@@ -1,0 +1,132 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: EventException.java,v 1.1 2005-11-01 00:30:20 arvindp Exp $
+ *
+ * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.iplanet.services.ldap.event;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
+import com.iplanet.services.ldap.LDAPServiceException;
+
+/**
+ * Exception occurs while setting an event request or when trigering the
+ * "entryChanged()" method after a persistent search results are received from
+ * the Directory Server.
+ * 
+ */
+public class EventException extends LDAPServiceException {
+
+    /**
+     * Holds the message assocuated with this exception, if present.
+     */
+    private String _message = "";
+
+    /**
+     * Constructs a EventException with no detail message and no nested
+     * exception. public EventException() { super(); }
+     */
+
+    /**
+     * Constructs a EventException with a detail message.
+     * 
+     * @param msg
+     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     */
+    public EventException(String msg) {
+        super(msg);
+        _message = msg;
+    }
+
+    /**
+     * Constructor with message string and an embedded exception Constructs a
+     * EventException with the given detail message and nested exception.
+     * 
+     * @param msg
+     *            Message string
+     * @param t
+     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     */
+    public EventException(String msg, Throwable t) {
+        super(msg, t);
+        _message = msg;
+    }
+
+    /**
+     * Returns a string representation of this EventException, including the
+     * detail message (if present);
+     * 
+     * @return a string representation of this EventException, including its
+     *         detail message, if present. iPlanet-PUBLIC-METHOD
+     */
+    public String toString() {
+        return super.toString()
+                + (_message == null ? "" : " [message: " + _message + "]");
+    }
+
+    /**
+     * Returns a string representation of the message in the this EventException
+     * (if present)
+     * 
+     * @return a string representation of the detailed message, if present.
+     *         iPlanet-PUBLIC-METHOD
+     */
+    public String getMessage() {
+        return _message;
+    }
+
+    /**
+     * Prints a stack trace for this EventException to System.out;
+     * iPlanet-PUBLIC-METHOD
+     */
+    public void printStackTrace() {
+        super.printStackTrace();
+    }
+
+    /**
+     * Prints a stack trace for this EventException to the given PrintStream;
+     * 
+     * @param printStream
+     *            a PrintStream to print the stack trace out to.
+     *            iPlanet-PUBLIC-METHOD
+     */
+    public void printStackTrace(PrintStream printStream) {
+        super.printStackTrace(printStream);
+    }
+
+    /**
+     * Prints a stack trace for this EventException to the given PrintWriter;
+     * 
+     * @param printWriter
+     *            a PrintWriter to print the stack trace out to.
+     *            iPlanet-PUBLIC-METHOD
+     */
+    public void printStackTrace(PrintWriter printWriter) {
+        super.printStackTrace(printWriter);
+    }
+}
+
+/**
+ * $History: EventException.java $
+ * 
+ */

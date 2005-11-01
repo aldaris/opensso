@@ -1,0 +1,12 @@
+dn: cn=schema
+attributeTypes: ( iplanetserviceschema-OID NAME ( 'iplanetserviceschema' ) DESC 'SMS Attribute to Store xml schema of a particular service' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  SINGLE-VALUE )
+attributeTypes: ( iplanetserviceid-OID NAME ( 'iplanetserviceid' ) DESC 'Attribute to store the reference to the inherited object' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  SINGLE-VALUE )
+attributeTypes: ( iplanetpluginid-OID NAME ( 'iplanetpluginid' ) DESC 'Attribute to store reference to the plugin configuration' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  SINGLE-VALUE )
+attributeTypes: ( iplanetsmspriority-OID NAME ( 'iplanetsmspriority' ) DESC 'To store the priority of the service with respect to its siblings' SYNTAX 1.3.6.1.4.1.1466.115.121.1.27  SINGLE-VALUE )
+attributeTypes: ( pluginschema-OID NAME ( 'pluginschema' ) DESC 'To store the plugin schema information' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( iplanetkeyvalue-OID NAME ( 'iplanetkeyvalue' ) DESC 'Attribute to store the encoded key values of the services' SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
+attributeTypes: ( iplanetxmlkeyvalue-OID NAME ( 'iplanetxmlkeyvalue' ) DESC 'Attribute to store the key values in xml format' SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
+objectClasses: ( iplanetservice-oid NAME 'iplanetservice' DESC 'object containing service information' SUP top MUST ( ou ) MAY ( labeleduri $ iplanetserviceschema $ iplanetkeyvalue $ iplanetxmlkeyvalue $ pluginschema $ description ) )
+objectClasses: ( iplanetorgservice-oid NAME 'iplanetorgservice' DESC 'Service information specific to organizations' SUP top MUST ( ou ) MAY ( iplanetkeyvalue $ iplanetxmlkeyvalue $ description ) )
+objectClasses: ( iplanetservicecomponent-oid NAME 'iplanetservicecomponent' DESC 'Sub-components of the service' SUP top MUST ( ou ) MAY ( iplanetserviceid $ iplanetsmspriority $ iplanetkeyvalue $ iplanetxmlkeyvalue $ description ) )
+objectClasses: ( iplanetserviceplugin-oid NAME 'iplanetserviceplugin' DESC 'Object that stores information specific to plugins' SUP top MUST ( ou ) MAY ( iplanetpluginid $ iplanetkeyvalue $ iplanetxmlkeyvalue $ iplanetsmspriority ) )

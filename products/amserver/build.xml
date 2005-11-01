@@ -1,0 +1,165 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2005-11-01 00:28:28 arvindp Exp $
+
+   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso" default="usage">
+                
+    <description>Open Web Single Sign-On</description>
+
+    <!-- global environment -->
+    <!-- top level directory structure -->
+    <property name="src.dir" location="source"/>
+    <property name="res.dir" location="resources"/>
+    <property name="script.dir" location="scripts"/>
+    <property name="www.dir" location="www"/>
+    <property name="xml.dir" location="xml"/>
+    <property name="extlib.dir" location="extlib"/>
+    <property name="demobase.dir" location="demo"/>
+
+    <!-- nested directory structure -->
+    <property name="script.bin.dir" location="${script.dir}/bin"/>
+    <property name="script.ldap.dir" location="${script.dir}/ldap"/>
+    <property name="script.sql.dir" location="${script.dir}/sql"/>
+    <property name="www.jsp.dir" location="${www.dir}/jsp"/>
+   
+    <!-- generated directory structure -->
+    <property name="built.dir" location="built"/>
+    <property name="classes.dir" location="${built.dir}/classes"/>   
+    <property name="built.res.dir" location="${built.dir}/resources"/>
+    <property name="built.docs.dir" location="${built.dir}/docs"/>   
+    <property name="built.apidocs.dir" location="${built.docs.dir}/api"/> 
+    <property name="demobuilt.dir" location="${built.dir}/demo"/> 
+
+
+    <!-- user specific properties -->
+    <property file="${user.home}/.opensso"/>
+
+    <!-- overridable properties -->
+    <property name="build.debug" value="off"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${classes.dir}"/>
+        <fileset dir="${extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="build" depends="preparebuild">
+        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${src.dir}"/>
+            <classpath refid="build.class.path"/>
+            <exclude name="**/package-info.java"/>
+        </javac>
+        <copy todir="${built.res.dir}">
+            <fileset dir="${res.dir}">
+                <include name="**/*.properties"/>
+                <exclude name="Services.properties"/>
+                <exclude name="DSConfig.properties"/>
+                <exclude name="ums.properties"/>
+                <exclude name="sso.properties"/>
+                <exclude name="SMS.properties"/>
+                <exclude name="authentication_util.properties"/>
+            </fileset>
+            <fileset dir="${xml.dir}">
+                <include name="**/*.dtd"/>
+                <include name="**/*.xml"/>
+                <exclude name="sms.dtd"/>
+            </fileset>
+            <filterset>
+                <filter token="XML_ENCODING" value="ISO-8859-1"/>
+            </filterset>
+        </copy>
+        <concat destfile="${built.res.dir}/amSDK.properties">
+            <fileset dir="${res.dir}">
+                <include name="Services.properties"/>
+                <include name="DSConfig.properties"/>
+                <include name="ums.properties"/>
+                <include name="sso.properties"/>
+                <include name="SMS.properties"/>
+                <include name="authentication_util.properties"/>
+            </fileset>
+        </concat>
+        <copy file="${xml.dir}/sms.dtd" 
+              todir="${classes.dir}/com/sun/identity/sm"/>
+    </target>
+
+    <target name="doc" depends="preparebuild">
+        <javadoc destdir="${built.apidocs.dir}" windowtitle="OpenSSO API">
+            <classpath refid="build.class.path"/>
+            <packageset dir="${src.dir}">
+                <include name="com/iplanet/sso/**"/>
+                <include name="com/iplanet/dpro/**"/>
+                <include name="com/sun/identity/session/**"/>
+            </packageset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
+        </javadoc>
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${built.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${built.res.dir}"/>
+        <mkdir dir="${built.docs.dir}"/>
+        <mkdir dir="${built.apidocs.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${built.apidocs.dir}"/>
+        <delete dir="${built.docs.dir}"/>
+        <delete dir="${built.res.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete dir="${built.dir}"/>
+    </target>
+   
+    <target name="demo" depends="build">
+        <ant antfile="${demobase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="demo-clean">
+        <ant antfile="${demobase.dir}/build.xml" 
+             inheritRefs="true" target="clean"/>
+    </target>
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available:"/>
+        <echo message=" "/>
+        <echo message=" build      : compiles the sources"/>
+        <echo message=" doc        : creates javadocs"/>
+        <echo message=" clean      : deletes the generated files"/>
+        <echo message=" demo       : builds the demo application"/>
+        <echo message=" demo-clean : deletes generated demo files"/>
+        <echo message=" usage      : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+
+</project>

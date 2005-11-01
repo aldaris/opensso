@@ -1,0 +1,97 @@
+#!/bin/sh
+
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: amsessiondb,v 1.1 2005-11-01 00:28:52 arvindp Exp $
+#
+# Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+#
+
+JAVA_HOME=/usr/jdk/entsys-j2se
+
+OS_ARCH=`/bin/uname -s`
+
+IMQ_JAR_PATH=/usr/share/lib
+JMS_JAR_PATH=/usr/share/lib
+BDB_JAR_PATH=/usr/share
+BDB_SO_PATH=/usr/lib
+AM_HOME=/opt/SUNWam
+
+if [ "$OS_ARCH" = "Linux" ]; then
+	IMQ_JAR_PATH=/opt/sun/mq/share/lib
+	JMS_JAR_PATH=/opt/sun/mq/share/lib
+	BDB_JAR_PATH=/usr/share/bdb
+	BDB_SO_PATH=/opt/sun/private/lib
+	AM_HOME=/opt/sun/identity
+fi
+
+
+
+CLASSPATH=${IMQ_JAR_PATH}/imq.jar:${JMS_JAR_PATH}/jms.jar:${BDB_JAR_PATH}/db.jar:${AM_HOME}/locale:${AM_HOME}/lib/am_sessiondb.jar:.
+
+OS_ARCH=`/bin/uname -s`
+
+if [ -z "$LD_LIBRARY_PATH" ] ; then
+	LD_LIBRARY_PATH=${BDB_SO_PATH}
+else
+	LD_LIBRARY_PATH=${BDB_SO_PATH}:$LD_LIBRARY_PATH
+fi
+
+if [ "$OS_ARCH" = "Linux" ]; then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${JAVA_HOME}/jre/lib/i386/native_threads
+fi
+
+export LD_LIBRARY_PATH
+
+JAVA_OPTS="-Xms128m -Xmx512m -Dsleepycat.db.libname=db_java"
+RESTART=true
+
+shutdown_amsessiondb() {
+    RESTART=false
+    if [ -n "$_javapid" ]; then
+	kill -TERM $_javapid
+    fi
+    echo "done. \n"
+}
+
+# If the script process is killed make sure we shutdown the Broker's Java process
+trap "shutdown_amsessiondb" TERM INT QUIT
+
+RESTART=true
+while [ "$RESTART" = "true" ]; do
+     echo "Starting...  $RESTART" >> /tmp/test
+    _javapid=""
+     echo "$JAVA_HOME/bin/java $JAVA_OPTS -classpath $CLASSPATH com.iplanet.dpro.session.jmqdb.client.AMSessionDB"
+     $JAVA_HOME/bin/java $JAVA_OPTS -classpath "$CLASSPATH" com.iplanet.dpro.session.jmqdb.client.AMSessionDB "$@" &
+    _javapid=$!
+    wait $_javapid
+    _status=$?
+
+    if [ $_status -eq 0 -o $_status -eq 1 -o $_status -eq 129 -o $_status -eq 130 -o $_status -eq 143 ]; then
+        RESTART=false 
+    elif [ "$AM_SFO_RESTART" = "true" ]; then
+        RESTART=true
+    else
+        RESTART=false
+    fi
+   
+done
+

@@ -1,0 +1,107 @@
+------------------------------------------------------------------------------
+README file for Open Web Single Sign-On Demo
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2005-11-01 00:28:30 arvindp Exp $
+
+Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+------------------------------------------------------------------------------
+
+%% Contents:
+    %% 1. About this demo
+    %% 2. Building the demo
+    %% 3. Installing the demo
+    %% 4. Running the demo
+
+%% 1. About this demo
+
+This demo illustrates how a web application can use the OpenSSO Session
+service to achieve single sign-on. Although OpenSSO does not include
+a full-fledged authentication service yet, a dummy implementation is 
+provided to facilitate this demo functionality. 
+
+This demo consists of two web applications that may be deployed on the same
+or different web containers. If deployed on different web containers, they
+may exist on the same or different hosts. These two web applications are
+the following:
+
+   - amserver.war    : contains OpenSSO Session service and dummy 
+                       authentication service. This application will be 
+                       referred to as the server.
+   - amdemoclient.war: contains a simple web application that uses the 
+                       OpenSSO Session client library to validate a user's
+                       session and thus identify the user. This application 
+                       will be referred to as the client.
+
+The client application checks for the presence of the SSO token cookie 
+from the web browser. If present, the client application uses the Session
+client library to validate that token and thus identify the user.
+
+%% 2. Building the demo
+
+Before you build the demo application, you must identify the environment 
+details pertaining to the server and client applications and provide them
+as an input to the build using the two files client_env.properties and
+server_env.properties. These files can be created by copying the
+corresponding template files and replacing the values where necessary.
+
+If your target web container does not have all the library dependencies
+for the client or server applications, you may optionally copy the libraries
+to include within the applications under the directories libclient and 
+libserver. For instance, if your target web container does not have ldapjdk.jar
+installed at the system level, the ldapjdk.jar library may be included in the
+libserver directory. Doing this will ensure that when the server war is
+created, the ldapjdk.jar library gets bundled with it.
+
+Once you have created the environment configuration files and added the
+necessary libraries into the lib* directories, you can build the demo
+application by issuing the "demo" target from the top level director.
+
+%% 3. Installing the demo
+
+Once the demo is built, two files are generated under the distribution
+directory built/demo/dist. The first file is the amdemoclient.war which is
+the client web application. This client web application can be deployed on 
+the client web container.
+
+The second file is the amsetup.jar. This is a simple installer that allows 
+you to create the necessary backend datastore needed by the Session service
+and infrastructure of OpenSSO. Transfer this file to the machine where the
+server web container exists and issue the following command:
+
+   $ java -jar amsetup.jar
+   
+This will install the backend datastore on the machine where executed and will
+also extract the amserver.war file. The amserver.war file can now be deployed
+on your server web container.
+
+%% 4. Running the demo
+
+Once both the amserver.war and amdemoclient.war files have been deployed, 
+the demo is ready to use. Simply startup a browser and point it to the
+server application. This will allow you to authenticate and create a session.
+During authentication, you can optionally setup the value of three custom
+properties p1, p2 and p3 that will be added to your session.
+
+Once authenticated, point your browser to the client application. The client
+application should be able to validate your session and assert your identity
+and also show you the value of the three properties that you setup during
+authentication.

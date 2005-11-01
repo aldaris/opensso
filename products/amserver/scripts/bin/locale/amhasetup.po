@@ -1,0 +1,372 @@
+domain "amhasetup"
+msgid  " "
+msgstr " "
+
+msgid  "Welcome to Sun Java System Access Manager 7 2005Q4"
+msgstr "Welcome to Sun Java System Access Manager 7 2005Q4"
+
+msgid  "Session Failover Configuration Setup Program."
+msgstr "Session Failover Configuration Setup Program."
+
+msgid  "Please read the following prior to starting the configuration process."
+msgstr "Please read the following prior to starting the configuration process."
+
+msgid  "a) No inetd configuration will be done by this script."
+msgstr "a) No inetd configuration will be done by this script."
+
+msgid  "b) Shared Memory settings required for HADB Commands will not be set"
+msgstr "b) Shared Memory settings required for HADB Commands will not be set"
+
+msgid  "   by this script. It is assumed that they have been preset to desired values."
+msgstr "   by this script. It is assumed that they have been preset to desired values."
+
+msgid  "c) If using Oracle Database as a Session Repository, then"
+msgstr "c) If using Oracle Database as a Session Repository, then"
+
+msgid  "   it should already be installed and configured."
+msgstr "   it should already be installed and configured."
+
+msgid  "d) LoadBalancer configuration will not be handled by this script."
+msgstr "d) LoadBalancer configuration will not be handled by this script."
+
+msgid  "e) Make sure the Directory Server is up and running on this host."
+msgstr "e) Make sure the Directory Server is up and running on this host."
+
+msgid  "Do you want to start configuring for Session Failover? [Yes/No]"
+msgstr "Do you want to start configuring for Session Failover? [Yes/No]"
+
+msgid  "YES"
+msgstr "YES"
+
+msgid  "Please choose the TYPE of configuration"
+msgstr "Please choose the TYPE of configuration"
+
+msgid  "1. Database Management"
+msgstr "1. Database Management"
+
+msgid  "2. Create/Load Session Failover Configuration XML file"
+msgstr "2. Create/Load Session Failover Configuration XML file"
+
+msgid  "3. Update AMConfig file in the Cluster"
+msgstr "3. Update AMConfig file in the Cluster"
+
+msgid  "4. All (1,2,3)"
+msgstr "4. All (1,2,3)"
+
+msgid  "5. Exit"
+msgstr "5. Exit"
+
+msgid  "Please enter your choice: "
+msgstr "Please enter your choice: "
+
+msgid  "Please choose the type of Database:"
+msgstr "Please choose the type of Database:"
+
+msgid  "1. HADB"
+msgstr "1. HADB"
+
+msgid  "2. ORACLE"
+msgstr "2. ORACLE"
+
+msgid  "3. EXIT"
+msgstr "3. EXIT"
+
+msgid  "Please choose the configuration option:"
+msgstr "Please choose the configuration option:"
+
+msgid  "1. Start HADB Database"
+msgstr "1. Start HADB Database"
+
+msgid  "2. Stop HADB Database"
+msgstr "2. Stop HADB Database"
+
+msgid  "3. Delete HADB Database"
+msgstr "3. Delete HADB Database"
+
+msgid  "4. Create HADB Database"
+msgstr "4. Create HADB Database"
+
+msgid  "5. Create Session Store"
+msgstr "5. Create Session Store"
+
+msgid  "6. Clear Session Store"
+msgstr "6. Clear Session Store"
+
+msgid  "7. Exit"
+msgstr "7. Exit"
+
+msgid  "1. Create Session Store"
+msgstr "1. Create Session Store"
+
+msgid  "2. Clear Session Store"
+msgstr "2. Clear Session Store"
+
+msgid  "3. Exit"
+msgstr "3. Exit"
+
+msgid  "Host Protocol: "
+msgstr "Host Protocol: "
+
+msgid  "Host Port    : "
+msgstr "Host Port    : "
+
+msgid  "Server Host  : "
+msgstr "Server Host  : "
+
+msgid  "Please confirm if following configuration values are correct."
+msgstr "Please confirm if following configuration values are correct."
+
+msgid  "Valid values [yY/nN] :"
+msgstr "Valid values [yY/nN] :"
+
+msgid  "Aborting update process...."
+msgstr "Aborting update process...."
+
+msgid  "Configuring host :"
+msgstr "Configuring host :"
+
+msgid  "Failed to update file for: "
+msgstr "Failed to update file for: "
+
+msgid  "Cluster Server List is empty in"
+msgstr "Cluster Server List is empty in"
+
+msgid  "Exiting ..."
+msgstr "Exiting ..."
+
+msgid  "Error in updating. Process aborted..."
+msgstr "Error in updating. Process aborted..."
+
+msgid  "Configuring Server Instance:"
+msgstr "Configuring Server Instance:"
+
+msgid  "Default instance already configured. Skipping..."
+msgstr "Default instance already configured. Skipping..."
+
+msgid  "Checking if the required files are present..."
+msgstr "Checking if the required files are present..."
+
+msgid  "Common utitlity AWK file does not exist:"
+msgstr "Common utitlity AWK file does not exist:"
+
+msgid  "Common utility AWK file is not readable. Please modify permission on file:"
+msgstr "Common utility AWK file is not readable. Please modify permission on file:"
+
+msgid  "Resource file does not exist:"
+msgstr "Resource file does not exist:"
+
+msgid  "Resource file is not readable. Please modify the permissions on file:"
+msgstr "Resource file is not readable. Please modify the permissions on file:"
+
+msgid  "This program can only be run by a root user."
+msgstr "This program can only be run by a root user."
+
+msgid  "(nothing will be echoed):"
+msgstr "(nothing will be echoed):"
+
+msgid  "Passwords are different!. Please retry."
+msgstr "Passwords are different!. Please retry."
+
+msgid  "Please do not enter the character !"
+msgstr "Please do not enter the character !"
+
+msgid  "Please enter the input again."
+msgstr "Please enter the input again."
+
+msgid  "Using"
+msgstr "Using"
+
+msgid  "Could not locate amadmin command on this machine. Exiting..."
+msgstr "Could not locate amadmin command on this machine. Exiting..."
+
+msgid  "Could not locate hadbm command on this machine. Exiting..."
+msgstr "Could not locate hadbm command on this machine. Exiting..."
+
+msgid  "Could not locate clusql command on this machine. Exiting..."
+msgstr "Could not locate clusql command on this machine. Exiting..."
+
+msgid  "Could not locate sqlplus command on this machine. Exiting..."
+msgstr "Could not locate sqlplus command on this machine. Exiting..."
+
+msgid  "Session Store cleaning SQL file does not exist:"
+msgstr "Session Store cleaning SQL file does not exist:"
+
+msgid  "Session Store cleaning SQL file is not writable:"
+msgstr "Session Store cleaning SQL file is not writable:"
+
+msgid  "Session Store tables does not exist in the Database."
+msgstr "Session Store tables does not exist in the Database."
+
+msgid  "Clearing Database tables required for Session Failover Setup..."
+msgstr "Clearing Database tables required for Session Failover Setup..."
+
+msgid  "Session Store tables cleared successfully."
+msgstr "Session Store tables cleared successfully."
+
+msgid  "Clearing Session Store table Failed."
+msgstr "Clearing Session Store table Failed."
+
+msgid  "Warning: Null configuration value for parameter:"
+msgstr "Warning: Null configuration value for parameter:"
+
+msgid  "in"
+msgstr "in"
+
+msgid  "Modifying file:"
+msgstr "Modifying file:"
+
+msgid  "Session Store creation SQL file does not exist:"
+msgstr "Session Store creation SQL file does not exist:"
+
+msgid  "Session Store creation SQL file is not writable:"
+msgstr "Session Store creation SQL file is not writable:"
+
+msgid  "Please enter the HADB Database System password:"
+msgstr "Please enter the HADB Database System password:"
+
+msgid  "Please enter the HADB Database User password:"
+msgstr "Please enter the HADB Database User password:"
+
+msgid  "Please enter the Oracle Database User password:"
+msgstr "Please enter the Oracle Database User password:"
+
+msgid  "Store creation SQL file does not exist:"
+msgstr "Store creation SQL file does not exist:"
+
+msgid  "Creating Database tables required for Session Failover Setup..."
+msgstr "Creating Database tables required for Session Failover Setup..."
+
+msgid  "Session Store created successfully."
+msgstr "Session Store created successfully."
+
+msgid  "Session Store Creation Failed."
+msgstr "Session Store Creation Failed."
+
+msgid  "Database does not exist:"
+msgstr "Database does not exist:"
+
+msgid  "Database failed to start ..."
+msgstr "Database failed to start ..."
+
+msgid  "Database is in running state..."
+msgstr "Database is in running state..."
+
+msgid  "Database failed to stop ..."
+msgstr "Database failed to stop ..."
+
+msgid  "Database is in stop state ..."
+msgstr "Database is in stop state ..."
+
+msgid  "Database cannot be stopped for deleting..."
+msgstr "Database cannot be stopped for deleting..."
+
+msgid  "Database delete failed..."
+msgstr "Database delete failed..."
+
+msgid  "Database deleted sucessfully..."
+msgstr "Database deleted sucessfully..."
+
+msgid  "Checking if Database EXISTS..."
+msgstr "Checking if Database EXISTS..."
+
+msgid  "Database already exists!!. Skipping creation part"
+msgstr "Database already exists!!. Skipping creation part"
+
+msgid  "Creating HADB Database..."
+msgstr "Creating HADB Database..."
+
+msgid  "HADB Database created successfully."
+msgstr "HADB Database created successfully."
+
+msgid  "HADB Database creation failed."
+msgstr "HADB Database creation failed."
+
+msgid  "Invalid Hostname in config file:"
+msgstr "Invalid Hostname in config file:"
+
+msgid  "Creating Session Configuration XML File..."
+msgstr "Creating Session Configuration XML File..."
+
+msgid  "Checking if Session Configuration File already EXISTS..."
+msgstr "Checking if Session Configuration File already EXISTS..."
+
+msgid  "Session Configuration file already exist and will be overwritten."
+msgstr "Session Configuration file already exist and will be overwritten."
+
+msgid  "Do you want to continue....(Y/N):"
+msgstr "Do you want to continue....(Y/N):"
+
+msgid  "Y"
+msgstr "Y"
+
+msgid  "Please rename the file and run the script again."
+msgstr "Please rename the file and run the script again."
+
+msgid  "Exiting upon your choice..."
+msgstr "Exiting upon your choice..."
+
+msgid  "Please enter the LDAP Admin password:"
+msgstr "Please enter the LDAP Admin password:"
+
+msgid  "Session Configuration XML File created successfully."
+msgstr "Session Configuration XML File created successfully."
+
+msgid  "Loading Session Configuration SCHEMA File..."
+msgstr "Loading Session Configuration SCHEMA File..."
+
+msgid  "Session Configuration Schema loaded successfully."
+msgstr "Session Configuration Schema loaded successfully."
+
+msgid  "Failed to load Session Configuration Schema."
+msgstr "Failed to load Session Configuration Schema."
+
+msgid  "Please refer to the log file"
+msgstr "Please refer to the log file"
+
+msgid  "for additional information."
+msgstr "for additional information."
+
+msgid  "Domain already exists for Hosts:"
+msgstr "Domain already exists for Hosts:"
+
+msgid  "Domain successfully created..."
+msgstr "Domain successfully created..."
+
+msgid  "Please enter the MA Admin password:"
+msgstr "Please enter the MA Admin password:"
+
+msgid  "Sun Java System Access Manager 6 2005Q4."
+msgstr "Sun Java System Access Manager 6 2005Q4."
+
+msgid  "Session Configuration Program Log."
+msgstr "Session Configuration Program Log."
+
+msgid  "Session Failover Setup Script. Execution end time"
+msgstr "Session Failover Setup Script. Execution end time"
+
+msgid  "Session Failover Setup Script. Execution start time"
+msgstr "Session Failover Setup Script. Execution start time"
+
+msgid  "Running with the following Settings."
+msgstr "Running with the following Settings."
+
+msgid  "Resource file:"
+msgstr "Resource file:"
+
+msgid  "Verify:"
+msgstr "Verify:"
+
+msgid  "Access Manager configuration file does not exist. Please make sure it is present."
+msgstr "Access Manager configuration file does not exist. Please make sure it is present."
+
+msgid  "Access Manager configuration file is not readable. Please rerun with read permissions."
+msgstr "Access Manager configuration file is not readable. Please rerun with read permissions."
+
+msgid  "Succeeded..."
+msgstr "Succeeded..."
+
+msgid  "Failed..."
+msgstr "Failed..."
+
+msgid  "Usage : amsessionconfig [--help] port protocol host"
+msgstr "Usage : amsessionconfig [--help] port protocol host"

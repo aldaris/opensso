@@ -1,0 +1,880 @@
+#!/bin/sh
+
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: amsfoconfig,v 1.1 2005-11-01 00:28:53 arvindp Exp $
+#
+# Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+#
+
+#All defines are listed here..
+#General utils
+platform="`uname`"
+if [ ${platform} = "Linux" ]
+then
+   ID=/usr/bin/id
+   ECHO="/bin/echo -e"
+   DATE=/bin/date
+   SED=/bin/sed
+   AWK=/bin/awk
+   RM=/bin/rm
+   CP=/bin/cp
+   CUT=/bin/cut
+   GETTEXT=/bin/gettext
+   GREP=/bin/grep
+else
+   ID=/usr/bin/id
+   ECHO=/usr/bin/echo
+   DATE=/usr/bin/date
+   SED=/usr/bin/sed
+   AWK=/usr/bin/awk
+   RM=/usr/bin/rm
+   CP=/usr/bin/cp
+   CUT=/usr/bin/cut
+   GETTEXT=/usr/bin/gettext
+   GREP=/usr/bin/grep
+fi
+
+
+#Script Specific defines
+
+. IS_INSTALL_ETCDIR/IS_PRODNAME/config/amProfile.conf
+
+#i18n stuff
+TEXTDOMAIN=amsfoconfig
+TEXTDOMAINDIR=${IS_INSTALL}/locale
+export TEXTDOMAIN
+export TEXTDOMAINDIR
+
+# Error Codes
+AMSFSETUP_SUCCESS=0
+AMSFSETUP_USAGE_ERROR=1
+
+AMSFSETUP_RESOURCEFILE_NOTFOUND=2
+AMSFSETUP_CANNOTREAD_RESOURCEFILE=3
+
+AMSFSETUP_AWKFILE_NOTFOUND=4
+AMSFCLSETUP_CANNOTREAD_AWKFILE=5
+
+AMSFSETUP_INVALID_USER=6
+AMSFSETUP_INVALID_VALUE=7
+
+AMSFSETUP_LOAD_FAILED=8
+AMSFSETUP_PSL_FAILED=9
+
+AMSFSETUP_VALID_SERVERID=10
+AMSFSETUP_INVALID_SERVERID=11
+
+AMSFSETUP_VALID_SITEID=12
+AMSFSETUP_INVALID_SITEID=13
+
+VALID=0 
+INVALID=1 
+
+# Logfile location where the output is logged.
+LOGFILE=/var/tmp/amsfoconfig.log
+
+# Configuration file that holds information about cluster objects.
+RESOURCEFILE=${IS_INSTALL}/lib/amsfo.conf
+
+# Configuration file that holds session related information
+SESSIONCONFIGXML=${IS_CONFIG}/xml/amSessionsfoCfg.xml
+
+# File to modify/load platform server and site entries
+ADDPSLXML=${IS_CONFIG}/xml/amPSLAddEntries.xml    
+
+# File to add the Organiztion alias entries
+ORGALIASXML=${IS_CONFIG}/xml/amOrgAlias.xml    
+
+# Temp file that holds server/site retrival information
+TMP_SITELIST_FILE=${IS_CONFIG}/xml/amSiteEntries.xml
+TMP_SVRLIST_FILE=${IS_CONFIG}/xml/amPSLEntries.xml
+
+# Temp file to query for server/site information
+TMP_PSL_FILE=${IS_CONFIG}/xml/amPSL.xml    
+TMP_SITE_FILE=${IS_CONFIG}/xml/amSite.xml    
+
+# awk script used by this script to parse the various information files.
+AWKFILE=${IS_SHARE}/harepository.awk
+
+# admin command to load the xml file
+AMADMIN=${IS_INSTALL}/bin/amadmin
+AMADMIN_ID=amadmin
+
+# Temp variable to hold the admin/JMQ password
+LDAPPSWD=
+JMQPASSWORD=
+
+# XML related variables
+REQUEST_OPEN_TAG="<Requests>"
+REQUEST_CLOSE_TAG="</Requests>"
+SCHEMA_REQUESTS_OPEN="<SchemaRequests"
+SCHEMA_REQUESTS_CLOSE="</SchemaRequests>"
+
+#Show welcome text and get confirmation from the user before proceding.
+ShowWelcome()
+{
+    RemoveXMLFiles
+    ${ECHO} "===================================================================="
+    ${ECHO} "\t`${GETTEXT} 'Welcome to Sun Java System Access Manager 7 2005Q4'`"
+    ${ECHO} "`${GETTEXT} ''`"
+    ${ECHO} "\t`${GETTEXT} 'Session Failover Configuration Setup script.'`"
+    ${ECHO} "===================================================================="
+    ${ECHO} " "
+}
+
+#Usage message function
+UsageMessage()
+{
+    ${ECHO} " "
+    ${ECHO} "`${GETTEXT} 'Usage: amsfoconfig [--help] [configure]'`" 
+    ${ECHO} " "
+}
+
+#Check if the usage of the script is correct
+CheckUsage()
+{
+   param=`${ECHO} "$1" | tr "[A-Z]" "[a-z]"`
+   if [ "${1}" = "--help" ]
+   then
+       UsageMessage
+       exit ${AMSFSETUP_USAGE_ERROR}
+   fi
+
+   # Check if correct number of arguments are passed, otherwise display
+   # usage and bail out
+
+   if [ $# -gt 1 ]
+   then
+      UsageMessage
+      exit ${AMSFSETUP_USAGE_ERROR}
+   else 
+      if [ "${param}" = "configure" -o "x${param}" = "x" ]
+      then
+         configureSFO
+      else
+         UsageMessage
+         exit ${AMSFSETUP_USAGE_ERROR}
+      fi
+   fi
+}
+
+
+#Check if the user running this script is root user. If not bail out
+CheckUser()
+{
+    if [ `${ID} | ${AWK} '{print $1}'` != "uid=0(root)" ]
+    then
+        ${ECHO} "`${GETTEXT} 'This program can only be run by a root user.'`"
+        exit ${AMSFSETUP_INVALID_USER}
+    fi
+}
+
+#Check if the system is already configured for Session Failover
+isSFOConfigured()
+{
+   #Check the platform Server list 
+   PslXMLFile serverList $TMP_PSL_FILE
+   [ $? -ne 0 ] && return $AMSFSETUP_INVALID_VALUE
+   #Read the server-list from the directory
+   CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${TMP_PSL_FILE}"
+   WriteToLog " "
+   WriteToLog " "
+   WriteToLog "\t `${GETTEXT} 'Retrieving Platform Server list...'`"
+   WriteToLog " "
+   #WriteToLog "\t $CMD \n\n"
+   $CMD > ${TMP_SVRLIST_FILE} 2>>${LOGFILE}
+   if [ $? -ne 0 ]
+   then
+      WriteToLog "\t `${GETTEXT} 'Failed to get Platform Server list...'`"
+      EndScript ${AMSFSETUP_PSL_FAILED}
+   fi
+   #Check if SFO enabled
+   if [ -f ${TMP_SVRLIST_FILE} ]
+   then
+      SERVER_LIST=`${GREP} http ${TMP_SVRLIST_FILE} | ${SED} 's/.*=\[//' | ${SED} 's/\].*$//'`
+      SList=`echo "$SERVER_LIST" | ${SED} 's/,/ /g' | ${SED} 's/|/\\\|/g'`
+      if [ "x$SList" != "x" ]
+      then
+          ${ECHO} "`${GETTEXT} ''`"
+          ${ECHO} "\t `${GETTEXT} 'Validating server entries.'`"
+          for server in `echo "${SList}"`
+          do
+              #Check if serverID is Site enabled 
+              isSiteEnabled "${server}"
+              if [ $? -ne ${VALID} ] 
+              then 
+                 eval ${ECHO} "`${GETTEXT} 'Server entry is already site configured:'` ${server}"
+                 return ${AMSFSETUP_INVALID_SERVERID}
+              fi
+          done
+          ${ECHO} "\t `${GETTEXT} 'Done...'`"
+      else	
+          WriteToLog "\t `${GETTEXT} 'Platform Server list is empty...'`"
+          return ${AMSFSETUP_INVALID_SERVERID}
+      fi
+   else 
+          WriteToLog "\t `${GETTEXT} 'No platform Server entries were retrieved.'`"
+          return ${AMSFSETUP_INVALID_SERVERID}
+   fi
+   #Check the platform Server list 
+   PslXMLFile siteList $TMP_SITE_FILE
+   [ $? -ne 0 ] && return $AMSFSETUP_INVALID_VALUE
+   #Read the site-list from the directory
+   CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${TMP_SITE_FILE}"
+   WriteToLog " "
+   WriteToLog " "
+   WriteToLog "\t `${GETTEXT} 'Retrieving Site list...'`"
+   WriteToLog " "
+   #WriteToLog "\t $CMD \n\n"
+   $CMD > ${TMP_SITELIST_FILE} 2>>${LOGFILE}
+   if [ $? -ne 0 ]
+   then
+      WriteToLog "\t `${GETTEXT} 'Failed to get Site list...'`"
+      EndScript ${AMSFSETUP_PSL_FAILED}
+   fi
+   #Check if SFO enabled
+   ${ECHO} "\t `${GETTEXT} 'Validating site entries.'`"
+   if [ -f ${TMP_SITELIST_FILE} ]
+   then
+      SITE_LIST=`${GREP} \\\[\\\] ${TMP_SITELIST_FILE}` 
+      if [ "x${SITE_LIST}" = "x" ]
+      then
+         ${ECHO} "\t `${GETTEXT} 'Site is already configured.'`"
+         return ${AMSFSETUP_INVALID_SERVERID}
+      fi
+   fi
+   ${ECHO} "\t `${GETTEXT} 'Done...'`"
+   return ${VALID}
+}
+
+#Helper function to check if serverID is site enabled
+isSiteEnabled()
+{
+    ID=`${ECHO} "${1}" | ${AWK} -F"|" '{print NF}'`
+    [ ${ID} -gt 2 ] && return ${INVALID}
+    return ${VALID}
+}
+
+#This is the main function that creates the Session Config file with
+#the required parameter values
+CreateSessionConfigXML()
+{
+    CreatePSLXMLFile 
+    [ $? -ne ${VALID} ] && return $AMSFSETUP_INVALID_VALUE
+    CreateSessionXMLFile ${SESSIONCONFIGXML} 
+    [ $? -ne ${VALID} ] && return $AMSFSETUP_INVALID_VALUE
+    CreateOrgXMLFile ${ORGALIASXML} 
+    [ $? -ne ${VALID} ] && return $AMSFSETUP_INVALID_VALUE
+    return ${VALID}
+}
+
+#This is the helper function that creates the XML header section 
+CreateXMLHeader()
+{
+    #Create the Session configuration file.
+    ${ECHO} "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" > $1
+    ${ECHO} "<!--" >> $1
+    ${ECHO} "\tCopyright (c) 2003 Sun Microsystems, Inc. All rights reserved" >> $1
+    ${ECHO} "\tUse is subject to license terms." >> $1
+    ${ECHO} "-->" >> $1
+    ${ECHO} "" >> $1
+    ${ECHO} "<!DOCTYPE Requests" >> $1
+    ${ECHO} "\tPUBLIC \"-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN\"" >> $1
+    ${ECHO} "\t\"jar://com/iplanet/am/admin/cli/amAdmin.dtd\"" >> $1
+    ${ECHO} ">" >> $1
+    ${ECHO} "\n" >> $1
+}
+
+#Function to create XML file for retriving platform and site entries
+PslXMLFile()
+{
+    SCHEMA_TYPE="SchemaType"
+    SERVICE_DEFAULT_OPEN="<GetServiceDefaultValues>"
+    SERVICE_DEFAULT_CLOSE="</GetServiceDefaultValues>"
+    CreateXMLHeader $2
+    ${ECHO} "<!--  GET DEFAULTS -->" >> $2
+    ${ECHO} "\n" >> $2
+    ${ECHO} "${REQUEST_OPEN_TAG}" >> $2
+    ${ECHO} "${SCHEMA_REQUESTS_OPEN} serviceName=\"iPlanetAMPlatformService\" ${SCHEMA_TYPE}=\"global\">" >> $2
+    ${ECHO} "${SERVICE_DEFAULT_OPEN}" >> $2
+    if [ "x${1}" = "xserverList" ]
+    then 
+       ${ECHO} "<Attribute name=\"iplanet-am-platform-server-list\"/>" >> $2
+    else
+       ${ECHO} "<Attribute name=\"iplanet-am-platform-site-list\"/>" >> $2
+    fi
+    ${ECHO} "${SERVICE_DEFAULT_CLOSE}" >> $2
+    ${ECHO} "${SCHEMA_REQUESTS_CLOSE}" >> $2
+    ${ECHO} "${REQUEST_CLOSE_TAG}" >> $2
+    return $VALID
+}
+
+#This is the main function that creates the PlatformServer list config file with
+#the modified parameter values
+CreatePSLXMLFile()
+{
+   if [ -f ${TMP_SVRLIST_FILE} ]
+   then
+      SERVER_LIST=`${GREP} http ${TMP_SVRLIST_FILE} | ${SED} 's/.*=\[//' | ${SED} 's/\].*$//'`
+      Serverlist=`${ECHO} "$SERVER_LIST" | ${SED} 's/,/ /g'`
+      if [ "x$Serverlist" != "x" ]
+      then
+          get_config_value SiteID
+          SiteID=${VALUE}
+          for host in `${ECHO} "${Serverlist}"`
+          do
+              ${ECHO} "`${GETTEXT} ''`"
+              ${ECHO} "\t `${GETTEXT} 'Validating host:'` ${host}"
+              #Check if serverID is same as SiteID 
+              checkServerID ${host} ${SiteID}
+              [ $? -ne ${AMSFSETUP_VALID_SERVERID} ] && return ${AMSFSETUP_INVALID_SITEID}
+          done
+          ${ECHO} "\t `${GETTEXT} 'Done...'`"
+      else
+          ${ECHO} " "
+          eval ${ECHO} "`${GETTEXT} 'Cluster Server List is empty in'` ${RESOURCEFILE}"
+          EndScript ${AMCLSETUP_EMPTYSERVERLIST_EXIT}
+      fi
+   else
+      WriteToLog "\t `${GETTEXT} 'Platform Server list is empty...'`"
+      EndScript ${AMSFSETUP_PSL_FAILED}
+   fi
+   ${ECHO} "`${GETTEXT} ''`"
+   WriteToLog "\t `${GETTEXT} 'Creating Platform Server XML File...'`"
+   #Create the xml file to load all the platform Server list entries
+   CreateXMLHeader ${ADDPSLXML} 
+   ${ECHO} "\n" >> ${ADDPSLXML}
+   addServerEntries ${TMP_SVRLIST_FILE} ${ADDPSLXML}
+   if [ $? != ${VALID} ]
+   then
+       WriteToLog "\t `${GETTEXT} 'Failed to create the Platform Serverlist XML file.'`"
+       EndScript ${AMSFSETUP_INVALID_SERVERID}
+   fi
+}
+
+#Adds server/site entries in the xml file
+addServerEntries()
+{
+   get_config_value lbServerPort
+   LBPORT=${VALUE}
+   get_config_value lbServerProtocol
+   LBPROTOCOL=${VALUE}
+   get_config_value lbServerHost
+   LBHOST=${VALUE}
+   get_config_value SiteID
+   SITEID=${VALUE}
+   SITEURL="$LBPROTOCOL://$LBHOST:$LBPORT|${SITEID}"
+   SCHEMA_TYPE="SchemaType"
+   ADD_DEFAULT_OPEN="<AddDefaultValues>"
+   ADD_DEFAULT_CLOSE="</AddDefaultValues>"
+   REM_DEFAULT_OPEN="<RemovePartialDefaultValues>"
+   REM_DEFAULT_CLOSE="</RemovePartialDefaultValues>"
+   ATTR_VALUE_PAIR_OPEN="<AttributeValuePair>"
+   ATTR_VALUE_PAIR_CLOSE="</AttributeValuePair>"
+   ${ECHO} "${REQUEST_OPEN_TAG}" >> ${2}
+   ${ECHO} "${SCHEMA_REQUESTS_OPEN} serviceName=\"iPlanetAMPlatformService\" ${SCHEMA_TYPE}=\"global\">" >> ${2}
+   #Remove the existing Server information 
+   if [ -f ${1} ]
+   then
+      SERVER_LIST=`${GREP} http ${1} | ${SED} 's/.*=\[//' | ${SED} 's/\].*$//'`
+      Serverlist=`${ECHO} "$SERVER_LIST" | ${SED} 's/,/ /g'`
+      if [ "x$Serverlist" != "x" ]
+      then
+         for host in `${ECHO} "${Serverlist}"`
+      	 do
+             ${ECHO} "\t${REM_DEFAULT_OPEN}" >> ${2}
+             ${ECHO} "\t\t${ATTR_VALUE_PAIR_OPEN}" >> ${2}
+             ${ECHO} "\t\t <Attribute name=\"iplanet-am-platform-server-list\"/>" >> ${2}
+             ${ECHO} "\t\t <Value>$host</Value>" >> ${2}
+             ${ECHO} "\t\t${ATTR_VALUE_PAIR_CLOSE}" >> ${2}
+             ${ECHO} "\t${REM_DEFAULT_CLOSE}" >> ${2}
+         done
+      fi
+   else
+       WriteToLog "\t `${GETTEXT} 'Platform Server list is empty...'`"
+       WriteToLog " "
+       return ${AMSFSETUP_INVALID_SERVERID}
+   fi
+   #Add the site information 
+   ${ECHO} "\t${ADD_DEFAULT_OPEN}" >> ${2}
+   ${ECHO} "\t\t${ATTR_VALUE_PAIR_OPEN}" >> ${2}
+   ${ECHO} "\t\t <Attribute name=\"iplanet-am-platform-site-list\"/>" >> ${2}
+   ${ECHO} "\t\t <Value>$SITEURL</Value>" >> ${2}
+   ${ECHO} "\t\t${ATTR_VALUE_PAIR_CLOSE}" >> ${2}
+   ${ECHO} "\t${ADD_DEFAULT_CLOSE}" >> ${2}
+   for host in `${ECHO} "${Serverlist}"`
+   do
+       ${ECHO} "\t${ADD_DEFAULT_OPEN}" >> ${2}
+       ${ECHO} "\t\t${ATTR_VALUE_PAIR_OPEN}" >> ${2}
+       ${ECHO} "\t\t <Attribute name=\"iplanet-am-platform-server-list\"/>" >> ${2}
+       ${ECHO} "\t\t <Value>$host|$SITEID</Value>" >> ${2}
+       ${ECHO} "\t\t${ATTR_VALUE_PAIR_CLOSE}" >> ${2}
+       ${ECHO} "\t${ADD_DEFAULT_CLOSE}" >> ${2}
+   done
+   ${ECHO} "${SCHEMA_REQUESTS_CLOSE}" >> ${2}
+   ${ECHO} "${REQUEST_CLOSE_TAG}" >> ${2}
+   WriteToLog "\t `${GETTEXT} 'Platform Server XML File created successfully.'`"
+   WriteToLog " "
+   return ${VALID}
+}
+
+
+#Validate siteID against the platform server ID's  
+checkServerID()
+{
+    if [ -z "${1}" ]
+    then
+        WriteToLog "\t `${GETTEXT} 'Site Id cannot be empty in'` ${RESOURCEFILE}"
+        EndScript ${AMSFSETUP_INVALID_SITEID}
+    fi 
+    ServerID=`${ECHO} "${1}" | ${AWK} -F"|" '{print $2}'`
+    if [ ${ServerID} -eq ${2} ] 
+    then
+        WriteToLog "\t `${GETTEXT} 'SiteID cannot be same as ServerID for:'` ${1}"
+        return ${AMSFSETUP_INVALID_SITEID}
+    else
+        return ${AMSFSETUP_VALID_SERVERID}
+    fi
+
+}
+
+#This function creates the Organization alias config xml file 
+CreateOrgXMLFile()
+{
+    get_config_value lbServerHost
+    LBHOST=${VALUE}
+    REALM_REQUEST_OPEN="<RealmRequests>"
+    REALM_REQUEST_CLOSE="</RealmRequests>"
+    ADD_ATTR_OPEN="<AddAttributeValues"
+    ADD_ATTR_CLOSE="</AddAttributeValues>"
+    ${ECHO} "`${GETTEXT} ''`"
+    WriteToLog "\t `${GETTEXT} 'Creating Organization Alias XML File...'`"
+    CreateXMLHeader $1
+    ${ECHO} "${REQUEST_OPEN_TAG}" >> ${1}
+    ${ECHO} "${REALM_REQUEST_OPEN}" >> ${1}
+    ${ECHO} "\t${ADD_ATTR_OPEN} realm=\"/\" serviceName=\"sunIdentityRepositoryService\" attrName=\"sunOrganizationAliases\">" >> ${1}
+    ${ECHO} "\t\t <Value>${LBHOST}</Value>" >> ${1}
+    ${ECHO} "\t${ADD_ATTR_CLOSE}" >> ${1}
+    ${ECHO} "${REALM_REQUEST_CLOSE}" >> ${1}
+    ${ECHO} "${REQUEST_CLOSE_TAG}" >> ${1}
+    WriteToLog "\t `${GETTEXT} 'Organization Alias XML File created successfully.'`"
+    WriteToLog " "
+    return ${VALID}
+}
+
+#This is the helper function that creates the Session Config file with
+#the required parameter values
+CreateSessionXMLFile()
+{
+    get_config_value lbServerPort
+    LBPORT=${VALUE}
+    get_config_value lbServerProtocol
+    LBPROTOCOL=${VALUE}
+    get_config_value lbServerHost
+    LBHOST=${VALUE}
+    get_config_value SiteID
+    SITEID=${VALUE}
+    SITE_URL="$LBPROTOCOL:&amp;#47;&amp;#47;$LBHOST:$LBPORT"
+    SCHEMA_REQ_OPEN_TAG="<ServiceConfigurationRequests"
+    SCHEMA_REQ_CLOSE_TAG="</ServiceConfigurationRequests>"
+    ADDSUBCONFIG_DEFAULT_OPEN_TAG="<AddSubConfiguration subConfigName=\"$SITE_URL\" subConfigId=\"Site\" priority=\"0\">"
+    ADDSUBCONFIG_DEFAULT_CLOSE_TAG="</AddSubConfiguration>"
+
+    #Create the Session configuration file.
+    CreateXMLHeader $1
+    ${ECHO} "<!--  MODIFY REQUESTS -->" >> $1
+    ${ECHO} "\n" >> $1
+    ${ECHO} "<!-- Default value cannot be set to choice values -->" >> $1
+    ${ECHO} "" >> $1
+    ${ECHO} "${REQUEST_OPEN_TAG}" >> $1
+    ${ECHO} "${SCHEMA_REQ_OPEN_TAG} serviceName=\"iPlanetAMSessionService\">" >> $1
+    ${ECHO} "${ADDSUBCONFIG_DEFAULT_OPEN_TAG}" >> $1
+    InsertNewAttrElementValues $1
+    ${ECHO} "${ADDSUBCONFIG_DEFAULT_CLOSE_TAG}" >> $1
+    ${ECHO} "${SCHEMA_REQ_CLOSE_TAG}" >> $1
+    ${ECHO} "${REQUEST_CLOSE_TAG}" >> $1
+    WriteToLog "\t `${GETTEXT} 'Session Configuration XML File created successfully.'`"
+    WriteToLog " "
+    return ${VALID}
+}
+
+#This is a helper function that creates the Session Config file with 
+#the required parameter values
+InsertNewAttrElementValues()
+{
+    ELEMENT_SCHEMA_OPEN_TAG="<AttributeValuePair>"
+    ELEMENT_SCHEMA_CLOSE_TAG="</AttributeValuePair>"
+    TRUE="true"
+    FALSE="false"
+    ATTR_NAME_PREFIX="iplanet-am-session-"
+    get_config_value USER_NAME
+    USERNAME=${VALUE}
+    get_config_value CLUSTER_LIST
+    DBURL=${VALUE}
+    JDBCIMPLCLASS=com.iplanet.dpro.session.jdbc.OracleConnectionImpl
+    WriteToLog "\t `${GETTEXT} 'Creating Session Configuration XML File...'`"
+    i=0
+    for part in store-username store-password store-cpl-max-wait-time JDBC-driver-Impl-classname jdbc-url min-pool-size max-pool-size
+    do
+        i=`expr $i + 1`
+        eval word_session$i="$part"
+    done
+    j=0
+    while [ $j -lt 7 ]
+    do
+        j=`expr $j + 1`
+        eval ATTR_NAME=${ATTR_NAME_PREFIX}\$word_session$j
+        ${ECHO} "\t ${ELEMENT_SCHEMA_OPEN_TAG}" >> $1
+
+        case "${ATTR_NAME}" in
+            *store-username*)
+                InsertNewAttrValues $1 ${ATTR_NAME} ${USERNAME}
+                ;;
+            *store-password*)
+                InsertNewAttrValues $1 ${ATTR_NAME} ${JMQPASSWORD}
+                ;;
+            *store-cpl-max-wait-time*)
+                InsertNewAttrValues $1 ${ATTR_NAME} 60000
+                ;;
+            *JDBC-driver-Impl-classname*)
+		InsertNewAttrValues $1 ${ATTR_NAME} ${JDBCIMPLCLASS}
+                ;;
+            *jdbc-url*)
+                CLUSTER_LIST=`${ECHO} "$DBURL" | ${SED} 's/ //g'`  
+                InsertNewAttrValues $1 ${ATTR_NAME} ${CLUSTER_LIST}
+                ;;
+            *min-pool-size*)
+                InsertNewAttrValues $1 ${ATTR_NAME} 8
+                ;;
+            *max-pool-size*)
+                InsertNewAttrValues $1 ${ATTR_NAME} 32
+                ;;
+        esac
+        ${ECHO} "\t ${ELEMENT_SCHEMA_CLOSE_TAG}" >> $1
+   done
+}
+
+#This is a helper function that writes the actual parameter values
+InsertNewAttrValues()
+{
+    ATTR_NAME_OPEN_TAG="<Attribute name="
+    ATTR_VALUE_OPEN_TAG="<Value>"
+    ATTR_VALUE_CLOSE_TAG="</Value>"
+    CLOSING_BRACES="/>"
+    ${ECHO} "\t\t   ${ATTR_NAME_OPEN_TAG}\"$2\"${CLOSING_BRACES}" >> $1
+    ${ECHO} "\t\t   ${ATTR_VALUE_OPEN_TAG}$3${ATTR_VALUE_CLOSE_TAG}" >> $1
+}
+
+#This function loads the dynamically created Session Config file into LDAP
+LoadConfigXML()
+{
+    #Load the secondary configuration xml file
+    CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${SESSIONCONFIGXML}"
+    WriteToLog " "
+    WriteToLog " "
+    WriteToLog "\t `${GETTEXT} 'Loading Session Configuration schema File...'`"
+    WriteToLog " "
+    $CMD 1>>${LOGFILE} 2>>${LOGFILE}
+    if [ $? = 0 ]
+    then
+	WriteToLog "\t `${GETTEXT} 'Session Configuration schema loaded successfully.'`"
+	${RM} -f ${SESSIONCONFIGXML}
+    else
+	WriteToLog "\t `${GETTEXT} 'Failed to load Session Configuration schema.'`"
+	return ${AMSFSETUP_LOAD_FAILED}
+    fi
+    
+    #Load the platform server list xml file
+    CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${ADDPSLXML}"
+    WriteToLog " "
+    WriteToLog " "
+    WriteToLog "\t `${GETTEXT} 'Loading Platform Server List File...'`"
+    WriteToLog " "
+    $CMD 1>>${LOGFILE} 2>>${LOGFILE}
+    if [ $? = 0 ]
+    then
+	WriteToLog "\t `${GETTEXT} 'Platform Server List server entries loaded successfully.'`"
+	${RM} -f ${ADDPSLXML}
+    else
+	WriteToLog "\t `${GETTEXT} 'Failed to load Platform Server List server entries.'`"
+	return ${AMSFSETUP_LOAD_FAILED}
+    fi
+
+    #Load the organization alias list xml file
+    CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${ORGALIASXML}"
+    WriteToLog " "
+    WriteToLog " "
+    WriteToLog "\t `${GETTEXT} 'Loading Organization Alias List File...'`"
+    WriteToLog " "
+    $CMD 1>>${LOGFILE} 2>>${LOGFILE}
+    if [ $? = 0 ]
+    then
+	WriteToLog "\t `${GETTEXT} 'Organization Alias List loaded successfully.'`"
+	${RM} -f ${ORGALIASXML}
+    else
+	WriteToLog "\t `${GETTEXT} 'Failed to load Organization Alias List entries.'`"
+	return ${AMSFSETUP_LOAD_FAILED}
+    fi
+    return ${VALID}
+}
+
+
+#This function checks if amadmin is available in the directory where
+#the Access Manager is installed. If not this will bail out..
+CheckAmadmin()
+{
+    if [ ! -f ${AMADMIN} ]
+    then
+        WriteToLog "`${GETTEXT} 'Could not locate amadmin command on this machine.'`"
+	EndScript ${AMCLSETUP_AMADMIN_NOT_FOUND}
+    else
+        WriteToLog "\t `${GETTEXT} 'Using'` ${AMADMIN}"
+    fi
+}
+
+#This function checks if Broker passoword file is present and  
+#prompts for the amAdmin password 
+getPasswordInfo()
+{
+    #Check for the required values
+    ${ECHO} "`${GETTEXT} ''`"
+    ${ECHO} "\t `${GETTEXT} 'Validating configuration information.'`"
+    get_config_value CLUSTER_LIST
+    get_config_value lbServerHost
+    shost=${VALUE}
+    HOSTNAME=`${ECHO} "$shost" | grep -w "sample1.red.iplanet.com"`
+    if [ "x$HOSTNAME" != "x" ]
+    then
+        WriteToLog "\t `${GETTEXT} 'Invalid Hostname in config file:'` $HOSTNAME"
+	EndScript ${INVALID}
+    fi
+    ${ECHO} "\t `${GETTEXT} 'Done...'`"
+
+    ${ECHO} "`${GETTEXT} ''`"
+    #Get the amadmin password
+    if [ "x${LDAPPSWD}" = "x" ]
+    then
+        GetPassword "`${GETTEXT} 'Please enter the LDAP Admin password:'`"
+    fi
+    LDAPPSWD=$PSWD
+
+    #Get the JMQ Queue Broker password
+    if [ "x${JMQPASSWORD}" = "x" ]
+    then
+        GetPassword "`${GETTEXT} 'Please enter the JMQ Broker User password:'`"
+        JMQPASSWORD=$PSWD
+    fi
+}
+
+
+#Check if all the configuration files are present and readable 
+CheckConfigFiles()
+{
+    ${ECHO} " "
+    ${ECHO} "===================================================================="
+    ${ECHO} "`${GETTEXT} 'Checking if the required files are present...'`"
+    ${ECHO} "===================================================================="
+    ${ECHO} " "
+
+    # Check if the Common AWK file exists and readable
+    if [ ! -f "${AWKFILE}" ]
+    then
+        eval ${ECHO} "`${GETTEXT} 'Common utility AWK file does not exist:'` ${AWKFILE}"
+        EndScript ${AMSFSETUP_AWKFILE_NOTFOUND}
+    fi
+    if [ ! -r "${AWKFILE}" ]
+    then
+        eval ${ECHO} "`${GETTEXT} 'Common utility AWK file is not readable. Please modify permission on file:'` ${AWKFILE}"
+	EndScript ${AMSFSETUP_CANNOTREAD_AWKFILE}
+    fi
+
+    # Check if file is exists
+    if [ ! -f "${RESOURCEFILE}" ]
+    then
+        eval ${ECHO} "`${GETTEXT} 'Resource file does not exist:'` ${RESOURCEFILE}" 
+        EndScript ${AMSFSETUP_CANNOTREAD_RESOURCEFILE}
+    fi
+
+    # Check if file is readable
+    if [ ! -r "${RESOURCEFILE}" ]
+    then
+        eval ${ECHO} "`${GETTEXT} 'Resource file is not readable. Please modify the permissions on file:'` ${RESOURCEFILE}" 
+        EndScript ${AMSFSETUP_CANNOTREAD_RESOURCEFILE}
+    fi
+    displayConfig
+}
+
+
+# If the password file is provided or default file is used then
+# read the password else prompt the user for the password
+GetPassword()
+{
+    while true
+    do
+        ${ECHO} "$1 \c"
+        ${ECHO} "`${GETTEXT} '(nothing will be echoed):'` \c"
+        stty -echo
+        myread PASSWORD1
+        stty echo
+        ${ECHO}
+        ${ECHO} "`${GETTEXT} 'Verify:'` \c"
+        stty -echo
+        myread PASSWORD2
+        stty echo
+        ${ECHO}
+        if [ "${PASSWORD1}" != "${PASSWORD2}" ]; then
+	   ${ECHO} "`${GETTEXT} 'Passwords are different!. Please retry.'`"
+        else
+           break
+        fi
+    done
+    PSWD=${PASSWORD1}
+}
+
+# Checks if the user entered ! in response to a question and prompts again
+myread()
+{
+    while true
+    do
+        read NOBANG
+        if [ "x${NOBANG}" = "x!" ]; then
+	    ${ECHO} "`${GETTEXT} 'Please do not enter the character !'`"
+	    ${ECHO} "`${GETTEXT} 'Please enter the input again.'`"
+            continue
+        else
+            eval $1=${NOBANG}
+            break
+        fi
+    done
+}
+
+# Get a value from config file
+get_config_value()
+{
+    VARNAME=$1
+    if [ "x$2" != "x" ] 
+    then 
+        FILENAME=$2
+    else
+        FILENAME=${RESOURCEFILE}
+    fi
+    VALUE=`${GREP} -s "^[ ]*$VARNAME" "${FILENAME}" | head -1 | ${SED} "s/^[ ]*$VARNAME=[ ]*//"`
+    #eval VALUE=`${ECHO} "$VALUE" | ${SED} "s/^[ ]*$VARNAME[ ]*//"`
+    if [ "x$VALUE" = "x" ]; then
+        WriteToLog " "
+	eval ${ECHO} "`${GETTEXT} 'Null configuration value for parameter:'` ${VARNAME} `${GETTEXT} 'in'` ${FILENAME}" 
+        EndScript ${INVALID}
+    fi
+}
+
+#Main driver function for the script
+configureSFO()
+{
+    CheckConfigFiles
+    CheckAmadmin
+    getPasswordInfo
+    isSFOConfigured
+    [ $? -ne ${VALID} ] && EndScript ${INVALID}
+    CreateSessionConfigXML
+    [ $? -ne ${VALID} ] && EndScript ${INVALID}
+    LoadConfigXML
+    [ $? -ne ${VALID} ] && EndScript ${INVALID}
+    RemoveXMLFiles
+}
+
+
+# This function deletes temporary xml file(s)
+RemoveXMLFiles()
+{
+    if [ -f $SESSIONCONFIGXML ]; then
+        $RM $SESSIONCONFIGXML
+    fi
+    if [ -f $ADDPSLXML ]; then
+        $RM $ADDPSLXML
+    fi
+    if [ -f $ORGALIASXML ]; then
+        $RM $ORGALIASXML
+    fi
+    if [ -f $TMP_PSL_FILE ]; then
+        $RM $TMP_PSL_FILE
+    fi
+    if [ -f $TMP_SITE_FILE ]; then
+        $RM $TMP_SITE_FILE
+    fi
+    if [ -f $TMP_SVRLIST_FILE ]; then
+        $RM $TMP_SVRLIST_FILE
+    fi
+    if [ -f $TMP_SITELIST_FILE ]; then
+        $RM $TMP_SITELIST_FILE
+    fi
+}
+
+
+#Generic function to exit from the script
+EndScript()
+{
+    RemoveXMLFiles
+    exitCode=$1
+    WriteToLog " "
+    [ ${exitCode} -ne ${AMSFSETUP_SUCCESS} ] && ${ECHO} "`${GETTEXT} 'Exiting...'`"
+    WriteToLog " "
+    WriteToLog " "
+    ${ECHO} "`${GETTEXT} 'Please refer to the log file'` ${LOGFILE} `${GETTEXT} 'for additional information.'`"
+    WriteToLog "###################################################################"
+    WriteToLog "`${GETTEXT} 'Session Failover Setup Script. Execution end time'` `${DATE} +%D` `${DATE} +%H:%M:%S`"
+    WriteToLog "###################################################################"
+    exit ${exitCode}
+}
+
+#Generic function to log all the messages
+WriteToLog()
+{
+    Message=$1
+    ${ECHO} "$1"
+    ${ECHO} "$1" >> ${LOGFILE}
+}
+
+#--------------------- Begin Script ----------------------------
+#Script begins here...
+displayConfig()
+{
+    WriteToLog " "
+    WriteToLog "\t `${GETTEXT} 'Running with the following Settings.'`"
+    WriteToLog "\t -------------------------------------------------"
+    WriteToLog "\t `${GETTEXT} 'Environment file:'` IS_INSTALL_ETCDIR/IS_PRODNAME/config/amProfile.conf"
+    WriteToLog "\t `${GETTEXT} 'Resource file:'` ${RESOURCEFILE}"
+    WriteToLog "\t -------------------------------------------------"
+}
+
+#Script begins here...
+CheckUser
+WriteToLog " "
+WriteToLog " "
+${ECHO} "`${GETTEXT} 'Sun Java System Access Manager 7 2005Q4.'`" >> ${LOGFILE}
+${ECHO} "`${GETTEXT} 'Session Configuration Program Log.'`" >> ${LOGFILE}
+WriteToLog " "
+${ECHO} "#####################################################################" >> ${LOGFILE}
+${ECHO} "`${GETTEXT} 'Session Failover Setup Script. Execution start time'` `${DATE} +%D` `${DATE} +%H:%M:%S`"  >> ${LOGFILE}
+${ECHO} "#####################################################################" >> ${LOGFILE}
+ShowWelcome
+CheckUsage $*
+EndScript ${AMSFSETUP_SUCCESS}

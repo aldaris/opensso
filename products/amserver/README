@@ -1,0 +1,78 @@
+------------------------------------------------------------------------------
+README file for Open Web Single Sign-On
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2005-11-01 00:28:28 arvindp Exp $
+
+Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+------------------------------------------------------------------------------
+
+%% Contents:
+    %% 1. Build requirements
+    %% 2. Library dependencies
+    %% 3. Building the workspace
+
+%% 1. Build requirements
+
+The OpenSSO workspace uses Apache Ant as the build tool. The build scripts
+in this workspace use features not present in releases of Ant prior to 1.6.
+Thus, in order to build this workspace you must have Ant version 1.6 or above
+installed and available in your system path.
+
+The sources in this workspace should be compiled using JDK 5.0 with the source
+and target levels set to "1.4". In order to allow this, you must ensure that
+JDK 5.0 is present in your system path and the JAVA_HOME environment variable
+is setup correctly pointing to its location.
+
+%% 2. Library dependencies
+
+The OpenSSO sources depend on the following libraries:
+
+   - J2EE SDK version 1.3.1: j2ee.jar
+   - Java Mail version 1.2 : mail.jar
+   - JWSDP version 1.6: jaxb-api.jar, jaxrpc-api.jar
+   - Mozilla LDAP JDK version 4.17: ldapjdk.jar
+   - SleepyCat Berkeley DB version 4.2.52: db.jar
+
+These libraries are not included as a part of the workspace and must be
+obtained directly. Some libraries such as LDAP JDK and SleepyCat Berkeley DB 
+are available in source distribution form and must be built locally before
+they can be used. Refer to library vendor documentation for complete 
+details of how these libraries can be built.
+
+Once you have these libraries available, they should be placed under the
+extlib directory in order that the build can reference them for compilation
+purposes. 
+
+%% 3. Building the workspace
+
+The workspace build system offers many build targets. You can view the
+available targets by issuing the ant command from the root of the
+workspace.
+
+
+
+
+
+
+
+
+

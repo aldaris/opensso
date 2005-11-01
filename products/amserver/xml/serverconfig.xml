@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="@XML_ENCODING@" standalone="yes"?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+  
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+  
+   $Id: serverconfig.xml,v 1.1 2005-11-01 00:31:43 arvindp Exp $
+  
+   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+-->
+
+
+<iPlanetDataAccessLayer>
+	<ServerGroup name="default" minConnPool="1" maxConnPool="10">
+		<Server name="Server1" host="@DIR_HOST@" port="@DIR_PORT@" type="SIMPLE" />
+		<User name="User1" type="proxy">
+			<DirDN>
+				cn=puser,ou=DSAME Users,@ORG_BASE@
+			</DirDN>
+			<DirPassword>
+				@ENCADMINPASSWD@
+			</DirPassword>
+		</User>
+		<User name="User2" type="admin">
+			<DirDN>
+				cn=dsameuser,ou=DSAME Users,@ORG_BASE@
+			</DirDN>
+			<DirPassword>
+				@ENCADMINPASSWD@
+			</DirPassword>
+		</User>
+		<BaseDN>
+			@ORG_BASE@
+		</BaseDN>		
+	</ServerGroup>
+</iPlanetDataAccessLayer>

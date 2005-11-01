@@ -1,0 +1,98 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: PluginInterface.java,v 1.1 2005-11-01 00:31:27 arvindp Exp $
+ *
+ * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.sm;
+
+import org.w3c.dom.Node;
+
+import com.iplanet.am.util.XMLUtils;
+
+/**
+ * The class <code>PluginInterface</code> provides interfaces needed to obtain
+ * information about a plugin interface defined by the service schema.
+ */
+public class PluginInterface extends Object {
+
+    private String name;
+
+    private String interfaceClass;
+
+    private String key;
+
+    private ServiceSchemaManagerImpl ssmi;
+
+    private PluginInterface() {
+        // cannot be instantiated
+    }
+
+    protected PluginInterface(ServiceSchemaManagerImpl si, Node n) {
+        ssmi = si;
+        name = XMLUtils.getNodeAttributeValue(n, SMSUtils.NAME);
+        interfaceClass = XMLUtils.getNodeAttributeValue(n,
+                SMSUtils.PLUGIN_INTERFACE_CLASS);
+        key = XMLUtils.getNodeAttributeValue(n, SMSUtils.I18N_KEY);
+    }
+
+    protected PluginInterface(String name, String interfaceClass, String key) {
+        this.name = name;
+        this.interfaceClass = interfaceClass;
+        this.key = key;
+    }
+
+    /**
+     * Returns the plugin interface name.
+     * 
+     * @return plugin interface name
+     */
+    public String getName() {
+        return (name);
+    }
+
+    /**
+     * Returns the plugin interface class name.
+     * 
+     * @return plugin interface class name
+     */
+    public String getInterfaceClass() {
+        return (interfaceClass);
+    }
+
+    /**
+     * Returns the i18n key that describes the function provided by the plugin
+     * interface
+     * 
+     * @return i18n index key to the resource bundle
+     */
+    public String getI18NKey() {
+        return (key);
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(100);
+        sb.append("PluginInterface name: " + name).append(
+                "\n\tInterface class: " + interfaceClass).append(
+                "\n\tI18N Key: " + key);
+        return (sb.toString());
+    }
+}

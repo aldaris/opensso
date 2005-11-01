@@ -1,0 +1,95 @@
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: server_env.template,v 1.1 2005-11-01 00:28:31 arvindp Exp $
+#
+# Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+#
+
+##########################################################################
+# TEMPLATE FILE FOR SERVER ENVIRONMENT CONFIGURATION                     #
+# Copy this file to server_env.properties and change the                 #
+# values as necessary.                                                   #
+##########################################################################
+
+#
+# Enter/modify the values for the following environment variables as
+# applicable to your server deployment.
+#
+# - OUTPUT_DIR  : where generated files will be kept
+# - CONFIG_DIR  : where bootstrap configuration will be kept
+# - SERVER_PROTO: protocol of the web container where server is deployed
+# - SERVER_HOST : hostname of the web container where server is deployed
+# - SERVER_PORT : port used by the web container where server is deployed
+# - AM_ENC_KEY  : the encryption key to use for encrypting information
+# - ADMIN_PASSWD: the password of amadmin (super) user
+#
+
+OUTPUT_DIR=/opt/opensso/work
+CONFIG_DIR=/opt/opensso/config
+SERVER_PROTO=http
+SERVER_HOST=myserverhost.mydomain.com
+SERVER_PORT=80
+AM_ENC_KEY=myencryptionkey
+ADMIN_PASSWD=password
+
+#
+# The following properties values should be kept as the suggested defaults.
+#
+# - CLIENT_PROTO     : same as SERVER_PROTO
+# - CLIENT_HOST      : same as SERVER_HOST
+# - CLIENT_PORT      : same as SERVER_PORT
+# - CLIENT_URI       : /amserver
+# - SERVER_URI       : /amserver
+# - SERVER_MODE      : true
+# - ORG_BASE         : dc=sun,dc=com
+# - DEFAULT_ORG      : dc=sun,dc=com
+# - DEBUG_LEVEL      : message
+# - USER_NAMING_ATTR : uid
+# - COOKIE_ENCODE    : false
+# - NOTIFICATION_ENDPOINT: notificationservice
+# - ADMIN_AUTH_CLASS : the admin authentication login module
+# - AUTH_DONOTINCLUDE_SMS: flag to disable SMS login sequence
+# - APPSSOPROVIDER_FACTORY: Application SSO Token provider factory
+# - SMS_OBJECT_CLASS : com.sun.identity.sm.flatfile.SMSFlatFileObject
+# - PLATFORM_LOCALE  : Locale of server (en_US)
+# - AVAILABLE_LOCALE : SMS schema fragment (<Value>en_US</Value>)
+# - SESSION_LOGGER   : the session logger implementation
+#
+
+CLIENT_PROTO=http
+CLIENT_HOST=myserverhost.mydomain.com
+CLIENT_PORT=80
+CLIENT_URI=/amserver
+SERVER_URI=/amserver
+SERVER_MODE=true
+ORG_BASE=dc=sun,dc=com
+DEFAULT_ORG=dc=sun,dc=com
+DEBUG_LEVEL=message
+USER_NAMING_ATTR=uid
+COOKIE_ENCODE=false
+NOTIFICATION_ENDPOINT=notificationservice
+ADMIN_AUTH_CLASS=com.sun.identity.demo.server.DemoAdminAuthLoginModule
+AUTH_DONOTINCLUDE_SMS=true
+APPSSOPROVIDER_FACTORY=com.sun.identity.demo.server.DemoAdminTokenFactory
+SMS_OBJECT_CLASS=com.sun.identity.sm.flatfile.SMSFlatFileObject
+PLATFORM_LOCALE=en_US
+AVAILABLE_LOCALES=<Value>en_US</Value>
+SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger

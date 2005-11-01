@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+  
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+  
+   $Id: web.xml,v 1.1 2005-11-01 00:28:39 arvindp Exp $
+  
+   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE web-app 
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+   <display-name>OpenSSO Demo</display-name>
+   <description>
+      Demonstrates the use of Session Service to achieve SSO
+   </description>
+
+   <servlet>
+      <servlet-name>LoginServlet</servlet-name>
+      <servlet-class>com.sun.identity.demo.server.LoginServlet</servlet-class>
+   </servlet>
+
+   <servlet>
+      <servlet-name>pllservice</servlet-name>
+      <servlet-class>com.iplanet.services.comm.server.PLLRequestServlet</servlet-class>
+   </servlet>
+   <servlet>
+      <servlet-name>SMSServlet</servlet-name>
+      <servlet-class>com.sun.identity.sm.SMServlet</servlet-class>
+   </servlet>
+   <servlet>
+      <servlet-name>notificationservice</servlet-name>
+      <description>notificationservice</description>
+      <servlet-class>com.iplanet.services.comm.client.PLLNotificationServlet</servlet-class>
+   </servlet>
+   <servlet-mapping>
+      <servlet-name>pllservice</servlet-name>
+      <url-pattern>/sessionservice</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>pllservice</servlet-name>
+      <url-pattern>/namingservice</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>SMSServlet</servlet-name>
+      <url-pattern>/SMSServlet</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>notificationservice</servlet-name>
+      <url-pattern>/notificationservice</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>LoginServlet</servlet-name>
+      <url-pattern>/login</url-pattern>
+   </servlet-mapping>
+
+   <welcome-file-list>
+      <welcome-file>/login.jsp</welcome-file>
+   </welcome-file-list>
+
+</web-app>

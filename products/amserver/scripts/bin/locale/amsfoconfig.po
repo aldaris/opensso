@@ -1,0 +1,192 @@
+domain "amsfoconfig"
+msgid  " "
+msgstr " "
+
+msgid  "Welcome to Sun Java System Access Manager 7 2005Q4"
+msgstr "Welcome to Sun Java System Access Manager 7 2005Q4"
+
+msgid  "Session Failover Configuration Setup script."
+msgstr "Session Failover Configuration Setup script."
+
+msgid  "Usage: amsfoconfig [-help] [configure]" 
+msgstr "Usage: amsfoconfig [-help] [configure]" 
+
+msgid  "This program can only be run by a root user."
+msgstr "This program can only be run by a root user."
+
+msgid  "Retrieving Platform Server list..."
+msgstr "Retrieving Platform Server list..."
+
+msgid  "Failed to get Platform Server list..."
+msgstr "Failed to get Platform Server list..."
+
+msgid  "Validating server entries."
+msgstr "Validating server entries."
+
+msgid  "Server entry is already site configured:"
+msgstr "Server entry is already site configured:"
+
+msgid  "Done..."
+msgstr "Done..."
+
+msgid  "No platform Server entries were retrieved."
+msgstr "No platform Server entries were retrieved."
+
+msgid  "Retrieving Site list..."
+msgstr "Retrieving Site list..."
+
+msgid  "Failed to get Site list..."
+msgstr "Failed to get Site list..."
+
+msgid  "Validating site entries."
+msgstr "Validating site entries."
+
+msgid  "Site is already configured."
+msgstr "Site is already configured."
+
+msgid  "Validating host:"
+msgstr "Validating host:"
+
+msgid  "Cluster Server List is empty in"
+msgstr "Cluster Server List is empty in"
+
+msgid  "Creating Platform Server XML File..."
+msgstr "Creating Platform Server XML File..."
+
+msgid  "Failed to create the Platform Serverlist XML file."
+msgstr "Failed to create the Platform Serverlist XML file."
+
+msgid  "Platform Server list is empty..."
+msgstr "Platform Server list is empty..."
+
+msgid  "Platform Server XML File created successfully."
+msgstr "Platform Server XML File created successfully."
+
+msgid  "Site Id cannot be empty in"
+msgstr "Site Id cannot be empty in"
+
+msgid  "SiteID cannot be same as ServerID for:"
+msgstr "SiteID cannot be same as ServerID for:"
+
+msgid  "Creating Organization Alias XML File..."
+msgstr "Creating Organization Alias XML File..."
+
+msgid  "Organization Alias XML File created successfully."
+msgstr "Organization Alias XML File created successfully."
+
+msgid  "Session Configuration XML File created successfully."
+msgstr "Session Configuration XML File created successfully."
+
+msgid  "Creating Session Configuration XML File..."
+msgstr "Creating Session Configuration XML File..."
+
+msgid  "Loading Session Configuration schema File..."
+msgstr "Loading Session Configuration schema File..."
+
+msgid  "Session Configuration schema loaded successfully."
+msgstr "Session Configuration schema loaded successfully."
+
+msgid  "Failed to load Session Configuration schema."
+msgstr "Failed to load Session Configuration schema."
+
+msgid  "Loading Platform Server List File..."
+msgstr "Loading Platform Server List File..."
+
+msgid  "Platform Server List server entries loaded successfully."
+msgstr "Platform Server List server entries loaded successfully."
+
+msgid  "Failed to load Platform Server List server entries."
+msgstr "Failed to load Platform Server List server entries."
+
+msgid  "Loading Organization Alias List File..."
+msgstr "Loading Organization Alias List File..."
+
+msgid  "Organization Alias List loaded successfully."
+msgstr "Organization Alias List loaded successfully."
+
+msgid  "Failed to load Organization Alias List entries."
+msgstr "Failed to load Organization Alias List entries."
+
+msgid  "Could not locate amadmin command on this machine."
+msgstr "Could not locate amadmin command on this machine."
+
+msgid  "Using"
+msgstr "Using"
+
+msgid  "Validating configuration information."
+msgstr "Validating configuration information."
+
+msgid  "Invalid Hostname in config file:"
+msgstr "Invalid Hostname in config file:"
+
+msgid  "Please enter the LDAP Admin password:"
+msgstr "Please enter the LDAP Admin password:"
+
+msgid  "Please enter the JMQ Broker User password:"
+msgstr "Please enter the JMQ Broker User password:"
+
+msgid  "Checking if the required files are present..."
+msgstr "Checking if the required files are present..."
+
+msgid  "Common utility AWK file does not exist:"
+msgstr "Common utility AWK file does not exist:"
+
+msgid  "Common utility AWK file is not readable. Please modify permission on file:"
+msgstr "Common utility AWK file is not readable. Please modify permission on file:"
+
+msgid  "Resource file does not exist:" 
+msgstr "Resource file does not exist:" 
+
+msgid  "Resource file is not readable. Please modify the permissions on file:" 
+msgstr "Resource file is not readable. Please modify the permissions on file:" 
+
+msgid  "(nothing will be echoed):"
+msgstr "(nothing will be echoed):"
+
+msgid  "Verify:"
+msgstr "Verify:"
+
+msgid  "Passwords are different!. Please retry."
+msgstr "Passwords are different!. Please retry."
+
+msgid  "Please do not enter the character !"
+msgstr "Please do not enter the character !"
+
+msgid  "Please enter the input again."
+msgstr "Please enter the input again."
+
+msgid  "Null configuration value for parameter:"
+msgstr "Null configuration value for parameter:"
+
+msgid  "in"
+msgstr "in"
+
+msgid  "Exiting..."
+msgstr "Exiting..."
+
+msgid  "Please refer to the log file"
+msgstr "Please refer to the log file"
+
+msgid  "for additional information."
+msgstr "for additional information."
+
+msgid  "Running with the following Settings."
+msgstr "Running with the following Settings."
+
+msgid  "Environment file:"
+msgstr "Environment file:"
+
+msgid  "Resource file:"
+msgstr "Resource file:"
+
+msgid  "Sun Java System Access Manager 7 2005Q4."
+msgstr "Sun Java System Access Manager 7 2005Q4."
+
+msgid  "Session Configuration Program Log."
+msgstr "Session Configuration Program Log."
+
+msgid  "Session Failover Setup Script. Execution start time"
+msgstr "Session Failover Setup Script. Execution start time"
+
+msgid  "Session Failover Setup Script. Execution end time"
+msgstr "Session Failover Setup Script. Execution end time"
