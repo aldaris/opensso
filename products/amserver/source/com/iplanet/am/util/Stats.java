@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.1 2005-11-01 00:29:43 arvindp Exp $
+ * $Id: Stats.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -276,7 +276,7 @@ public class Stats {
      * 
      * <p>
      * <b>NOTE:</b> It is recommended that <code>isEnabled()</code> be used
-     * instead of <code>isEnabled()</code> as the former is more intuitive.</>
+     * instead of <code>isEnabled()</code> as the former is more intuitive.
      * 
      * @return <code>true</code> if statistics is enabled <code>false</code>
      *         if statistics is disabled

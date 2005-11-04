@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.1 2005-11-01 00:30:05 arvindp Exp $
+ * $Id: Attribute.java,v 1.2 2005-11-04 18:53:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,14 +41,14 @@ import com.iplanet.security.util.ObjectIdentifier;
  * 
  * <pre>
  * 
- *     Attribute	::= SEQUENCE {
- * 	type		AttributeType,
- *  	value		SET OF AttributeValue
- *               	-- at least one value is required --}
+ *     Attribute        ::= SEQUENCE {
+ *         type                AttributeType,
+ *          value                SET OF AttributeValue
+ *                       -- at least one value is required --}
  * 
- *     AttributeType	::= OBJECT IDENTIFIER
+ *     AttributeType        ::= OBJECT IDENTIFIER
  * 
- *     AttributeValue	::= ANY
+ *     AttributeValue        ::= ANY
  *     
  * </pre>
  * 

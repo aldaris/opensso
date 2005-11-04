@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConstants.java,v 1.1 2005-11-01 00:28:59 arvindp Exp $
+ * $Id: AMConstants.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,7 +166,7 @@ public interface AMConstants {
     // COS Attribute type could default, operational, override,
     // For policy attributes, will use "override" since user won't be
     // able to customize them
-    // suffix for policy COSDefinition, i.e. <serviceName>Policy
+    // suffix for policy COSDefinition, i.e. &lt;serviceName>Policy
     static final String POLICY_SUFFIX = "Policy";
 
     static final String POLICY_COSATTR_TYPE = " override";

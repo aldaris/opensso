@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionEncodeURL.java,v 1.1 2005-11-01 00:29:58 arvindp Exp $
+ * $Id: SessionEncodeURL.java,v 1.2 2005-11-04 18:53:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,8 +66,10 @@ import com.sun.identity.session.util.SessionUtils;
  * <p>
  * If the encoding scheme is QUERY then the cookie value would be
  * written in the URL in the following format:
- * protocol://server:port/path?<cookieName>=<cookieValue>
- * protocol://server:port/path?queryString&<cookieName>=<cookieValue>
+ * <pre>
+ * protocol://server:port/path?&lt;cookieName>=&lt;cookieValue>
+ * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
+ * </pre>
  * <p>
  * This is the default and Access Manager always encodes in this format
  * unless otherwise specified. If the URL passed in has query parameter then
@@ -120,9 +122,14 @@ public class SessionEncodeURL {
      * URL format will be :
      * <code>protocol://server:port/path?cookieName=cookieValue</code>
      * if escape is false then no entity escaping of ampersand.
-     * <code>protocol://server:port/path?queryString&cookieName=cookieValue</code>
+     * <pre>
+     * protocol://server:port/path?queryString&amp;
+     *         cookieName=cookieValue
+     * </pre>
      * if escape is true then entity escaping of ampersand
-     * <code>protocol://server:port/path?queryString&amp;cookieName=cookieValue</code>
+     * <pre>
+     * protocol://server:port/path?queryString&amp;cookieName=cookieValue
+     * </pre>
      * <p>
      * if encoding scheme is <code>SLASH</code>, <code>encodedURL</code>
      * format will be :

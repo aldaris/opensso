@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerInterface.java,v 1.1 2005-11-01 00:29:24 arvindp Exp $
+ * $Id: DirectoryManagerInterface.java,v 1.2 2005-11-04 18:53:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -601,23 +601,22 @@ public interface DirectoryManagerInterface {
     /**
      * Return the name of the creation template for a given object type.
      * 
-     * @param objectType
-     *            Integere representing object type
+     * @param objectType Object Type.
      * @return Name of creation template
      */
     public String getCreationTemplateName(int objectType);
 
     /**
-     * Returns the objectclass represening an object type.
+     * Returns the object class of an object type.
      * 
-     * @param objectType
-     * @return
+     * @param objectType Object Type.
+     * @return object class
      */
     public String getObjectClassFromDS(int objectType);
 
     /**
      * Returns the attributes in the directory schema, associated with the given
-     * objectclass.
+     * <code>objectclass</code>.
      * 
      * @param objectclass
      * @return The set of attribute names (both required and optional) for this
@@ -628,28 +627,22 @@ public interface DirectoryManagerInterface {
     /**
      * Returns the search filter of a given search template.
      * 
-     * @param objectType
-     *            Integere represenintg object type.
-     * @param orgDN
-     *            Organization <code< DN </code>
-     * @param searchTemplateName
-     *            Name of search template
-     * @return Search filter
+     * @param objectType Object type.
+     * @param orgDN  Organization <code>DN</code>.
+     * @param searchTemplateName Name of search template.
+     * @return Search filter.
      */
     public String getSearchFilterFromTemplate(int objectType, String orgDN,
             String searchTemplateName);
 
     /**
-     * Returns the set of top level containers that can be viewed by ths user
+     * Returns the set of top level containers that can be viewed by ths user.
      * 
-     * @param token
-     *            User's single sign on token.
+     * @param token User's single sign on token.
      * @return The top level containers this user manages based on its'
-     *         administrative roles (if any)
-     * @throws AMException
-     *             if a datastore access fails
-     * @throws SSOException
-     *             if user's single sign on token is invalid.
+     *         administrative roles (if any).
+     * @throws AMException if a datastore access fails.
+     * @throws SSOException if user's single sign on token is invalid.
      */
     public Set getTopLevelContainers(SSOToken token) throws AMException,
             SSOException;
@@ -658,12 +651,11 @@ public interface DirectoryManagerInterface {
      * Add a listener object that will receive notifications when entries are
      * changed.
      * 
-     * @param token
-     *            SSOToken of the user adding the listner
-     * @param listener
-     *            listener object that will be called when entries are changed
-     * @throws AMEventManagerException
-     *             if a error occurs during adding listener object
+     * @param token SSOToken of the user adding the listner.
+     * @param listener listener object that will be called when entries are
+     *        changed.
+     * @throws AMEventManagerException if a error occurs during adding listener
+     *         object
      */
     public void addListener(SSOToken token, AMObjectListener listener,
             Map configMap) throws AMEventManagerException;

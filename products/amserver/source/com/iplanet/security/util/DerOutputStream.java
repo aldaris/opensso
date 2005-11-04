@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DerOutputStream.java,v 1.1 2005-11-01 00:30:04 arvindp Exp $
+ * $Id: DerOutputStream.java,v 1.2 2005-11-04 18:53:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,7 +110,7 @@ public class DerOutputStream extends ByteArrayOutputStream implements
      *            original tag of the value in the output , such as in
      * 
      * <pre>
-     *		<em>
+     *                <em>
      *  &lt;field&gt; [N] IMPLICIT &lt;type&gt;
      * </em>
      * </pre>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupContainerImpl.java,v 1.1 2005-11-01 00:29:07 arvindp Exp $
+ * $Id: AMGroupContainerImpl.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,8 +300,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            <serviceName><AttrMap>
-     *            (attrMap=<attrName><Set of attrvalues>)
+     *            &lt;serviceName>&lt;AttrMap>
+     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -457,8 +457,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            <serviceName><AttrMap>
-     *            (attrMap=<attrName><Set of attrvalues>)
+     *            &lt;serviceName>&lt;AttrMap>
+     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -543,8 +543,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            <serviceName><AttrMap>
-     *            (attrMap=<attrName><Set of attrvalues>)
+     *            &lt;serviceName>&lt;AttrMap>
+     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      *             if there is an error when accessing the data store

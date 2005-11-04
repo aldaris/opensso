@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.1 2005-11-01 00:29:44 arvindp Exp $
+ * $Id: SystemProperties.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ import com.sun.identity.common.Constants;
  * <p>
  * If multiple servers are running, each may have their own configuration file.
  * The naming convention for such scenarios is
- * <code>AMConfig-<serverName></code>.
+ * <code>AMConfig-&lt;serverName></code>.
  */
 public class SystemProperties {
     private static Properties props;

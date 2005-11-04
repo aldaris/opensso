@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.1 2005-11-01 00:29:33 arvindp Exp $
+ * $Id: EventListener.java,v 1.2 2005-11-04 18:53:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,7 @@ class EventListener {
     private static SOAPClient client;
 
     /**
-     * Constructor for <class>EventListener</class>. Should be instantiated
+     * Constructor for <code>EventListener</code>. Should be instantiated
      * once by <code>DirectoryManager</code>
      * 
      * @param set

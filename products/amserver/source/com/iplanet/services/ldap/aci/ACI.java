@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACI.java,v 1.1 2005-11-01 00:30:19 arvindp Exp $
+ * $Id: ACI.java,v 1.2 2005-11-04 18:53:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,24 +163,20 @@ public class ACI {
         _name = name;
     }
 
-    /**
-     * Constructor
+    /*
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructor.
      * 
-     * @param name
-     *            name of the ACI
-     * @param target
-     *            the target to which the ACI applies
-     * @param tagetFilter
-     *            the ldap filter that controls the set of entries to which the
-     *            ACI applies
-     * @param targetAttributes
-     *            QualfiedCollection of attributes to which the ACI applies.
-     * @link QualifiedCollection#setExclusive
-     * @param users
-     *            collection of users for who the ACI applies
-     * @param permissions
-     *            QualifiedCollection of permissions that apply to the ACI.
-     * @link QualifiedCollection.setExclusive iPlanet-PUBLIC-CONSTRUCTOR
+     * @param name name of the ACI.
+     * @param target the target to which the ACI applies.
+     * @param tagetFilter the LDAP filter that controls the set of entries to
+     *        which the ACI applies.
+     * @param targetAttributes <code>QualfiedCollection</code> of attributes to
+     *        which the ACI applies.
+     * @param users collection of users for who the ACI applies.
+     * @param permissions <code>QualifiedCollection</code> of permissions that
+     *        apply to the ACI.
+     * @link QualifiedCollection.setExclusive
      */
     public ACI(String name, String target, String targetFilter,
             QualifiedCollection targetAttributes, Collection users,

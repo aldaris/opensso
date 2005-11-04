@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.1 2005-11-01 00:31:19 arvindp Exp $
+ * $Id: SessionUtils.java,v 1.2 2005-11-04 18:53:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,7 +115,10 @@ public class SessionUtils {
      * <p>
      * If the encoding scheme is SLASH then the cookie value would be written in
      * the URL as extra path info in the following format:
-     * protocol://server:port/servletpath/<cookieName>=<cookieValue>?queryString
+     * <pre>
+     * protocol://server:port/servletpath/&lt;cookieName>=&lt;cookieValue>?
+     *     queryString
+     * </pre>
      * <p>
      * Note that this format works only if the path is a servlet, if a a jsp
      * file is specified then webcontainers return with "File Not found" error.
@@ -125,15 +128,20 @@ public class SessionUtils {
      * <p>
      * If the encoding scheme is SEMICOLON then the cookie value would be
      * written in the URL as extra path info in the following format:
-     * protocol://server:port/path;<cookieName=cookieValue>?queryString Note
-     * that this is not supported in the servlet specification and some web
+     * <pre>
+     * protocol://server:port/path;&lt;cookieName=cookieValue>?queryString
+     * </pre>
+     * Note that this is not supported in the servlet specification and some web
      * containers do not support this.
      * 
      * <p>
      * If the encoding scheme is QUERY then the cookie value would be written in
-     * the URL in the following format: protocol://server:port/path?
-     * <cookieName>=<cookieValue>
-     * protocol://server:port/path?queryString&<cookieName>=<cookieValue>
+     * the URL in the following format:
+     * <pre>
+     * protocol://server:port/path?&lt;cookieName>=&lt;cookieValue>
+     * protocol://server:port/path?queryString&amp;
+     *       &lt;cookieName>=&lt;cookieValue>
+     * </pre>
      * <p>
      * This is the default and Access Manager always encodes in this format
      * unless otherwise specified. If the URL passed in has query parameter then
@@ -142,19 +150,16 @@ public class SessionUtils {
      * will be entity escaped.
      * <p>
      * 
-     * @param ssoToken
-     *            the SSOToken object which contains the session string.
-     * @param url the url to be encoded
-     * @param encodingScheme possible values are QUERY,SLASH,SEMICOLON
-     * @param escape 
-     *            entity escaping of ampersand when appending the SSOToken ID to
-     *            request query string.
-     * @return encoded URL with cookie value (session id) based on the encoding
+     * @param ssoToken Single Sign Token which contains the session string.
+     * @param url the URL to be encoded
+     * @param encodingScheme possible values are <code>QUERY</code>,
+     *        <code>SLASH</code>, <code>SEMICOLON</code>.
+     * @param escape <code>true</code> to escape ampersand when appending the
+     *        Single Sign On Token ID to request query string.
+     * @return encoded URL with cookie value (session ID) based on the encoding
      *         scheme.
-     * @exception SSOException
-     *                if URL cannot be encoded
+     * @exception SSOException if URL cannot be encoded.
      */
-
     public static String encodeURL(SSOToken ssoToken, String url,
             short encodingScheme, boolean escape) throws SSOException {
         String encodedURL = url;
@@ -176,8 +181,11 @@ public class SessionUtils {
      * 
      * This method assumes default encoding scheme which is QUERY. The cookie
      * value would be written in the URL in the following format:
-     * protocol://server:port/path?<cookieName>=<cookieValue>
-     * protocol://server:port/path?queryString&<cookieName>=<cookieValue>
+     * <pre>
+     * protocol://server:port/path?&lt;cookieName>=&lt;cookieValue>
+     * protocol://server:port/path?queryString&amp;
+     *        &lt;cookieName>=&lt;cookieValue>
+     * </pre>
      * <p>
      * 
      * This is the default and Access Manager always encodes in this format
@@ -187,17 +195,15 @@ public class SessionUtils {
      * will be entity escaped.
      * <p>
      * 
-     * @param ssoToken
-     *            the SSOToken object which contains the session string.
-     * @param url the url to be encoded
-     * @param escape 
-     *            entity escaping of ampersand when appending the SSOToken ID to
-     *            request query string.
+     * @param ssoToken Single Sign Token which contains the session string.
+     * @param url the URL to be encoded
+     * @param encodingScheme possible values are <code>QUERY</code>,
+     *        <code>SLASH</code>, <code>SEMICOLON</code>.
+     * @param escape <code>true</code> to escape ampersand when appending the
+     *        Single Sign On Token ID to request query string.
      * @return URL encoded with cookie Value in the query string.
-     * @exception SSOException
-     *                if URL cannot be encoded.
+     * @exception SSOException if URL cannot be encoded.
      */
-
     public static String encodeURL(SSOToken ssoToken, String url, 
             boolean escape) throws SSOException 
     {

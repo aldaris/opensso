@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientDetectionDefaultImpl.java,v 1.1 2005-11-01 00:30:09 arvindp Exp $
+ * $Id: ClientDetectionDefaultImpl.java,v 1.2 2005-11-04 18:53:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,7 +136,7 @@ public class ClientDetectionDefaultImpl implements ClientDetectionInterface {
 
                         if (debug.messageEnabled()) {
                             debug.message("Longest user-agent match client " +
-                                    "type =				 " + clientType);
+                                    "type = " + clientType);
                         }
                     }
                 }

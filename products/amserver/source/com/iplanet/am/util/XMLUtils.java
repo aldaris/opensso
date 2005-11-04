@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.1 2005-11-01 00:29:45 arvindp Exp $
+ * $Id: XMLUtils.java,v 1.2 2005-11-04 18:53:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -642,11 +642,12 @@ public class XMLUtils {
     }
 
     /**
-     * Replaces XML special character '&', '<', '>', '"', ''' with
-     * corresponding entity references
+     * Replaces XML special character <code>&</code>, <code>&lt;</code>,
+     * <code>&gt;</code>, <code>"</code>, <code>'</code> with
+     * corresponding entity references.
      * 
      * @return String with the special characters replaced with entity
-     *         references
+     *         references.
      */
     public static String escapeSpecialCharacters(String text) {
 

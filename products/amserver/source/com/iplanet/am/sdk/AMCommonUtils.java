@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonUtils.java,v 1.1 2005-11-01 00:28:58 arvindp Exp $
+ * $Id: AMCommonUtils.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,10 +165,8 @@ public class AMCommonUtils implements AMConstants {
      * smaller map are merged with the larger map and the larger map is
      * returned.
      * 
-     * @param mapA
-     *            the first map
-     * @param mapB
-     *            the second map
+     * @param mapA the first map.
+     * @param mapB the second map.
      * @return a result map which the biggest of the two maps with values merged
      *         from the smaller one.
      */

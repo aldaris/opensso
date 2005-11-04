@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.1 2005-11-01 00:29:39 arvindp Exp $
+ * $Id: Locale.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -351,7 +351,7 @@ public class Locale {
 
     /**
      * Gets Date object from date string with specified locale. Syntax of date
-     * string is defined in amUser_<locale> properties file.
+     * string is defined in amUser_&lt;locale> properties file.
      * 
      * @param dateString
      *            date string

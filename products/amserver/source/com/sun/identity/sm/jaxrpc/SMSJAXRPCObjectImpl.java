@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.1 2005-11-01 00:31:35 arvindp Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.2 2005-11-04 18:53:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -193,7 +193,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     /**
      * Returns the suborganization names. Returns a set of SMSEntry objects that
      * are suborganization names. The paramter <code>numOfEntries</code>
-     * identifies the number of entries to return, if <code>0</code> returns
+     * identifies the number of entries to return, if code>0</code> returns
      * all the entries.
      */
     public Set searchSubOrgNames(String tokenID, String dn, String filter,
@@ -434,9 +434,11 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     /**
      * Returns an array of ModificationItems converted from string
      * representation of mods. The string representation is of the format:
+     * <pre>
      * <Modifications size="xx"> <AttributeValuePair event="ADD | REPLACE |
      * DELETE"> <Attribute name="attrName" /> <Value>...</Value>
      * </AttributeValuePair> </Modifications>
+     * </pre>
      */
     static ModificationItem[] getModItems(String mods) throws SMSException {
         if (debug.messageEnabled()) {

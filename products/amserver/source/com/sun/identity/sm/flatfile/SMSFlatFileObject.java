@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObject.java,v 1.1 2005-11-01 00:31:35 arvindp Exp $
+ * $Id: SMSFlatFileObject.java,v 1.2 2005-11-04 18:53:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,11 +70,12 @@ import com.sun.identity.sm.ServiceNotFoundException;
  * The naming convention of a configuration object is hierarchy levels separated
  * by a comma, for example "ou=serviceName,ou=services,dc=sun,dc=com". This
  * object would live in the directory
- * <config-dir>/dc=com/dc=sun/ou=services/ou=serviceName The directory has a
- * file with the object's attributes in java.util.Properties format. The file
- * name is Attributes.properties. Attributes with multi-values are seperated by
- * a comma. A comma within a value is encoded as %2C, and a % within a value is
- * encoded with %25.
+ * <code>&lt;config-dir>/dc=com/dc=sun/ou=services/ou=serviceName</code>. The
+ * directory has a file with the object's attributes in
+ * <code>java.util.Properties</code> format. The file name is
+ * <code>Attributes.properties</code>. Attributes with multi-values are
+ * seperated by a comma. A comma within a value is encoded as %2C, and a %
+ * within a value is encoded with <code>%25</code>.
  */
 public class SMSFlatFileObject extends SMSObject {
 

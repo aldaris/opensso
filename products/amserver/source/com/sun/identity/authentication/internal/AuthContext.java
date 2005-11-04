@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.1 2005-11-01 00:30:50 arvindp Exp $
+ * $Id: AuthContext.java,v 1.2 2005-11-04 18:53:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -304,8 +304,7 @@ public final class AuthContext extends Object {
     /**
      * Constructor to get an instance of this class given the organization name
      * <code>orgName</code> the user would like to access, and the principal's
-     * <code>subject
-     * <code/> the user would like to be authenticated as.
+     * <code>subject</code> the user would like to be authenticated as.
      */
     protected AuthContext(String orgName, AuthSubject subject)
             throws LoginException {
@@ -406,12 +405,12 @@ public final class AuthContext extends Object {
     // for example.
     //
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor to get an instance of this class
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructor to get an instance of this class
      * given the organization name <code>orgName</code>. The plug-in modules
      * would then query for the user name and related information.
      * 
-     * @param orgName
-     *            organization name.
+     * @param orgName organization name.
      * @throws LoginException
      */
     public AuthContext(String orgName) throws LoginException {

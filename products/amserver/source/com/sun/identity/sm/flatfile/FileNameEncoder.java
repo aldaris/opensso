@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileNameEncoder.java,v 1.1 2005-11-01 00:31:35 arvindp Exp $
+ * $Id: FileNameEncoder.java,v 1.2 2005-11-04 18:53:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,8 +73,7 @@ public class FileNameEncoder {
      * some differences as described at the top of this class. This method uses
      * UTF-8 as the encoding scheme to obtain the bytes for unsafe characters.
      * 
-     * @param s
-     *            <code>String</code> to be translated.
+     * @param s <code>String</code> to be translated.
      * @return the translated <code>String</code>.
      */
     public static String encode(String s) {

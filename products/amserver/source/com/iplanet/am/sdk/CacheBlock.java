@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlock.java,v 1.1 2005-11-01 00:29:23 arvindp Exp $
+ * $Id: CacheBlock.java,v 1.2 2005-11-04 18:53:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,7 +146,7 @@ class CacheBlock {
     protected synchronized Map getAttributes(String principalDN, 
         boolean byteValues) 
     {
-	return (getAttributes(principalDN, null, byteValues));
+        return (getAttributes(principalDN, null, byteValues));
     }
         
     protected synchronized Map getAttributes(String principalDN, Set attrNames, 
@@ -154,77 +154,77 @@ class CacheBlock {
     {
         Map attributes = new AMHashMap(byteValues);
 
-	// Get the cache entry for the principal
+        // Get the cache entry for the principal
         CacheEntry ce = (CacheEntry) cacheEntries.get(principalDN);
         if (ce != null) {
             // Get the names of attributes that this principal can access
             Set accessibleAttrs = null;
-	    if (attrNames == null) {
-		accessibleAttrs = ce.getReadableAttrNames();
-	    } else {
-		accessibleAttrs = ce.getReadableAttrNames(attrNames);
-	    }
-	    // Get the attribute values from cache
+            if (attrNames == null) {
+                accessibleAttrs = ce.getReadableAttrNames();
+            } else {
+                accessibleAttrs = ce.getReadableAttrNames(attrNames);
+            }
+            // Get the attribute values from cache
             if (!byteValues) {            
                 attributes = stringAttributes.getCopy(accessibleAttrs);
-		if (ce.isCompleteSet() && !attributes.keySet().containsAll(
-		    accessibleAttrs) && !byteAttributes.isEmpty()) {
-		    // Since the flag for complete set does not distingusih
-		    // between string and binary attributes, check for
-		    // missing attributes in byteAttributes
-		    for (Iterator items = accessibleAttrs.iterator();
-			items.hasNext();) {
-			Object key = items.next();
-			if (!attributes.containsKey(key) &&
-			    byteAttributes.containsKey(key)) {
-			    byte[][] values = (byte[][]) byteAttributes.get(key);
-			    Set valueSet = new HashSet(values.length*2);
-			    for (int i = 0; i < values.length; i++) {
-				try {
-				    valueSet.add(new String(values[i], "UTF8"));
-				} catch (UnsupportedEncodingException uee) {
-				    // Use default encoding
-				    valueSet.add(new String(values[i]));
-				}
-			    }
-			    attributes.put(key, valueSet);
-			}
-		    }   
-		}
+                if (ce.isCompleteSet() && !attributes.keySet().containsAll(
+                    accessibleAttrs) && !byteAttributes.isEmpty()) {
+                    // Since the flag for complete set does not distingusih
+                    // between string and binary attributes, check for
+                    // missing attributes in byteAttributes
+                    for (Iterator items = accessibleAttrs.iterator();
+                        items.hasNext();) {
+                        Object key = items.next();
+                        if (!attributes.containsKey(key) &&
+                            byteAttributes.containsKey(key)) {
+                            byte[][] values = (byte[][])byteAttributes.get(key);
+                            Set valueSet = new HashSet(values.length*2);
+                            for (int i = 0; i < values.length; i++) {
+                                try {
+                                    valueSet.add(new String(values[i], "UTF8"));
+                                } catch (UnsupportedEncodingException uee) {
+                                    // Use default encoding
+                                    valueSet.add(new String(values[i]));
+                                }
+                            }
+                            attributes.put(key, valueSet);
+                        }
+                    }   
+                }
             } else {
                 attributes = byteAttributes.getCopy(accessibleAttrs);
-		if (ce.isCompleteSet() && !attributes.keySet().containsAll(
-		    accessibleAttrs) && !stringAttributes.isEmpty()) {
-		    // Since the flag for complete set does not distingusih
-		    // between string and binary attributes, check for
-		    // missing attributes in stringAttributes
-		    for (Iterator items = accessibleAttrs.iterator();
-			items.hasNext();) {
-			Object key = items.next();
-			if (!attributes.containsKey(key) &&
-			    stringAttributes.containsKey(key)) {
-			    Set valueSet = (Set) stringAttributes.get(key);
-			    byte[][] values = new byte[valueSet.size()][];
-			    int item = 0;
-			    for (Iterator vals = valueSet.iterator();
-				vals.hasNext();) {
-				String val = (String) vals.next();
-				values[item] = new byte[val.length()];
-				byte[] src = null;
-				try {
-				    src = val.getBytes("UTF8");
-				} catch (UnsupportedEncodingException uee) {
-				    // Use default encoding
-				    src = val.getBytes();
-				}
-				System.arraycopy(src, 0, values[item], 0,
-				    val.length());
-				item++;
-			    }
-			    attributes.put(key, values);
-			}
-		    }   
-		}
+                if (ce.isCompleteSet() && !attributes.keySet().containsAll(
+                    accessibleAttrs) && !stringAttributes.isEmpty()) {
+                    // Since the flag for complete set does not distingusih
+                    // between string and binary attributes, check for
+                    // missing attributes in stringAttributes
+                    for (Iterator items = accessibleAttrs.iterator();
+                        items.hasNext();) {
+                        Object key = items.next();
+                        if (!attributes.containsKey(key) &&
+                            stringAttributes.containsKey(key)) {
+                            Set valueSet = (Set) stringAttributes.get(key);
+                            byte[][] values = new byte[valueSet.size()][];
+                            int item = 0;
+                            for (Iterator vals = valueSet.iterator();
+                                vals.hasNext();) {
+                                String val = (String) vals.next();
+                                values[item] = new byte[val.length()];
+                                byte[] src = null;
+                                try {
+                                    src = val.getBytes("UTF8");
+                                } catch (UnsupportedEncodingException uee) {
+                                    // Use default encoding
+                                    src = val.getBytes();
+                                }
+                                System.arraycopy(src, 0, values[item], 0,
+                                    val.length());
+                                item++;
+                            }
+                            attributes.put(key, values);
+                        }
+                    }   
+                }
             }
 
             // Get the names of attributes that are invalid/not accessible

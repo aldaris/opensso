@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISearch.java,v 1.1 2005-11-01 00:30:37 arvindp Exp $
+ * $Id: ISearch.java,v 1.2 2005-11-04 18:53:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,10 +43,10 @@ package com.iplanet.ums;
  *              organization.search(
  *                    &quot;(uid=smith)&quot;, { &quot;telephone&quot; }, null);
  *       if (searchResults.hasMoreElements() == true) {
- *  	        PersistentObject userSmith = searchResults.next();
+ *                  PersistentObject userSmith = searchResults.next();
  *           userSmith.modify(&quot;telephone&quot;, &quot;408-888-8888&quot;);
  *           userSmith.save();
- *     	}
+ *             }
  * </pre>
  * 
  * <p>
@@ -61,14 +61,14 @@ package com.iplanet.ums;
  *       for (pageIndex = 0; pageIndex &lt; 10; pageIndex ++) {
  *           searchControl.setVLVRange(startPos,  0, pageSize);
  *           searchControl.setSortAttributeNames( { &quot;cn&quot; } );
- *  	     SearchResults searchResults = 
+ *               SearchResults searchResults = 
  *                 organization.search(&quot;(department=netscape)&quot;,
  *                        { &quot;cn&quot;, &quot;sn&quot;, &quot;uid&quot; }, 
  *                              searchControl);
  *           while (searchResults.hasMoreElements() == true) {
- *  	            PersistentObject user = searchResults.next();
+ *                      PersistentObject user = searchResults.next();
  *               display(user);
- *     	    }
+ *                 }
  *           startPos = startPos + pageSize + 1;
  *       }
  * </pre>

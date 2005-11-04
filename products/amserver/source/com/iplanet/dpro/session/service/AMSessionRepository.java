@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSessionRepository.java,v 1.1 2005-11-01 00:29:54 arvindp Exp $
+ * $Id: AMSessionRepository.java,v 1.2 2005-11-04 18:53:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,11 +30,10 @@ import com.iplanet.dpro.session.SessionID;
 
  /**
   * The <code>AMSessionRepository</code> interface provides methods to
-  * <code>retrive</code> , <code>save</code> , <delete> the session from
-  * the session repository.Any </code>Session<code> repository mechanisms
-  * such as <code>JDBCSessionRepository</code> ,
-  I <code> JMQSessionRepository</code>
-  * implements this interface.
+  * <code>retrive</code> , <code>save</code> , <code>delete</code> the session
+  * from the session repository.Any </code>Session<code> repository mechanisms
+  * such as <code>JDBCSessionRepository</code>,
+  I <code> JMQSessionRepository</code> implements this interface.
   *
   * @see com.iplanet.dpro.session.jdbc.JDBCSessionRepository
   * @see com.iplanet.dpro.session.jmqdb.JMQSessionRepository
@@ -42,13 +41,11 @@ import com.iplanet.dpro.session.SessionID;
 public interface AMSessionRepository {
 
     /**
-     * Retrieves session state from the repository
+     * Retrieves session state from the repository.
      * 
-     * @param sid
-     *            session id
-     * @return InternalSession object retrieved from the repository
-     * @throws Exception
-     *             if anything goes wrong
+     * @param sid session ID
+     * @return <code>InternalSession</code> object retrieved from the repository
+     * @throws Exception if anything goes wrong
      */
     public InternalSession retrieve(SessionID sid) throws Exception;
 
@@ -59,20 +56,16 @@ public interface AMSessionRepository {
      * InternalSession and in the record match In case of version mismatch or
      * missing record IllegalArgumentException will be thrown
      * 
-     * @param is
-     *            reference to InternalSession object being saved
-     * @throws Exception
-     *             if anything goes wrong
+     * @param is reference to <code>InternalSession</code> object being saved.
+     * @throws Exception if anything goes wrong.
      */
     public void save(InternalSession is) throws Exception;
 
     /**
-     * Deletes session record from the repository
+     * Deletes session record from the repository.
      * 
-     * @param sid
-     *            session id
-     * @throws Exception
-     *             if anything goes wrong
+     * @param sid session ID.
+     * @throws Exception if anything goes wrong.
      */
     public void delete(SessionID sid) throws Exception;
 
@@ -90,11 +83,9 @@ public interface AMSessionRepository {
      * Returns the expiration information of all sessions belonging to a user.
      * The returned value will be a Map (sid->expiration_time).
      * 
-     * @param uuid
-     *            User's universal unique ID.
-     * @throws Exception
-     *             if there is any problem with accessing the session
-     *             repository.
+     * @param uuid User's universal unique ID.
+     * @throws Exception if there is any problem with accessing the session
+     *         repository.
      */
     public Map getSessionsByUUID(String uuid) throws Exception;
 }

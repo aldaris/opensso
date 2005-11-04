@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCount.java,v 1.1 2005-11-01 00:29:56 arvindp Exp $
+ * $Id: SessionCount.java,v 1.2 2005-11-04 18:53:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,7 +56,7 @@ import com.sun.identity.session.util.RestrictedTokenContext;
   * Query other AM servers for the sessions for the  given user Add the numbers 
   * up (including the local one) and return the value. If any of the AM servers 
   * is down, simply ignors it since all the sessions maintained by that instance
-  * are not available.			
+  * are not available.                        
   * <li> SFO_MODE : Fetch the sessions for the given user directly from the 
   * session repository.
   * </ul>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNOrIPAddressListTokenRestriction.java,v 1.1 2005-11-01 00:29:47 arvindp Exp $
+ * $Id: DNOrIPAddressListTokenRestriction.java,v 1.2 2005-11-04 18:53:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
     *            if something goes wrong.
     */
    public DNOrIPAddressListTokenRestriction(String dn, List hostNames)
-	throws Exception
+        throws Exception
     {
         this.dn = Misc.canonicalize(dn);
         for (Iterator i = hostNames.iterator(); i.hasNext();) {

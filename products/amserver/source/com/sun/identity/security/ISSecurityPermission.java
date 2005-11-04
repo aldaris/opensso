@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSecurityPermission.java,v 1.1 2005-11-01 00:31:17 arvindp Exp $
+ * $Id: ISSecurityPermission.java,v 1.2 2005-11-04 18:53:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,30 +32,27 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /* iPlanet-PUBLIC-CLASS */
+
 /**
- * 
- * 
- * This class <code> ISSecurityPermission </code> is used to protect the Access
+ * This class <code>ISSecurityPermission</code> is used to protect the Access
  * Manager resources which should be accessed only by trusted application. The
  * resources this Permission is used to protect are: Access Manager
  * administrator DN and password, and access to the encryption and decryption
  * methods used to encrypt all passwords in Access Manager services. The
- * supported permissions is <code> "access" </code> and supported actions are
- * <code> "adminpassword" and "crypt" </code>. So in the Java security policy
- * file which will define the security options to grant this permission to code
- * bases, it should be done as below:
+ * supported permissions is <code>"access"</code> and supported actions are
+ * <code>"adminpassword"</code> and <code>"crypt"</code>. So in the Java
+ * security policy file which will define the security options to grant this
+ * permission to code bases, it should be done as below:
  * 
- * <PRE>
- * 
+ * <pre>
  * grant codeBase "file:{directory where jars are located}/-" {
  * com.sun.identity.security.ISSecurityPermission "access",
  * "adminpassword,crypt"; };
+ *</pre>
  * 
- * Note: The property <code<<br>
- * com.sun.identity.security.checkcaller</br> <code>
- * should be set to true in AMConfig properties file to enable the
+ * Note: The property <code>com.sun.identity.security.checkcaller</code>
+ * should be set to true in <code>AMConfig.properties</code> file to enable the
  * Java security permissions check.
- * </PRE>
  */
 public class ISSecurityPermission extends Permission {
     private static Random rnd = new Random();

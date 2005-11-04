@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cache.java,v 1.1 2005-11-01 00:29:37 arvindp Exp $
+ * $Id: Cache.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,8 +54,8 @@ import java.util.Set;
  * The class <code>Cache</code> provides the functionality to cache objects
  * based on their usage. The maximum size of the cache can be set using the
  * constructor. If the maximum size is not set the default cache size for
- * <code>Cache</code will be obtained from the config file <code> ???
- * </code> file, defined using the key <code> ??? </code>. The 
+ * <code>Cache</code> will be obtained from the config file <code>???</code>
+ * file, defined using the key <code>???</code>. The 
  * object that needs to be cached can be supplied to the instance of this class
  * using the put method. The object can be obtained by invoking the get method
  * on the instance. Each object that is cached is tracked based on its usage. 
@@ -115,7 +115,7 @@ import java.util.Set;
  * @see     Object#equals(java.lang.Object)
  * @see     Object#hashCode()
  * @see     Collection
- * @see	    Map
+ * @see            Map
  * @since JDK1.0
  */
 public class Cache extends Dictionary implements Map, java.io.Serializable {

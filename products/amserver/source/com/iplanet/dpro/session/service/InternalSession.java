@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.1 2005-11-01 00:29:55 arvindp Exp $
+ * $Id: InternalSession.java,v 1.2 2005-11-04 18:53:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,11 +56,13 @@ import com.sun.identity.session.util.SessionUtils;
  * session. A session has four states: invalid, valid, inactive, and destroy.
  * The initial state of a session is invalid. The following is the state diagram
  * for a session:
+ * <pre>
  *  | | | V -------------<invalid> | | | | creation (authentication OK) | |
  * |max login time | max idle time |destroy V ---------------> | <valid>
  * <inactive> -- | | <-------------- | | | reactivate | | | | | | logout |
  * destroy | | destroy | max session time | | max session time | | V |
  * ------------> <destroy> <--------------------------
+ * </pre>
  * 
  */
 
@@ -336,8 +338,8 @@ public class InternalSession implements Serializable {
     /**
      * Set the type of Internal Session. User OR Application.
      * 
-     * @param type <code >0 </code> for USER_SESSION
-     *             <code >1 </code> for APPLICATION_SESSION
+     * @param type <code>0</code> for <code>USER_SESSION</code>.
+     *             <code>1</code> for <code>APPLICATION_SESSION</code>.
      */
     public void setType(int type) {
         sessionType = type;
@@ -347,7 +349,7 @@ public class InternalSession implements Serializable {
     /**
      * Returns Client ID, accessing this Internal Session.
      * 
-     * @return ClientID
+     * @return Client ID.
      */
     public String getClientID() {
         return clientID;
@@ -1049,7 +1051,10 @@ public class InternalSession implements Serializable {
      * <p>
      * If the encoding scheme is SLASH then the cookie value would be written in
      * the URL as extra path info in the following format:
-     * protocol://server:port/servletpath/<cookieName>=<cookieValue>?queryString
+     * <pre>
+     * protocol://server:port/servletpath/&lt;cookieName>=&lt;cookieValue>?
+     *   queryString
+     *</pre>
      * <p>
      * Note that this format works only if the path is a servlet, if a a jsp
      * file is specified then webcontainers return with "File Not found" error.
@@ -1059,15 +1064,19 @@ public class InternalSession implements Serializable {
      * <p>
      * If the encoding scheme is SEMICOLON then the cookie value would be
      * written in the URL as extra path info in the following format:
-     * protocol://server:port/path;<cookieName=cookieValue>?queryString Note
-     * that this is not supported in the servlet specification and some web
+     * <pre>
+     * protocol://server:port/path;&lt;cookieName=cookieValue>?queryString
+     * </pre>
+     * Note that this is not supported in the servlet specification and some web
      * containers do not support this.
      * 
      * <p>
      * If the encoding scheme is QUERY then the cookie value would be written in
-     * the URL in the following format: protocol://server:port/path?
-     * <cookieName>=<cookieValue>
-     * protocol://server:port/path?queryString&<cookieName>=<cookieValue>
+     * the URL in the following format:
+     * <pre>
+     * protocol://server:port/path?&lt;cookieName>=&lt;cookieValue>
+     * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
+     * </pre>
      * <p>
      * This is the default and Access Manager always encodes in this format
      * unless otherwise specified. If the URL passed in has query parameter then
@@ -1076,14 +1085,14 @@ public class InternalSession implements Serializable {
      * will be entity escaped.
      * <p>
      * 
-     * @param url the url to be encoded
-     * @param encodingScheme possible values are QUERY,SLASH,SEMICOLON
+     * @param url the URL to be encoded.
+     * @param encodingScheme possible values are <code>QUERY</code>,
+     *        <code>SLASH</code>, <code>SEMICOLON</code>.
      * @param escape entity escaping of ampersand when appending the SSOToken 
-     *            ID to request query string.
-     * @return encoded URL with cookie value (session id) based on the encoding
+     *        ID to request query string.
+     * @return encoded URL with cookie value (session ID) based on the encoding
      *         scheme or the url itself if there is an error.
      */
-
     public String encodeURL(String url, short encodingScheme, boolean escape) {
         return encodeURL(url, encodingScheme, escape, Session.getCookieName());
     }
@@ -1101,8 +1110,10 @@ public class InternalSession implements Serializable {
      * <p>
      * If the encoding scheme is SLASH then the  cookie value would be
      * written in the URL as extra path info in the following format:
-     * protocol://server:port/servletpath/<cookieName>=
-     *                                  <cookieValue>?queryString     
+     * <pre>
+     * protocol://server:port/servletpath/&lt;cookieName>=&lt;cookieValue>?
+     *       queryString     
+     * </pre>
      * <p>
      * Note that this format works only if the path is a servlet, if a
      * a jsp file is specified then webcontainers return with
@@ -1112,15 +1123,19 @@ public class InternalSession implements Serializable {
      * <p>
      * If the encoding scheme is SEMICOLON then the cookie value would be
      * written in the URL as extra path info in the following format:
-     * protocol://server:port/path;<cookieName=cookieValue>?queryString
+     * <pre>
+     * protocol://server:port/path;&lt;cookieName=cookieValue>?queryString
+     * </pre>
      * Note that this is not supported in the servlet specification and
      * some web containers do not support this.
      *
      * <p>
      * If the encoding scheme is QUERY then the cookie value would be
      * written in the URL in the following format:
-     * protocol://server:port/path?<cookieName>=<cookieValue>
-     * protocol://server:port/path?queryString&<cookieName>=<cookieValue>
+     * <pre>
+     * protocol://server:port/path?&lt;cookieName>=&lt;cookieValue>
+     * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
+     * </pre>
      * <p>
      * This is the default and Access Manager always encodes in this format 
      * unless otherwise specified. If the URL passed in has query parameter then
@@ -1136,9 +1151,7 @@ public class InternalSession implements Serializable {
      * @param cookieName 
      * @return encoded URL with cookie value (session id) based
      *         on the encoding scheme or the url itself if there is an error.
-     * 
      */
-
     public String encodeURL(String url, short encodingScheme, boolean escape,
             String cookieName) {
 
@@ -1170,10 +1183,9 @@ public class InternalSession implements Serializable {
     }
 
     /**
-     * Returns true if cookies are supported else false
-     * <p>
+     * Returns true if cookies are supported.
      * 
-     * @return true if cookie supported else false;
+     * @return true if cookie supported;
      */
 
     private boolean getCookieSupport() {
@@ -1198,7 +1210,7 @@ public class InternalSession implements Serializable {
     }
 
     /**
-     * Sets the HttpSession into the Internal Session
+     * Sets the HttpSession into the Internal Session.
      * 
      * @param hSession
      */
