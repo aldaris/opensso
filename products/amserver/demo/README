@@ -20,16 +20,23 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2005-11-01 00:28:30 arvindp Exp $
+$Id: README,v 1.2 2005-11-04 22:47:30 arvindp Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
 
 %% Contents:
     %% 1. About this demo
-    %% 2. Building the demo
-    %% 3. Installing the demo
-    %% 4. Running the demo
+    %% 2. Demo build requirements
+        %% 2.1 Client environment details
+        %% 2.2 Server environment details
+        %% 2.3 Bundling 3rd party libraries
+    %% 3. Building the demo
+        %% 3.1 Build details
+    %% 4. Installing the demo
+        %% 4.1 Installing client
+        %% 4.2 Installing server
+    %% 5. Running the demo
 
 %% 1. About this demo
 
@@ -38,62 +45,284 @@ service to achieve single sign-on. Although OpenSSO does not include
 a full-fledged authentication service yet, a dummy implementation is 
 provided to facilitate this demo functionality. 
 
-This demo consists of two web applications that may be deployed on the same
-or different web containers. If deployed on different web containers, they
-may exist on the same or different hosts. These two web applications are
-the following:
+When the demo is built, it results in the creation of two files in the 
+distribution directory under built/demo/dist. These two files are:
 
-   - amserver.war    : contains OpenSSO Session service and dummy 
-                       authentication service. This application will be 
-                       referred to as the server.
-   - amdemoclient.war: contains a simple web application that uses the 
+   - amdemoclient.war: contains a simple web application that uses the
                        OpenSSO Session client library to validate a user's
-                       session and thus identify the user. This application 
-                       will be referred to as the client.
+                       session and thus identify the user. This application
+                       is referred to as the client in the rest of this 
+                       document.
+   - amsetup.jar     : the file amsetup.jar is a simple installer that allows
+     (amserver.war)    the user to setup a backend service configuration store.
+                       It also extracts the amserver.war file that can be then
+                       deployed on the same machine where the backend 
+                       service configuration store has been created. The
+                       amserver.war is a simple web application that bundles
+                       the OpenSSO Session service along with other 
+                       infrastructure services such as Naming and 
+                       Communication services. Along with these, the 
+                       amserver.war provides a dummy authentication mechanism
+                       that can be used to authenticate a user and create a
+                       session using OpenSSO Session service. This amserver.war 
+                       application is referred to as the server in the rest of
+                       this document.
 
 The client application checks for the presence of the SSO token cookie 
 from the web browser. If present, the client application uses the Session
 client library to validate that token and thus identify the user.
 
-%% 2. Building the demo
+%% 2. Demo build requirements
 
-Before you build the demo application, you must identify the environment 
-details pertaining to the server and client applications and provide them
-as an input to the build using the two files client_env.properties and
-server_env.properties. These files can be created by copying the
-corresponding template files and replacing the values where necessary.
+In order to build the demo you must first identify your deployment 
+configuration which will be supplied to the build process so that the 
+appropriate configuration settings can be created. A typical deployment
+configuration will comprise of two hosts, each containing a web container 
+where either the client or the server will be deployed. You may choose to use
+the same host with two different web containers or the same host with the
+same web container for both client and server deployments as well. Once you
+know the hostname and web container details about where you wish to deploy the
+client and the server, these can be passed on to the build process by 
+setting the environment properties files as described in the sections below.
+
+%% 2.1 Client environment details
+
+To pass the client environment details to the build process, copy the file
+demo/client_env.template to demo/client_env.properties and modify the
+values as needed. Consider an example where the client is deployed on 
+host-a.domain.com and server is deployed on host-b.domain.com. Further, 
+assume that the client is deployed on a web container that listens on 
+port 8080 using HTTP protocol, and the server is deployed on a web container
+that listens on port 9090 using HTTPS protocol. In this case, the various
+values contained in the client_env.properties could be as follows:
+
+   OUTPUT_DIR=/tmp/opensso/client/work
+   SERVER_PROTO=http
+   SERVER_HOST=host-b.domain.com
+   SERVER_PORT=9090
+   CLIENT_PROTO=http
+   CLIENT_HOST=host-a.domain.com
+   CLIENT_PORT=8080
+   SERVER_URI=/amserver
+   CLIENT_URI=/amdemoclient
+   DEBUG_LEVEL=message
+   COOKIE_ENCODE=false
+   NOTIFICATION_ENDPOINT=notificationservice
+
+NOTE:
+- The OUTPUT_DIR variable contains the path to a directory where the client
+  will house the generated files like debug files and stats files. 
+- The SERVER_URI and CLIENT_URI must match the deployment URI of the server 
+  and client web applications. It is recommended for demo purposes to not 
+  change these from /amserver and /amdemoclient values as present by default.
+- The DEBUG_LEVEL can be set to one of: off, error, warning, message and 
+  controls the amount of debug output written to debug log files by the
+  client application.
+- The COOKIE_ENCODE flag should be left as false unless the cookie encoding
+  done by the client and server containers does not match. This is typically
+  the case when the web container types are different for the client and 
+  server. It is recommended to use the same web container for both client and
+  server for demo purposes.
+- The NOTIFICATION_ENDPOINT represents the node that listens for notifications
+  sent by the server. Its value should be left as the default value:
+  notificationservice.
+
+%% 2.2 Server environment details
+
+To pass the server environment details to the build process, copy the file
+demo/server_env.template to demo/server_env.properties and modify the
+values as needed. Consider an example where the client is deployed on 
+host-a.domain.com and server is deployed on host-b.domain.com. Further, 
+assume that the client is deployed on a web container that listens on 
+port 8080 using HTTP protocol, and the server is deployed on a web container
+that listens on port 9090 using HTTPS protocol. In this case, the various
+values contained in the server_env.properties could be as follows:
+
+   OUTPUT_DIR=/tmp/opensso/work
+   CONFIG_DIR=/opt/opensso/config
+   SERVER_PROTO=http
+   SERVER_HOST=host-b.domain.com
+   SERVER_PORT=9090
+   AM_ENC_KEY=myencryptionkey
+   ADMIN_PASSWD=password
+   CLIENT_PROTO=http
+   CLIENT_HOST=host-a.domain.com
+   CLIENT_PORT=8080
+*  CLIENT_URI=/amserver    [ SEE SPECIAL NOTE BELOW ]
+*  SERVER_URI=/amserver    [ SEE SPECIAL NOTE BELOW ]
+   SERVER_MODE=true
+   ORG_BASE=dc=sun,dc=com
+   DEFAULT_ORG=dc=sun,dc=com
+   USER_NAMING_ATTR=uid
+   DEBUG_LEVEL=message
+   COOKIE_ENCODE=false
+   NOTIFICATION_ENDPOINT=notificationservice
+   ADMIN_AUTH_CLASS=com.sun.identity.demo.server.DemoAdminAuthLoginModule
+   AUTH_DONOTINCLUDE_SMS=true
+   APPSSOPROVIDER_FACTORY=com.sun.identity.demo.server.DemoAdminTokenFactory
+   SMS_OBJECT_CLASS=com.sun.identity.sm.flatfile.SMSFlatFileObject
+   PLATFORM_LOCALE=en_US
+   AVAILABLE_LOCALES=<Value>en_US</Value>
+   SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger
+
+NOTE:
+- The OUTPUT_DIR variable contains the path to a directory where the server
+  will house the generated files like debug files and stats files. 
+- The CONFIG_DIR variable contains the path to a directory where the 
+  service configuration store will be created. This directory will also contain
+  the UMS configuration file serverconfig.xml.
+- The AM_ENC_KEY is the encryption key used for encrypting the passwords and
+  other sensitive information within the configuration settings as needed.
+- The ADMIN_PASSWD is the password value that is assigned to the default 
+  special user accounts such as the super user (amadmin) and proxy/application
+  users as configured in the serverconfig.xml file.
+* The CLIENT_URI and SERVER_URI must be set as the same value which is
+  the URI for deployment of amserver.war application. It is recommended for
+  demo purposes to not change these values from their default /amserver. Note
+  that in client_env.properties file, you are required to use different values
+  for CLIENT_URI and SERVER_URI based on the individual deployment URIs of the
+  the client and server applications. However, in the case of 
+  server_env.properties both of these must be set to the same value matching 
+  the deployment user of the server application.
+- The SERVER_MODE flag must be set to true for server environment always.
+- The ORG_BASE, DEFAULT_ORG, USER_NAMING_ATTR values must be kept as their
+  suggested defaults.
+- The DEBUG_LEVEL can be set to one of: off, error, warning, message and 
+  controls the amount of debug output written to debug log files by the
+  client application.
+- The COOKIE_ENCODE flag should be left as false unless the cookie encoding
+  done by the client and server containers does not match. This is typically
+  the case when the web container types are different for the client and 
+  server. It is recommended to use the same web container for both client and
+  server for demo purposes.
+- The NOTIFICATION_ENDPOINT represents the node that listens for notifications
+  sent by the server. Its value should be left as the default value:
+  notificationservice.
+- The ADMIN_AUTH_CLASS, AUTH_DONOTINCLUDE_SMS, APPSSOPROVIDER_FACTORY, 
+  SMS_OBJECT_CLASS, PLATFORM_LOCALE, AVAILABLE_LOCALES, and 
+  SESSION_LOGGER values must be kept as their suggested defaults. These
+  values are necessary for the Session service to function in the server
+  environment. 
+
+%% 2.3 Bundling 3rd party libraries
 
 If your target web container does not have all the library dependencies
 for the client or server applications, you may optionally copy the libraries
-to include within the applications under the directories libclient and 
-libserver. For instance, if your target web container does not have ldapjdk.jar
-installed at the system level, the ldapjdk.jar library may be included in the
-libserver directory. Doing this will ensure that when the server war is
-created, the ldapjdk.jar library gets bundled with it.
+to include within these applications under the directories demo/libclient and 
+demo/libserver. 
 
-Once you have created the environment configuration files and added the
-necessary libraries into the lib* directories, you can build the demo
-application by issuing the "demo" target from the top level director.
+It is recommended that minimally the LDAP JDK library ldapjdk.jar be included
+in the demo/libserver directory if the target web container does not have this
+library available. For the demo purposes, the other libraries are not necessary
+and need not be included with either the client or the server applications.
 
-%% 3. Installing the demo
+When the demo is built, all the libraries available under demo/libserver
+directory are added to the WEB-INF/lib of the amserver.war application.
+Similarly, all the libraries available under demo/libclient are added to 
+the WEB-INF/lib of the amdemoclient.war application.
 
-Once the demo is built, two files are generated under the distribution
-directory built/demo/dist. The first file is the amdemoclient.war which is
-the client web application. This client web application can be deployed on 
-the client web container.
+%% 3. Building the demo
 
-The second file is the amsetup.jar. This is a simple installer that allows 
-you to create the necessary backend datastore needed by the Session service
-and infrastructure of OpenSSO. Transfer this file to the machine where the
-server web container exists and issue the following command:
+Once you have setup the client and server environment configuration files
+and copied the necessary libraries to be included in these applications,
+you can start the demo build by issuing the "demo" build target. Note that
+this target must be executed from within the workspace root directory 
+located at opensso/products/amserver. Even though a build.xml file exists
+under the opensso/products/amserver/demo directory, it cannot be used 
+directly since the demo requires the complete workspace to be built prior
+to its own compilation.
 
-   $ java -jar amsetup.jar
-   
-This will install the backend datastore on the machine where executed and will
-also extract the amserver.war file. The amserver.war file can now be deployed
-on your server web container.
+When you issue the demo build target at the workspace root, the build target
+of the main workspace is first invoked, after which the control is handed
+to the demo/build.xml build file for executing its default target. This 
+results in the building of both the workspace and demo sources together.
 
-%% 4. Running the demo
+%% 3.1 Build details
+
+The demo build process uses the client and server configuration environment
+values specified in the corresponding property files to generate the necessary
+configuration files for the client and server applications. These applications
+are then packaged appropriately and made available in the built/demo/dist
+directory. The complete build process for the demo involves the following 
+steps:
+
+3.1.1 The demo sources from demo/sources are compiled first.
+3.1.2 One of the demo classes - com.sun.identity.demo.setup.PasswordEncryptor
+      is then invoked by the build to generate the encrypted password. This
+      invocation requires two arguments - (a) the server environment 
+      configuration file from where the admin password and password encryption
+      key values are read; and (b) the path to a temporary file in which the
+      encrypted passwords are stored. The PasswordEncryptor processes these
+      arguments and generates the encrypted password in the temporary file.
+      Once the encrypted password is injected in the configuration files where
+      needed, the temporary file is deleted by the build process.
+3.1.3 The necessary XML and configuration properties properties files are then
+      copied over to a staging area using filter tokens to replace values
+      with the applicable values as specified by the server environment file
+      and the generated encrypted password file.
+3.1.4 Using the files in the staging area, the server application file 
+      amserver.war is created. 
+3.1.5 An executable jar file is then created with the Main-Class attribute set
+      to one of the demo classes - 
+      com.sun.identity.demo.setup.SetupConfigurator. The SetupConfigurator is
+      an installer for the demo server which allows the user to initialize the
+      necessary configuration data store on the machine where the server will
+      be deployed. This file contains all the necessary classes for the
+      SetupConfigurator to execute along with the necessary libraries and 
+      the resource files as applicable. This file is named amsetup.jar.
+3.1.6 The previously generated amserver.war is then added to the amsetup.jar.
+      This allows the amsetup.jar file to be the only only file needed to be
+      transported to the machine where the server is deployed. When this jar
+      is executed on that machine, it extracts the amserver.war for deployment
+      along with initializing the configuration data store.
+3.1.7 After the amsetup.jar is ready, the build creates a staging area to 
+      populate configuration files with the client environment values and uses
+      it to create the client application - amdemoclient.war.
+3.1.8 The two files - amsetup.jar and amdemoclient.war are then copied to the
+      distribution area of the build under built/demo/dist directory.
+
+The distribution area now contains the deployable client web application called
+amdemoclient.war and an executable file amsetup.jar. The executable amsetup.jar
+can be run on the server host to initialize the configuration data store and
+extract the amserver.war application that can then be deployed on that machine.
+
+%% 4. Installing the demo
+
+The following sections describe how the client and server applications can be
+installed for demo purposes.
+
+%% 4.1 Installing client
+
+To install the demo client, simply deploy the web application amdemoclient.war
+using the deployment URI of /amdemoclient in the web container designated to 
+host the client application. 
+
+Note that the deployment URI, host name of the machine were client application
+will be deployed, the web container details, and other environment settings
+must match the values provided in the client_env.properties file prior to 
+building the demo. If any of these properties do not match, the demo may fail
+to work correctly.
+
+%% 4.2 Installing server
+
+To install the server, copy the file amsetup.jar to the machine where the 
+server will be deployed. Once copied, execute this jar by giving the command:
+
+    $ java -jar amsetup.jar
+
+This command will result in the creation of a configuration data store on this
+machine and will also result in the extraction of amserver.war file. Once this
+command completes, the amserver.war file should be deployed in the web 
+container designated for the server on this machine. This application should
+be deployed using the deployment URI of /amserver in the designated web 
+container.
+
+Note that the deployment URI, host name, web container details, and other 
+environment settings must match the values provided in the 
+server_env.properties file prior to building the demo. If any of these 
+properties do not match, the demo may fail to work correctly.
+
+%% 5. Running the demo
 
 Once both the amserver.war and amdemoclient.war files have been deployed, 
 the demo is ready to use. Simply startup a browser and point it to the

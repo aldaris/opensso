@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2005-11-01 00:28:28 arvindp Exp $
+$Id: README,v 1.2 2005-11-04 22:47:30 arvindp Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -28,7 +28,19 @@ Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 %% Contents:
     %% 1. Build requirements
     %% 2. Library dependencies
+        %% 2.1 Obtaining j2ee.jar
+        %% 2.2 Obtaining mail.jar
+        %% 2.3 Obtaining jaxb-api.jar and jaxrpc-api.jar
+        %% 2.4 Obtaining ldapjdk.jar
+        %% 2.5 Obtaining db.jar
     %% 3. Building the workspace
+        %% 3.1 build target
+        %% 3.2 doc target
+        %% 3.3 clean target
+        %% 3.4 demo target
+        %% 3.5 demo-clean target
+        %% 3.6 usage target
+    %% 4. Building the demo
 
 %% 1. Build requirements
 
@@ -44,7 +56,11 @@ is setup correctly pointing to its location.
 
 %% 2. Library dependencies
 
-The OpenSSO sources depend on the following libraries:
+The OpenSSO sources depend upon a few third-party libraries that are not
+included as a part of the workspace and must be obtained directly from 
+the library vendor or distributor. Some of these libraries are available in 
+source distribution form and must be built locally before they can be used. 
+The libraries needed for compiling OpenSSO sources are:
 
    - J2EE SDK version 1.3.1: j2ee.jar
    - Java Mail version 1.2 : mail.jar
@@ -52,27 +68,255 @@ The OpenSSO sources depend on the following libraries:
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar
 
-These libraries are not included as a part of the workspace and must be
-obtained directly. Some libraries such as LDAP JDK and SleepyCat Berkeley DB 
-are available in source distribution form and must be built locally before
-they can be used. Refer to library vendor documentation for complete 
-details of how these libraries can be built.
+Once these libraries are available, they should be placed under the extlib
+directory of the workspace. Any library placed in this directory is 
+automatically included in the classpath during the compilation phase of
+the build process.
 
-Once you have these libraries available, they should be placed under the
-extlib directory in order that the build can reference them for compilation
-purposes. 
+The following subsections briefly describe how these libraries may be 
+obtained. These instructions are provided for your convenience only and
+are not intended to replace or invalidate the procedures/guidelines set
+by the library vendor or distributor for obtaining those libraries. Before
+you follow these instructions, you must agree to abide by any terms and
+conditions set forth by the library vendor or distributor. In case any of
+these instructions are in contradiction to such terms or conditions, you 
+must disregard those instructions and instead follow the ones provided by
+the library vendor or distributor in accordance with their terms and 
+conditions.
+
+%% 2.1 Obtaining j2ee.jar
+
+The j2ee.jar library can be obtained from J2EE SDK version 1.3.1. Follow
+these steps to obtain the J2EE SDK:
+
+2.1.1 Open the web page: http://java.sun.com/j2ee/sdk_1.3/
+2.1.2 Scroll down to the section titled "Download the Software for the 
+      Java 2 SDK, Enterprise Edition 1.3.1" and click the Download button.
+2.1.3 In the resulting page, review the license agreement and select
+      the Accept choice to proceed.
+2.1.4 Depending on your choice of platform, you may choose to download any
+      one of the three distribution types available.
+2.1.5 Extract or extract and install the downloaded file as necessary to
+      have the SDK available on your system.
+
+Once the J2EE SDK is installed, you can get the j2ee.jar file from the
+lib directory of this SDK. 
+
+%% 2.2 Obtaining mail.jar
+
+The mail.jar library can be obtained from JavaMail API version 1.2 
+distribution. Follow these steps to obtain the JavaMail API:
+
+2.2.1 Open the web page: 
+      http://java.sun.com/products/javamail/javamail-1_2.html
+2.2.2 Click on the Download button.
+2.2.3 In the resulting page, review the license agreement and select
+      the Accept choice to proceed.
+2.2.4 Download the zip file javamail-1_2.zip.
+2.2.5 Extract the zip file into a convenient location.
+
+The mail.jar can be obtained from the javamail-1.2 directory of the expanded
+image of the downloaded file.
+
+%% 2.3 Obtaining jaxb-api.jar and jaxrpc-api.jar
+
+The libraries jaxb-api.jar and jaxrpc-api.jar can be obtained from the JWSDP
+version 1.6 distribution. Follow these steps to obtain JWSDK 1.6:
+
+2.3.1 Open the web page:
+      http://java.sun.com/webservices/downloads/webservicespack.html
+2.3.2 Click on the Download button under JWSDP 1.6 title.
+2.3.3 If you are not already logged into Sun Developer Network, you may have
+      to authenticate using your Sun Developer Network username and password.
+      If you do not have a Sun Developer Network account, you must create one
+      by clicking on the Register Now link available on this page. 
+2.3.4 Once you have logged in, you will see the download page for Java Web
+      Services Developer Pack 1.6. Review the license agreement and select
+      the Accept choice to proceed.
+2.3 5 Depending on your choice of platform, you may choose to download any
+      one of the two distribution types available.
+2.3.6 Install the downloaded file in order to have the JWSDP available on
+      your system.
+
+Once the JWSDP distribution is installed on your system, the jaxb-api.jar
+library can be obtained from the <jwsdp-install-dir>/jaxb/lib. Also, the
+jaxrpc-api.jar library can be obtained from <jwsdp-install-dir>/jaxrpc/lib
+directory.
+
+%% 2.4 Obtaining ldapjdk.jar
+
+The ldapjdk.jar library is not distributed in the binary form. However, this
+library can be built using the source distribution provided by Mozilla 
+project. Follow these steps to obtain ldapjdk 4.17:
+
+2.4.1 Open the web page: http://www.mozilla.org/directory/javasdk.html
+2.4.2 Download the the source distribution based on your preference of
+      using zip or tar-gzip formats. 
+2.4.3 Extract the source distribution in a convenient location.
+2.4.4 The complete build instructions are provided at:
+      http://www.mozilla.org/directory/buildjsdk-4.0.txt
+      A copy of these instructions is also present under the directory
+      mozilla/directory in a file called buildjsdk.txt.  Follow these 
+      instructions based on your platform to build the ldap sources. Note 
+      that in case you are using JDK 5.0 for compilation, you will have to 
+      modify the make-files to add a -source 1.3 to the compiler definition 
+      in order to ensure that the build does not break due to the use of 
+      newly introduced keywords in JDK 1.4 and JDK 5.0 releases such as enum
+      and assert. The rest of the instructions in this section describe how 
+      this distribution can be built on a unix platform.
+2.4.5 Change into the directory mozilla/directory/java-sdk.
+2.4.6 If you are using JDK 5.0 for compilation, open the ldap.mk file and
+      modify the JAVAC variable definition to include the -source 1.3 option
+      as follows:
+          JAVAC=$(JDKBIN)javac -O -classpath "$(JAVACLASSPATH)" -source 1.3
+      Since this variable is defined in three places, you will have to
+      change all three to ensure that all build paths are covered.
+2.4.7 Compile the sources using the following command:
+          gmake -f ldap.mk JAVA_VERSION=1.5
+      You should replace the JAVA_VERSION to the appropriate value as 
+      applicable to your environment.
+2.4.8 Package the compiled sources into a jar using the command:
+          gmake -f ldap.mk JAVA_VERSION=1.5 basepackage
+      You should replace the JAVA_VERSION to the appropriate value as 
+      applicable to your environment.
+
+Once this process is complete, the ldapjdk.jar library can be obtained from
+the directory mozilla/directory/java-sdk/dist/packages.
+
+%% 2.5 Obtaining db.jar
+
+The Sleepycat library db.jar is not distributed in the binary form. However,
+this can be built using the source distribution provided by Sleepycat 
+Software. Follow these steps to obtain the db.jar library:
+
+2.5.1 Open the web page: http://www.sleepycat.com/download/index.shtml
+2.5.2 Under "Select a Product" form, choose "Berkeley DB". Following that,
+      select version 4.2.52 from the drop-down menu for version number.
+      Once the product and version is selected, select the appropriate
+      format using the "Select a Package" drop-down menu. The choice of
+      strong encryption support is not necessary and thus the corresponding
+      choice box can be left unchecked. Once this process is complete, 
+      click on the link "db-4.2.52.N.C.tar.gz" on this page to download
+      the source distribution of Berkeley DB.
+2.5.3 Extract the sources in a convenient location. 
+2.5.4 To build the entire distribution follow the instructions provided in
+      the docs/index.html by opening that file in a browser and clicking 
+      on the appropriate link under "Building Berkeley DB" section as 
+      applicable for your platform. The rest of the instructions in this 
+      section describe how this distribution can be built on a unix platform.
+2.5.5 Enter the directory db-4.2.52.NC/build_unix and issue the command:
+          ../dist/configure --enable-java
+      for this command to work, you will need a C compiler along with
+      development utilities like gmake, autoconf and libtool available on
+      your on your system.
+2.5.6 Once this command completes successfully, issue the following command
+      to compile the source distribution:
+          gmake
+      Note that you do not have to install the distribution for obtaining
+      the desired library.
+
+Once this process is complete, the db.jar library can be obtained from 
+under the db-4.2.52.NC/build_unix directory.
 
 %% 3. Building the workspace
 
 The workspace build system offers many build targets. You can view the
 available targets by issuing the ant command from the root of the
-workspace.
+workspace. The default target that is executed is the usage target which
+displays a brief description about the other targets. Currently the main
+targets available in the workspace are:
+   
+     - build      : compiles the sources
+     - doc        : creates javadocs
+     - clean      : deletes the generated files
+     - demo       : builds the demo application
+     - demo-clean : deletes generated demo files
+     - usage      : displays this usage message
 
+%% 3.1 build target
 
+The build target involves the following processing:
 
+3.1.1 Creation of build output directories such as 
+        <workspace-root>/built
+        <workspace-root>/built/classes
+        <workspace-root>/built/resources
+        <workspace-root>/built/docs
+        <workspace-root>/built/docs/api
 
+3.1.2 Compiles all the classes present in the source directory to the
+      built/classes directory. The compilation debug flag is set to
+      "-g:none" but can be changed by defining the following two properties
+      in your user level property file $HOME/.opensso:
+      
+      - build.debug: allowed values are on and off. Example: build.debug=on
 
+      - build.debuglevel: one or more of lines, vars, source as a comma
+          separated list. Example: build.debuglevel=lines,source
 
+3.1.3 Transfers the resource and xml files from the resources and xml 
+      directories to the built area under the built/resources directory.
+      The two exceptions are:
 
+      - the file sms.dtd is copied over to the classes directory under
+        the package com/sun/identity/sm as per its defined location for
+        reference by other xml files.
 
+      - the properties files Services.properties, DSConfig.properties,
+        ums.properties, sso.properties, SMS.properties and 
+        authentication_util.properties are combined into a single
+        properties file called amSDK.properties.
 
+      The xml files are tag-swapped to change the XML_ENCODING tag with
+      the value ISO-8859-1.
+
+%% 3.2 doc target
+
+The doc target involves the following processing:
+
+3.2.1 Creation of build output directories such as 
+        <workspace-root>/built
+        <workspace-root>/built/classes
+        <workspace-root>/built/resources
+        <workspace-root>/built/docs
+        <workspace-root>/built/docs/api
+
+3.2.2 Executes the javadoc tool with output directory set to built/docs/api
+      and includes the following packages:
+        com/iplanet/sso/**
+        com/iplanet/dpro/**
+        com/sun/identity/session/**
+
+      The "**" indicate all sub-packages underneath the current package.
+
+%% 3.3 clean target
+
+The clean target removes all the build output directories.
+
+%% 3.4 demo target
+
+The demo target first invokes the build target and then delegates the
+further processing to the build.xml file present under the demo directory.
+This target cannot be executed directly unless certain configuration tasks
+are performed as described in the file demo/README. Please refer to this file
+for further details on the configuration tasks needed prior to building the
+demo.
+
+%% 3.5 demo-clean target
+
+Issues a clean to the build.xml file present under the demo directory. This
+target is useful in case you are interested in rebuilding the demo without
+rebuilding the entire OpenSSO distribution. By issuing the demo-clean target
+the build output area for the OpenSSO distribution is not changed and only
+the demo related build output area is cleaned.
+
+%% 3.6 usage target
+
+Displays a list of available targets along with a brief description of
+each available target for quick reference.
+
+%% 4. Building the demo
+
+Before building the demo, please follow any instructions described in the
+file demo/README. This file also describes the necessary background 
+information regarding the demo and the details of how it works.

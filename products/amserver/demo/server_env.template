@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.1 2005-11-01 00:28:31 arvindp Exp $
+# $Id: server_env.template,v 1.2 2005-11-04 22:47:30 arvindp Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -61,8 +61,8 @@ ADMIN_PASSWD=password
 # - SERVER_MODE      : true
 # - ORG_BASE         : dc=sun,dc=com
 # - DEFAULT_ORG      : dc=sun,dc=com
-# - DEBUG_LEVEL      : message
 # - USER_NAMING_ATTR : uid
+# - DEBUG_LEVEL      : message
 # - COOKIE_ENCODE    : false
 # - NOTIFICATION_ENDPOINT: notificationservice
 # - ADMIN_AUTH_CLASS : the admin authentication login module
@@ -82,8 +82,8 @@ SERVER_URI=/amserver
 SERVER_MODE=true
 ORG_BASE=dc=sun,dc=com
 DEFAULT_ORG=dc=sun,dc=com
-DEBUG_LEVEL=message
 USER_NAMING_ATTR=uid
+DEBUG_LEVEL=message
 COOKIE_ENCODE=false
 NOTIFICATION_ENDPOINT=notificationservice
 ADMIN_AUTH_CLASS=com.sun.identity.demo.server.DemoAdminAuthLoginModule
