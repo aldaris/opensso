@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessageImpl.java,v 1.1 2005-11-01 00:30:58 arvindp Exp $
+ * $Id: L10NMessageImpl.java,v 1.2 2005-11-08 17:12:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,9 @@ import com.iplanet.am.util.AMResourceBundleCache;
  * java.lang.Exception an provides mechanism to provide resource bundle for
  * error messages
  */
-
 public class L10NMessageImpl extends Exception implements L10NMessage {
+
+    private static final long serialVersionUID = -4690604178832156822L;
 
     public L10NMessageImpl(String msg) {
         super(msg);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOException.java,v 1.1 2005-11-01 00:30:28 arvindp Exp $
+ * $Id: SSOException.java,v 1.2 2005-11-08 17:12:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,27 +30,23 @@ import com.sun.identity.common.L10NMessageImpl;
 /**
  * This <code>SSOException</code> is thrown when there are single sign on token 
  * operation error.
- * 
  */
-
 public class SSOException extends L10NMessageImpl {
 
-    /*
-     * CONSTRUCTORS
-     */
+    private static final long serialVersionUID = 8947757932659270975L;
 
     /**
      * Constructs a <code>SSOException</code> with a detail message.
      * @param msg The message provided by the object that is throwing the
      * exception.
      */
-    public SSOException(java.lang.String msg) {
+    public SSOException(String msg) {
         super(msg);
     }
 
     /**
-     * Constructs a <code>SSOException</code> with a detailed  localizable error
-     * message
+     * Constructs a <code>SSOException</code> with a detailed localizable error
+     * message.
      *
      * @param bundleName Resource Bundle Name to be used for getting 
      *        localized error message.
@@ -61,8 +57,7 @@ public class SSOException extends L10NMessageImpl {
      *  String localizedStr = rb.getString(errorCode)
      * </pre>
      * 
-     * @param args
-     *            arguments to message. If arguments to the message are not
+     * @param args Arguments to message. If arguments to the message are not
      *            present, pass null.
      */
     public SSOException(String bundleName, String errCode, Object[] args) {
@@ -76,7 +71,7 @@ public class SSOException extends L10NMessageImpl {
      * @param t The <code>Throwable</code> object provided by the object that is
      *        throwing the exception.
      */
-    public SSOException(java.lang.Throwable t) {
+    public SSOException(Throwable t) {
         super(t);
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMException.java,v 1.1 2005-11-01 00:29:05 arvindp Exp $
+ * $Id: AMException.java,v 1.2 2005-11-08 17:12:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,9 @@ import com.sun.identity.common.L10NMessage;
  * while performing an operation on the data store.
  */
 public class AMException extends Exception implements L10NMessage {
+
+    private static final long serialVersionUID = -660487903675407220L;
+
     private String localizedMsg = null;
 
     private String errorCode = null;

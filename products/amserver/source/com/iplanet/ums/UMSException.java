@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMSException.java,v 1.1 2005-11-01 00:30:42 arvindp Exp $
+ * $Id: UMSException.java,v 1.2 2005-11-08 17:12:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,6 +149,8 @@ import netscape.ldap.LDAPException;
  * @see java.lang.RuntimeException
  */
 public class UMSException extends java.lang.Exception {
+
+    private static final long serialVersionUID = -7043204896844472780L;
 
     static ResourceBundle xcptMsgs = null;
 
@@ -321,9 +323,8 @@ public class UMSException extends java.lang.Exception {
      * has a root exception; the stack trace of the root exception is printed to
      * the print writer instead.
      * 
-     * @param ps
-     *            The non-null print writer to which to print.
-     *            iPlanet-PUBLIC-METHOD
+     * @param pw The non-null print writer to which to print.
+     * iPlanet-PUBLIC-METHOD
      */
     public void printStackTrace(java.io.PrintWriter pw) {
         if (rootCause != null) {

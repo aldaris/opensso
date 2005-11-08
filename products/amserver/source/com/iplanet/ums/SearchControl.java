@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchControl.java,v 1.1 2005-11-01 00:30:40 arvindp Exp $
+ * $Id: SearchControl.java,v 1.2 2005-11-08 17:12:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,9 @@ import netscape.ldap.LDAPv2;
  * ways for client to define different hierarchical tree through SearchControl.
  */
 public class SearchControl implements java.io.Serializable {
+
+    private static final long serialVersionUID = -8755868973524858945L;
+
     static final String KeyVlvRange = "vlvRange";
 
     static final String KeyVlvJumpTo = "vlvJumpTo";
