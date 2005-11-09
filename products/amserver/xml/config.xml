@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+    <service name="IdentityManagementServices"
+	targetNamespace="http://isp.com/wsdl"
+	typeNamespace="http://isp.com/types"
+	packageName="com.sun.identity.jaxrpc">
+	<interface name="com.sun.identity.sm.jaxrpc.SMSObjectIF"
+	    servantName="com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl" />
+	<interface name="com.iplanet.am.sdk.remote.DirectoryManagerIF"
+	    servantName="com.iplanet.am.sdk.remote.DirectoryManagerImpl" />
+        <interface name="com.sun.identity.entity.EntityObjectIF"
+	    servantName="com.sun.identity.entity.EntityObjectImpl" />
+        <interface name="com.sun.liberty.jaxrpc.LibertyManagerIF"
+	    servantName="com.sun.liberty.jaxrpc.LibertyManagerImpl" />
+    </service>
+
+
+</configuration>
