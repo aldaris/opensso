@@ -17,8 +17,6 @@
 	    servantName="com.iplanet.am.sdk.remote.DirectoryManagerImpl" />
         <interface name="com.sun.identity.entity.EntityObjectIF"
 	    servantName="com.sun.identity.entity.EntityObjectImpl" />
-        <interface name="com.sun.liberty.jaxrpc.LibertyManagerIF"
-	    servantName="com.sun.liberty.jaxrpc.LibertyManagerImpl" />
     </service>
 
 
