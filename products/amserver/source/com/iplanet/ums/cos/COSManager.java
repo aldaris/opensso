@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSManager.java,v 1.1 2005-11-01 00:30:43 arvindp Exp $
+ * $Id: COSManager.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,15 +61,11 @@ public class COSManager {
      * instance of a SchemaManager which will be used to update schema entries
      * for COS assignments.
      * 
-     * @param principal
-     *            Authenticated principal
-     * @param guid
-     *            The unique identifier specifying where COS definitions will be
-     *            managed.
-     * 
-     * @throws UMSException
-     *             The exception thrown if the token authentication fails, or if
-     *             the guid for the parent entry is not valid.
+     * @param token Authenticated principal's single sign on token.
+     * @param guid The unique identifier specifying where COS definitions will
+     *        be managed.
+     * @throws UMSException if the token authentication fails, or if
+     *         the guid for the parent entry is not valid.
      */
     protected COSManager(SSOToken token, Guid guid) throws UMSException {
         try {
@@ -110,17 +106,14 @@ public class COSManager {
     }
 
     /**
+     * iPlanet-PUBLIC-STATIC
      * This method returns an instance of a COS Manager.
      * 
-     * @param principal
-     *            Authenticated principal
-     * @param guid
-     *            COS definitions will be managed under the level identified by
-     *            this guid.
-     * 
+     * @param token Authenticated principal's single sign on token.
+     * @param guid COS definitions will be managed under the level identified by
+     *        this guid.
      * @throws UMSException
      *             The exception thrown from the COSManager constructor.
-     *             iPlanet-PUBLIC-STATIC
      */
     public static COSManager getCOSManager(SSOToken token, Guid guid)
             throws UMSException {
@@ -130,15 +123,11 @@ public class COSManager {
     /**
      * This method returns an instance of a COS Manager.
      * 
-     * @param principal
-     *            Authenticated principal
-     * @param guid
-     *            COS definitions will be managed under the level identified by
-     *            this guid.
-     * 
+     * @param principal Authenticated principal.
+     * @param guid COS definitions will be managed under the level identified by
+     *        this guid.
      * @throws UMSException
      *             The exception thrown from the data layer.
-     * 
      */
     public static COSManager getCOSManager(Principal principal, Guid guid)
             throws UMSException {
@@ -233,20 +222,13 @@ public class COSManager {
     }
 
     /**
-     * Retrieves a COS definition given the name.
+     * iPlanet-PUBLIC-METHOD
+     * Returns COS definition given the name.
      * 
-     * @param name
-     *            The name of the COS definition.
-     * @param searchControl
-     *            Specifies search customization parameters.
-     * 
+     * @param name Name of the COS definition.
      * @return A COS definition with the specified name.
-     * 
-     * @throws UMSException
-     *             The exception thrown from the data layer.
-     * @throws COSNotFoundException
-     *             The exception thrown if the COS object is not found.
-     *             iPlanet-PUBLIC-METHOD
+     * @throws UMSException if exception occurred at the data layer.
+     * @throws COSNotFoundException if the COS object is not found.
      */
     public ICOSDefinition getDefinition(String name) throws UMSException,
             COSNotFoundException {
@@ -256,10 +238,11 @@ public class COSManager {
                 DEF_ATTRIBUTE_NAMES, null);
         while (sr.hasMoreElements()) {
             cosDef = (ICOSDefinition) sr.next();
-            if (cosDef.getName().equals(name))
+            if (cosDef.getName().equals(name)) {
                 break;
-            else
+            } else {
                 cosDef = null;
+            }
         }
         if (cosDef == null) {
             String msg = i18n.getString(IUMSConstants.COS_DEFINITION_NOT_FOUND);

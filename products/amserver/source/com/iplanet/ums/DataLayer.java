@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.1 2005-11-01 00:30:34 arvindp Exp $
+ * $Id: DataLayer.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -314,15 +314,18 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Get String values of the attribute.
+     * iPlanet-PUBLIC-METHOD
+     * Returns String values of the attribute.
      * 
-     * @param id
-     *            distinguished name
-     * @param attrName
-     *            attribute name iPlanet-PUBLIC-METHOD
+     * @param principal Authentication Principal.
+     * @param guid distinguished name.
+     * @param attrName attribute name.
      */
-    public String[] getAttributeString(java.security.Principal principal,
-            Guid guid, String attrName) {
+    public String[] getAttributeString(
+        java.security.Principal principal,
+        Guid guid,
+        String attrName
+    ) {
         LDAPConnection conn = null;
         String id = guid.getDn();
 
@@ -344,15 +347,18 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Get Attr from the given attribute name
+     * iPlanet-PUBLIC-METHOD
+     * Returns <code>Attr</code> from the given attribute name.
      * 
-     * @param id
-     *            distinguished name
-     * @param attrName
-     *            attribute name iPlanet-PUBLIC-METHOD
+     * @param principal Authentication Principal.
+     * @param guid Distinguished name.
+     * @param attrName Attribute name.
      */
-    public Attr getAttribute(java.security.Principal principal, Guid guid,
-            String attrName) {
+    public Attr getAttribute(
+        java.security.Principal principal,
+        Guid guid,
+        String attrName
+    ) {
         LDAPConnection conn = null;
         String id = guid.getDn();
 
@@ -379,16 +385,18 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Get attributes for the given attribute names
+     * Returns attributes for the given attribute names.
      * 
-     * @param id
-     *            distinguished name
-     * @param attrNames
-     *            attribute names
+     * @param principal Authentication Principal.
+     * @param guid Distinguished name.
+     * @param attrNames Attribute names.
      * @return collection of Attr iPlanet-PUBLIC-METHOD
      */
-    public Collection getAttributes(java.security.Principal principal,
-            Guid guid, Collection attrNames) {
+    public Collection getAttributes(
+        java.security.Principal principal,
+        Guid guid,
+        Collection attrNames
+    ) {
         Collection attributes = new ArrayList();
         LDAPConnection conn = null;
         String id = guid.getDn();
@@ -423,22 +431,21 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Add entry to the server
+     * iPlanet-PUBLIC-METHOD
+     * Adds entry to the server.
      * 
-     * @param id
-     *            distinguished name
-     * @param attrSet
-     *            attribute set containing name/value pairs
-     * @exception AccessRightsException
-     *                insufficient access
-     * @exception EntryAlreadyExistsException
-     *                the entry already exists
-     * @exception UMSException
-     *                Fail to add entry iPlanet-PUBLIC-METHOD
+     * @param principal Authenticated Principal.
+     * @param guid Distinguished name.
+     * @param attrSet attribute set containing name/value pairs.
+     * @exception AccessRightsException if insufficient access>
+     * @exception EntryAlreadyExistsException if the entry already exists.
+     * @exception UMSException if fail to add entry.
      */
-    public void addEntry(java.security.Principal principal, Guid guid,
-            AttrSet attrSet) throws AccessRightsException,
-            EntryAlreadyExistsException, UMSException {
+    public void addEntry(
+        java.security.Principal principal,
+        Guid guid,
+        AttrSet attrSet
+    ) throws AccessRightsException, EntryAlreadyExistsException, UMSException {
         LDAPConnection conn = null;
         String id = guid.getDn();
 
@@ -572,20 +579,21 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Read an ldap entry
+     * iPlanet-PUBLIC-METHOD
+     * Reads an ldap entry.
      * 
-     * @param guid
-     *            globally unique identifier for the entry
-     * @param attributes
-     *            to read
-     * @return an attribute set representing the entry in ldap
-     * @exception EntryNotFoundException
-     *                if the entry is not found
-     * @exception UMSException
-     *                Fail to read the entry iPlanet-PUBLIC-METHOD
+     * @param principal Authentication Principal.
+     * @param guid Globally unique identifier for the entry.
+     * @param attrNames Attributes to read.
+     * @return an attribute set representing the entry in LDAP.
+     * @exception EntryNotFoundException if the entry is not found.
+     * @exception UMSException if fail to read the entry.
      */
-    public AttrSet read(java.security.Principal principal, Guid guid,
-            String[] attrNames) throws EntryNotFoundException, UMSException {
+    public AttrSet read(
+        java.security.Principal principal,
+        Guid guid,
+        String attrNames[]
+    ) throws EntryNotFoundException, UMSException {
         LDAPConnection conn = null;
         String id = guid.getDn();
         LDAPEntry entry = null;
@@ -677,22 +685,21 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Modify an ldap entry
+     * iPlanet-PUBLIC-METHOD
+     * Modifies an ldap entry.
      * 
-     * @param id
-     *            globally unique identifier for the entry
-     * @param modSet
-     *            set of modifications for the entry
-     * @exception AccessRightsException
-     *                insufficient access
-     * @exception EntryNotFoundException
-     *                if the entry is not found
-     * @exception UMSException
-     *                failure iPlanet-PUBLIC-METHOD
+     * @param principal Authentication Principal.
+     * @param guid globally unique identifier for the entry.
+     * @param modSet Set of modifications for the entry.
+     * @exception AccessRightsException if insufficient access
+     * @exception EntryNotFoundException if the entry is not found.
+     * @exception UMSException if failure
      */
-    public void modify(java.security.Principal principal, Guid guid,
-            ModSet modSet) throws AccessRightsException,
-            EntryNotFoundException, UMSException {
+    public void modify(
+        java.security.Principal principal,
+        Guid guid,
+        ModSet modSet
+    ) throws AccessRightsException, EntryNotFoundException, UMSException {
         LDAPConnection conn = null;
         String id = guid.getDn();
 
@@ -738,20 +745,21 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Adds value for an attribute and saves the change in the database.
      * 
-     * @param id
-     *            the id of the entry to which to add the attribute value
-     * @param name
-     *            name of the attribute to which value is being added
-     * @param value
-     *            value to be added to the attribute
-     * @throws UMSException
-     *             if there is any error while adding the value
-     *             iPlanet-PUBLIC-METHOD
+     * @param principal Authenticated Principal.
+     * @param guid ID of the entry to which to add the attribute value.
+     * @param name name of the attribute to which value is being added.
+     * @param value Value to be added to the attribute.
+     * @throws UMSException if there is any error while adding the value
      */
-    public void addAttributeValue(java.security.Principal principal, Guid guid,
-            String name, String value) throws UMSException {
+    public void addAttributeValue(
+        java.security.Principal principal,
+        Guid guid,
+        String name,
+        String value
+    ) throws UMSException {
         ModSet modSet = new ModSet();
         modSet.add(LDAPModification.ADD, new LDAPAttribute(name, value));
 
@@ -760,17 +768,14 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Removes value for an attribute and saves the change in the database.
      * 
-     * @param id
-     *            the id of the entry from which to remove the attribute value
-     * @param name
-     *            name of the attribute from which value is being removed
-     * @param value
-     *            value to be removed from the attribute
-     * @throws UMSException
-     *             if there is any error while removing the value
-     *             iPlanet-PUBLIC-METHOD
+     * @param principal Authenticated Principal.
+     * @param guid the id of the entry from which to remove the attribute value.
+     * @param name Name of the attribute from which value is being removed
+     * @param value Value to be removed from the attribute.
+     * @throws UMSException if there is any error while removing the value.
      */
     public void removeAttributeValue(java.security.Principal principal,
             Guid guid, String name, String value) throws UMSException {
@@ -840,29 +845,31 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * Perform synchronous search based on specified ldap filter. This is low
+     * iPlanet-PUBLIC-METHOD
+     * Performs synchronous search based on specified ldap filter. This is low
      * level API which assumes caller knows how to construct a data store filer.
      * 
-     * @param id
-     *            globally unique identifier for the entry
-     * @param scope
-     *            scope can be either SCOPE_ONE, SCOPE_SUB or SCOPE_BASE
-     * @param searchFilter
-     *            search filter for this search
-     * @param attrNames
-     *            attribute name for retrieving
-     * @param attrsOnly
-     *            if true, returns the names but not the values of the
-     *            attributes found.
-     * @exception UMSException
-     *                failure
-     * @exception InvalidSearchFilterException
-     *                failure iPlanet-PUBLIC-METHOD
+     * @param principal Authenticated Principal.
+     * @param guid Unique identifier for the entry.
+     * @param scope Scope can be either <code>SCOPE_ONE</code>,
+     *        <code>SCOPE_SUB</code> or <code>SCOPE_BASE</code>.
+     * @param searchFilter Search filter for this search.
+     * @param attrNames Attribute name for retrieving.
+     * @param attrOnly if true, returns the names but not the values of the
+     *        attributes found.
+     * @param searchControl Search Control.
+     * @exception UMSException if failure.
+     * @exception InvalidSearchFilterException if failure
      */
-    public SearchResults search(java.security.Principal principal, Guid guid,
-            int scope, String searchFilter, String[] attrNames,
-            boolean attrOnly, SearchControl searchControl)
-            throws InvalidSearchFilterException, UMSException {
+    public SearchResults search(
+        java.security.Principal principal,
+        Guid guid,
+        int scope,
+        String searchFilter,
+        String attrNames[],
+        boolean attrOnly,
+        SearchControl searchControl
+    ) throws InvalidSearchFilterException, UMSException {
         LDAPConnection conn = null;
         String id = guid.getDn();
 
@@ -991,24 +998,26 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Perform synchronous search based on specified ldap filter. This is low
      * level API which assumes caller knows how to construct a data store filer.
      * 
-     * @param id
-     *            globally unique identifier for the entry
-     * @param scope
-     *            scope can be either SCOPE_ONE, SCOPE_SUB, SCOBE_BASE
-     * @param searchFilter
-     *            search filter for this search
-     * @exception UMSException
-     *                failure
-     * @exception InvalidSearchFilterException
-     *                failure iPlanet-PUBLIC-METHOD
+     * @param principal Authenticated Principal.
+     * @param guid Unique identifier for the entry
+     * @param scope Scope can be either <code>SCOPE_ONE</code>,
+     *        <code>SCOPE_SUB</code>, <code>SCOBE_BASE</code>
+     * @param searchFilter Search filter for this search.
+     * @param searchControl Search Control.
+     * @exception UMSException if failure.
+     * @exception InvalidSearchFilterException if failure.
      */
-    public SearchResults searchIDs(java.security.Principal principal,
-            Guid guid, int scope, String searchFilter,
-            SearchControl searchControl) throws InvalidSearchFilterException,
-            UMSException {
+    public SearchResults searchIDs(
+        java.security.Principal principal,
+        Guid guid,
+        int scope,
+        String searchFilter,
+        SearchControl searchControl
+    ) throws InvalidSearchFilterException, UMSException {
         // TODO: support LDAP referral
         String attrNames[] = { "objectclass" };
         return search(principal, guid, scope, searchFilter, attrNames, false,

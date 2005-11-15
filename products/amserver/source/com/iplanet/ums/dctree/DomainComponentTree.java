@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainComponentTree.java,v 1.1 2005-11-01 00:30:45 arvindp Exp $
+ * $Id: DomainComponentTree.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,19 +82,16 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor given an authenticated prinicipal
-     * and an identification of the root of the dc index tree
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructs a <code>DomainComponentTree</code> with an authenticated
+     * prinicipal and an identification of the root of the dc index tree.
      * 
-     * @param principal
-     *            Authenticated principal with priviledge for accessing the
-     *            domain component index tree (dctree)
-     * @param dcRoot
-     *            Identification of root, a DN, of the dc tree such as
-     *            "o=internet"
-     * @throws InvalidDCRootException
-     *             for invalid root specification
-     * @throws UMSException
-     *             for other read error
+     * @param token Single sign on token of authenticated principal with
+     *        priviledge for accessing the domain component index tree (dctree).
+     * @param dcRoot Identification of root, a DN, of the dc tree such as
+     *        <code>o=internet</code>.
+     * @throws InvalidDCRootException if invalid root specification.
+     * @throws UMSException if other read error occurred.
      */
     public DomainComponentTree(SSOToken token, Guid dcRoot)
             throws InvalidDCRootException, UMSException {
@@ -290,19 +287,14 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Set the domain mapping so that the dc entry maps to
-     * an organization in the convergence tree
+     * iPlanet-PUBLIC-METHOD
+     * Set the domain mapping so that the dc entry maps to
+     * an organization in the convergence tree.
      * 
-     * @param domain
-     *            Virtual domain name
-     * @param orgGUID
-     *            Identifiication of Organization entry to be mapped from dctree
-     *            to organization DIT (the convergence tree in nortel spec)
-     * @throws DomainNotFoundException
-     *             if domain id not defined
-     * @throws UMSException
-     *             upon write failure
-     * 
+     * @param domain Virtual domain name.
+     * @param orgGuid Identifiication of Organization entry to be mapped from
+     *        dctree to organization DIT (the convergence tree in nortel spec).
+     * @throws UMSException if write failed.
      */
     public void setDomainMapping(String domain, Guid orgGuid)
             throws UMSException {

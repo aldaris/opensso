@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.2 2005-11-04 18:53:46 veiming Exp $
+ * $Id: SessionUtils.java,v 1.3 2005-11-15 04:10:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -196,16 +196,17 @@ public class SessionUtils {
      * <p>
      * 
      * @param ssoToken Single Sign Token which contains the session string.
-     * @param url the URL to be encoded
-     * @param encodingScheme possible values are <code>QUERY</code>,
-     *        <code>SLASH</code>, <code>SEMICOLON</code>.
+     * @param url the URL to be encoded.
      * @param escape <code>true</code> to escape ampersand when appending the
      *        Single Sign On Token ID to request query string.
      * @return URL encoded with cookie Value in the query string.
      * @exception SSOException if URL cannot be encoded.
      */
-    public static String encodeURL(SSOToken ssoToken, String url, 
-            boolean escape) throws SSOException 
+    public static String encodeURL(
+        SSOToken ssoToken,
+        String url,
+        boolean escape
+    ) throws SSOException 
     {
         String encodedURL = url;
         try {
@@ -317,16 +318,13 @@ public class SessionUtils {
     }
 
     /**
-     * Helper method to deserialize and decrypt objects retrieved from the
-     * repository
+     * Deserializes and decrypts objects retrieved from the repository.
      * 
-     * @param blob
-     *            byte array containing serialized and encrypted object value
-     * @return retrieved object
-     * @throws Exception
-     *             if anything goes wrong
+     * @param blob Byte array containing serialized and encrypted object value.
+     * @return retrieved object.
+     * @throws Exception if anything goes wrong.
      */
-    public static Object decode(final byte[] blob) throws Exception {
+    public static Object decode(final byte blob[]) throws Exception {
         byte[] decryptedBlob;
         if (SESSION_ENCRYPTION) {
             decryptedBlob = (byte[]) AccessController

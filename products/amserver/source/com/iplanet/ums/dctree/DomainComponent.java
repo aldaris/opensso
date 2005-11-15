@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainComponent.java,v 1.1 2005-11-01 00:30:45 arvindp Exp $
+ * $Id: DomainComponent.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,12 +97,13 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the mapping of a dc entry in the dctree to an
-     * organization or OrganizationalUnit entry in the convergence DIT, the
-     * directory tree hosting all the actual entries
+     * iPlanet-PUBLIC-METHOD
+     * Sets the mapping of a dc entry in the dctree to an
+     * organization or organizational unit entry in the convergence DIT, the
+     * directory tree hosting all the actual entries.
      * 
-     * @param orgGUID
-     *            Identifier for organization
+     * @param orgGuid Identifier for organization.
+     * @throws UMSException if mapping of dc entry cannot be set.
      */
     public void setAssociatedOrganization(Guid orgGuid) throws UMSException {
         if (orgGuid == null || orgGuid.getDn().length() == 0) {

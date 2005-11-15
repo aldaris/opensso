@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManagedRole.java,v 1.1 2005-11-01 00:30:38 arvindp Exp $
+ * $Id: ManagedRole.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,14 +157,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Adds a member to the role. The change is saved to persistent storage.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
-     * @param guid
-     *            Globally unique identifier for the member to be added
-     * @throws UMSException
-     *             on failure to save to persistent storage
+     * @param guid Globally unique identifier for the member to be added.
+     * @throws UMSException if fail to save to persistent storage.
      */
     public void addMember(Guid guid) throws UMSException {
 
@@ -280,16 +277,13 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     }
 
     /**
-     * Gets the members of the group meeting the filter condition.
-     * 
      * iPlanet-PUBLIC-METHOD
+     * Returns the members of the group meeting the filter condition.
      * 
-     * @param Filter
-     *            an LDAP filter to select a subset of members
-     * @return SearchResults that can be used to iterate over the unique
-     *         identifiers for members of the role
-     * @throws UMSException
-     *             on failure to search
+     * @param filter LDAP filter to select a subset of members
+     * @return <code>SearchResults</code> that can be used to iterate over the
+     *         unique identifiers for members of the role.
+     * @throws UMSException if fail to search.
      */
     public SearchResults getMemberIDs(String filter) throws UMSException {
         String[] attributesToGet = { "objectclass" };

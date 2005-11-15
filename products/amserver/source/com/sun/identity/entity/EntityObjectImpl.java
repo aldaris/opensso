@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityObjectImpl.java,v 1.1 2005-11-01 00:31:05 arvindp Exp $
+ * $Id: EntityObjectImpl.java,v 1.2 2005-11-15 04:10:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,25 +111,23 @@ public class EntityObjectImpl implements EntityObjectIF {
     /**
      * Deletes entities.
      * 
-     * @param ssotoken
-     *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of this entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param ssoToken User's Single Sign On Token.
+     * @param entityName Name of this entity. example
+     *        <code>cn=websphereAgent</code>.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityLocation Location of the entity creation. example
+     *        <code>www.abc.com</code>.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
-    public void deleteEntity(String ssoToken, String entityName,
-            String entityType, String entityLocation) throws EntityException,
-            SSOException {
-
+    public void deleteEntity(
+            String ssoToken,
+            String entityName,
+            String entityType,
+            String entityLocation
+    ) throws EntityException, SSOException {
         initializeObject(ssoToken, entityLocation);
         Set entityNameSet = new HashSet();
         try {
@@ -158,26 +156,25 @@ public class EntityObjectImpl implements EntityObjectIF {
      * Returns the entity object for each entity given the entityType and
      * entityName(s) in that particular organization.
      * 
-     * @param ssotoken
-     *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of this entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity objects.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param ssoToken User's Single Sign On Token.
+     * @param entityName Name of this entity. example
+     *        <code>cn=websphereAgent</code>.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityLocation Location of the entity creation. example
+     *        <code>www.abc.com</code>.
+     * @return Set of Entity objects.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
+     * @throws RemoteException
      */
-    public Map getEntity(String ssoToken, String entityName, String entityType,
-            String entityLocation) throws EntityException, SSOException,
-            RemoteException {
-
+    public Map getEntity(
+            String ssoToken,
+            String entityName,
+            String entityType,
+            String entityLocation
+    ) throws EntityException, SSOException, RemoteException {
         initializeObject(ssoToken, entityLocation);
         Map entityMap = new HashMap();
         return entityMap;
@@ -187,26 +184,24 @@ public class EntityObjectImpl implements EntityObjectIF {
      * Returns a set of Entity Names given the Entity Type for that particular
      * organization.
      * 
-     * @param ssotoken
-     *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of this entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param ssoToken User's Single Sign On Token.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityLocation Location of the entity creation. example
+     *        <code>www.abc.com</code>.
+     * @param entityFilter
+     * @return Set of Entity Names.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
+     * @throws RemoteException
      */
-    public Set getEntityNames(String ssoToken, String entityType,
-            String entityLocation, String entityFilter) throws EntityException,
-            SSOException, RemoteException {
-
+    public Set getEntityNames(
+            String ssoToken,
+            String entityType,
+            String entityLocation,
+            String entityFilter
+    ) throws EntityException, SSOException, RemoteException {
         initializeObject(ssoToken, entityLocation);
         Set entitySet = new HashSet();
         return entitySet;
@@ -216,26 +211,25 @@ public class EntityObjectImpl implements EntityObjectIF {
      * Sets or replaces attribute values with the new values supplied and Stores
      * the changes to directory server.
      * 
-     * @param ssotoken
-     *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of this entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param ssoToken User's Single Sign Token.
+     * @param entityName Name of this entity. example
+     *        <code>cn=websphereAgent</code>
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityLocation Location of the entity creation. example 
+     *        <code>www.abc.com</code>.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
+     * @throws RemoteException
      */
-    public void modifyEntity(String ssoToken, String entityName,
-            String entityType, String entityLocation, Map attributes)
-            throws EntityException, SSOException, RemoteException {
-
+    public void modifyEntity(
+            String ssoToken,
+            String entityName,
+            String entityType,
+            String entityLocation,
+            Map attributes
+    ) throws EntityException, SSOException, RemoteException {
         initializeObject(ssoToken, entityLocation);
         AMEntity amEntity = getAMEntity(ssoToken, entityName, entityType,
                 entityLocation);

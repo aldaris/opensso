@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.1 2005-11-01 00:30:57 arvindp Exp $
+ * $Id: ISLocaleContext.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -190,14 +190,14 @@ public class ISLocaleContext {
     }
 
     /**
-     * Set locale to given level
+     * Set locale to given level.
      * 
-     * @param int
-     *            level - Possible values are OS_LOCALE,PLATFORM_LOCALE
-     *            AUTH_LOCALE, ACCEPT_LOCALE, USER_PREFERRED_LOCALE, URL_LOCALE
-     * @param String
-     *            loc - locale value in string ex en, ja_JP Warning: This method
-     *            overrides priority lookup mechanism.
+     * @param level Possible values are <code>OS_LOCALE,PLATFORM_LOCALE</code>
+     *        <code>AUTH_LOCALE</code>, <code>ACCEPT_LOCALE</code>,
+     *        <code>USER_PREFERRED_LOCALE</code>, <code>URL_LOCALE</code>.
+     * @param loc Locale value in string example <code>en</code>,
+     *        <code>ja_JP</ocde>. Warning: This method overrides priority
+     *        lookup mechanism.
      * 
      */
     public void setLocale(int level, String loc) {
@@ -207,13 +207,12 @@ public class ISLocaleContext {
     }
 
     /**
-     * Set locale to given level
+     * Set locale to given level.
      * 
-     * @param int
-     *            level - Possible values are OS_LOCALE,PLATFORM_LOCALE
-     *            AUTH_LOCALE, ACCEPT_LOCALE, USER_PREFERRED_LOCALE, URL_LOCALE
-     * @param java.util.Locale
-     *            loc - locale value
+     * @param level Possible values are <code>OS_LOCALE,PLATFORM_LOCALE</code>
+     *        <code>AUTH_LOCALE</code>, <code>ACCEPT_LOCALE</code>,
+     *        <code>USER_PREFERRED_LOCALE</code>, <code>URL_LOCALE</code>.
+     * @param loc Locale value.
      */
     public void setLocale(int level, java.util.Locale loc) {
         if (level < 0 || level > URL_LOCALE) {
@@ -227,14 +226,12 @@ public class ISLocaleContext {
     }
 
     /**
-     * Set locale based on HTTPServletRequest
+     * Set locale based on HTTP Servlet Request.
      * 
-     * @param HttpServletRequest
-     *            req Analyze HttpHeader and look for URL parameter called
-     *            locale . If it is set, it takes high precedence.Else look for
-     *            accept-language header and set the locale if it is present.
-     * @param java.util.Locale
-     *            loc - locale value
+     * @param request Analyze HttpHeader and look for URL parameter called
+     *        locale . If it is set, it takes high precedence. Else look for
+     *        <code>accept-language</code> header and set the locale if it
+     *        is present.
      */
     public void setLocale(HttpServletRequest request) {
         if (request != null) {
@@ -264,20 +261,22 @@ public class ISLocaleContext {
     }
 
     /**
-     * Set the current locale level to USER_LOCALE and sets the value if current
-     * locale level is greater than USER_LOCALE, this setting will be ignored
+     * Set the current locale level to <code>USER_LOCALE</code> and sets the
+     * value if current locale level is greater than <code>USER_LOCALE</code>,
+     * this setting will be ignored.
      * 
-     * @param locale
+     * @param loc Locale.
      */
     public void setUserLocale(java.util.Locale loc) {
         setLocale(USER_PREFERRED_LOCALE, loc);
     }
 
     /**
-     * Set the current locale level to USER_LOCALE and sets the value the locale
-     * value is separated by underscore character ex:en_US
+     * Set the current locale level to <code>USER_LOCALE</code> and sets the
+     * value the locale value is separated by underscore character
+     * <code>ex:en_US</code>.
      * 
-     * @param locale
+     * @param loc Locale.
      */
     public void setUserLocale(String loc) {
         if (loc == null || loc.length() == 0) {
@@ -287,9 +286,9 @@ public class ISLocaleContext {
     }
 
     /**
-     * locale value that has got highest prioirty
+     * Returns Locale value that has got highest prioirty
      * 
-     * @return locale
+     * @return locale.
      */
     public java.util.Locale getLocale() {
         return locale;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DynamicGroup.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: DynamicGroup.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,7 @@ import com.iplanet.services.ldap.ModSet;
 import com.iplanet.services.util.I18n;
 
 /**
- * Represents a dynnamic group entry.
+ * Represents a dynamic group entry.
  */
 public class DynamicGroup extends PersistentObject implements
         IDynamicMembership {
@@ -51,7 +51,7 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     protected DynamicGroup() {
     }
@@ -59,12 +59,9 @@ public class DynamicGroup extends PersistentObject implements
     /**
      * Constructs a group object from an ID by reading from persistent storage.
      * 
-     * @param session
-     *            authenticated session
-     * @param guid
-     *            globally unique identifier for the group entry
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param session Authenticated session.
+     * @param guid globally unique identifier for the group entry.
+     * @exception UMSException if fail to instantiate from persistent storage.
      * @deprecated
      */
     DynamicGroup(Principal principal, Guid guid) throws UMSException {
@@ -73,15 +70,14 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * Constructs a DynamicGroup in memory using the default registered template
-     * for DynamicGroup. This is an in-memory representation of a new object and
-     * one needs to call the save method to save this new object to persistent
-     * storage.
+     * Constructs a <code>DynamicGroup</code> in memory using the default
+     * registered template for <code>DynamicGroup</code>. This is an
+     * in-memory representation of a new object and one needs to call the
+     * <code>save</code> method to save this new object to persistent storage.
      * 
-     * @param attrSet
-     *            Attribute/value set, which should contain memberUrl
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param attrSet Attribute/value set, which should contain
+     *        <code>memberUrl</code>.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     DynamicGroup(AttrSet attrSet) throws UMSException {
         this(TemplateManager.getTemplateManager().getCreationTemplate(_class,
@@ -89,17 +85,16 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs a DynamicGroup in memory with a
-     * given template for DynamicGroup. This is an in-memory representation of a
-     * new object; the save method must be called to save this new object to
-     * persistent storage.
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructs a <code>DynamicGroup</code> in memory with a given template
+     * for <code>DynamicGroup</code>. This is an in-memory representation of a
+     * new object; the <code>save</code> method must be called to save this
+     * new object to persistent storage.
      * 
-     * @param template
-     *            Template for creating a group
-     * @param attrSet
-     *            Attribute/value set, which should contain memberUrl
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param template Template for creating a group.
+     * @param attrSet Attribute/value set, which should contain
+     *        <code>memberUrl</code>.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     public DynamicGroup(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -107,23 +102,18 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * Constructs a DynamicGroup in memory using the default registered template
-     * for DynamicGroup. This is an in memory representation of a new object and
-     * the save method must be called to save this new object to persistent
-     * storage.
+     * Constructs a <code>DynamicGroup</code> in memory using the default
+     * registered template for <code>DynamicGroup</code>. This is an in memory
+     * representation of a new object and the <code>save</code> method must be
+     * called to save this new object to persistent storage.
      * 
-     * @param attrSet
-     *            Attribute/value set, which should not contain memberUrl; any
-     *            values of memberUrl will be overwritten by the explicit search
-     *            criteria arguments.
-     * @param base
-     *            Search base for evaluating members of the group
-     * @param filter
-     *            Search filter for evaluating members of the group
-     * @param scope
-     *            Search scope for evaluating members of the group
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param attrSet Attribute/value set, which should not contain
+     *        <code>memberUrl</code>; any values of <code>memberUrl</code> will
+     *        be overwritten by the explicit search criteria arguments.
+     * @param base Search base for evaluating members of the group.
+     * @param filter Search filter for evaluating members of the group.
+     * @param scope Search scope for evaluating members of the group.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     DynamicGroup(AttrSet attrSet, Guid baseGuid, String filter, int scope)
             throws UMSException {
@@ -132,30 +122,30 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs a DynamicGroup in memory given a
-     * template for DynamicGroup. This is an in-memory representation of a new
-     * object and the save method must be called to save this new object to
-     * persistent storage.
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructs a <code>DynamicGroup</code> in memory given a template for
+     * <code>DynamicGroup</code>. This is an in-memory representation of a new
+     * object and the <code>save</code> method must be called to save this new
+     * object to persistent storage.
      * 
-     * @param template
-     *            Template for creating a group
-     * @param attrSet
-     *            Attribute/value set, which should not contain memberUrl; any
-     *            values of memberUrl will be overwritten by the explicit search
-     *            criteria arguments.
-     * @param base
-     *            Search base for evaluating members of the group
-     * @param filter
-     *            Search filter for evaluating members of the group
-     * @param scope
-     *            Search scope for evaluating members of the group has to be
-     *            LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
+     * @param template Template for creating a group.
+     * @param attrSet Attribute/value set, which should not contain member Url;
+     *        any values of memberUrl will be overwritten by the explicit search
+     *        criteria arguments.
+     * @param baseGuid Search base for evaluating members of the group.
+     * @param filter Search filter for evaluating members of the group.
+     * @param scope Search scope for evaluating members of the group has to be
+     *        <code>LDAPv2.SCOPE_ONE</code> or <code>LDAPv2.SCOPE_SUB</code>.
      * 
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
-    public DynamicGroup(CreationTemplate template, AttrSet attrSet,
-            Guid baseGuid, String filter, int scope) throws UMSException {
+    public DynamicGroup(
+        CreationTemplate template,
+        AttrSet attrSet,
+        Guid baseGuid,
+        String filter,
+        int scope
+    ) throws UMSException {
         super(template, attrSet);
         try {
             setUrl(baseGuid, filter, scope);
@@ -166,11 +156,10 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the search filter used to evaluate this
-     * dynamic group.
+     * iPlanet-PUBLIC-METHOD
+     * Sets the search filter used to evaluate this dynamic group.
      * 
-     * @param filter
-     *            Search filter for evaluating members of the group
+     * @param filter Search filter for evaluating members of the group.
      */
     public void setSearchFilter(String filter) {
         LDAPUrl url = getUrl();
@@ -187,23 +176,22 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the search filter used to evaluate this
-     * dynamic group.
+     * iPlanet-PUBLIC-METHOD
+     * Returns the search filter used to evaluate this dynamic group.
      * 
      * @return Search filter for evaluating members of the group the scope in
-     *         the filter has to be LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
-     * 
+     *         the filter has to be <code>LDAPv2.SCOPE_ONE</code> or
+     *         <code>LDAPv2.SCOPE_SUB</code>.
      */
     public String getSearchFilter() {
         return getUrl().getFilter();
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the search base used to evaluate this dynamic
-     * group.
+     * iPlanet-PUBLIC-METHOD
+     * Sets the search base used to evaluate this dynamic group.
      * 
-     * @param base
-     *            Search base for evaluating members of the group
+     * @param baseGuid Search base for evaluating members of the group.
      */
     public void setSearchBase(Guid baseGuid) {
         LDAPUrl url = getUrl();
@@ -219,22 +207,22 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the search base used to evaluate this dynamic
-     * group.
+     * iPlanet-PUBLIC-METHOD
+     * Returns the search base used to evaluate this dynamic group.
      * 
-     * @return Search base for evaluating members of the group
+     * @return Search base for evaluating members of the group.
      */
     public Guid getSearchBase() {
         return new Guid(getUrl().getDN());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the search scope used to evaluate this dynamic
-     * group.
+     * iPlanet-PUBLIC-METHOD
+     * Sets the search scope used to evaluate this dynamic group.
      * 
-     * @param scope
-     *            Search scope for evaluating members of the group. Use one of
-     *            the search scope SCOPE_BASE, SCOPE_ONE, or SCOPE_SUB.
+     * @param scope Search scope for evaluating members of the group. Use one of
+     *        the search scope <code>SCOPE_BASE</code>,
+     *        <code>SCOPE_ONE</code>, or <code>SCOPE_SUB</code>.
      */
     public void setSearchScope(int scope) {
         LDAPUrl url = getUrl();
@@ -250,10 +238,10 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the search scope used to evaluate this dynamic
-     * group.
+     * iPlanet-PUBLIC-METHOD
+     * Returns the search scope used to evaluate this dynamic group.
      * 
-     * @return Search scope for evaluating members of the group
+     * @return Search scope for evaluating members of the group.
      */
     public int getSearchScope() {
         return getUrl().getScope();
@@ -264,13 +252,10 @@ public class DynamicGroup extends PersistentObject implements
      * and attribute to return are present in the LDAP URL. Only search base,
      * filter and scope are given.
      * 
-     * @param base
-     *            Search Base DN in the LDAP URL.
-     * @param filter
-     *            Search filter in LDAP URL.
-     * @param scope
-     *            Search scope in LDAP URL.
-     * @return String representation of LDAP URL.
+     * @param base Search Base DN in the LDAP URL.
+     * @param filter Search filter in LDAP URL.
+     * @param scope Search scope in LDAP URL.
+     * @return LDAP URL.
      */
     protected String toUrlStr(String base, String filter, int scope) {
         StringBuffer urlBuf = new StringBuffer();
@@ -302,12 +287,9 @@ public class DynamicGroup extends PersistentObject implements
      * Creates a new search definition; the change is not persistent until
      * save() is called.
      * 
-     * @param base
-     *            Search base for evaluating members of the group
-     * @param filter
-     *            Search filter for evaluating members of the group
-     * @param scope
-     *            Search scope for evaluating members of the group
+     * @param baseGuid Search base for evaluating members of the group.
+     * @param filter Search filter for evaluating members of the group.
+     * @param scope Search scope for evaluating members of the group.
      */
     protected void setUrl(Guid baseGuid, String filter, int scope) {
         // Only valid scope is "sub" and "one"
@@ -334,7 +316,7 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * Gets the native LDAP URL used to evaluate this dynamic group.
+     * Returns the native LDAP URL used to evaluate this dynamic group.
      * 
      * @return LDAP URL for evaluating members of the group
      */
@@ -366,9 +348,9 @@ public class DynamicGroup extends PersistentObject implements
     /**
      * Sets the native LDAP URL used to evaluate this dynamic group.
      * 
-     * @param url
-     *            LDAP URL for evaluating members of the group search scope in
-     *            the url has to be LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
+     * @param url LDAP URL for evaluating members of the group search scope in
+     *        the url has to be <code>LDAPv2.SCOPE_ONE</code> or
+     *        <code>LDAPv2.SCOPE_SUB</code>.
      */
     protected void setUrl(LDAPUrl url) {
         String ldapurl = url.toString();
@@ -392,13 +374,11 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * Gets the members of the group.
+     * Returns the members of the group.
      * 
-     * @param attributes
-     *            Attributes to return
-     * @return Iterator for unique identifiers for members of the group
-     * @exception UMSException
-     *                on failure to search
+     * @param attributes Attributes to return.
+     * @return Iterator for unique identifiers for members of the group.
+     * @exception UMSException if fail to search.
      */
     protected SearchResults getMemberIDs(String[] attributes)
             throws UMSException {
@@ -407,11 +387,11 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the members of the group.
+     * iPlanet-PUBLIC-METHOD
+     * Returns the members of the group.
      * 
-     * @return Iterator for unique identifiers for members of the group
-     * @exception UMSException
-     *                on failure to search
+     * @return Iterator for unique identifiers for members of the group.
+     * @exception UMSException if fail to search.
      */
     public SearchResults getMemberIDs() throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -419,11 +399,11 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the member count.
+     * iPlanet-PUBLIC-METHOD
+     * Returns the member count.
      * 
-     * @return Number of members of the group
-     * @exception UMSException
-     *                on failure to search
+     * @return Number of members of the group.
+     * @exception UMSException if fail to search.
      */
     public int getMemberCount() throws UMSException {
         int count = 0;
@@ -437,13 +417,12 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets a member given an index (zero-based).
+     * iPlanet-PUBLIC-METHOD
+     * Returns a member given an index (zero-based).
      * 
-     * @param index
-     *            Zero-based index into the group container
-     * @return Unique identifier for a member
-     * @exception UMSException
-     *                on failure to search
+     * @param index Zero-based index into the group container.
+     * @return Unique identifier for a member.
+     * @exception UMSException if fail to search.
      */
     public Guid getMemberIDAt(int index) throws UMSException {
         if (index < 0) {
@@ -467,13 +446,13 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks if a given identifier is a member of the
+     * iPlanet-PUBLIC-METHOD
+     * Returns <code>true</code> if a given identifier is a member of the
      * group.
      * 
-     * @param guid
-     *            Identity of member to be checked for membership
-     * @return <code>true if it is a member
-     * @exception       UMSException on failure to evaluate group
+     * @param guid Identity of member to be checked for membership.
+     * @return <code>true</code> if it is a member.
+     * @exception UMSException if fail to evaluate group
      */
     public boolean hasMember(Guid guid) throws UMSException {
         String filter = getSearchFilter();

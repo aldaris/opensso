@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QCharset.java,v 1.1 2005-11-01 00:29:40 arvindp Exp $
+ * $Id: QCharset.java,v 1.2 2005-11-15 04:10:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,11 +39,12 @@ public class QCharset implements Comparable {
     private float qFactor;
 
     /**
-     * @param name -
-     *            Name of the charset
-     * @param float
-     *            q - Q factor to express preference. 0.0 < q < 1.0 Constructs
-     *            new QCharset set object with charset name and q value
+     * Construct a <code>QCharset</code> object.
+     *
+     * @param name Name of the charset.
+     * @param q Q factor to express preference. 0.0 < q < 1.0.
+     *        Constructs new <code>QCharset</code> set object with charset
+     *        name and q value.
      */
     public QCharset(String name, float q) {
         if (name == null) {
@@ -77,10 +78,12 @@ public class QCharset implements Comparable {
     }
 
     /**
-     * @param object
-     *            o - QCharset type object
-     * @return -1,0,1 based on q value returns -1, 0, 1. If q value is same uses
-     *         string.compareTo method
+     * Returns <code>1</code> if <code>o1</code>'s q value is higher.
+     * Returns <code>-1</code> if <code>o1</code>'s q value is lower.
+     * Returns <code>0</code> if <code>o1</code>'s q value is the same.
+     *
+     * @param o1 <code>QCharset</code> type object.
+     * @return <code>-1,0,1</code> based on q value.
      */
     public int compareTo(Object o1) {
         QCharset q1 = (QCharset) o1;

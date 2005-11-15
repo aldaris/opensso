@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDynamicMembership.java,v 1.1 2005-11-01 00:30:36 arvindp Exp $
+ * $Id: IDynamicMembership.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,11 +50,10 @@ public interface IDynamicMembership extends IMembership {
     public String getSearchFilter();
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Sets the search base used to evaluate this dynamic group.
      * 
-     * @param base
-     *            search base for evaluating members of the group
-     *            iPlanet-PUBLIC-METHOD
+     * @param baseGuid Search base for evaluating members of the group.
      */
     public void setSearchBase(Guid baseGuid);
 
@@ -67,12 +66,12 @@ public interface IDynamicMembership extends IMembership {
     public Guid getSearchBase();
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Sets the search scope used to evaluate this dynamic group.
      * 
-     * @param base
-     *            search scope for evaluating members of the group. Use one of
-     *            the LDAPv2 scopes: SCOPE_BASE, SCOPE_ONE, or SCOPE_SUB.
-     *            iPlanet-PUBLIC-METHOD
+     * @param scope Search scope for evaluating members of the group. Use one of
+     *        the <code>LDAPv2</code> scopes: <code>SCOPE_BASE</code>,
+     *        <code>SCOPE_ONE</code>, or <code>SCOPE_SUB</code>.
      */
     public void setSearchScope(int scope);
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceLookup.java,v 1.1 2005-11-01 00:30:58 arvindp Exp $
+ * $Id: ResourceLookup.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,13 +49,11 @@ public class ResourceLookup {
     /**
      * Returns the first existing resource in the ordered search paths.
      * 
-     * @param context,
-     *            ServletContext Reference
+     * @param context Servlet Context Reference.
      * @param fileRoot
      * @param locale
-     * @param component
-     * @param clientPath
      * @param orgFilePath
+     * @param clientPath
      * @param filename
      * @param resourceDir
      *            (absolute path of template base directory)

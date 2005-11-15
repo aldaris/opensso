@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPermission.java,v 1.1 2005-11-01 00:31:01 arvindp Exp $
+ * $Id: DelegationPermission.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,20 +79,23 @@ public class DelegationPermission {
      *            The service version in the delegation permission
      * @param configType
      *            The config type in the delegation permission
-     * @param subconfigName
+     * @param subConfigName
      *            The subconfig name in the delegation permission
      * @param actions
      *            The action names in the delegation permission
      * @param extensions
      *            a placeholder for future extensions
-     * 
-     * @throws DelegationException
-     *             if anything is wrong
+     * @throws DelegationException if anything is wrong.
      */
-
-    public DelegationPermission(String orgName, String serviceName,
-            String version, String configType, String subConfigName,
-            Set actions, Map extensions) throws DelegationException {
+    public DelegationPermission(
+            String orgName,
+            String serviceName,
+            String version,
+            String configType,
+            String subConfigName,
+            Set actions,
+            Map extensions
+    ) throws DelegationException {
         setOrganizationName(orgName);
         this.serviceName = serviceName;
         this.serviceVersion = version;

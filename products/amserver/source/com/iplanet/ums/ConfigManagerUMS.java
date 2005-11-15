@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigManagerUMS.java,v 1.1 2005-11-01 00:30:34 arvindp Exp $
+ * $Id: ConfigManagerUMS.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,8 +94,7 @@ public class ConfigManagerUMS implements java.io.Serializable {
     /**
      * Get the singleton instance of Config Manager.
      * 
-     * @return com.iplanet.ums.ConfigManagerUMS - Singleton instance of Config
-     *         Manager
+     * @return Singleton instance of Configuration Manager.
      */
     public static synchronized ConfigManagerUMS getConfigManager()
             throws ConfigManagerException {
@@ -115,16 +114,13 @@ public class ConfigManagerUMS implements java.io.Serializable {
 
     /**
      * Reads the directory server, via SMS APIs for a given org (/b/a) and for a
-     * given template (StructureTemplates, CreationTemplates etc.)
+     * given template (<code>StructureTemplates</code>,
+     * <code>CreationTemplates</code>, etc.).
      * 
-     * @param java.util.String
-     *            org - Name of organization /pepsi/coke
-     * @param java.util.Collection
-     *            c - List of template names
-     * @param java.util.String
-     *            template - Name of template
+     * @param org  Name of organization <code>/pepsi/coke</code>.
+     * @param c  List of template names.
+     * @param template Name of template.
      */
-
     private void loadCache(String org, Set c, String template) {
         //
         // To get all attributes for each component name from DS and store
@@ -231,15 +227,13 @@ public class ConfigManagerUMS implements java.io.Serializable {
     /**
      * CACHE MANAGEMENT for entity and template components.
      * 
-     * @param java.security.Principal
-     *            The principal
-     * @param org
-     *            A string identifier for the cache
+     * @param org A string identifier for the cache.
      * @throws ConfigManagerException
-     *             The default components would be loaded through an XML
-     *             schema/config file ConfigManager has to get the components
-     *             and the related attributes from the directory Server
-     *             initially to store them in the cache by calling the SMS API.
+     *         The default components would be loaded through an XML
+     *         schema/configuration file <code>ConfigManager</code> has to
+     *         get the components and the related attributes from the directory
+     *         Server initially to store them in the cache by calling the SMS
+     *         API.
      */
     void updateCache(String org) throws ConfigManagerException {
 
@@ -462,16 +456,11 @@ public class ConfigManagerUMS implements java.io.Serializable {
     /**
      * Config management.
      * 
-     * @param -
-     *            com.iplanet.ums.Guid - provides the Guid it is looking under
-     * @param -
-     *            java.util.String name - name for which AttrSets are needed
-     * @param -
-     *            java.util.String template - template name (StructureTemplates
-     *            etc.)
-     * @return Object - Returns either an AttrSet or a collection depending on
-     *         caller
-     * 
+     * @param guid GUID it is looking under.
+     * @param name Name for which AttrSets are needed.
+     * @param template Template name (<code>StructureTemplates</code>, etc.)
+     * @return either an <code>AttrSet</code> or a collection depending on
+     *         caller.
      */
     private Object getConfigData(Guid guid, String name, String template,
             int lookup) throws ConfigManagerException {
@@ -645,30 +634,24 @@ public class ConfigManagerUMS implements java.io.Serializable {
     }
 
     /**
-     * This method retrieves the Attribute Key-Value set of a StructureTemplate
+     * Returns the Attribute Key-Value set of a Structure Template
      * entry. It searches for all entries and returns the entry for which the
      * "class" Attribute matches the provided name.
      * 
-     * @param java.security.Principal -
-     *            the principal
-     * @param java.util.String
-     *            guid -specifies the starting location for ConfigManager to
-     *            begin searching for DIT information (for structural entities)
-     * @param java.util.String
-     *            name - is the class name of the object for which the DIT
-     *            information applies.
-     * 
-     * @return java.util.Set Collection of attrSets pertaining to the structure
-     *         templates in the DIT
-     * 
+     * @param guid GUI specifies the starting location for
+     *        <code>ConfigManager</code> to begin searching for DIT
+     *        information (for structural entities).
+     * @param name Class name of the object for which the DIT information
+     *        applies.
+     * @return Collection of attrSets pertaining to the structure
+     *         templates in the DIT.
+     * @throws ConfigManagerException.
      */
     public Set getEntity(Guid guid, String name) throws ConfigManagerException {
-
         Set ret = (Set) getConfigData(guid, name, ENTITY,
                 TemplateManager.SCOPE_ANCESTORS);
-        if (ret == null)
-            return java.util.Collections.EMPTY_SET;
-        return ret;
+        return (ret == null) ?
+            java.util.Collections.EMPTY_SET : ret;
     }
 
     /**
@@ -677,64 +660,64 @@ public class ConfigManagerUMS implements java.io.Serializable {
      */
 
     /**
-     * This method retrieves the Attribute Key-Value set of a Search or Creation
+     * Returns the Attribute Key-Value set of a Search or Creation
      * Template entry. It searches for all entries and returns the entry for
      * which the "name" Attribute matches the provided name.
      * 
-     * @param java.util.String
-     *            guid - specifies the starting location for ConfigManager to
-     *            begin searching for DIT information (for structural entities)
-     * @param java.util.String
-     *            name - is the class name of the object for which the DIT
-     *            information applies.
-     * 
-     * @return com.iplanet.services.ldap.AttrSet value pertaining to the
-     *         structural template in the DIT
-     * 
-     * Usage: AttrSet a = CM.getSearchTemplate(principal, "o=foo,o=org",
-     * "BasicUserSearch"); Converts the guid to /iDA/foo/org(for internal SMS
-     * representation). Looks for Search Template with attribute "name" matching
-     * "BasicUserSearch" and returns the first one matched. If found in cache,
-     * it returns that. Else it looks it up in the Directory through SMS
-     * (traverses the tree if need be)
+     * @param guid Specifies the starting location for
+     *        <code>ConfigManager</code> to begin searching for DIT
+     *        information (for structural entities).
+     * @param templateName Template name.
+     * @param lookup.
+     * @return <code>AttrSet</code> value pertaining to the structural template
+     *         in the DIT. Usage:
+     *         <pre>
+     *         AttrSet a = CM.getSearchTemplateForClass(
+     *              principal, "o=foo,o=org", "BasicUserSearch");
+     *         </pre>
+     *         Converts the guid to <code>/iDA/foo/org</code> (for internal SMS
+     *         representation). Looks for Search Template with attribute "name"
+     *         matching <code>BasicUserSearch</code> and returns the first one
+     *         matched. If found in cache, it returns that. Else it looks it up
+     *         in the Directory through SMS (traverses the tree if need be).
+     * @throws ConfigManagerException.
      */
-
     public AttrSet getSearchTemplate(Guid guid, String templateName, int lookup)
             throws ConfigManagerException {
-        AttrSet ret = (AttrSet) getConfigData(guid, templateName, SEARCH,
+        AttrSet ret = (AttrSet)getConfigData(guid, templateName, SEARCH,
                 lookup);
-        if (ret == null)
-            return com.iplanet.services.ldap.AttrSet.EMPTY_ATTR_SET;
-        return ret;
-
+        return (ret == null) ?
+            com.iplanet.services.ldap.AttrSet.EMPTY_ATTR_SET : ret;
     }
 
     /**
-     * This method retrieves the Attribute Key-Value set of a CreationTemplate
-     * entry. It searches for all entries and returns the entry for which the
+     * Returns Attribute Key-Value set of a <code>CreationTemplate</code> entry.
+     * It searches for all entries and returns the entry for which the
      * "name" Attribute matches the provided name.
      * 
-     * @param java.util.String
-     *            guid - specifies the starting location for ConfigManager to
-     *            begin searching for DIT information (for structural entities)
-     * @param java.util.String
-     *            name - is the class name of the object for which the DIT
-     *            information applies.
-     * 
-     * @return com.iplanet.services.ldap.AttrSet value pertaining to the
-     *         structural template in the DIT
-     * 
-     * Usage: AttrSet a = CM.getCreationTemplate(principal, "o=foo,o=org",
-     * "BasicUser"); Converts the guid to /iDA/foo/org(for internal SMS
-     * representation). Looks for Search Template with attribute "name" matching
-     * "BasicUser" and returns the first one matched. If found in cache, it
-     * returns that. Else it looks it up in the Directory through SMS (traverses
-     * the tree if need be)
+     * @param guid Specifies the starting location for
+     *        <code>ConfigManager</code> to begin searching for DIT information
+     *        (for structural entities).
+     * @param templateName Template name.
+     * @param lookup.
+     * @return <code>AttrSet</code> value pertaining to the structural template
+     *         in the DIT.  Usage:
+     *         <pre>
+     *         AttrSet a = CM.getCreationTemplateForClass(
+     *              principal, "o=foo,o=org", "BasicUser");
+     *         </pre>
+     *         Converts the guid to <code>/iDA/foo/org</code> (for internal SMS
+     *         representation). Looks for Search Template with attribute "name"
+     *         matching <code>BasicUser</code> and returns the first one
+     *         matched. If found in cache, it returns that. Else it looks it
+     *         up in the Directory through SMS (traverses the tree if need be)
+     * @throws ConfigManagerException.
      */
-
-    public AttrSet getCreationTemplate(Guid guid, String templateName,
-            int lookup) throws ConfigManagerException {
-
+    public AttrSet getCreationTemplate(
+        Guid guid,
+        String templateName,
+        int lookup
+    ) throws ConfigManagerException {
         AttrSet ret = (AttrSet) getConfigData(guid, templateName, CREATION,
                 lookup);
         if (ret == null)
@@ -744,75 +727,65 @@ public class ConfigManagerUMS implements java.io.Serializable {
     }
 
     /**
-     * This method returns the Attribusee key-value pair of Creation templates
-     * under the given organization by matching the the "javaclass" attribute to
-     * the name provided. If no templates are listed under the current
+     * Returns the Attribute key-value pair of Creation templates under the
+     * given organization by matching the the <code>javaclass</code> attribute
+     * to the name provided. If no templates are listed under the current
      * organization then it traverses the org tree till it finds one, or returns
      * null.
      * 
-     * @param java.util.String
-     *            guid - Organization DN
-     * @param java.util.String
-     *            className - Name of javaclass Attribute to be matched.
-     * @return com.iplanet.services.ldap.AttrSet
-     * 
-     * Usage: AttrSet a = CM.getCreationTemplate(principal, "o=foo,o=org",
-     * "com.iplanet.ums.BasicUser"); Converts the guid to /iDA/org. Looks under
-     * CreationTemplates/templates/org for nodes where attribute "class" matches
-     * "com.iplanet.ums.BasicUser" First looks up cache, if not found in cache,
-     * then looks up in Directory
+     * @param guid Organization DN.
+     * @param className Name of <code>javaclass</code> Attribute to be matched.
+     * @param lookup.
+     * @return Attribute key-value pair of Creation templates.  Usage:
+     *         <pre>
+     *         AttrSet a = CM.getCreationTemplateForClass(
+     *              principal, "o=foo,o=org", "com.iplanet.ums.BasicUser");
+     *         </pre>
+     *         Converts the guid to <code>/iDA/org</code>. Looks under
+     *         <code>CreationTemplates/templates/org</code> for nodes where
+     *         attribute "class" matches <code>com.iplanet.ums.BasicUser</code>.
+     *         First looks up cache, if not found in cache, then looks up in
+     *         Directory.
      */
-
-    public AttrSet getCreationTemplateForClass(Guid guid, String className,
-            int lookup) throws ConfigManagerException {
-
+    public AttrSet getCreationTemplateForClass(
+        Guid guid,
+        String className,
+        int lookup
+    ) throws ConfigManagerException {
         AttrSet ret = (AttrSet) getConfigData(
-                                    guid, className, CREATION, lookup);
-        if (ret == null)
+            guid, className, CREATION, lookup);
+        if (ret == null) {
             return com.iplanet.services.ldap.AttrSet.EMPTY_ATTR_SET;
+        }
         return ret;
     }
 
     /**
-     * This method returns an array of the Creation Template names under the
+     * Returns an array of the Creation Template names under the
      * given organization. If there are no Creation Templates under the given
      * organization then it traveres the organization tree upwards till it finds
      * one, or returns null.
      * 
-     * @param String
-     *            guid - Organization to look under.
-     * @return java.util.Set
-     * 
-     * Usage: Set s = CM.getCreationTemplatesNames(p, "o=foo, o=org") Converts
-     * guid to iDA/foo/org for internal use. Returns a list of all attributes
-     * for /foo/org/iDA/templates/CreationTemplates Looks up cache first and if
-     * not found, then looks up directory.
+     * @param guid Organization to look under.
+     * @return Set of Creation Template names.
      */
-
     public Set getCreationTemplateNames(Guid guid)
             throws ConfigManagerException {
-
         return getConfigTemplateNames(
                 guid, CREATION, TemplateManager.SCOPE_ORG);
-
     }
 
     /**
-     * This method returns an array of the Search Template names under the given
+     * Returns a set of the Search Template names under the given
      * organization. If there are no Search Templates under the given
      * organization then it traveres the organization tree upwards till it finds
      * one, or returns null.
      * 
-     * @param String
-     *            guid - Organization to look under.
-     * @return java.util.Set Usage: Set s = CM.getSearchTemplatesNames( "o=foo,
-     *         o=org") Converts guid to iDA/foo/org for internal use. Returns a
-     *         list of all attributes for /foo/org/iDA/templates/SearchTemplates
-     *         Looks up cache first and if not found, then looks up directory.
+     * @param guid Organization to look under.
+     * @return Set of template name.
+     * @throws ConfigManagerException.
      */
-
     public Set getSearchTemplateNames(Guid guid) throws ConfigManagerException {
-
         return getConfigTemplateNames(guid, SEARCH, TemplateManager.SCOPE_ORG);
 
     }
@@ -825,8 +798,8 @@ public class ConfigManagerUMS implements java.io.Serializable {
      * component "ObjectResolver" under the root tree. This component will not
      * exist under any other organization except the root.
      * 
-     * @return an array of Objectclass/Javaclass pairs
-     * @exception ConfigManagerException
+     * @return an array of Objectclass/Javaclass pairs.
+     * @exception ConfigManagerException.
      * 
      * Usage: String[][] a = CM.getClassResolver() Looks up the attributes at
      * the top level /ObjectResolver/templates/iDA Caches it first.
@@ -843,13 +816,10 @@ public class ConfigManagerUMS implements java.io.Serializable {
     /**
      * Replaces an existing template.
      * 
-     * @param guid
-     *            provides the Guid it is looking under
-     * @param templateName
-     *            name of the template
-     * @param attrSet
-     *            attribute-values pair to be replaced
-     * @exception ConfigManagerException
+     * @param guid the GUID it is looking under.
+     * @param templateName Name of the template.
+     * @param attrSet attribute-values pair to be replaced.
+     * @exception ConfigManagerException.
      */
     public void replaceCreationTemplate(Guid guid, String templateName,
             AttrSet attrSet) throws ConfigManagerException {
@@ -920,7 +890,7 @@ public class ConfigManagerUMS implements java.io.Serializable {
     }
 
     /**
-     * Construct configuration
+     * Construct configuration.
      */
     private ConfigManagerUMS() throws ConfigManagerException {
         _cch = new Hashtable();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.1 2005-11-01 00:31:33 arvindp Exp $
+ * $Id: ServiceSchemaManager.java,v 1.2 2005-11-15 04:10:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -563,14 +563,12 @@ public class ServiceSchemaManager {
      * is expensive because it does not cache the modified time stamp but goes
      * directly to the data store to obtain the value of this entry
      * 
-     * @returns The last modified time stamp as a string with the format of
-     *          <code> yyyyMMddhhmmss </code>
-     * @throws SMSException
-     *             if there is an error trying to read from the datastore
-     * @throws SSOException
-     *             if the single sign-on token of the user is invalid.
+     * @return The last modified time stamp as a string with the format of
+     *         <code>yyyyMMddhhmmss</code>
+     * @throws SMSException if there is an error trying to read from the
+     *         datastore.
+     * @throws SSOException if the single sign-on token of the user is invalid.
      */
-
     public String getLastModifiedTime() throws SMSException, SSOException {
         CachedSMSEntry ce = ssm.getCachedSMSEntry();
         SMSEntry e = ce.getSMSEntry();
@@ -649,8 +647,7 @@ public class ServiceSchemaManager {
     /**
      * Removes the plugin interface object from the service schema.
      * 
-     * @param interfaceName
-     *            name of the plugin class
+     * @param interfacename Name of the plugin class.
      */
     public void removePluginInterface(String interfacename)
             throws SMSException, SSOException {

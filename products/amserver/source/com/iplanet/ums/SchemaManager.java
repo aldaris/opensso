@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaManager.java,v 1.1 2005-11-01 00:30:40 arvindp Exp $
+ * $Id: SchemaManager.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,27 +142,22 @@ public class SchemaManager implements java.io.Serializable, IUMSConstants {
      * Constructs a schema manager to manage the schema associated with the
      * given principal
      * 
-     * @param principal
-     *            Authenticated principal
-     * @throws UMSException
-     *             upon failure
+     * @param principal Authenticated principal.
+     * @throws UMSException if failed to construct the schema manager.
      */
     protected SchemaManager(java.security.Principal principal)
-            throws UMSException {
-
+        throws UMSException {
         m_datalayer = DataLayer.getInstance();
         m_principal = principal;
     }
 
     /**
-     * Gets the schema manager assosciated with the given authenticated
-     * Principal
+     * Returns the schema manager assosciated with the given authenticated
+     * Principal.
      * 
-     * @param ctx
-     *            Authenticated context for the user session
-     * @return Schema manager associated with the given principal
-     * @throws UMSException
-     *             upon failure
+     * @param token Authenticated principal's single sign on token.
+     * @return Schema manager associated with the given principal.
+     * @throws UMSException if failed to get schema manager.
      */
     public static SchemaManager getSchemaManager(SSOToken token)
             throws UMSException {
@@ -185,20 +180,17 @@ public class SchemaManager implements java.io.Serializable, IUMSConstants {
     }
 
     /**
-     * Gets the schema manager assosciated with the given authenticated
-     * Principal
+     * Returns the schema manager assosciated with the given authenticated
+     * Principal.
      * 
-     * @param ctx
-     *            Authenticated context for the user session
-     * @return Schema manager associated with the given principal
-     * @throws UMSException
-     *             upon failure
+     * @param principal Authenticated principal.
+     * @return Schema manager associated with the given principal.
+     * @throws UMSException if failed to get schema manager.
      */
     public static SchemaManager getSchemaManager(
-            java.security.Principal principal) throws UMSException {
-
-        SchemaManager schemaManager = new SchemaManager(principal);
-        return schemaManager;
+        java.security.Principal principal
+    ) throws UMSException {
+        return new SchemaManager(principal);
     }
 
     private LDAPSchema getLDAPSchema() throws UMSException {
@@ -472,15 +464,13 @@ public class SchemaManager implements java.io.Serializable, IUMSConstants {
     }
 
     /**
-     * Gets a collection of the names of the required and optional attributes
-     * for this object class
+     * Returns a collection of the names of the required and optional attributes
+     * for this object class.
      * 
-     * @param objectClassName
-     *            Name of the object class
+     * @param objClassName Name of the object class.
      * @return A collection of the names of the required and optional attributes
-     *         for this object class
-     * @throws UMSException
-     *             failure
+     *         for this object class.
+     * @throws UMSException if failed to get attribute names.
      */
     public Collection getAttributes(String objClassName) throws UMSException {
         Collection attributes = getRequiredAttributes(objClassName);
@@ -489,15 +479,13 @@ public class SchemaManager implements java.io.Serializable, IUMSConstants {
     }
 
     /**
-     * Gets a collection of the names of the required attributes for this object
-     * class
+     * Returns a collection of the names of the required attributes for this
+     * object class.
      * 
-     * @param objectClassName
-     *            the name of the object class
+     * @param objClassName Name of the object class.
      * @return a collection of the names of the required attributes for this
-     *         object class
-     * @throws UMSException
-     *             failure
+     *         object class.
+     * @throws UMSException if failed to get attribute names.
      */
     public Collection getRequiredAttributes(String objClassName)
             throws UMSException {
@@ -514,15 +502,13 @@ public class SchemaManager implements java.io.Serializable, IUMSConstants {
     }
 
     /**
-     * Gets a collection of the names of the optional attributes for this object
-     * class
+     * Returns a collection of the names of the optional attributes for this
+     * object class.
      * 
-     * @param objectClassName
-     *            the name of the object class
+     * @param objClassName Name of the object class.
      * @return a collection of the names of the optional attributes for this
-     *         object class
-     * @throws UMSException
-     *             failure
+     *         object class.
+     * @throws UMSException if failed to get attribute names.
      */
     public Collection getOptionalAttributes(String objClassName)
             throws UMSException {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessageImpl.java,v 1.2 2005-11-08 17:12:09 veiming Exp $
+ * $Id: L10NMessageImpl.java,v 1.3 2005-11-15 04:10:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ public class L10NMessageImpl extends Exception implements L10NMessage {
      * @param args
      *            arguments to message. If it is not present pass the as null
      */
-    public L10NMessageImpl(String rbName, String errorCode, Object[] args) {
+    public L10NMessageImpl(String rbName, String errorCode, Object args[]) {
         this.bundleName = rbName;
         this.errorCode = errorCode;
         this.args = args;
@@ -71,9 +71,8 @@ public class L10NMessageImpl extends Exception implements L10NMessage {
      * This constructor is used to extract localized error message from
      * throwable
      * 
-     * @param Throwable
-     *            ex if the exception message is instance of L10NMessage, the
-     *            bundleName,errorCode and args are extracted from throwable
+     * @param ex if the exception message is instance of L10NMessage, the
+     *        bundleName,errorCode and args are extracted from throwable
      */
     public L10NMessageImpl(Throwable ex) {
         this.message = ex.getMessage();

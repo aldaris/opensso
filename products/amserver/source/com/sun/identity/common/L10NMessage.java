@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessage.java,v 1.1 2005-11-01 00:30:58 arvindp Exp $
+ * $Id: L10NMessage.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,11 +33,10 @@ import java.util.Locale;
 public interface L10NMessage {
 
     /**
-     * Use this method to get localized error message directly
+     * Use this method to get localized error message directly.
      * 
-     * @param locale
-     *            locale of the error message
-     * @return gets localized error message
+     * @param loc Locale of the error message.
+     * @return localized error message.
      */
     public String getL10NMessage(Locale loc);
 

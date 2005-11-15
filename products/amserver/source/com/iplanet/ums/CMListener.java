@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CMListener.java,v 1.1 2005-11-01 00:30:33 arvindp Exp $
+ * $Id: CMListener.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,34 +56,55 @@ public class CMListener implements ServiceListener {
     }
 
     /**
-     * This method is called back by the event notification whenever global
-     * configuration has been added, deleted or modified.
-     * 
-     * @param serviceName
-     *            is the name of the service that has been added, deleted or
-     *            modified
-     */
-    public void globalConfigChanged(String serviceName, String version,
-            String groupName, String componentName, int type) {
-
+     * This method is called back by SM when a service's global configuration
+     * data has been changed. The parameter <code>groupName</code> denote
+     * the name of the configuration grouping (e.g. default) and
+     * <code>componentName</code> denotes the service's sub-component
+     * that changed.
+     *
+     * @param serviceName name of the service.
+     * @param version version of the service.
+     * @param groupName name of the configuration grouping.
+     * @param componentName name of the service component that
+     *        changed.
+     * @param type change type, i.e. <code>ADDED</code>, <code>REMOVED</code> or
+     *         <code>MODIFIED</code>.
+     */ 
+    public void globalConfigChanged(
+        String serviceName,
+        String version,
+        String groupName,
+        String componentName,
+        int type
+    ) {
         organizationConfigChanged(serviceName, version, null, groupName,
                 componentName, type);
     }
 
     /**
-     * This method is called back by the event notification whenever a change
-     * occurs in LDAP.
-     * 
-     * @param java.util.String
-     *            org OrgName of modified Org (looks like /b/a)
-     * @param java.util.String
-     *            service - names of service modified
-     * @param String
-     *            sid - Listerner ID
-     * 
-     */
-    public void organizationConfigChanged(String service, String version,
-            String org, String groupname, String componentName, int type) {
+     * This method is called back by SM when a service's organization
+     * configuration data has been changed. The parameters <code>org</code>,
+     * <code>groupname</code> and <code>componentName</code>
+     * denotes the organization name, configuration grouping name and
+     * service's sub-component that are changed respectively.
+     *
+     * @param service name of the service.
+     * @param version version of the service.
+     * @param org organization name as DN.
+     * @param groupname name of the configuration grouping.
+     * @param componentName the name of the service components that
+     *        changed.
+     * @param type change type, i.e. <code>ADDED</code>, <code>REMOVED</code> or
+     *        <code>MODIFIED</code>.
+     */ 
+    public void organizationConfigChanged(
+        String service,
+        String version,
+        String org,
+        String groupname,
+        String componentName,
+        int type
+    ) {
         try {
             ConfigManagerUMS cm = ConfigManagerUMS.getConfigManager();
             if (org == null)

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResults.java,v 1.1 2005-11-01 00:30:40 arvindp Exp $
+ * $Id: SearchResults.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,18 +100,18 @@ public class SearchResults implements java.io.Serializable {
     static final String SEARCH_SCOPE = "searchScope";
 
     /**
-     * Constructs SearchResults from ldapSearchResult.
-     * <p>
+     * Constructs SearchResults from <code>ldapSearchResult</code>.
      * 
-     * @param ldapSearchResults
-     *            LDAPSearchResults to construct from
-     * @param conn
-     *            LDAPConnection assosciated with the searchresults
-     * @param dataLayer
-     *            DataLayer assosciated with the connection
+     * @param ldapSearchResult <code>LDAPSearchResults</code> to construct from
+     * @param conn <code>LDAPConnection</code> assosciated with the search
+     *        results.
+     * @param dataLayer Data Layer assosciated with the connection.
      */
-    protected SearchResults(LDAPSearchResults ldapSearchResult,
-            LDAPConnection conn, DataLayer dataLayer) {
+    protected SearchResults(
+        LDAPSearchResults ldapSearchResult,
+        LDAPConnection conn,
+        DataLayer dataLayer
+    ) {
         // TODO: SearchResults is tightly coupled with DataLayer and
         // PersistentObject. That could make it harder to separate them
         // in the future.
@@ -126,13 +126,12 @@ public class SearchResults implements java.io.Serializable {
     }
 
     /**
-     * Constructs SearchResults from ldapSearchResult.
-     * <p>
+     * Constructs Search Results from <code>ldapSearchResult</code>.
      * 
-     * @param ldapSearchResults
-     *            LDAPSearchResults to construct from
-     * @param conn
-     *            LDAPConnection assosciated with the searchresults
+     * @param ldapSearchResult <code>LDAPSearchResults</code> to construct
+     *        from.
+     * @param conn <code>LDAPConnection</code> associated with the search
+     *        results.
      */
     protected SearchResults(LDAPSearchResults ldapSearchResult,
             LDAPConnection conn) {
@@ -445,10 +444,9 @@ public class SearchResults implements java.io.Serializable {
     }
 
     /**
-     * Sets the session with which to associate search results.
+     * Sets the principal with which to associate search results.
      * 
-     * @param session
-     *            An authenticated session
+     * @param principal Authenticated principal.
      */
     protected void setPrincipal(Principal principal) {
         m_principal = principal;

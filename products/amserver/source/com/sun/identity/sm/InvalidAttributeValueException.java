@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidAttributeValueException.java,v 1.1 2005-11-01 00:31:25 arvindp Exp $
+ * $Id: InvalidAttributeValueException.java,v 1.2 2005-11-15 04:10:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,6 @@ public class InvalidAttributeValueException extends SMSException {
      *            Uses the locale object to create the appropriate localized
      *            error message
      * @return localized error message.
-     * @see #SMSException(String, String, Object[])
      */
     public String getL10NMessage(java.util.Locale locale) {
         String message = errCode;

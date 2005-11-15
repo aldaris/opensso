@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityObject.java,v 1.1 2005-11-01 00:31:04 arvindp Exp $
+ * $Id: EntityObject.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,19 +127,14 @@ public class EntityObject {
      * Returns the entity object for each entity given the entityType and
      * entityName(s) in that particular organization.
      * 
-     * @param entityName
-     *            Name of the entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity objects.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param entityName Name of the entity. example
+     *        <code>cn=websphereAgent</code>.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @return Set of Entity objects.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
     public Map getEntity(String entityName, String entityType)
             throws EntityException, SSOException {
@@ -162,22 +157,21 @@ public class EntityObject {
      * Returns a set of Entity Names given the Entity Type for that particular
      * organization.
      * 
-     * @param entityName
-     *            Name of the entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param entityName Name of the entity. example
+     *        <code>cn=websphereAgent</code>.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityFilter
+     * @return Set of Entity Names.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
-    public Set getEntityNames(String entityName, String entityType,
-            String entityFilter) throws EntityException, SSOException {
+    public Set getEntityNames(
+            String entityName,
+            String entityType,
+            String entityFilter
+    ) throws EntityException, SSOException {
         try {
             Object[] objs = { tokenString, entityType, entityLocation,
                     entityFilter };
@@ -198,20 +192,20 @@ public class EntityObject {
      * Sets or replaces attribute values with the new values supplied and Stores
      * the changes to directory server.
      * 
-     * @param entityName
-     *            Name of the entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param entityName Name of the entity. example
+     *        <code>cn=websphereAgent</code>.
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param attributes
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
-    public void modifyEntity(String entityName, String entityType,
-            Map attributes) throws EntityException, SSOException {
+    public void modifyEntity(
+            String entityName,
+            String entityType,
+            Map attributes
+    ) throws EntityException, SSOException {
         try {
             Object[] objs = { tokenString, entityName, entityType,
                     entityLocation, attributes };

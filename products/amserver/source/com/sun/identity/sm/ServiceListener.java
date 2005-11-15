@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceListener.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceListener.java,v 1.2 2005-11-15 04:10:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,9 +54,9 @@ public interface ServiceListener {
     public static final int MODIFIED = LDAPPersistSearchControl.MODIFY;
 
     /**
-     * This methid will be invoked when a service's schema has been changed.
+     * This method will be invoked when a service's schema has been changed.
      * 
-     * @param seviceName
+     * @param serviceName
      *            name of the service
      * @param version
      *            version of the service

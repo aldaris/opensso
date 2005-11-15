@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetValidator.java,v 1.1 2005-11-01 00:30:49 arvindp Exp $
+ * $Id: SetValidator.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,12 +47,11 @@ public class SetValidator implements IValidator {
      * validate(408, &quot;415,650,408,510&quot;); // exception
      * </pre>
      * 
-     * @param value
-     *            string value to validate
-     * @param rule
-     *            a set used by the validation, in the form of a String with
+     * @param value Value to validate.
+     * @param set Set used by the validation, in the form of a String with
      *            each elements separated by comma.
-     * @return true if value is in the set iPlanet-PUBLIC-METHOD
+     * @return true if value is in the set
+     * iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String value, String set) {
         String[] range = stringToArray(normalize(set));

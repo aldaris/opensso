@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationInterface.java,v 1.1 2005-11-01 00:31:03 arvindp Exp $
+ * $Id: DelegationInterface.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,21 +174,14 @@ public interface DelegationInterface {
      * Returns a boolean value indicating if a user has the the specified
      * permission.
      * 
-     * @param token
-     *            sso token of the user evaluating permission
-     * @param permission
-     *            delegation permission to be evaluated
-     * @param envParameters
-     *            run-time environment parameters
-     * 
+     * @param token Single sign on token of the user evaluating permission.
+     * @param permission Delegation permission to be evaluated
+     * @param envParams Run-time environment parameters.
      * @return the result of the evaluation as a boolean value
      * 
-     * @throws SSOException
-     *             single-sign-on token invalid or expired
-     * @throws DelegationException
-     *             for any other abnormal condition
+     * @throws SSOException single-sign-on token invalid or expired.
+     * @throws DelegationException for any other abnormal condition.
      */
-
     public boolean isAllowed(SSOToken token, DelegationPermission permission,
             Map envParams) throws SSOException, DelegationException;
 

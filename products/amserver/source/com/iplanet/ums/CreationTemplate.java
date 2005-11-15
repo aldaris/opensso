@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreationTemplate.java,v 1.1 2005-11-01 00:30:34 arvindp Exp $
+ * $Id: CreationTemplate.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -337,16 +337,15 @@ public class CreationTemplate extends Template {
     /**
      * Adds the validator and the rule for the attribute name.
      * 
-     * @param attrName
-     *            Attribute name to validate
-     * @param validator
-     *            Validator class name used for validation
-     * @param rule
-     *            The optional rule used by the validator
+     * @param attrName Attribute name to validate.
+     * @param validatorClass Validator class name used for validation.
+     * @param rule The optional rule used by the validator.
      */
-    public void addValidation(String attrName, String validatorClass,
-            String rule) {
-
+    public void addValidation(
+        String attrName,
+        String validatorClass,
+        String rule
+    ) {
         if (validatorClass != null && attrName != null) {
             String validationString = encodeValidationString(validatorClass,
                     rule);

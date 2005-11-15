@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISearch.java,v 1.2 2005-11-04 18:53:44 veiming Exp $
+ * $Id: ISearch.java,v 1.3 2005-11-15 04:10:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -152,21 +152,19 @@ public interface ISearch {
      * in filter. Search behavior is controlled by searchControl. Each result
      * contains values for given attribute names.
      * 
-     * @param filter
-     *            search filter
-     * @param resultAttributeNames
-     *            attribute name array for retrieving
-     * @param searchControl
-     *            search control, use default setting if searchControl == null
-     * @param resultAttributeNames
-     *            attribute names
+     * @param filter Search filter.
+     * @param resultAttributeNames Attribute name array for retrieving.
+     * @param searchControl Search control, use default setting if
+     *        searchControl is <code>null</code>.
      * @return An search result class for reading entries.
-     * @exception com.iplanet.ums.InvalidSearchFilterException
-     * @exception com.iplanet.ums.UMSException
+     * @exception InvalidSearchFilterException
+     * @exception UMSException
      */
-    public SearchResults search(String filter, String[] resultAttributeNames,
-            SearchControl searchControl) throws InvalidSearchFilterException,
-            UMSException;
+    public SearchResults search(
+        String filter,
+        String resultAttributeNames[],
+        SearchControl searchControl
+    ) throws InvalidSearchFilterException, UMSException;
 
     /**
      * Search (subtree) entries under current node based on criteria specified

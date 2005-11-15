@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionEncodeURL.java,v 1.2 2005-11-04 18:53:41 veiming Exp $
+ * $Id: SessionEncodeURL.java,v 1.3 2005-11-15 04:10:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -316,7 +316,7 @@ public class SessionEncodeURL {
     /**
      * Constructs the cookie string based on the URL and cookie String passed.
      *
-     * @param URL URL which needs to be rewritten.
+     * @param url URL which needs to be rewritten.
      * @param cookieStr Cookie name and cookie value.
      * @param encodingScheme how the cookie will be encoded in as query string
      *        or as extra path info (<code>SLASH</code> or
@@ -324,17 +324,15 @@ public class SessionEncodeURL {
      * @param escape <code>true</code> to escape ampersand.
      * @return encoded URL.
      */
-    public static String buildCookieString(String url, String cookieStr,
-            short encodingScheme, boolean escape) {
-
-        String rewrittenURL = url;
-        if (encodingScheme == SessionUtils.QUERY) {
-            rewrittenURL = writeUrlInQuery(url, cookieStr, escape);
-        } else {
-            rewrittenURL = writeUrlInPath(url, cookieStr, encodingScheme);
-        }
-
-        return rewrittenURL;
+    public static String buildCookieString(
+        String url,
+        String cookieStr,
+        short encodingScheme,
+        boolean escape
+    ) {
+        return (encodingScheme == SessionUtils.QUERY) ?
+            writeUrlInQuery(url, cookieStr, escape) :
+            writeUrlInPath(url, cookieStr, encodingScheme);
     }
 
     /**

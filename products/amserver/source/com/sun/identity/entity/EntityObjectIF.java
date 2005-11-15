@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityObjectIF.java,v 1.1 2005-11-01 00:31:04 arvindp Exp $
+ * $Id: EntityObjectIF.java,v 1.2 2005-11-15 04:10:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public interface EntityObjectIF extends Remote {
     /**
      * Creates entities.
      * 
-     * @param ssotoken
+     * @param ssoToken
      *            String representing user's SSO Token.
      * @param entityName
      *            Name of the entity.eg.cn=websphereAgent
@@ -65,21 +65,16 @@ public interface EntityObjectIF extends Remote {
      * Sets or replaces attribute values with the new values supplied and Stores
      * the changes to directory server.
      * 
-     * @param ssotoken
-     *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of the entity.eg.cn=websphereAgent
-     * @param entityType
-     *            Type of entity being created. eg. Agent The types supported by
-     *            SDK are configured in the list of Managed Objects in the
-     *            <code>DAI</code> service.
-     * @param entityLocation
-     *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param ssoToken User's Single Sign On Token.
+     * @param entityName Name of the entity. example
+     *        <code>cn=websphereAgent</code>
+     * @param entityType Type of entity being created. eg. Agent The types
+     *        supported by SDK are configured in the list of Managed Objects
+     *        in the <code>DAI</code> service.
+     * @param entityLocation Location of the entity creation. example
+     *        <code>www.abc.com</code>
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
     public void modifyEntity(String ssoToken, String entityName,
             String entityType, String entityLocation, Map attributes)
@@ -88,7 +83,7 @@ public interface EntityObjectIF extends Remote {
     /**
      * Deletes entities.
      * 
-     * @param ssotoken
+     * @param ssoToken
      *            String representing user's SSO Token.
      * @param entityName
      *            Name of the entity.eg.cn=websphereAgent
@@ -111,7 +106,7 @@ public interface EntityObjectIF extends Remote {
      * Returns the entity object for each entity given the entityType and
      * entityName(s) in that particular organization.
      * 
-     * @param ssotoken
+     * @param ssoToken
      *            String representing user's SSO Token.
      * @param entityName
      *            Name of the entity.eg.cn=websphereAgent
@@ -135,21 +130,18 @@ public interface EntityObjectIF extends Remote {
      * Returns a set of Entity Names given the Entity Type for that particular
      * organization.
      * 
-     * @param ssotoken
+     * @param ssoToken
      *            String representing user's SSO Token.
-     * @param entityName
-     *            Name of the entity.eg.cn=websphereAgent
      * @param entityType
      *            Type of entity being created. eg. Agent The types supported by
      *            SDK are configured in the list of Managed Objects in the
      *            <code>DAI</code> service.
      * @param entityLocation
      *            Location of the entity creation.eg.www.abc.com
-     * @return Returns a set of Entity Names.
-     * @throws EntityException
-     *             if there is an internal error in the AM Store
-     * @throws SSOException
-     *             if the sign on is no longer valid
+     * @param entityFilter
+     * @return Set of Entity Names.
+     * @throws EntityException if there is an internal error in the AM Store.
+     * @throws SSOException if the sign on is no longer valid.
      */
     public Set getEntityNames(String ssoToken, String entityType,
             String entityLocation, String entityFilter) throws EntityException,

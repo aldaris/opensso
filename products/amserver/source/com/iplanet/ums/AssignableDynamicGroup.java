@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssignableDynamicGroup.java,v 1.1 2005-11-01 00:30:33 arvindp Exp $
+ * $Id: AssignableDynamicGroup.java,v 1.2 2005-11-15 04:10:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,12 +57,11 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     /**
      * Constructs an in memory AssignableDynamicGroup object. Default registered
      * template will be used. This is an in memory Group object and one needs to
-     * call save method to save this newly created object to persistent storage
+     * call <code>save</code> method to save this newly created object to
+     * persistent storage.
      * 
-     * @param attrSet
-     *            Attribute/value set
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param attrSet Attribute/value set.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     AssignableDynamicGroup(AttrSet attrSet) throws UMSException {
         this(TemplateManager.getTemplateManager().getCreationTemplate(_class,
@@ -70,18 +69,16 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs an in memory AssignableDynamicGroup
-     * object with a given template. This is an in memory Group object and one
-     * needs to call save method to save this newly created object to persistent
-     * storage
+     * iPlanet-PUBLIC-CONSTRUCTOR
      * 
-     * @param template
-     *            Template for creating a group
-     * @param attrSet
-     *            Attribute/value set
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
-     *                iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructs an in memory <code>AssignableDynamicGroup</code> object with
+     * a given template. This is an in memory Group object and one needs to
+     * call save method to <code>save</code> this newly created object to
+     * persistent storage.
+     * 
+     * @param template Template for creating a group.
+     * @param attrSet Attribute/value set.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     public AssignableDynamicGroup(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -89,22 +86,19 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * Constructs an in memory AssignableDynamicGroup object using default
-     * registered for AssignableDynamicGroup. This is an in memory Group object
-     * and one needs to call save method to save this newly created object to
-     * persistent storage
+     * Constructs an in memory <code>AssignableDynamicGroup</code> object using
+     * default registered for <code>AssignableDynamicGroup</code>. This is an
+     * in memory Group object and one needs to call <code>save</code> method to
+     * save this newly created object to persistent storage.
      * 
-     * @param attrSet
-     *            Attribute/value set, which should not contain memberUrl; any
-     *            values of memberUrl will be overwritten by the explicit search
-     *            criteria arguments.
-     * @param base
-     *            Search base for evaluating members of the group
-     * @param scope
-     *            Search scope for evaluating members of the group the value has
-     *            to be LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
+     * @param attrSet Attribute/value set, which should not contain
+     *        <code>memberUrl</code>; any values of <code>memberUrl</code> will
+     *        be overwritten by the explicit search criteria arguments.
+     * @param base Search base for evaluating members of the group.
+     * @param scope Search scope for evaluating members of the group the value
+     *        has to be <code>LDAPv2.SCOPE_ONE</code> or
+     *        <code>LDAPv2.SCOPE_SUB</code>.
+     * @exception UMSException if fail to instantiate from persistent storage.
      */
     AssignableDynamicGroup(AttrSet attrSet, Guid baseGuid, int scope)
             throws UMSException {
@@ -113,26 +107,20 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs an in memory AssignableDynamicGroup
-     * object with a given template. This is an in memory Group object and one
-     * needs to call save method to save this newly created object to persistent
-     * storage
+     * iPlanet-PUBLIC-CONSTRUCTOR
+     * Constructs an <code>AssignableDynamicGroup</code> object with a given
+     * template. This is an in memory Group object and one needs to call
+     * <code>save</code> method to save this newly created object to
+     * persistent storage.
      * 
-     * @param template
-     *            Template for creating a group
-     * @param attrSet
-     *            Attribute/value set, which should not contain memberUrl; any
-     *            values of memberUrl will be overwritten by the explicit search
-     *            criteria arguments.
-     * @param base
-     *            Search base for evaluating members of the group
-     * @param scope
-     *            Search scope for evaluating members of the group has to be
-     *            LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
-     * 
-     * @exception UMSException
-     *                on failure to instantiate from persistent storage
-     *                iPlanet-PUBLIC-CONSTRUCTOR
+     * @param template Template for creating a group.
+     * @param attrSet Attribute-value set which should not contain member URL;
+     *        any values of member URL will be overwritten by the explicit
+     *        search criteria arguments.
+     * @param baseGuid Search base for evaluating members of the group
+     * @param scope Search scope for evaluating members of the group has to be
+     *        <code>LDAPv2.SCOPE_ONE</code> or <code>LDAPv2.SCOPE_SUB</code>.
+     * @exception UMSException if fail to instantiate from persistent storage
      */
     public AssignableDynamicGroup(CreationTemplate template, AttrSet attrSet,
             Guid baseGuid, int scope) throws UMSException {
@@ -143,16 +131,15 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the search filter used to evaluate this
-     * dynamic group. For an AssignableDynamicGroup, the filter is always
-     * "memberof=THIS_DN", so this method should not generally be called outside
-     * the package
-     * 
-     * @param filter
-     *            search filter for evaluating members of the group the scope in
-     *            the filter has to be LDAPv2.SCOPE_ONE or LDAPv2.SCOPE_SUB
-     * 
      * iPlanet-PUBLIC-METHOD
+     * Sets the search filter used to evaluate this dynamic group. For an 
+     * <code>AssignableDynamicGroup</code>, the filter is always
+     * <code>"memberof=THIS_DN"</code>, so this method should not generally be
+     * called outside the package.
+     * 
+     * @param filter Search filter for evaluating members of the group the
+     *        scope in the filter has to be <code>LDAPv2.SCOPE_ONE</code> or
+     *        <code>LDAPv2.SCOPE_SUB</code>.
      */
     public void setSearchFilter(String filter) {
         LDAPUrl url = getUrl();
@@ -166,15 +153,14 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * Sets the GUID of the entity; used within the package
+     * Sets the GUID of the entity; used within the package.
      * 
-     * @param guid
-     *            string representation of guid REVIEW: This method overloads
-     *            the PersistentObject.setGuid() method. Hence the signature has
-     *            to match, and we can't throw the UMSException that could be
-     *            thrown from "setSearchFilter". Is it enough to log such an
-     *            error ???
-     * 
+     * @param guid GUID <code>REVIEW</code>: This method overloads the
+     *        <code>PersistentObject.setGuid()</code> method. Hence the
+     *        signature has to match, and we can't throw the
+     *        <code>UMSException</code> that could be thrown from
+     *        <code>"setSearchFilter"</code>. Is it enough to log such an
+     *        error ???
      */
     protected void setGuid(Guid guid) {
         super.setGuid(guid);
@@ -191,17 +177,14 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a member to the group. The change is saved to
-     * persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Adds a member to the group. The change is saved to persistent storage.
      * 
-     * @param userGuid
-     *            Globally unique identifier for the member to be added
-     * @exception UMSException
-     *                on failure to save to persistent storage or if the user is
-     *                not within the scope of the group iPlanet-PUBLIC-METHOD
+     * @param userGuid Globally unique identifier for the member to be added.
+     * @exception UMSException if fail to save to persistent storage or if the
+     *            user is not within the scope of the group.
      */
     public void addMember(Guid userGuid) throws UMSException {
-
         // UMSSession session = getUMSSession();
         if (getPrincipal() == null) {
             throw new IllegalArgumentException(i18n
@@ -212,14 +195,12 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a member to the group. The change is saved to
-     * persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Adds a member to the group. The change is saved to persistent storage.
      * 
-     * @param member
-     *            Object to be added as member
-     * @exception UMSException
-     *                on failure to save to persistent storage or if the user is
-     *                not within the scope of the group iPlanet-PUBLIC-METHOD
+     * @param member Object to be added as member.
+     * @exception UMSException if fail to save to persistent storage or if the
+     *            user is not within the scope of the group.
      */
     public void addMember(PersistentObject member) throws UMSException {
         // check whether the userGuid is within the scope of memberUrl
@@ -248,14 +229,12 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a list of members to the group. The change is
-     * saved to persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Adds a list of members to the group. The change is saved to persistent
+     * storage.
      * 
-     * @param guids
-     *            Array of member guids to be added as members to the group
-     * @exception UMSException
-     *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
+     * @param guids Array of member GUIDs to be added as members to the group.
+     * @exception UMSException if fail to save to persistent storage.
      */
     public void addMembers(Guid[] guids) throws UMSException {
         if (guids == null) {
@@ -268,14 +247,12 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes a member from the group. The change is
-     * saved to persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Removes a member from the group. The change is saved to persistent
+     * storage.
      * 
-     * @param guid
-     *            Unique identifier for the member to be removed
-     * @exception UMSException
-     *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
+     * @param guid Unique identifier for the member to be removed.
+     * @exception UMSException if fail to save to persistent storage.
      */
     public void removeMember(Guid guid) throws UMSException {
         PersistentObject member = UMSObject.getObject(getPrincipal(), guid);
@@ -283,14 +260,12 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes a member from the group. The change is
-     * saved to persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Removes a member from the group. The change is saved to persistent
+     * storage.
      * 
-     * @param member
-     *            Object to be removed
-     * @exception UMSException
-     *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
+     * @param member Object to be removed.
+     * @exception UMSException if fail to save to persistent storage.
      */
     public void removeMember(PersistentObject member) throws UMSException {
         member.modify(new Attr(MEMBER_ATTR_NAME, this.getDN()), ModSet.DELETE);
@@ -298,11 +273,10 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes all members of the group
+     * iPlanet-PUBLIC-METHOD
+     * Removes all members of the group.
      * 
-     * @exception UMSException
-     *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
+     * @exception UMSException if fail to save to persistent storage.
      */
     public void removeAllMembers() throws UMSException {
 
@@ -320,14 +294,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks if a given identifier is a member of the
-     * group
+     * iPlanet-PUBLIC-METHOD
+     * Returns <code>true</code> if a given identifier is a member of the
+     * group.
      * 
-     * @param guid
-     *            Identity of member to be checked for membership
-     * @return <code>true</code> if it is a member
-     * @exception UMSException
-     *                on failure to read object for guid iPlanet-PUBLIC-METHOD
+     * @param guid Identity of member to be checked for membership.
+     * @return <code>true</code> if it is a member.
+     * @exception UMSException if fail to read object for guid.
      */
     public boolean hasMember(Guid guid) throws UMSException {
         if (getPrincipal() == null) {
@@ -370,11 +343,10 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Save the modification(s) to the object to
-     * persistent storage.
+     * iPlanet-PUBLIC-METHOD
+     * Saves the modification(s) to the object to persistent storage.
      * 
-     * @return UMSException on failure to save to persistent storage
-     *         iPlanet-PUBLIC-METHOD
+     * @return UMSException on failure to save to persistent storage.
      */
     /*
      * public void save () throws UMSException { String filter =

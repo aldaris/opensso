@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSTemplate.java,v 1.1 2005-11-01 00:30:44 arvindp Exp $
+ * $Id: COSTemplate.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,12 +77,12 @@ public class COSTemplate extends PersistentObject {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
      * Sets the priority for this template. The priority determines which COS
      * template will provide the attribute value if there are competing
      * templates. A priority of "0" is the highest priority.
      * 
-     * @param the
-     *            priority for this template iPlanet-PUBLIC-METHOD
+     * @param priority Priority for this template.
      */
     public void setPriority(int priority) {
         setAttribute(new Attr("cosPriority", new Integer(priority).toString()));
