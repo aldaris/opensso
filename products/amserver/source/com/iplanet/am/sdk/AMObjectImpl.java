@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.1 2005-11-01 00:29:11 arvindp Exp $
+ * $Id: AMObjectImpl.java,v 1.2 2005-11-22 18:24:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1710,7 +1710,9 @@ class AMObjectImpl implements AMObject {
                 if (stringValueModMap.containsKey("userpassword")) {
                     Map noPasswdMap = stringValueModMap.getCopy();
                     noPasswdMap.remove("userpassword");
-                    noPasswdMap.put("userpassword", "xxx...");
+                    Set set = new HashSet(2);
+                    set.add("********");
+                    noPasswdMap.put("userpassword", set);
                     debug.message("AMObjectImpl.store(): DN=" + entryDN + "\n"
                             + AMCommonUtils.mapSetToString(noPasswdMap));
                 } else {
