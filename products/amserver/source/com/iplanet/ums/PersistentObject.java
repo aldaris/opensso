@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PersistentObject.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
+ * $Id: PersistentObject.java,v 1.3 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,8 @@ import com.iplanet.ums.validation.Validation;
 /**
  * Represents a persistent object in UMS. This is the base class for all objects
  * that Object Management Module (OMM) manages in UMS.
+ *
+ * @supported.api
  */
 public class PersistentObject implements ISearch, Serializable, IUMSConstants {
 
@@ -128,7 +130,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @throws UMSException
      *             for failure to construct the object. The given attrSet needs
      *             to provide the required attribute(s) defined in template
-     *             iPlanet-PUBLIC-CONSTRUCTOR
+     *
+     * @supported.api
      */
     public PersistentObject(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -182,7 +185,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * 
      * @param attrName
      *            Name of the attribute to be queried
-     * @return Attribute value iPlanet-PUBLIC-METHOD
+     * @return Attribute value
+     *
+     * @supported.api
      */
     public Attr getAttribute(String attrName) {
         Attr attr = getAttributeFromCache(attrName);
@@ -204,7 +209,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *         attribute with locale not found. No fallback mechanism is
      *         provided
      * @see com.iplanet.ums.PersistentObject#getAttribute(String)
-     *      iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public Attr getAttribute(String attrName, Locale locale)
             throws UMSException {
@@ -222,7 +228,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @param attrs
      *            Array of strings representing attribute names
      * @return attribute value set for the return values
-     * @see #getAttribute(String) iPlanet-PUBLIC-METHOD
+     * @see #getAttribute(String)
+     *
+     * @supported.api
      */
     public AttrSet getAttributes(String[] attrs) throws UMSException {
         return getAttributes(attrs, false);
@@ -237,7 +245,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *            if true, read attributes from cache only without contacting
      *            data stroe
      * @return attribute value set for the return values
-     * @see #getAttribute(String) iPlanet-PUBLIC-METHOD
+     * @see #getAttribute(String)
+     *
+     * @supported.api
      */
     public AttrSet getAttributes(String[] attrs, boolean cacheOnly)
             throws UMSException {
@@ -264,7 +274,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns attribute values with a specified locale.
      * 
      * @param attrNames Attribute names
@@ -272,6 +281,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @return Attribute value set. May return null value for attribute(s) with
      *         unfound locale. No fallback mechanism is provided.
      * @see #getAttribute(String)
+     *
+     * @supported.api
      */
     public AttrSet getAttributes(String attrNames[], Locale locale)
             throws UMSException {
@@ -295,7 +306,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * <P>
      * 
      * @param attr
-     *            Attribute and value iPlanet-PUBLIC-METHOD
+     *            Attribute and value
+     *
+     * @supported.api
      */
     public void setAttribute(Attr attr) {
 
@@ -327,7 +340,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *            Attribute and value
      * @param locale
      *            Intended locale of the attribute to be set
-     *            iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void setAttribute(Attr attr, Locale locale) {
 
@@ -353,7 +367,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * <P>
      * 
      * @param attr
-     *            Attribute to be removed iPlanet-PUBLIC-METHOD
+     *            Attribute to be removed
+     *
+     * @supported.api
      */
     public void removeAttribute(Attr attr) {
         checkCache();
@@ -369,7 +385,7 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * 
      * @return Array of strings representing attribute names
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String[] getAttributeNames() {
         if (m_principal != null && m_guid != null && m_attrSet == null) {
@@ -400,7 +416,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * 
      * @param modSet
      *            Set of modification of attributes
-     * @see ModSet iPlanet-PUBLIC-METHOD
+     * @see ModSet
+     *
+     * @supported.api
      */
     public void modify(ModSet modSet) {
         checkCache();
@@ -462,7 +480,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *               ModSet.REPLACE
      * </pre>
      * 
-     * @see ModSet iPlanet-PUBLIC-METHOD
+     * @see ModSet
+     *
+     * @supported.api
      */
     public void modify(Attr attr, int op) {
         ModSet modSet = new ModSet();
@@ -491,7 +511,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *                   ModSet.REPLACE
      * </pre>
      * 
-     * @see ModSet iPlanet-PUBLIC-METHOD
+     * @see ModSet
+     *
+     * @supported.api
      */
     public void modify(String attrName, String value, int op) {
         ModSet modSet = new ModSet();
@@ -503,7 +525,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     /**
      * Get GUID of the given entity
      * 
-     * @return the GUID. iPlanet-PUBLIC-METHOD
+     * @return the GUID.
+     *
+     * @supported.api
      */
     public Guid getGuid() {
         return m_guid;
@@ -525,7 +549,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *             if the entry is not found
      * @throws UMSException
      *             on failure to save to persistent storage
-     *             iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void rename(String newRDN, boolean deleteOldName)
             throws AccessRightsException, EntryNotFoundException, UMSException {
@@ -581,7 +606,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *             if the entry is not found
      * @throws UMSException
      *             on failure to save to persistent storage
-     *             iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void save() throws AccessRightsException, EntryNotFoundException,
             UMSException {
@@ -622,7 +648,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * identification
      * <P>
      * 
-     * @return Attribute name for identification iPlanet-PUBLIC-METHOD
+     * @return Attribute name for identification
+     *
+     * @supported.api
      */
     public String getNamingAttribute() {
 
@@ -647,7 +675,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @return PersistentObject representing the parent object
      * @throws UMSException
      *             on failure instantiating the parent object
-     *             iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public PersistentObject getParentObject() throws UMSException {
 
@@ -669,7 +698,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds a child object to the persistent object container. All persistent
      * objects can add objects as a container. To override this behavior or
      * impose restrictions override the add method in a subclass so that e.g.
@@ -682,6 +710,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *         container. Possible causes include
      *         <code>EntryAlreadyExists</code>, <code>AccessRights</code>
      *         violation.
+     *
+     * @supported.api
      */
     public void addChild(PersistentObject object) throws AccessRightsException,
             EntryAlreadyExistsException, UMSException {
@@ -747,7 +777,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes a child object from a persistent object container. It is
      * important for constraints to be applied in overriding this method in
      * subclasses of PersistentObject. For example, Organization may choose not
@@ -758,6 +787,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @throws EntryNotFoundException if the entry is not found.
      * @throws UMSException if fail to remove the child object. Possible causes
      *         includes EntryNotFount, AccessRights violation etc.
+     *
+     * @supported.api
      */
     public void removeChild(PersistentObject object)
             throws AccessRightsException, EntryNotFoundException, UMSException {
@@ -816,7 +847,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes an object given its unique ID. This method expects the given
      * child ID is a descendant (something being contained) in "this" object
      * 
@@ -826,6 +856,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @throws UMSException if failure to remove the entry from the persistent
      *         store. Possible causes include AccessRights violation,
      *         EntryNotFound etc.
+     *
+     * @supported.api
      */
     public void removeChild(Guid childGuid) throws AccessRightsException,
             EntryNotFoundException, UMSException {
@@ -854,7 +886,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *             if the entry is not found
      * @throws UMSException
      *             from UMSSession.removeObject( principal, guid)
-     *             iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void remove() throws AccessRightsException, EntryNotFoundException,
             UMSException {
@@ -884,7 +917,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     /**
      * Gets a string representation of the object
      * 
-     * @return String representation of the object iPlanet-PUBLIC-METHOD
+     * @return String representation of the object
+     *
+     * @supported.api
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -931,8 +966,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *             if the search filter is invalid
      * @throws UMSException
      *             on searching for immediate children in the container
-     * 
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public SearchResults getChildren(String filter, SearchControl searchControl)
             throws InvalidSearchFilterException, UMSException {
@@ -964,7 +999,7 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @throws UMSException
      *             on failure with searhing
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public SearchResults getChildren(String filter,
             String[] resultAttributeNames, SearchControl searchControl)
@@ -999,7 +1034,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @param searchControl
      *            Search control, use default setting if searchControl == null
      * @throws UMSException
-     *             on failure with searching iPlanet-PUBLIC-METHOD
+     *             on failure with searching
+     *
+     * @supported.api
      */
     public SearchResults getChildren(SearchTemplate template,
             SearchControl searchControl) throws UMSException {
@@ -1019,8 +1056,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *             on invalid search filter
      * @throws UMSException
      *             on failure with searching
-     * 
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public SearchResults search(String filter, SearchControl searchControl)
             throws InvalidSearchFilterException, UMSException {
@@ -1054,7 +1091,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @throws UMSException
      *             on failure with searching
      * 
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public SearchResults search(String filter, String[] resultAttributeNames,
             SearchControl searchControl) throws InvalidSearchFilterException,
@@ -1085,7 +1123,9 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @param searchControl
      *            Search control, use default setting if searchControl == null
      * @throws UMSException
-     *             on failure to search iPlanet-PUBLIC-METHOD
+     *             on failure to search
+     *
+     * @supported.api
      */
     public SearchResults search(SearchTemplate template,
             SearchControl searchControl) throws UMSException {
@@ -1289,7 +1329,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *         IMembership, <code>false</code> otherwise
      * @throws UMSException
      *             propagates any exception from the datalayer
-     *             iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public boolean isMemberOf(IMembership im) throws UMSException {
         return im.hasMember(getGuid());
@@ -1301,8 +1342,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @return list that lets iterating over role GUIDs
      * @throws UMSException
      *             propagates any exception from the datalayer
-     * 
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public Collection getRoles() throws UMSException {
         ArrayList roleList = new ArrayList();
@@ -1314,11 +1355,12 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns all the ACIs of this object.
      * 
      * @return collecion of ACIs of this object.
      * @throws ACIParseException if any error
+     *
+     * @supported.api
      */
     public Collection getACI() throws ACIParseException, UMSException {
         Collection acis = new ArrayList();
@@ -1334,12 +1376,13 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns all the ACIs of this object with the given name.
      * 
      * @param name Name of the ACI to get.
      * @return collecion of ACIs of this object.
      * @throws ACIParseException in case of any error
+     *
+     * @supported.api
      */
     public Collection getACI(String name) throws ACIParseException,
             UMSException {
@@ -1359,12 +1402,13 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds an ACI to this object.
      * 
      * @param aci ACI added to be added to this object.
      * @throws AccessRightsException if an access rights exception occurs.
      * @throws UMSException if any error
+     *
+     * @supported.api
      */
     public void addACI(ACI aci) throws AccessRightsException, UMSException {
         Attr attr = new Attr(ACI.ACI, aci.toString());
@@ -1373,12 +1417,13 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Deletes an ACI of this object
      * 
      * @param aci ACI to be deleted.
      * @throws AccessRightsException if an access rights exception occurs.
      * @throws UMSException if any error.
+     *
+     * @supported.api
      */
     public void deleteACI(ACI aci) throws AccessRightsException, UMSException {
         Attr attr = new Attr(ACI.ACI, aci.getACIText());
@@ -1387,13 +1432,14 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Replaces an ACI of this object
      * 
      * @param oldACI ACI to be replaced.
      * @param newACI the new ACI.
      * @throws AccessRightsException if an access rights exception occurs.
      * @throws UMSException if any error.
+     *
+     * @supported.api
      */
     public void replaceACI(ACI oldACI, ACI newACI)
             throws AccessRightsException, UMSException {
@@ -1405,7 +1451,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds value for an attribute and saves the change in the database.
      * 
      * @param token Authenticated prinicpal's single sign on token.
@@ -1414,6 +1459,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @param name Name of the attribute to which value is being added.
      * @param value Value to be added to the attribute.
      * @throws UMSException if any exception from the data layer.
+     *
+     * @supported.api
      */
     public static void addAttributeValue(
         SSOToken token,
@@ -1450,7 +1497,6 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes value for an attribute and saves the change in the database.
      * 
      * @param token Authenticated prinicpal's single sign on token.
@@ -1459,6 +1505,8 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      * @param name Name of the attribute from which value is being removed.
      * @param value Value to be removed from the attribute.
      * @throws UMSException if any exception from the data layer.
+     *
+     * @supported.api
      */
     public static void removeAttributeValue(SSOToken token, Guid guid,
             String name, String value) throws UMSException {

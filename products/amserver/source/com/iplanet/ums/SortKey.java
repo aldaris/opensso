@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SortKey.java,v 1.2 2005-11-08 17:12:09 veiming Exp $
+ * $Id: SortKey.java,v 1.3 2005-12-08 01:16:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,9 @@
 package com.iplanet.ums;
 
 /**
- * iPlanet-PUBLIC-CLASS
  * This class represents data structure for sort key.
+ *
+ * @supported.all.api
  */
 public class SortKey implements java.io.Serializable {
 

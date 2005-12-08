@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataConstraintException.java,v 1.1 2005-11-01 00:30:47 arvindp Exp $
+ * $Id: DataConstraintException.java,v 1.2 2005-12-08 01:16:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,13 @@ import com.iplanet.ums.UMSException;
  * validating functions is checked against optional rules and validating rules
  * specific to the validator classes and this exception is thrown when it
  * doesnot satify those rules.
+ *
+ * @supported.all.api
  */
 public class DataConstraintException extends UMSException {
 
     /**
      * Constructor to constuct the exception without any message
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public DataConstraintException() {
     }
@@ -46,7 +47,6 @@ public class DataConstraintException extends UMSException {
      * 
      * @param msg
      *            message describing the cause of the exception
-     *            iPlanet-PUBLIC-CONSTRUCTOR
      */
     public DataConstraintException(String msg) {
         super(msg);
@@ -59,7 +59,7 @@ public class DataConstraintException extends UMSException {
      *            the message explaining the exception
      * @param rootCause
      *            the embedded exception, the exception that led to this
-     *            exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            exception.
      */
     public DataConstraintException(String msg, Throwable rootCause) {
         super(msg, rootCause);

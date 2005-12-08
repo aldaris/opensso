@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientTypesManager.java,v 1.1 2005-11-01 00:30:10 arvindp Exp $
+ * $Id: ClientTypesManager.java,v 1.2 2005-12-08 01:16:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,13 +31,12 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.sm.SMSException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * Interface that needs to be implemented by external applications inorder to do
  * some special processing for client management. The implementation module is
  * pluggable and is configurable via <code>AMConfig.properties</code>. The
  * property to set is <code>com.iplanet.ClientTypesManagerImpl</code>.
+ * @supported.all.api
  */
 public interface ClientTypesManager {
 

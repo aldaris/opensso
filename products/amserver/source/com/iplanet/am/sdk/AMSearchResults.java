@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchResults.java,v 1.1 2005-11-01 00:29:18 arvindp Exp $
+ * $Id: AMSearchResults.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,11 +27,10 @@ package com.iplanet.am.sdk;
 import java.util.Map;
 import java.util.Set;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class <code>AMSearchResults</code> provides to obtain the search
  * results.
+ * @supported.all.api
  */
 public class AMSearchResults {
 

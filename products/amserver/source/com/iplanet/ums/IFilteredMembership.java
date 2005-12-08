@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilteredMembership.java,v 1.1 2005-11-01 00:30:37 arvindp Exp $
+ * $Id: IFilteredMembership.java,v 1.2 2005-12-08 01:16:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,8 @@ package com.iplanet.ums;
 /**
  * Interface that would be implemented by roles that control membership based on
  * a filter.
+ *
+ * @supported.all.api
  */
 public interface IFilteredMembership extends IMembership {
     /**
@@ -35,7 +37,7 @@ public interface IFilteredMembership extends IMembership {
      * @param filter
      *            an LDAP filter that controls the membership
      * @throws UMSException
-     *             in case of any error iPlanet-PUBLIC-METHOD
+     *             in case of any error
      */
     public void setFilter(String filter) throws UMSException;
 
@@ -44,7 +46,7 @@ public interface IFilteredMembership extends IMembership {
      * 
      * @return the LDAP filter that controls the membership
      * @throws UMSException
-     *             in case of any error iPlanet-PUBLIC-METHOD
+     *             in case of any error
      */
     public String getFilter() throws UMSException;
 }

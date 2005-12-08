@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectCOSDefinition.java,v 1.1 2005-11-01 00:30:44 arvindp Exp $
+ * $Id: DirectCOSDefinition.java,v 1.2 2005-12-08 01:16:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.iplanet.ums.UMSException;
 
 /**
  * This class represents a Direct (or Classic) COS definition.
+ * @supported.api
  */
 public class DirectCOSDefinition extends PersistentObject implements
         ICOSDefinition {
@@ -63,7 +64,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      *             The exception thrown from the DirectCOSDefinition constructor
      *             accepting a creation template and attribute set.
      * @see com.iplanet.ums.cos.DirectCOSDefinition#DirectCOSDefinition
-     *      (CreationTemplate, AttrSet) iPlanet-PUBLIC-CONSTRUCTOR
+     *      (CreationTemplate, AttrSet)
+     * @supported.api
      */
     public DirectCOSDefinition(AttrSet attrSet) throws UMSException {
         this(TemplateManager.getTemplateManager().getCreationTemplate(_class,
@@ -81,7 +83,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      * @throws UMSException
      *             The exception thrown from the parent class constructor.
      * @see com.iplanet.ums.PersistentObject#PersistentObject (CreationTemplate,
-     *      AttrSet) iPlanet-PUBLIC-CONSTRUCTOR
+     *      AttrSet)
+     * @supported.api
      */
     public DirectCOSDefinition(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -92,7 +95,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      * Sets the name of this COS.
      * 
      * @param name
-     *            the name of this COS. iPlanet-PUBLIC-METHOD
+     *            the name of this COS.
+     * @supported.api
      */
     public void setName(String name) {
         setAttribute(new Attr(ICOSDefinition.DEFAULT_NAMING_ATTR, name));
@@ -101,7 +105,8 @@ public class DirectCOSDefinition extends PersistentObject implements
     /**
      * Returns the name of this COS.
      * 
-     * @return the name of this COS iPlanet-PUBLIC-METHOD
+     * @return the name of this COS
+     * @supported.api
      */
     public String getName() {
         String attributeValue = null;
@@ -131,7 +136,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void addCOSAttribute(String attrName, int qualifier)
             throws UMSException {
@@ -152,7 +157,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      * Removes the COS attribute from the definition.
      * 
      * @param attrName
-     *            The name of the attribute to be removed. iPlanet-PUBLIC-METHOD
+     *            The name of the attribute to be removed.
+     * @supported.api
      */
     public void removeCOSAttribute(String attrName) {
         modify(new Attr(ICOSDefinition.COSATTRIBUTE, attrName), ModSet.DELETE);
@@ -162,7 +168,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      * Retrieves the COS attributes for this definition.
      * 
      * @return String[] A string array of COS attributes (for example,
-     *         mailquota). iPlanet-PUBLIC-METHOD
+     *         mailquota).
+     * @supported.api
      */
     public String[] getCOSAttributes() {
         Attr attr = getAttribute(ICOSDefinition.COSATTRIBUTE);
@@ -174,7 +181,8 @@ public class DirectCOSDefinition extends PersistentObject implements
      * conjunction with the template entry's DN, to identify the template entry.
      * 
      * @param cosSpecifier
-     *            The COS specifier. iPlanet-PUBLIC-METHOD
+     *            The COS specifier.
+     * @supported.api
      */
     public void setCOSSpecifier(String cosSpecifier) {
         setAttribute(new Attr(COSSPECIFIER, cosSpecifier));
@@ -186,7 +194,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * @return the COS specifier
      * 
      * @see DirectCOSDefinition#setCOSSpecifier(String cosSpecifier)
-     *      iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String getCOSSpecifier() {
         String attributeValue = null;
@@ -206,7 +214,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void addCOSTemplate(COSTemplate cosTemplate) throws UMSException {
         if (getGuid() == null) {
@@ -231,7 +239,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeCOSTemplate(String name) throws UMSException {
         Guid tGuid = new Guid(COSTemplate.DEFAULT_NAMING_ATTR + "=" + name
@@ -244,7 +252,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeCOSTemplates() throws UMSException {
         ArrayList aList = (ArrayList) getCOSTemplates();
@@ -266,7 +274,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      *             The exception thrown if the COS template is not found.
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public COSTemplate getCOSTemplate(String name) throws COSNotFoundException,
             UMSException {
@@ -292,7 +300,7 @@ public class DirectCOSDefinition extends PersistentObject implements
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Collection getCOSTemplates() throws UMSException {
         COSTemplate cosTemplate = null;

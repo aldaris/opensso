@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSManager.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
+ * $Id: COSManager.java,v 1.3 2005-12-08 01:16:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ import com.iplanet.ums.UMSObject;
 /**
  * This class has the responsibility of adding, removing and replacing COS
  * definitions. It also provides search capabilities for COS definitions.
+ * @supported.api
  */
 public class COSManager {
 
@@ -106,7 +107,6 @@ public class COSManager {
     }
 
     /**
-     * iPlanet-PUBLIC-STATIC
      * This method returns an instance of a COS Manager.
      * 
      * @param token Authenticated principal's single sign on token.
@@ -114,6 +114,7 @@ public class COSManager {
      *        this guid.
      * @throws UMSException
      *             The exception thrown from the COSManager constructor.
+     * @supported.api
      */
     public static COSManager getCOSManager(SSOToken token, Guid guid)
             throws UMSException {
@@ -143,7 +144,7 @@ public class COSManager {
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void addDefinition(ICOSDefinition cosDef) throws UMSException {
         if (!(cosDef instanceof DirectCOSDefinition)) {
@@ -190,7 +191,7 @@ public class COSManager {
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeDefinition(String name) throws UMSException {
         Guid guid = new Guid(ICOSDefinition.DEFAULT_NAMING_ATTR + "=" + name
@@ -209,7 +210,7 @@ public class COSManager {
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void updateDefinition(ICOSDefinition cosDef) throws UMSException {
         PersistentObject pObject = (PersistentObject) cosDef;
@@ -222,13 +223,13 @@ public class COSManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns COS definition given the name.
      * 
      * @param name Name of the COS definition.
      * @return A COS definition with the specified name.
      * @throws UMSException if exception occurred at the data layer.
      * @throws COSNotFoundException if the COS object is not found.
+     * @supported.api
      */
     public ICOSDefinition getDefinition(String name) throws UMSException,
             COSNotFoundException {
@@ -260,7 +261,7 @@ public class COSManager {
      * 
      * @throws UMSException
      *             The exception thrown from the data layer.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Collection getDefinitions() throws UMSException {
         Collection cosDefinitions = new ArrayList();
@@ -288,7 +289,8 @@ public class COSManager {
      *            be null.
      * 
      * @throws UMSException
-     *             If a data layer exception occurs. iPlanet-PUBLIC-METHOD
+     *             If a data layer exception occurs.
+     * @supported.api
      */
     public void assignCOSDef(PersistentObject pObject, ICOSDefinition cosDef,
             COSTemplate cosTemplate) throws UMSException {
@@ -336,7 +338,7 @@ public class COSManager {
      *             o the target object is not persistent. o the COS definition
      *             is not one of the valid COS definitions. o an exception is
      *             propagated from any of the "remove" methods.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeCOSAssignment(PersistentObject pObject,
             ICOSDefinition cosDef, COSTemplate cosTemplate) throws UMSException 

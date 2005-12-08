@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMSObject.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
+ * $Id: UMSObject.java,v 1.3 2005-12-08 01:16:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,8 +51,8 @@ import com.iplanet.sso.SSOTokenManager;
  *       UMSObject.getObject( java.security.Principal principal, String guid );
  *       UMSObject.removeObject(java.security.Principal principal, String guid);
  * </pre>
- * 
- * 
+ *
+ * @supported.api
  */
 public class UMSObject {
 
@@ -67,7 +67,6 @@ public class UMSObject {
     private static I18n i18n = I18n.getInstance(IUMSConstants.UMS_PKG);
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the persistent object of correct subclass, for the given id.
      * The Java class to construct the persistent object is inferred from the
      * default creation templates registered with the Template manager.
@@ -78,6 +77,7 @@ public class UMSObject {
      * @throws UMSException if there is an error while instantiating
      *         the right type of object. In addition, it propagates any
      *         exception from the datalayer.
+     * @supported.api
      */
     static public PersistentObject getObject(SSOToken token, Guid guid)
             throws UMSException {
@@ -85,7 +85,6 @@ public class UMSObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the persistent object of correct subclass, for the given ID. The
      * Java class to construct the persistent object is inferred from the
      * default creation templates registered with the Template manager.
@@ -97,6 +96,7 @@ public class UMSObject {
      * @throws UMSException if there is an error while instantiating
      *         the right type of object. In addition, it propagates any
      *         exception from the datalayer.
+     * @supported.api
      */
     static public PersistentObject getObject(
         SSOToken token,
@@ -120,7 +120,6 @@ public class UMSObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes an object identified by the given ID.
      * 
      * @param token Authenticated principal's single sign on token.
@@ -128,6 +127,7 @@ public class UMSObject {
      * @throws EntryNotFoundException if the entry is not found.
      * @throws UMSException if there is an error while removing the object from
      *         persistence store
+     * @supported.api
      */
     static public void removeObject(SSOToken token, Guid guid)
             throws EntryNotFoundException, UMSException {
@@ -201,7 +201,7 @@ public class UMSObject {
      * @throws UMSException
      *             for failure to create the object
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static PersistentObject getObjectHandle(SSOToken token, Guid guid)
             throws UMSException {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManagedRole.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
+ * $Id: ManagedRole.java,v 1.3 2005-12-08 01:16:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,8 @@ import com.iplanet.services.util.I18n;
  * attribute. When a member is added to the role, the DN of the role is added to
  * the member's nsRoleDN attribute. When a member is removed from the role, the
  * DN of the role is removed from the member's nsRoleDN attribute value.
+ *
+ * @supported.api
  */
 public class ManagedRole extends BaseRole implements IAssignableMembership {
 
@@ -49,21 +51,22 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Name of the member attribute, which is modified when the member is added
      * to/removed from the role. To be added as a member of the role, the member
-     * object should allow this attribute. iPlanet-PUBLIC-STATIC
+     * object should allow this attribute.
+     * @supported.api
      */
     public static final String MEMBER_ATTR_NAME = "nsRoleDN";
 
     /**
      * Name of the computed member attribute, which would be computed by
      * Directory server for role, when the member entry is read.
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final String COMPUTED_MEMBER_ATTR_NAME = "nsRole";
 
     /**
      * LDAP object classes that define the nsManagedRoleDefinition, the iPlanet
      * Directory Server object class, that maps to ManagedRole
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final String[] MANAGEDROLE_OBJECTCLASSES = { "top",
             "ldapsubentry", "nsroledefinition", "nssimpleroledefinition",
@@ -71,14 +74,15 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
 
     /**
      * The attribute that is must for ManagedRole. Any creation template for
-     * ManagedRole should have this attribute iPlanet-PUBLIC-STATIC
+     * ManagedRole should have this attribute
+     * @supported.api
      */
     public static final String[] MANAGEDROLE_ATTRIBUTES = { "cn" };
 
     /**
      * No argument constructor
      * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
+     * @supported.api
      */
     public ManagedRole() {
     }
@@ -116,14 +120,13 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
      * Constructs a ManagedRole object in memory with a given template. One
      * needs to call save method to save the new object to persistent storage.
      * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
-     * 
      * @param template
      *            Template for creating a group
      * @param attrSet
      *            Attribute/value set
      * @throws UMSException
      *             on failure to instantiate
+     * @supported.api
      */
     public ManagedRole(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -133,12 +136,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Adds a member to the role. The change is saved to persistent storage.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param member
      *            Object to be added as member
      * @throws UMSException
      *             on failure to save to persistent storage
+     * @supported.api
      */
     public void addMember(PersistentObject member) throws UMSException {
         member.modify(new Attr(MEMBER_ATTR_NAME, this.getDN()), ModSet.ADD);
@@ -157,11 +159,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds a member to the role. The change is saved to persistent storage.
      * 
      * @param guid Globally unique identifier for the member to be added.
      * @throws UMSException if fail to save to persistent storage.
+     * @supported.api
      */
     public void addMember(Guid guid) throws UMSException {
 
@@ -178,12 +180,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
      * Adds a list of members to the role. The change is saved to persistent
      * storage.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param guids
      *            Array of member guids to be added as members to the role
      * @throws UMSException
      *             on failure to save to persistent storage
+     * @supported.api
      */
     public void addMembers(Guid[] guids) throws UMSException {
         if (guids == null) {
@@ -265,11 +266,10 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Gets the members of the group.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @return Iterator for unique identifiers for members of the role
      * @throws UMSException
      *             on failure to search
+     * @supported.api
      */
     public SearchResults getMemberIDs() throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -277,13 +277,13 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the members of the group meeting the filter condition.
      * 
      * @param filter LDAP filter to select a subset of members
      * @return <code>SearchResults</code> that can be used to iterate over the
      *         unique identifiers for members of the role.
      * @throws UMSException if fail to search.
+     * @supported.api
      */
     public SearchResults getMemberIDs(String filter) throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -293,11 +293,10 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Gets the member count.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @return Number of members of the role
      * @throws UMSException
      *             on failure to search
+     * @supported.api
      */
     public int getMemberCount() throws UMSException {
         int count = 0;
@@ -313,13 +312,12 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Gets the GUID of the member at the given index (zero-based).
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param index
      *            Zero-based index into the group container
      * @return Unique identifier for a member
      * @throws UMSException
      *             on failure to search
+     * @supported.api
      */
     public Guid getMemberIDAt(int index) throws UMSException {
         if (index < 0) {
@@ -343,12 +341,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
      * Removes a member from the role. The change is saved to persistent
      * storage.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param member
      *            member to be removed from the role
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeMember(PersistentObject member) throws UMSException {
 
@@ -368,12 +365,11 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
      * Removes a member from the group. The change is saved to persistent
      * storage.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param guid
      *            Unique identifier for the member to be removed
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeMember(Guid guid) throws UMSException {
 
@@ -389,10 +385,9 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Removes all members of the role.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeAllMembers() throws UMSException {
         SearchResults searchResults = getMemberIDs();
@@ -404,13 +399,12 @@ public class ManagedRole extends BaseRole implements IAssignableMembership {
     /**
      * Checks if a given identifier is a member of the role.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param guid
      *            guid of the member to be checked for membership
      * @return <code>true</code> if it is a member
      * @exception UMSException
      *                on failure to read object for guid
+     * @supported.api
      */
     public boolean hasMember(Guid guid) throws UMSException {
 

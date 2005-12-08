@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACI.java,v 1.2 2005-11-04 18:53:43 veiming Exp $
+ * $Id: ACI.java,v 1.3 2005-12-08 01:16:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 /**
  * Class that encapsulates directory entry aci Provides a simple programmatic
  * interface to compose, set, query and parse ACI
+ * @supported.api
  */
 public class ACI {
 
@@ -148,7 +149,8 @@ public class ACI {
      */
 
     /**
-     * No argument constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * No argument constructor
+     * @supported.api
      */
     public ACI() {
     }
@@ -157,14 +159,14 @@ public class ACI {
      * Constructor
      * 
      * @param name
-     *            name of the ACI iPlanet-PUBLIC-CONSTRUCTOR
+     *            name of the ACI
+     * @supported.api
      */
     public ACI(String name) {
         _name = name;
     }
 
     /*
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructor.
      * 
      * @param name name of the ACI.
@@ -177,6 +179,7 @@ public class ACI {
      * @param permissions <code>QualifiedCollection</code> of permissions that
      *        apply to the ACI.
      * @link QualifiedCollection.setExclusive
+     * @supported.api
      */
     public ACI(String name, String target, String targetFilter,
             QualifiedCollection targetAttributes, Collection users,
@@ -197,7 +200,8 @@ public class ACI {
      * @param object
      *            the object to check for equality
      * @return <code>true</code> if the passed object is equal to this object,
-     *         <code>false</code> otherwise iPlanet-PUBLIC-METHOD
+     *         <code>false</code> otherwise
+     * @supported.api
      */
     public boolean equals(Object object) {
         boolean objectsEqual = false;
@@ -229,7 +233,8 @@ public class ACI {
      * Sets the name of the ACI
      * 
      * @param name
-     *            the name of the ACI iPlanet-PUBLIC-METHOD
+     *            the name of the ACI
+     * @supported.api
      */
     public void setName(String name) {
         _name = name;
@@ -238,7 +243,8 @@ public class ACI {
     /**
      * Gets the name of the ACI
      * 
-     * @return the name of the ACI iPlanet-PUBLIC-METHOD
+     * @return the name of the ACI
+     * @supported.api
      */
     public String getName() {
         return _name;
@@ -248,7 +254,8 @@ public class ACI {
      * Sets the target of the ACI
      * 
      * @param target
-     *            the target of the ACI iPlanet-PUBLIC-METHOD
+     *            the target of the ACI
+     * @supported.api
      */
     public void setTarget(String target) {
         _target = target;
@@ -257,7 +264,8 @@ public class ACI {
     /**
      * Gets the target of the ACI
      * 
-     * @return the target of the ACI iPlanet-PUBLIC-METHOD
+     * @return the target of the ACI
+     * @supported.api
      */
     public String getTarget() {
         return _target;
@@ -267,7 +275,8 @@ public class ACI {
      * Sets the target filter of the ACI
      * 
      * @param targetFilter
-     *            the ldap target filter for the ACI iPlanet-PUBLIC-METHOD
+     *            the ldap target filter for the ACI
+     * @supported.api
      */
     public void setTargetFilter(String targetFilter) {
         _targetFilter = targetFilter;
@@ -277,14 +286,16 @@ public class ACI {
      * Gets the target filter for the ACI
      * 
      * @return the target filter that controls the entries to which the ACI
-     *         apllies iPlanet-PUBLIC-METHOD
+     *         apllies
+     * @supported.api
      */
     public String getTargetFilter() {
         return _targetFilter;
     }
 
     /**
-     * Removes the target filter of the ACI iPlanet-PUBLIC-METHOD
+     * Removes the target filter of the ACI
+     * @supported.api
      */
     public void removeTargetFilter() {
         _targetFilter = null;
@@ -295,7 +306,8 @@ public class ACI {
      * 
      * @param targetAttribtes
      *            the QualifiedCollection of target attributes that apply to the
-     *            ACI iPlanet-PUBLIC-METHOD
+     *            ACI
+     * @supported.api
      */
     public void setTargetAttributes(QualifiedCollection targetAttributes) {
         _targetAttributes = targetAttributes;
@@ -305,7 +317,8 @@ public class ACI {
      * Geets the QualifiedCollection of targetAttributes that apply to the ACI
      * 
      * @return the QualifiedCollection of target attributes that apply to the
-     *         ACI iPlanet-PUBLIC-METHOD
+     *         ACI
+     * @supported.api
      */
 
     public QualifiedCollection getTargetAttributes() {
@@ -314,7 +327,8 @@ public class ACI {
 
     /**
      * Removes the QualifiedCollection of targetAttributes that contol the
-     * attributes to which this ACI apllies iPlanet-PUBLIC-METHOD
+     * attributes to which this ACI apllies
+     * @supported.api
      */
     public void removeTargetAttributes() {
         _targetAttributes = null;
@@ -325,7 +339,8 @@ public class ACI {
      * 
      * @param permissions
      *            the QualifiedCollection of permissions that apply to the ACI
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setPermissions(QualifiedCollection permissions) {
         _permissions = permissions;
@@ -335,7 +350,8 @@ public class ACI {
      * Geets the QualifiedCollection of permissions that apply to the ACI
      * 
      * @return the QualifiedCollection of permissions that apply to the ACI
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public QualifiedCollection getPermissions() {
         return _permissions;
@@ -346,7 +362,8 @@ public class ACI {
      * 
      * @param users
      *            the collection of users to whom the ACI apllies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setUsers(Collection users) {
         _users = users;
@@ -356,7 +373,8 @@ public class ACI {
      * Gets the collection of users to whom the ACI apllies
      * 
      * @return the collection of users to whom the ACI apllies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getUsers() {
         return _users;
@@ -367,7 +385,8 @@ public class ACI {
      * 
      * @param groups
      *            the collection of groups to whom the ACI apllies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setGroups(Collection groups) {
         _groups = groups;
@@ -377,7 +396,8 @@ public class ACI {
      * Gets the collection of groups to whom the ACI apllies
      * 
      * @return the collection of groups to whom the ACI apllies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getGroups() {
         return _groups;
@@ -388,7 +408,8 @@ public class ACI {
      * 
      * @param roles
      *            the collection of roles to which the ACI applies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setRoles(Collection roles) {
         _roles = roles;
@@ -398,7 +419,8 @@ public class ACI {
      * Gets the collection of roles to which the ACI applies
      * 
      * @return the collection of roles to which the ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getRoles() {
         return _roles;
@@ -409,7 +431,8 @@ public class ACI {
      * 
      * @param clientIP
      *            collection of client IPs to which this ACI applies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setClientIP(Collection clientIP) {
         _clientIP = clientIP;
@@ -419,7 +442,8 @@ public class ACI {
      * Gets the client IPs to which this ACI applies
      * 
      * @return collection of client IPs to which this ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getClientIP() {
         return _clientIP;
@@ -430,7 +454,8 @@ public class ACI {
      * 
      * @param clientHostNames
      *            collection of DNS host names to which this ACI applies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setClientHostNames(Collection clientHostNames) {
         _clientHostNames = clientHostNames;
@@ -440,7 +465,8 @@ public class ACI {
      * Gets the client DNS host names to which this ACI applies
      * 
      * @return collection of DNS host names to which this ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getClientHostNames() {
         return _clientHostNames;
@@ -451,7 +477,8 @@ public class ACI {
      * 
      * @param timesOfDay
      *            collection of timesOfDay at which this ACI applies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setTimesOfDay(Collection timesOfDay) {
         _timesOfDay = timesOfDay;
@@ -461,7 +488,8 @@ public class ACI {
      * Gets the times of the day at which this ACI applies
      * 
      * @return collection of timesOfDay at which this ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getTimesOfDay() {
         return _timesOfDay;
@@ -472,7 +500,8 @@ public class ACI {
      * 
      * @param the
      *            collection of days of week on which this ACI applies
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setDaysOfWeek(Collection daysOfWeek) {
         _daysOfWeek = daysOfWeek;
@@ -482,7 +511,8 @@ public class ACI {
      * Gets the days of the week on which this ACI applies
      * 
      * @return collection of days of week on which this ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getDaysOfWeek() {
         return _daysOfWeek;
@@ -493,7 +523,7 @@ public class ACI {
      * 
      * @param authMethods
      *            the collection of authorization methods to which this ACI
-     *            applies iPlanet-PUBLIC-METHOD
+     *            applies
      */
     public void setAuthMethods(Collection authMethods) {
         _authMethods = authMethods;
@@ -503,7 +533,8 @@ public class ACI {
      * Gets the authorization methods to which this ACI applies
      * 
      * @return collection of authorization methods to which this ACI applies
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getAuthMethods() {
         return _authMethods;
@@ -515,7 +546,8 @@ public class ACI {
      * @param attrName
      *            name of the attribute
      * @param values
-     *            collections of value for the attr rule iPlanet-PUBLIC-METHOD
+     *            collections of value for the attr rule
+     * @supported.api
      */
     public void setAttrRuleValue(String attrName, Collection values)
             throws ACIComposeException {
@@ -536,7 +568,8 @@ public class ACI {
      * Gets the collections of values for the given attrRuleName
      * 
      * @return collection of attr rule names supported by the ACI API
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getAttrRuleValue(String attrName) throws ACIException {
         Collection values = null;
@@ -556,7 +589,8 @@ public class ACI {
      * Gets the names of supported attr rule names
      * 
      * @return the collection of attr rule names supported by the ACI API
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public Collection getSupportedAttrRules() {
         return SUPPORTED_ATTR_RULES_COLLECTION;
@@ -567,7 +601,8 @@ public class ACI {
      * 
      * @param targetAttrFilters
      *            string defining a filter for value based access control
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void setTargetAttrFilters(String targetAttrFilters) {
         _targetAttrFilters = targetAttrFilters;
@@ -577,7 +612,8 @@ public class ACI {
      * Gets the target attr filters that controls value based access control
      * 
      * @return string defining a filter for value based access control
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public String getTargetAttrFilters() {
         return _targetAttrFilters;
@@ -586,7 +622,8 @@ public class ACI {
     /**
      * Gets a string representation of this ACI
      * 
-     * @return string representation of this ACI iPlanet-PUBLIC-METHOD
+     * @return string representation of this ACI
+     * @supported.api
      */
     public String toString() {
         StringBuffer aci = new StringBuffer();
@@ -947,70 +984,80 @@ public class ACI {
      * 
      * @param aciText
      *            value of aci attribute, typically read from directoy server
-     * @return the converted ACI iPlanet-PUBLIC-STATIC
+     * @return the converted ACI
+     * @supported.api
      */
     public static ACI valueOf(String aciText) throws ACIParseException {
         return ACIParser.parseACI(aciText);
     }
 
     /**
-     * Set the user DN attributes iPlanet-PUBLIC-METHOD
+     * Set the user DN attributes
+     * @supported.api
      */
     public void setUserDNAttrs(Collection values) {
         _userDNAttrs = values;
     }
 
     /**
-     * Get the DN attributes. iPlanet-PUBLIC-METHOD
+     * Get the DN attributes.
+     * @supported.api
      */
     public Collection getUserDNAttrs() {
         return _userDNAttrs;
     }
 
     /**
-     * Set the group DN attributes. iPlanet-PUBLIC-METHOD
+     * Set the group DN attributes.
+     * @supported.api
      */
     public void setGroupDNAttrs(Collection values) {
         _groupDNAttrs = values;
     }
 
     /**
-     * Get the group DN attributes. iPlanet-PUBLIC-METHOD
+     * Get the group DN attributes.
+     * @supported.api
      */
     Collection getGroupDNAttrs() {
         return _groupDNAttrs;
     }
 
     /**
-     * Set the user attributes. iPlanet-PUBLIC-METHOD
+     * Set the user attributes.
+     * @supported.api
      */
     public void setUserAttrs(Collection values) {
         _userAttrs = values;
     }
 
     /**
-     * Get the user Attributes. iPlanet-PUBLIC-METHOD
+     * Get the user Attributes.
+     * @supported.api
      */
     public Collection getUserAttrs() {
         return _userAttrs;
     }
 
     /**
-     * Set the ACI text. iPlanet-PUBLIC-METHOD
+     * Set the ACI text.
+     * @supported.api
      */
     public void setACIText(String aciText) {
         _aciText = aciText;
     }
 
     /**
-     * Get the ACI text. iPlanet-PUBLIC-METHOD
+     * Get the ACI text.
+     * @supported.api
      */
     public String getACIText() {
         return _aciText;
     }
 
     /**
-     * Set the Access Control Rule. iPlanet-PUBLIC-METHOD
+     * Set the Access Control Rule.
+     * @supported.api
      */
     public void setACR(ACR acr) {
         setVersion(acr.getVersion());
@@ -1031,14 +1078,16 @@ public class ACI {
     }
 
     /**
-     * Set the version number of the ACI. iPlanet-PUBLIC-METHOD
+     * Set the version number of the ACI.
+     * @supported.api
      */
     public void setVersion(String version) {
         _version = version;
     }
 
     /**
-     * Get the version number. iPlanet-PUBLIC-METHOD
+     * Get the version number.
+     * @supported.api
      */
     public String getVersion() {
         return _version;
@@ -1300,7 +1349,8 @@ class ACITargetExpression {
 
     /**
      * Returns the string representation of ACITargetExpression
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -1899,7 +1949,8 @@ class BindRuleBuilder {
     }
 
     /**
-     * Returns the string representation of the Bind rule. iPlanet-PUBLIC-METHOD
+     * Returns the string representation of the Bind rule.
+     * @supported.api
      */
     public String toString() {
         StringBuffer bindRule = new StringBuffer();

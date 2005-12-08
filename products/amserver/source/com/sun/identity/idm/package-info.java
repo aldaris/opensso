@@ -17,13 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2005-11-17 21:05:23 veiming Exp $
+ * $Id: package-info.java,v 1.2 2005-12-08 01:16:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 /**
  * Provides classes for accessing the Identity Repository interfaces.
+ * @supported.api
  */
-
 package com.sun.identity.idm;

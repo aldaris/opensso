@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventException.java,v 1.1 2005-11-01 00:30:20 arvindp Exp $
+ * $Id: EventException.java,v 1.2 2005-12-08 01:16:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.iplanet.services.ldap.LDAPServiceException;
  * Exception occurs while setting an event request or when trigering the
  * "entryChanged()" method after a persistent search results are received from
  * the Directory Server.
- * 
+ * @supported.api
  */
 public class EventException extends LDAPServiceException {
 
@@ -51,7 +51,8 @@ public class EventException extends LDAPServiceException {
      * Constructs a EventException with a detail message.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception 
+     * @supported.api
      */
     public EventException(String msg) {
         super(msg);
@@ -65,7 +66,8 @@ public class EventException extends LDAPServiceException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception 
+     * @supported.api
      */
     public EventException(String msg, Throwable t) {
         super(msg, t);
@@ -77,7 +79,8 @@ public class EventException extends LDAPServiceException {
      * detail message (if present);
      * 
      * @return a string representation of this EventException, including its
-     *         detail message, if present. iPlanet-PUBLIC-METHOD
+     *         detail message, if present.
+     * @supported.api
      */
     public String toString() {
         return super.toString()
@@ -89,7 +92,8 @@ public class EventException extends LDAPServiceException {
      * (if present)
      * 
      * @return a string representation of the detailed message, if present.
-     *         iPlanet-PUBLIC-METHOD
+     *        
+     * @supported.api
      */
     public String getMessage() {
         return _message;
@@ -97,7 +101,8 @@ public class EventException extends LDAPServiceException {
 
     /**
      * Prints a stack trace for this EventException to System.out;
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void printStackTrace() {
         super.printStackTrace();
@@ -108,7 +113,8 @@ public class EventException extends LDAPServiceException {
      * 
      * @param printStream
      *            a PrintStream to print the stack trace out to.
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void printStackTrace(PrintStream printStream) {
         super.printStackTrace(printStream);
@@ -119,14 +125,10 @@ public class EventException extends LDAPServiceException {
      * 
      * @param printWriter
      *            a PrintWriter to print the stack trace out to.
-     *            iPlanet-PUBLIC-METHOD
+     *           
+     * @supported.api
      */
     public void printStackTrace(PrintWriter printWriter) {
         super.printStackTrace(printWriter);
     }
 }
-
-/**
- * $History: EventException.java $
- * 
- */

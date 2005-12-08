@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUser.java,v 1.1 2005-11-01 00:29:21 arvindp Exp $
+ * $Id: AMUser.java,v 1.2 2005-12-08 01:16:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,19 +28,17 @@ import java.util.Set;
 
 import com.iplanet.sso.SSOException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This interface provides methods to manage user. <code>AMUser</code> objects
  * can be obtained by using <code>AMStoreConnection</code>. A handle to this
  * object can be obtained by using the DN of the object.
  * 
  * <PRE>
- * 
  * AMStoreConnection amsc = new AMStoreConnection(ssotoken); if
  * (amsc.doesEntryExist(uDN)) { AMUser user = amsc.getUser(uDN); }
- * 
  * </PRE>
+ * 
+ * @supported.all.api
  */
 public interface AMUser extends AMObject {
 

@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoFatalException.java,v 1.1 2005-11-01 00:31:09 arvindp Exp $
+ * $Id: IdRepoFatalException.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The exception class whose instance is thrown if there is any error during the
@@ -34,6 +32,8 @@ package com.sun.identity.idm;
  * errors are categorized as a <code>ABORT</code>, <code>RETRY</code>,
  * <code>CONFIG_PROBLEM</code> or <code>LDAP_OP_FAILED</code> (typically a
  * bug).
+ *
+ * @supported.all.api
  */
 public class IdRepoFatalException extends IdRepoException {
 

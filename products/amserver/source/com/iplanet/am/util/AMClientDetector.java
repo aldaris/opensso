@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.1 2005-11-01 00:29:34 arvindp Exp $
+ * $Id: AMClientDetector.java,v 1.2 2005-12-08 01:16:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,13 +37,12 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This is an utility to get the client type. This utility executes Client
  * Detection Class provided in Client Detection Module Service and gets the
  * client type. Default client type will be returned if there is no Client
  * Detection Implementation provided
+ * @supported.all.api
  */
 public class AMClientDetector {
 
@@ -122,7 +121,7 @@ public class AMClientDetector {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the client type by executing client
+     * Returns the client type by executing client
      * detector class provided in Client Detection Service.
      * 
      * @param request

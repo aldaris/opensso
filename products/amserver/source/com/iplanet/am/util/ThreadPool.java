@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.1 2005-11-01 00:29:44 arvindp Exp $
+ * $Id: ThreadPool.java,v 1.2 2005-12-08 01:16:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * <p>
@@ -40,6 +38,7 @@ package com.iplanet.am.util;
  * tasks until the number of un-executed tasks is less than the threshold value.
  * This guarantees the thread pool will not use up the system resources under
  * heavy load.
+ * @supported.all.api
  */
 public class ThreadPool {
 

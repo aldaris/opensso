@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecryptAction.java,v 1.1 2005-11-01 00:31:17 arvindp Exp $
+ * $Id: DecryptAction.java,v 1.2 2005-12-08 01:16:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,8 +53,9 @@ import com.iplanet.am.util.AMPasswordUtil;
  * true in AMConfig properties file.
  * 
  * </PRE>
+ *
+ * @supported.all.api
  */
-/* iPlanet-PUBLIC-CLASS */
 public class DecryptAction implements PrivilegedAction {
     protected String value;
 

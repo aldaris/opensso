@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdOperation.java,v 1.1 2005-11-01 00:31:08 arvindp Exp $
+ * $Id: IdOperation.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
-/* iPlanet-PUBLIC-CLASS */
 /**
  * The class <code>IdOperation</code> defines the types of operations
  * supported on managed identities, and provides static constants for these
@@ -36,8 +35,9 @@ package com.sun.identity.idm;
  * </code> and <code> IdOperation.SERVICE </code>.
  * The usage of the respective operations are defined along with their
  * declaration.
+ *
+ * @supported.all.api
  */
-
 public class IdOperation {
 
     private String op;

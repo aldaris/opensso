@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISearch.java,v 1.3 2005-11-15 04:10:29 veiming Exp $
+ * $Id: ISearch.java,v 1.4 2005-12-08 01:16:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,7 @@ package com.iplanet.ums;
  * 
  * @see com.iplanet.ums.SearchControl
  * 
- * iPlanet-PUBLIC-CLASS
+ * @supported.all.api
  */
 public interface ISearch {
 

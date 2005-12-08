@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2005-11-01 00:28:28 arvindp Exp $
+   $Id: build.xml,v 1.2 2005-12-08 01:16:00 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,6 +49,7 @@
     <property name="built.res.dir" location="${built.dir}/resources"/>
     <property name="built.docs.dir" location="${built.dir}/docs"/>   
     <property name="built.apidocs.dir" location="${built.docs.dir}/api"/> 
+    <property name="built.publicapidocs.dir" location="${built.docs.dir}/public-api"/> 
     <property name="demobuilt.dir" location="${built.dir}/demo"/> 
 
 
@@ -120,15 +121,35 @@
         </javadoc>
     </target>
 
+    <target name="publicdoc" depends="preparebuild">
+        <javadoc destdir="${built.publicapidocs.dir}"
+                 windowtitle="Public OpenSSO API">
+            <classpath refid="build.class.path"/>
+            <packageset dir="${src.dir}">
+                <include name="com/iplanet/sso/**"/>
+                <include name="com/iplanet/dpro/**"/>
+                <include name="com/sun/identity/session/**"/>
+            </packageset>
+            <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
+                    path="${classes.dir}" />
+            <tag name="supported.all.api" description="" />
+            <tag name="supported.api" description="" />
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
+        </javadoc>
+    </target>
+
     <target name="preparebuild">
         <mkdir dir="${built.dir}"/>
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${built.res.dir}"/>
         <mkdir dir="${built.docs.dir}"/>
         <mkdir dir="${built.apidocs.dir}"/>
+        <mkdir dir="${built.publicapidocs.dir}"/>
     </target>
 
     <target name="clean">
+        <delete dir="${built.publicapidocs.dir}"/>
         <delete dir="${built.apidocs.dir}"/>
         <delete dir="${built.docs.dir}"/>
         <delete dir="${built.res.dir}"/>

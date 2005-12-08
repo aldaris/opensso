@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAssignableMembership.java,v 1.1 2005-11-01 00:30:36 arvindp Exp $
+ * $Id: IAssignableMembership.java,v 1.2 2005-12-08 01:16:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ package com.iplanet.ums;
  * IMembership by adding support for adding and removing members.
  * 
  * @see com.iplanet.ums.IMembership
+ * @supported.all.api
  */
 public interface IAssignableMembership extends IMembership {
 
@@ -39,7 +40,6 @@ public interface IAssignableMembership extends IMembership {
      *            globally unique identifier for the member to be added
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void addMember(Guid guid) throws UMSException;
 
@@ -50,7 +50,6 @@ public interface IAssignableMembership extends IMembership {
      *            Object to be added
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void addMember(PersistentObject member) throws UMSException;
 
@@ -62,7 +61,6 @@ public interface IAssignableMembership extends IMembership {
      *            list of member guids to be added as members to the group
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void addMembers(Guid[] guids) throws UMSException;
 
@@ -74,7 +72,6 @@ public interface IAssignableMembership extends IMembership {
      *            unique identifier for the member to be removed
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void removeMember(Guid guid) throws UMSException;
 
@@ -86,7 +83,6 @@ public interface IAssignableMembership extends IMembership {
      *            Object to be removed
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void removeMember(PersistentObject member) throws UMSException;
 
@@ -95,7 +91,6 @@ public interface IAssignableMembership extends IMembership {
      * 
      * @exception UMSException
      *                on failure to save to persistent storage
-     *                iPlanet-PUBLIC-METHOD
      */
     public void removeAllMembers() throws UMSException;
 }

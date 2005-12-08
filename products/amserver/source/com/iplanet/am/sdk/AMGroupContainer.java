@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupContainer.java,v 1.1 2005-11-01 00:29:06 arvindp Exp $
+ * $Id: AMGroupContainer.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This interface provides methods to manage group container.
@@ -44,6 +42,7 @@ import com.iplanet.sso.SSOException;
  * amsc.getGroupContainer(gcDN); }
  * 
  * </PRE>
+ * @supported.all.api
  */
 public interface AMGroupContainer extends AMObject {
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilteredRole.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: FilteredRole.java,v 1.2 2005-12-08 01:16:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,20 +36,23 @@ import com.iplanet.services.util.I18n;
  * FilteredRole is a role implementation of the membership interface
  * IFilteredRole. FilteredRole maps to nsFilteredRoleDefinition of iPlanet
  * Directory Server.
+ * @supported.api
  */
 public class FilteredRole extends BaseRole implements IFilteredMembership,
         IUMSConstants {
 
     /**
      * Name of the filter attribute, which controls membership.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String FILTER_ATTR_NAME = "nsRoleFilter";
 
     /**
      * LDAP object classes that define the nsFilteredRoleDefinition, the iPlanet
      * Directory Server object class that maps to FilteredRole.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String[] FILTEREDROLE_OBJECTCLASSES = { "top",
             "ldapsubentry", "nsroledefinition", "nscomplexroledefinition",
@@ -57,7 +60,9 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
 
     /**
      * The attributes that are required for FilteredRole. Any creation template
-     * for FilteredRole should have these attributes. iPlanet-PUBLIC-STATIC
+     * for FilteredRole should have these attributes.
+     *
+     * @supported.api
      */
     public static final String[] FILTEREDROLE_ATTRIBUTES = { "cn",
             "nsRoleFilter" };
@@ -102,7 +107,7 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs a FilteredRole object in memory
+     * Constructs a FilteredRole object in memory
      * with a given template. The save method must be called to save the new
      * object to persistent storage.
      * 
@@ -112,6 +117,8 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
      *            Attribute/value set
      * @exception UMSException
      *                on failure to instantiate
+     *
+     * @supported.api
      */
     public FilteredRole(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -119,23 +126,27 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the filter that controls the membership.
+     * Sets the filter that controls the membership.
      * 
      * @param filter
      *            the filter that controls the membership
      * @throws UMSException
      *             if there is any error while setting the filter
+     *
+     * @supported.api
      */
     public void setFilter(String filter) throws UMSException {
         setAttribute(new Attr(FILTER_ATTR_NAME, filter));
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the filter that controls the membership.
+     * Gets the filter that controls the membership.
      * 
      * @return the filter that controls the membership
      * @throws UMSException
      *             if there is any error while getting the filter
+     *
+     * @supported.api
      */
     public String getFilter() throws UMSException {
         return getAttribute(FILTER_ATTR_NAME).getValue();
@@ -204,12 +215,14 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the members of the role.
+     * Gets the members of the role.
      * 
      * @return SearchResults for iterating through the unique identifiers of
      *         members of the role
      * @throws UMSException
      *             on failure to search
+     *
+     * @supported.api
      */
     public SearchResults getMemberIDs() throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -217,7 +230,7 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the members of the role meeting an LDAP filter
+     * Gets the members of the role meeting an LDAP filter
      * condition.
      * 
      * @param filter
@@ -226,6 +239,8 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
      *         members of the role
      * @exception UMSException
      *                on failure to search
+     *
+     * @supported.api
      */
     public SearchResults getMemberIDs(String filter) throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -233,11 +248,13 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the member count.
+     * Gets the member count.
      * 
      * @return Number of members of the role
      * @exception UMSException
      *                on failure to search
+     *
+     * @supported.api
      */
     public int getMemberCount() throws UMSException {
         int count = 0;
@@ -251,13 +268,15 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets a member given an index (zero based).
+     * Gets a member given an index (zero based).
      * 
      * @param index
      *            Zero-based index into the group container
      * @return Unique identifier for a member
      * @exception UMSException
      *                on failure to search
+     *
+     * @supported.api
      */
     public Guid getMemberIDAt(int index) throws UMSException {
         if (index < 0) {
@@ -291,14 +310,15 @@ public class FilteredRole extends BaseRole implements IFilteredMembership,
     // return hasMember(po, true);
     // }
     /**
-     * iPlanet-PUBLIC-METHOD Checks if a given identifier is a member of the
-     * role.
+     * Checks if a given identifier is a member of the role.
      * 
      * @param guid
      *            guid of the member to be checked for membership
      * @return <code>true</code> if it is a member
      * @exception UMSException
      *                on failure to read object for guid
+     *
+     * @supported.api
      */
     public boolean hasMember(Guid guid) throws UMSException {
         Principal principal = getPrincipal();

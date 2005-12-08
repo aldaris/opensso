@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.2 2005-11-15 04:10:36 veiming Exp $
+ * $Id: ServiceSchemaManager.java,v 1.3 2005-12-08 01:16:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,8 @@ import com.iplanet.ums.IUMSConstants;
  * The class <code>ServiceSchemaManager</code> provides interfaces to manage
  * the service's schema. It provides access to <code>ServiceSchema</code>,
  * which represents a single "schema" in the service.
+ *
+ * @supported.api
  */
 public class ServiceSchemaManager {
 
@@ -70,7 +72,7 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Creates an instance of
+     * Creates an instance of
      * <code>ServiceSchemaManager</code> for the given service and version
      * pair. It requires an user identity, that will used to perform operations
      * with. It is assumed that the application calling this constructor should
@@ -87,6 +89,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation
      * @throws SSOException
      *             if the single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceSchemaManager(SSOToken token, String serviceName,
             String version) throws SMSException, SSOException {
@@ -102,35 +106,41 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the name of the service.
+     * Returns the name of the service.
      * 
      * @return the name of the service
+     *
+     * @supported.api
      */
     public String getName() {
         return (serviceName);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the version of the service.
+     * Returns the version of the service.
      * 
      * @return the version of the service
+     *
+     * @supported.api
      */
     public String getVersion() {
         return (version);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the I18N properties file name for the
+     * Returns the I18N properties file name for the
      * service.
      * 
      * @return the I18N properties file name for the service
+     *
+     * @supported.api
      */
     public String getI18NFileName() {
         return (ssm.getI18NFileName());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the I18N properties file name for the service
+     * Sets the I18N properties file name for the service
      * 
      * @param url
      *            properties file name
@@ -138,6 +148,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation
      * @throws SSOException
      *             if the single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void setI18NFileName(String url) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
@@ -152,19 +164,21 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the URL of the JAR file that contains the
+     * Returns the URL of the JAR file that contains the
      * I18N properties file. The method could return null, in which case the
      * properties file should be in <code>CLASSPATH</code>.
      * 
      * @return the URL of the JAR file containing the <code>I18N</code>
      *         properties file.
+     *
+     * @supported.api
      */
     public String getI18NJarURL() {
         return (ssm.getI18NJarURL());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the URL of the JAR file that contains the I18N
+     * Sets the URL of the JAR file that contains the I18N
      * properties
      * 
      * @param url
@@ -173,6 +187,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation
      * @throws SSOException
      *             if the single sign on token is invalid or expired
+     *
+     * @supported.api
      */
 
     public void setI18NJarURL(String url) throws SMSException, SSOException {
@@ -188,16 +204,18 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service's hierarchy.
+     * Returns the service's hierarchy.
      * 
      * @return service hierarchy in slash format.
+     *
+     * @supported.api
      */
     public String getServiceHierarchy() {
         return (ssm.getServiceHierarchy());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the service's hierarchy
+     * Sets the service's hierarchy
      * 
      * @param newhierarchy
      *            service hierarchy
@@ -205,6 +223,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation
      * @throws SSOException
      *             if the single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void setServiceHierarchy(String newhierarchy) throws SMSException,
             SSOException {
@@ -220,16 +240,18 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns i18nKey of the schema.
+     * Returns i18nKey of the schema.
      * 
      * @return i18nKey of the schema.
+     *
+     * @supported.api
      */
     public String getI18NKey() {
         return (ssm.getI18NKey());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the i18nKey of the schema.
+     * Sets the i18nKey of the schema.
      * 
      * @param i18nKey
      *            <code>i18nKey</code> of the schema.
@@ -237,6 +259,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation.
      * @throws SSOException
      *             if the single sign on token is invalid or expired.
+     *
+     * @supported.api
      */
     public void setI18NKey(String i18nKey) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
@@ -252,16 +276,18 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns URL of the view bean for the service
+     * Returns URL of the view bean for the service
      * 
      * @return URL for view bean
+     *
+     * @supported.api
      */
     public String getPropertiesViewBeanURL() {
         return (ssm.getPropertiesViewBeanURL());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the URL of the view bean for the service.
+     * Sets the URL of the view bean for the service.
      * 
      * @param url
      *            of the view bean for the service.
@@ -269,6 +295,8 @@ public class ServiceSchemaManager {
      *             if an error occurred while trying to perform the operation.
      * @throws SSOException
      *             if the single sign on token is invalid or expired.
+     *
+     * @supported.api
      */
     public void setPropertiesViewBeanURL(String url) throws SMSException,
             SSOException {
@@ -316,12 +344,14 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the schema types available with this
+     * Returns the schema types available with this
      * service.
      * 
      * @return set of <code>SchemaTypes</code> in this service.
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public Set getSchemaTypes() throws SMSException {
         SMSEntry.validateToken(token);
@@ -329,7 +359,7 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the configuration schema for the given
+     * Returns the configuration schema for the given
      * schema type
      * 
      * @param type
@@ -337,6 +367,8 @@ public class ServiceSchemaManager {
      * @return service schema.
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getSchema(String type) throws SMSException {
         SchemaType t = null;
@@ -353,7 +385,7 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the configuration schema for the given
+     * Returns the configuration schema for the given
      * schema type
      * 
      * @param type
@@ -361,6 +393,8 @@ public class ServiceSchemaManager {
      * @return service schema.
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getSchema(SchemaType type) throws SMSException {
         SMSEntry.validateToken(token);
@@ -397,7 +431,7 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the attribute schemas for the given schema
+     * Returns the attribute schemas for the given schema
      * type excluding status and service identifier attributes.
      * 
      * @param type
@@ -405,6 +439,8 @@ public class ServiceSchemaManager {
      * @return service schema.
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public Set getServiceAttributeNames(SchemaType type) throws SMSException {
         SMSEntry.validateToken(token);
@@ -413,11 +449,13 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the global service configuration schema.
+     * Returns the global service configuration schema.
      * 
      * @return the global service configuration schema
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getGlobalSchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -425,12 +463,14 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the organization service configuration
+     * Returns the organization service configuration
      * schema.
      * 
      * @return the organization service configuration schema
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getOrganizationSchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -438,11 +478,13 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the dynamic service configuration schema.
+     * Returns the dynamic service configuration schema.
      * 
      * @return the dynamic service configuration schema
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getDynamicSchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -450,11 +492,13 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the user service configuration schema.
+     * Returns the user service configuration schema.
      * 
      * @return the user service configuration schema
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getUserSchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -462,11 +506,13 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the policy service configuration schema.
+     * Returns the policy service configuration schema.
      * 
      * @return the policy service configuration schema
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public ServiceSchema getPolicySchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -474,11 +520,13 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service schema in XML for this service.
+     * Returns the service schema in XML for this service.
      * 
      * @return the service schema in XML for this service
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
+     *
+     * @supported.api
      */
     public InputStream getSchema() throws SMSException {
         SMSEntry.validateToken(token);
@@ -486,7 +534,7 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Replaces the existing service schema with the given
+     * Replaces the existing service schema with the given
      * schema defined by the XML input stream that follows the SMS DTD.
      * 
      * @param xmlServiceSchema
@@ -497,6 +545,8 @@ public class ServiceSchemaManager {
      *             if the single sign on token is invalid or expired
      * @throws IOException
      *             if an error occurred with the <code> InputStream </code>
+     *
+     * @supported.api
      */
     public void replaceSchema(InputStream xmlServiceSchema)
             throws SSOException, SMSException, IOException {
@@ -506,12 +556,14 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns true if the given object equals this
+     * Returns true if the given object equals this
      * object.
      * 
      * @param o
      *            object for comparison.
      * @return true if the given object equals this object.
+     *
+     * @supported.api
      */
     public boolean equals(Object o) {
         if (o instanceof ServiceSchemaManager) {
@@ -525,34 +577,40 @@ public class ServiceSchemaManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the string representation of the Service
+     * Returns the string representation of the Service
      * Schema.
      * 
      * @return the string representation of the Service Schema.
+     *
+     * @supported.api
      */
     public String toString() {
         return (ssm.toString());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Registers for changes to service's schema. The
+     * Registers for changes to service's schema. The
      * object will be called when schema for this service and version is
      * changed.
      * 
      * @param listener
      *            callback object that will be invoked when schema changes.
      * @return an ID of the registered listener.
+     *
+     * @supported.api
      */
     public String addListener(ServiceListener listener) {
         return (ssm.addListener(listener));
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the listener from the service for the given
+     * Removes the listener from the service for the given
      * listener ID. The ID was issued when the listener was registered.
      * 
      * @param listenerID
      *            the listener ID issued when the listener was registered
+     *
+     * @supported.api
      */
     public void removeListener(String listenerID) {
         ssm.removeListener(listenerID);

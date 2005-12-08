@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceConfig.java,v 1.2 2005-12-08 01:16:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,12 +36,12 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>ServiceConfig</code> provides interfaces to manage the
  * configuration information of a service configuration. It provides methods to
  * get and set configuration parameters for this service configuration.
+ *
+ * @supported.all.api
  */
 public class ServiceConfig {
     // Instance variables

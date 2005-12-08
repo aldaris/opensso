@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemplateManager.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
+ * $Id: TemplateManager.java,v 1.3 2005-12-08 01:16:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import com.iplanet.services.util.I18n;
  * @see com.iplanet.ums.Template
  * @see com.iplanet.ums.CreationTemplate
  * @see com.iplanet.ums.SearchTemplate
+ * @supported.api
  */
 public class TemplateManager implements java.io.Serializable {
 
@@ -68,7 +69,7 @@ public class TemplateManager implements java.io.Serializable {
      * Search scope for determining how to get the configuration data. This will
      * get the configuration data at the organization level specified.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_ORG = 0;
 
@@ -77,7 +78,7 @@ public class TemplateManager implements java.io.Serializable {
      * get the configuration data from the nearest ancestor containing the
      * configuration data.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_ANCESTORS = 1;
 
@@ -86,7 +87,7 @@ public class TemplateManager implements java.io.Serializable {
      * get the configuration data at the organization level, and if not found,
      * then at the root level.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_TOP = 2;
 
@@ -141,7 +142,7 @@ public class TemplateManager implements java.io.Serializable {
      *             if an exception occurs while getting an instance of a
      *             template manager.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static synchronized TemplateManager getTemplateManager()
             throws UMSException {
@@ -176,7 +177,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Given a class, gets the default creation template for the object. This
      * will traverse the tree all the way to the root until the CreationTemplate
      * is found.
@@ -187,6 +187,7 @@ public class TemplateManager implements java.io.Serializable {
      *         class is not known or no template is registered for the class.
      * @throws UMSException if an exception occurs while getting the creation
      *         template.
+     * @supported.api
      */
     public CreationTemplate getCreationTemplate(Class cls, Guid orgGuid)
             throws UMSException {
@@ -195,7 +196,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns default creation template of a given class.
      * 
      * @param cls Class (instance of) to be queried for the template.
@@ -205,6 +205,7 @@ public class TemplateManager implements java.io.Serializable {
      * @return Creation template for the class or <code>null</code> if the
      *         class is not known or no template is registered for the class
      * @throws UMSException if error occurs while getting the creation template.
+     * @supported.api
      */
     public CreationTemplate getCreationTemplate(Class cls, Guid orgGuid,
             int scope) throws UMSException {
@@ -228,7 +229,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a template from a supplied template name. This will traverse the
      * tree all the way to the root until the CreationTemplate is found.
      * 
@@ -237,6 +237,7 @@ public class TemplateManager implements java.io.Serializable {
      * @return CreationTemplate matching the supplied name, or <code>null</code>
      *         if there is no matching template
      * @throws UMSException if error occurs while getting the creation template.
+     * @supported.api
      */
     public CreationTemplate getCreationTemplate(String name, Guid orgGuid)
             throws UMSException {
@@ -244,7 +245,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a template from a supplied template name.
      * 
      * @param name Name of template.
@@ -255,6 +255,7 @@ public class TemplateManager implements java.io.Serializable {
      *         if there is no matching template
      * @throws UMSException if an exception occurs while getting the creation
      *         template.
+     * @supported.api
      */
     public CreationTemplate getCreationTemplate(String name, Guid orgGuid,
             int scope) throws UMSException {
@@ -279,7 +280,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a template from a supplied template name. This will traverse the
      * tree all the way to the root till the SearchTemplate is found.
      * 
@@ -288,6 +288,7 @@ public class TemplateManager implements java.io.Serializable {
      * @return SearchTemplate matching the supplied name, or <code>null</code>
      *         if there is no matching template
      * @throws UMSException if error occurs while getting the search template.
+     * @supported.api
      */
     public SearchTemplate getSearchTemplate(String name, Guid orgGuid)
             throws UMSException {
@@ -295,7 +296,6 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a template from a supplied template name.
      * 
      * @param name Name of Template.
@@ -306,6 +306,7 @@ public class TemplateManager implements java.io.Serializable {
      *         if there is no matching template.
      * @throws UMSException if an exception occurs while getting the search
      *         template.
+     * @supported.api
      */
     public SearchTemplate getSearchTemplate(
         String name,
@@ -330,12 +331,12 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a set of known creation templates.
      * 
      * @param orgGuid GUID of the Organization where the config data is stored.
      * @return Names of known creation templates
      * @throws UMSException if an exception occurs.
+     * @supported.api
      */
     public Set getCreationTemplateNames(Guid orgGuid) throws UMSException {
         Set names = null;
@@ -348,12 +349,12 @@ public class TemplateManager implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a set of known search templates.
      * 
      * @param orgGuid GUID of the Organization where the config data is stored.
      * @return Names of known search templates.
      * @throws UMSException if an exception occurs.
+     * @supported.api
      */
     public Set getSearchTemplateNames(Guid orgGuid) throws UMSException {
         Set names = null;

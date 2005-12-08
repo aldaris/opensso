@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreationTemplate.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: CreationTemplate.java,v 1.3 2005-12-08 01:16:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,8 @@ import com.iplanet.ums.validation.ValidationElement;
  * 
  * @see Template
  * @see SearchTemplate
+ *
+ * @supported.api
  */
 public class CreationTemplate extends Template {
 
@@ -131,7 +133,7 @@ public class CreationTemplate extends Template {
      *         attributeName is <CODE>null</CODE>, or the attribute is not
      *         found.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Attr getAttribute(String attributeName) {
         if (attributeName == null) {
@@ -152,7 +154,7 @@ public class CreationTemplate extends Template {
      * 
      * @return Names of all required attributes defined
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String[] getRequiredAttributeNames() {
         return (m_required == null) ? new String[0] : m_required
@@ -164,7 +166,7 @@ public class CreationTemplate extends Template {
      * 
      * @return Names of all optional attributes defined
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String[] getOptionalAttributeNames() {
         return (m_optional == null) ? new String[0] : m_optional
@@ -176,7 +178,7 @@ public class CreationTemplate extends Template {
      * 
      * @return set of required attributes
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public AttrSet getRequiredAttributeSet() {
         return m_required;
@@ -187,7 +189,7 @@ public class CreationTemplate extends Template {
      * 
      * @return set of optional attributes
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public AttrSet getOptionalAttributeSet() {
         return m_optional;
@@ -198,7 +200,7 @@ public class CreationTemplate extends Template {
      * 
      * @return classes associated with this template
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public ArrayList getCreationClasses() {
         return m_classes;
@@ -211,7 +213,7 @@ public class CreationTemplate extends Template {
      *            Attribute name
      * @return Enumeration of ValidationElement
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Enumeration getValidation(String attrName) {
         Vector v = new Vector();
@@ -236,7 +238,7 @@ public class CreationTemplate extends Template {
      * 
      * @return a list of attribute names registered for validation
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String[] getValidatedAttributeNames() {
         return (m_validated == null) ? new String[0] : m_validated
@@ -387,7 +389,7 @@ public class CreationTemplate extends Template {
      * 
      * @return the naming attribute
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String getNamingAttribute() {
         return m_namingAttribute;
@@ -398,7 +400,7 @@ public class CreationTemplate extends Template {
      * 
      * @return a copy of the template
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Object clone() {
         CreationTemplate t = (CreationTemplate) super.clone();
@@ -490,7 +492,7 @@ public class CreationTemplate extends Template {
      * 
      * @return The object in printable form
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String toString() {
         return "CreationTemplate: " + getName() + " { Required " + m_required

@@ -17,18 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClientException.java,v 1.1 2005-11-01 00:31:15 arvindp Exp $
+ * $Id: SOAPClientException.java,v 1.2 2005-12-08 01:16:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.jaxrpc;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * An <code>SOAPClientException</code> is thrown when there are errors related
  * to JAXRPC and SOAP methods.
+ *
+ * @supported.all.api
  */
 public class SOAPClientException extends Exception {
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.1 2005-11-01 00:31:26 arvindp Exp $
+ * $Id: OrganizationConfigManager.java,v 1.2 2005-12-08 01:16:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,8 +39,6 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.delegation.DelegationException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>OrganizationConfigManager</code> provides interfaces to
  * manage an organization's configuration data. It provides interfaces to create
@@ -53,6 +51,8 @@ import com.sun.identity.delegation.DelegationException;
  * "/", and sub-organizations will be separated by "/". For example "/a/b/c"
  * would represent a "c" sub-organization within "b" which would be a
  * sub-organization of "a".
+ *
+ * @supported.all.api
  */
 public class OrganizationConfigManager {
     // Instance variables
@@ -72,7 +72,7 @@ public class OrganizationConfigManager {
             + SMSEntry.COMMA + SMSEntry.baseDN;
 
     /**
-     * iPlanet-PUBLIC-METHOD Constructor to obtain an instance of
+     * Constructor to obtain an instance of
      * <code>OrganizationConfigManager
      * </code> for an organization by providing
      * an authenticated identity of the user. The organization name would be "/"
@@ -129,7 +129,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the fully qualified name of the
+     * Returns the fully qualified name of the
      * organization from the root
      * 
      * @return the name of the organization
@@ -155,7 +155,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a set of service schemas to be used for
+     * Returns a set of service schemas to be used for
      * creation of an organization. The service schemas contain a list of
      * attributes and their schema, and will be provided as
      * <code>ServiceSchema</code>.
@@ -198,7 +198,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates a sub-organization under the current
+     * Creates a sub-organization under the current
      * organization and sets the specified attributes. The sub-organization
      * created can be only one level below the current organization. For
      * multiple levels this method must be called recursively with the
@@ -299,7 +299,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the names of all sub-organizations.
+     * Returns the names of all sub-organizations.
      * 
      * @return set of names of all sub-organizations.
      * @throws SMSException
@@ -319,7 +319,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the names of all peer-organizations.
+     * Returns the names of all peer-organizations.
      * 
      * @return set of names of all peer-organizations.
      * @throws SMSException
@@ -347,7 +347,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns names of sub-organizations matching the
+     * Returns names of sub-organizations matching the
      * given pattern. If the parameter <code>recursive</code> is set to
      * <code>true</code>, search will be performed for the entire sub-tree.
      * The pattern can contain "*" as the wildcard to represent zero or more
@@ -384,7 +384,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Deletes the given sub-organization. If the
+     * Deletes the given sub-organization. If the
      * parameter <code>recursive</code> is set to <code>true</code>, then
      * the suborganization and the sub-tree will be deleted.
      * 
@@ -465,7 +465,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the <code>OrganizationConfigManager</code>
+     * Returns the <code>OrganizationConfigManager</code>
      * for the given organization name.
      * 
      * @param subOrgName
@@ -484,7 +484,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the organization creation attributes for
+     * Returns the organization creation attributes for
      * the service.
      * 
      * @param serviceName
@@ -558,7 +558,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds organization attributes for the service. If
+     * Adds organization attributes for the service. If
      * the attribute already exists, the values will be appended to it, provided
      * it is a multi-valued attribute. It will throw exception if we try to add
      * a value to an attribute which has the same value already.
@@ -620,7 +620,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets/Creates organization attributes for the
+     * Sets/Creates organization attributes for the
      * service. If the attributes already exists, the given attribute values
      * will replace them.
      * 
@@ -746,7 +746,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the given organization creation attribute
+     * Removes the given organization creation attribute
      * for the service.
      * 
      * @param serviceName
@@ -791,7 +791,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the given organization creation attribute
+     * Removes the given organization creation attribute
      * values for the service.
      * 
      * @param serviceName
@@ -846,7 +846,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service configuration object for the
+     * Returns the service configuration object for the
      * given service name.
      * 
      * @param serviceName
@@ -874,7 +874,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a service configuration object for the given
+     * Adds a service configuration object for the given
      * service name for this organization. If the service has been already added
      * a <code>SMSException</code> will be thrown.
      * 
@@ -915,7 +915,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the service configuration object for the
+     * Removes the service configuration object for the
      * given service name for this organization.
      * 
      * @param serviceName
@@ -939,7 +939,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Registers for changes to organization's
+     * Registers for changes to organization's
      * configuration. The object will be called when configuration for this
      * organization is changed.
      * 
@@ -953,7 +953,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the listener from the organization for the
+     * Removes the listener from the organization for the
      * given listener ID. The ID was issued when the listener was registered.
      * 
      * @param listenerID
@@ -1038,7 +1038,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a set of service names that can be assigned
+     * Returns a set of service names that can be assigned
      * to a realm. This set excludes name of services that are already assigned
      * to the realm and services that are required for the existence of a realm.
      * 
@@ -1111,7 +1111,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a set of service names that are assigned to
+     * Returns a set of service names that are assigned to
      * a realm.
      * 
      * @return a set of service names that are assigned to a realm.
@@ -1153,7 +1153,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Assigns the given service to the orgnization with
+     * Assigns the given service to the orgnization with
      * the respective attributes. If the service has been already added a <code>
      * SMSException</code>
      * will be thrown.
@@ -1171,7 +1171,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns attributes configured for the service.
+     * Returns attributes configured for the service.
      * 
      * @param serviceName
      *            name of the service
@@ -1197,7 +1197,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Unassigns the service from the organization.
+     * Unassigns the service from the organization.
      * 
      * @param serviceName
      *            name of the service
@@ -1214,7 +1214,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the attributes related to provided service.
+     * Sets the attributes related to provided service.
      * The assumption is that the service is already assigned to the
      * organization. The attributes for the service are validated against the
      * service schema.
@@ -1245,7 +1245,7 @@ public class OrganizationConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the <code>OrganizationConfigManager</code>
+     * Returns the <code>OrganizationConfigManager</code>
      * of the parent for the given organization name.
      * 
      * @return the configuration manager of the parent for the given

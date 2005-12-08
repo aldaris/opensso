@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPasswordUtil.java,v 1.1 2005-11-01 00:29:35 arvindp Exp $
+ * $Id: AMPasswordUtil.java,v 1.2 2005-12-08 01:16:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,11 @@ package com.iplanet.am.util;
 
 import com.iplanet.services.util.Crypt;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class which contains utilities to encrypt and decrypt attribute value of
  * password type.
+ * @supported.all.api
  */
-
 public class AMPasswordUtil {
 
     /**

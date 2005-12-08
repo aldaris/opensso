@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Resource.java,v 1.1 2005-11-01 00:30:39 arvindp Exp $
+ * $Id: Resource.java,v 1.2 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,8 @@ import com.iplanet.services.ldap.AttrSet;
 
 /**
  * Represents a user entry in UMS.
- * 
+ *
+ * @supported.api
  */
 public class Resource extends PersistentObject {
 
@@ -92,7 +93,7 @@ public class Resource extends PersistentObject {
      * @param attrSet
      *            attribute/value set
      * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
+     * @supported.api
      */
     public Resource(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -107,7 +108,7 @@ public class Resource extends PersistentObject {
      *            Search template
      * @return attribute set with attribute names defined in the template
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public AttrSet getAttributes(SearchTemplate template) throws UMSException {
         AttrSet attrSet = new AttrSet();
@@ -129,7 +130,7 @@ public class Resource extends PersistentObject {
      *            The starting location of the role (rights) aggregation.
      * @return AccessRightObject associated with the user
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public AccessRightObject getAccessRight(Guid guid) throws UMSException,
             com.iplanet.services.ldap.aci.ACIParseException {

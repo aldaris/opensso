@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchControl.java,v 1.2 2005-11-08 17:12:08 veiming Exp $
+ * $Id: SearchControl.java,v 1.3 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import netscape.ldap.LDAPv2;
  * This class provides a way to customize Search behaviors. Common behaviors are
  * time limit, result limit and Virtual list view. In future, we will provide
  * ways for client to define different hierarchical tree through SearchControl.
+ *
+ * @supported.api
  */
 public class SearchControl implements java.io.Serializable {
 
@@ -63,7 +65,7 @@ public class SearchControl implements java.io.Serializable {
      * SearchControl.setSearchScope to override the default search scope in
      * getChildren.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_ONE = LDAPv2.SCOPE_ONE;
 
@@ -72,14 +74,14 @@ public class SearchControl implements java.io.Serializable {
      * scope in the search API. One can use SearchControl.setSearchScope to
      * override the default search scope in search methods.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_SUB = LDAPv2.SCOPE_SUB;
 
     /**
      * Search scope for just this object.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int SCOPE_BASE = LDAPv2.SCOPE_BASE;
 
@@ -87,7 +89,8 @@ public class SearchControl implements java.io.Serializable {
      * Set sort order based on attribute names.
      * 
      * @param attributeNames
-     *            array of attribute names to sort on iPlanet-PUBLIC-METHOD
+     *            array of attribute names to sort on
+     * @supported.api
      */
     public void setSortKeys(String[] attributeNames) {
         SortKey[] sortKeys;
@@ -108,14 +111,16 @@ public class SearchControl implements java.io.Serializable {
      * Set sort order based on SortKey
      * 
      * @param sortKeys
-     *            array of SortKey iPlanet-PUBLIC-METHOD
+     *            array of SortKey.
+     * @supported.api
      */
     public void setSortKeys(SortKey[] sortKeys) {
         set(KeySortKeys, sortKeys);
     }
 
     /**
-     * Get existing attribute names for sorting. iPlanet-PUBLIC-METHOD
+     * Get existing attribute names for sorting.
+     * @supported.api
      */
     public SortKey[] getSortKeys() {
         return (SortKey[]) get(KeySortKeys);
@@ -129,7 +134,8 @@ public class SearchControl implements java.io.Serializable {
      * @param beforeCount
      *            Number of entries before the startIndex
      * @param afterCount
-     *            Number of entries after the startIndex iPlanet-PUBLIC-METHOD
+     *            Number of entries after the startIndex.
+     * @supported.api
      */
     public void setVLVRange(int startIndex, int beforeCount, int afterCount) {
         int[] range = new int[3];
@@ -148,7 +154,8 @@ public class SearchControl implements java.io.Serializable {
      * @param beforeCount
      *            Number of entries before the startIndex
      * @param afterCount
-     *            Number of entries after the startIndex iPlanet-PUBLIC-METHOD
+     *            Number of entries after the startIndex.
+     * @supported.api
      */
     public void setVLVRange(String jumpTo, int beforeCount, int afterCount) {
         int[] range = new int[3];
@@ -165,7 +172,8 @@ public class SearchControl implements java.io.Serializable {
      * Get range for current VLV setting.
      * 
      * @return array of int which contain startIndex, beforeCount and
-     *         afterCount. iPlanet-PUBLIC-METHOD
+     *         afterCount.
+     * @supported.api
      */
     public int[] getVLVRange() {
         return (int[]) get(KeyVlvRange);
@@ -174,7 +182,8 @@ public class SearchControl implements java.io.Serializable {
     /**
      * Get jumpTo value for VLV range.
      * 
-     * @return jumpTo value iPlanet-PUBLIC-METHOD
+     * @return jumpTo value.
+     * @supported.api
      */
     public String getVLVJumpTo() {
         return (String) get(KeyVlvJumpTo);
@@ -185,14 +194,16 @@ public class SearchControl implements java.io.Serializable {
      * search.
      * 
      * @param timeOut
-     *            Max number of milliseconds iPlanet-PUBLIC-METHOD
+     *            Max number of milliseconds.
+     * @supported.api
      */
     public void setTimeOut(int timeOut) {
         set(KeyTimeOut, new Integer(timeOut));
     }
 
     /**
-     * Get current time out setting. iPlanet-PUBLIC-METHOD
+     * Get current time out setting.
+     * @supported.api
      */
     public int getTimeOut() {
         Integer i = (Integer) get(KeyTimeOut);
@@ -205,7 +216,8 @@ public class SearchControl implements java.io.Serializable {
 
     /**
      * Sets the maximum number of search results to return; 0 means there is no
-     * limit. iPlanet-PUBLIC-METHOD
+     * limit.
+     * @supported.api
      */
     public void setMaxResults(int maxNumber) {
         set(KeyMaxResults, new Integer(maxNumber));
@@ -213,7 +225,8 @@ public class SearchControl implements java.io.Serializable {
 
     /**
      * Gets the maximum number of search results to return. return 0 means there
-     * is no limit. iPlanet-PUBLIC-METHOD
+     * is no limit.
+     * @supported.api
      */
     public int getMaxResults() {
         Integer i = (Integer) get(KeyMaxResults);
@@ -229,7 +242,8 @@ public class SearchControl implements java.io.Serializable {
      * 
      * @param scope
      *            Search scope defined in the SearchControl to be used with the
-     *            search API iPlanet-PUBLIC-METHOD
+     *            search API.
+     * @supported.api
      */
     public void setSearchScope(int scope) {
         set(KeySearchScope, new Integer(scope));
@@ -240,7 +254,8 @@ public class SearchControl implements java.io.Serializable {
      * 
      * @return search scope defined in the SearchControl. If search scope is
      *         never defined in the SearchControl SCOPE_SUB for subtree type of
-     *         search is assumed. iPlanet-PUBLIC-METHOD
+     *         search is assumed.
+     * @supported.api
      */
     public int getSearchScope() {
         Integer scope = (Integer) get(KeySearchScope);
@@ -261,7 +276,8 @@ public class SearchControl implements java.io.Serializable {
      *            with a search scope
      * 
      * @return Search scope defined in the SearchControl. Return defaultScope if
-     *         scope is not defined in the control iPlanet-PUBLIC-METHOD
+     *         scope is not defined in the control.
+     * @supported.api
      */
     public int getSearchScope(int defaultScope) {
         Integer scope = (Integer) get(KeySearchScope);

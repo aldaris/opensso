@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAttributeSchema.java,v 1.1 2005-11-01 00:28:57 arvindp Exp $
+ * $Id: AMAttributeSchema.java,v 1.2 2005-12-08 01:16:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,14 +30,13 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>AMAttributeSchema</code> provides the interfaces to obtain
  * meta information about service configuration variable.
  * 
  * @deprecated This class has been deprecated. Please use
  *             <code>com.sun.identity.sm.AttributeSchema</code>.
+ * @supported.all.api
  */
 public class AMAttributeSchema extends Object {
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroup.java,v 1.1 2005-11-01 00:29:06 arvindp Exp $
+ * $Id: AMGroup.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,10 +29,9 @@ import java.util.Set;
 
 import com.iplanet.sso.SSOException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The <code>AMGroup</code> interface provides methods to manage group
+ * @supported.all.api
  */
 abstract public interface AMGroup extends AMObject {
     /**

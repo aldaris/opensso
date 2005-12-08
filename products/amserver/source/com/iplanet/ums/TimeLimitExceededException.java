@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeLimitExceededException.java,v 1.1 2005-11-01 00:30:42 arvindp Exp $
+ * $Id: TimeLimitExceededException.java,v 1.2 2005-12-08 01:16:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,11 @@ package com.iplanet.ums;
 
 /**
  * Exception on search when time limit is exceeded.
+ * @supported.all.api
  */
 public class TimeLimitExceededException extends UMSException {
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public TimeLimitExceededException() {
         super();
@@ -39,7 +40,7 @@ public class TimeLimitExceededException extends UMSException {
      * Constructor with a message string.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public TimeLimitExceededException(String msg) {
         super(msg);
@@ -51,10 +52,9 @@ public class TimeLimitExceededException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public TimeLimitExceededException(String msg, Throwable t) {
         super(msg, t);
     }
-
 }

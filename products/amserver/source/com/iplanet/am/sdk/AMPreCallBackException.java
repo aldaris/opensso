@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPreCallBackException.java,v 1.1 2005-11-01 00:29:15 arvindp Exp $
+ * $Id: AMPreCallBackException.java,v 1.2 2005-12-08 01:16:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,7 @@ package com.iplanet.am.sdk;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.UMSException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
- * 
  * <code>AMPreCallBackException</code> is a subclass of
  * <code>AMException</code> which is used by all implementations of
  * <code>AMCallback</code>. This exception should be thrown by the
@@ -38,6 +35,7 @@ import com.iplanet.ums.UMSException;
  * being performed by SDK. This helps distinguish a <code>pre-callback</code>
  * exception from normal SDK exceptions and can be handled differently by any
  * applications, if they wish to.
+ * @supported.all.api
  */
 public class AMPreCallBackException extends AMException {
 

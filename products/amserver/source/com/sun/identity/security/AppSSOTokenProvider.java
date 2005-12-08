@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AppSSOTokenProvider.java,v 1.2 2005-11-15 04:10:34 veiming Exp $
+ * $Id: AppSSOTokenProvider.java,v 1.3 2005-12-08 01:16:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,9 @@ import com.iplanet.sso.SSOToken;
  * <code>com.sun.identity.policy.client.PolicyEvaluator</code> would pass an
  * implementation of this interface to construct an instance of
  * <code>com.sun.identity.policy.client.PolicyEvaluator</code>.
+ *
+ * @supported.all.api
  */
-/* iPlanet-PUBLIC-CLASS */
 public interface AppSSOTokenProvider {
     /**
      * Returns application single sign on token.

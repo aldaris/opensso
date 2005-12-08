@@ -17,17 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChoiceValues.java,v 1.1 2005-11-01 00:31:21 arvindp Exp $
+ * $Id: ChoiceValues.java,v 1.2 2005-12-08 01:16:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-/* iPlanet-PUBLIC-CLASS */
-
 import java.util.Map;
-
 import org.w3c.dom.Node;
 
 /**
@@ -40,6 +37,8 @@ import org.w3c.dom.Node;
  * Instead of providing the choice values in the XML configuration file, the
  * class name must be specified within the XML node
  * <code>ChoiceValuesClassName</code>.
+ *
+ * @supported.all.api
  */
 public abstract class ChoiceValues {
 

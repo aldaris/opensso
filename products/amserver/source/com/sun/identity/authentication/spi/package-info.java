@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2005-11-17 21:05:18 veiming Exp $
+ * $Id: package-info.java,v 1.2 2005-12-08 01:16:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@
  * <p>
  * Provides an interface to receive notifications of a user status change after
  * successful password reset or after account lockout (memory).
+ * @supported.api
  */
 
 package com.sun.identity.authentication.spi;

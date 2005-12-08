@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainNotFoundException.java,v 1.1 2005-11-01 00:30:45 arvindp Exp $
+ * $Id: DomainNotFoundException.java,v 1.2 2005-12-08 01:16:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,35 +27,37 @@ package com.iplanet.ums.dctree;
 import com.iplanet.ums.UMSException;
 
 /**
- * Exception occurs when specified domain is not found in the dctree
+ * Exception occurs when specified domain is not found in the dctree.
+ *
+ * @supported.all.api
  */
 public class DomainNotFoundException extends UMSException {
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public DomainNotFoundException() {
         super();
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor with a message string
+     * Constructor with a message string
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public DomainNotFoundException(String msg) {
         super(msg);
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor with message string and an
+     * Constructor with message string and an
      * embedded exception
      * 
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public DomainNotFoundException(String msg, Throwable t) {
         super(msg, t);

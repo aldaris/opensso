@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.1 2005-11-01 00:31:13 arvindp Exp $
+ * $Id: LDAPv3EventService.java,v 1.2 2005-12-08 01:16:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,6 +72,7 @@ import com.sun.identity.idm.IdRepoException;
  * A single connection is established initially and reused to service all
  * notification requests.
  * 
+ * @supported.api
  */
 public class LDAPv3EventService implements Runnable {
 
@@ -305,7 +306,9 @@ public class LDAPv3EventService implements Runnable {
 
     /**
      * At the end, close THE Event Manager's connections Abandon all previous
-     * persistent search requests iPlanet-PUBLIC-METHOD
+     * persistent search requests.
+     *
+     * @supported.api
      */
     public void finalize() {
         Collection requestObjs = _requestList.values();
@@ -364,7 +367,9 @@ public class LDAPv3EventService implements Runnable {
     }
 
     /**
-     * Adds a listener to the directory. iPlanet-PUBLIC-METHOD
+     * Adds a listener to the directory.
+     *
+     * @supported.api
      */
     public synchronized String addListener(SSOToken token,
             IdRepoListener listener, String base, int scope, String filter,
@@ -474,7 +479,8 @@ public class LDAPv3EventService implements Runnable {
 
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void run() {
         if (debugger.messageEnabled()) {
@@ -610,10 +616,12 @@ public class LDAPv3EventService implements Runnable {
 
     /**
      * removes the listener from the list of Persistent Search listeners of the
-     * asynchronous seach for the given search ID. iPlanet-PUBLIC-METHOD
+     * asynchronous seach for the given search ID.
      * 
      * @param requestID
      *            The request ID returned by the addListener
+     *
+     * @supported.api
      */
     protected void removeListener(Request request) {
         if (debugger.warningEnabled()) {

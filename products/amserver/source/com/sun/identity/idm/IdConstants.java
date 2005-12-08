@@ -17,14 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdConstants.java,v 1.1 2005-11-01 00:31:07 arvindp Exp $
+ * $Id: IdConstants.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
-/* iPlanet-PUBLIC-CLASS */
+/**
+ *
+ * @supported.all.api
+ */
 public interface IdConstants {
 
     // The properties below are Id Repo service config attributes to be

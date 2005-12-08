@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="@XML_ENCODING@"?>
+<?xml version="1.0" encoding="XML_ENCODING"?>
 
 <!--
    The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amG11NSettings.xml,v 1.1 2005-11-01 00:31:40 arvindp Exp $
+   $Id: amG11NSettings.xml,v 1.2 2005-12-08 01:16:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->

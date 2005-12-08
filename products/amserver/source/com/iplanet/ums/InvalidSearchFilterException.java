@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidSearchFilterException.java,v 1.1 2005-11-01 00:30:38 arvindp Exp $
+ * $Id: InvalidSearchFilterException.java,v 1.2 2005-12-08 01:16:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,12 @@ package com.iplanet.ums;
 /**
  * This exception will be thrown if invalid LDAP search filters are used during
  * search operations.
+ *
+ * @supported.api
  */
 public class InvalidSearchFilterException extends UMSException {
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public InvalidSearchFilterException() {
         super();
@@ -40,7 +42,7 @@ public class InvalidSearchFilterException extends UMSException {
      * Constructor with a message string.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public InvalidSearchFilterException(String msg) {
         super(msg);
@@ -52,7 +54,7 @@ public class InvalidSearchFilterException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public InvalidSearchFilterException(String msg, Throwable t) {
         super(msg, t);

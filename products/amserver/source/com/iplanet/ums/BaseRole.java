@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BaseRole.java,v 1.1 2005-11-01 00:30:33 arvindp Exp $
+ * $Id: BaseRole.java,v 1.2 2005-12-08 01:16:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,9 @@ import com.iplanet.services.ldap.aci.ACIParseException;
 import com.iplanet.services.ldap.aci.QualifiedCollection;
 
 /**
- * Abstract base class for all roles
+ * Abstract base class for all roles.
+ *
+ * @supported.api
  */
 public abstract class BaseRole extends PersistentObject implements IRole {
     private static Debug debug;
@@ -66,11 +68,13 @@ public abstract class BaseRole extends PersistentObject implements IRole {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs a BaseRole from a creation template
+     * Constructs a BaseRole from a creation template
      * and attribute set.
      * 
      * @see com.iplanet.ums.PersistentObject#PersistentObject(CreationTemplate
      *      template, AttrSet attrSet)
+     *
+     * @supported.api
      */
     public BaseRole(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -80,14 +84,14 @@ public abstract class BaseRole extends PersistentObject implements IRole {
     /**
      * Checks if a given identifier is a member of the role.
      * 
-     * iPlanet-PUBLIC-METHOD
-     * 
      * @param po
      *            member to be checked for membership
      * 
      * @return <code>true</code> if it is a member
      * @exception UMSException
      *                on failure to read object for guid
+     *
+     * @supported.api
      */
     public boolean hasMember(PersistentObject po) throws UMSException {
         boolean hasTheMember = false;
@@ -102,11 +106,11 @@ public abstract class BaseRole extends PersistentObject implements IRole {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the attribute access rights associated with the
-     * role.
+     * Returns the attribute access rights associated with the role.
      * 
      * @return AccessRightObject associated with the role
-     * 
+     *
+     * @supported.api
      */
     public AccessRightObject getAccessRight() throws UMSException,
             ACIParseException {
@@ -167,12 +171,13 @@ public abstract class BaseRole extends PersistentObject implements IRole {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Create attribute access rights for the role;
+     * Creates attribute access rights for the role;
      * existing attribute access rights for the role will be replaced.
      * 
      * @param accessRight
      *            New access right to be set to the role
-     * 
+     *
+     * @supported.api
      */
     public void newAccessRight(AccessRightObject accessRight)
             throws UMSException, ACIParseException {

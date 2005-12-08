@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.1 2005-11-01 00:31:16 arvindp Exp $
+ * $Id: AdminTokenAction.java,v 1.2 2005-12-08 01:16:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,8 @@ import com.sun.identity.authentication.internal.AuthPrincipal;
  * 
  * </PRE>
  * 
+ * @supported.all.api
  */
-/* iPlanet-PUBLIC-CLASS */
 public class AdminTokenAction implements PrivilegedAction {
     private static SSOTokenManager tokenManager;
 

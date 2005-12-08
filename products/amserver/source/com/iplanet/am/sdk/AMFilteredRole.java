@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFilteredRole.java,v 1.1 2005-11-01 00:29:05 arvindp Exp $
+ * $Id: AMFilteredRole.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,6 @@
 package com.iplanet.am.sdk;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This interface provides methods to manage filtered role.
@@ -42,6 +40,7 @@ import com.iplanet.sso.SSOException;
  * }
  * 
  * </PRE>
+ * @supported.all.api
  */
 public interface AMFilteredRole extends AMRole {
     /**

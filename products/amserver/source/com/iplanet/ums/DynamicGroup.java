@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DynamicGroup.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: DynamicGroup.java,v 1.3 2005-12-08 01:16:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.iplanet.services.util.I18n;
 
 /**
  * Represents a dynamic group entry.
+ *
+ * @supported.api
  */
 public class DynamicGroup extends PersistentObject implements
         IDynamicMembership {
@@ -85,7 +87,6 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructs a <code>DynamicGroup</code> in memory with a given template
      * for <code>DynamicGroup</code>. This is an in-memory representation of a
      * new object; the <code>save</code> method must be called to save this
@@ -95,6 +96,8 @@ public class DynamicGroup extends PersistentObject implements
      * @param attrSet Attribute/value set, which should contain
      *        <code>memberUrl</code>.
      * @exception UMSException if fail to instantiate from persistent storage.
+     *
+     * @supported.api
      */
     public DynamicGroup(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -122,7 +125,6 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructs a <code>DynamicGroup</code> in memory given a template for
      * <code>DynamicGroup</code>. This is an in-memory representation of a new
      * object and the <code>save</code> method must be called to save this new
@@ -138,6 +140,8 @@ public class DynamicGroup extends PersistentObject implements
      *        <code>LDAPv2.SCOPE_ONE</code> or <code>LDAPv2.SCOPE_SUB</code>.
      * 
      * @exception UMSException if fail to instantiate from persistent storage.
+     *
+     * @supported.api
      */
     public DynamicGroup(
         CreationTemplate template,
@@ -156,10 +160,11 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search filter used to evaluate this dynamic group.
      * 
      * @param filter Search filter for evaluating members of the group.
+     *
+     * @supported.api
      */
     public void setSearchFilter(String filter) {
         LDAPUrl url = getUrl();
@@ -176,22 +181,24 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the search filter used to evaluate this dynamic group.
      * 
      * @return Search filter for evaluating members of the group the scope in
      *         the filter has to be <code>LDAPv2.SCOPE_ONE</code> or
      *         <code>LDAPv2.SCOPE_SUB</code>.
+     *
+     * @supported.api
      */
     public String getSearchFilter() {
         return getUrl().getFilter();
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search base used to evaluate this dynamic group.
      * 
      * @param baseGuid Search base for evaluating members of the group.
+     *
+     * @supported.api
      */
     public void setSearchBase(Guid baseGuid) {
         LDAPUrl url = getUrl();
@@ -207,22 +214,24 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the search base used to evaluate this dynamic group.
      * 
      * @return Search base for evaluating members of the group.
+     *
+     * @supported.api
      */
     public Guid getSearchBase() {
         return new Guid(getUrl().getDN());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search scope used to evaluate this dynamic group.
      * 
      * @param scope Search scope for evaluating members of the group. Use one of
      *        the search scope <code>SCOPE_BASE</code>,
      *        <code>SCOPE_ONE</code>, or <code>SCOPE_SUB</code>.
+     *
+     * @supported.api
      */
     public void setSearchScope(int scope) {
         LDAPUrl url = getUrl();
@@ -238,10 +247,11 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the search scope used to evaluate this dynamic group.
      * 
      * @return Search scope for evaluating members of the group.
+     *
+     * @supported.api
      */
     public int getSearchScope() {
         return getUrl().getScope();
@@ -387,11 +397,12 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the members of the group.
      * 
      * @return Iterator for unique identifiers for members of the group.
      * @exception UMSException if fail to search.
+     *
+     * @supported.api
      */
     public SearchResults getMemberIDs() throws UMSException {
         String[] attributesToGet = { "objectclass" };
@@ -399,11 +410,12 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns the member count.
      * 
      * @return Number of members of the group.
      * @exception UMSException if fail to search.
+     *
+     * @supported.api
      */
     public int getMemberCount() throws UMSException {
         int count = 0;
@@ -417,12 +429,13 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns a member given an index (zero-based).
      * 
      * @param index Zero-based index into the group container.
      * @return Unique identifier for a member.
      * @exception UMSException if fail to search.
+     *
+     * @supported.api
      */
     public Guid getMemberIDAt(int index) throws UMSException {
         if (index < 0) {
@@ -446,13 +459,14 @@ public class DynamicGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns <code>true</code> if a given identifier is a member of the
      * group.
      * 
      * @param guid Identity of member to be checked for membership.
      * @return <code>true</code> if it is a member.
      * @exception UMSException if fail to evaluate group
+     *
+     * @supported.api
      */
     public boolean hasMember(Guid guid) throws UMSException {
         String filter = getSearchFilter();

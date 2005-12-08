@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attr.java,v 1.1 2005-11-01 00:30:16 arvindp Exp $
+ * $Id: Attr.java,v 1.2 2005-12-08 01:16:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,8 @@ import netscape.ldap.LDAPAttribute;
 
 /**
  * Represents an attribute value pair in UMS. The value of an attribute can be
- * of multiple values
+ * of multiple values.
+ * @supported.api
  */
 public class Attr implements java.io.Serializable, java.lang.Cloneable {
 
@@ -44,30 +45,31 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     private LDAPAttribute _ldapAttribute;
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Default constructor
+     * Default constructor
+     * @supported.api
      */
     public Attr() {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs an attribute value pair with no
-     * value
+     * Constructs an attribute value pair with no value.
      * 
      * @param name
      *            attribute name
+     * @supported.api
      */
     public Attr(String name) {
         _name = name.toLowerCase();
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Construct an attribute value pair with a
-     * single string value
+     * Construct an attribute value pair with a single string value.
      * 
      * @param name
      *            the name of attribute
      * @param value
      *            string value of attribute
+     * @supported.api
      */
     public Attr(String name, String value) {
         _name = name.toLowerCase();
@@ -76,13 +78,13 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Construct an attribute value pair with a
-     * multiple string values
+     * Construct an attribute value pair with a multiple string values.
      * 
      * @param name
      *            the name of attribute
      * @param value
      *            multiple string values of attribute
+     * @supported.api
      */
     public Attr(String name, String[] value) {
         _name = name.toLowerCase();
@@ -94,13 +96,13 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs an attribute value pair with byte
-     * array
+     * Constructs an attribute value pair with byte array.
      * 
      * @param name
      *            attribute name
      * @param value
      *            byte array as input for value
+     * @supported.api
      */
     public Attr(String name, byte[] value) {
         _name = name.toLowerCase();
@@ -109,13 +111,13 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs an attribute value pair with array
-     * of byte array
+     * Constructs an attribute value pair with array of byte array.
      * 
      * @param name
      *            attribute name
      * @param value
      *            array of byte array as input for value
+     * @supported.api
      */
     public Attr(String name, byte[][] value) {
         _name = name.toLowerCase();
@@ -173,10 +175,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Set value of an attribute
+     * Set value of an attribute
      * 
      * @param value
      *            the attribute value to be set
+     * @supported.api
      */
     public void setValue(String value) {
         if (_stringValues == null) {
@@ -187,10 +190,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add a string value to the attribute
+     * Add a string value to the attribute
      * 
      * @param value
      *            value to be added to the attribute
+     * @supported.api
      */
     public void addValue(String value) {
         if (_stringValues == null) {
@@ -202,10 +206,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add mulitple string values to the attribute
+     * Add mulitple string values to the attribute
      * 
      * @param value
      *            string values to be added to the attribute
+     * @supported.api
      */
     public void addValues(String[] values) {
         int size = values.length;
@@ -215,10 +220,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Remove a specified string value in the attribute
+     * Remove a specified string value in the attribute
      * 
      * @param value
      *            specified value to be remvoed from the value array
+     * @supported.api
      */
     public void removeValue(String value) {
         if (_stringValues == null) {
@@ -234,10 +240,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Set value of an attribute
+     * Set value of an attribute
      * 
      * @param value
      *            the attribute value to be set
+     * @supported.api
      */
     public void setValue(byte[] value) {
         if (_byteValues == null) {
@@ -248,10 +255,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add a byte array value to the attribute
+     * Add a byte array value to the attribute
      * 
      * @param value
      *            byte array value to be added to the attribute
+     * @supported.api
      */
     public void addValue(byte[] value) {
         if (_byteValues == null) {
@@ -261,10 +269,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add a list byte array values to the attribute
+     * Add a list byte array values to the attribute
      * 
      * @param list
      *            of byte array values to be added to the attribute
+     * @supported.api
      */
     public void addValues(byte[][] values) {
         int size = values.length;
@@ -274,10 +283,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Remove a specified string value in the attribute
+     * Remove a specified string value in the attribute
      * 
      * @param value
      *            specified value to be remvoed from the value array
+     * @supported.api
      */
     public void removeValue(byte[] value) {
         if (_byteValues == null) {
@@ -294,33 +304,36 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get name of an UMS attribute
+     * Get name of an UMS attribute
      * 
      * @return name of an UMS attribute
+     * @supported.api
      */
     public String getName() {
         return _name;
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get name of attribute in a given Locale
+     * Get name of attribute in a given Locale
      * 
      * @param locale
      *            Given locale for the attribute name to return
      * @return name of an UMS attribute
+     * @supported.api
      */
     public String getName(Locale locale) {
         return Attr.getName(_name, locale);
     }
 
     /**
-     * iPlanet-PUBLIC-STATIC Get attribute name with locale input
+     * Get attribute name with locale input.
      * 
      * @param attrName
      *            name of the attribute
      * @param locale
      *            desired locale for the attribute
      * @return attribute name with locale attached for retrieval
+     * @supported.api
      */
     static public String getName(String attrName, Locale locale) {
         String name = null;
@@ -346,10 +359,11 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get base name for the attribute. e.g, the base name
+     * Get base name for the attribute. e.g, the base name
      * of "cn;lang-en" or "cn;lang-ja" is "cn"
      * 
      * @return basename of an attribute
+     * @supported.api
      */
     public String getBaseName() {
         String baseName = null;
@@ -362,19 +376,21 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-STATIC Get base name for an attribute name. e.g, the base
+     * Get base name for an attribute name. e.g, the base
      * name of "cn;lang-en" or "cn;lang-ja" is "cn"
      * 
      * @return basename of the given attribute name
+     * @supported.api
      */
     static public String getBaseName(String attrName) {
         return LDAPAttribute.getBaseName(attrName);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get one string value of the attribute
+     * Get one string value of the attribute
      * 
      * @return one value of the attribute
+     * @supported.api
      */
     public String getValue() {
         String value = null;
@@ -388,9 +404,10 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the string values of the attribute
+     * Get the string values of the attribute
      * 
      * @return the values in an string array
+     * @supported.api
      */
     public String[] getStringValues() {
         // Returning a colletion would be better, but would break existing
@@ -415,13 +432,14 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks whether the given value already exist for
+     * Checks whether the given value already exist for
      * the attribute
      * 
      * @param value
      *            the value to check for
      * @return <code>true</code> if the value already exists,
      *         <code>false</code> otherwise
+     * @supported.api
      */
     public boolean contains(String value) {
         boolean contained = false;
@@ -439,11 +457,12 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get one byte[] value of the attribute Returning a
+     * Get one byte[] value of the attribute Returning a
      * colletion would be better, but will not be consistent with the method
      * getStringValues()
      * 
      * @return one byte[] value
+     * @supported.api
      */
     public byte[] getByteValue() {
         // Not cloning the value before returning. Do we need to clone?
@@ -458,9 +477,10 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the byte[] values of the attribute
+     * Get the byte[] values of the attribute
      * 
      * @return the byte[] values in array
+     * @supported.api
      */
     public byte[][] getByteValues() {
         // Not cloning the values before returning. Do we need to clone?
@@ -477,13 +497,14 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks whether the given value already exist for
+     * Checks whether the given value already exist for
      * the attribute
      * 
      * @param value
      *            the value to check for
      * @return <code>true</code> if the value already exists,
      *         <code>false</code> otherwise
+     * @supported.api
      */
     public boolean contains(byte[] value) {
         boolean contained = false;
@@ -502,9 +523,10 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the number of values of the attribute
+     * Get the number of values of the attribute
      * 
      * @return The number of values of the attribute
+     * @supported.api
      */
     public int size() {
         int size = 0;
@@ -519,9 +541,10 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Return a copy of the object
+     * Return a copy of the object
      * 
      * @return A copy of the object
+     * @supported.api
      */
     public Object clone() {
         /*
@@ -544,9 +567,10 @@ public class Attr implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Retrieves the string representation of an attribute
+     * Retrieves the string representation of an attribute
      * 
      * @return string representation of the attribute.
+     * @supported.api
      */
     public String toString() {
         if (_stringValues == null) {

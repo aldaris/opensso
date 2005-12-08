@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
+ * $Id: SystemProperties.java,v 1.3 2005-12-08 01:16:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,6 @@ import java.util.ResourceBundle;
 
 import com.sun.identity.common.Constants;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class provides functionality that allows single-point-of-access to all
  * related system properties.
@@ -58,6 +56,7 @@ import com.sun.identity.common.Constants;
  * If multiple servers are running, each may have their own configuration file.
  * The naming convention for such scenarios is
  * <code>AMConfig-&lt;serverName></code>.
+ * @supported.all.api
  */
 public class SystemProperties {
     private static Properties props;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSTemplate.java,v 1.2 2005-11-15 04:10:30 veiming Exp $
+ * $Id: COSTemplate.java,v 1.3 2005-12-08 01:16:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.ums.UMSException;
  * This class represents a COS Template. A COS Template has attributes and
  * attribute values which will be dynamically added to entries affected by COS
  * definitions.
+ * @supported.api
  */
 public class COSTemplate extends PersistentObject {
 
@@ -55,7 +56,8 @@ public class COSTemplate extends PersistentObject {
      * @throws UMSException
      *             The exception thrown from the parent class constructor.
      * @see com.iplanet.ums.PersistentObject#PersistentObject (CreationTemplate,
-     *      AttrSet) iPlanet-PUBLIC-CONSTRUCTOR
+     *      AttrSet)
+     * @supported.api
      */
     public COSTemplate(CreationTemplate temp, String name) throws UMSException {
         super(temp,
@@ -65,7 +67,8 @@ public class COSTemplate extends PersistentObject {
     /**
      * Returns the name of this COS template.
      * 
-     * @return The name of this COS template. iPlanet-PUBLIC-METHOD
+     * @return The name of this COS template.
+     * @supported.api
      */
     public String getName() {
         String attributeValue = null;
@@ -77,12 +80,12 @@ public class COSTemplate extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the priority for this template. The priority determines which COS
      * template will provide the attribute value if there are competing
      * templates. A priority of "0" is the highest priority.
      * 
      * @param priority Priority for this template.
+     * @supported.api
      */
     public void setPriority(int priority) {
         setAttribute(new Attr("cosPriority", new Integer(priority).toString()));
@@ -96,7 +99,8 @@ public class COSTemplate extends PersistentObject {
      *            the name of the attribute
      * 
      * @param value
-     *            the value of the attribute iPlanet-PUBLIC-METHOD
+     *            the value of the attribute
+     * @supported.api
      */
     public void addTemplateAttribute(String name, String value) {
         modify(name, value, ModSet.ADD);
@@ -106,7 +110,8 @@ public class COSTemplate extends PersistentObject {
      * Removes a name/value attribute pair from this template.
      * 
      * @param name
-     *            the name of the attribute iPlanet-PUBLIC-METHOD
+     *            the name of the attribute
+     * @supported.api
      */
     public void removeTemplateAttribute(String name) {
         removeAttribute(new Attr(name));

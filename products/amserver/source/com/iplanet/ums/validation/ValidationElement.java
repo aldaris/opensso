@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidationElement.java,v 1.1 2005-11-01 00:30:50 arvindp Exp $
+ * $Id: ValidationElement.java,v 1.2 2005-12-08 01:16:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import java.io.Serializable;
 /**
  * Represents a validator/rule pair. A validator/rule pair is required to
  * represent a complete validation rountine.
+ *
+ * @supported.all.api
  */
 public class ValidationElement implements Serializable {
 
@@ -43,7 +45,7 @@ public class ValidationElement implements Serializable {
      * @param validator
      *            validator
      * @param rule
-     *            rule applies to the validator iPlanet-PUBLIC-METHOD
+     *            rule applies to the validator
      */
     public ValidationElement(String validator, String rule) {
         _validator = validator;
@@ -53,7 +55,7 @@ public class ValidationElement implements Serializable {
     /**
      * Returns a validator
      * 
-     * @return returns a validator iPlanet-PUBLIC-METHOD
+     * @return returns a validator
      */
     public String getValidator() {
         return _validator;
@@ -62,7 +64,7 @@ public class ValidationElement implements Serializable {
     /**
      * Returns a rule
      * 
-     * @return returns a rule iPlanet-PUBLIC-METHOD
+     * @return returns a rule
      */
     public String getRule() {
         return _rule;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.1 2005-11-01 00:31:19 arvindp Exp $
+ * $Id: AttributeSchema.java,v 1.2 2005-12-08 01:16:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,12 +42,12 @@ import com.iplanet.am.util.XMLUtils;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.security.EncodeAction;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>AttributeSchema</code> provides methods to access the
  * schema of a configuration parameter. Also, it provides methods to set default
  * and choice values.
+ *
+ * @supported.all.api
  */
 public class AttributeSchema {
     // Debug

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchControl.java,v 1.1 2005-11-01 00:31:11 arvindp Exp $
+ * $Id: IdSearchControl.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,6 @@ import java.util.Set;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This is a helper class which is used in the <code> AMIdentityRepository
  * </code>
@@ -44,6 +42,7 @@ import com.sun.identity.common.CaseInsensitiveHashSet;
  * plugin by adding attribute-values which can be either OR'ed or AND'ed to the
  * basic search.
  * 
+ * @supported.all.api
  */
 public final class IdSearchControl {
     private Set returnAttributes = null;

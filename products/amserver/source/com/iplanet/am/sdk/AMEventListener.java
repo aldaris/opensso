@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEventListener.java,v 1.1 2005-11-01 00:29:04 arvindp Exp $
+ * $Id: AMEventListener.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * <p>
@@ -35,6 +33,7 @@ package com.iplanet.am.sdk;
  * <b>NOTE: </b> It is recommended that the classes that implement this
  * interface also implement {@link Object#equals Object.equals()} method if the
  * default behavior of the method is not desired.
+ * @supported.all.api
  */
 public interface AMEventListener extends java.util.EventListener {
     /**

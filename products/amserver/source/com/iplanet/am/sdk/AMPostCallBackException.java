@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPostCallBackException.java,v 1.1 2005-11-01 00:29:15 arvindp Exp $
+ * $Id: AMPostCallBackException.java,v 1.2 2005-12-08 01:16:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.iplanet.am.sdk;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.UMSException;
 
-/* iPlanet-PUBLIC-CLASS */
 /**
  * 
  * <code>AMPostCallBackException</code> is a subclass of
@@ -36,6 +35,7 @@ import com.iplanet.ums.UMSException;
  * plugins in the post callback methods called by SDK. This helps distinguish a
  * post-callback exception from normal SDK exceptions and can be handled
  * differently by any applications using the SDK, if they wish to.
+ * @supported.all.api
  */
 public class AMPostCallBackException extends AMException {
 

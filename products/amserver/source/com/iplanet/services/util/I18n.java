@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: I18n.java,v 1.1 2005-11-01 00:30:26 arvindp Exp $
+ * $Id: I18n.java,v 1.2 2005-12-08 01:16:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,6 +67,8 @@ import java.util.TimeZone;
  * resource bundle name or the URL of the jar file that contains the properties
  * file name. It is assumed that the properties file is present in
  * <code>CLASSPATH</code>
+ *
+ * @supported.api
  */
 public class I18n {
 
@@ -108,8 +110,6 @@ public class I18n {
     }
 
     /**
-     * iPlanet-PUBLIC-STATIC
-     * 
      * Method to get an instance of I18n object that has been either previously
      * created or to obtain a new instance if it does'nt exist
      * 
@@ -117,6 +117,7 @@ public class I18n {
      *            name of the service for which messages must be
      *            internationalized
      * @return I18n object
+     * @supported.api
      */
     public static I18n getInstance(String serviceName) {
         if (serviceName == null)
@@ -193,7 +194,7 @@ public class I18n {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to obtain internationalized message from the
+     * Method to obtain internationalized message from the
      * resource bundle given the key and locale.
      * 
      * @param key
@@ -201,6 +202,7 @@ public class I18n {
      * @param locale
      *            locale in a string format
      * @return returns internationalized message for the specified key
+     * @supported.api
      */
     public String getString(String key, String locale) {
         initialize();
@@ -212,12 +214,13 @@ public class I18n {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to obtain internationalized message from the
+     * Method to obtain internationalized message from the
      * resource bundle given the key.
      * 
      * @param key
      *            Key string in the properties file
      * @return Returns value to the specified key
+     * @supported.api
      */
     public String getString(String key) {
         initialize();
@@ -229,7 +232,7 @@ public class I18n {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to obtain internationalized message from the
+     * Method to obtain internationalized message from the
      * resource bundle given the key, locale and parameters.
      * 
      * @param key
@@ -239,6 +242,7 @@ public class I18n {
      * @param params
      *            parameters to be applied to the message
      * @return returns internationalized message for the specified key
+     * @supported.api
      */
     public String getString(String key, String locale, Object[] params) {
         initialize();
@@ -248,7 +252,7 @@ public class I18n {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to obtain internationalized message from the
+     * Method to obtain internationalized message from the
      * resource bundle given the key and parameters.
      * 
      * @param key
@@ -256,6 +260,7 @@ public class I18n {
      * @param params
      *            parameters to be applied to the message
      * @return Returns value to the specified key
+     * @supported.api
      */
     public String getString(String key, Object[] params) {
         initialize();

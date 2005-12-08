@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AlphaValidator.java,v 1.1 2005-11-01 00:30:47 arvindp Exp $
+ * $Id: AlphaValidator.java,v 1.2 2005-12-08 01:16:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,13 @@ package com.iplanet.ums.validation;
  * class to validate the string for alphabetic string. Pass the string to be
  * alphabeticvalidated and optional rule to validate function. The function
  * returns true value if the string is valid alphabetic string
+ *
+ * @supported.all.api
  */
-
 public class AlphaValidator implements IValidator {
 
     /**
-     * iPlanet-PUBLIC-METHOD Determines whether the specified string is a valid
+     * Determines whether the specified string is a valid
      * alphabetic string
      * 
      * @param value
@@ -49,7 +50,7 @@ public class AlphaValidator implements IValidator {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Determines whether the specified string is a valid
+     * Determines whether the specified string is a valid
      * alphabetic string
      * 
      * @param value

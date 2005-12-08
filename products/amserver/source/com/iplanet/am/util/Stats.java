@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
+ * $Id: Stats.java,v 1.3 2005-12-08 01:16:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,8 +39,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
-
-/* iPlanet-PUBLIC-CLASS */
 
 // NOTE: Since JVM specs guarantee atomic access/updates to int variables
 // (actually all variables except double and long), the design consciously
@@ -92,7 +90,8 @@ import java.util.Vector;
  * <code>warning()</code> methods to avoid unnecessary argument evaluation and
  * to maximize application performance.
  * </p>
- ******************************************************************************/
+ * @supported.all.api
+ */
 public class Stats {
     /** flags the disabled stats state. */
     public static final int OFF = 0;

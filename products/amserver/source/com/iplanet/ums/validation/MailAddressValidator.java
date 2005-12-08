@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MailAddressValidator.java,v 1.1 2005-11-01 00:30:48 arvindp Exp $
+ * $Id: MailAddressValidator.java,v 1.2 2005-12-08 01:16:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import java.util.Vector;
  * constructor and mail address is passed to validate function with optional
  * rules The passed mail address is validated for authenticity and boolean value
  * is returned accordingly.
+ *
+ * @supported.all.api
  */
 public class MailAddressValidator implements IValidator {
 
@@ -43,7 +45,6 @@ public class MailAddressValidator implements IValidator {
      * @param rule
      *            not used by this method
      * @return true if the value represents a valid email address string
-     *         iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String value, String rule) {
         return validate(value);
@@ -55,7 +56,6 @@ public class MailAddressValidator implements IValidator {
      * @param addr
      *            value to test
      * @return true if the string contains valid email characters
-     *         iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String addr) {
         String namePart;

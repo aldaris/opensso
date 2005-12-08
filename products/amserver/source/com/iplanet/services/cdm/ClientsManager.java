@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientsManager.java,v 1.1 2005-11-01 00:30:11 arvindp Exp $
+ * $Id: ClientsManager.java,v 1.2 2005-12-08 01:16:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import com.iplanet.am.util.AMClientDetector;
  * call store() to save changes into SMS. versions of the getInstance methods
  * that accept a SSO token should be used if the client code wishes to set
  * client data.
+ * @supported.api
  */
-
 public class ClientsManager {
 
     protected static ClientTypesManager clientTypesManager = AMClientDetector
@@ -64,8 +64,7 @@ public class ClientsManager {
      * @return Requested Client instance.
      * @throws ClientException
      *             if specified client type is null or not defined.
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static Client getInstance(String clientType) throws ClientException {
         if (clientType == null) {
@@ -83,8 +82,7 @@ public class ClientsManager {
      * Get a Client instance for the default client type
      * 
      * @return The Client instance corresponding to the default client type
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static Client getDefaultInstance() {
         String def = clientTypesManager.getDefaultClientType();
@@ -95,12 +93,10 @@ public class ClientsManager {
      * Returns an iterator of Client objects for all known client types.
      * 
      * @return Iterator of Client objects
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static Iterator getAllInstances() {
         Map allInstances = clientTypesManager.getAllClientInstances();
         return allInstances.values().iterator();
     }
-
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchResults.java,v 1.1 2005-11-01 00:31:11 arvindp Exp $
+ * $Id: IdSearchResults.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,11 +29,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class <code>IdSearchResults</code> provides to obtain the search
  * results.
+ *
+ * @supported.all.api
  */
 public class IdSearchResults {
 

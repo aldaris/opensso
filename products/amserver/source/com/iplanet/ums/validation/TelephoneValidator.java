@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TelephoneValidator.java,v 1.1 2005-11-01 00:30:49 arvindp Exp $
+ * $Id: TelephoneValidator.java,v 1.2 2005-12-08 01:16:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ package com.iplanet.ums.validation;
  * default constructor and validate function is used to validate telephone
  * number passing the telephone number as argument to the function. Upon
  * validation the validate function returns boolean value.
+ * @supported.all.api
  */
 public class TelephoneValidator implements IValidator {
 
@@ -40,7 +41,6 @@ public class TelephoneValidator implements IValidator {
      * @param rule
      *            not used by this method
      * @return true if the value represents a valid telephone number string
-     *         iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String value, String rule) {
         return validate(value);
@@ -53,7 +53,6 @@ public class TelephoneValidator implements IValidator {
      * @param telephone
      *            string telephone to validate
      * @return true if telephone is a valid telephone number string
-     *         iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String telephone) {
         char aChar;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationalUnit.java,v 1.1 2005-11-01 00:30:38 arvindp Exp $
+ * $Id: OrganizationalUnit.java,v 1.2 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,8 @@ import com.iplanet.services.ldap.AttrSet;
  * User1 );
  * 
  * </PRE>
+ *
+ * @supported.api
  */
 public class OrganizationalUnit extends PersistentObject {
 
@@ -91,7 +93,8 @@ public class OrganizationalUnit extends PersistentObject {
      *            template for the OrganizationalUnit, containing required and
      *            optional attributes, and possibly default values
      * @param attrSet
-     *            attribute/value set iPlanet-PUBLIC-CONSTRUCTOR
+     *            attribute/value set
+     * @supported.api
      */
     public OrganizationalUnit(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -101,7 +104,8 @@ public class OrganizationalUnit extends PersistentObject {
     /**
      * Return name of the organizational unit
      * 
-     * @return name of the organizational unit iPlanet-PUBLIC-METHOD
+     * @return name of the organizational unit
+     * @supported.api
      */
     public String getName() throws UMSException {
         return (getAttribute(getNamingAttribute()).getValue());

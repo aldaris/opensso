@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidAttributeValueException.java,v 1.2 2005-11-15 04:10:35 veiming Exp $
+ * $Id: InvalidAttributeValueException.java,v 1.3 2005-12-08 01:16:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,11 +29,11 @@ import java.util.ResourceBundle;
 
 import com.iplanet.am.util.Locale;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * @see java.lang.Exception
  * @see java.lang.Throwable
+ *
+ * @supported.all.api
  */
 public class InvalidAttributeValueException extends SMSException {
     private String resourceBundleName;

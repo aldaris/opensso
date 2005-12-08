@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLoginException.java,v 1.1 2005-11-01 00:30:54 arvindp Exp $
+ * $Id: AuthLoginException.java,v 1.2 2005-12-08 01:16:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @param nestedException
      *            Exception nested in the new exception.
-     *            iPlanet-PUBLIC-CONSTRUCTOR
+     *
+     * @supported.api
      */
     public AuthLoginException(Throwable nestedException) {
         _nestedException = nestedException;
@@ -90,7 +91,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * @param message
      *            message for this exception. This message can be later
      *            retrieved by <code>getMessage()</code> method.
-     *            iPlanet-PUBLIC-CONSTRUCTOR
+     *
+     * @supported.api
      */
     public AuthLoginException(String message) {
         _message = message;
@@ -120,7 +122,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      *            arguments to message. If it is not present pass them as null
      * @param nestedException
      *            The nested <code>Throwable</code>.
-     *            iPlanet-PUBLIC-CONSTRUCTOR
+     *
+     * @supported.api
      */
     public AuthLoginException(String rbName, String errorCode, Object[] args,
             Throwable nestedException) {
@@ -149,7 +152,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @param args
      *            arguments to message. If it is not present pass them as null
-     *            iPlanet-PUBLIC-CONSTRUCTOR
+     *
+     * @supported.api
      */
     public AuthLoginException(String rbName, String errorCode, Object[] args) {
         this(rbName, errorCode, args, null);
@@ -160,7 +164,9 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @param locale
      *            the locale in which the message will be returned.
-     * @return String localized error message iPlanet-PUBLIC-METHOD
+     * @return String localized error message.
+     *
+     * @supported.api
      */
     public String getL10NMessage(java.util.Locale locale) {
         String result = _message;
@@ -195,7 +201,9 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * Returns the resource bundle name.
      * 
      * @return Resource Bundle Name associated with this error message.
-     * @see #getL10NMessage(java.util.Locale) iPlanet-PUBLIC-METHOD
+     * @see #getL10NMessage(java.util.Locale).
+     *
+     * @supported.api
      */
     public String getResourceBundleName() {
         return _bundleName;
@@ -205,7 +213,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * Returns the error code.
      * 
      * @return Error code associated with this error message.
-     *         iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public String getErrorCode() {
         return _errorCode;
@@ -216,7 +225,9 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @return arguments for formatting this error message. You need to use
      *         <code>MessageFormat</code> class to format the message. It can
-     *         be null. iPlanet-PUBLIC-METHOD
+     *         be null.
+     *
+     * @supported.api
      */
     public Object[] getMessageArgs() {
         return _args;
@@ -231,7 +242,9 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      *         exception, all the way to the root exception, by following the
      *         nested exceptions. The message returned is always in English
      *         locale. To get localized message, use the getL10NMessage(Locale)
-     *         method. iPlanet-PUBLIC-METHOD
+     *         method.
+     *
+     * @supported.api
      */
     public String getMessage() {
         return getL10NMessage(java.util.Locale.ENGLISH);
@@ -241,7 +254,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * Prints the stack trace of the root exception to standard error stream.
      * Also prints the messages of all the exceptions starting from top
      * exception to the root exception, at the top of stack trace
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void printStackTrace() {
         System.err.println(fetchStackTrace());
@@ -255,7 +269,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @param pw
      *            <code>PrintWriter</code> to which to print the stack trace.
-     *            iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void printStackTrace(PrintWriter pw) {
         pw.println(fetchStackTrace());
@@ -269,7 +284,8 @@ public class AuthLoginException extends LoginException implements L10NMessage {
      * 
      * @param ps
      *            <code>PrintStream</code> to which to print the stack trace
-     *            iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void printStackTrace(PrintStream ps) {
         ps.println(fetchStackTrace());

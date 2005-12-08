@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceConfigManager.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,8 @@ import com.iplanet.ums.IUMSConstants;
  * <code>ServiceConfig</code> which represents a single "configuration" in the
  * service. It manages configuration data only for GLOBAL and ORGANIZATION
  * types.
+ *
+ * @supported.api
  */
 public class ServiceConfigManager {
     // Instance variables
@@ -82,7 +84,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Creates an instance of
+     * Creates an instance of
      * <code>ServiceConfigManager</code> for the given service and version. It
      * requires an user identity, that will used to perform operations with. It
      * is assumed that the application calling this constructor should
@@ -99,6 +101,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceConfigManager(SSOToken token, String serviceName,
             String version) throws SMSException, SSOException {
@@ -118,29 +122,35 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the name of the service.
+     * Returns the name of the service.
      * 
      * @return the name of the service
+     *
+     * @supported.api
      */
     public String getName() {
         return (serviceName);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service version.
+     * Returns the service version.
      * 
      * @return the version of the service
+     *
+     * @supported.api
      */
     public String getVersion() {
         return (version);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service instance names
+     * Returns the service instance names
      * 
      * @return the service instance names
      * @throws SMSException
      *             if an error has occurred while performing the operation
+     *
+     * @supported.api
      */
     public Set getInstanceNames() throws SMSException {
         try {
@@ -153,11 +163,13 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the configuration group names
+     * Returns the configuration group names
      * 
      * @return the service configuration group names
      * @throws SMSException
      *             if an error has occurred while performing the operation
+     *
+     * @supported.api
      */
     public Set getGroupNames() throws SMSException {
         try {
@@ -170,7 +182,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the service instance given the instance
+     * Returns the service instance given the instance
      * name
      * 
      * @param instanceName
@@ -179,6 +191,8 @@ public class ServiceConfigManager {
      * @throws SMSException
      *             if an error has occurred while performing the operation
      * @throws SSOException
+     *
+     * @supported.api
      *             if the user's single sign on token is invalid or expired
      */
     public ServiceInstance getInstance(String instanceName)
@@ -188,7 +202,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the instance form the service
+     * Removes the instance form the service
      * 
      * @param instanceName
      *            the service instance name
@@ -196,6 +210,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void removeInstance(String instanceName) throws SMSException,
             SSOException {
@@ -203,7 +219,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the global configuration for the given
+     * Returns the global configuration for the given
      * service instance.
      * 
      * @param instanceName
@@ -213,6 +229,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceConfig getGlobalConfig(String instanceName)
             throws SMSException, SSOException {
@@ -221,7 +239,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the organization configuration for the
+     * Returns the organization configuration for the
      * given organization and instance name.
      * 
      * @param orgName
@@ -233,6 +251,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceConfig getOrganizationConfig(String orgName,
             String instanceName) throws SMSException, SSOException {
@@ -243,7 +263,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates global configuration for the default
+     * Creates global configuration for the default
      * instance of the service given the configuration attributes.
      * 
      * @param attrs
@@ -252,6 +272,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceConfig createGlobalConfig(Map attrs) throws SMSException,
             SSOException {
@@ -276,7 +298,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates organization configuration for the default
+     * Creates organization configuration for the default
      * instance of the service given configuration attributes.
      * 
      * @param orgName
@@ -287,6 +309,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public ServiceConfig createOrganizationConfig(String orgName, Map attrs)
             throws SMSException, SSOException {
@@ -331,7 +355,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds instances, global and organization
+     * Adds instances, global and organization
      * configurations
      * 
      * @param in
@@ -340,6 +364,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void addConfiguration(InputStream in) throws SMSException,
             SSOException {
@@ -365,7 +391,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Deletes the global configuration data for the given
+     * Deletes the global configuration data for the given
      * group name. If group name is <code>null</code>, it used the default
      * group name.
      * 
@@ -375,6 +401,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void removeGlobalConfiguration(String groupName)
             throws SMSException, SSOException {
@@ -392,7 +420,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Deletes the organization configuration data for the
+     * Deletes the organization configuration data for the
      * given organization. It removes all the groups within the organization.
      * 
      * @param orgName
@@ -401,6 +429,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void deleteOrganizationConfig(String orgName) throws SMSException,
             SSOException {
@@ -408,7 +438,7 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Deletes the organization's group configuration
+     * Deletes the organization's group configuration
      * data.
      * 
      * @param orgName
@@ -419,6 +449,8 @@ public class ServiceConfigManager {
      *             if an error has occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void removeOrganizationConfiguration(String orgName,
             String groupName) throws SMSException, SSOException {
@@ -517,35 +549,41 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Registers for changes to service's configuration.
+     * Registers for changes to service's configuration.
      * The object will be called when configuration for this service and version
      * is changed.
      * 
      * @param listener
      *            callback object that will be invoked when schema changes.
      * @return an ID of the registered listener.
+     *
+     * @supported.api
      */
     public String addListener(ServiceListener listener) {
         return (scm.addListener(listener));
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the listener from the service for the given
+     * Removes the listener from the service for the given
      * listener ID. The ID was issued when the listener was registered.
      * 
      * @param listenerID
      *            the listener ID issued when the listener was registered
+     *
+     * @supported.api
      */
     public void removeListener(String listenerID) {
         scm.removeListener(listenerID);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Compares this object with the given object.
+     * Compares this object with the given object.
      * 
      * @param o
      *            object for comparison.
      * @return true if objects are equals.
+     *
+     * @supported.api
      */
     public boolean equals(Object o) {
         if (o instanceof ServiceConfigManager) {
@@ -559,11 +597,13 @@ public class ServiceConfigManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns String representation of the service's
+     * Returns String representation of the service's
      * configuration data, along with instances and groups.
      * 
      * @return String representation of the service's configuration data, along
      *         with instances and groups.
+     *
+     * @supported.api
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

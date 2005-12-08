@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.1 2005-11-01 00:31:33 arvindp Exp $
+ * $Id: ServiceManager.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ import com.sun.identity.security.EncodeAction;
  * services and to list currently registered services. It also provides methods
  * to obtain an instance of <code>ServiceSchemaManager</code> and an instance
  * of <code>ServiceConfigManager</code>.
+ *
+ * @supported.api
  */
 public class ServiceManager {
 
@@ -135,7 +137,7 @@ public class ServiceManager {
     private static Debug debug = SMSEntry.debug;
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates an instance of <code>ServiceManager</code>.
+     * Creates an instance of <code>ServiceManager</code>.
      * The <code>SSOToken</code> is used to identify the user performing
      * service operations.
      * 
@@ -145,6 +147,8 @@ public class ServiceManager {
      *             if the user's single sign on token is invalid or expired
      * @throws SMSException
      *             if an error occurred while performing the operation
+     *
+     * @supported.api
      */
     public ServiceManager(SSOToken token) throws SSOException, SMSException {
         // Initilaize the static variables and caches
@@ -156,7 +160,7 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the <code>ServiceSchemaManager</code> for
+     * Returns the <code>ServiceSchemaManager</code> for
      * the given service name and version.
      * 
      * @param serviceName
@@ -169,6 +173,8 @@ public class ServiceManager {
      *             if the user's single sign on token is invalid or expired
      * @throws SMSException
      *             if an error occurred while performing the operation
+     *
+     * @supported.api
      */
     public ServiceSchemaManager getSchemaManager(String serviceName,
             String version) throws SMSException, SSOException {
@@ -186,7 +192,7 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the <code>ServiceConfigManager</code> for
+     * Returns the <code>ServiceConfigManager</code> for
      * the given service name and version.
      * 
      * @param serviceName
@@ -199,6 +205,8 @@ public class ServiceManager {
      *             if the user's single sign on token is invalid or expired
      * @throws SMSException
      *             if an error occurred while performing the operation
+     *
+     * @supported.api
      */
     public ServiceConfigManager getConfigManager(String serviceName,
             String version) throws SMSException, SSOException {
@@ -249,12 +257,14 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns all the service names that have been
+     * Returns all the service names that have been
      * registered.
      * 
      * @return the set of names of services that have been registered
      * @throws SMSException
      *             if an error occurred while performing the operation
+     *
+     * @supported.api
      */
     public Set getServiceNames() throws SMSException {
         try {
@@ -371,13 +381,15 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns all versions supported by the service.
+     * Returns all versions supported by the service.
      * 
      * @param serviceName
      *            service name.
      * @return the set of versions supported by the service
      * @throws SMSException
      *             if an error occurred while performing the operation
+     *
+     * @supported.api
      */
     public Set getServiceVersions(String serviceName) throws SMSException {
         try {
@@ -389,7 +401,7 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Registers one or more services, defined by the XML
+     * Registers one or more services, defined by the XML
      * input stream that follows the SMS DTD.
      * 
      * @param xmlServiceSchema
@@ -400,6 +412,8 @@ public class ServiceManager {
      *             if an error occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public Set registerServices(InputStream xmlServiceSchema)
             throws SMSException, SSOException {
@@ -493,7 +507,7 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes the service schema and configuration for
+     * Removes the service schema and configuration for
      * the given service name.
      * 
      * @param serviceName
@@ -504,6 +518,8 @@ public class ServiceManager {
      *             if an error occurred while performing the operation
      * @throws SSOException
      *             if the user's single sign on token is invalid or expired
+     *
+     * @supported.api
      */
     public void removeService(String serviceName, String version)
             throws SMSException, SSOException {
@@ -656,11 +672,13 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes all the SMS cached entries. This method
+     * Removes all the SMS cached entries. This method
      * should be called to clear the cache for example, if ACIs for the SMS
      * entries are changed in the directory. Also, this clears the SMS entries
      * only in this JVM instance. If multiple instances (of JVM) are running
      * this method must be called within each instance.
+     *
+     * @supported.api
      */
     public synchronized void clearCache() {
         serviceSchemaMgrs = new HashMap();
@@ -686,11 +704,13 @@ public class ServiceManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns <code>true</code> if current service
+     * Returns <code>true</code> if current service
      * configuration uses the realm model to store the configuration data.
      * 
      * @return <code>true</code> is realm model is used for storing
      *         configuration data; <code>false</code> otherwise.
+     *
+     * @supported.api
      */
     public static boolean isRealmEnabled() {
         if (!initialized) {

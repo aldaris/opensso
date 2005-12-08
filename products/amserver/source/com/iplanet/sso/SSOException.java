@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOException.java,v 1.2 2005-11-08 17:12:08 veiming Exp $
+ * $Id: SSOException.java,v 1.3 2005-12-08 01:16:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import com.sun.identity.common.L10NMessageImpl;
 /**
  * This <code>SSOException</code> is thrown when there are single sign on token 
  * operation error.
+ *
+ * @supported.all.api
  */
 public class SSOException extends L10NMessageImpl {
 

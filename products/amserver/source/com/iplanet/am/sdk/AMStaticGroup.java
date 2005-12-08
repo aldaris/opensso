@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStaticGroup.java,v 1.1 2005-11-01 00:29:19 arvindp Exp $
+ * $Id: AMStaticGroup.java,v 1.2 2005-12-08 01:16:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,6 @@ package com.iplanet.am.sdk;
 import java.util.Set;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This interface provides methods to manage static group.
@@ -42,6 +40,7 @@ import com.iplanet.sso.SSOException;
  * (amsc.doesEntryExist(sDN)) { AMStaticGroup sg = amsc.getStaticGroup(rDN); }
  * 
  * </PRE>
+ * @supported.all.api
  */
 public interface AMStaticGroup extends AMGroup {
     /**

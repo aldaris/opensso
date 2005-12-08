@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessRightsException.java,v 1.1 2005-11-01 00:30:32 arvindp Exp $
+ * $Id: AccessRightsException.java,v 1.2 2005-12-08 01:16:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,11 +27,15 @@ package com.iplanet.ums;
 /**
  * Exception occurs upon insufficient access rights to perform operations in the
  * underlying persistent storage.
+ *
+ * @supported.api
  */
 public class AccessRightsException extends UMSException {
 
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
+     *
+     * @supported.api
      */
     public AccessRightsException() {
         super();
@@ -42,7 +46,9 @@ public class AccessRightsException extends UMSException {
      * string.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
+     *
+     * @supported.api
      */
     public AccessRightsException(String msg) {
         super(msg);
@@ -55,7 +61,9 @@ public class AccessRightsException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
+     *
+     * @supported.api
      */
     public AccessRightsException(String msg, Throwable t) {
         super(msg, t);

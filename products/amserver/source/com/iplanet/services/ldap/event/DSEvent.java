@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSEvent.java,v 1.1 2005-11-01 00:30:20 arvindp Exp $
+ * $Id: DSEvent.java,v 1.2 2005-12-08 01:16:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,9 @@ package com.iplanet.services.ldap.event;
 
 import netscape.ldap.controls.LDAPPersistSearchControl;
 
+/**
+ * @supported.api
+ */
 public class DSEvent {
 
     private int _eventType;
@@ -60,7 +63,8 @@ public class DSEvent {
 
     /**
      * Returns the type of change event either add, modify, delete, etc.
-     * iPlanet-PUBLIC-METHOD
+     * 
+     * @supported.api
      */
     public int getEventType() {
         return _eventType;
@@ -75,7 +79,8 @@ public class DSEvent {
 
     /**
      * Return the Directory Server ID assigned to the entry changed
-     * iPlanet-PUBLIC-METHOD
+     * 
+     * @supported.api
      */
     public String getID() {
         return _id;
@@ -90,7 +95,8 @@ public class DSEvent {
 
     /**
      * Returns the Directory Server class name for the given entry
-     * iPlanet-PUBLIC-METHOD
+     * 
+     * @supported.api
      */
     public String getClassName() {
         return _className;
@@ -105,10 +111,10 @@ public class DSEvent {
 
     /**
      * Returns the Directory Server search ID that was assigned when the
-     * persistent search was first submited. iPlanet-PUBLIC-METHOD
+     * persistent search was first submited. 
+     * @supported.api
      */
     public String getSearchID() {
         return _searchId;
     }
-
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthPrincipal.java,v 1.1 2005-11-01 00:30:51 arvindp Exp $
+ * $Id: AuthPrincipal.java,v 1.2 2005-12-08 01:16:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,27 +39,31 @@ import com.sun.identity.authentication.internal.server.AuthSPrincipal;
  * 
  * @see java.security.Principal
  * @see javax.security.auth.Subject
+ *
+ * @supported.api
  */
 public class AuthPrincipal extends AuthSPrincipal {
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Create an <code>AuthPrincipal</code> with a
-     * user name.
+     * Create an <code>AuthPrincipal</code> with a user name.
      * 
      * @param name
      *            the name for this user.
      * @exception NullPointerException
      *                if the <code>name</code> is <code>null</code>.
+     *
+     * @supported.api
      */
     public AuthPrincipal(String name) {
         super(name);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Return the user name for this
-     * <code>AuthPrincipal</code>.
+     * Return the user name for this <code>AuthPrincipal</code>.
      * 
      * @return the user name for this <code>AuthPrincipal</code>
+     *
+     * @supported.api
      */
     public String getName() {
         return name;
@@ -67,8 +71,6 @@ public class AuthPrincipal extends AuthSPrincipal {
 
     /**
      * Return the AuthMethod for this <code>AuthPrincipal</code>.
-     * 
-     * <p>
      * 
      * @return the AuthMethod for this <code>AuthPrincipal</code>
      */
@@ -79,8 +81,6 @@ public class AuthPrincipal extends AuthSPrincipal {
     /**
      * Return the AuthLevel for this <code>AuthPrincipal</code>.
      * 
-     * <p>
-     * 
      * @return the AuthLevel for this <code>AuthPrincipal</code>
      */
     public String getAuthLevel() {
@@ -88,31 +88,30 @@ public class AuthPrincipal extends AuthSPrincipal {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Return a string representation of this
+     * Return a string representation of this
      * <code>AuthPrincipal</code>.
      * 
-     * <p>
-     * 
      * @return a string representation of this <code>AuthPrincipal</code>.
+     *
+     * @supported.api
      */
     public String toString() {
         return ("AuthPrincipal:  " + name);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Compares the specified object with this
+     * Compares the specified object with this
      * <code>AuthPrincipal</code> for equality. Returns true if the given
      * object is also an <code>AuthPrincipal</code> and the two
      * <code>AuthPrincipal</code>s have the same user name.
      * 
-     * <p>
-     * 
      * @param o
      *            Object to be compared for equality with this
      *            <code>AuthPrincipal</code>.
-     * 
      * @return true if the specified Object is equal to this
      *         <code>AuthPrincipal</code>.
+     *
+     * @supported.api
      */
     public boolean equals(Object o) {
         if (o == null)
@@ -133,12 +132,12 @@ public class AuthPrincipal extends AuthSPrincipal {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Return a hash code for this
+     * Return a hash code for this
      * <code>AuthPrincipal</code>.
      * 
-     * <p>
-     * 
      * @return a hash code for this <code>AuthPrincipal</code>.
+     *
+     * @supported.api
      */
     public int hashCode() {
         return name.hashCode();

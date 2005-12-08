@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchControl.java,v 1.1 2005-11-01 00:29:18 arvindp Exp $
+ * $Id: AMSearchControl.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,13 +28,12 @@ import java.util.Set;
 
 import com.iplanet.ums.SearchControl;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class provides a way to customize Search behaviors. Common behaviors are
  * time limit, result limit and Virtual list view. In future, we will provide
  * ways for client to define different hierarchical tree through
  * <code>AMSearchControl</code>.
+ * @supported.all.api
  */
 public class AMSearchControl {
 

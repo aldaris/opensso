@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntryAlreadyExistsException.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: EntryAlreadyExistsException.java,v 1.2 2005-12-08 01:16:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,11 +31,12 @@ package com.iplanet.ums;
  * If LDAP is the underlying persistent storage, this exception is thrown upon
  * receiving the LDAP exception with the error code for "ENTRY_ALREADY_EXISTS".
  * 
+ * @supported.all.api
  */
 public class EntryAlreadyExistsException extends UMSException {
 
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public EntryAlreadyExistsException() {
         super();
@@ -45,7 +46,7 @@ public class EntryAlreadyExistsException extends UMSException {
      * Constructor with a message string.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public EntryAlreadyExistsException(String msg) {
         super(msg);
@@ -57,10 +58,9 @@ public class EntryAlreadyExistsException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public EntryAlreadyExistsException(String msg, Throwable t) {
         super(msg, t);
     }
-
 }

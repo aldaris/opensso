@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: DataLayer.java,v 1.3 2005-12-08 01:16:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,7 @@ import com.sun.identity.security.ServerInstanceAction;
  * pools of connections for mulitple (host,port) to DS servers instead of single
  * host and port.
  * 
+ * @supported.api
  */
 public class DataLayer implements java.io.Serializable {
 
@@ -198,7 +199,8 @@ public class DataLayer implements java.io.Serializable {
 
     /**
      * create the singelton DataLayer object if it doesn't exist already.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public synchronized static DataLayer getInstance(ServerInstance serverCfg) {
         // Make sure only one instance of this class is created.
@@ -237,7 +239,8 @@ public class DataLayer implements java.io.Serializable {
     /**
      * create the singelton DataLayer object if it doesn't exist already.
      * Assumes the server instance for "LDAPUser.Type.AUTH_PROXY".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static DataLayer getInstance() {
         // Make sure only one instance of this class is created.
@@ -259,7 +262,9 @@ public class DataLayer implements java.io.Serializable {
     /**
      * Get connection from pool. Reauthenticate if necessary
      * 
-     * @return connection that is available to use iPlanet-PUBLIC-METHOD
+     * @return connection that is available to use.
+     *
+     * @supported.api
      */
     public LDAPConnection getConnection(java.security.Principal principal) {
         if (_ldapPool == null)
@@ -289,7 +294,8 @@ public class DataLayer implements java.io.Serializable {
      * 
      * @param conn
      *            connection in the pool to be released for others to use
-     *            iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void releaseConnection(LDAPConnection conn) {
         if (_ldapPool == null || conn == null)
@@ -314,12 +320,13 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns String values of the attribute.
      * 
      * @param principal Authentication Principal.
      * @param guid distinguished name.
      * @param attrName attribute name.
+     *
+     * @supported.api
      */
     public String[] getAttributeString(
         java.security.Principal principal,
@@ -347,12 +354,13 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns <code>Attr</code> from the given attribute name.
      * 
      * @param principal Authentication Principal.
      * @param guid Distinguished name.
      * @param attrName Attribute name.
+     *
+     * @supported.api
      */
     public Attr getAttribute(
         java.security.Principal principal,
@@ -390,7 +398,9 @@ public class DataLayer implements java.io.Serializable {
      * @param principal Authentication Principal.
      * @param guid Distinguished name.
      * @param attrNames Attribute names.
-     * @return collection of Attr iPlanet-PUBLIC-METHOD
+     * @return collection of Attr.
+     *
+     * @supported.api
      */
     public Collection getAttributes(
         java.security.Principal principal,
@@ -431,7 +441,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds entry to the server.
      * 
      * @param principal Authenticated Principal.
@@ -440,6 +449,8 @@ public class DataLayer implements java.io.Serializable {
      * @exception AccessRightsException if insufficient access>
      * @exception EntryAlreadyExistsException if the entry already exists.
      * @exception UMSException if fail to add entry.
+     *
+     * @supported.api
      */
     public void addEntry(
         java.security.Principal principal,
@@ -507,7 +518,9 @@ public class DataLayer implements java.io.Serializable {
      * @exception EntryNotFoundException
      *                if the entry is not found
      * @exception UMSException
-     *                Fail to delete the entry iPlanet-PUBLIC-METHOD
+     *                Fail to delete the entry
+     *
+     * @supported.api
      */
     public void deleteEntry(java.security.Principal principal, Guid guid)
             throws AccessRightsException, EntryNotFoundException, UMSException {
@@ -571,7 +584,9 @@ public class DataLayer implements java.io.Serializable {
      * @exception EntryNotFoundException
      *                if the entry is not found
      * @exception UMSException
-     *                Fail to read the entry iPlanet-PUBLIC-METHOD
+     *                Fail to read the entry
+     *
+     * @supported.api
      */
     public AttrSet read(java.security.Principal principal, Guid guid)
             throws EntryNotFoundException, UMSException {
@@ -579,7 +594,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Reads an ldap entry.
      * 
      * @param principal Authentication Principal.
@@ -588,6 +602,8 @@ public class DataLayer implements java.io.Serializable {
      * @return an attribute set representing the entry in LDAP.
      * @exception EntryNotFoundException if the entry is not found.
      * @exception UMSException if fail to read the entry.
+     *
+     * @supported.api
      */
     public AttrSet read(
         java.security.Principal principal,
@@ -685,7 +701,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Modifies an ldap entry.
      * 
      * @param principal Authentication Principal.
@@ -694,6 +709,8 @@ public class DataLayer implements java.io.Serializable {
      * @exception AccessRightsException if insufficient access
      * @exception EntryNotFoundException if the entry is not found.
      * @exception UMSException if failure
+     *
+     * @supported.api
      */
     public void modify(
         java.security.Principal principal,
@@ -745,7 +762,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds value for an attribute and saves the change in the database.
      * 
      * @param principal Authenticated Principal.
@@ -753,6 +769,8 @@ public class DataLayer implements java.io.Serializable {
      * @param name name of the attribute to which value is being added.
      * @param value Value to be added to the attribute.
      * @throws UMSException if there is any error while adding the value
+     *
+     * @supported.api
      */
     public void addAttributeValue(
         java.security.Principal principal,
@@ -768,7 +786,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes value for an attribute and saves the change in the database.
      * 
      * @param principal Authenticated Principal.
@@ -776,6 +793,8 @@ public class DataLayer implements java.io.Serializable {
      * @param name Name of the attribute from which value is being removed
      * @param value Value to be removed from the attribute.
      * @throws UMSException if there is any error while removing the value.
+     *
+     * @supported.api
      */
     public void removeAttributeValue(java.security.Principal principal,
             Guid guid, String name, String value) throws UMSException {
@@ -845,7 +864,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Performs synchronous search based on specified ldap filter. This is low
      * level API which assumes caller knows how to construct a data store filer.
      * 
@@ -860,6 +878,8 @@ public class DataLayer implements java.io.Serializable {
      * @param searchControl Search Control.
      * @exception UMSException if failure.
      * @exception InvalidSearchFilterException if failure
+     *
+     * @supported.api
      */
     public SearchResults search(
         java.security.Principal principal,
@@ -998,7 +1018,6 @@ public class DataLayer implements java.io.Serializable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Perform synchronous search based on specified ldap filter. This is low
      * level API which assumes caller knows how to construct a data store filer.
      * 
@@ -1010,6 +1029,8 @@ public class DataLayer implements java.io.Serializable {
      * @param searchControl Search Control.
      * @exception UMSException if failure.
      * @exception InvalidSearchFilterException if failure.
+     *
+     * @supported.api
      */
     public SearchResults searchIDs(
         java.security.Principal principal,
@@ -1032,7 +1053,9 @@ public class DataLayer implements java.io.Serializable {
      * @exception AccessRightsException
      *                insufficient access
      * @exception UMSException
-     *                Fail to fetch the schema iPlanet-PUBLIC-METHOD
+     *                Fail to fetch the schema.
+     *
+     * @supported.api
      */
     public LDAPSchema getSchema(java.security.Principal principal)
             throws AccessRightsException, UMSException {
@@ -1103,7 +1126,9 @@ public class DataLayer implements java.io.Serializable {
      * @exception SchemaElementAlreadyExistsException
      *                if the element already exists
      * @exception UMSException
-     *                Fail to add schema element iPlanet-PUBLIC-METHOD
+     *                Fail to add schema element.
+     *
+     * @supported.api
      */
     public void addSchema(java.security.Principal principal,
             LDAPSchemaElement schemaElement) throws AccessRightsException,
@@ -1140,7 +1165,9 @@ public class DataLayer implements java.io.Serializable {
      * @exception AccessRightsException
      *                insufficient access
      * @exception UMSException
-     *                Fail to remove schema element iPlanet-PUBLIC-METHOD
+     *                Fail to remove schema element.
+     *
+     * @supported.api
      */
     public void removeSchema(java.security.Principal principal,
             LDAPSchemaElement schemaElement) throws AccessRightsException,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IRole.java,v 1.2 2005-11-15 04:10:29 veiming Exp $
+ * $Id: IRole.java,v 1.3 2005-12-08 01:16:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,10 @@
 package com.iplanet.ums;
 
 /**
- * iPlanet-PUBLIC-CLASS This is a common iterface from which different roles can
+ * This is a common iterface from which different roles can
  * be implemented.
+ *
+ * @supported.all.api
  */
 public interface IRole {
     /**

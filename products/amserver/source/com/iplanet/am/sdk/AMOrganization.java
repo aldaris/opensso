@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganization.java,v 1.1 2005-11-01 00:29:12 arvindp Exp $
+ * $Id: AMOrganization.java,v 1.2 2005-12-08 01:16:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This interface provides methods to manage organization.
@@ -45,6 +43,7 @@ import com.iplanet.sso.SSOException;
  * }
  * 
  * </PRE>
+ * @supported.all.api
  */
 
 public interface AMOrganization extends AMObject {

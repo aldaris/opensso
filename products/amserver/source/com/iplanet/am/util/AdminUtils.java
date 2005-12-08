@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminUtils.java,v 1.1 2005-11-01 00:29:36 arvindp Exp $
+ * $Id: AdminUtils.java,v 1.2 2005-12-08 01:16:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,12 +36,11 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.security.ISSecurityPermission;
 import com.sun.identity.security.ServerInstanceAction;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class contains methods to retrieve Top Level Administrator information.
  * The information comes from the server configuration file 
  * (<code>serverconfig.xml</code>).
+ * @supported.all.api
  */
 public class AdminUtils {
 

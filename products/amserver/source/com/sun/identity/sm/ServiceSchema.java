@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.1 2005-11-01 00:31:33 arvindp Exp $
+ * $Id: ServiceSchema.java,v 1.2 2005-12-08 01:16:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,12 +44,12 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.Constants;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>ServiceSchema</code> provides interfaces to manage the
  * schema information of a service. The schema for a service can be one of the
  * following types: GLOBAL, ORGANIZATION, DYNAMIC, USER, and POLICY.
+ *
+ * @supported.all.api
  */
 public class ServiceSchema {
 

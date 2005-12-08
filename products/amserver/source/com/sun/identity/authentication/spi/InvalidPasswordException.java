@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidPasswordException.java,v 1.1 2005-11-01 00:30:54 arvindp Exp $
+ * $Id: InvalidPasswordException.java,v 1.2 2005-12-08 01:16:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.authentication.spi;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * Exception that is thrown when the user-entered password token causes the
@@ -34,8 +32,9 @@ package com.sun.identity.authentication.spi;
  * exception, the authentication module should set the <code>userTokenId</code>
  * so that subsequent calls to <code>getUserTokenId</code> will return correct
  * <code>userTokenId</code> that will be use to lock out the user.
+ *
+ * @supported.all.api
  */
-
 public class InvalidPasswordException extends AuthLoginException {
 
     String tokenId;

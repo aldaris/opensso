@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainComponentTree.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
+ * $Id: DomainComponentTree.java,v 1.3 2005-12-08 01:16:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,7 @@ import com.iplanet.ums.User;
  * level dc node being mapped to an organizational DIT.
  * 
  * @see DomainComponent
+ * @supported.api
  */
 public class DomainComponentTree {
 
@@ -82,7 +83,6 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructs a <code>DomainComponentTree</code> with an authenticated
      * prinicipal and an identification of the root of the dc index tree.
      * 
@@ -92,6 +92,7 @@ public class DomainComponentTree {
      *        <code>o=internet</code>.
      * @throws InvalidDCRootException if invalid root specification.
      * @throws UMSException if other read error occurred.
+     * @supported.api
      */
     public DomainComponentTree(SSOToken token, Guid dcRoot)
             throws InvalidDCRootException, UMSException {
@@ -151,12 +152,13 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the root of the domain component tree (dc
+     * Sets the root of the domain component tree (dc
      * tree). Needs an established authenticated principal before setting
      * dcroot.
      * 
      * @param root
      *            Identification of the root of the tree such as o=internet
+     * @supported.api
      */
     public void setDCRoot(Guid root) throws UMSException {
         SSOToken token = getSSOToken();
@@ -173,17 +175,18 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the root of the domain component tree (dc
+     * Gets the root of the domain component tree (dc
      * tree)
      * 
      * @return PersistentObject representing the dctree root in the dctree DIT
+     * @supported.api
      */
     public PersistentObject getDCRoot() {
         return m_dcRoot;
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add a virtual domain into the domain component
+     * Add a virtual domain into the domain component
      * tree.
      * 
      * @param domain
@@ -193,6 +196,7 @@ public class DomainComponentTree {
      *             if dcroot is not defined
      * @throws UMSException
      *             for write problem in adding domain to dctree
+     * @supported.api
      */
     public DomainComponent addDomain(String domain) throws UMSException {
         if (domain == null || domain.length() == 0) {
@@ -249,7 +253,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Remove a virtual domain in the dctree
+     * Remove a virtual domain in the dctree
      * 
      * @param domain
      *            Virtual domain name to be removed
@@ -257,6 +261,7 @@ public class DomainComponentTree {
      *             upon failure to remove the corresponding dc entry in the
      *             dctree
      * 
+     * @supported.api
      */
     public void removeDomain(String domain) throws UMSException {
         if (m_dcRoot == null)
@@ -267,7 +272,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Set the domain mapping so that the dc entry maps to
+     * Set the domain mapping so that the dc entry maps to
      * an organization in the the organization DIT hosting user data (the
      * convergence tree in Nortel spec)
      * 
@@ -280,6 +285,7 @@ public class DomainComponentTree {
      *             if domain id not defined
      * @throws UMSException
      *             upon write failure
+     * @supported.api
      */
     public void setDomainMapping(String domain, PersistentObject org)
             throws UMSException {
@@ -287,7 +293,6 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Set the domain mapping so that the dc entry maps to
      * an organization in the convergence tree.
      * 
@@ -295,6 +300,7 @@ public class DomainComponentTree {
      * @param orgGuid Identifiication of Organization entry to be mapped from
      *        dctree to organization DIT (the convergence tree in nortel spec).
      * @throws UMSException if write failed.
+     * @supported.api
      */
     public void setDomainMapping(String domain, Guid orgGuid)
             throws UMSException {
@@ -303,7 +309,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the domain status for a given virtual domain
+     * Sets the domain status for a given virtual domain
      * 
      * @param domain
      *            Virtual domain name
@@ -314,6 +320,7 @@ public class DomainComponentTree {
      * @throws UMSException
      *             upon write failure
      * 
+     * @supported.api
      */
     public void setDomainStatus(String domain, String status)
             throws DomainNotFoundException, UMSException {
@@ -322,7 +329,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the domain status of a given virtual domain
+     * Gets the domain status of a given virtual domain
      * 
      * @param domain
      *            Virtual domain name
@@ -331,6 +338,7 @@ public class DomainComponentTree {
      *             if domain not found in dctree
      * @throws UMSException
      *             upon read failure
+     * @supported.api
      */
     public String getDomainStatus(String domain)
             throws DomainNotFoundException, UMSException {
@@ -339,12 +347,13 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given a fully qualified domain name, maps it to the
+     * Given a fully qualified domain name, maps it to the
      * corresponding DN in the DCtree
      * 
      * @param domain
      *            Fully qualified domain name
      * @return String representation of the Distinguished Name in the DC Tree
+     * @supported.api
      */
     public String mapDomainToDN(String domain) {
         StringTokenizer st = new StringTokenizer(domain, ".");
@@ -359,7 +368,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given a virtual domain name such as
+     * Given a virtual domain name such as
      * "javasoft.sun.com", returns the domain component entry in the dc index
      * tree. This entry lives under dc index tree and one can use the dc entry
      * to get to the organization assoicated with the dc tree
@@ -372,6 +381,7 @@ public class DomainComponentTree {
      *             if given domain is not found in the dctree
      * @throws UMSException
      *             upon read error
+     * @supported.api
      */
     public DomainComponent getDomainComponent(String domain)
             throws DomainNotFoundException, UMSException {
@@ -390,7 +400,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given a virtual domain name such as
+     * Given a virtual domain name such as
      * "javasoft.sun.com", return the organization, organizationalunit or any
      * DIT entry that is assoicated from the domain compoent tree (dctree) to
      * the customer oranization DIT (the convergence tree as outlined in nortel
@@ -403,6 +413,7 @@ public class DomainComponentTree {
      *             if domain is not found
      * @throws UMSException
      *             for reading problem in instantiating the mapped organization
+     * @supported.api
      */
     public PersistentObject getOrganization(String domain)
             throws DomainNotFoundException, UMSException {
@@ -411,7 +422,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given a uid for a user, lookup the user under a
+     * Given a uid for a user, lookup the user under a
      * specified virtual domain name. For example,
      * 
      * <pre>
@@ -431,6 +442,7 @@ public class DomainComponentTree {
      *             if domain is not found
      * @throws UMSException
      *             upon failure in instantiating the user object
+     * @supported.api
      */
     public User getUser(String uid, String domain)
             throws DomainNotFoundException, UMSException {
@@ -438,7 +450,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given identification of a user with a naming
+     * Given identification of a user with a naming
      * attribute and value, lookup the user under a virtual domain specified.
      * For example,
      * 
@@ -463,6 +475,7 @@ public class DomainComponentTree {
      *             if domain is not found
      * @throws UMSException
      *             upon failure in instantiating the user object
+     * @supported.api
      */
     public User getUser(String namingAttribute, String value, String domain)
             throws DomainNotFoundException, UMSException {
@@ -475,12 +488,13 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Given a domain componet in a dctree, maps it to a
+     * Given a domain componet in a dctree, maps it to a
      * virtual domain name
      * 
      * @param dc
      *            A domain component that lives in the dctree
      * @return Fully qualified domain name
+     * @supported.api
      */
     public String mapDCToDomainName(DomainComponent dc) {
 
@@ -512,7 +526,7 @@ public class DomainComponentTree {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get all virtual domains present in the dctree.
+     * Get all virtual domains present in the dctree.
      * Construct a hashtable of the found domain names and their associated
      * organization in the customer organizational DIT (the convergence tree)
      * <p>
@@ -528,6 +542,7 @@ public class DomainComponentTree {
      *         DIT.
      * @throws UMSException
      *             upon failure in searching all mapped domains
+     * @supported.api
      */
     public Hashtable getChildDomainIDs() throws UMSException {
 

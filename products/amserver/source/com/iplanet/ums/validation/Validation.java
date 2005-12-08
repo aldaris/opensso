@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Validation.java,v 1.1 2005-11-01 00:30:49 arvindp Exp $
+ * $Id: Validation.java,v 1.2 2005-12-08 01:16:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,8 @@ import com.iplanet.ums.UMSException;
  * validator specific rules. UMSException is throw if there is instanciation
  * problems DataConstraintException is thrown when the attributes fail to
  * validations.
+ *
+ * @supported.all.api
  */
 public class Validation {
 
@@ -63,8 +65,6 @@ public class Validation {
      *                failure
      * @exception DataConstraintException
      *                data validation failure
-     * 
-     * iPlanet-PUBLIC-STATIC
      */
     public static void validateAttribute(Attr attr, String validatorClass,
             String rule) throws UMSException, DataConstraintException {
@@ -112,8 +112,6 @@ public class Validation {
      *                failure
      * @exception DataConstraintException
      *                data validation failure
-     * 
-     * iPlanet-PUBLIC-STATIC
      */
     public static void validateAttribute(Attr attr, Class cls, Guid guid)
             throws UMSException, DataConstraintException {
@@ -161,8 +159,6 @@ public class Validation {
      *                failure
      * @exception DataConstraintException
      *                data validation failure
-     * 
-     * iPlanet-PUBLIC-STATIC
      */
     public static void validateAttributes(AttrSet attrSet, Class cls, Guid guid)
             throws UMSException, DataConstraintException {
@@ -191,8 +187,6 @@ public class Validation {
      *                failure
      * @exception DataConstraintException
      *                data validation failure
-     * 
-     * iPlanet-PUBLIC-STATIC
      */
     public static void validateAttributes(ModSet modSet, Class cls, Guid guid)
             throws UMSException, DataConstraintException {

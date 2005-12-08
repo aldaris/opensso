@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAssignableDynamicGroup.java,v 1.1 2005-11-01 00:28:57 arvindp Exp $
+ * $Id: AMAssignableDynamicGroup.java,v 1.2 2005-12-08 01:16:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,6 @@ package com.iplanet.am.sdk;
 import java.util.Set;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * <p>
@@ -43,6 +41,7 @@ import com.iplanet.sso.SSOException;
  *     AMAssignableDynamicGroup adg = amsc.getAssignableDynamicGroup(aDN);
  * }
  * </pre>
+ * @supported.all.api
  */
 
 public interface AMAssignableDynamicGroup extends AMGroup {

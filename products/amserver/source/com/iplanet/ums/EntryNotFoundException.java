@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntryNotFoundException.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: EntryNotFoundException.java,v 1.2 2005-12-08 01:16:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,11 +30,13 @@ package com.iplanet.ums;
  * 
  * If LDAP is the underlying persistent storage, this exception is thrown upon
  * receiving LDAPException with error code for LDAPException.NO_SUCH_OBJECT.
+ *
+ * @supported.all.api
  */
 public class EntryNotFoundException extends UMSException {
 
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public EntryNotFoundException() {
         super();
@@ -44,7 +46,7 @@ public class EntryNotFoundException extends UMSException {
      * Constructor with a message string.
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public EntryNotFoundException(String msg) {
         super(msg);
@@ -56,7 +58,7 @@ public class EntryNotFoundException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public EntryNotFoundException(String msg, Throwable t) {
         super(msg, t);

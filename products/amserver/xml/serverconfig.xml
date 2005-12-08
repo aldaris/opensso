@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="@XML_ENCODING@" standalone="yes"?>
+<?xml version="1.0" encoding="XML_ENCODING" standalone="yes"?>
 
 <!--
    The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: serverconfig.xml,v 1.1 2005-11-01 00:31:43 arvindp Exp $
+   $Id: serverconfig.xml,v 1.2 2005-12-08 01:16:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,25 +28,25 @@
 
 <iPlanetDataAccessLayer>
 	<ServerGroup name="default" minConnPool="1" maxConnPool="10">
-		<Server name="Server1" host="@DIR_HOST@" port="@DIR_PORT@" type="SIMPLE" />
+		<Server name="Server1" host="DIR_HOST" port="@DIR_PORT@" type="SIMPLE" />
 		<User name="User1" type="proxy">
 			<DirDN>
-				cn=puser,ou=DSAME Users,@ORG_BASE@
+				cn=puser,ou=DSAME Users,ORG_BASE
 			</DirDN>
 			<DirPassword>
-				@ENCADMINPASSWD@
+				ENCADMINPASSWD
 			</DirPassword>
 		</User>
 		<User name="User2" type="admin">
 			<DirDN>
-				cn=dsameuser,ou=DSAME Users,@ORG_BASE@
+				cn=dsameuser,ou=DSAME Users,ORG_BASE
 			</DirDN>
 			<DirPassword>
-				@ENCADMINPASSWD@
+				ENCADMINPASSWD
 			</DirPassword>
 		</User>
 		<BaseDN>
-			@ORG_BASE@
+			ORG_BASE
 		</BaseDN>		
 	</ServerGroup>
 </iPlanetDataAccessLayer>

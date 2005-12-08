@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.1 2005-11-01 00:29:37 arvindp Exp $
+ * $Id: Debug.java,v 1.2 2005-12-08 01:16:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,6 @@ import java.util.ResourceBundle;
 import com.sun.identity.util.IDebug;
 import com.sun.identity.util.IDebugProvider;
 import com.sun.identity.util.impl.DebugProviderImpl;
-
-/* iPlanet-PUBLIC-CLASS */
 
 // NOTE: Since JVM specs guarantee atomic access/updates to int variables
 // (actually all variables except double and long), the design consciously
@@ -98,7 +96,8 @@ import com.sun.identity.util.impl.DebugProviderImpl;
  * avoid unnecessary argument evaluation and to maximize application
  * performance.
  * </p>
- ******************************************************************************/
+ * @supported.all.api
+ */
 public class Debug {
 
     /* Static fields and methods */

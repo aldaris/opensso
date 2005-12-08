@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.1 2005-11-01 00:30:20 arvindp Exp $
+ * $Id: EventService.java,v 1.2 2005-12-08 01:16:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,7 @@ import com.sun.identity.security.ServerInstanceAction;
  * 
  * A single connection is established initially and reused to service all
  * notification requests.
- * 
+ * @supported.api
  */
 public class EventService implements Runnable {
 
@@ -208,7 +208,8 @@ public class EventService implements Runnable {
     /**
      * create the singelton EventService object if it doesn't exist already.
      * Check if directory server supports the Persistent Search Control and the
-     * Proxy Auth Control iPlanet-PUBLIC-STATIC
+     * Proxy Auth Control
+     * @supported.api
      */
     public synchronized static EventService getEventService()
             throws EventException, LDAPException {
@@ -248,7 +249,8 @@ public class EventService implements Runnable {
 
     /**
      * At the end, close THE Event Manager's connections Abandon all previous
-     * persistent search requests iPlanet-PUBLIC-METHOD
+     * persistent search requests
+     * @supported.api
      */
     public void finalize() {
         Collection requestObjs = _requestList.values();
@@ -261,7 +263,8 @@ public class EventService implements Runnable {
     }
 
     /**
-     * Adds a listener to the directory. iPlanet-PUBLIC-METHOD
+     * Adds a listener to the directory.
+     * @supported.api
      */
     public synchronized String addListener(SSOToken token,
             IDSEventListener listener, String base, int scope, String filter,
@@ -340,7 +343,8 @@ public class EventService implements Runnable {
 
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
-     * iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void run() {
         if (debugger.messageEnabled()) {
@@ -490,10 +494,11 @@ public class EventService implements Runnable {
 
     /**
      * removes the listener from the list of Persistent Search listeners of the
-     * asynchronous seach for the given search ID. iPlanet-PUBLIC-METHOD
+     * asynchronous seach for the given search ID.
      * 
      * @param requestID
      *            The request ID returned by the addListener
+     * @supported.api
      */
     protected void removeListener(Request request) {
         LDAPConnection connection = request.getLDAPConnection();

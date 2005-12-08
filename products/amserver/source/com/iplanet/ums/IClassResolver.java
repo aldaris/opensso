@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IClassResolver.java,v 1.1 2005-11-01 00:30:36 arvindp Exp $
+ * $Id: IClassResolver.java,v 1.2 2005-12-08 01:16:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,8 +31,9 @@ import com.iplanet.services.ldap.AttrSet;
  * specific collection of attributes.
  * 
  * @see com.iplanet.ums.TemplateManager
+ *
+ * @supported.api
  */
-
 public interface IClassResolver {
     /**
      * Resolves a set of attributes to a subclass of PersistentObject and
@@ -43,7 +44,9 @@ public interface IClassResolver {
      * @param set
      *            a set of attributes of an object
      * @return a class for a corresponding object, or <code>null</code> if no
-     *         class could be resolved iPlanet-PUBLIC-METHOD
+     *         class could be resolved
+     *
+     * @supported.api
      */
     public Class resolve(String id, AttrSet set);
 }

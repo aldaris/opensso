@@ -17,18 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientException.java,v 1.1 2005-11-01 00:30:10 arvindp Exp $
+ * $Id: ClientException.java,v 1.2 2005-12-08 01:16:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The <code>ClientException</code> is thrown to indicate that there is an
  * error in using the client detection module.
+ * @supported.all.api
  */
 public class ClientException extends Exception {
 

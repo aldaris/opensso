@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenManager.java,v 1.1 2005-11-01 00:30:30 arvindp Exp $
+ * $Id: SSOTokenManager.java,v 1.2 2005-12-08 01:16:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,7 @@ import com.iplanet.services.util.I18n;
 import com.iplanet.sso.providers.dpro.SSOProviderBundle;
 import com.iplanet.ums.IUMSConstants;
 
-/* iPlanet-PUBLIC-CLASS */
-
-/*
+/**
  * SSOTokenManager is the final class that is the mediator between the SSO APIs
  * and SSO providers. When an SSO client makes an API invocation,
  * SSOTokenManager will delegate that call to the SSO provider/plug-in. The SSO
@@ -68,6 +66,8 @@ import com.iplanet.ums.IUMSConstants;
  * can be called to create <code>SSOToken</code>, get <code>SSOToken</code>
  * given the <code>SSOTokenID</code> in string format, and to validate
  * <code>SSOToken</code>s.
+ *
+ * @supported.all.api
  */
 public final class SSOTokenManager {
     
@@ -97,7 +97,7 @@ public final class SSOTokenManager {
     private static SSOTokenManager instance = null;
 
     /**
-     * iPlanet-PUBLIC-STATIC Returns the singleton instance of
+     * Returns the singleton instance of
      * <code>SSOTokenManager</code>.
      * 
      * @return The singleton <code>SSOTokenManager</code> instance
@@ -239,7 +239,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates a single sign on token after authenticating
+     * Creates a single sign on token after authenticating
      * the principal with the given password. This method of creating a single
      * sign on token should only be used for command line applications and it is
      * forbidden to use this single sign on token in any other context (e.g.
@@ -282,7 +282,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates a single sign on token from the single sign
+     * Creates a single sign on token from the single sign
      * on token ID. Note:-If you want to do Client's IP address validation for
      * the single sign on token then use
      * <code>creatSSOToken(String, String)</code> OR
@@ -304,7 +304,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates a single sign on token from the single sign
+     * Creates a single sign on token from the single sign
      * on token ID.
      * 
      * @param tokenId
@@ -326,7 +326,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns true if a single sign on token is valid.
+     * Returns true if a single sign on token is valid.
      * 
      * @param token
      *            The single sign on token object to be validated.
@@ -341,7 +341,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns true if the single sign on token is valid.
+     * Returns true if the single sign on token is valid.
      * 
      * @param token
      *            The single sign on token object to be validated.
@@ -353,7 +353,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Destroys a single sign on token.
+     * Destroys a single sign on token.
      * 
      * @param token
      *            The single sign on token object to be destroyed.
@@ -367,7 +367,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Refresh the Session corresponding to the single
+     * Refresh the Session corresponding to the single
      * sign on token from the Session Server. This method should only be used
      * when the client cannot wait the "session cache interval" for updates on
      * any changes made to the session properties in the session server. If the
@@ -391,7 +391,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Destroys a single sign on token.
+     * Destroys a single sign on token.
      * 
      * @param destroyer
      *            The single sign on token object used to authorize the
@@ -408,7 +408,7 @@ public final class SSOTokenManager {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a list of single sign on token objects
+     * Returns a list of single sign on token objects
      * which correspond to valid Sessions accessible to requester. Single sign
      * on tokens returned are restricted: they can only be used to retrieve
      * properties and destroy sessions they represent.

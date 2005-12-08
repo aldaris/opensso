@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.1 2005-11-01 00:30:09 arvindp Exp $
+ * $Id: Client.java,v 1.2 2005-12-08 01:16:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,7 @@ import com.iplanet.sso.SSOToken;
  * Client data is accessed for a particular client type. The underlying client
  * data is stored in the profile service, but this interface should always used
  * for accessing it (not by accessing the profile directly).
- * 
+ * @supported.api
  */
 
 public class Client extends Observable implements ICDMConstants {
@@ -75,9 +75,6 @@ public class Client extends Observable implements ICDMConstants {
     //
     private Set additionalProperties = null;
 
-    /**
-     * iPlanet-PRIVATE-DEFAULT-CONSTRUCTOR
-     */
     public Client() {
     }
 
@@ -98,8 +95,7 @@ public class Client extends Observable implements ICDMConstants {
      * @throws ClientException
      *             if specified client type is null or not defined
      * @deprecated Use ClientsManager#getInstance(String)
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public static Client getInstance(String clientType) throws ClientException {
         return ClientsManager.getInstance(clientType);
@@ -128,7 +124,8 @@ public class Client extends Observable implements ICDMConstants {
      * Returns a Client instance for the default client type
      * 
      * @return The Client instance corresponding to the default client type
-     * @deprecated Use ClientsManager#getDefaultInstance() iPlanet-PUBLIC-METHOD
+     * @deprecated Use ClientsManager#getDefaultInstance()
+     * @supported.api
      */
     public static Client getDefaultInstance() {
         return ClientsManager.getDefaultInstance();
@@ -138,9 +135,8 @@ public class Client extends Observable implements ICDMConstants {
      * Returns an iterator of Client objects for all known client types.
      * 
      * @return Iterator of Client objects
-     * 
-     * iPlanet-PUBLIC-METHOD
      * @deprecated Use ClientsManager#getAllInstances()
+     * @supported.api
      */
     public static Iterator getAllInstances() {
         return ClientsManager.getAllInstances();
@@ -164,8 +160,7 @@ public class Client extends Observable implements ICDMConstants {
      * Gets the name of the client type for the data in this client instance.
      * 
      * @return Name of the client type
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String getClientType() {
         return cType;
@@ -176,10 +171,9 @@ public class Client extends Observable implements ICDMConstants {
      * 
      * @param name
      *            The key for the client property to be returned.
-     * @return The client property.
-     * @return null if name is null or an unknown key
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @return The client property. Return null if name is null or an unknown
+     *            key
+     * @supported.api
      */
     public String getProperty(String name) {
         String value = null;
@@ -203,10 +197,9 @@ public class Client extends Observable implements ICDMConstants {
      * 
      * @param name
      *            The key for the client property to be returned.
-     * @return The set of client property values.
-     * @return null if name is null or an unknown key
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @return The set of client property values. Returns null if name is null
+     *            or an unknown key
+     * @supported.api
      */
     public Set getProperties(String name) {
         Set properties = getPropertiesInternal(name);
@@ -223,8 +216,7 @@ public class Client extends Observable implements ICDMConstants {
      * Returns a set of property names for this client data instance.
      * 
      * @return The set of property names for this client data instance.
-     * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getPropertyNames() {
         Set keys = profileMap.keySet();
@@ -243,7 +235,6 @@ public class Client extends Observable implements ICDMConstants {
 
     /**
      * used by the console plug-in (only) to get the additional properties.
-     * iPlanet-PRIVATE-METHOD
      */
     public Set getAdditionalProperties() {
         return additionalProperties;

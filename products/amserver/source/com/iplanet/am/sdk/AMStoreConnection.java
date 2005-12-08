@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.1 2005-11-01 00:29:20 arvindp Exp $
+ * $Id: AMStoreConnection.java,v 1.2 2005-12-08 01:16:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,8 +51,6 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchemaManager;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The <code>AMStoreConnection</code> class represents a connection to the Sun
@@ -127,6 +125,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * <code>sun.com</code>. More examples of how to use this method are provided
  * in the Javadocs of the method below.
  * 
+ * @supported.all.api
  */
 public final class AMStoreConnection implements AMConstants {
     // ~ Static fields/initializers

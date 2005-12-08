@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QualifiedCollection.java,v 1.1 2005-11-01 00:30:19 arvindp Exp $
+ * $Id: QualifiedCollection.java,v 1.2 2005-12-08 01:16:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.util.Collection;
  * Class that wraps a collection and a boolean flag Used to represent ACI target
  * attributes and ACI permissions. The boolean flag indicates whether the target
  * attributes ( or the permissions ) are exclusive or inclusive
+ * @supported.api
  */
 public class QualifiedCollection {
 
@@ -44,7 +45,8 @@ public class QualifiedCollection {
      *            the collections of values.
      * @param exclusive
      *            the boolean flag indicating whether the values are excluisive
-     *            or inclusive. iPlanet-PUBLIC-CONSTRUCTOR
+     *            or inclusive.
+     * @supported.api
      */
     public QualifiedCollection(Collection collection, boolean exclusive) {
         _collection = collection;
@@ -59,7 +61,8 @@ public class QualifiedCollection {
      * @param object
      *            the object that is to be compared for equality
      * @return <code>true</code> if the passed object is equal to this object,
-     *         <code>false</code> otherwise iPlanet-PUBLIC-METHOD
+     *         <code>false</code> otherwise
+     * @supported.api
      */
     public boolean equals(Object object) {
         boolean objectsEqual = false;
@@ -78,7 +81,8 @@ public class QualifiedCollection {
     /**
      * Clones this object
      * 
-     * @return the cloned object iPlanet-PUBLIC-METHOD
+     * @return the cloned object
+     * @supported.api
      */
     public Object clone() {
         QualifiedCollection theClone = null;
@@ -97,7 +101,8 @@ public class QualifiedCollection {
      * Sets the collection of values
      * 
      * @param collection
-     *            the collection of values iPlanet-PUBLIC-METHOD
+     *            the collection of values
+     * @supported.api
      */
     public void setCollection(Collection collection) {
         _collection = collection;
@@ -106,7 +111,8 @@ public class QualifiedCollection {
     /**
      * Gets the collection of values
      * 
-     * @return the collection of values iPlanet-PUBLIC-METHOD
+     * @return the collection of values
+     * @supported.api
      */
     public Collection getCollection() {
         return _collection;
@@ -116,7 +122,8 @@ public class QualifiedCollection {
      * Sets the exclusive flag
      * 
      * @param the
-     *            value fo exclusive flag iPlanet-PUBLIC-METHOD
+     *            value fo exclusive flag
+     * @supported.api
      */
     public void setExclusive(boolean exclusive) {
         _exclusive = exclusive;
@@ -125,10 +132,10 @@ public class QualifiedCollection {
     /**
      * Gets the value of the exclusive flag
      * 
-     * @return the value of the exclusive flag iPlanet-PUBLIC-METHOD
+     * @return the value of the exclusive flag
+     * @supported.api
      */
     public boolean isExclusive() {
         return _exclusive;
     }
-
 }

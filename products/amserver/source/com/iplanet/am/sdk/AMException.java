@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMException.java,v 1.2 2005-11-08 17:12:07 veiming Exp $
+ * $Id: AMException.java,v 1.3 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,11 +34,10 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.UMSException;
 import com.sun.identity.common.L10NMessage;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The <code>AMException</code> is thrown whenever an error is is encountered
  * while performing an operation on the data store.
+ * @supported.all.api
  */
 public class AMException extends Exception implements L10NMessage {
 

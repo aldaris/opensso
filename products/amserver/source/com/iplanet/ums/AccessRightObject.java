@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessRightObject.java,v 1.1 2005-11-01 00:30:32 arvindp Exp $
+ * $Id: AccessRightObject.java,v 1.2 2005-12-08 01:16:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.Iterator;
 
 /**
  * Represents the attribute access rights associated with a user or role.
+ * 
+ * @supported.api
  */
 public class AccessRightObject {
     // readable attributes
@@ -39,7 +41,9 @@ public class AccessRightObject {
     private HashSet writables = new HashSet();
 
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
+     *
+     * @supported.api
      */
     public AccessRightObject() {
     }
@@ -52,7 +56,9 @@ public class AccessRightObject {
      *            Collection of readable attribute names
      * @param writableAttributeNames
      *            Collection of writable attribute names
-     *            iPlanet-PUBLIC-CONSTRUCTOR
+     *           
+     *
+     * @supported.api
      */
     public AccessRightObject(Collection readableAttributeNames,
             Collection writableAttributeNames) {
@@ -80,7 +86,7 @@ public class AccessRightObject {
      *            A collection of attribute names to which read permission will
      *            be granted.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void grantReadPermission(Collection attributeNames) {
         // need to convert all attribute names to lower case
@@ -100,7 +106,7 @@ public class AccessRightObject {
      *            A collection of attribute names to which write permission will
      *            be granted.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void grantWritePermission(Collection attributeNames) {
         // need to convert all attribute names to lower case
@@ -120,7 +126,7 @@ public class AccessRightObject {
      *            A collection of attribute names on which read permission will
      *            be revoked.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void revokeReadPermission(Collection attributeNames) {
         // need to convert all attribute names to lower case
@@ -140,7 +146,7 @@ public class AccessRightObject {
      *            A collection of attribute names on which write permission will
      *            be revoked.
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void revokeWritePermission(Collection attributeNames) {
         // need to convert all attribute names to lower case
@@ -158,7 +164,7 @@ public class AccessRightObject {
      * 
      * @return Collection of all the readable attribute names
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Collection getReadableAttributeNames() {
         return (Collection) readables.clone();
@@ -169,7 +175,7 @@ public class AccessRightObject {
      * 
      * @return Collection of all the writable attribute names
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Collection getWritableAttributeNames() {
         return (Collection) writables.clone();
@@ -183,7 +189,7 @@ public class AccessRightObject {
      * @return <code>boolean; </code> true if this attribute is readable, false
      *         otherwise
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public boolean isReadable(String attributeName) {
         if (readables.contains(attributeName.toLowerCase()))
@@ -200,7 +206,7 @@ public class AccessRightObject {
      * @return <code>boolean;</code> true if this attribute is writable, false
      *         otherwise
      * 
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public boolean isWritable(String attributeName) {
         if (writables.contains(attributeName.toLowerCase()))

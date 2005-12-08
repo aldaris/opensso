@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntityType.java,v 1.1 2005-11-01 00:29:03 arvindp Exp $
+ * $Id: AMEntityType.java,v 1.2 2005-12-08 01:16:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class defines a supported managed object type by <code> AM SDK </code>
@@ -49,6 +47,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * }
  * 
  * </PRE>
+ * @supported.all.api
  */
 public final class AMEntityType {
 

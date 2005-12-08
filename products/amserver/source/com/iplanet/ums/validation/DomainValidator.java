@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainValidator.java,v 1.1 2005-11-01 00:30:47 arvindp Exp $
+ * $Id: DomainValidator.java,v 1.2 2005-12-08 01:16:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import java.util.Vector;
 
 /**
  * Validates domain
+ *
+ * @supported.all.api
  */
 public class DomainValidator implements IValidator {
 
@@ -40,7 +42,6 @@ public class DomainValidator implements IValidator {
      * @param rule
      *            not used by this method
      * @return true if the value represents a valid domain string
-     *         iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String value, String rule) {
         return validate(value);
@@ -51,7 +52,7 @@ public class DomainValidator implements IValidator {
      * 
      * @param domain
      *            domain string to test
-     * @return true if the domain string is valid iPlanet-PUBLIC-METHOD
+     * @return true if the domain string is valid.
      */
     public boolean validate(String domain) {
         StringTokenizer tok;

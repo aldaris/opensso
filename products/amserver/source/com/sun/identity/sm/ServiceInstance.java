@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstance.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceInstance.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,11 +32,11 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The class <code>ServiceInstance</code> provides methods to manage service's
  * instance variables.
+ *
+ * @supported.all.api
  */
 public class ServiceInstance {
     // InstanceVariables

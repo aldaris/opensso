@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PeopleContainer.java,v 1.1 2005-11-01 00:30:39 arvindp Exp $
+ * $Id: PeopleContainer.java,v 1.2 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.services.ldap.AttrSet;
  * Represents People Container in UMS. People Container is simply a container
  * for storing user entries.
  * 
+ * @supported.api
  */
 public class PeopleContainer extends PersistentObject {
 
@@ -66,7 +67,8 @@ public class PeopleContainer extends PersistentObject {
      * the persistent store.
      * 
      * @param attrSet
-     *            attribute/value set iPlanet-PUBLIC-CONSTRUCTOR
+     *            attribute/value set
+     * @supported.api
      */
     PeopleContainer(AttrSet attrSet) throws UMSException {
         this(TemplateManager.getTemplateManager().getCreationTemplate(_class,
@@ -82,7 +84,8 @@ public class PeopleContainer extends PersistentObject {
      *            template for the People Container, containing required and
      *            optional attributes, and possibly default values
      * @param attrSet
-     *            attribute/value set iPlanet-PUBLIC-CONSTRUCTOR
+     *            attribute/value set 
+     * @supported.api
      */
     public PeopleContainer(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -99,7 +102,8 @@ public class PeopleContainer extends PersistentObject {
      * @exception EntryAlreadyExistsException
      *                if the entry already exists
      * @exception UMSException
-     *                Fail to add the object iPlanet-PUBLIC-METHOD
+     *                Fail to add the object 
+     * @supported.api
      */
     public void addUser(User user) throws AccessRightsException,
             EntryAlreadyExistsException, UMSException {
@@ -116,7 +120,8 @@ public class PeopleContainer extends PersistentObject {
      * @exception EntryAlreadyExistsException
      *                if the entry already exists
      * @exception UMSException
-     *                fails to add the object iPlanet-PUBLIC-METHOD
+     *                fails to add the object 
+     * @supported.api
      */
     public void addChildPeopleContainer(PeopleContainer pc)
             throws AccessRightsException, EntryAlreadyExistsException,
@@ -132,7 +137,8 @@ public class PeopleContainer extends PersistentObject {
      * @exception AccessRightsEsception
      *                if an access rights exception occurs
      * @exception UMSException
-     *                fails to remove the object iPlanet-PUBLIC-METHOD
+     *                fails to remove the object 
+     * @supported.api
      */
     public void removeUser(User user) throws AccessRightsException,
             UMSException {
@@ -149,7 +155,8 @@ public class PeopleContainer extends PersistentObject {
      * @exception EntryNotFoundException
      *                if the entry is not found
      * @exception UMSException
-     *                fails to remove the object iPlanet-PUBLIC-METHOD
+     *                fails to remove the object 
+     * @supported.api
      */
     public void removeChildPeopleContainer(PeopleContainer pc)
             throws AccessRightsException, EntryNotFoundException, UMSException {
@@ -159,7 +166,8 @@ public class PeopleContainer extends PersistentObject {
     /**
      * Gets the current number of users.
      * 
-     * @return the current number of users iPlanet-PUBLIC-METHOD
+     * @return the current number of users 
+     * @supported.api
      */
     public long getUserCount() throws UMSException {
         /*
@@ -180,7 +188,8 @@ public class PeopleContainer extends PersistentObject {
     /**
      * Gets the current number of People Containers.
      * 
-     * @return the current number of People Containers iPlanet-PUBLIC-METHOD
+     * @return the current number of People Containers
+     * @supported.api
      */
     public long getChildPeopleContainerCount() throws UMSException {
         /*
@@ -204,7 +213,7 @@ public class PeopleContainer extends PersistentObject {
      * 
      * @param limit
      *            number of users allowed in a People Container
-     *            iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setMaxUserLimit(long limit) throws UMSException {
         String value = (new Long(limit)).toString();
@@ -216,7 +225,7 @@ public class PeopleContainer extends PersistentObject {
      * 
      * @param limit
      *            number of children People Containers allowed
-     *            iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setMaxChildPeopleContainerLimit(long limit) throws UMSException
     {
@@ -227,7 +236,8 @@ public class PeopleContainer extends PersistentObject {
     /**
      * Gets the user limit constraint.
      * 
-     * @return user limit constraint iPlanet-PUBLIC-METHOD
+     * @return user limit constraint 
+     * @supported.api
      */
     public long getMaxUserLimit() throws UMSException {
         String value = getAttribute(MAX_USER_ATTR_NAME).getValue();
@@ -237,7 +247,8 @@ public class PeopleContainer extends PersistentObject {
     /**
      * Gets the container limit constraint.
      * 
-     * @return container limit constraint iPlanet-PUBLIC-METHOD
+     * @return container limit constraint 
+     * @supported.api
      */
     public long getMaxChildPeopleContainerLimit() throws UMSException {
         String value = getAttribute(MAX_PEOPLECONTAINER_ATTR_NAME).getValue();
@@ -249,7 +260,8 @@ public class PeopleContainer extends PersistentObject {
      * 
      * @param user
      *            User object to be checked
-     * @return true if it is a member iPlanet-PUBLIC-METHOD
+     * @return true if it is a member 
+     * @supported.api
      */
     public boolean isMember(User user) throws UMSException {
         DN userdn = new DN(user.getDN());
@@ -265,7 +277,8 @@ public class PeopleContainer extends PersistentObject {
     /**
      * Return name of the People Container.
      * 
-     * @return name of the People Container iPlanet-PUBLIC-METHOD
+     * @return name of the People Container 
+     * @supported.api
      */
     public String getName() throws UMSException {
         return (getAttribute(getNamingAttribute()).getValue());

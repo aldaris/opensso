@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientDetectionDefaultImpl.java,v 1.2 2005-11-04 18:53:43 veiming Exp $
+ * $Id: ClientDetectionDefaultImpl.java,v 1.3 2005-12-08 01:16:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
-
-/* iPlanet-PUBLIC-CLASS */
 
 import java.util.Iterator;
 
@@ -38,8 +36,8 @@ import com.iplanet.am.util.Debug;
  * by services and applications serving multiple clients, to determine the
  * client from which the request has originated. This interface detects the
  * client type from the client request.
+ * @supported.all.api
  */
-
 public class ClientDetectionDefaultImpl implements ClientDetectionInterface {
 
     protected static Debug debug = Debug.getInstance("amClientDetection");

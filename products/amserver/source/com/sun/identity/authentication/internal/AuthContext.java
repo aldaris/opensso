@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.2 2005-11-04 18:53:45 veiming Exp $
+ * $Id: AuthContext.java,v 1.3 2005-12-08 01:16:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,39 +70,51 @@ import com.sun.identity.common.Constants;
  * can then get the <code>
  * Subject</code> for the user; if not successfully
  * authenticated, the caller obtains the LoginException.
+ *
+ * @supported.api
  */
 public final class AuthContext extends Object {
 
     /**
-     * iPlanet-PUBLIC-STATIC This login status indicates that the login process
+     * This login status indicates that the login process
      * has not started yet. Basically, it means that the method
      * <code>startLogin</code> has not been called.
+     *
+     * @supported.api
      */
     public static final int AUTH_NOT_STARTED = 1;
 
     /**
-     * iPlanet-PUBLIC-STATIC This login status indicates that the login process
+     * This login status indicates that the login process
      * is in progress. Basically, it means that the <code>startLogin</code>
      * method has been called and that this object is waiting for the user to
      * send authentication information.
+     *
+     * @supported.api
      */
     public static final int AUTH_IN_PROGRESS = 2;
 
     /**
-     * iPlanet-PUBLIC-STATIC This login status indicates that the login process
+     * This login status indicates that the login process
      * has succeeded.
+     *
+     * @supported.api
      */
     public static final int AUTH_SUCCESS = 3;
 
     /**
-     * iPlanet-PUBLIC-STATIC This login status indicates that the login process
+     * This login status indicates that the login process
      * has failed.
+     *
+     * @supported.api
      */
     public static final int AUTH_FAILED = 4;
 
     /**
-     * iPlanet-PUBLIC-STATIC This login status indicates that the user has been
+     * This login status indicates that the user has been
      * successfully logged out.
+     *
+     * @supported.api
      */
     public static final int AUTH_COMPLETED = 5;
 
@@ -149,12 +161,14 @@ public final class AuthContext extends Object {
     //
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor to get an instance of
+     * Constructor to get an instance of
      * <code>AuthContext</code>. Caller would then use
      * <code>getRequirements()</code> and <code>submitRequirements()</code>
      * to pass the credentials needed for authentication by the plugin modules.
      * 
      * @throws LoginException
+     *
+     * @supported.api
      */
     public AuthContext() throws LoginException {
         // initialize
@@ -162,7 +176,7 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor to get an authenticated instance
+     * Constructor to get an authenticated instance
      * of this class given the <code>java.security.Principal</code> the user
      * would like to be authenticated as, and the <code>password</code> for
      * the user.
@@ -172,6 +186,8 @@ public final class AuthContext extends Object {
      * @param password
      *            password for the user
      * @throws LoginException
+     *
+     * @supported.api
      */
     public AuthContext(Principal principal, char[] password)
             throws LoginException {
@@ -189,7 +205,7 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructor to get an instance of this class
+     * Constructor to get an instance of this class
      * given the organization name <code>orgName</code> the user would like to
      * access, the <code>java.security.Principal
      * </code>the user would like to
@@ -202,6 +218,8 @@ public final class AuthContext extends Object {
      * @param password
      *            password for the user
      * @throws LoginException
+     *
+     * @supported.api
      */
     public AuthContext(String orgName, Principal principal, char[] password)
             throws LoginException {
@@ -405,13 +423,14 @@ public final class AuthContext extends Object {
     // for example.
     //
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructor to get an instance of this class
      * given the organization name <code>orgName</code>. The plug-in modules
      * would then query for the user name and related information.
      * 
      * @param orgName organization name.
      * @throws LoginException
+     *
+     * @supported.api
      */
     public AuthContext(String orgName) throws LoginException {
         this(orgName, null);
@@ -521,10 +540,12 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to start the login process. This method will
+     * Method to start the login process. This method will
      * read the plug-ins configured for the application and initialize them.
      * 
      * @throws LoginException
+     *
+     * @supported.api
      */
     public void startLogin() throws LoginException {
 
@@ -556,11 +577,13 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns true if the login process requires more
+     * Returns true if the login process requires more
      * information from the user to complete the authentication.
      * 
      * @return true if the login process requires more information from the user
      *         to complete the authentication.
+     *
+     * @supported.api
      */
     public boolean hasMoreRequirements() {
         authDebug.message("AuthContext::requiresMoreInformation()");
@@ -572,7 +595,7 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns an array of <code>Callback</code> objects
+     * Returns an array of <code>Callback</code> objects
      * that must be populated by the user and returned back. These objects are
      * requested by the authentication plug-ins, and these are usually displayed
      * to the user. The user then provides the requested information for it to
@@ -580,6 +603,8 @@ public final class AuthContext extends Object {
      * 
      * @return an array of <code>Callback</code> objects that must be
      *         populated by the user and returned back.
+     *
+     * @supported.api
      */
     public Callback[] getRequirements() {
         authDebug.message("AuthContext::getInformationRequired()");
@@ -621,13 +646,15 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Submits the populated <code>Callback</code>
+     * Submits the populated <code>Callback</code>
      * objects to the authentication plug-in modules. Called after
      * <code>getInformationRequired</code> method and obtaining user's
      * response to these requests.
      * 
      * @param info
      *            array of <code>Callback</code> objects.
+     *
+     * @supported.api
      */
     public void submitRequiredInformation(Callback[] info) {
         authDebug.message("AuthContext::submitRequestedInformation()");
@@ -644,9 +671,11 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Logs the user out.
+     * Logs the user out.
      * 
      * @throws LoginException
+     *
+     * @supported.api
      */
     public void logout() throws LoginException {
         authDebug.message("AuthContext::logout()");
@@ -657,10 +686,12 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns login exception, if any, during the
+     * Returns login exception, if any, during the
      * authentication process. Typically set when the login fails.
      * 
      * @return login exception.
+     *
+     * @supported.api
      */
     public LoginException getLoginException() {
         authDebug.message("AuthContext::getLoginException()");
@@ -668,10 +699,12 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the current state of the login process.
+     * Returns the current state of the login process.
      * Possible states are listed above.
      * 
      * @return the current state of the login process.
+     *
+     * @supported.api
      */
     public int getLoginStatus() {
         authDebug.message("AuthContext::getLoginStatus()");
@@ -688,12 +721,14 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns the (first) <code>AuthPrincipal</code> in
+     * Returns the (first) <code>AuthPrincipal</code> in
      * the <code>Subject</code>. Returns the first <code>Principal</code>,
      * if more than one exists.
      * 
      * @return the (first) <code>AuthPrincipal</code> in the
      *         <code>Subject</code>.
+     *
+     * @supported.api
      */
     public Principal getPrincipal() {
         Set sop = getSubject().getPrincipals();
@@ -763,11 +798,13 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to get organization name that was set during
+     * Method to get organization name that was set during
      * construction of this instance.
      * 
      * @return organization name; <code>null</code> if it was not initialized
      *         during construction of this instance
+     *
+     * @supported.api
      */
     public String getOrganizationName() {
         if (organizationName == null) {
@@ -792,11 +829,13 @@ public final class AuthContext extends Object {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Method to get the Single-Sign-On (SSO) Token. This
+     * Method to get the Single-Sign-On (SSO) Token. This
      * token can be used as the authenticated token.
      * 
      * @return single-sign-on token.
      * @throws InvalidAuthContextException
+     *
+     * @supported.api
      */
     public SSOToken getSSOToken() throws InvalidAuthContextException {
         if (token != null) {

@@ -17,18 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultValues.java,v 1.1 2005-11-01 00:31:23 arvindp Exp $
+ * $Id: DefaultValues.java,v 1.2 2005-12-08 01:16:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-/* iPlanet-PUBLIC-CLASS */
-
 import java.util.Map;
 import java.util.Set;
-
 import org.w3c.dom.Node;
 
 /**
@@ -41,6 +38,8 @@ import org.w3c.dom.Node;
  * Instead of providing the default values in the XML configuration file, the
  * class name must be specified within the XML node
  * <code>DefaultValuesClassName</code>.
+ *
+ * @supported.all.api
  */
 public abstract class DefaultValues {
 

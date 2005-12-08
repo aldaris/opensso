@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ICOSDefinition.java,v 1.1 2005-11-01 00:30:44 arvindp Exp $
+ * $Id: ICOSDefinition.java,v 1.2 2005-12-08 01:16:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,20 +30,23 @@ import com.iplanet.ums.UMSException;
  * This interface provides method signatures which will be implemented for COS
  * definitions. Each of the COS definition classes implement this interface, and
  * provide implementations for these methods.
+ * @supported.api
  */
 public interface ICOSDefinition {
     /**
      * This method sets the name for the COS definition.
      * 
      * @param name
-     *            the name of this COS definition. iPlanet-PUBLIC-METHOD
+     *            the name of this COS definition.
+     * @supported.api
      */
     public void setName(String name);
 
     /**
      * This method returns the name of the COS definition.
      * 
-     * @return the name of the COS definition. iPlanet-PUBLIC-METHOD
+     * @return the name of the COS definition.
+     * @supported.api
      */
     public String getName();
 
@@ -57,7 +60,8 @@ public interface ICOSDefinition {
      *            are: 0 (default), 1 (override), 2 (operational), 3
      *            (merge-schemes).
      * @throws UMSException
-     *             if an exception occurs. iPlanet-PUBLIC-METHOD
+     *             if an exception occurs.
+     * @supported.api
      */
     public void addCOSAttribute(String attrName, int qualifier)
             throws UMSException;
@@ -67,14 +71,14 @@ public interface ICOSDefinition {
      * 
      * @param attrName
      *            The name of the COS attribute to be removed.
-     *            iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeCOSAttribute(String attrName);
 
     /**
      * This method returns an array of COS attributes.
      * 
-     * @return an array of COS attributes. iPlanet-PUBLIC-METHOD
+     * @return an array of COS attributes.
      */
     public String[] getCOSAttributes();
 
@@ -83,37 +87,43 @@ public interface ICOSDefinition {
     //
     /**
      * This field represents the default naming attribute for COS definitions.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String DEFAULT_NAMING_ATTR = "cn";
 
     /**
      * This field represents a keyword used in COS definitions.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String COSTEMPLATEDN = "cosTemplateDn";
 
     /**
      * This field represents a keyword used in COS definitions.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String COSSPECIFIER = "cosSpecifier";
 
     /**
      * This field represents a keyword used in COS definitions.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String ICOSSPECIFIER = "cosIndirectSpecifier";
 
     /**
      * This field represents a keyword used in COS definitions.
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String COSATTRIBUTE = "cosAttribute";
 
     /**
      * This field represents an LDAP search filter used for searching for COS
-     * definitions by name. iPlanet-PUBLIC-STATIC
+     * definitions by name.
+     * @supported.api
      */
     public static final String COSSUPERDEF_NAME_SEARCH = 
         "(&(objectclass=ldapsubentry)(objectclass=cossuperdefinition)("
@@ -121,7 +131,8 @@ public interface ICOSDefinition {
 
     /**
      * This field represents an LDAP search filter used for searching for COS
-     * definitions. iPlanet-PUBLIC-STATIC
+     * definitions.
+     * @supported.api
      */
     public static final String COSSUPERDEF_SEARCH = 
         "&(objectclass=ldapsubentry)(objectclass=cossuperdefinition)";
@@ -129,7 +140,8 @@ public interface ICOSDefinition {
     // for DS 4.x
     /**
      * This field represents a keyword used in Directory Server 4.x COS
-     * implementations. iPlanet-PUBLIC-STATIC
+     * implementations.
+     * @supported.api
      */
     public static final String COSTARGETTREE = "cosTargetTree";
 
@@ -138,44 +150,51 @@ public interface ICOSDefinition {
     //
     /**
      * This field represents the minimum value a COS attribute qualifier may
-     * have. iPlanet-PUBLIC-STATIC
+     * have.
+     * @supported.api
      */
     public static final int minQualifier = 0;
 
     /**
      * This field represents the maximum value a COS attribute qualifier may
-     * have. iPlanet-PUBLIC-STATIC
+     * have.
+     * @supported.api
      */
     public static final int maxQualifier = 2;
 
     /**
      * This field represents the numeric qualifier constant for "default".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final int DEFAULT = 0;
 
     /**
      * This field represents the numeric qualifier constant for "override".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final int OVERRIDE = 1;
 
     /**
      * This field represents the numeric qualifier constant for "operational".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final int OPERATIONAL = 2;
 
     /**
      * This field represents the numeric qualifier constant for "merge-schemes".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final int MERGE_SCHEMES = 3;
 
     /**
      * This represents a string array of COS attribute qualifiers. The valid
      * values are "default", "override", "operational", and "merge-schemes".
-     * iPlanet-PUBLIC-STATIC
+     *
+     * @supported.api
      */
     public static final String[] qualifiers = { "default", "override",
             "operational", "merge-schemes" };

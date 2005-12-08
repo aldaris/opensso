@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMInvalidDNException.java,v 1.1 2005-11-01 00:29:09 arvindp Exp $
+ * $Id: AMInvalidDNException.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,11 +26,10 @@ package com.iplanet.am.sdk;
 
 import com.iplanet.ums.UMSException;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The <code>AMInvalidDNException</code> is thrown to indicate that an invalid
  * DN was used.
+ * @supported.all.api
  */
 
 public class AMInvalidDNException extends AMException {

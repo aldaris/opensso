@@ -17,22 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceNotFoundException.java,v 1.1 2005-11-01 00:31:33 arvindp Exp $
+ * $Id: ServiceNotFoundException.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-/* iPlanet-PUBLIC-CLASS */
-
-// Imports
 /**
  * The <code>ServiceNotFoundException</code> is thrown if the service does not
  * exist.
  * 
  * @see java.lang.Exception
  * @see java.lang.Throwable
+ *
+ * @supported.all.api
  */
 public class ServiceNotFoundException extends SMSException {
     /**

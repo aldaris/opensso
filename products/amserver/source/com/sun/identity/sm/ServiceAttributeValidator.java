@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceAttributeValidator.java,v 1.1 2005-11-01 00:31:31 arvindp Exp $
+ * $Id: ServiceAttributeValidator.java,v 1.2 2005-12-08 01:16:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,11 +26,11 @@ package com.sun.identity.sm;
 
 import java.util.Set;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The interface <code>ServiceAttributeValidator</code> should be implemented
  * by the services/applications if validator plugins are required.
+ *
+ * @supported.all.api
  */
 public interface ServiceAttributeValidator {
 

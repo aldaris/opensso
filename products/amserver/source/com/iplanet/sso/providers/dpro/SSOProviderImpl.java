@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.1 2005-11-01 00:30:31 arvindp Exp $
+ * $Id: SSOProviderImpl.java,v 1.2 2005-12-08 01:16:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,12 +42,13 @@ import com.iplanet.sso.SSOProvider;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
 
- /**
-  * This <code>final</code> class <code>SSOProviderImpl</code> implements 
-  * <code>SSOProvider</code> interface and provides implemtation of the methods 
-  * to create , destroy , check the validity of a single sign on token .
-  */
-  
+/**
+ * This <code>final</code> class <code>SSOProviderImpl</code> implements 
+ * <code>SSOProvider</code> interface and provides implemtation of the methods 
+ * to create , destroy , check the validity of a single sign on token .
+ *
+ * @supported.api
+ */
 public final class SSOProviderImpl implements SSOProvider {
 
     /** Debug SSOProvider */
@@ -67,6 +68,8 @@ public final class SSOProviderImpl implements SSOProvider {
      * Constructs a instance of <code>SSOProviderImpl</code>
      * 
      * @throws SSOException
+     *
+     * @supported.api
      */
     public SSOProviderImpl() throws SSOException {
     }
@@ -309,7 +312,7 @@ public final class SSOProviderImpl implements SSOProvider {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Destroys a single sign on token.
+     * Destroys a single sign on token.
      * 
      * @param destroyer
      *            The single sign on token object used to authorize the
@@ -319,6 +322,8 @@ public final class SSOProviderImpl implements SSOProvider {
      * @throws SSOException
      *             if the there was an error during communication with session
      *             service.
+     *
+     * @supported.api
      */
     public void destroyToken(SSOToken destroyer, SSOToken destroyed)
             throws SSOException {
@@ -332,7 +337,7 @@ public final class SSOProviderImpl implements SSOProvider {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a list of single sign on token objects
+     * Returns a list of single sign on token objects
      * which correspond to valid Sessions accessible to requester. single sign
      * on token objects returned are restricted: they can only be used to
      * retrieve properties and destroy sessions they represent.
@@ -346,6 +351,8 @@ public final class SSOProviderImpl implements SSOProvider {
      * @throws SSOException
      *             if the there was an error during communication with session
      *             service.
+     *
+     * @supported.api
      */
     public Set getValidSessions(SSOToken requester, String server)
             throws SSOException {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.1 2005-11-01 00:31:12 arvindp Exp $
+ * $Id: IdUtils.java,v 1.2 2005-12-08 01:16:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,8 +56,9 @@ import com.sun.identity.sm.ServiceSchemaManager;
 /**
  * The class defines some static utilities used by other components like policy
  * and auth
+ *
+ * @supported.api
  */
-
 public final class IdUtils {
     private static Debug debug = AMIdentityRepository.debug;
 
@@ -147,7 +148,7 @@ public final class IdUtils {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a handle of the Identity object based on
+     * Returns a handle of the Identity object based on
      * the SSO Token passed in (<code>AMIdentity</code> object of the user
      * who is authenticated).
      * 
@@ -158,6 +159,8 @@ public final class IdUtils {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
+     *
+     * @supported.api
      */
     public static AMIdentity getIdentity(SSOToken token)
             throws IdRepoException, SSOException {
@@ -180,20 +183,21 @@ public final class IdUtils {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a string which uniquely represents this
-     * identity object.
+     * Returns a string which uniquely represents this identity object.
      * 
      * @param id
      *            <code>AMIdentity</code> object whose string represenation is
      *            needed.
      * @return universal identifier of <code>id</code>.
+     *
+     * @supported.api
      */
     public static String getUniversalId(AMIdentity id) {
         return id.getUniversalId();
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns an <code>AMIdentity</code> object, if
+     * Returns an <code>AMIdentity</code> object, if
      * provided with a string identifier for the object.
      * 
      * @param token
@@ -203,6 +207,8 @@ public final class IdUtils {
      * @return Identity object
      * @throws IdRepoException
      *             if the identifier provided is wrong.
+     *
+     * @supported.api
      */
     public static AMIdentity getIdentity(SSOToken token, String univId)
             throws IdRepoException {
@@ -356,11 +362,13 @@ public final class IdUtils {
 
     /**
      * Returns an organization which maps to the identifier used by application
-     * in order to iPlanet-PUBLIC-METHOD
+     * in order to.
      * 
      * @param orgIdentifier
      *            Organization identifier
      * @return Organization mapping to that identifier.
+     *
+     * @supported.api
      */
     public static String getOrganization(SSOToken token, String orgIdentifier)
             throws IdRepoException, SSOException {

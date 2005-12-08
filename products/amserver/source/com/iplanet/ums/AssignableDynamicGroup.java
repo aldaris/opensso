@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssignableDynamicGroup.java,v 1.2 2005-11-15 04:10:27 veiming Exp $
+ * $Id: AssignableDynamicGroup.java,v 1.3 2005-12-08 01:16:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,8 @@ import com.iplanet.services.util.I18n;
 /**
  * Represents a dynamic group entry that uses memberOf as its filter. It checks
  * whether the user is the member of the specified group
+ *
+ * @supported.api
  */
 public class AssignableDynamicGroup extends DynamicGroup implements
         IAssignableMembership, IDynamicMembership {
@@ -49,7 +51,9 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Default constructor
+     * Default constructor
+     *
+     * @supported.api
      */
     public AssignableDynamicGroup() {
     }
@@ -69,8 +73,6 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
-     * 
      * Constructs an in memory <code>AssignableDynamicGroup</code> object with
      * a given template. This is an in memory Group object and one needs to
      * call save method to <code>save</code> this newly created object to
@@ -79,6 +81,8 @@ public class AssignableDynamicGroup extends DynamicGroup implements
      * @param template Template for creating a group.
      * @param attrSet Attribute/value set.
      * @exception UMSException if fail to instantiate from persistent storage.
+     *
+     * @supported.api
      */
     public AssignableDynamicGroup(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -107,7 +111,6 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR
      * Constructs an <code>AssignableDynamicGroup</code> object with a given
      * template. This is an in memory Group object and one needs to call
      * <code>save</code> method to save this newly created object to
@@ -121,6 +124,8 @@ public class AssignableDynamicGroup extends DynamicGroup implements
      * @param scope Search scope for evaluating members of the group has to be
      *        <code>LDAPv2.SCOPE_ONE</code> or <code>LDAPv2.SCOPE_SUB</code>.
      * @exception UMSException if fail to instantiate from persistent storage
+     *
+     * @supported.api
      */
     public AssignableDynamicGroup(CreationTemplate template, AttrSet attrSet,
             Guid baseGuid, int scope) throws UMSException {
@@ -131,7 +136,6 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search filter used to evaluate this dynamic group. For an 
      * <code>AssignableDynamicGroup</code>, the filter is always
      * <code>"memberof=THIS_DN"</code>, so this method should not generally be
@@ -140,6 +144,8 @@ public class AssignableDynamicGroup extends DynamicGroup implements
      * @param filter Search filter for evaluating members of the group the
      *        scope in the filter has to be <code>LDAPv2.SCOPE_ONE</code> or
      *        <code>LDAPv2.SCOPE_SUB</code>.
+     *
+     * @supported.api
      */
     public void setSearchFilter(String filter) {
         LDAPUrl url = getUrl();
@@ -177,12 +183,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds a member to the group. The change is saved to persistent storage.
      * 
      * @param userGuid Globally unique identifier for the member to be added.
      * @exception UMSException if fail to save to persistent storage or if the
      *            user is not within the scope of the group.
+     *
+     * @supported.api
      */
     public void addMember(Guid userGuid) throws UMSException {
         // UMSSession session = getUMSSession();
@@ -195,12 +202,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds a member to the group. The change is saved to persistent storage.
      * 
      * @param member Object to be added as member.
      * @exception UMSException if fail to save to persistent storage or if the
      *            user is not within the scope of the group.
+     *
+     * @supported.api
      */
     public void addMember(PersistentObject member) throws UMSException {
         // check whether the userGuid is within the scope of memberUrl
@@ -229,12 +237,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Adds a list of members to the group. The change is saved to persistent
      * storage.
      * 
      * @param guids Array of member GUIDs to be added as members to the group.
      * @exception UMSException if fail to save to persistent storage.
+     *
+     * @supported.api
      */
     public void addMembers(Guid[] guids) throws UMSException {
         if (guids == null) {
@@ -247,12 +256,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes a member from the group. The change is saved to persistent
      * storage.
      * 
      * @param guid Unique identifier for the member to be removed.
      * @exception UMSException if fail to save to persistent storage.
+     *
+     * @supported.api
      */
     public void removeMember(Guid guid) throws UMSException {
         PersistentObject member = UMSObject.getObject(getPrincipal(), guid);
@@ -260,12 +270,13 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes a member from the group. The change is saved to persistent
      * storage.
      * 
      * @param member Object to be removed.
      * @exception UMSException if fail to save to persistent storage.
+     *
+     * @supported.api
      */
     public void removeMember(PersistentObject member) throws UMSException {
         member.modify(new Attr(MEMBER_ATTR_NAME, this.getDN()), ModSet.DELETE);
@@ -273,10 +284,11 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Removes all members of the group.
      * 
      * @exception UMSException if fail to save to persistent storage.
+     *
+     * @supported.api
      */
     public void removeAllMembers() throws UMSException {
 
@@ -294,13 +306,14 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Returns <code>true</code> if a given identifier is a member of the
      * group.
      * 
      * @param guid Identity of member to be checked for membership.
      * @return <code>true</code> if it is a member.
      * @exception UMSException if fail to read object for guid.
+     *
+     * @supported.api
      */
     public boolean hasMember(Guid guid) throws UMSException {
         if (getPrincipal() == null) {
@@ -343,7 +356,6 @@ public class AssignableDynamicGroup extends DynamicGroup implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Saves the modification(s) to the object to persistent storage.
      * 
      * @return UMSException on failure to save to persistent storage.

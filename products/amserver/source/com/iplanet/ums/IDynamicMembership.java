@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDynamicMembership.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: IDynamicMembership.java,v 1.3 2005-12-08 01:16:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ package com.iplanet.ums;
  * IMembership by adding support for adding and removing members.
  * 
  * @see com.iplanet.ums.IMembership
+ * @supported.api
  */
 public interface IDynamicMembership extends IMembership {
 
@@ -37,7 +38,8 @@ public interface IDynamicMembership extends IMembership {
      * 
      * @param filter
      *            search filter for evaluating members of the group
-     *            iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public void setSearchFilter(String filter);
 
@@ -45,15 +47,17 @@ public interface IDynamicMembership extends IMembership {
      * Gets the search filter used to evaluate this dynamic group.
      * 
      * @return search filter for evaluating members of the group
-     *         iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public String getSearchFilter();
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search base used to evaluate this dynamic group.
      * 
      * @param baseGuid Search base for evaluating members of the group.
+     *
+     * @supported.api
      */
     public void setSearchBase(Guid baseGuid);
 
@@ -61,17 +65,19 @@ public interface IDynamicMembership extends IMembership {
      * Gets the search base used to evaluate this dynamic group.
      * 
      * @return search base for evaluating members of the group
-     *         iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public Guid getSearchBase();
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the search scope used to evaluate this dynamic group.
      * 
      * @param scope Search scope for evaluating members of the group. Use one of
      *        the <code>LDAPv2</code> scopes: <code>SCOPE_BASE</code>,
      *        <code>SCOPE_ONE</code>, or <code>SCOPE_SUB</code>.
+     *
+     * @supported.api
      */
     public void setSearchScope(int scope);
 
@@ -79,7 +85,8 @@ public interface IDynamicMembership extends IMembership {
      * Gets the search scope used to evaluate this dynamic group.
      * 
      * @return search scope for evaluating members of the group
-     *         iPlanet-PUBLIC-METHOD
+     *
+     * @supported.api
      */
     public int getSearchScope();
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModSet.java,v 1.1 2005-11-01 00:30:17 arvindp Exp $
+ * $Id: ModSet.java,v 1.2 2005-12-08 01:16:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,8 @@ import netscape.ldap.LDAPModification;
 import netscape.ldap.LDAPModificationSet;
 
 /**
- * iPlanet-PUBLIC-CLASS Represents a set of modification on attributes
- * 
+ * Represents a set of modification on attributes
+ * @supported.api
  */
 public class ModSet extends LDAPModificationSet {
     // TODO: This is an incomplete implementation. Currently subclass from

@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientDetectionInterface.java,v 1.1 2005-11-01 00:30:10 arvindp Exp $
+ * $Id: ClientDetectionInterface.java,v 1.2 2005-12-08 01:16:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
-
-/* iPlanet-PUBLIC-CLASS */
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  * by services and applications serving multiple clients, to determine the
  * client from which the request has originated. This interface detects the
  * client type from the client request.
+ * @supported.all.api
  */
 public interface ClientDetectionInterface {
     /**

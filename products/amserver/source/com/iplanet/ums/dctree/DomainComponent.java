@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainComponent.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
+ * $Id: DomainComponent.java,v 1.3 2005-12-08 01:16:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,7 @@ import com.iplanet.ums.UMSObject;
  * the nortel specication).
  * 
  * @see DomainComponentTree
- * 
+ * @supported.api
  */
 public class DomainComponent extends PersistentObject {
 
@@ -64,11 +64,12 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Given a name for domain component, construct
+     * Given a name for domain component, construct
      * the dc object in memory
      * 
      * @param dcName
      *            Domain Componet name
+     * @supported.api
      */
     public DomainComponent(SSOToken token, String dcName) throws UMSException {
         setAttribute(new Attr("objectclass", dcObjectClasses));
@@ -83,13 +84,14 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Sets the mapping of a dc entry in the dctree to an
+     * Sets the mapping of a dc entry in the dctree to an
      * organization or OrganizationalUnit entry in the convergence DIT, the
      * directory tree hosting all the actual entries
      * 
      * @param org
      *            Organization entry to be associated with the dc entry in the
      *            dctree
+     * @supported.api
      */
     public void setAssociatedOrganization(PersistentObject org)
             throws UMSException {
@@ -97,13 +99,13 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * Sets the mapping of a dc entry in the dctree to an
      * organization or organizational unit entry in the convergence DIT, the
      * directory tree hosting all the actual entries.
      * 
      * @param orgGuid Identifier for organization.
      * @throws UMSException if mapping of dc entry cannot be set.
+     * @supported.api
      */
     public void setAssociatedOrganization(Guid orgGuid) throws UMSException {
         if (orgGuid == null || orgGuid.getDn().length() == 0) {
@@ -120,12 +122,13 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the domain mapping from this dc entry to the
+     * Get the domain mapping from this dc entry to the
      * organization entry in the customer DIT. Return the organization object
      * associated with thic dc entry
      * 
      * @return PersistentObject representing the organization entry associated
      *         with dc entry
+     * @supported.api
      */
     public PersistentObject getOrganization() throws UMSException {
 
@@ -134,10 +137,11 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the domain mapping from this dc entry. Domain
+     * Get the domain mapping from this dc entry. Domain
      * mapping is in terms of DN
      * 
      * @return identifier for the domain mapping associated with this dc entry
+     * @supported.api
      */
     public Guid getAssociatedOrganizationGuid() throws UMSException {
 
@@ -151,9 +155,10 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the domain status in the dc entry
+     * Get the domain status in the dc entry
      * 
      * @return Domain status in the dc entry
+     * @supported.api
      */
     public String getDomainStatus() throws UMSException {
         Attr attr = getAttribute(TAG_DOMAIN_STATUS);
@@ -166,10 +171,11 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Set the domain status in the dc entry
+     * Set the domain status in the dc entry
      * 
      * @param status
      *            Domain status to be set
+     * @supported.api
      */
     public void setDomainStatus(String status) throws UMSException {
         modify(new Attr(TAG_DOMAIN_STATUS, status), ModSet.REPLACE);
@@ -182,7 +188,8 @@ public class DomainComponent extends PersistentObject {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the naming attribute for the dc entry
+     * Get the naming attribute for the dc entry
+     * @supported.api
      */
     public String getNamingAttribute() {
         return (DEFAULT_NAMING_ATTR);

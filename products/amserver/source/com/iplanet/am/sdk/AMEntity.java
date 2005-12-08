@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntity.java,v 1.1 2005-11-01 00:29:02 arvindp Exp $
+ * $Id: AMEntity.java,v 1.2 2005-12-08 01:16:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.iplanet.sso.SSOException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This interface provides methods to manage entities. The entities that can be
@@ -47,6 +45,7 @@ import com.iplanet.sso.SSOException;
  * (amsc.doesEntryExist(uDN)) { AMEntity entity = amsc.getEntity(uDN); }
  * 
  * </PRE>
+ * @supported.all.api
  */
 public interface AMEntity {
 

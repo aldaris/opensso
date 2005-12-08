@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Organization.java,v 1.1 2005-11-01 00:30:38 arvindp Exp $
+ * $Id: Organization.java,v 1.2 2005-12-08 01:16:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,8 @@ import com.iplanet.services.util.I18n;
  *           ou=buyerclub  
  *               uid=joe    
  * </pre>
+ *
+ * @supported.api
  */
 public class Organization extends PersistentObject {
 
@@ -93,7 +95,8 @@ public class Organization extends PersistentObject {
      * @param template
      *            template for the organization
      * @param attrSet
-     *            attribute/value set iPlanet-PUBLIC-CONSTRUCTOR
+     *            attribute/value set
+     * @supported.api
      */
     public Organization(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -110,7 +113,8 @@ public class Organization extends PersistentObject {
      * @exception EntryAlreadyExistsException
      *                if the entry already exists
      * @exception UMSException
-     *                Fail to add the object iPlanet-PUBLIC-METHOD
+     *                Fail to add the object
+     * @supported.api
      */
     public void addChild(PersistentObject object) throws AccessRightsException,
             EntryAlreadyExistsException, UMSException {
@@ -154,7 +158,8 @@ public class Organization extends PersistentObject {
      * @exception EntryNotFoundException
      *                if the entry is not found
      * @exception UMSException
-     *                Fail to remove the object iPlanet-PUBLIC-METHOD
+     *                Fail to remove the object
+     * @supported.api
      */
     public void removeChild(PersistentObject object)
             throws AccessRightsException, EntryNotFoundException, UMSException {
@@ -166,7 +171,8 @@ public class Organization extends PersistentObject {
     /**
      * Returns the name of the organization.
      * 
-     * @return name of the organization iPlanet-PUBLIC-METHOD
+     * @return name of the organization
+     * @supported.api
      */
     public String getName() throws UMSException {
         return getAttribute(getNamingAttribute()).getValue();
@@ -199,7 +205,8 @@ public class Organization extends PersistentObject {
      * 
      * @return guids identifying People Containers under the organization
      * @exception UMSException
-     *                Failure iPlanet-PUBLIC-METHOD
+     *                Failure
+     * @supported.api
      */
     public Collection getPeopleContainerGuids() throws UMSException {
         Collection pcs = new ArrayList();
@@ -248,7 +255,8 @@ public class Organization extends PersistentObject {
      * @param guid
      *            guid of the People Container to which the rule is applied.
      * @exception UMSException
-     *                Failure iPlanet-PUBLIC-METHOD
+     *                Failure
+     * @supported.api
      */
     public void addPeopleContainerRule(Guid guid, String filter)
             throws UMSException {
@@ -265,7 +273,8 @@ public class Organization extends PersistentObject {
      * @param guid
      *            guid of which the rule applies to
      * @exception UMSException
-     *                Failure iPlanet-PUBLIC-METHOD
+     *                Failure 
+     * @supported.api
      */
     public void removePeopleContainerRule(Guid guid, String filter)
             throws UMSException {
@@ -280,7 +289,8 @@ public class Organization extends PersistentObject {
      * @param guid
      *            guid of the default People Container
      * @exception UMSException
-     *                Failure iPlanet-PUBLIC-METHOD
+     *                Failure
+     * @supported.api
      */
     public void setDefaultPeopleContainer(Guid guid) throws UMSException {
         PCMappingTable mt = PCMappingTable.getPCMappingTable(this);

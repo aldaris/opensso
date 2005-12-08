@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACIParseException.java,v 1.1 2005-11-01 00:30:19 arvindp Exp $
+ * $Id: ACIParseException.java,v 1.2 2005-12-08 01:16:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,18 +27,19 @@ package com.iplanet.services.ldap.aci;
 /**
  * Exception thrown to indicate problems while parsing value of aci attribute
  * read from directory to ACI object
+ * @@supported.all.api
  */
 public class ACIParseException extends ACIException {
 
     /**
-     * No arguments constructor. iPlanet-PUBLIC-CONSTRUCTOR
+     * No arguments constructor.
      */
     public ACIParseException() {
     }
 
     /**
      * @param message
-     *            Error message. iPlanet-PUBLIC-CONSTRUCTOR
+     *            Error message.
      */
     public ACIParseException(String message) {
         super(message);

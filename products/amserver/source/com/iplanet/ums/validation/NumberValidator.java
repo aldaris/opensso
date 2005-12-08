@@ -17,17 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumberValidator.java,v 1.1 2005-11-01 00:30:48 arvindp Exp $
+ * $Id: NumberValidator.java,v 1.2 2005-12-08 01:16:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums.validation;
 
+/**
+ * @supported.all.api
+ */
 public class NumberValidator implements IValidator {
 
     /**
-     * iPlanet-PUBLIC-METHOD Determines whether the specified string is a valid
+     * Determines whether the specified string is a valid
      * Integer
      * 
      * @param value
@@ -41,7 +44,7 @@ public class NumberValidator implements IValidator {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Determines whether the specified string is a valid
+     * Determines whether the specified string is a valid
      * Integer
      * 
      * @param value

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.2 2005-11-04 18:53:38 veiming Exp $
+ * $Id: Locale.java,v 1.3 2005-12-08 01:16:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,12 +35,11 @@ import java.util.StringTokenizer;
 
 import com.iplanet.dpro.session.Session;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This class <code>Locale.java</code> is a utility that provides
  * functionality for applications and services to internationalize their
  * messages.
+ * @supported.all.api
  */
 public class Locale {
     static BitSet dontEncode;

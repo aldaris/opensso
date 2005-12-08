@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceListener.java,v 1.2 2005-11-15 04:10:35 veiming Exp $
+ * $Id: ServiceListener.java,v 1.3 2005-12-08 01:16:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,6 @@ package com.sun.identity.sm;
 
 import netscape.ldap.controls.LDAPPersistSearchControl;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The interface <code>ServiceListener</code> needs to be implemented by
  * applications in order to receive service data change notifications. The
@@ -35,6 +33,8 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
  * has been changed. The method <code>globalConfigChanged()</code> and
  * <code>organizationConfigChanged()</code> are invoked when the service
  * configuration data has been changed.
+ *
+ * @supported.all.api
  */
 public interface ServiceListener {
 

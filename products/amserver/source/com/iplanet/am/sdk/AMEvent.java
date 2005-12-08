@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEvent.java,v 1.2 2005-11-08 17:12:07 veiming Exp $
+ * $Id: AMEvent.java,v 1.3 2005-12-08 01:16:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,6 @@ import java.util.EventObject;
 import netscape.ldap.controls.LDAPPersistSearchControl;
 
 import com.iplanet.services.ldap.event.DSEvent;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * <p>
@@ -45,6 +43,7 @@ import com.iplanet.services.ldap.event.DSEvent;
  * <li>The event type
  * <li>The source object type: Type of the underlying object that caused event.
  * </ul>
+ * @supported.all.api
  */
 public class AMEvent extends EventObject {
 

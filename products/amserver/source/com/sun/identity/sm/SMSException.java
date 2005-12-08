@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSException.java,v 1.1 2005-11-01 00:31:28 arvindp Exp $
+ * $Id: SMSException.java,v 1.2 2005-12-08 01:16:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,6 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.common.L10NMessage;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The exception class whose instance is thrown if there is any error during the
  * operation of objects of the <code>com.sun.identity.sms</code> package. This
@@ -53,6 +51,8 @@ import com.sun.identity.common.L10NMessage;
  * errors are categorized as a <code>ABORT</code>, <code>RETRY</code>,
  * <code>CONFIG_PROBLEM</code> or <code>LDAP_OP_FAILED</code> (typically a
  * bug).
+ *
+ * @supported.all.api
  */
 public class SMSException extends Exception implements L10NMessage {
 

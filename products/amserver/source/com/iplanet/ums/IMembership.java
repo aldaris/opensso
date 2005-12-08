@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IMembership.java,v 1.1 2005-11-01 00:30:37 arvindp Exp $
+ * $Id: IMembership.java,v 1.2 2005-12-08 01:16:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,27 +26,29 @@ package com.iplanet.ums;
 
 /**
  * Represents a container interface common to groups and roles.
+ *
+ * @supported.all.api
  */
 public interface IMembership {
     /**
      * Gets the members of the group.
      * 
      * @return Iterator for unique identifiers in the group
-     *         iPlanet-PUBLIC-METHOD
+     *        
      */
     public SearchResults getMemberIDs() throws UMSException;
 
     /**
      * Gets the member count of the group.
      * 
-     * @return number of members in the group iPlanet-PUBLIC-METHOD
+     * @return number of members in the group
      */
     public int getMemberCount() throws UMSException;
 
     /**
      * Gets a member.
      * 
-     * @return the guid unique identifier for a member iPlanet-PUBLIC-METHOD
+     * @return the guid unique identifier for a member
      */
     public Guid getMemberIDAt(int index) throws UMSException;
 
@@ -57,7 +59,7 @@ public interface IMembership {
      *            identity of member to be checked for membership
      * @return <code>true </code>if it is a member
      * @exception UMSException
-     *                on failure to evaluate membership iPlanet-PUBLIC-METHOD
+     *                on failure to evaluate membership
      */
     public boolean hasMember(Guid guid) throws UMSException;
 }

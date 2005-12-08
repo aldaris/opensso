@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticGroup.java,v 1.1 2005-11-01 00:30:41 arvindp Exp $
+ * $Id: StaticGroup.java,v 1.2 2005-12-08 01:16:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.iplanet.services.util.I18n;
 
 /**
  * Represents a static group entry.
+ * @supported.api
  */
 public class StaticGroup extends PersistentObject implements
         IAssignableMembership {
@@ -45,7 +46,7 @@ public class StaticGroup extends PersistentObject implements
      * Level indicator for no nesting of group membership. Use this level
      * indicator for getting direct membership in a group.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int LEVEL_DIRECT = 0;
 
@@ -54,7 +55,7 @@ public class StaticGroup extends PersistentObject implements
      * level indicator in getting all direct and indirect members through nested
      * group behavior.
      * 
-     * iPlanet-PUBLIC-STATIC
+     * @supported.api
      */
     public static final int LEVEL_ALL = -1;
 
@@ -104,7 +105,7 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Constructs a StaticGroup object in memory with
+     * Constructs a StaticGroup object in memory with
      * a given template. This one simply creates a Group object in memory; the
      * save method must be called to save the new object to persistent storage.
      * 
@@ -114,6 +115,7 @@ public class StaticGroup extends PersistentObject implements
      *            Attribute/value set
      * @exception UMSException
      *                on failure to instantiate from persistent storage
+     * @supported.api
      */
     public StaticGroup(CreationTemplate template, AttrSet attrSet)
             throws UMSException {
@@ -121,13 +123,14 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a member to the group. The change is saved to
+     * Adds a member to the group. The change is saved to
      * persistent storage.
      * 
      * @param guid
      *            Globally unique identifier for the member to be added
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void addMember(Guid guid) throws UMSException {
 
@@ -155,26 +158,28 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a member to the group. The change is saved to
+     * Adds a member to the group. The change is saved to
      * persistent storage.
      * 
      * @param member
      *            Object to be added as member
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void addMember(PersistentObject member) throws UMSException {
         addMember(member.getGuid());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Adds a list of members to the group. The change is
+     * Adds a list of members to the group. The change is
      * saved to persistent storage.
      * 
      * @param guids
      *            Array of member guids to be added as members to the group
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void addMembers(Guid[] guids) throws UMSException {
         if (guids == null) {
@@ -188,11 +193,12 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the members of the group.
+     * Gets the members of the group.
      * 
      * @return SearchResults for members of the group
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public SearchResults getMemberIDs() throws UMSException {
         return getMembers(LEVEL_DIRECT);
@@ -205,13 +211,14 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get members of the group.
+     * Get members of the group.
      * 
      * @param level
      *            Nesting level
      * @return SearchResults for members of the group
      * @exception Not
      *                thrown by this class
+     * @supported.api
      * 
      */
     public SearchResults getMembers(int level) throws UMSException {
@@ -265,24 +272,26 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the member count.
+     * Gets the member count.
      * 
      * @return Number of members of the group
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public int getMemberCount() throws UMSException {
         return getMemberCount(LEVEL_DIRECT);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the member count.
+     * Gets the member count.
      * 
      * @param level
      *            Nesting level
      * @return Number of members of the group
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public int getMemberCount(int level) throws UMSException {
 
@@ -308,13 +317,14 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets a member given an index (zero-based).
+     * Gets a member given an index (zero-based).
      * 
      * @param index
      *            Zero-based index into the group container
      * @return The unique identifier for a member
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public Guid getMemberIDAt(int index) throws UMSException {
         Attr attr = getAttribute(MEMBER_ATTR_NAME);
@@ -323,7 +333,7 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets a member given an index (zero-based).
+     * Gets a member given an index (zero-based).
      * 
      * @param index
      *            Zero-based index into the group container
@@ -332,6 +342,7 @@ public class StaticGroup extends PersistentObject implements
      * @return The unique identifier for a member
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public Guid getMemberIDAt(int index, int level) throws UMSException {
         SearchResults allMembers = getMembers(level);
@@ -350,13 +361,14 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes a member from the group. The change is
-     * saved to persistent storage.
+     * Removes a member from the group. The change is saved to persistent
+     * storage.
      * 
      * @param guid
      *            Unique identifier for the member to be removed
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeMember(Guid guid) throws UMSException {
         String dn = guid.getDn();
@@ -366,23 +378,25 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes a member from the group. The change is
-     * saved to persistent storage.
+     * Removes a member from the group. The change is saved to persistent
+     * storage.
      * 
      * @param member
      *            Object to be removed
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeMember(PersistentObject member) throws UMSException {
         removeMember(member.getGuid());
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes all members of the group.
+     * Removes all members of the group.
      * 
      * @exception UMSException
      *                on failure to save to persistent storage
+     * @supported.api
      */
     public void removeAllMembers() throws UMSException {
 
@@ -401,13 +415,13 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks if a given identifier is a member of the
-     * group.
+     * Checks if a given identifier is a member of the group.
      * 
      * @param guid
      *            Identity of member to be checked for membership
      * @return <code>true if it is a member
      * @exception   Not thrown by this class
+     * @supported.api
      */
     public boolean hasMember(Guid guid) throws UMSException {
         return isMemberAtLevel(guid.getDn(), LEVEL_DIRECT);
@@ -434,8 +448,7 @@ public class StaticGroup extends PersistentObject implements
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Checks if a given identifier is a member of the
-     * group.
+     * Checks if a given identifier is a member of the group.
      * 
      * @param guid
      *            Identity of member to be checked for membership
@@ -444,6 +457,7 @@ public class StaticGroup extends PersistentObject implements
      * @return <code>true</code> if it is a member
      * @exception Not
      *                thrown by this class
+     * @supported.api
      */
     public boolean hasMember(Guid guid, int level) throws UMSException {
 

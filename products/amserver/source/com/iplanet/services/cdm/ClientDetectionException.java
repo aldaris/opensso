@@ -17,19 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientDetectionException.java,v 1.1 2005-11-01 00:30:09 arvindp Exp $
+ * $Id: ClientDetectionException.java,v 1.2 2005-12-08 01:16:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The <code>ClientDetectionException</code> class is used to throw exceptions
  * whenever an error is encountered in detecting client type. This includes
  * errors while reading the client data.
+ * @supported.all.api
  */
 public class ClientDetectionException extends Exception {
     /**

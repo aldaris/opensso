@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConstants.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
+ * $Id: AMConstants.java,v 1.3 2005-12-08 01:16:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,9 @@ package com.iplanet.am.sdk;
 import java.util.HashSet;
 import java.util.Set;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This interface defines constants used by <code>AM SDK</code>.
+ * @supported.all.api
  */
 public interface AMConstants {
 

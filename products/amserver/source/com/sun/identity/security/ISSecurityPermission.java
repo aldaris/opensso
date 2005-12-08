@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSecurityPermission.java,v 1.2 2005-11-04 18:53:45 veiming Exp $
+ * $Id: ISSecurityPermission.java,v 1.3 2005-12-08 01:16:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class <code>ISSecurityPermission</code> is used to protect the Access
@@ -53,6 +51,8 @@ import java.util.StringTokenizer;
  * Note: The property <code>com.sun.identity.security.checkcaller</code>
  * should be set to true in <code>AMConfig.properties</code> file to enable the
  * Java security permissions check.
+ *
+ * @supported.all.api
  */
 public class ISSecurityPermission extends Permission {
     private static Random rnd = new Random();

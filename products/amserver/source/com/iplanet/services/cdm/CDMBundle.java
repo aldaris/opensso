@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDMBundle.java,v 1.1 2005-11-01 00:30:09 arvindp Exp $
+ * $Id: CDMBundle.java,v 1.2 2005-12-08 01:16:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,11 @@ package com.iplanet.services.cdm;
 
 import java.util.ResourceBundle;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * Provides methods to get the Locale values from resource bundle for
  * <code>ClientDetection</code> class.
+ * @supported.all.api
  */
-
 public class CDMBundle {
 
     private static ResourceBundle cdmBundle = null;
@@ -41,8 +39,6 @@ public class CDMBundle {
      * @param str
      *            The key for the resource bundle property to be returned.
      * @return The Locale value for the given key
-     * 
-     * iPlanet-PUBLIC-METHOD
      */
     public static String getString(String str) {
         if (cdmBundle == null) {

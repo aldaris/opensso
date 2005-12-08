@@ -17,20 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceListener.java,v 1.1 2005-11-01 00:29:19 arvindp Exp $
+ * $Id: AMServiceListener.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * The interface <code>AMServiceListener</code> needs to be implemented by
  * applications in order to receive service data change notifications. The
  * method <code>serviceChanged()</code> is invoked when a service schema data
  * or a service configuration data has been changed.
+ * @supported.all.api
  */
 public interface AMServiceListener {
     /**

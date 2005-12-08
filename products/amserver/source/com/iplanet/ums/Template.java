@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Template.java,v 1.1 2005-11-01 00:30:41 arvindp Exp $
+ * $Id: Template.java,v 1.2 2005-12-08 01:16:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,12 +34,11 @@ import java.io.Serializable;
  * 
  * @see CreationTemplate
  * @see SearchTemplate
+ * @supported.all.api
  */
 public abstract class Template implements Serializable, Cloneable {
     /**
      * Default constructor for deserialization
-     * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public Template() {
     }
@@ -49,8 +48,6 @@ public abstract class Template implements Serializable, Cloneable {
      * 
      * @param name
      *            Template name
-     * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public Template(String name) {
         _name = name;
@@ -60,8 +57,6 @@ public abstract class Template implements Serializable, Cloneable {
      * Gets the name of the template.
      * 
      * @return name of the Template
-     * 
-     * iPlanet-PUBLIC-METHOD
      */
     public String getName() {
         return _name;
@@ -72,8 +67,6 @@ public abstract class Template implements Serializable, Cloneable {
      * 
      * @param name
      *            name of the template
-     * 
-     * iPlanet-PUBLIC-METHOD
      */
     public void setName(String name) {
         _name = name;
@@ -83,8 +76,6 @@ public abstract class Template implements Serializable, Cloneable {
      * Returns a copy of the template.
      * 
      * @return a copy of the template
-     * 
-     * iPlanet-PUBLIC-METHOD
      */
     public Object clone() {
         try {

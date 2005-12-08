@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.1 2005-11-01 00:31:06 arvindp Exp $
+ * $Id: AMIdentityRepository.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,6 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.sm.DNMapper;
 
-/* iPlanet-PUBLIC-CLASS */
 /**
  * The class <code> AMIdentityRepository </code> represents an object to access
  * the repositories in which user/role/group and other identity data is
@@ -55,6 +54,7 @@ import com.sun.identity.sm.DNMapper;
  * 
  * </PRE>
  * 
+ * @supported.all.api
  */
 public final class AMIdentityRepository {
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BadSearchFilterException.java,v 1.1 2005-11-01 00:30:33 arvindp Exp $
+ * $Id: BadSearchFilterException.java,v 1.2 2005-12-08 01:16:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,12 @@ package com.iplanet.ums;
 
 /**
  * Exception for invalid search filter.
+ *
+ * @supported.all.api
  */
 public class BadSearchFilterException extends UMSException {
     /**
-     * Default constructor iPlanet-PUBLIC-CONSTRUCTOR
+     * Default constructor
      */
     public BadSearchFilterException() {
         super();
@@ -39,7 +41,7 @@ public class BadSearchFilterException extends UMSException {
      * Constructor with a message string
      * 
      * @param msg
-     *            Message string for the exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            Message string for the exception
      */
     public BadSearchFilterException(String msg) {
         super(msg);
@@ -51,10 +53,9 @@ public class BadSearchFilterException extends UMSException {
      * @param msg
      *            Message string
      * @param t
-     *            The embedded exception iPlanet-PUBLIC-CONSTRUCTOR
+     *            The embedded exception
      */
     public BadSearchFilterException(String msg, Throwable t) {
         super(msg, t);
     }
-
 }

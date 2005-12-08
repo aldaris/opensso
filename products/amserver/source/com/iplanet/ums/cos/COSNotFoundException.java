@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSNotFoundException.java,v 1.1 2005-11-01 00:30:44 arvindp Exp $
+ * $Id: COSNotFoundException.java,v 1.2 2005-12-08 01:16:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,14 +28,12 @@ import com.iplanet.ums.UMSException;
 
 /**
  * The exception thrown by COS Manager if a COS object is not found.
- * 
+ * @supported.api
  */
 public class COSNotFoundException extends UMSException {
 
     /**
      * Constructs the exception with no message.
-     * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public COSNotFoundException() {
     }
@@ -45,8 +43,6 @@ public class COSNotFoundException extends UMSException {
      * 
      * @param msg
      *            the message describing cause of the exception
-     * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public COSNotFoundException(String msg) {
         super(msg);
@@ -59,8 +55,6 @@ public class COSNotFoundException extends UMSException {
      *            the message describing the cause of the exception
      * @param rootCause
      *            the exception that led to this exception
-     * 
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public COSNotFoundException(String msg, Throwable rootCause) {
         super(msg, rootCause);

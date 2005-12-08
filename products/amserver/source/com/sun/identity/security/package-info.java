@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2005-11-17 21:05:25 veiming Exp $
+ * $Id: package-info.java,v 1.2 2005-12-08 01:16:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 /**
  * Provides the classes to be used for performing privileged operations (like
  * getting the Access Manager administrator's DN and password).
+ * @supported.api
  */
 
 package com.sun.identity.security;

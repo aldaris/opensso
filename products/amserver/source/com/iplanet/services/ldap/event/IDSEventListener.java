@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDSEventListener.java,v 1.1 2005-11-01 00:30:21 arvindp Exp $
+ * $Id: IDSEventListener.java,v 1.2 2005-12-08 01:16:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,19 +32,22 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 /**
  * The purpose of this interface is to allow classes that implement this
  * interface to listen to Directory Server Events.
+ * @supported.api
  */
 public interface IDSEventListener extends EventListener {
 
     /**
      * This callback method is called by the EventService when the Directory
-     * Server triggers a PersistentSearch notification iPlanet-PUBLIC-METHOD
+     * Server triggers a PersistentSearch notification
+     * @supported.api
      */
     public void entryChanged(DSEvent e);
 
     /**
      * This callback method is called by the EventService when an error is
      * encountered after setting a Persistent Search request in the Directory
-     * Server iPlanet-PUBLIC-METHOD
+     * Server
+     * @supported.api
      */
     public void eventError(String err);
 

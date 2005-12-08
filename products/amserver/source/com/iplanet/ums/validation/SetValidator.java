@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetValidator.java,v 1.2 2005-11-15 04:10:31 veiming Exp $
+ * $Id: SetValidator.java,v 1.3 2005-12-08 01:16:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.StringTokenizer;
  * string value to be validated and set of Stringvalues against which the value
  * should be validated to validate function, true is returned if the value is
  * present in the set.
+ * @supported.all.api
  */
 public class SetValidator implements IValidator {
 
@@ -51,7 +52,6 @@ public class SetValidator implements IValidator {
      * @param set Set used by the validation, in the form of a String with
      *            each elements separated by comma.
      * @return true if value is in the set
-     * iPlanet-PUBLIC-METHOD
      */
     public boolean validate(String value, String set) {
         String[] range = stringToArray(normalize(set));

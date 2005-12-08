@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Guid.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: Guid.java,v 1.2 2005-12-08 01:16:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,13 +27,15 @@ package com.iplanet.ums;
 import netscape.ldap.LDAPDN;
 
 /**
- * iPlanet-PUBLIC-CLASS This class represents an LDAP entry and it provides
+ * This class represents an LDAP entry and it provides
  * access to the ID (dn) and GUID of the given name. Every persistent object
  * (that is, entry in the Directory server) has a GUID (Globally Unique
  * Identifier) associated with it. Upon doing a getGuid() (getGuid() is a method
  * in the PersistentObject class) on an LDAP entry, this GUID object would be
  * returned (not a DN string or a guid in the LDAP sense). Methods of the Guid
  * object could then be used to get the actual DN, etc.
+ *
+ * @supported.all.api
  */
 public class Guid {
 

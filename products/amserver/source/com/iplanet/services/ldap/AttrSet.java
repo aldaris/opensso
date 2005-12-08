@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttrSet.java,v 1.1 2005-11-01 00:30:17 arvindp Exp $
+ * $Id: AttrSet.java,v 1.2 2005-12-08 01:16:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,28 +32,31 @@ import netscape.ldap.LDAPAttributeSet;
 
 /**
  * Represents a set of attributes
+ * @supported.api
  */
 public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
 
     private ArrayList _attrs = new ArrayList();
 
     /**
-     * iPlanet-PUBLIC-STATIC Empty Attribute Set.
+     * Empty Attribute Set.
+     * @supported.api
      */
     public static final AttrSet EMPTY_ATTR_SET = new AttrSet();
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR No argument constructor
+     * No argument constructor
+     * @supported.api
      */
     public AttrSet() {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Construct attribute set given an array of
-     * attributes
+     * Construct attribute set given an array of attributes.
      * 
      * @param attrs
      *            array of attributes to be defined in the attribute set
+     * @supported.api
      */
     public AttrSet(Attr[] attrs) {
         int size = attrs.length;
@@ -64,10 +67,11 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-CONSTRUCTOR Construct attribute set given an attribute
+     * Construct attribute set given an attribute
      * 
      * @param attr
      *            attribute to be defined in the attribute set
+     * @supported.api
      */
     public AttrSet(Attr attr) {
         add(attr);
@@ -89,11 +93,12 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add one attribute to the AttrSet The attribute
+     * Add one attribute to the AttrSet The attribute
      * should have only string values
      * 
      * @param attr
      *            attribute to be added to the set
+     * @supported.api
      */
     public void add(Attr attr) {
         if (attr == null)
@@ -109,11 +114,12 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Add one attribute to the AttrSet The attribute
+     * Add one attribute to the AttrSet The attribute
      * should have only byte values
      * 
      * @param attr
      *            attribute to be added to the set
+     * @supported.api
      */
     public void addBinaryAttr(Attr attr) {
         Attr attr1 = findAttribute(attr.getName());
@@ -127,10 +133,11 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Removes an exisiting attribute
+     * Removes an exisiting attribute
      * 
      * @param attr
      *            attribute to be removed
+     * @supported.api
      */
     public void remove(String name) {
         int index = indexOf(name);
@@ -140,13 +147,14 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Remove a specified value for an attribute in the
+     * Remove a specified value for an attribute in the
      * set
      * 
      * @param attrName
      *            attribute name to be looked up
      * @param delValue
      *            value to be deleted for the specified attribute
+     * @supported.api
      */
     public void remove(String attrName, String delValue) {
         int index = indexOf(attrName);
@@ -160,10 +168,11 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Replace an existing attribute
+     * Replace an existing attribute.
      * 
      * @param attr
      *            attribute to be replaced
+     * @supported.api
      */
     public void replace(Attr attr) {
         int index = indexOf(attr.getName());
@@ -175,9 +184,10 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get names of attributes
+     * Get names of attributes.
      * 
      * @return Names of attributes in the set
+     * @supported.api
      */
     public String[] getAttributeNames() {
         int size = size();
@@ -189,12 +199,13 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the attribute contained in the set. If not
+     * Gets the attribute contained in the set. If not
      * found returns null object
      * 
      * @param name
      *            name of the attribute to get
      * @return attribute found
+     * @supported.api
      */
     public Attr getAttribute(String name) {
         // We may probably want to clone. Not cloning now.
@@ -202,10 +213,11 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Enumerate the attributes contained in the attribute
+     * Enumerate the attributes contained in the attribute
      * set
      * 
      * @return enmeration of attributes in the set
+     * @supported.api
      */
     public Enumeration getAttributes() {
         // iterator would be preferred; returning Enumeration for backward
@@ -214,12 +226,13 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Gets the first string value right from a specified
+     * Gets the first string value right from a specified
      * attribute
      * 
      * @param attrName
      *            name of the attribute to be queried in the set
      * @return the first string value found
+     * @supported.api
      */
     public String getValue(String attrName) {
         String value = null;
@@ -231,11 +244,12 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Check if attrSet has this attribute
+     * Check if attrSet has this attribute
      * 
      * @param attrName
      *            name of the attribute to be checked against the set
      * @return true if found and false otherwise
+     * @supported.api
      */
     public boolean contains(String attrName) {
         boolean containsTheValue = false;
@@ -247,7 +261,7 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Check if this attrSet has the attribute with the
+     * Check if this attrSet has the attribute with the
      * given value
      * 
      * @param attrName
@@ -255,6 +269,7 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
      * @param value
      *            value of the attribute the attribute should contain
      * @return true if found and false otherwise
+     * @supported.api
      */
     public boolean contains(String attrName, String value) {
         boolean containsTheValue = false;
@@ -266,9 +281,10 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Get the number of attributes in the Attribute Set
+     * Get the number of attributes in the Attribute Set
      * 
      * @return number of attributes in the set
+     * @supported.api
      */
     public int size() {
         return _attrs.size();
@@ -324,9 +340,10 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Return a copy of the object
+     * Return a copy of the object
      * 
      * @return A copy of the object
+     * @supported.api
      */
     public Object clone() {
         AttrSet attrSet = new AttrSet();
@@ -355,9 +372,10 @@ public class AttrSet implements java.io.Serializable, java.lang.Cloneable {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Retrieves the string representation of an AttrSet
+     * Retrieves the string representation of an AttrSet
      * 
      * @return string representation of the AttrSet.
+     * @supported.api
      */
     public String toString() {
         StringBuffer sb = new StringBuffer("AttrSet: ");

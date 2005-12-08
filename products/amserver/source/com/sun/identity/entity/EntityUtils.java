@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityUtils.java,v 1.1 2005-11-01 00:31:05 arvindp Exp $
+ * $Id: EntityUtils.java,v 1.2 2005-12-08 01:16:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ public class EntityUtils {
     public static Debug debug = Debug.getInstance("amRemoteEntity");
 
     /**
-     * Constructor iPlanet-PRIVATE-DEFAULT-CONSTRUCTOR
+     * Constructor
      */
     private EntityUtils() {
     }

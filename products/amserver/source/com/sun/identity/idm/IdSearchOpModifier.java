@@ -17,20 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchOpModifier.java,v 1.1 2005-11-01 00:31:11 arvindp Exp $
+ * $Id: IdSearchOpModifier.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This is a helper class which can be in conjunction with the
  * <code>IdSearchControl</code> class to make simple modifications to the
  * basic search performed by each plugin. The two basic modifications allowed
  * are OR and AND which are defined statically in this class.
+ *
+ * @supported.all.api
  */
 public final class IdSearchOpModifier {
     private int sOp;

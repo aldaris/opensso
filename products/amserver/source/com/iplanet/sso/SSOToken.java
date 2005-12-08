@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOToken.java,v 1.1 2005-11-01 00:30:29 arvindp Exp $
+ * $Id: SSOToken.java,v 1.2 2005-12-08 01:16:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.sso;
 
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The <code>SSOToken</code> class represents a "single sign on"(SSO) token.
@@ -33,8 +32,9 @@ package com.iplanet.sso;
  * name of the client that sent the request (browser). It also contains
  * session-related information such as maximum session time, maximum session
  * idle time and session idle time.
+ *
+ * @supported.all.api
  */
-
 public interface SSOToken {
 
     /**
