@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2005-12-08 01:16:00 veiming Exp $
+   $Id: build.xml,v 1.3 2005-12-12 21:42:24 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -171,6 +171,7 @@
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
         <echo message=" build      : compiles the sources"/>
+        <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
         <echo message=" doc        : creates javadocs"/>
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" demo       : builds the demo application"/>
