@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
+ * $Id: ServiceManager.java,v 1.3 2005-12-12 20:11:50 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -546,7 +546,8 @@ public class ServiceManager {
             // delete that node(schema).
             CachedSMSEntry smse = CachedSMSEntry.getInstance(token, dn, null);
             SMSEntry e = smse.getSMSEntry();
-            Iterator versions = e.subEntries("*", 0, false, false).iterator();
+            Iterator versions = 
+                e.subEntries(token, "*", 0, false, false).iterator();
             if (!versions.hasNext()) {
                 e.delete(token);
                 smse.refresh(e);
