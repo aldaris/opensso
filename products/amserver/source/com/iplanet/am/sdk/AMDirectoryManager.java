@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryManager.java,v 1.1 2005-11-01 00:29:00 arvindp Exp $
+ * $Id: AMDirectoryManager.java,v 1.2 2005-12-12 18:26:32 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2687,7 +2687,14 @@ public class AMDirectoryManager implements AMConstants {
             String cacheKey = orgName + ":" + IdConstants.AMSDK_PLUGIN_NAME;
             IdRepo pClass = null;
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(cacheKey);
+                // idRepoMap.get(cacheKey) could return either a Map or
+                // IdRepo object.
+                // So check the instance before casting it.
+
+                Object obj = idRepoMap.get(cacheKey);
+                if (obj instanceof IdRepo) {
+                    pClass = (IdRepo) idRepoMap.get(cacheKey);
+                }
             }
             if (pClass == null) {
                 Map amsdkConfig = new HashMap();
@@ -2759,7 +2766,9 @@ public class AMDirectoryManager implements AMConstants {
                 if (pNames == null || pNames.isEmpty()) {
                     // Update the cache with empty HashMap
                     synchronized (idRepoMap) {
-                        idRepoMap.put(cacheKey, Collections.EMPTY_MAP);
+                        if (!idRepoMap.containsKey(cacheKey)) {
+                            idRepoMap.put(cacheKey, Collections.EMPTY_MAP);
+                        }
                     }
                     continue; // go to start of while
                 }
