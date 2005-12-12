@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.1 2005-11-01 00:30:56 arvindp Exp $
+ * $Id: Constants.java,v 1.2 2005-12-12 18:07:42 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -894,6 +894,24 @@ public interface Constants {
      * HTTP Form Parameter name used by PEP for posting policy advices to AM
      */
     public static final String COMPOSITE_ADVICE = "sunamcompositeadvice";
+
+    /**
+     * XML tag name used for Advices message
+     */
+    public static final String ADVICES_TAG_NAME = "Advices";
+
+    /**
+     * Key that is used to identify the advice messages from
+     * <code>AuthSchemeCondition</code>
+     */
+    public static final String AUTH_SCHEME_CONDITION_ADVICE =
+        "AuthSchemeConditionAdvice";
+
+    /** Key that is used to identify the advice messages from
+     * <code>AuthLevelCondition</code>.
+     */   
+    public static final String AUTH_LEVEL_CONDITION_ADVICE =
+        "AuthLevelConditionAdvice";
 
     /**
      * property string for determining whether server mode or client mode
