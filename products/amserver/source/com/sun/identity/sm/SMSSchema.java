@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.1 2005-11-01 00:31:29 arvindp Exp $
+ * $Id: SMSSchema.java,v 1.2 2005-12-21 22:00:37 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -81,6 +82,8 @@ public class SMSSchema {
     private String serviceName;
 
     private String version;
+    private static Class docBuildFactoryClass = null;
+
 
     /**
      * Constructor to instantiate SMSSchema with a DOM's Document. Using this
@@ -356,9 +359,59 @@ public class SMSSchema {
 
     public static Document getXMLDocument(InputStream in, boolean validation)
             throws SchemaException, SMSException {
+
+        DocumentBuilderFactory factory = null;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
+            factory = DocumentBuilderFactory.newInstance();
+        } catch (FactoryConfigurationError fce) {
+            if (docBuildFactoryClass == null) {
+                if (SMSEntry.debug.warningEnabled()) {
+                    SMSEntry.debug.warning("SMSSchema:getXMLDocument():"+
+                        "DocumentBuilderFactory class not found,"+
+                        "so getting the instance of :"+
+                        "com.sun.org.apache.xerces.internal.jaxp."+
+                        "DocumentBuilderFactoryImpl with new context "+
+                        "classloader");
+                }
+                try {
+                /* This explicit loading of context classloader is because of
+                   the JAXP issue. The FactoryFinder code always uses a custom
+                   classloader and does not delegate to the new classloader,
+                   in this case our AM classloader for this
+                   DocumentBuilderFactory class.
+                */
+                    docBuildFactoryClass = Class.forName(
+                        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+                } catch (ClassNotFoundException cfe) {
+                    if (SMSEntry.debug.warningEnabled()) {
+                        SMSEntry.debug.warning("SMSSchema:getXMLDocument():"+
+                            "com.sun.org.apache.xerces.internal.jaxp."+
+                                "DocumentBuilderFactory class not found");
+                    }
+                    throw new SMSException(cfe, "sms-init-no-class-found");
+                }
+            }
+            try {
+                factory = (DocumentBuilderFactory)
+                    docBuildFactoryClass.newInstance();
+            } catch (Exception e) {
+                if (SMSEntry.debug.warningEnabled()) {
+                    SMSEntry.debug.warning("SMSSchema: "+
+                        "error in instantiation of :" +
+                            "com.sun.org.apache.xerces.internal.jaxp."+
+                            "DocumentBuilderFactory: Message: " +
+                            e.getMessage());
+                }
+                throw new SMSException(e, "sms-instantiation-failed");
+            }
+        } catch (Exception e) {
+            if (SMSEntry.debug.warningEnabled()) {
+                SMSEntry.debug.warning("SMSSchema: error in instantiation of" +
+                   "DocumentBuilderFactory: Message: " + e.getMessage());
+            }
+            throw new SMSException(e, "sms-instantiation-failed");
+        }
+        try {
             factory.setValidating(validation);
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setErrorHandler(new SMSErrorHandler());
