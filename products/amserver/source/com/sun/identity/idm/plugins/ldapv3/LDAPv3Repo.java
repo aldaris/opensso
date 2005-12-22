@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.1 2005-11-01 00:31:13 arvindp Exp $
+ * $Id: LDAPv3Repo.java,v 1.2 2005-12-22 17:03:16 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1867,7 +1867,7 @@ public class LDAPv3Repo extends IdRepo {
             } else if (membershipType.equals(IdType.ROLE)) {
                 result = getManagedRoleMemberShips(token, type, name,
                         membershipType);
-            } else if (type.equals(IdType.FILTEREDROLE)) {
+            } else if (membershipType.equals(IdType.FILTEREDROLE)) {
                 result = getFilteredRoleMemberShips(token, type, name,
                         membershipType);
             } else { // Memberships of any other types not supported for
@@ -2158,19 +2158,20 @@ public class LDAPv3Repo extends IdRepo {
             searchConstraints.setServerTimeLimit(maxTime * 1000);
         }
 
+        String namingAttr = getNamingAttr(type);
         String[] theAttr = null;
         if (returnAllAttrs) {
             theAttr = new String[] { "*" };
         } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
+	    returnAttrs.add(namingAttr);
             theAttr = (String[]) returnAttrs.toArray(new String[returnAttrs
                     .size()]);
         } else { // don't return any attr it will be faster.
-            // theAttr = new String[]{"*"};
-            theAttr = null;
+	    // Need to get back the naming attribute
+	    theAttr = new String[] { namingAttr };
         }
 
         LDAPSearchResults myResults = null;
-        String namingAttr = getNamingAttr(type);
         String objectClassFilter = getObjClassFilter(type);
 
         StringBuffer filterSB = new StringBuffer();
@@ -2231,12 +2232,11 @@ public class LDAPv3Repo extends IdRepo {
 
         int errorCode = RepoSearchResults.SUCCESS;
         Map allEntryMap = new HashMap();
-        Set allEntryDN = new HashSet();
+        Set allEntries = new HashSet();
         try {
             while (myResults.hasMoreElements()) {
                 LDAPEntry entry = myResults.next();
                 String entryDN = entry.getDN();
-                allEntryDN.add(entryDN);
                 Map attrEntryMap = new HashMap();
 
                 if (returnAllAttrs) {
@@ -2257,7 +2257,14 @@ public class LDAPv3Repo extends IdRepo {
                             attrEntryMap.put(attrName, attrValueSet);
                         }
                     }
-                    allEntryMap.put(entryDN, attrEntryMap);
+		    // Get the naming attribute value
+		    Set idNameValue = (Set) attrEntryMap.get(namingAttr);
+		    String idName = entryDN;
+		    if (idNameValue != null && !idNameValue.isEmpty()) {
+			idName = (String) idNameValue.iterator().next();
+		    }
+		    allEntries.add(idName);
+		    allEntryMap.put(idName, attrEntryMap);
                 } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
                     // return the attributes specified by caller.
                     Iterator itr = returnAttrs.iterator();
@@ -2276,13 +2283,29 @@ public class LDAPv3Repo extends IdRepo {
                         }
                         attrEntryMap.put(attrName, attrValueSet);
                     }
-                    allEntryMap.put(entryDN, attrEntryMap);
+		    // Get the naming attribute value
+		    Set idNameValue = (Set) attrEntryMap.get(namingAttr);
+		    String idName = entryDN;
+		    if (idNameValue != null && !idNameValue.isEmpty()) {
+			idName = (String) idNameValue.iterator().next();
+		    }
+		    allEntries.add(idName);
+		    allEntryMap.put(idName, attrEntryMap);
                 } else {
-                    // returnAllAttrs is false and list of attr to return is
-                    // null
-                    // do not return any attribute
+		    // returnAllAttrs is false and list of attr to return is null
+		    // do not return any attribute  
+		    // Get the naming attribute for results
+		    // return entry DN if empty
+		    String idName = entryDN;
+		    LDAPAttribute ldapAttr = entry.getAttribute(namingAttr);
+		    if (ldapAttr != null ) { 
+			Enumeration enumVals = ldapAttr.getStringValues();
+			if ((enumVals != null) && enumVals.hasMoreElements()) {
+			    idName = (String) enumVals.nextElement();
+			}
+		    }
+		    allEntries.add(idName);
                 }
-
             } // while
 
         } catch (LDAPException e) {
@@ -2304,10 +2327,10 @@ public class LDAPv3Repo extends IdRepo {
         connPool.close(ld);
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: exit search " + "allEntryDN:"
-                    + allEntryDN + " ;allEntryMap:" + allEntryMap);
+                    + allEntries + " ;allEntries:" + allEntryMap);
         }
 
-        return new RepoSearchResults(allEntryDN, errorCode, allEntryMap, type);
+        return new RepoSearchResults(allEntries, errorCode, allEntryMap, type);
 
     }
 
