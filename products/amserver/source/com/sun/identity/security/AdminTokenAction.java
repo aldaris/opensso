@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.2 2005-12-08 01:16:46 veiming Exp $
+ * $Id: AdminTokenAction.java,v 1.3 2006-01-04 18:35:59 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,29 +227,34 @@ public class AdminTokenAction implements PrivilegedAction {
 
         try {
             // call method directly
-            String adminDN = AdminUtils.getAdminDN();
-            String adminPassword = new String(AdminUtils.getAdminPassword());
-            if (!authInitialized
-                    && (WebtopNaming.isServerMode() || SystemProperties
-                            .get(AMADMIN_MODE) != null)) {
-                // Use internal auth context to get the SSOToken
-                AuthContext ac = new AuthContext(new AuthPrincipal(adminDN),
-                        adminPassword.toCharArray());
-                ssoAuthToken = ac.getSSOToken();
-            } else {
-                // Copy the authentication state
-                boolean authInit = authInitialized;
-                if (authInit) {
-                    authInitialized = false;
-                }
+            if (AdminUtils.getAdminPassword() != null) {
+                String adminDN = AdminUtils.getAdminDN();
+                String adminPassword = 
+                    new String(AdminUtils.getAdminPassword());
+                if (!authInitialized && 
+                    (WebtopNaming.isServerMode() || 
+                     SystemProperties.get(AMADMIN_MODE) != null)) {
+                    // Use internal auth context to get the SSOToken
+                    AuthContext ac = 
+                        new AuthContext(new AuthPrincipal(adminDN),
+                            adminPassword.toCharArray());
+                    ssoAuthToken = ac.getSSOToken();
+                } else {
+                    // Copy the authentication state
+                    boolean authInit = authInitialized;
+                    if (authInit) {
+                        authInitialized = false;
+                    }
 
-                // Obtain SSOToken using AuthN service
-                ssoAuthToken = AppSSOTokenProviderFactory.getProvider(adminDN,
-                        adminPassword).getAppSSOToken();
+                    // Obtain SSOToken using AuthN service
+                    ssoAuthToken = 
+                        AppSSOTokenProviderFactory.getProvider(adminDN,
+                            adminPassword).getAppSSOToken();
 
-                // Restore the authentication state
-                if (authInit && ssoAuthToken != null) {
-                    authInitialized = true;
+                    // Restore the authentication state
+                    if (authInit && ssoAuthToken != null) {
+                        authInitialized = true;
+                    }
                 }
             }
         } catch (NoClassDefFoundError ne) {
