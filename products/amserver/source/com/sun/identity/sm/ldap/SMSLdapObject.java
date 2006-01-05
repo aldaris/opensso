@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.1 2005-11-01 00:31:36 arvindp Exp $
+ * $Id: SMSLdapObject.java,v 1.2 2006-01-05 23:10:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,12 +212,18 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
      */
     public Map read(SSOToken token, String dn) throws SMSException,
             SSOException {
-        if (dn == null || dn.length() == 0 || !DN.isDN(dn)) {
+        if (dn == null || dn.length() == 0 ) {
             // This must not be possible return an exception.
-            debug.error("SMSLdapObject: Invalid DN=" + dn);
+            debug.error("SMSLdapObject: read():Null or Empty DN=" + dn);
             throw (new SMSException(new LDAPException(bundle
-                    .getString(IUMSConstants.SMS_INVALID_DN)
+                .getString(IUMSConstants.SMS_INVALID_DN)
                     + dn, LDAPException.NO_SUCH_OBJECT), "sms-NO_SUCH_OBJECT"));
+        }
+        if (!DN.isDN(dn)) {
+            debug.warning("SMSLdapObject: Invalid DN=" + dn);
+            String[] args = {dn};
+            throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                "sms-INVALID_DN", args);
         }
 
         // Check if entry does not exist
