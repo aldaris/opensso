@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2005-11-01 00:28:30 arvindp Exp $
+   $Id: build.xml,v 1.2 2006-01-06 19:49:59 arviranga Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -138,6 +138,11 @@
         </copy>
         <copy todir="${demo.pkg.dir}/serverweb">
             <fileset dir="${demo.www.dir}/server/jsp">
+                <include name="**/*.jsp"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb">
+            <fileset dir="${www.jsp.dir}">
                 <include name="**/*.jsp"/>
             </fileset>
         </copy>
