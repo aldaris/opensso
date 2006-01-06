@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.2 2005-12-08 01:16:07 veiming Exp $
+ * $Id: AMStoreConnection.java,v 1.3 2006-01-06 22:51:49 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -338,7 +338,25 @@ public final class AMStoreConnection implements AMConstants {
      *            Integer type (as returned by <code>getAMObjectType</code>)
      * @return identifier for the above type. Returns null if type is unknown.
      */
-    public static String getAMObjectName(int type) {
+    public String getAMObjectName(int type) {
+        String ret = (String) AMCommonUtils.supportedNames.get(Integer
+                .toString(type));
+        return ret;
+    }
+
+    /**
+     * Take a supported type, and returns the matching name of the supported
+     * managed type. For example, if <code> AMObject.USER</code> is passed in,
+     * it will return "user" (one of the basic supported types in AM SDK. But
+     * this method (and configuration in the service <code>DAI</code>) can be
+     * used to extend the basic supported types to include customer-specific
+     * entities, like "agents", "printers" etc.
+     * 
+     * @param type
+     *            Integer type (as returned by <code>getAMObjectType</code>)
+     * @return identifier for the above type. Returns null if type is unknown.
+     */
+    public static String getObjectName(int type) {
         String ret = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         return ret;

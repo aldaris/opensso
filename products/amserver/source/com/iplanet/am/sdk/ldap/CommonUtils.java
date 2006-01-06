@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonUtils.java,v 1.1 2005-11-01 00:29:28 arvindp Exp $
+ * $Id: CommonUtils.java,v 1.2 2006-01-06 22:51:50 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,8 +45,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.Guid;
 import com.sun.identity.authentication.internal.AuthPrincipal;
-import com.sun.identity.security.AdminDNAction;
-import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
@@ -114,19 +113,9 @@ class CommonUtils {
      */
     protected static SSOToken getInternalToken() {
         if (internalToken == null) {
-            try {
-                SSOTokenManager tm = SSOTokenManager.getInstance();
-                String adminDN = (String) AccessController
-                        .doPrivileged(new AdminDNAction());
-                String adminPassword = (String) AccessController
-                        .doPrivileged(new AdminPasswordAction());
-                internalToken = tm.createSSOToken(new AuthPrincipal(adminDN),
-                        adminPassword);
-            } catch (SSOException e) {
-                debug.error("CommonUtils.getInternalToken(): Unable to "
-                        + "obtain internal token", e);
-            }
-        }
+	    internalToken = (SSOToken) 
+                AccessController.doPrivileged(AdminTokenAction.getInstance());
+	}
         return internalToken;
     }
 
@@ -536,7 +525,7 @@ class CommonUtils {
     protected static boolean populateManagedObjects() {
         try {
             ServiceConfigManager scm = new ServiceConfigManager("DAI",
-                    CommonUtils.getInternalToken());
+                getInternalToken());
             ServiceConfig gc = scm.getGlobalConfig(null);
             Set managedObjects = gc.getSubConfigNames("*", "ManagedObjects");
             if (managedObjects == null || managedObjects.isEmpty()) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryManager.java,v 1.2 2005-12-12 18:26:32 goodearth Exp $
+ * $Id: AMDirectoryManager.java,v 1.3 2006-01-06 22:51:48 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1479,6 +1479,11 @@ public class AMDirectoryManager implements AMConstants {
         boolean amsdkIncluded = false;
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
+            if (!idRepo.getSupportedTypes().contains(membersType)) {
+                // IdRepo plugin does not support the idType for
+                // memberships
+                continue;
+            }
             try {
                 // Map cMap = idRepo.getConfiguration();
                 boolean isAMSDK = idRepo.getClass().getName().equals(
@@ -1559,6 +1564,11 @@ public class AMDirectoryManager implements AMConstants {
         boolean amsdkIncluded = false;
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
+            if (!idRepo.getSupportedTypes().contains(membershipType)) {
+                // IdRepo plugin does not support the idType for
+                // memberships
+                continue;
+            }
             try {
                 // Map cMap = idRepo.getConfiguration();
                 boolean isAMSDK = idRepo.getClass().getName().equals(
@@ -1731,6 +1741,11 @@ public class AMDirectoryManager implements AMConstants {
         IdRepo idRepo;
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
+            if (!idRepo.getSupportedTypes().contains(membersType)) {
+                // IdRepo plugin does not support the idType for
+                // memberships
+                continue;
+            }
             try {
                 idRepo.modifyMemberShip(token, type, name, members,
                         membersType, operation);

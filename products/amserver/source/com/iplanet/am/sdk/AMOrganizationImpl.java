@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
+ * $Id: AMOrganizationImpl.java,v 1.3 2006-01-06 22:51:48 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3096,7 +3096,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
                 .get(Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
-        String entityTypeName = AMStoreConnection.getAMObjectName(type);
+        String entityTypeName = amsc.getAMObjectName(type);
         String containerDN = entityType.getContainerRDN();
         int containerType = entityType.getContainerType();
         String createDN = entryDN;
@@ -3154,7 +3154,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
                 .get(Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
-        String entityTypeName = AMStoreConnection.getAMObjectName(type);
+        String entityTypeName = amsc.getAMObjectName(type);
         String containerDN = entityType.getContainerRDN();
         int containerType = entityType.getContainerType();
         String createDN = entryDN;

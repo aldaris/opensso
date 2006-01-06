@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.2 2005-12-08 01:16:44 veiming Exp $
+ * $Id: IdUtils.java,v 1.3 2006-01-06 22:51:51 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -572,7 +572,7 @@ public final class IdUtils {
         // Getting object type would use the cached attributes
         int sdkType = amdm.getObjectType(token, amsdkdn);
         // Convert the sdkType to IdRepo type
-        IdType type = getType(AMStoreConnection.getAMObjectName(sdkType));
+        IdType type = getType(AMStoreConnection.getObjectName(sdkType));
         String name = (new DN(amsdkdn)).explodeDN(true)[0];
         if (ServiceManager.isCoexistenceMode()) {
             // Get the organization from the object dn

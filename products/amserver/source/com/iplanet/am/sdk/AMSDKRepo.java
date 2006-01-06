@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.1 2005-11-01 00:29:17 arvindp Exp $
+ * $Id: AMSDKRepo.java,v 1.2 2006-01-06 22:51:49 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1540,7 +1540,7 @@ public class AMSDKRepo extends IdRepo {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != AMObject.USER) {
                     Object[] args = { AMStoreConnection
-                            .getAMObjectName(sdkType) };
+                            .getObjectName(sdkType) };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "217",
                             args);
                 }
@@ -1554,7 +1554,7 @@ public class AMSDKRepo extends IdRepo {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != 100) {
                     Object[] args = { AMStoreConnection
-                            .getAMObjectName(sdkType) };
+                            .getObjectName(sdkType) };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "217",
                             args);
                 }
@@ -1569,7 +1569,7 @@ public class AMSDKRepo extends IdRepo {
                 if (sdkType != AMObject.GROUP
                         && sdkType != AMObject.STATIC_GROUP) {
                     Object[] args = { AMStoreConnection
-                            .getAMObjectName(sdkType) };
+                            .getObjectName(sdkType) };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "217",
                             args);
                 }
@@ -1583,7 +1583,7 @@ public class AMSDKRepo extends IdRepo {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != AMObject.ROLE) {
                     Object[] args = { AMStoreConnection
-                            .getAMObjectName(sdkType) };
+                            .getObjectName(sdkType) };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "217",
                             args);
                 }
@@ -1597,7 +1597,7 @@ public class AMSDKRepo extends IdRepo {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != AMObject.FILTERED_ROLE) {
                     Object[] args = { AMStoreConnection
-                            .getAMObjectName(sdkType) };
+                            .getObjectName(sdkType) };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "217",
                             args);
                 }

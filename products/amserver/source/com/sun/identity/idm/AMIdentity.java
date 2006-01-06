@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.2 2005-12-08 01:16:40 veiming Exp $
+ * $Id: AMIdentity.java,v 1.3 2006-01-06 22:51:50 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -725,6 +725,33 @@ public final class AMIdentity {
                             ismember = true;
                             break;
                         }
+                    }
+                }
+            }
+
+            // If membership is still false, check only the UUID
+            // without the amsdkdn
+            if (!ismember && members != null && !members.isEmpty()) {
+                // Get UUID without amsdkdn for "membership" identity
+                String identityDN = identity.getUniversalId();
+                String amsdkdn = identity.getDN();
+                if (amsdkdn != null) {
+                    identityDN = identityDN.substring(0,
+                        identityDN.indexOf(amsdkdn) - 9);
+                }
+                // Get UUID without amsdkdn for users memberships
+                Iterator it = members.iterator();
+                while (it.hasNext()) {
+                    AMIdentity id = (AMIdentity) it.next();
+                    String idDN = id.getUniversalId();
+                    String mdn = id.getDN();
+                    if (mdn != null) {
+                        idDN = idDN.substring(0,
+                            idDN.indexOf(mdn) - 9);
+                    }
+                    if (idDN.equalsIgnoreCase(identityDN)) {
+                        ismember = true;
+                        break;
                     }
                 }
             }
