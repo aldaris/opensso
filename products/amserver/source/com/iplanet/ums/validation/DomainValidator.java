@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainValidator.java,v 1.2 2005-12-08 01:16:34 veiming Exp $
+ * $Id: DomainValidator.java,v 1.3 2006-01-12 00:50:23 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,6 +158,7 @@ public class DomainValidator implements IValidator {
         validDomainChars.addElement("Y");
         validDomainChars.addElement("Z");
         validDomainChars.addElement("-");
+        validDomainChars.addElement("_");
         validDomainChars.addElement("0");
         validDomainChars.addElement("1");
         validDomainChars.addElement("2");
