@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCacheManager.java,v 1.1 2005-11-01 00:28:57 arvindp Exp $
+ * $Id: AMCacheManager.java,v 1.2 2006-01-12 01:41:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -215,6 +215,8 @@ class AMCacheManager extends AMDirectoryManager {
     protected void dirtyCache(Cache thisCache, String dn, int eventType,
             boolean cosType, boolean aciChange, Set attrNames) {
         CacheBlock cb;
+	String origdn = dn;
+	dn = AMCommonUtils.formatToRFC(dn);
         switch (eventType) {
         case AMEvent.OBJECT_ADDED:
             cb = getFromCache(thisCache, dn);
@@ -261,8 +263,9 @@ class AMCacheManager extends AMDirectoryManager {
             debug.message("AMCacheManager.dirtyCache(): Cache dirtied "
                     + "because of Event Notification. Parameters - eventType: "
                     + eventType + ", cosType: " + cosType + ", aciChange: "
-                    + aciChange + ", fullDN: " + dn);
+                    + aciChange + ", fullDN: " + origdn + "; rfcDN =" + dn);
         }
+	dn = origdn;
     }
 
     /**
