@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.2 2005-12-08 01:16:45 veiming Exp $
+ * $Id: LDAPv3EventService.java,v 1.3 2006-01-12 18:06:11 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,7 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.factory.JSSESocketFactory;
 
+import com.iplanet.am.sdk.AMObjectListener;
 import com.iplanet.am.sdk.IdRepoListener;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOToken;
@@ -64,10 +65,11 @@ import com.sun.identity.idm.IdRepoException;
  * search control. Uses ldapjdk asynchronous interfaces so that multiple search
  * requests can be processed by a single thread
  * 
- * The Type of changes that can be monitored are: - 
- * LDAPPersistSearchControl.ADD -
- * LDAPPersistSearchControl.DELETE - LDAPPersistSearchControl.MODIFY -
- * LDAPPersistSearchControl.MODDN
+ * The Type of changes that can be monitored are: 
+ * - LDAPPersistSearchControl.ADD 
+ * - LDAPPersistSearchControl.DELETE 
+ * - LDAPPersistSearchControl.MODIFY 
+ * - LDAPPersistSearchControl.MODDN
  * 
  * A single connection is established initially and reused to service all
  * notification requests.
@@ -130,7 +132,7 @@ public class LDAPv3EventService implements Runnable {
         "sun-idrepo-ldapv3-config-numretires";
 
     private static final String LDAPv3Config_LDAP_RETRY_INTERVAL = 
-        "sun-idrepo-ldapv3-config-retyrinterval";
+	"com.iplanet.am.ldap.connection.delay.between.retries";
 
     private static final String LDAPv3Config_LDAP_ERROR_CODES = 
         "sun-idrepo-ldapv3-config-errorcodes";
@@ -744,7 +746,8 @@ public class LDAPv3EventService implements Runnable {
 
     private void dispatchEventAllChanged(Request request) {
         IdRepoListener el = request.getListener();
-        el.getConfigMap();
+	LDAPv3Repo myldapv3 = request.getOwner();
+	myldapv3.clearCache();
         el.allObjectsChanged();
     }
 
@@ -759,7 +762,11 @@ public class LDAPv3EventService implements Runnable {
                     + " changeType=" + changeType + " configParams="
                     + configParams);
         }
+	LDAPv3Repo myldapv3 = request.getOwner();
+	myldapv3.objectChanged(dn, changeType);
         el.objectChanged(dn, changeType, configParams);
+
+	debugger.error("exit dispatchEvent. configParams=" + configParams);
     }
 
     /**
@@ -772,7 +779,9 @@ public class LDAPv3EventService implements Runnable {
         while (iter.hasNext()) {
             Request req = (Request) iter.next();
             IdRepoListener el = req.getListener();
-            el.allObjectsChanged();
+	    el.allObjectsChanged();
+	    LDAPv3Repo myldapv3 = req.getOwner();
+	    myldapv3.clearCache();
         }
     }
 
@@ -850,7 +859,6 @@ public class LDAPv3EventService implements Runnable {
         Enumeration enumAttrs = findAttrs.getAttributes();
         while (enumAttrs.hasMoreElements()) {
             LDAPAttribute anAttr = (LDAPAttribute) enumAttrs.nextElement();
-            anAttr.getName();
             Enumeration enumVals = anAttr.getStringValues();
             while (enumVals.hasMoreElements()) {
                 enumVals.nextElement();
@@ -1003,7 +1011,7 @@ public class LDAPv3EventService implements Runnable {
                 }
                 retry++;
                 try {
-                    Thread.sleep(connRetryInterval);
+                    Thread.currentThread().sleep(connRetryInterval);
                 } catch (InterruptedException ex) {
                 }
             }
