@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.1 2005-11-01 00:31:27 arvindp Exp $
+ * $Id: SMSEntry.java,v 1.2 2006-01-14 03:21:46 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1010,7 +1010,7 @@ public class SMSEntry implements Cloneable {
 
                     int indx = rfcDNlc.indexOf(dn);
                     if (indx < 0) {
-                        indx = rfcDNlc.indexOf(baseDN);
+                        indx = rfcDNlc.lastIndexOf(baseDN);
                     }
                     String origStr = rfcDN.substring(0, indx - 1);
                     // If orgAttr is not null,replace with the org naming
