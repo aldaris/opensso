@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.2 2005-12-12 18:07:42 mrudul_uchil Exp $
+ * $Id: Constants.java,v 1.3 2006-01-18 00:52:37 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -495,6 +495,24 @@ public interface Constants {
      */
     public static final String AM_SESSION_CLIENT_POLLING_PERIOD = 
         "com.iplanet.am.session.client.polling.period";
+
+    /**
+     * property string for security provider package
+     */
+    public static final String SECURITY_PROVIDER_PKG = 
+        "com.sun.identity.security.x509.pkg";
+    
+    /**
+     * property string for iplanet security provider package
+     */
+    public static final String IPLANET_SECURITY_PROVIDER_PKG = 
+        "com.iplanet.security.x509.impl";
+
+    /**
+     * property string for sun security provider package
+     */
+    public static final String SUN_SECURITY_PROVIDER_PKG = 
+        "com.sun.identity.security.x509.impl";
 
     /**
      * property string for UNIX helper port
