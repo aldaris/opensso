@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLClient.java,v 1.1 2005-11-01 00:30:13 arvindp Exp $
+ * $Id: PLLClient.java,v 1.2 2006-01-19 05:27:46 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,9 +206,17 @@ public class PLLClient {
         }
     }
 
-    // parses the cookies from the response header and stores them in
-    // in cookieTable.
-    static void parseCookies(Map headers, HashMap cookieTable) {
+    /**
+     * Parses the cookies from the response header and stores them in
+     * in cookieTable
+     * 
+     * @param headers
+     *            The Map containig headers
+     * @param cookieTable
+     *            The HashMap that constains cookies to be replayed and stores
+     *            cookies retrieved from the response.
+     */
+    public static void parseCookies(Map headers, HashMap cookieTable) {
         if (headers == null || headers.isEmpty()) {
             return;
         }
@@ -218,7 +226,8 @@ public class PLLClient {
         for (Iterator hrs = headers.entrySet().iterator(); hrs.hasNext();) {
             Map.Entry me = (Map.Entry) hrs.next();
             String key = (String) me.getKey();
-            if (key != null && key.equalsIgnoreCase("Set-cookie")) {
+            if (key != null && (key.equalsIgnoreCase("Set-cookie") ||
+                (key.equalsIgnoreCase("cookie")))) {
                 List list = (List) me.getValue();
                 if (list == null || list.isEmpty()) {
                     continue;
