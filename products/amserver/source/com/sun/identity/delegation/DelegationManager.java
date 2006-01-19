@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.1 2005-11-01 00:31:00 arvindp Exp $
+ * $Id: DelegationManager.java,v 1.2 2006-01-19 21:57:38 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,6 +227,14 @@ public final class DelegationManager {
 
     public void addPrivilege(DelegationPrivilege privilege)
             throws DelegationException {
+        if (debug.messageEnabled()) {
+            debug.message("privilege=" + privilege);
+        }
+        String name = privilege.getName();
+        Set subjects = privilege.getSubjects();
+        DelegationPrivilege dp = new DelegationPrivilege(
+                                        name, subjects, orgName);
+        privilege = dp;
         if (pluginInstance != null) {
             try {
                 pluginInstance.addPrivilege(token, orgName, privilege);
@@ -322,7 +330,17 @@ public final class DelegationManager {
     }
 
     // Gets an instance of DelegationInterface
-    synchronized static DelegationInterface getDelegationPlugin()
+    static DelegationInterface getDelegationPlugin()
+        throws DelegationException {
+        if (pluginInstance != null) {
+            return pluginInstance;
+        }
+        return loadDelegationPlugin();
+    }
+
+
+    // Loads an instance of DelegationInterface
+    synchronized static DelegationInterface loadDelegationPlugin()
             throws DelegationException {
         if (pluginInstance == null) {
             try {
@@ -381,7 +399,7 @@ public final class DelegationManager {
                             "no_plugin_specified", null, null);
                 }
             } catch (Exception e) {
-                debug.error("Unable to get an instance of plugin"
+                debug.error("Unable to get an instance of plugin "
                         + "for delegation", e);
                 pluginInstance = null;
                 throw new DelegationException(e);

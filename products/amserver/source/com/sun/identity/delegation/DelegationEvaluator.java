@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.1 2005-11-01 00:31:00 arvindp Exp $
+ * $Id: DelegationEvaluator.java,v 1.2 2006-01-19 21:56:50 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,6 @@ public class DelegationEvaluator {
     }
 
     public DelegationEvaluator() throws DelegationException {
-        pluginInstance = DelegationManager.getDelegationPlugin();
         if (debug.messageEnabled()) {
             debug.message("Instantiated a DelegationEvaluator.");
         }
@@ -98,12 +97,16 @@ public class DelegationEvaluator {
             String userName = token.getPrincipal().getName();
             if (userName.equalsIgnoreCase(privilegedUserName)) {
                 result = true;
-            } else if (pluginInstance != null) {
+            } else {
+                if (pluginInstance == null) {
+                    pluginInstance = DelegationManager.getDelegationPlugin();
+                    if (pluginInstance == null) {
+                        throw new DelegationException(ResBundleUtils.rbName,
+                            "no_plugin_specified", null, null);
+                    }
+                }
                 result = pluginInstance.isAllowed(token, permission,
                         envParameters);
-            } else {
-                throw new DelegationException(ResBundleUtils.rbName,
-                        "no_plugin_specified", null, null);
             }
         }
         if (debug.messageEnabled()) {
