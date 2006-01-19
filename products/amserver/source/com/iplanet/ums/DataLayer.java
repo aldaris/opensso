@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.3 2005-12-08 01:16:21 veiming Exp $
+ * $Id: DataLayer.java,v 1.4 2006-01-19 00:30:55 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -220,18 +220,8 @@ public class DataLayer implements java.io.Serializable {
             }
             m_instance = new DataLayer(pUser, pPwd, host, port);
 
-            // Initialize event service. This is a Hack - to make sure that
-            // EventService thread is started. The other place this hack
-            // is used is com.iplanet.am.sdk.ldap.AMEventManager which is
-            // initialized in com.iplanet.am.sdk.ldap.DirectoryManager
-            try {
-                debug.message("DataLayer: EventService thread getting  "
-                        + "initialized ");
-                EventService.getEventService();
-            } catch (Exception e) {
-                // An Error occurred while intializing EventService
-                debug.error("DataLayer: Unable to start EventService!!", e);
-            }
+            // Start the EventService thread if it has not already started.
+            initializeEventService();
         }
         return m_instance;
     }
@@ -1387,6 +1377,37 @@ public class DataLayer implements java.io.Serializable {
     public static HashSet getRetryErrorCodes() {
         return retryErrorCodes;
     }
+    
+    private static void initializeEventService() {
+        // Initialize event service. This is to make sure that EventService
+        // thread is started. The other place where it is also tried to start
+        // is: com.iplanet.am.sdk.ldap.AMEventManager which is
+        // initialized in com.iplanet.am.sdk.ldap.DirectoryManager
+        if (!EventService.isThreadStarted()) {
+            // Use a separate thread to start the EventService thread.
+            // This will prevent deadlocks associated in the system because
+            // of EventService related dependencies.
+            InitEventServiceThread th = new InitEventServiceThread();
+            Thread initEventServiceThread = new Thread(th,
+                "InitEventServiceThread");
+            initEventServiceThread.setDaemon(true);
+            initEventServiceThread.start();
+        }
+    }
+
+    private static class InitEventServiceThread implements Runnable {
+        public void run() {
+            debug.message("InitEventServiceThread:initializeEventService() - "
+                + "EventService thread getting  initialized ");
+            try {
+                EventService.getEventService();
+            } catch (Exception e) {
+                // An Error occurred while intializing EventService
+                debug.error("InitEventServiceThread:run() Unable to "
+                    + "start EventService!!", e);
+            }
+        }
+    }    
 
     static private ConnectionPool _ldapPool = null;
 

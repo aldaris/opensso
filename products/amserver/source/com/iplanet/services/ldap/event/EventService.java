@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.2 2005-12-08 01:16:17 veiming Exp $
+ * $Id: EventService.java,v 1.3 2006-01-19 00:30:54 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,6 +140,8 @@ public class EventService implements Runnable {
     protected static boolean _listenerInitialized = false;
 
     protected static Object _listenerInitMonitor = new Object();
+
+    protected static boolean _isThreadStarted = false;
 
     static {
         // Determine the Number of retries for Event Service Connections
@@ -340,6 +342,56 @@ public class EventService implements Runnable {
     public IDSEventListener getIDSListeners(String className) {
         return (IDSEventListener) _ideListenersMap.get(className);
     }
+    
+    public static boolean isThreadStarted() {
+        return _isThreadStarted;
+    }
+    
+    protected void initListeners() {
+        int size = listeners.length;
+        for (int i = 0; i < size; i++){
+            String l1 = listeners[i];
+            try {
+                if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
+                    String enableDataStoreNotification = SystemProperties.get(
+                        "com.sun.identity.sm.enableDataStoreNotification", 
+                        "true");
+                    if (debugger.messageEnabled()) {
+                        debugger.message("EventService.initListeners()-" 
+                                + "com.sun.identity.sm." 
+                                + "enableDataStoreNotification:"
+                                + enableDataStoreNotification);
+                    }
+                    if (enableDataStoreNotification.equals("false") &&
+                        com.sun.identity.sm.ServiceManager.isRealmEnabled()) {
+                        debugger.message("EventService.initListeners() - " 
+                                + "Skipping " 
+                                + "com.sun.identity.sm.ldap.LDAPEventManager");
+                        continue;
+                    }
+                }
+                Class thisClass = Class.forName(l1);
+                IDSEventListener listener = (IDSEventListener)
+                    thisClass.newInstance();
+                _ideListenersMap.put(l1, listener);
+                _instance.addListener(getSSOToken(), listener, 
+                    listener.getBase(), listener.getScope(), 
+                    listener.getFilter(), listener.getOperations());
+                if (debugger.messageEnabled()) {
+                    debugger.message("EventService.initListeners() - " +
+                            "successfully initialized listener: " + l1);
+                }
+            } catch (Exception e) {
+                debugger.error("EventService.initListeners() Unable to start " 
+                        + "listener " + l1, e);
+            }
+        }
+        
+        synchronized (_listenerInitMonitor) {
+            _listenerInitialized = true;
+            _listenerInitMonitor.notifyAll();
+        }  
+    }
 
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
@@ -352,37 +404,7 @@ public class EventService implements Runnable {
                     + "No Idle timeout Set: " + _idleTimeOut + " minutes.");
         }
 
-        int size = listeners.length;
-        for (int i = 0; i < size; i++) {
-            String l1 = listeners[i];
-            try {
-                if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
-                    String enableDataStoreNotification = SystemProperties.get(
-                            "com.sun.identity.sm.enableDataStoreNotification",
-                            "true");
-                    if (enableDataStoreNotification.equals("false")
-                            && com.sun.identity.sm.ServiceManager
-                                    .isRealmEnabled()) {
-                        debugger.message("EventService.run() - Skipping "
-                                + "com.sun.identity.sm.ldap.LDAPEventManager");
-                        continue;
-                    }
-                }
-                Class thisClass = Class.forName(l1);
-                IDSEventListener listener = (IDSEventListener) thisClass
-                        .newInstance();
-                _ideListenersMap.put(l1, listener);
-                _instance.addListener(getSSOToken(), listener, listener
-                        .getBase(), listener.getScope(), listener.getFilter(),
-                        listener.getOperations());
-                if (debugger.messageEnabled()) {
-                    debugger.message("added listener in startup: " + l1);
-                }
-            } catch (Exception e) {
-                debugger.error("EventService: Unable to start listener " + l1,
-                        e);
-            }
-        }
+        initListeners();
 
         synchronized (_listenerInitMonitor) {
             _listenerInitialized = true;
@@ -438,6 +460,13 @@ public class EventService implements Runnable {
             _monitorThread = new Thread(_instance, getName());
             _monitorThread.setDaemon(true);
             _monitorThread.start();
+            
+            // Since this is a singleton class once a getEventService() 
+            // is invoked the thread will be started and the variable 
+            // will be set to true. This will help other components 
+            // to avoid starting it once again if the thread has 
+            // started.
+            _isThreadStarted = true;            
         }
     }
 

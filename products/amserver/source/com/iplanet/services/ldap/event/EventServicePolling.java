@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventServicePolling.java,v 1.1 2005-11-01 00:30:20 arvindp Exp $
+ * $Id: EventServicePolling.java,v 1.2 2006-01-19 00:30:54 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,46 +101,14 @@ public class EventServicePolling extends EventService {
                     + "running! Idle timeout = " + _idleTimeOut + " minutes.");
         }
 
+        // Initialize the listeners
+        initListeners();
+        
         boolean successState = true;
         LDAPMessage message = null;
 
         // Used to determine if the message is processed or not
         boolean processingResult[] = new boolean[1];
-
-        int size = listeners.length;
-        for (int i = 0; i < size; i++) {
-            String l1 = listeners[i];
-            try {
-                if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
-                    String enableDataStoreNotification = SystemProperties.get(
-                            "com.sun.identity.sm.enableDataStoreNotification",
-                            "false");
-                    if (enableDataStoreNotification.equals("false")
-                            && com.sun.identity.sm.ServiceManager
-                                    .isRealmEnabled()) {
-                        continue;
-                    }
-                }
-                Class thisClass = Class.forName(l1);
-                IDSEventListener listener = (IDSEventListener) thisClass
-                        .newInstance();
-                _ideListenersMap.put(l1, listener);
-                _instance.addListener(getSSOToken(), listener, listener
-                        .getBase(), listener.getScope(), listener.getFilter(),
-                        listener.getOperations());
-                if (debugger.messageEnabled()) {
-                    debugger.message("added listener in startup: " + l1);
-                }
-            } catch (Exception e) {
-                debugger.error("EventService: Unable to start listener " + l1,
-                        e);
-            }
-        }
-
-        synchronized (_listenerInitMonitor) {
-            _listenerInitialized = true;
-            _listenerInitMonitor.notifyAll();
-        }
 
         while (successState) {
             try {

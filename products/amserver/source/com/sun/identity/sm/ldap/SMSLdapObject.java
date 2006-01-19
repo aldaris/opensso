@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.2 2006-01-05 23:10:19 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.3 2006-01-19 00:30:55 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,9 +160,19 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
             if (enableProxy) {
                 // Get UMS datalayer
                 dlayer = DataLayer.getInstance();
+                
+                if (debug.messageEnabled()) {
+                    debug.message("SMSLdapObject: DataLayer instance " 
+                            + "obtained.");
+                }
             } else {
                 // Get SM datalayer
                 smdlayer = SMDataLayer.getInstance();
+                
+                if (debug.messageEnabled()) {
+                    debug.message("SMSLdapObject: SMDataLayer instance " 
+                            + "obtained.");
+                }               
             }
             // Use puser id just to get the baseDN from serverconfig.xml
             ServerInstance serverInstance = null;
