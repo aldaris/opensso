@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
+ * $Id: ISLocaleContext.java,v 1.3 2006-01-26 22:35:13 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMTemplate;
 import com.iplanet.am.util.AMClientDetector;
 import com.iplanet.am.util.Locale;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.Misc;
 import com.iplanet.services.cdm.Client;
 import com.iplanet.services.cdm.ClientException;
@@ -42,6 +43,7 @@ import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
@@ -100,15 +102,15 @@ public class ISLocaleContext {
 
     private static AMStoreConnection dpStore = null;
 
-    private static AMClientDetector clientDt = new AMClientDetector();
+    private static AMClientDetector clientDt;
 
-    private static Client defaultClient = ClientsManager.getDefaultInstance();
+    private static Client defaultClient;
+    
+    private Client client;
 
-    private static G11NSettings g11nSettings = G11NSettings.getInstance();
+    private static G11NSettings g11nSettings;
 
-    private static String initCharset;
-
-    private Client client = defaultClient;
+    private static String initCharset;    
 
     private String charset;
 
@@ -117,6 +119,15 @@ public class ISLocaleContext {
     private int localeLevel;
 
     static {
+        String installTime = 
+            SystemProperties.get(AdminTokenAction.AMADMIN_MODE, "false");
+        if (installTime.equalsIgnoreCase("false")) {
+            clientDt = new AMClientDetector();
+            if (AuthUtils.isClientDetectionEnabled()) {
+                defaultClient = ClientsManager.getDefaultInstance();                
+            }
+        }
+        g11nSettings = G11NSettings.getInstance();
         try {
             String initLocaleStr;
             SSOToken token = (SSOToken) AccessController
@@ -165,8 +176,10 @@ public class ISLocaleContext {
             initLocale = java.util.Locale.getDefault();
             initLocaleLevel = OS_LOCALE;
         }
-        initCharset = defaultClient.getCharset(initLocale);
-
+        initCharset = G11NSettings.CDM_DEFAULT_CHARSET;
+        if (defaultClient != null) {
+            initCharset = defaultClient.getCharset(initLocale);
+        }
     }
 
     /**
@@ -178,6 +191,7 @@ public class ISLocaleContext {
         locale = initLocale;
         localeLevel = initLocaleLevel;
         charset = initCharset;
+        client = defaultClient;
     }
 
     /**
@@ -220,7 +234,10 @@ public class ISLocaleContext {
         }
         if (level >= localeLevel) {
             localeLevel = level;
-            charset = client.getCharset(loc);
+            charset = initCharset;
+            if (client != null) {
+                charset = client.getCharset(loc);
+            }
             locale = loc;
         }
     }
@@ -236,11 +253,17 @@ public class ISLocaleContext {
     public void setLocale(HttpServletRequest request) {
         if (request != null) {
             String superLocale = request.getParameter("locale");
-            String agentType = clientDt.getClientType(request);
+            String agentType = AuthUtils.DEFAULT_CLIENT_TYPE;
+            if (clientDt != null) {
+                agentType = clientDt.getClientType(request);
+            }
 
             try {
                 client = ClientsManager.getInstance(agentType);
             } catch (ClientException ex) {
+                // Unable to determine the client hence we fall back
+                // to default client . It is performed at initalization
+            } catch (Exception e) {
                 // Unable to determine the client hence we fall back
                 // to default client . It is performed at initalization
             }
@@ -361,7 +384,10 @@ public class ISLocaleContext {
      */
 
     public String getJavaCharset() {
-        String jCharset = g11nSettings.getJavaCharset(charset);
+        String jCharset = G11NSettings.JAVA_CHARSET_NAME;
+        if (g11nSettings != null) {
+            jCharset = g11nSettings.getJavaCharset(charset);
+        }
         return jCharset;
     }
 

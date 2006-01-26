@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.2 2005-12-08 01:16:11 veiming Exp $
+ * $Id: AMClientDetector.java,v 1.3 2006-01-26 22:34:18 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,8 +79,10 @@ public class AMClientDetector {
         getServiceSchemaManager();
         if (servicePassed) {
             getClientAttributes();
-            initClientTypesManager();
-            executeClientDetector();
+            if (detectionEnabled) {
+                initClientTypesManager();
+                executeClientDetector();
+            }
         }
     }
 
@@ -133,30 +135,30 @@ public class AMClientDetector {
      *         null .
      */
     public String getClientType(HttpServletRequest request) {
-
-        String clientType;
-
+        String clientType = null;
         debug.message("AMClientDetector.getClientType()");
         // Check whether the client detection is enabled or not
-        if (detectionEnabled && clientDetector != null) {
+        if (detectionEnabled) {
             try {
-                clientType = clientDetector.getClientType(request);
-                if (debug.messageEnabled()) {
-                    debug
-                            .message("AMClientDetector: Client Type:"
-                                    + clientType);
+                if (clientDetector != null) {
+                    clientType = clientDetector.getClientType(request);
                 }
-                return clientType;
+                if (debug.messageEnabled()) {
+                    debug.message("AMClientDetector: Client Type : "
+                                    + clientType);
+                }                
             } catch (Exception ex) {
-                // Fall through
+                clientType = clientManager.getDefaultClientType();
             }
-        }
-        clientType = clientManager.getDefaultClientType();
-        if (debug.messageEnabled()) {
-            debug.message("AMClientDetector:default Client Type:" + clientType);
-        }
+        }        
+        
         if (clientType == null || clientType.length() == 0)
             clientType = "genericHTML";
+        
+        if (debug.messageEnabled()) {
+            debug.message("AMClientDetector: Default Client Type : " 
+                + clientType);
+        }
         return clientType;
     }
 
@@ -220,12 +222,13 @@ public class AMClientDetector {
     private static void getClientAttributes() {
         if (attrs != null) {
             String det = Misc.getMapAttr(attrs, CDM_ENABLED_ATTR);
-            if (det != null && det.equalsIgnoreCase("true"))
+            if (det != null && det.equalsIgnoreCase("true")) {
                 detectionEnabled = true;
-            else
+            } else {
                 detectionEnabled = false;
+            }
             if (debug.messageEnabled()) {
-                debug.message("AMClientDetector: ClientDetection enable"
+                debug.message("AMClientDetector: ClientDetection enable : "
                         + detectionEnabled);
             }
             clientDetectionClass = Misc.getMapAttr(attrs, CDM_CLASS_NAME);
