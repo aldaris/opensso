@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObject.java,v 1.2 2005-11-04 18:53:47 veiming Exp $
+ * $Id: SMSFlatFileObject.java,v 1.3 2006-01-26 22:37:13 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1440,7 +1440,9 @@ public class SMSFlatFileObject extends SMSObject {
             boolean recursive) throws SMSException, SSOException {
 
         // not yet implemented
-        return null;
+        Set retSet = new HashSet();
+        retSet.add("ou=services,"+mRootDN);
+        return retSet;
     }
 
     /**
@@ -1455,7 +1457,9 @@ public class SMSFlatFileObject extends SMSObject {
             throws SMSException, SSOException {
 
         // not yet implemented
-        return null;
+        Set retSet = new HashSet();
+        retSet.add("ou=services,"+mRootDN);
+        return retSet;
     }
 
     /**
