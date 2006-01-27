@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.3 2006-01-26 22:35:13 mrudul_uchil Exp $
+ * $Id: ISLocaleContext.java,v 1.4 2006-01-27 09:53:07 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,6 @@ import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
@@ -123,7 +122,8 @@ public class ISLocaleContext {
             SystemProperties.get(AdminTokenAction.AMADMIN_MODE, "false");
         if (installTime.equalsIgnoreCase("false")) {
             clientDt = new AMClientDetector();
-            if (AuthUtils.isClientDetectionEnabled()) {
+            if (clientDt != null 
+                && (clientDt.detectionEnabled()).equalsIgnoreCase("true")) {
                 defaultClient = ClientsManager.getDefaultInstance();                
             }
         }
@@ -253,7 +253,7 @@ public class ISLocaleContext {
     public void setLocale(HttpServletRequest request) {
         if (request != null) {
             String superLocale = request.getParameter("locale");
-            String agentType = AuthUtils.DEFAULT_CLIENT_TYPE;
+            String agentType = Client.CDM_DEFAULT_CLIENT_TYPE;
             if (clientDt != null) {
                 agentType = clientDt.getClientType(request);
             }
