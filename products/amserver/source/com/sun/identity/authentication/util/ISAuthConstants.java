@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.1 2005-11-01 00:30:54 arvindp Exp $
+ * $Id: ISAuthConstants.java,v 1.2 2006-01-27 20:03:40 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -383,7 +383,7 @@ public interface ISAuthConstants {
     public static final String DEFAULT_LOCALE = "en_US";
 
     /**
-     * Property Names
+     * Property Names to be stored in SSOToken
      */
 
     public static final String PRINCIPAL = "Principal";
@@ -397,6 +397,30 @@ public interface ISAuthConstants {
     public static final String SERVICE = "Service";
 
     public static final String HOST = "Host";
+    
+    public static final String USER_PROFILE = "UserProfile";
+    
+    public static final String LOGIN_URL = "loginURL";
+    
+    public static final String SUCCESS_URL = "successURL";
+    
+    public static final String USER_ID = "UserId";
+    
+    public static final String USER_TOKEN = "UserToken";
+    
+    public static final String LOCALE = "Locale";
+    
+    public static final String CHARSET = "CharSet";
+    
+    public static final String CLIENT_TYPE = "clientType";  
+    
+    public static final String AUTH_INSTANT = "authInstant";
+    
+    public static final String PRINCIPALS = "Principals";
+    
+    public static final String INDEX_TYPE = "IndexType";
+    
+    public static final String ROLE = "Role";    
 
     public static final String FILE_PATH_PROPERTY = "filePath";
 
