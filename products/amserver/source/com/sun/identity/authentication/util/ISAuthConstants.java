@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.2 2006-01-27 20:03:40 mrudul_uchil Exp $
+ * $Id: ISAuthConstants.java,v 1.3 2006-01-27 20:29:24 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -381,6 +381,18 @@ public interface ISAuthConstants {
     public static final String DEFAULT_MAX_SESS_CACHING_TIME = "3";
 
     public static final String DEFAULT_LOCALE = "en_US";
+    
+    /**
+     * Option key values for User Profile choice selection
+     */
+
+    public static final String REQUIRED = "Required";
+
+    public static final String CREATE = "Create";
+
+    public static final String IGNORE = "Ignore";
+
+    public static final String CREATE_WITH_ALIAS = "CreateWithAlias";
 
     /**
      * Property Names to be stored in SSOToken
