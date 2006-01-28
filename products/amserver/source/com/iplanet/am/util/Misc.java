@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Misc.java,v 1.1 2005-11-01 00:29:39 arvindp Exp $
+ * $Id: Misc.java,v 1.2 2006-01-28 01:37:08 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,18 +186,25 @@ public class Misc {
             return null;
         }
         Iterator iter = attrValues.iterator();
+	int index = -1;
         if (attrValues.size() == 1) {
-            String strServer = (String) iter.next();
+            String strServer = (String)iter.next();
             if (strServer != null) {
                 strServer = strServer.trim();
+            }
+            if (strServer.startsWith(localDsameServer)) {
+                index = strServer.indexOf("|");
+                if (index != -1) {
+                    return strServer.substring(index + 1);
+                }
             }
             return strServer;
         }
         while (iter.hasNext()) {
-            String s = (String) iter.next();
+            String s = (String)iter.next();
             if (s != null) {
                 if (s.startsWith(localDsameServer)) {
-                    int index = s.indexOf("|");
+                    index = s.indexOf("|");
                     if (index != -1) {
                         return s.substring(index + 1).trim();
                     }
