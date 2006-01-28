@@ -1,0 +1,101 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: AMPostAuthProcessInterface.java,v 1.1 2006-01-28 09:17:00 veiming Exp $
+ *
+ * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ */
+
+
+package com.sun.identity.authentication.spi;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.iplanet.sso.SSOToken;
+
+/**
+ * The <code>AMPostAuthProcessInterface</code> interface needs to 
+ * be implemented by services and applications to do post 
+ * authentication processing. 
+ * <p>
+ * This interface is invoked by Access Manager Authentication
+ * service on a successful authentication , failed authentication 
+ * or during logout.
+ * <p>
+ * This interface has three methods <code>onLoginSuccess</code>,
+ * <code>onLoginFailure</code> and <code>onLogout</code>. The
+ * <code>onLoginSucess</code> will be invoked when authentication
+ * is successful. The <code>onFailure</code> will be invoked on failed
+ * authentication. The <code>onLogout</code> is invoked during a logout.
+ * <p>
+ * The post processing class implementation can be configured per ORGANIZATION 
+ * or SERVICE or ROLE 
+ *
+ * @supported.all.api
+ */
+public interface AMPostAuthProcessInterface {
+    /**
+     * Post processing on successful authentication.
+     *
+     * @param requestParamsMap map containing <code>HttpServletRequest</code>
+     *        parameters
+     * @param request <code>HttpServletRequest</code> object.
+     * @param response <code>HttpServletResponse</code> object.
+     * @param ssoToken authenticated user's single sign token.
+     * @exception AuthenticationException if there is an error.
+     */
+    public void onLoginSuccess(
+        Map requestParamsMap,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        SSOToken ssoToken
+    ) throws AuthenticationException;
+
+    /**
+     * Post processing on failed authentication.
+     *
+     * @param requestParamsMap map containing <code>HttpServletRequest<code>
+     *        parameters.
+     * @param request <code>HttpServletRequest</code> object.
+     * @param response <code>HttpServletResponse</code> object.
+     * @throws AuthenticationException when there is an error.
+     */
+    public void onLoginFailure(
+        Map requestParamsMap,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws AuthenticationException;
+ 
+    /**
+     * Post processing on Logout.
+     *
+     * @param request <code>HttpServletRequest</code> object.
+     * @param response <code>HttpServletResponse</code> object.
+     * @param ssoToken authenticated user's single sign on token.
+     * @throws AuthenticationException
+     */
+    public void onLogout(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        SSOToken ssoToken
+    ) throws AuthenticationException;
+}
