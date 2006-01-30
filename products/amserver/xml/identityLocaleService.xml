@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: identityLocaleService.xml,v 1.2 2006-01-19 06:08:34 veiming Exp $
+   $Id: identityLocaleService.xml,v 1.3 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,15 +33,15 @@
     <Service name="sunIdentityLocaleService" version="1.0">
         <Schema revisionNumber="20">
             <Global validate="no" >
-		<SubSchema name="ResourceBundleName" validate="no" inheritance="multiple">
-		    <SubSchema name="Locale" validate="no" inheritance="multiple">
-		    </SubSchema>
-		</SubSchema>
-	    </Global>
-	</Schema>
-	<Configuration>
-	    <GlobalConfiguration>
-	    </GlobalConfiguration>
-	</Configuration>
+                <SubSchema name="ResourceBundleName" validate="no" inheritance="multiple">
+                    <SubSchema name="Locale" validate="no" inheritance="multiple">
+                    </SubSchema>
+                </SubSchema>
+            </Global>
+        </Schema>
+        <Configuration>
+            <GlobalConfiguration>
+            </GlobalConfiguration>
+        </Configuration>
     </Service>
 </ServicesConfiguration>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: auth.js,v 1.1 2006-01-28 09:17:58 veiming Exp $
+ * $Id: auth.js,v 1.2 2006-01-30 20:58:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@
 /** makes current page occupies entire browser window */
 function occupyFullBrowser() {
     if (top.location != window.location) {
-	top.location = window.location;
+        top.location = window.location;
     }
 }
 
@@ -36,17 +36,17 @@ function placeCursorOnFirstElm() {
     var frmCount = frms.length;
 
     for (var i = 0; i < frmCount; i++) {
-	var frm = frms[i];
-	var sz = frm.elements.length;
+        var frm = frms[i];
+        var sz = frm.elements.length;
 
-	for (var j = 0; j < sz; j++) {
-	    var elm = frm.elements[j];
+        for (var j = 0; j < sz; j++) {
+            var elm = frm.elements[j];
 
-	    if (elm.type != "hidden") {
-		elm.focus();
-		return;
-	    }
-	}
+            if (elm.type != "hidden") {
+                elm.focus();
+                return;
+            }
+        }
     }
 }
 
@@ -113,25 +113,25 @@ function aggSubmit() {
     var hiddenFrm = frms['Login'];
 
     if (hiddenFrm != null) {
-	for (var i = 0; i < elmCount; i++) {
-	    var frm = frms['frm' + i];
+        for (var i = 0; i < elmCount; i++) {
+            var frm = frms['frm' + i];
 
-	    if (frm != null) {
-		var elm = frm.elements[0];
+            if (frm != null) {
+                var elm = frm.elements[0];
 
-		if (elm != null) {
-		    if (elm.type == 'radio') {
-			hiddenFrm.elements[i].value =
-			    getSelectedRadioValue(frm);
-		    } else if (elm.type == 'checkbox') {
-			hiddenFrm.elements[i].value = 
+                if (elm != null) {
+                    if (elm.type == 'radio') {
+                        hiddenFrm.elements[i].value =
+                            getSelectedRadioValue(frm);
+                    } else if (elm.type == 'checkbox') {
+                        hiddenFrm.elements[i].value = 
                             getSelectedCheckBoxValues(frm);
-		    } else {
-			hiddenFrm.elements[i].value = elm.value;
-		    }
-		}
-	    }
-	}
+                    } else {
+                        hiddenFrm.elements[i].value = elm.value;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -142,11 +142,11 @@ function aggSubmit() {
  */
 function getSelectedRadioValue(frmObj) {
     for (var i = 0; i < frmObj.elements.length; i++) {
-	var elm = frmObj.elements[i];
+        var elm = frmObj.elements[i];
 
-	if (elm.checked) {
-	    return elm.value;
-	}
+        if (elm.checked) {
+            return elm.value;
+        }
     }
     return "";
 }
@@ -159,7 +159,7 @@ function getSelectedRadioValue(frmObj) {
 function getSelectedCheckBoxValues(frmObj) {
     var checked = "";
     for (var i = 0; i < frmObj.elements.length; i++) {
-	var elm = frmObj.elements[i];
+        var elm = frmObj.elements[i];
 
         if ((elm.checked) && (elm.type == 'checkbox')) {
             checked = checked + elm.value + "|";
@@ -185,13 +185,13 @@ function strTrim(str){
  */
 function clearFormElms(frm) {
     if (frm != null) {
-	var elms = frm.elements;
+        var elms = frm.elements;
 
-	if ((elms != null) && (elms.length > 0)) {
-	    for (var i = 0; i < elms.length; i++) {
-		var elm = elms[i];
-		elm.value = "";
-	    }
-	}
+        if ((elms != null) && (elms.length > 0)) {
+            for (var i = 0; i < elms.length; i++) {
+                var elm = elms[i];
+                elm.value = "";
+            }
+        }
     }
 }

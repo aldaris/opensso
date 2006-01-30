@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: debug.xml,v 1.1 2005-11-01 00:31:42 arvindp Exp $
+   $Id: debug.xml,v 1.2 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,29 +28,29 @@
 <Debug>
 
     <Default level="WARNING"
-	fileName="/tmp/debug"
-	typeofOutput="FILE" />
+        fileName="/tmp/debug"
+        typeofOutput="FILE" />
 
     <Component name="SMS"
-	level = "OFF"
-	typeofOutput="STDOUT" />
+        level = "OFF"
+        typeofOutput="STDOUT" />
 
     <Component name="UMS"
-	level = "OFF" />
+        level = "OFF" />
 
     <Component name="com.iplanet.services.ldap"
-	level = "OFF" />
+        level = "OFF" />
 
     <Component name="high.SMSAPI"
-	level = "OFF"
-	typeofOutput="STDOUT" />
+        level = "OFF"
+        typeofOutput="STDOUT" />
 
     <Component name="authentication"
-	level = "OFF"
-	typeofOutput="STDOUT" />
+        level = "OFF"
+        typeofOutput="STDOUT" />
 
     <Component name="UTIL"
-	level = "OFF"
-	typeofOutput="STDOUT" />
+        level = "OFF"
+        typeofOutput="STDOUT" />
 
 </Debug>

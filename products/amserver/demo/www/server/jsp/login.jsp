@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: login.jsp,v 1.1 2005-11-01 00:28:37 arvindp Exp $
+   $Id: login.jsp,v 1.2 2006-01-30 20:58:42 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,17 +28,17 @@
         <title>OpenSSO Demo | Login</title>
     </head>
     <body bgcolor="#FFFFFF" text="#000000">
-	<table width="600">
-	<tr>
-	<td>
+        <table width="600">
+        <tr>
+        <td>
         <h3>Authenticate</h3>
         <p>
         Please enter your user name and password:
-	</p>
+        </p>
         <p>(Hint: you can login as andy/andy; bob/bob; or as chris/chris)</p>
         <form action="<%=request.getContextPath()%>/login" method="POST">
-	    <table bgcolor="000000" cellpadding="1" cellspacing="0">
-	    <tr><td>
+            <table bgcolor="000000" cellpadding="1" cellspacing="0">
+            <tr><td>
             <table bgcolor="F0F0F0" border="0" cellpadding="5" cellspacing="0">
                 <tr>
                     <td>Username</td>
@@ -50,20 +50,20 @@
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-			<input type="reset">
+                        <input type="reset">
                         <input type="submit" name="submit" value="submit">
                     </td>
                 </tr>
             </table>
-	    </td></tr>
+            </td></tr>
             </table>
-	    <p>
-	    You can use the following fields to set optional properties in your
-	    session. These properties are identified as p1, p2 and p3.
-	    </p>
-	    <p>
-	    <table bgcolor="000000" cellpadding="1" cellspacing="0">
-	    <tr><td>
+            <p>
+            You can use the following fields to set optional properties in your
+            session. These properties are identified as p1, p2 and p3.
+            </p>
+            <p>
+            <table bgcolor="000000" cellpadding="1" cellspacing="0">
+            <tr><td>
             <table bgcolor="F0F0F0" border="0" cellpadding="5" cellspacing="0">
                 <tr>
                     <th>Name</th>
@@ -76,19 +76,19 @@
                 <tr>
                     <td>Property p2 =</td>
                     <td><input type="text" name="p2"
-			value="<%=System.currentTimeMillis()%>" size="20"></td>
+                        value="<%=System.currentTimeMillis()%>" size="20"></td>
                 </tr>
                 <tr>
                     <td>Property p3 =</td>
                     <td><input type="text" name="p3" value="123" size="20"></td>
-		</tr>
+                </tr>
             </table>
-	    </td></tr>
+            </td></tr>
             </table>
             </p>
         </form>
-	</td>
-	</tr>
-	</table>
+        </td>
+        </tr>
+        </table>
     </body>
 </html>

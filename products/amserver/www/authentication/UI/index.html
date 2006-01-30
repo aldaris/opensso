@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: index.html,v 1.1 2006-01-28 09:17:23 veiming Exp $
+    $Id: index.html,v 1.2 2006-01-30 20:58:46 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,7 +38,7 @@ function redirectToAuth() {
     var url = 'DEPLOY_URI/UI/Login';
 
     if (params != '') {
-	url += params;
+        url += params;
     }
     top.location.replace(url);
 }
@@ -47,9 +47,9 @@ function getQueryParameters() {
     var loc = '' + location;
     var idx = loc.indexOf('?');
     if (idx != -1) {
-	return loc.substring(idx);
+        return loc.substring(idx);
     } else {
-	return '';
+        return '';
     }
 }
 //-->

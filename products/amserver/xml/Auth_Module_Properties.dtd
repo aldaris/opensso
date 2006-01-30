@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Auth_Module_Properties.dtd,v 1.1 2006-01-28 09:18:29 veiming Exp $
+    $Id: Auth_Module_Properties.dtd,v 1.2 2006-01-30 20:58:52 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,7 +58,7 @@
     authentication process (in case it is 'true'). -->
 <!ELEMENT       Callbacks       ( NameCallback | PasswordCallback | 
                                 ChoiceCallback | ConfirmationCallback |
-				HttpCallback )* >
+                                HttpCallback )* >
 <!ATTLIST       Callbacks
         length          NMTOKEN                 #REQUIRED
         order           NMTOKEN                 #REQUIRED
@@ -121,7 +121,7 @@
 
 <!-- HttpCallback element is used by the authentication module with Http 
      protocol based handshaking negotiation. -->
-<!ELEMENT	HttpCallback	(HttpHeader, Negotiation, HttpErrorCode)>
+<!ELEMENT        HttpCallback        (HttpHeader, Negotiation, HttpErrorCode)>
 
 
 <!-- Prompt element will be used by the module to request the
@@ -151,12 +151,12 @@
 <!ELEMENT       Value           ( #PCDATA ) > 
 
 <!-- HttpHeader element is used in HttpCallback -->
-<!ELEMENT	HttpHeader	( #PCDATA ) >
+<!ELEMENT        HttpHeader        ( #PCDATA ) >
 
 <!-- Negotiation element is used in HttpCallback to set the negotiation header
      in HttpServletResponse -->
-<!ELEMENT	Negotiation	( #PCDATA ) >
+<!ELEMENT        Negotiation        ( #PCDATA ) >
 
 <!-- Code element is used in HttpCallback to set the error code in negotiation
      response -->
-<!ELEMENT	HttpErrorCode 	( #PCDATA ) >
+<!ELEMENT        HttpErrorCode         ( #PCDATA ) >

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: config.xml,v 1.6 2006-01-19 19:59:51 veiming Exp $
+   $Id: config.xml,v 1.7 2006-01-30 20:58:55 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,15 +28,15 @@
 
 <configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
     <service name="IdentityManagementServices"
-	targetNamespace="http://isp.com/wsdl"
-	typeNamespace="http://isp.com/types"
-	packageName="com.sun.identity.jaxrpc">
-	<interface name="com.sun.identity.sm.jaxrpc.SMSObjectIF"
-	    servantName="com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl" />
-	<interface name="com.iplanet.am.sdk.remote.DirectoryManagerIF"
-	    servantName="com.iplanet.am.sdk.remote.DirectoryManagerImpl" />
+        targetNamespace="http://isp.com/wsdl"
+        typeNamespace="http://isp.com/types"
+        packageName="com.sun.identity.jaxrpc">
+        <interface name="com.sun.identity.sm.jaxrpc.SMSObjectIF"
+            servantName="com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl" />
+        <interface name="com.iplanet.am.sdk.remote.DirectoryManagerIF"
+            servantName="com.iplanet.am.sdk.remote.DirectoryManagerImpl" />
         <interface name="com.sun.identity.entity.EntityObjectIF"
-	    servantName="com.sun.identity.entity.EntityObjectImpl" />
+            servantName="com.sun.identity.entity.EntityObjectImpl" />
     </service>
 
 

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthConfig.xml,v 1.1 2006-01-28 09:18:38 veiming Exp $
+    $Id: amAuthConfig.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,7 +39,7 @@
             serviceHierarchy="/DSAMEConfig/iPlanetAMAuthConfiguration"
             i18nFileName="amAuthConfig"
             i18nKey="iplanet-am-auth-config-service-description"
-	    revisionNumber="20"
+            revisionNumber="20"
             propertiesViewBeanURL="@CONSOLE_URI@/auth/ACServiceInstanceList"> 
             <Global>
                 <AttributeSchema name="serviceObjectClasses"
@@ -63,12 +63,12 @@
                             propertiesViewBeanURL="@CONSOLE_URI@/auth/ACModuleList" 
                             uitype="link"
                             i18nKey="a101" />
- 	                    <AttributeSchema name="iplanet-am-auth-login-success-url"
+                             <AttributeSchema name="iplanet-am-auth-login-success-url"
                             type="list"
                             syntax="string"
                             i18nKey="a102">
                             <DefaultValues>
- 				 <Value/>
+                                  <Value/>
                             </DefaultValues>
                         </AttributeSchema>
                         <AttributeSchema name="iplanet-am-auth-login-failure-url"
@@ -101,21 +101,21 @@
                     <DefaultValues>
                         <Value>[Empty]</Value>
                     </DefaultValues>
-                </AttributeSchema>		
+                </AttributeSchema>                
             </Dynamic>
         </Schema> 
-	<Configuration>
-	    <OrganizationConfiguration name="/">
-		<SubConfiguration name="Configurations">
-		    <SubConfiguration name="ldapService"
-			id="NamedConfiguration">
-			<AttributeValuePair>
-			    <Attribute name="iplanet-am-auth-configuration"/>
-			    <Value>&lt;AttributeValuePair&gt;&lt;Value&gt;LDAP REQUIRED &lt;&#47;Value&gt;&lt;&#47;AttributeValuePair&gt;</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		</SubConfiguration>
-	    </OrganizationConfiguration>
-	</Configuration>
+        <Configuration>
+            <OrganizationConfiguration name="/">
+                <SubConfiguration name="Configurations">
+                    <SubConfiguration name="ldapService"
+                        id="NamedConfiguration">
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-auth-configuration"/>
+                            <Value>&lt;AttributeValuePair&gt;&lt;Value&gt;LDAP REQUIRED &lt;&#47;Value&gt;&lt;&#47;AttributeValuePair&gt;</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+            </OrganizationConfiguration>
+        </Configuration>
     </Service> 
 </ServicesConfiguration> 

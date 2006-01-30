@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthWindowsDesktopSSO.xml,v 1.1 2006-01-28 09:18:43 veiming Exp $
+    $Id: amAuthWindowsDesktopSSO.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,85 +38,85 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/iPlanetAMAuthWindowsDesktopSSOService"
             i18nFileName="amAuthWindowsDesktopSSO"
-	    revisionNumber="20"
+            revisionNumber="20"
             i18nKey="iplanet-am-auth-windowsdesktopsso-service-description">
 
             <Organization>
-	        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-principal-name"
+                <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-principal-name"
                     type="single"
                     syntax="string"
                     i18nKey="a101">
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-windowsdesktopsso-keytab-file"
+                <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-keytab-file"
                     type="single"
                     syntax="string"
                     i18nKey="a102">
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kerberos-realm"
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kerberos-realm"
                     type="single"
                     syntax="string"
                     i18nKey="a103">
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kdc"
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kdc"
                     type="single"
                     syntax="string"
                     i18nKey="a104">
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-windowsdesktopsso-returnRealm"
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-returnRealm"
                     type="single"
                     syntax="boolean"
                     i18nKey="a105">
                     <DefaultValues>
                         <Value>false</Value>
                     </DefaultValues>
-		</AttributeSchema>
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-auth-level"
                     type="single"
                     syntax="number"
                     i18nKey="a106">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>0</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-		<SubSchema name="serverconfig" inheritance="multiple">
-    	            <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-principal-name"
+                <SubSchema name="serverconfig" inheritance="multiple">
+                        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-principal-name"
                         type="single"
                         syntax="string"
                         i18nKey="a101">
                     </AttributeSchema>
-    		    <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-keytab-file"
+                        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-keytab-file"
                         type="single"
                         syntax="string"
                         i18nKey="a102">
-    		    </AttributeSchema>
-    		    <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kerberos-realm"
+                        </AttributeSchema>
+                        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kerberos-realm"
                         type="single"
                         syntax="string"
                         i18nKey="a103">
-    		    </AttributeSchema>
-    		    <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kdc"
+                        </AttributeSchema>
+                        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-kdc"
                         type="single"
                         syntax="string"
                         i18nKey="a104">
-    		    </AttributeSchema>
-    		    <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-returnRealm"
+                        </AttributeSchema>
+                        <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-returnRealm"
                         type="single"
                         syntax="boolean"
                         i18nKey="a105">
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
-    		    </AttributeSchema>
+                        </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-windowsdesktopsso-auth-level"
                         type="single"
                         syntax="number"
                         i18nKey="a106">
-    		    <DefaultValues>
+                        <DefaultValues>
                             <Value>0</Value>
-    		    </DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
-		</SubSchema>
-	    </Organization>
+                </SubSchema>
+            </Organization>
         </Schema>
     </Service>
 </ServicesConfiguration>

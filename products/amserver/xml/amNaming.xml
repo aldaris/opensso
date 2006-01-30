@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amNaming.xml,v 1.3 2006-01-19 06:08:32 veiming Exp $
+   $Id: amNaming.xml,v 1.4 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,50 +34,50 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMNamingService"
             i18nFileName="amNaming"
-	    revisionNumber="20"
+            revisionNumber="20"
             i18nKey="iplanet-am-naming-service-description">
- 	    <Global>
+             <Global>
                 <AttributeSchema name="serviceObjectClasses"
                     type="list"
                     syntax="string"
-		    i18nKey="">
-		    <DefaultValues>
+                    i18nKey="">
+                    <DefaultValues>
                         <Value>iplanet-am-naming-service</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-profile-url"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-profile-url"
                     type="single"
                     syntax="url"
                     i18nKey="a101">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>%protocol://%host:%port@SERVER_URI@/profileservice</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-session-url"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-session-url"
                     type="single"
                     syntax="url"
                     i18nKey="a102">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>%protocol://%host:%port@SERVER_URI@/sessionservice</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-logging-url"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-logging-url"
                     type="single"
                     syntax="url"
                     i18nKey="a103">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>%protocol://%host:%port@SERVER_URI@/loggingservice</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-policy-url"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-policy-url"
                     type="single"
                     syntax="url"
                     i18nKey="a105">
-		    <DefaultValues>
-			<Value>%protocol://%host:%port@SERVER_URI@/policyservice</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-auth-url"
+                    <DefaultValues>
+                        <Value>%protocol://%host:%port@SERVER_URI@/policyservice</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-auth-url"
                     type="single"
                     syntax="url"
                     i18nKey="a106">
@@ -85,15 +85,15 @@
                         <Value>%protocol://%host:%port@SERVER_URI@/authservice</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		 <AttributeSchema name="iplanet-am-naming-samlawareservlet-url"
-		    type="single"
-	            syntax="url"
+                 <AttributeSchema name="iplanet-am-naming-samlawareservlet-url"
+                    type="single"
+                    syntax="url"
                     i18nKey="a107">
                     <DefaultValues>
                         <Value>%protocol://%host:%port@SERVER_URI@/SAMLAwareServlet</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-samlsoapreceiver-url"
+                <AttributeSchema name="iplanet-am-naming-samlsoapreceiver-url"
                     type="single"
                     syntax="url"
                     i18nKey="a108">
@@ -101,7 +101,7 @@
                         <Value>%protocol://%host:%port@SERVER_URI@/SAMLSOAPReceiver</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-samlpostservlet-url"
+                <AttributeSchema name="iplanet-am-naming-samlpostservlet-url"
                     type="single"
                     syntax="url"
                     i18nKey="a109">
@@ -109,7 +109,7 @@
                         <Value>%protocol://%host:%port@SERVER_URI@/SAMLPOSTProfileServlet</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-samlassertionmanager-url"
+                <AttributeSchema name="iplanet-am-naming-samlassertionmanager-url"
                     type="single"
                     syntax="url"
                     i18nKey="a110">
@@ -127,7 +127,7 @@
                     </DefaultValues>
                 </AttributeSchema>
 
-		<AttributeSchema name="iplanet-am-naming-fsassertionmanager-url"
+                <AttributeSchema name="iplanet-am-naming-fsassertionmanager-url"
                     type="single"
                     syntax="url"
                     i18nKey="a111">
@@ -135,46 +135,46 @@
                         <Value>%protocol://%host:%port@SERVER_URI@/FSAssertionManagerServlet/FSAssertionManagerIF</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-naming-securitytokenmanager-url"
+                <AttributeSchema name="iplanet-am-naming-securitytokenmanager-url"
                     type="single"
                     syntax="url"
                     i18nKey="a113">
                     <DefaultValues>
-			<Value>%protocol://%host:%port@SERVER_URI@/SecurityTokenManagerServlet/SecurityTokenManagerIF</Value>
+                        <Value>%protocol://%host:%port@SERVER_URI@/SecurityTokenManagerServlet/SecurityTokenManagerIF</Value>
                     </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-profile-class"
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-profile-class"
                     type="single"
                     syntax="string"
                     i18nKey="">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>com.iplanet.dpro.profile.agent.ProfileService</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-session-class"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-session-class"
                     type="single"
                     syntax="string"
                     i18nKey="">
-		    <DefaultValues>
-			<Value>com.iplanet.dpro.session.service.SessionRequestHandler</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-logging-class"
+                    <DefaultValues>
+                        <Value>com.iplanet.dpro.session.service.SessionRequestHandler</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-logging-class"
                     type="single"
                     syntax="string"
                     i18nKey="">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>com.sun.identity.log.service.LogService</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-naming-policy-class"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-naming-policy-class"
                     type="single"
                     syntax="string"
                     i18nKey="">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>com.sun.identity.policy.remote.PolicyRequestHandler</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-naming-auth-class"
                     type="single"
                     syntax="string"
@@ -184,6 +184,6 @@
                     </DefaultValues>
                 </AttributeSchema>
             </Global>
-	</Schema>
+        </Schema>
     </Service>
 </ServicesConfiguration>

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthJDBC.xml,v 1.1 2006-01-28 09:18:40 veiming Exp $
+    $Id: amAuthJDBC.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,9 +35,9 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/sunAMAuthJDBCService"
             i18nFileName="amAuthJDBC"
-	    revisionNumber="20"
+            revisionNumber="20"
             i18nKey="sunAMAuthJDBCServiceDescription">
-	    
+            
             <Organization>
                 <AttributeSchema name="sunAMAuthJDBCConnectionType"
                     type="single_choice"
@@ -115,7 +115,7 @@
                         <Value>com.sun.identity.authentication.modules.jdbc.ClearTextTransform</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="sunAMAuthJDBCAuthLevel"
+                <AttributeSchema name="sunAMAuthJDBCAuthLevel"
                     type="single"
                     syntax="number"
                     i18nKey="a109">
@@ -123,7 +123,7 @@
                         <Value>0</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<SubSchema name="serverconfig" inheritance="multiple">
+                <SubSchema name="serverconfig" inheritance="multiple">
                     <AttributeSchema name="sunAMAuthJDBCConnectionType"
                         type="single_choice"
                         syntax="string"
@@ -200,7 +200,7 @@
                             <Value>com.sun.identity.authentication.modules.jdbc.ClearTextTransform</Value>
                         </DefaultValues>
                     </AttributeSchema>
-    		    <AttributeSchema name="sunAMAuthJDBCAuthLevel"
+                        <AttributeSchema name="sunAMAuthJDBCAuthLevel"
                         type="single"
                         syntax="number"
                         i18nKey="a109">
@@ -208,7 +208,7 @@
                             <Value>0</Value>
                         </DefaultValues>
                     </AttributeSchema>
-		</SubSchema>
+                </SubSchema>
             </Organization>
         </Schema>
     </Service>

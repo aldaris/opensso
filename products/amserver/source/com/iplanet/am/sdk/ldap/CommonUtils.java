@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonUtils.java,v 1.2 2006-01-06 22:51:50 arviranga Exp $
+ * $Id: CommonUtils.java,v 1.3 2006-01-30 20:58:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,9 +113,9 @@ class CommonUtils {
      */
     protected static SSOToken getInternalToken() {
         if (internalToken == null) {
-	    internalToken = (SSOToken) 
+            internalToken = (SSOToken) 
                 AccessController.doPrivileged(AdminTokenAction.getInstance());
-	}
+        }
         return internalToken;
     }
 

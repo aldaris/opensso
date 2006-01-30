@@ -17,90 +17,87 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: adminstyle.css,v 1.1 2006-01-28 09:18:00 veiming Exp $
+ * $Id: adminstyle.css,v 1.2 2006-01-30 20:58:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 
-
-
-
 BODY.dataFrame  { 
-		color: black;
-		background: #cccccc; }
+                color: black;
+                background: #cccccc; }
 
 BODY.navFrame   { 
-		color: black;
-		background: #cccccc; 
-		}
+                color: black;
+                background: #cccccc; 
+                }
 
 BODY.tabFrame   { 
-		color: black;
-		background: #ffffff; 
-		}
+                color: black;
+                background: #ffffff; 
+                }
 
 BODY.bannerFrame { 
-		color: black;
-		background: #999999; 
-		}
+                color: black;
+                background: #999999; 
+                }
 
-H2		{ color: black }
+H2              { color: black }
 IMAGE           { border: 0; }
 
-TABLE.header	{ 
-		background: #999999; 
-		font-weight: bold;
-		}
+TABLE.header    { 
+                background: #999999; 
+                font-weight: bold;
+                }
 TD.vSpacer      { background: #000000; }
 TD.hSpacer      { background: #000000; }
-TD.hLine	{ background: #aaaaaa; }
-TD.list		{ vertical-align: text-top; }
+TD.hLine        { background: #aaaaaa; }
+TD.list         { vertical-align: text-top; }
 
-TD.attrName	{ 
-		font-weight: bold;
-		}
-TD.label	{
-		font-weight: bold;
-		}
+TD.attrName     { 
+                font-weight: bold;
+                }
+TD.label        {
+                font-weight: bold;
+                }
 
 TD.attrSeparator { 
-		background: #999999;
-		color: #000000; 
-		}
+                background: #999999;
+                color: #000000; 
+                }
 
-TD.message	{
+TD.message      {
                 font-weight: bold;
                 font-style:italic;
                 font-size:smaller;
-		}
+                }
 
-.addons		{ 
-		position: relative; 
-		visibility:hidden; 
-		}
-.bColor     	{ 
-		color: black; 
-		background: white; 
-		}
+.addons         { 
+                position: relative; 
+                visibility:hidden; 
+                }
+.bColor             { 
+                color: black; 
+                background: white; 
+                }
 
-.button 	{
+.button         {
                 font-family: verdana;
                 font-size: 12pt;
                 font-weight: normal;
                 color: white;
-		background: #666699;
+                background: #666699;
                 margin-left: 2px;
                 margin-right: 4px;
-        	}
+                }
 
-.sectionTitle	{
-		font-weight: bold;
-		}
-.hiText		{
-		font-weigth: bold;
-		}
-	
-#reqField 	{
-		color: #0000FF;
-		}
+.sectionTitle   {
+                font-weight: bold;
+                }
+.hiText         {
+                font-weigth: bold;
+                }
+        
+#reqField       {
+                color: #0000FF;
+                }

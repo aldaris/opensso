@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ums.xml,v 1.1 2005-11-01 00:31:44 arvindp Exp $
+   $Id: ums.xml,v 1.2 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,21 +69,21 @@
                 </SubSchema>
 
             </SubSchema>
-	</Global> </Schema>
+        </Global> </Schema>
         <Configuration> <GlobalConfiguration>
             <SubConfiguration name="templates">
                 <SubConfiguration name="StructureTemplates">
                     <SubConfiguration name="Organization" id="StructureUmsObjects">
                         <AttributeValuePair>
-			    <Attribute name="class" />
+                            <Attribute name="class" />
                             <Value>com.iplanet.ums.Organization</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
-			    <Attribute name="name" />
+                            <Attribute name="name" />
                             <Value>o=org</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
-			    <Attribute name="childNode" />
+                            <Attribute name="childNode" />
                             <Value>OrganizationalUnit</Value>
                             <Value>PeopleContainer</Value>
                         </AttributeValuePair>
@@ -191,7 +191,7 @@
                             <Value>objectClass=inetOrgPerson</Value>
                             <Value>objectClass=inetUser</Value>
                             <Value>objectClass=nsManagedPerson</Value>
-			    <Value>objectClass=iplanetpreferences</Value>
+                            <Value>objectClass=iplanetpreferences</Value>
                             <Value>cn</Value>
                             <Value>sn</Value>
                             <Value>uid</Value>
@@ -206,9 +206,9 @@
                             <Value>mail</Value>
                             <Value>postaladdress</Value>
                             <Value>usercertificate</Value>
-			    <Value>preferredLanguage</Value>
-			    <Value>preferredLocale</Value>
-			    <Value>preferredTimeZone</Value>
+                            <Value>preferredLanguage</Value>
+                            <Value>preferredLocale</Value>
+                            <Value>preferredTimeZone</Value>
                         </AttributeValuePair>
                         <AttributeValuePair> <Attribute name="validated" />
                             <Value>mail=com.iplanet.ums.validation.MailAddressValidator</Value>
@@ -636,7 +636,7 @@
                 </SubConfiguration>
             </Organization>
 -->
-	</GlobalConfiguration>
+        </GlobalConfiguration>
         </Configuration>
     </Service>
 </ServicesConfiguration>

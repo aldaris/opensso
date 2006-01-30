@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthNT.xml,v 1.1 2006-01-28 09:18:43 veiming Exp $
+    $Id: amAuthNT.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -68,7 +68,7 @@
                         <Value>0</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<SubSchema name="serverconfig" inheritance="multiple">
+                <SubSchema name="serverconfig" inheritance="multiple">
                     <AttributeSchema name="iplanet-am-auth-nt-domain"
                         type="single"
                         syntax="string"
@@ -95,7 +95,7 @@
                             <Value>0</Value>
                         </DefaultValues>
                     </AttributeSchema>
-		</SubSchema>
+                </SubSchema>
             </Organization>
 
         </Schema>

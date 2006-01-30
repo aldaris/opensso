@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.1 2006-01-28 09:18:36 veiming Exp $
+    $Id: amAuth.xml,v 1.2 2006-01-30 20:58:53 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,17 +40,17 @@
             i18nFileName="amAuth"
             revisionNumber="30"
             i18nKey="iplanet-am-auth-service-description">
-	    <Global>
+            <Global>
                 <AttributeSchema name="iplanet-am-auth-supported-auth-modules"
                     type="list"
                     syntax="string"
                     i18nKey="a124">
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-authenticators" 
+                <AttributeSchema name="iplanet-am-auth-authenticators" 
                     type="list"
                     syntax="string" 
                     i18nKey="a117">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>com.sun.identity.authentication.modules.ldap.LDAP</Value>
                         <Value>com.sun.identity.authentication.modules.ad.AD</Value>
                         <Value>com.sun.identity.authentication.modules.membership.Membership</Value>
@@ -62,7 +62,7 @@
                         <Value>com.sun.identity.authentication.modules.windowsdesktopsso.WindowsDesktopSSO</Value>
                         <Value>com.sun.identity.authentication.modules.msisdn.MSISDN</Value>
                         <Value>com.sun.identity.authentication.modules.datastore.DataStore</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-connection-pool-size"
                     type="list"
@@ -85,16 +85,16 @@
                         <Value>300</Value>
                     </DefaultValues>
                 </AttributeSchema>
-	    </Global>
-            <Organization>	        
-		<AttributeSchema name="iplanet-am-auth-allowed-modules"
+            </Global>
+            <Organization>                
+                <AttributeSchema name="iplanet-am-auth-allowed-modules"
                     type="list"
                     syntax="string"
                     i18nKey="">
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-dynamic-profile-creation"
+                <AttributeSchema name="iplanet-am-auth-dynamic-profile-creation"
                      type="single_choice"
-		     syntax="string"
+                     syntax="string"
                      i18nKey="a102">
                      <ChoiceValues>
                           <ChoiceValue i18nKey="Create">true</ChoiceValue>
@@ -102,60 +102,60 @@
                           <ChoiceValue i18nKey="Ignore">ignore</ChoiceValue>
                           <ChoiceValue i18nKey="Required">false</ChoiceValue>
                      </ChoiceValues>
-		     <DefaultValues>
+                     <DefaultValues>
                           <Value>false</Value>
                      </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-admin-auth-module" 
+                <AttributeSchema name="iplanet-am-auth-admin-auth-module" 
                     type="single_choice" 
                     syntax="string"
                     i18nKey="a104">
                     <ChoiceValues>
-			<ChoiceValuesClassName
-			    className=
-		"com.sun.identity.authentication.service.ConfiguredAuthServices" />
+                        <ChoiceValuesClassName
+                            className=
+                "com.sun.identity.authentication.service.ConfiguredAuthServices" />
                     </ChoiceValues>
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>[Empty]</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-default-role" 
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-default-role" 
                     type="list"
                     syntax="string" 
                     i18nKey="a105">
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-persistent-cookie-mode" 
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-persistent-cookie-mode" 
                     type="single"
                     syntax="boolean" 
                     i18nKey="a108">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>false</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-persistent-cookie-time" 
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-persistent-cookie-time" 
                     type="single"
                     syntax="number" 
                     i18nKey="a109">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>2147483</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sunEnableModuleBasedAuth"
                     type="single"
                     syntax="boolean"
                     i18nKey="a145">
                     <DefaultValues>
-			<Value>true</Value>
+                        <Value>true</Value>
                     </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-login-failure-lockout-mode" 
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-login-failure-lockout-mode" 
                     type="single"
                     syntax="boolean" 
                     i18nKey="a125">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>false</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="sunStoreInvalidAttemptsInDS"
                     type="single"
                     syntax="boolean"
@@ -164,7 +164,7 @@
                         <Value>true</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-lockout-duration"
+                <AttributeSchema name="iplanet-am-auth-lockout-duration"
                     type="single"
                     syntax="number"
                     i18nKey="a130">
@@ -172,21 +172,21 @@
                         <Value>0</Value>
                     </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-login-failure-count" 
+                <AttributeSchema name="iplanet-am-auth-login-failure-count" 
                     type="single"
                     syntax="number" 
                     i18nKey="a126">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>5</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-login-failure-duration" 
+                <AttributeSchema name="iplanet-am-auth-login-failure-duration" 
                     type="single"
                     syntax="number" 
                     i18nKey="a127">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>300</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
 
                 <AttributeSchema name="iplanet-am-auth-lockout-email-address"
@@ -202,7 +202,7 @@
                         <Value>4</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-lockout-attribute-name"
+                <AttributeSchema name="iplanet-am-auth-lockout-attribute-name"
                     type="single"
                     syntax="string"
                     i18nKey="a131">
@@ -212,51 +212,51 @@
                     syntax="string"
                     i18nKey="a132">
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-user-container"
+                <AttributeSchema name="iplanet-am-auth-user-container"
                     type="list"
                     syntax="dn"
                     i18nKey="">
                     <DefaultValues>
-			<Value>ou=People</Value>
+                        <Value>ou=People</Value>
                     </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-alias-attr-name" 
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-alias-attr-name" 
                     type="list"
                     syntax="string" 
                     i18nKey="a114">
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-user-naming-attr"
-		    type="single"
+                <AttributeSchema name="iplanet-am-auth-user-naming-attr"
+                    type="single"
                     syntax="string"
                     i18nKey="">
                     <DefaultValues>
-			<Value>@USER_NAMING_ATTR@</Value>
+                        <Value>@USER_NAMING_ATTR@</Value>
                     </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-default-auth-level" 
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-default-auth-level" 
                     type="single"
                     syntax="number" 
                     i18nKey="a500">
-		    <DefaultValues>
-			<Value>0</Value>
-		    </DefaultValues>
+                    <DefaultValues>
+                        <Value>0</Value>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-locale" 
+                <AttributeSchema name="iplanet-am-auth-locale" 
                     type="single"
                     syntax="string" 
                     i18nKey="a120">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@CURRENT_PLATFORM_LOCALE@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-org-config"
                     type="single_choice" 
                     syntax="string"
                     i18nKey="a121">
                     <ChoiceValues>
-			<ChoiceValuesClassName
-			    className=
-		"com.sun.identity.authentication.service.ConfiguredAuthServices" />
+                        <ChoiceValuesClassName
+                            className=
+                "com.sun.identity.authentication.service.ConfiguredAuthServices" />
                     </ChoiceValues>
                     <DefaultValues>
                         <Value>[Empty]</Value>
@@ -299,42 +299,42 @@
                          <Value>com.sun.identity.authentication.spi.DefaultUserIDGenerator</Value>
                      </DefaultValues>
                  </AttributeSchema> 
-		<AttributeSchema name="sunAMIdentityType"
-		    type="multiple_choice"
-		    syntax="string"
-		    i18nKey="a142">
-		    <ChoiceValues>
-			<ChoiceValuesClassName
-			    className=
+                <AttributeSchema name="sunAMIdentityType"
+                    type="multiple_choice"
+                    syntax="string"
+                    i18nKey="a142">
+                    <ChoiceValues>
+                        <ChoiceValuesClassName
+                            className=
                     "com.sun.identity.authentication.service.ConfiguredIdentityTypes" />
-		    </ChoiceValues>
-		    <DefaultValues>
-			<Value>user</Value>
-                        <Value>agent</Value>			
-		    </DefaultValues>
-		</AttributeSchema>
+                    </ChoiceValues>
+                    <DefaultValues>
+                        <Value>user</Value>
+                        <Value>agent</Value>                        
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="sunAMUserStatusCallbackPlugins"
                     type="list"
                     syntax="string"
                     i18nKey="a143">
                 </AttributeSchema>
-	    </Organization>
+            </Organization>
         </Schema>
-	<Configuration>
-	    <OrganizationConfiguration name="/">
-		<AttributeValuePair>
-		    <Attribute name="iplanet-am-auth-alias-attr-name" />
-		    <Value>@USER_NAMING_ATTR@</Value>
-		</AttributeValuePair>
-		<AttributeValuePair>
-		    <Attribute name="iplanet-am-auth-admin-auth-module" />
-		    <Value>ldapService</Value>
-		</AttributeValuePair>
-		<AttributeValuePair>
-		    <Attribute name="iplanet-am-auth-org-config" />
-		    <Value>ldapService</Value>
-		</AttributeValuePair>
-	    </OrganizationConfiguration>
-	</Configuration>
+        <Configuration>
+            <OrganizationConfiguration name="/">
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-alias-attr-name" />
+                    <Value>@USER_NAMING_ATTR@</Value>
+                </AttributeValuePair>
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-admin-auth-module" />
+                    <Value>ldapService</Value>
+                </AttributeValuePair>
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-org-config" />
+                    <Value>ldapService</Value>
+                </AttributeValuePair>
+            </OrganizationConfiguration>
+        </Configuration>
     </Service>
 </ServicesConfiguration>

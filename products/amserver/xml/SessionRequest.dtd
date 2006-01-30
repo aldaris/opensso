@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: SessionRequest.dtd,v 1.1 2005-11-01 00:31:39 arvindp Exp $
+   $Id: SessionRequest.dtd,v 1.2 2006-01-30 20:58:53 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,9 +28,9 @@
 <!ELEMENT SessionRequest (GetSession |
                           GetValidSessions |
                           DestroySession |
-	                  Logout |
-	                  AddSessionListener |
-	                  AddSessionListenerOnAllSessions |
+                          Logout |
+                          AddSessionListener |
+                          AddSessionListenerOnAllSessions |
                           SetProperty |
                           GetSessionCount)>
 <!ATTLIST SessionRequest

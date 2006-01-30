@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.1 2006-01-05 02:30:00 arviranga Exp $
+ * $Id: FilesRepo.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,11 +132,11 @@ public class FilesRepo extends IdRepo {
 
     // Initialize supported types and operations
     static {
-	loadSupportedOps();
+        loadSupportedOps();
     }
 
     public FilesRepo() {
-	// do nothing
+        // do nothing
     }
 
     /*
@@ -150,34 +150,34 @@ public class FilesRepo extends IdRepo {
         Set set = (Set) configParams.get(DIRECTORY);
         if (set != null && !set.isEmpty()) {
             directory = (String) set.iterator().next();
-	    try {
-		initDir(directory);
-	    } catch (IdRepoException ide) {
-		initializationException = ide;
-		debug.error("FilesRepo: Init exception", ide);
-	    }
+            try {
+                initDir(directory);
+            } catch (IdRepoException ide) {
+                initializationException = ide;
+                debug.error("FilesRepo: Init exception", ide);
+            }
         }
 
-	// Get password attribute
-	set = (Set) configParams.get(PASSWORD);
-	if (set != null && !set.isEmpty()) {
-	    passwordAttribute = (String) set.iterator().next();
-	}
-	// Get status attribute
-	set = (Set) configParams.get(STATUS);
-	if (set != null && !set.isEmpty()) {
-	    statusAttribute = (String) set.iterator().next();
-	}
-	// Get attributes to be hashed
-	set = (Set) configParams.get(HASH);
-	if (set != null && !set.isEmpty()) {
-	    hashAttributes.addAll(set);
-	}
-	// Get attributes to be encyrpted
-	set = (Set) configParams.get(ENCRYPT);
-	if (set != null && !set.isEmpty()) {
-	    encryptAttributes.addAll(set);
-	}
+        // Get password attribute
+        set = (Set) configParams.get(PASSWORD);
+        if (set != null && !set.isEmpty()) {
+            passwordAttribute = (String) set.iterator().next();
+        }
+        // Get status attribute
+        set = (Set) configParams.get(STATUS);
+        if (set != null && !set.isEmpty()) {
+            statusAttribute = (String) set.iterator().next();
+        }
+        // Get attributes to be hashed
+        set = (Set) configParams.get(HASH);
+        if (set != null && !set.isEmpty()) {
+            hashAttributes.addAll(set);
+        }
+        // Get attributes to be encyrpted
+        set = (Set) configParams.get(ENCRYPT);
+        if (set != null && !set.isEmpty()) {
+            encryptAttributes.addAll(set);
+        }
 
         if (debug.messageEnabled()) {
             debug.message("FlatFiles: Root dir: " + directory +
@@ -211,38 +211,38 @@ public class FilesRepo extends IdRepo {
      *      com.sun.identity.sm.SchemaType, java.util.Map)
      */
     public void assignService(SSOToken token, IdType type, String name,
-	String serviceName, SchemaType stype, Map attrMap)
+        String serviceName, SchemaType stype, Map attrMap)
         throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-	    debug.message("Assign service called for: " + type.getName() +
-		":" + name + "\n\t" + serviceName + "=" + attrMap +
-		"\n\tSchema=" + stype);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+            debug.message("Assign service called for: " + type.getName() +
+                ":" + name + "\n\t" + serviceName + "=" + attrMap +
+                "\n\tSchema=" + stype);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
         if (type.equals(IdType.USER) || type.equals(IdType.ROLE)) {
-	    // Update the objectclass and set attributes
-	    Set set = new HashSet();
-	    set.add(OC);
-	    Map attrs = getAttributes(token, type, name, set);
-	    Set objectclasses = (Set) attrs.get(OC);
-	    CaseInsensitiveHashMap sAttrs = new CaseInsensitiveHashMap();
-	    sAttrs.putAll(attrMap);
-	    Set serviceOcs = (Set) sAttrs.get(OC);
-	    if (objectclasses != null && !objectclasses.isEmpty() &&
-		serviceOcs != null) {
-		//  Update objectclasses
-		serviceOcs.addAll(objectclasses);
-	    }
-	    setAttributes(token, type, name, attrMap, false);
+            // Update the objectclass and set attributes
+            Set set = new HashSet();
+            set.add(OC);
+            Map attrs = getAttributes(token, type, name, set);
+            Set objectclasses = (Set) attrs.get(OC);
+            CaseInsensitiveHashMap sAttrs = new CaseInsensitiveHashMap();
+            sAttrs.putAll(attrMap);
+            Set serviceOcs = (Set) sAttrs.get(OC);
+            if (objectclasses != null && !objectclasses.isEmpty() &&
+                serviceOcs != null) {
+                //  Update objectclasses
+                serviceOcs.addAll(objectclasses);
+            }
+            setAttributes(token, type, name, attrMap, false);
         } else {
-	    Object args[] = { NAME, IdOperation.SERVICE.getName() };
-	    throw new IdRepoUnsupportedOpException(
-		IdRepoBundle.BUNDLE_NAME, "305", args);
-	}
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "305", args);
+        }
     }
 
     /*
@@ -253,36 +253,36 @@ public class FilesRepo extends IdRepo {
      */
     public String create(SSOToken token, IdType type, String name, Map attrMap)
             throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
         if (supportedOps.keySet().contains(type)) {
-	    // Check if identity exists
-	    File file = constructFile(directory, type, name);
-	    if (!file.exists()) {
-		// Create the identity
-		attrMap = processAttributes(attrMap, hashAttributes,
-		    encryptAttributes);
-		writeFile(file, attrMap);
-		// %%% Send notification (must be via a different thread)
-		if (repoListener != null) {
-		    repoListener.objectChanged(name, AMEvent.OBJECT_ADDED,
-			repoListener.getConfigMap());
-		}
-	    } else {
-		// throw exception
-		String args[] = { file.getAbsolutePath() };
-		throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-					   "310", args));
-	    }
+            // Check if identity exists
+            File file = constructFile(directory, type, name);
+            if (!file.exists()) {
+                // Create the identity
+                attrMap = processAttributes(attrMap, hashAttributes,
+                    encryptAttributes);
+                writeFile(file, attrMap);
+                // %%% Send notification (must be via a different thread)
+                if (repoListener != null) {
+                    repoListener.objectChanged(name, AMEvent.OBJECT_ADDED,
+                        repoListener.getConfigMap());
+                }
+            } else {
+                // throw exception
+                String args[] = { file.getAbsolutePath() };
+                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                                           "310", args));
+            }
         } else {
-	    Object args[] = { NAME, IdOperation.SERVICE.getName(),
-		type.getName() };
-	    throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-		"305", args);
-	}
-	return (name);
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        }
+        return (name);
     }
 
     /*
@@ -293,12 +293,12 @@ public class FilesRepo extends IdRepo {
      */
     public void delete(SSOToken token, IdType type, String name)
         throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
-	File file = constructFile(directory, type, name);
-	file.delete();
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
+        File file = constructFile(directory, type, name);
+        file.delete();
     }
 
     /*
@@ -310,36 +310,36 @@ public class FilesRepo extends IdRepo {
      */
     public Set getAssignedServices(SSOToken token, IdType type, String name,
             Map mapOfServicesAndOCs) throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: GetAssignedService called: " + name +
-		"\n\tmapOfServicesAndOCs=" + mapOfServicesAndOCs);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: GetAssignedService called: " + name +
+                "\n\tmapOfServicesAndOCs=" + mapOfServicesAndOCs);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Get objectclasses for the identity
-	Set attrNames = new HashSet();
-	attrNames.add(OC);
-	Map ocs = getAttributes(token, type, name, attrNames);
-	Set presentOcs = (Set) ocs.get(OC);
-	if (presentOcs == null || presentOcs.isEmpty()) {
-	    return (Collections.EMPTY_SET);
-	}
+        // Get objectclasses for the identity
+        Set attrNames = new HashSet();
+        attrNames.add(OC);
+        Map ocs = getAttributes(token, type, name, attrNames);
+        Set presentOcs = (Set) ocs.get(OC);
+        if (presentOcs == null || presentOcs.isEmpty()) {
+            return (Collections.EMPTY_SET);
+        }
 
-	// Check ocs against the mapOfServicesAndOCs
-	Set answer = new HashSet();
-	for (Iterator items = mapOfServicesAndOCs.keySet().iterator();
-	    items.hasNext();) {
-	    String serviceName = (String) items.next();
-	    Set reqOcs = (Set) mapOfServicesAndOCs.get(serviceName);
-	    if (reqOcs != null && !reqOcs.isEmpty() &&
-		presentOcs.containsAll(reqOcs)) {
-		answer.add(serviceName);
-	    }
-	}
-	return (answer);
+        // Check ocs against the mapOfServicesAndOCs
+        Set answer = new HashSet();
+        for (Iterator items = mapOfServicesAndOCs.keySet().iterator();
+            items.hasNext();) {
+            String serviceName = (String) items.next();
+            Set reqOcs = (Set) mapOfServicesAndOCs.get(serviceName);
+            if (reqOcs != null && !reqOcs.isEmpty() &&
+                presentOcs.containsAll(reqOcs)) {
+                answer.add(serviceName);
+            }
+        }
+        return (answer);
     }
 
     /*
@@ -350,30 +350,30 @@ public class FilesRepo extends IdRepo {
      */
     public Map getAttributes(SSOToken token, IdType type, String name,
         Set attrNames) throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: getAttributes called: " + name +
-		"\n\treturn attributes=" + attrNames);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: getAttributes called: " + name +
+                "\n\treturn attributes=" + attrNames);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Get all the attributes and return the subset
-	Map answer = (attrNames == null) ? null : new HashMap();
-	Map map = getAttributes(token, type, name);
-	if (attrNames == null) {
-	    answer = map;
-	} else {
-	    for (Iterator items = attrNames.iterator(); items.hasNext();) {
-		Object key = items.next();
-		Object value = map.get(key);
-		if (value != null) {
-		    answer.put(key, value);
-		}
-	    }
-	}
-	return (answer);
+        // Get all the attributes and return the subset
+        Map answer = (attrNames == null) ? null : new HashMap();
+        Map map = getAttributes(token, type, name);
+        if (attrNames == null) {
+            answer = map;
+        } else {
+            for (Iterator items = attrNames.iterator(); items.hasNext();) {
+                Object key = items.next();
+                Object value = map.get(key);
+                if (value != null) {
+                    answer.put(key, value);
+                }
+            }
+        }
+        return (answer);
     }
 
     /*
@@ -384,14 +384,14 @@ public class FilesRepo extends IdRepo {
      */
     public Map getAttributes(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: get all attributes called: " + name);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
-	File file = constructFile(directory, type, name);
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: get all attributes called: " + name);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
+        File file = constructFile(directory, type, name);
         return (decodeAttributes(readFile(file), encryptAttributes));
     }
 
@@ -404,7 +404,7 @@ public class FilesRepo extends IdRepo {
      */
     public Map getBinaryAttributes(SSOToken token, IdType type, String name,
         Set attrNames) throws IdRepoException, SSOException {
-	return (getAttributes(token, type, name, attrNames));
+        return (getAttributes(token, type, name, attrNames));
     }
 
     /*
@@ -415,8 +415,8 @@ public class FilesRepo extends IdRepo {
      *      java.lang.String, java.util.Map, boolean)
      */
     public void setBinaryAttributes(SSOToken token, IdType type, String name,
-	Map attributes, boolean isAdd) throws IdRepoException, SSOException {
-	setAttributes(token, type, name, attributes, isAdd);
+        Map attributes, boolean isAdd) throws IdRepoException, SSOException {
+        setAttributes(token, type, name, attributes, isAdd);
     }
 
     /*
@@ -428,74 +428,74 @@ public class FilesRepo extends IdRepo {
      */
     public Set getMembers(SSOToken token, IdType type, String name,
         IdType membersType) throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: getMembers called" + type + 
-		": " + name + ": " + membersType);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: getMembers called" + type + 
+                ": " + name + ": " + membersType);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Memers can be returned for roles and groups
-	if (!type.equals(IdType.ROLE) && !type.equals(IdType.GROUP)) {
-	    if (debug.messageEnabled()) {
-		debug.message("FilesRepo:getMembers supported for " +
-			      "roles and groups");
-	    }
-	    throw new IdRepoException(IdRepoBundle.getString("203"), "203");
-	}
+        // Memers can be returned for roles and groups
+        if (!type.equals(IdType.ROLE) && !type.equals(IdType.GROUP)) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:getMembers supported for " +
+                              "roles and groups");
+            }
+            throw new IdRepoException(IdRepoBundle.getString("203"), "203");
+        }
 
-	// Set to maintain the members
-	Set results = new HashSet();
+        // Set to maintain the members
+        Set results = new HashSet();
 
-	// Process group members
-	if (type.equals(IdType.GROUP)) {
-	    // Read the group files and return the membership attribute
-	    File file = constructFile(directory, type, name);
-	    Map attrs = decodeAttributes(readFile(file), encryptAttributes);
-	    Set members = (Set) attrs.get(groupMembersAttribute);
-	    // Iterate through members and add to results only if "membersType"
-	    // matches
-	    if (members != null && !members.isEmpty()) {
-		String mtype = membersType.getName();
-		int mtypeLen = mtype.length();
-		for (Iterator items = members.iterator(); items.hasNext();) {
-		    String sname = (String) items.next();
-		    if (sname.startsWith(mtype)) {
-			results.add(sname.substring(mtypeLen));
-		    }
-		}
-	    }
-	} else if (type.equals(IdType.ROLE)) {
-	    // Get the list of all "membersType" and check if they belong
-	    // to the group
-	    Set returnAttrs = new HashSet();
-	    returnAttrs.add(roleMembershipAttribute);
-	    RepoSearchResults allUsers = search(token, membersType, "*", 0, 0,
-		returnAttrs, false, IdRepo.OR_MOD, null, false);
-	    Map userAttributes = null;
-	    if (allUsers != null &&
-	        (userAttributes = allUsers.getResultAttributes()) != null) {
-		for (Iterator items = userAttributes.keySet().iterator();
-		    items.hasNext();) {
-		    String sname = (String) items.next();
-		    Map attrs = (Map) userAttributes.get(sname);
-		    // Check if user belongs to the role
-		    Set roles = (Set) attrs.get(roleMembershipAttribute);
-		    if (roles != null && roles.contains(name)) {
-			results.add(sname);
-		    }
-		}
-	    }
-	} else {
-	    // throw unsupported operation exception
-	    Object args[] = { NAME, IdOperation.READ.getName(),
-		type.getName() };
-	    throw new IdRepoUnsupportedOpException(
-		IdRepoBundle.BUNDLE_NAME, "305", args);
-	}
-	return (results);
+        // Process group members
+        if (type.equals(IdType.GROUP)) {
+            // Read the group files and return the membership attribute
+            File file = constructFile(directory, type, name);
+            Map attrs = decodeAttributes(readFile(file), encryptAttributes);
+            Set members = (Set) attrs.get(groupMembersAttribute);
+            // Iterate through members and add to results only if "membersType"
+            // matches
+            if (members != null && !members.isEmpty()) {
+                String mtype = membersType.getName();
+                int mtypeLen = mtype.length();
+                for (Iterator items = members.iterator(); items.hasNext();) {
+                    String sname = (String) items.next();
+                    if (sname.startsWith(mtype)) {
+                        results.add(sname.substring(mtypeLen));
+                    }
+                }
+            }
+        } else if (type.equals(IdType.ROLE)) {
+            // Get the list of all "membersType" and check if they belong
+            // to the group
+            Set returnAttrs = new HashSet();
+            returnAttrs.add(roleMembershipAttribute);
+            RepoSearchResults allUsers = search(token, membersType, "*", 0, 0,
+                returnAttrs, false, IdRepo.OR_MOD, null, false);
+            Map userAttributes = null;
+            if (allUsers != null &&
+                (userAttributes = allUsers.getResultAttributes()) != null) {
+                for (Iterator items = userAttributes.keySet().iterator();
+                    items.hasNext();) {
+                    String sname = (String) items.next();
+                    Map attrs = (Map) userAttributes.get(sname);
+                    // Check if user belongs to the role
+                    Set roles = (Set) attrs.get(roleMembershipAttribute);
+                    if (roles != null && roles.contains(name)) {
+                        results.add(sname);
+                    }
+                }
+            }
+        } else {
+            // throw unsupported operation exception
+            Object args[] = { NAME, IdOperation.READ.getName(),
+                type.getName() };
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "305", args);
+        }
+        return (results);
     }
 
     /*
@@ -508,67 +508,67 @@ public class FilesRepo extends IdRepo {
      */
     public Set getMemberships(SSOToken token, IdType type, String name,
         IdType membershipType) throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: getMemberships called" + type + 
-		": " + name + ": " + membershipType);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: getMemberships called" + type + 
+                ": " + name + ": " + membershipType);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Memerships can be returned for users and agents
-	if (!type.equals(IdType.USER) && !type.equals(IdType.AGENT)) {
-	    if (debug.messageEnabled()) {
-		debug.message("FilesRepo:getMemberships supported for " +
-			      "users and agents");
-	    }
-	    Object args[] = { NAME };
-	    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args));
-	}
+        // Memerships can be returned for users and agents
+        if (!type.equals(IdType.USER) && !type.equals(IdType.AGENT)) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:getMemberships supported for " +
+                              "users and agents");
+            }
+            Object args[] = { NAME };
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args));
+        }
 
-	// Set to maintain the members
-	Set results = new HashSet();
-	if (membershipType.equals(IdType.ROLE)) {
-	    // Get the role attribute and return
-	    Set returnAttrs = new HashSet();
-	    returnAttrs.add(roleMembershipAttribute);
-	    Map attrs = getAttributes(token, type, name, returnAttrs);
-	    if (attrs != null) {
-		Set roles = (Set) attrs.get(roleMembershipAttribute);
-		if (roles != null) {
-		    results = roles;
-		}
-	    }
-	} else if (membershipType.equals(IdType.GROUP)) {
-	    // Get the list of groups and search for memberships
-	    Set returnAttrs = new HashSet();
-	    returnAttrs.add(groupMembersAttribute);
-	    RepoSearchResults allGroups = search(token, membershipType, "*",
-		0, 0, returnAttrs, false, IdRepo.OR_MOD, null, false);
-	    Map groupAttrs = null;
-	    if (allGroups != null &&
-		(groupAttrs = allGroups.getResultAttributes()) != null) {
-		// Prefix name with IdType
-		name = type.getName() + name;
-		for (Iterator items = groupAttrs.keySet().iterator();
-		    items.hasNext();) {
-		    String sname = (String) items.next();
-		    Map attrs = (Map) groupAttrs.get(sname);
-		    Set ids = (Set) attrs.get(groupMembersAttribute);
-		    if (ids != null && ids.contains(name)) {
-			results.add(sname);
-		    }
-		}
-	    }
-	} else {
-	    // throw unsupported operation exception
-	    Object args[] = { NAME, IdOperation.READ.getName(),
-		membershipType.getName() };
-	    throw new IdRepoUnsupportedOpException(
-		IdRepoBundle.BUNDLE_NAME, "305", args);
-	}
-	return (results);
+        // Set to maintain the members
+        Set results = new HashSet();
+        if (membershipType.equals(IdType.ROLE)) {
+            // Get the role attribute and return
+            Set returnAttrs = new HashSet();
+            returnAttrs.add(roleMembershipAttribute);
+            Map attrs = getAttributes(token, type, name, returnAttrs);
+            if (attrs != null) {
+                Set roles = (Set) attrs.get(roleMembershipAttribute);
+                if (roles != null) {
+                    results = roles;
+                }
+            }
+        } else if (membershipType.equals(IdType.GROUP)) {
+            // Get the list of groups and search for memberships
+            Set returnAttrs = new HashSet();
+            returnAttrs.add(groupMembersAttribute);
+            RepoSearchResults allGroups = search(token, membershipType, "*",
+                0, 0, returnAttrs, false, IdRepo.OR_MOD, null, false);
+            Map groupAttrs = null;
+            if (allGroups != null &&
+                (groupAttrs = allGroups.getResultAttributes()) != null) {
+                // Prefix name with IdType
+                name = type.getName() + name;
+                for (Iterator items = groupAttrs.keySet().iterator();
+                    items.hasNext();) {
+                    String sname = (String) items.next();
+                    Map attrs = (Map) groupAttrs.get(sname);
+                    Set ids = (Set) attrs.get(groupMembersAttribute);
+                    if (ids != null && ids.contains(name)) {
+                        results.add(sname);
+                    }
+                }
+            }
+        } else {
+            // throw unsupported operation exception
+            Object args[] = { NAME, IdOperation.READ.getName(),
+                membershipType.getName() };
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "305", args);
+        }
+        return (results);
 
     }
 
@@ -583,47 +583,47 @@ public class FilesRepo extends IdRepo {
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
         String serviceName, Set attrNames) throws IdRepoException,
         SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: get serviceAttributes called: " + name +
-		"\n\t" + serviceName + "=" + attrNames);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: get serviceAttributes called: " + name +
+                "\n\t" + serviceName + "=" + attrNames);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
         if (!type.equals(IdType.USER) && !type.equals(IdType.ROLE)) {
-	    // Unsupported Operation
-	    Object args[] = { NAME, IdOperation.SERVICE.getName() };
-	    throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-		"305", args);
-	}
-
-	// Get attributes from Identity Object
-	Map results = getAttributes(token, type, name, attrNames);
-	if (results == null) {
-	    results = new HashMap();
-	}
-	// Get the roles for the identity and add the service attributes
-	Set roles = getMemberships(token, type, name, IdType.ROLE);
-	for (Iterator items = roles.iterator(); items.hasNext();) {
-	    String role = (String) items.next();
-	    Map roleAttrs = getAttributes(token, IdType.ROLE, role, attrNames);
-	    // Add the attributes to results
-	    for (Iterator ris = roleAttrs.keySet().iterator();
-		ris.hasNext();) {
-		Object roleAttrName = ris.next();
-		Set roleAttrValues = (Set) roleAttrs.get(roleAttrName);
-		Set idAttrValues = (Set) results.get(roleAttrName);
-		if (idAttrValues == null) {
-		    results.put(roleAttrName, roleAttrValues);
-		} else {
-		    // Need to combine the values
-		    idAttrValues.addAll(roleAttrValues);
-		}
-	    }
+            // Unsupported Operation
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
         }
-	return (results);
+
+        // Get attributes from Identity Object
+        Map results = getAttributes(token, type, name, attrNames);
+        if (results == null) {
+            results = new HashMap();
+        }
+        // Get the roles for the identity and add the service attributes
+        Set roles = getMemberships(token, type, name, IdType.ROLE);
+        for (Iterator items = roles.iterator(); items.hasNext();) {
+            String role = (String) items.next();
+            Map roleAttrs = getAttributes(token, IdType.ROLE, role, attrNames);
+            // Add the attributes to results
+            for (Iterator ris = roleAttrs.keySet().iterator();
+                ris.hasNext();) {
+                Object roleAttrName = ris.next();
+                Set roleAttrValues = (Set) roleAttrs.get(roleAttrName);
+                Set idAttrValues = (Set) results.get(roleAttrName);
+                if (idAttrValues == null) {
+                    results.put(roleAttrName, roleAttrValues);
+                } else {
+                    // Need to combine the values
+                    idAttrValues.addAll(roleAttrValues);
+                }
+            }
+        }
+        return (results);
     }
 
     /*
@@ -634,12 +634,12 @@ public class FilesRepo extends IdRepo {
      */
     public boolean isExists(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
-	Map map = getAttributes(token, type, name);
-	return (!map.isEmpty());
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
+        Map map = getAttributes(token, type, name);
+        return (!map.isEmpty());
     }
 
     /*
@@ -653,93 +653,93 @@ public class FilesRepo extends IdRepo {
     public void modifyMemberShip(SSOToken token, IdType type, String name,
         Set members, IdType membersType, int operation)
         throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: modifyMemberShip called "
-		+ type	+ "; name= " + name 
-		+ "; members= " + members
-		+ "; membersType= " + membersType
-		+ "; operation= " + operation);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
-	if (members == null || members.isEmpty()) {
-	    if (debug.messageEnabled()) {
-	        debug.message("FilesRepo.modifyMemberShip: " +
-		    "Members set is empty");
-	    }
-	    throw new IdRepoException(IdRepoBundle.getString("201"), "201");
-	}
-	if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
-	    if (debug.messageEnabled()) {
-	        debug.message("FilesRepo.modifyMembership: " +
-		    "Membership to users and agents is not supported");
-	    }
-	    throw new IdRepoException(IdRepoBundle.getString("203"), "203");
-	}
-	if (!membersType.equals(IdType.USER) &&
-	    !membersType.equals(IdType.AGENT)) {
-	    if (debug.messageEnabled()) {
-	        debug.message(
-	   	    "FilesRepo.modifyMembership: A non user/agent type cannot "
-		    + " be made a member of any identity"
-		    + membersType.getName());
-	    }
-	    Object[] args = { NAME };
-	    throw new IdRepoException(IdRepoBundle.getString("206", args),
-		"206",
-		args);
-	}
-	if (type.equals(IdType.GROUP)) {
-	    // add the identities to the user's group membership
-	    File file = constructFile(directory, type, name);
-	    Map attrs = decodeAttributes(readFile(file), encryptAttributes);
-	    Set gmembers = (Set) attrs.get(groupMembersAttribute);
-	    if (gmembers == null) {
-		gmembers = new HashSet();
-		attrs.put(groupMembersAttribute, gmembers);
-	    }
-	    for (Iterator items = members.iterator(); items.hasNext();) {
-		String item = membersType.getName() + items.next().toString();
-		if (operation == ADDMEMBER) {
-		    gmembers.add(item);
-		} else {
-		    gmembers.remove(item);
-		}
-	    }
-	    // Save the results
-	    setAttributes(token, type, name, attrs, false);
-	} else if (type.equals(IdType.ROLE)) {
-	    // add to user/agents's role attribute
-	    Set returnAttrs = new HashSet();
-	    returnAttrs.add(roleMembershipAttribute);
-	    for (Iterator items = members.iterator(); items.hasNext();) {
-		String sname = (String) items.next();
-		// Get role attribute
-		Map roles = getAttributes(token, membersType,
-		    sname, returnAttrs);
-		if (roles == null) {
-		    roles = new HashMap();
-		}
-		Set sroles = (Set) roles.get(roleMembershipAttribute);
-		if (sroles == null) {
-		    sroles = new HashSet();
-		    roles.put(roleMembershipAttribute, sroles);
-		}
-		if (operation == ADDMEMBER) {
-		    sroles.add(name);
-		} else {
-		    sroles.remove(name);
-		}
-		// Save the attribute
-		setAttributes(token, membersType, sname, roles, false);
-	    }
-	} else {
-	    Object[] args = { NAME, type.getName() };
-	    throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-		"209", args);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: modifyMemberShip called "
+                + type        + "; name= " + name 
+                + "; members= " + members
+                + "; membersType= " + membersType
+                + "; operation= " + operation);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
+        if (members == null || members.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo.modifyMemberShip: " +
+                    "Members set is empty");
+            }
+            throw new IdRepoException(IdRepoBundle.getString("201"), "201");
+        }
+        if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo.modifyMembership: " +
+                    "Membership to users and agents is not supported");
+            }
+            throw new IdRepoException(IdRepoBundle.getString("203"), "203");
+        }
+        if (!membersType.equals(IdType.USER) &&
+            !membersType.equals(IdType.AGENT)) {
+            if (debug.messageEnabled()) {
+                debug.message(
+                       "FilesRepo.modifyMembership: A non user/agent type cannot "
+                    + " be made a member of any identity"
+                    + membersType.getName());
+            }
+            Object[] args = { NAME };
+            throw new IdRepoException(IdRepoBundle.getString("206", args),
+                "206",
+                args);
+        }
+        if (type.equals(IdType.GROUP)) {
+            // add the identities to the user's group membership
+            File file = constructFile(directory, type, name);
+            Map attrs = decodeAttributes(readFile(file), encryptAttributes);
+            Set gmembers = (Set) attrs.get(groupMembersAttribute);
+            if (gmembers == null) {
+                gmembers = new HashSet();
+                attrs.put(groupMembersAttribute, gmembers);
+            }
+            for (Iterator items = members.iterator(); items.hasNext();) {
+                String item = membersType.getName() + items.next().toString();
+                if (operation == ADDMEMBER) {
+                    gmembers.add(item);
+                } else {
+                    gmembers.remove(item);
+                }
+            }
+            // Save the results
+            setAttributes(token, type, name, attrs, false);
+        } else if (type.equals(IdType.ROLE)) {
+            // add to user/agents's role attribute
+            Set returnAttrs = new HashSet();
+            returnAttrs.add(roleMembershipAttribute);
+            for (Iterator items = members.iterator(); items.hasNext();) {
+                String sname = (String) items.next();
+                // Get role attribute
+                Map roles = getAttributes(token, membersType,
+                    sname, returnAttrs);
+                if (roles == null) {
+                    roles = new HashMap();
+                }
+                Set sroles = (Set) roles.get(roleMembershipAttribute);
+                if (sroles == null) {
+                    sroles = new HashSet();
+                    roles.put(roleMembershipAttribute, sroles);
+                }
+                if (operation == ADDMEMBER) {
+                    sroles.add(name);
+                } else {
+                    sroles.remove(name);
+                }
+                // Save the attribute
+                setAttributes(token, membersType, sname, roles, false);
+            }
+        } else {
+            Object[] args = { NAME, type.getName() };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                "209", args);
+        }
     }
 
     /*
@@ -752,24 +752,24 @@ public class FilesRepo extends IdRepo {
     public void modifyService(SSOToken token, IdType type, String name,
        String serviceName, SchemaType sType, Map attrMap)
        throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: Modify service called: " + name +
-		"\n\t" + serviceName + "=" + attrMap +
-		"\n\tSchema=" + sType);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: Modify service called: " + name +
+                "\n\t" + serviceName + "=" + attrMap +
+                "\n\tSchema=" + sType);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
         if (type.equals(IdType.USER) || type.equals(IdType.ROLE)) {
-	    // Set the attributes
-	    assignService(token, type, name, serviceName, sType, attrMap);
+            // Set the attributes
+            assignService(token, type, name, serviceName, sType, attrMap);
         } else {
-	    Object args[] = { NAME, IdOperation.SERVICE.getName() };
-	    throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-		"305", args);
-	}
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        }
     }
 
     /*
@@ -780,19 +780,19 @@ public class FilesRepo extends IdRepo {
      *      com.sun.identity.idm.IdType, java.lang.String, java.util.Set)
      */
     public void removeAttributes(SSOToken token, IdType type, String name,
-	Set attrNames) throws IdRepoException, SSOException {
-	Map answer = getAttributes(token, type, name);
-	for (Iterator items = attrNames.iterator(); items.hasNext();) {
-	    answer.remove(items.next());
-	}
-	File file = constructFile(directory, type, name);
-	writeFile(file, processAttributes(answer, Collections.EMPTY_SET,
-	    encryptAttributes));
-	// %%% Send notification (must be via a different thread)
-	if (repoListener != null) {
-	    repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
-		repoListener.getConfigMap());
-	}
+        Set attrNames) throws IdRepoException, SSOException {
+        Map answer = getAttributes(token, type, name);
+        for (Iterator items = attrNames.iterator(); items.hasNext();) {
+            answer.remove(items.next());
+        }
+        File file = constructFile(directory, type, name);
+        writeFile(file, processAttributes(answer, Collections.EMPTY_SET,
+            encryptAttributes));
+        // %%% Send notification (must be via a different thread)
+        if (repoListener != null) {
+            repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
+                repoListener.getConfigMap());
+        }
     }
 
     /*
@@ -801,7 +801,7 @@ public class FilesRepo extends IdRepo {
      * @see com.sun.identity.idm.IdRepo#removeListener()
      */
     public void removeListener() {
-	repoListener = null;
+        repoListener = null;
     }
 
     /*
@@ -815,84 +815,84 @@ public class FilesRepo extends IdRepo {
         String pattern, int maxTime, int maxResults, Set returnAttrs,
         boolean returnAllAttrs, int filterOp, Map avPairs,
         boolean recursive) throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Directory to start the search
-	File dir = new File(new File(directory), type.getName());
-	String[] files = dir.list(new FileRepoFileFilter(pattern));
-	if (files.length == 0) {
-	    return new RepoSearchResults(Collections.EMPTY_SET,
-		RepoSearchResults.SUCCESS, Collections.EMPTY_MAP, type);
-	}
+        // Directory to start the search
+        File dir = new File(new File(directory), type.getName());
+        String[] files = dir.list(new FileRepoFileFilter(pattern));
+        if (files.length == 0) {
+            return new RepoSearchResults(Collections.EMPTY_SET,
+                RepoSearchResults.SUCCESS, Collections.EMPTY_MAP, type);
+        }
 
-	// Check if attribute mapping has to be done
-	Set results = new HashSet();
-	if (avPairs != null && !avPairs.isEmpty()) {
-	    for (int i = 0; i < files.length; i++) {
-		// Check if the attributes match
-		Map allAttrs = getAttributes(token, type, files[i]);
-		Set attrNames = new CaseInsensitiveHashSet();
-		attrNames.addAll(allAttrs.keySet());
-		boolean addResult = (filterOp == IdRepo.AND_MOD);
-		for (Iterator items = avPairs.keySet().iterator();
-		    items.hasNext();) {
-		    String attrName = (String) items.next();
-		    Set attrValue = (Set) avPairs.get(attrName);
-		    if (attrValue == null || attrValue.isEmpty()) {
-			// Check if the attribute is present
-			if (attrNames.contains(attrName)) {
-			    if (filterOp == IdRepo.OR_MOD) {
-				addResult = true;
-				break;
-			    }
-			} else if (filterOp == IdRepo.AND_MOD) {
-			    addResult = false;
-			    break;
-			}
-		    } else {
-			// Check if the values are present
-			Set matchValues = (Set) allAttrs.get(attrName);
-			if (matchValues != null &&
-			    matchValues.contains(attrValue)) {
-			    if (filterOp == IdRepo.OR_MOD) {
-				addResult = true;
-				break;
-			    }
-			} else if (filterOp == IdRepo.AND_MOD) {
-			    addResult = false;
-			    break;
-			}
-		    }
-		}
-		if (addResult) {
-		    results.add(files[i]);
-		}
-	    }
-	} else {
-	    for (int i = 0; i < files.length; i++) {
-		results.add(files[i]);
-	    }
-	}
-	
-	// Build RepoSearchResults
-	Map resultsWithAttrs = new HashMap();
-	for (Iterator items = results.iterator(); items.hasNext();) {
-	    String item = (String) items.next();
-	    if (returnAllAttrs || returnAttrs == null) {
-		resultsWithAttrs.put(item, getAttributes(token,
-		    type, item));
-	    } else if (returnAttrs.isEmpty()) {
-		resultsWithAttrs.put(item, Collections.EMPTY_MAP);
-	    } else {
-		resultsWithAttrs.put(item, getAttributes(token,
-		    type, item, returnAttrs));
-	    }
-	}
-	return (new RepoSearchResults(results, RepoSearchResults.SUCCESS,
-	    resultsWithAttrs, type));
+        // Check if attribute mapping has to be done
+        Set results = new HashSet();
+        if (avPairs != null && !avPairs.isEmpty()) {
+            for (int i = 0; i < files.length; i++) {
+                // Check if the attributes match
+                Map allAttrs = getAttributes(token, type, files[i]);
+                Set attrNames = new CaseInsensitiveHashSet();
+                attrNames.addAll(allAttrs.keySet());
+                boolean addResult = (filterOp == IdRepo.AND_MOD);
+                for (Iterator items = avPairs.keySet().iterator();
+                    items.hasNext();) {
+                    String attrName = (String) items.next();
+                    Set attrValue = (Set) avPairs.get(attrName);
+                    if (attrValue == null || attrValue.isEmpty()) {
+                        // Check if the attribute is present
+                        if (attrNames.contains(attrName)) {
+                            if (filterOp == IdRepo.OR_MOD) {
+                                addResult = true;
+                                break;
+                            }
+                        } else if (filterOp == IdRepo.AND_MOD) {
+                            addResult = false;
+                            break;
+                        }
+                    } else {
+                        // Check if the values are present
+                        Set matchValues = (Set) allAttrs.get(attrName);
+                        if (matchValues != null &&
+                            matchValues.contains(attrValue)) {
+                            if (filterOp == IdRepo.OR_MOD) {
+                                addResult = true;
+                                break;
+                            }
+                        } else if (filterOp == IdRepo.AND_MOD) {
+                            addResult = false;
+                            break;
+                        }
+                    }
+                }
+                if (addResult) {
+                    results.add(files[i]);
+                }
+            }
+        } else {
+            for (int i = 0; i < files.length; i++) {
+                results.add(files[i]);
+            }
+        }
+        
+        // Build RepoSearchResults
+        Map resultsWithAttrs = new HashMap();
+        for (Iterator items = results.iterator(); items.hasNext();) {
+            String item = (String) items.next();
+            if (returnAllAttrs || returnAttrs == null) {
+                resultsWithAttrs.put(item, getAttributes(token,
+                    type, item));
+            } else if (returnAttrs.isEmpty()) {
+                resultsWithAttrs.put(item, Collections.EMPTY_MAP);
+            } else {
+                resultsWithAttrs.put(item, getAttributes(token,
+                    type, item, returnAttrs));
+            }
+        }
+        return (new RepoSearchResults(results, RepoSearchResults.SUCCESS,
+            resultsWithAttrs, type));
     }
 
     /*
@@ -905,7 +905,7 @@ public class FilesRepo extends IdRepo {
     public RepoSearchResults search(SSOToken token, IdType type,
         String pattern, Map avPairs, boolean recursive, int maxResults,
         int maxTime, Set returnAttrs)
-	throws IdRepoException, SSOException {
+        throws IdRepoException, SSOException {
         return (search(token, type, pattern, maxTime, maxResults, returnAttrs,
                 (returnAttrs == null), OR_MOD, avPairs, recursive));
     }
@@ -919,42 +919,42 @@ public class FilesRepo extends IdRepo {
      */
     public void setAttributes(SSOToken token, IdType type, String name,
         Map attributes, boolean isAdd) throws IdRepoException, SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo:setAttributs for " + type + " " + name +
-		"\n\tAttributes=" + attributes.keySet() + " isAdd=" + isAdd);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo:setAttributs for " + type + " " + name +
+                "\n\tAttributes=" + attributes.keySet() + " isAdd=" + isAdd);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	Map answer = getAttributes(token, type, name);
-	// Hash the new attributes, if any
-	attributes = processAttributes(attributes, hashAttributes,
-	    Collections.EMPTY_SET);
-	if (!isAdd) {
-	    answer.putAll(attributes);
-	} else {
-	    for (Iterator items = attributes.keySet().iterator();
-		items.hasNext();) {
-		Object key = items.next();
-		Set value = (Set) answer.get(key);
-		if (value != null) {
-		    value.addAll((Set) attributes.get(key));
-		} else {
-		    value = (Set) attributes.get(key);
-		}
-		answer.put(key, value);
-	    }
-	}
-	File file = constructFile(directory, type, name);
-	writeFile(file, processAttributes(answer, Collections.EMPTY_SET,
-	    encryptAttributes));
-	// %%% Send notification (must be via a different thread)
-	if (repoListener != null) {
-	    repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
-		repoListener.getConfigMap());
-	}
+        Map answer = getAttributes(token, type, name);
+        // Hash the new attributes, if any
+        attributes = processAttributes(attributes, hashAttributes,
+            Collections.EMPTY_SET);
+        if (!isAdd) {
+            answer.putAll(attributes);
+        } else {
+            for (Iterator items = attributes.keySet().iterator();
+                items.hasNext();) {
+                Object key = items.next();
+                Set value = (Set) answer.get(key);
+                if (value != null) {
+                    value.addAll((Set) attributes.get(key));
+                } else {
+                    value = (Set) attributes.get(key);
+                }
+                answer.put(key, value);
+            }
+        }
+        File file = constructFile(directory, type, name);
+        writeFile(file, processAttributes(answer, Collections.EMPTY_SET,
+            encryptAttributes));
+        // %%% Send notification (must be via a different thread)
+        if (repoListener != null) {
+            repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
+                repoListener.getConfigMap());
+        }
     }
 
     /*
@@ -968,30 +968,30 @@ public class FilesRepo extends IdRepo {
     public void unassignService(SSOToken token, IdType type, String name,
         String serviceName, Map attrMap) throws IdRepoException,
         SSOException {
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo: Uasssign service called: " + name +
-		"\n\t" + serviceName + "=" + attrMap);
-	}
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo: Uasssign service called: " + name +
+                "\n\t" + serviceName + "=" + attrMap);
+        }
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Need to selectively remove the objectclassess
-	// First get the objectclasses
-	Set set = new HashSet();
-	set.add(OC);
-	Map attrs = getAttributes(token, type, name, set);
-	Set objectclasses = (Set) attrs.get(OC);
-	CaseInsensitiveHashMap sAttrs = new CaseInsensitiveHashMap();
-	sAttrs.putAll(attrMap);
-	Set serviceOCs = (Set) sAttrs.remove(OC);
-	if (objectclasses != null && !objectclasses.isEmpty() &&
-	    serviceOCs != null) {
-	    objectclasses.removeAll(serviceOCs);
-	    setAttributes(token, type, name, attrs, false);
-	}
-	removeAttributes(token, type, name, sAttrs.keySet());
+        // Need to selectively remove the objectclassess
+        // First get the objectclasses
+        Set set = new HashSet();
+        set.add(OC);
+        Map attrs = getAttributes(token, type, name, set);
+        Set objectclasses = (Set) attrs.get(OC);
+        CaseInsensitiveHashMap sAttrs = new CaseInsensitiveHashMap();
+        sAttrs.putAll(attrMap);
+        Set serviceOCs = (Set) sAttrs.remove(OC);
+        if (objectclasses != null && !objectclasses.isEmpty() &&
+            serviceOCs != null) {
+            objectclasses.removeAll(serviceOCs);
+            setAttributes(token, type, name, attrs, false);
+        }
+        removeAttributes(token, type, name, sAttrs.keySet());
     }
 
     /*
@@ -1021,10 +1021,10 @@ public class FilesRepo extends IdRepo {
      */
     public boolean isActive(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
         Map attributes = getAttributes(token, type, name);
         if (attributes == null) {
             Object[] args = { NAME, name };
@@ -1055,16 +1055,16 @@ public class FilesRepo extends IdRepo {
         supportedOps.put(IdType.REALM, Collections.unmodifiableSet(nopSet));
         if (debug.messageEnabled()) {
             debug.message("FilesRepo: loadSupportedOps  called" +
-		"\n\tsupportedOps=" + supportedOps.toString());
+                "\n\tsupportedOps=" + supportedOps.toString());
         }
     }
 
     public String getFullyQualifiedName(SSOToken token, IdType type, 
             String name) throws IdRepoException, SSOException {
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
         RepoSearchResults results = search(token, type, name, null, true, 0, 0,
                 null);
         Set dns = results.getSearchResults();
@@ -1082,76 +1082,76 @@ public class FilesRepo extends IdRepo {
 
     public boolean authenticate(Callback[] credentials) throws IdRepoException,
         AuthLoginException {
-	debug.message("FilesRepo:authenticate called");
-	if (initializationException != null) {
-	    debug.error("FilesRepo: throwing initialization exception");
-	    throw (initializationException);
-	}
+        debug.message("FilesRepo:authenticate called");
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
 
-	// Obtain user name and password from credentials and authenticate
-	String username = null;
-	String password = null;
-	for (int i = 0; i < credentials.length; i++) {
-	    if (credentials[i] instanceof NameCallback) {
-		username = ((NameCallback) credentials[i]).getName();
-		if (debug.messageEnabled()) {
-		    debug.message("FilesRepo:authenticate username: " +
-				  username);
-		}
-	    } else if (credentials[i] instanceof PasswordCallback) {
-		char[] passwd = ((PasswordCallback) credentials[i])
-		    .getPassword();
-		if (passwd != null) {
-		    password = new String(passwd);
-		    debug.message("FilesRepo:authN passwd present");
-		}
-	    }
-	}
-	if (username == null || password == null) {
-	    return (false);
-	}
+        // Obtain user name and password from credentials and authenticate
+        String username = null;
+        String password = null;
+        for (int i = 0; i < credentials.length; i++) {
+            if (credentials[i] instanceof NameCallback) {
+                username = ((NameCallback) credentials[i]).getName();
+                if (debug.messageEnabled()) {
+                    debug.message("FilesRepo:authenticate username: " +
+                                  username);
+                }
+            } else if (credentials[i] instanceof PasswordCallback) {
+                char[] passwd = ((PasswordCallback) credentials[i])
+                    .getPassword();
+                if (passwd != null) {
+                    password = new String(passwd);
+                    debug.message("FilesRepo:authN passwd present");
+                }
+            }
+        }
+        if (username == null || password == null) {
+            return (false);
+        }
 
-	// Get user's password attribute
-	Map attrs = null;
-	try {
-	    attrs = getAttributes(null, IdType.USER, username);
-	    if (attrs.isEmpty()) {
-		// Try agent
-		if (debug.messageEnabled()) {
-		    debug.message("FilesRepo:authn user not found. " +
-			"Searching for agent");
-		}
-		attrs = getAttributes(null, IdType.AGENT, username);
-	    } else if (debug.messageEnabled()) {
-		debug.message("FilesRepo:authenticate found user entry");
-	    }
-	} catch (SSOException ssoe) {
-	    // Since SSOToken are not sent, this should not happen
-	}
-	if (attrs == null || attrs.isEmpty() ||
-	    !attrs.containsKey(passwordAttribute)) {
-	    // Cound not find user or agent, return false
-	    if (debug.messageEnabled()) {
-		debug.message("FilesRepo:authenticate not found user/agent");
-	    }
-	    return (false);
-	}
-	Set storedPasswords = (Set) attrs.get(passwordAttribute);
-	if (storedPasswords == null || storedPasswords.isEmpty()) {
-	    if (debug.messageEnabled()) {
-		debug.message("FilesRepo:authenticate no stored password");
-	    }
-	    return (false);
-	}
-	String storedPassword = (String) storedPasswords.iterator().next();
-	if (hashAttributes.contains(passwordAttribute)) {
-	    password = Hash.hash(password);
-	}
-	if (debug.messageEnabled()) {
-	    debug.message("FilesRepo:authenticate AuthN of " + username +
-		"=" + password.equals(storedPassword));
-	}
-	return (password.equals(storedPassword));
+        // Get user's password attribute
+        Map attrs = null;
+        try {
+            attrs = getAttributes(null, IdType.USER, username);
+            if (attrs.isEmpty()) {
+                // Try agent
+                if (debug.messageEnabled()) {
+                    debug.message("FilesRepo:authn user not found. " +
+                        "Searching for agent");
+                }
+                attrs = getAttributes(null, IdType.AGENT, username);
+            } else if (debug.messageEnabled()) {
+                debug.message("FilesRepo:authenticate found user entry");
+            }
+        } catch (SSOException ssoe) {
+            // Since SSOToken are not sent, this should not happen
+        }
+        if (attrs == null || attrs.isEmpty() ||
+            !attrs.containsKey(passwordAttribute)) {
+            // Cound not find user or agent, return false
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:authenticate not found user/agent");
+            }
+            return (false);
+        }
+        Set storedPasswords = (Set) attrs.get(passwordAttribute);
+        if (storedPasswords == null || storedPasswords.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:authenticate no stored password");
+            }
+            return (false);
+        }
+        String storedPassword = (String) storedPasswords.iterator().next();
+        if (hashAttributes.contains(passwordAttribute)) {
+            password = Hash.hash(password);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo:authenticate AuthN of " + username +
+                "=" + password.equals(storedPassword));
+        }
+        return (password.equals(storedPassword));
     }
     
     // -----------------------------------------------
@@ -1161,60 +1161,60 @@ public class FilesRepo extends IdRepo {
 
     // Initialize, read and write methods
     static void initDir(String rootDir) throws IdRepoException {
-	// Check if roor dir exists, if not create
-	File root = new File(rootDir);
-	if (!root.exists() && !root.mkdirs()) {
-	    // Unable to create the directory
-	    Object args[] = { root.getAbsolutePath() };
-	    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-		"309", args));
-	} else if (!root.isDirectory()) {
-	    // Not a directory
-	    Object args[] = { root.getAbsolutePath() };
-	    throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-		"308", args));
-	}
-	// Check sub-directories
-	Set types = supportedOps.keySet();
-	for (Iterator items = types.iterator(); items.hasNext();) {
-	    String subDir = ((IdType) items.next()).getName();
-	    File dir = new File(root, subDir);
-	    if (!dir.exists() && !dir.mkdir()) {
-		// Unable to create the directory
-		String args[] = { dir.getAbsolutePath() };
-		throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-		    "309", args));
-	    } else if (!dir.isDirectory()) {
-		// Not a directory
-		String args[] = { dir.getAbsolutePath() };
-		throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
-		    "308", args));
-	    }
-	    if (subDir.equals(IdType.REALM.getName())) {
-		// Create realm ContainerDefaultTemplateRole
-		File role = new File(dir, "ContainerDefaultTemplateRole");
-		if (!role.exists()) {
-		    // Write an empyt map to the file
-		    writeFile(role, Collections.EMPTY_MAP);
-		}
-	    }
-	}
-	
+        // Check if roor dir exists, if not create
+        File root = new File(rootDir);
+        if (!root.exists() && !root.mkdirs()) {
+            // Unable to create the directory
+            Object args[] = { root.getAbsolutePath() };
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                "309", args));
+        } else if (!root.isDirectory()) {
+            // Not a directory
+            Object args[] = { root.getAbsolutePath() };
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                "308", args));
+        }
+        // Check sub-directories
+        Set types = supportedOps.keySet();
+        for (Iterator items = types.iterator(); items.hasNext();) {
+            String subDir = ((IdType) items.next()).getName();
+            File dir = new File(root, subDir);
+            if (!dir.exists() && !dir.mkdir()) {
+                // Unable to create the directory
+                String args[] = { dir.getAbsolutePath() };
+                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                    "309", args));
+            } else if (!dir.isDirectory()) {
+                // Not a directory
+                String args[] = { dir.getAbsolutePath() };
+                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                    "308", args));
+            }
+            if (subDir.equals(IdType.REALM.getName())) {
+                // Create realm ContainerDefaultTemplateRole
+                File role = new File(dir, "ContainerDefaultTemplateRole");
+                if (!role.exists()) {
+                    // Write an empyt map to the file
+                    writeFile(role, Collections.EMPTY_MAP);
+                }
+            }
+        }
+        
     }
 
     static File constructFile(String rootDir, IdType type, String name) {
-	// Construct file name
-	File root = new File(rootDir);
-	File subDir = new File(root, type.getName());
-	return (new File(subDir, name));
+        // Construct file name
+        File root = new File(rootDir);
+        File subDir = new File(root, type.getName());
+        return (new File(subDir, name));
     }
 
     static void writeFile(File file, Map values) throws IdRepoException {
-	try {
-	    writeFile(file.getCanonicalPath(), values);
-	} catch (IOException ioe) {
-	    convertIO2IdRepoException(ioe);
-	}
+        try {
+            writeFile(file.getCanonicalPath(), values);
+        } catch (IOException ioe) {
+            convertIO2IdRepoException(ioe);
+        }
     }
 
     static void writeFile(String fileName, Map values)
@@ -1226,8 +1226,8 @@ public class FilesRepo extends IdRepo {
             String encodedMap = client.encodeMap("result", values);
             pw = new PrintWriter(new FileOutputStream(fileName));
             pw.println(encodedMap);
-	    // update the cache
-	    identityCache.put(fileName.toLowerCase(), values);
+            // update the cache
+            identityCache.put(fileName.toLowerCase(), values);
         } catch (IOException ioe) {
             if (debug.messageEnabled()) {   
                 debug.message("FilesRepo: error writing file: " + fileName);
@@ -1241,39 +1241,39 @@ public class FilesRepo extends IdRepo {
     }
 
     static Map readFile(File file) throws IdRepoException {
-	Map answer = Collections.EMPTY_MAP;
-	try {
-	    answer = readFile(file.getCanonicalPath());
-	} catch (IOException ioe) {
+        Map answer = Collections.EMPTY_MAP;
+        try {
+            answer = readFile(file.getCanonicalPath());
+        } catch (IOException ioe) {
             convertIO2IdRepoException(ioe);
-	}
-	return (answer);
+        }
+        return (answer);
     }
 
     static Map readFile(String fileName) throws IdRepoException {
         Map answer = null;
-	// Check in cache
-	String cacheName = fileName.toLowerCase();
-	if ((answer = (Map) identityCache.get(cacheName)) != null) {
-	    return (answer);
-	}
+        // Check in cache
+        String cacheName = fileName.toLowerCase();
+        if ((answer = (Map) identityCache.get(cacheName)) != null) {
+            return (answer);
+        }
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(fileName));
             String encodedMap = br.readLine();
             SOAPClient client = new SOAPClient();
             Map map = client.decodeMap(encodedMap);
-	    // Convert HashMap to CaseInsensitiveHashMap
-	    answer = new CaseInsensitiveHashMap();
-	    for (Iterator items = map.keySet().iterator(); items.hasNext();) {
-		Object key = items.next();
-		Set ovalue = (Set) map.get(key);
-		Set nvalue = new CaseInsensitiveHashSet();
-		nvalue.addAll(ovalue);
-		answer.put(key, nvalue);
-	    }
-	    // Add to cache
-	    identityCache.put(cacheName, answer);
+            // Convert HashMap to CaseInsensitiveHashMap
+            answer = new CaseInsensitiveHashMap();
+            for (Iterator items = map.keySet().iterator(); items.hasNext();) {
+                Object key = items.next();
+                Set ovalue = (Set) map.get(key);
+                Set nvalue = new CaseInsensitiveHashSet();
+                nvalue.addAll(ovalue);
+                answer.put(key, nvalue);
+            }
+            // Add to cache
+            identityCache.put(cacheName, answer);
         } catch (IOException ioe) {
             if (debug.messageEnabled()) {
                 debug.message("FilesRepo: error reading file: " + fileName,
@@ -1293,97 +1293,97 @@ public class FilesRepo extends IdRepo {
     }
     
     static void clearCache() {
-	identityCache = new HashMap();
+        identityCache = new HashMap();
     }
 
     static Map processAttributes(Map attrs, Set hashAttrs, Set encAttrs) {
-	// Convert to CaseInsensitiveHashMap
-	Map answer = new CaseInsensitiveHashMap();
-	for (Iterator items = attrs.keySet().iterator(); items.hasNext();) {
-	    Object key = items.next();
-	    Set ovalue = (Set) attrs.get(key);
-	    Set nvalue = new CaseInsensitiveHashSet();
-	    if (hashAttrs.contains(key)) {
-		for (Iterator i = ovalue.iterator(); i.hasNext();) {
-		    nvalue.add(Hash.hash((String) i.next()));
-		}
-	    } else if (encAttrs.contains(key)) {
-		try {
-		    for (Iterator i = ovalue.iterator(); i.hasNext();) {
-		        nvalue.add((String) AccessController.doPrivileged(
-			    new EncodeAction((String) i.next())));
-		    }
-		} catch (Throwable e) {
-		    // Printing the attribute value could be security issue
-		    debug.error("FilesRepo: unable to encode", e);
-		}
-	    } else {
-		nvalue.addAll(ovalue);
-	    }
-	    answer.put(key, nvalue);
-	}
-	return (answer);
+        // Convert to CaseInsensitiveHashMap
+        Map answer = new CaseInsensitiveHashMap();
+        for (Iterator items = attrs.keySet().iterator(); items.hasNext();) {
+            Object key = items.next();
+            Set ovalue = (Set) attrs.get(key);
+            Set nvalue = new CaseInsensitiveHashSet();
+            if (hashAttrs.contains(key)) {
+                for (Iterator i = ovalue.iterator(); i.hasNext();) {
+                    nvalue.add(Hash.hash((String) i.next()));
+                }
+            } else if (encAttrs.contains(key)) {
+                try {
+                    for (Iterator i = ovalue.iterator(); i.hasNext();) {
+                        nvalue.add((String) AccessController.doPrivileged(
+                            new EncodeAction((String) i.next())));
+                    }
+                } catch (Throwable e) {
+                    // Printing the attribute value could be security issue
+                    debug.error("FilesRepo: unable to encode", e);
+                }
+            } else {
+                nvalue.addAll(ovalue);
+            }
+            answer.put(key, nvalue);
+        }
+        return (answer);
     }
 
     static Map decodeAttributes(Map attrs, Set encAttrs) {
-	if (encAttrs.isEmpty()) {
-	    return (attrs);
-	}
-	// Decode the attributes
-	for (Iterator items = encAttrs.iterator(); items.hasNext();) {
-	    Object key = items.next();
-	    Set ovalue = (Set) attrs.get(key);
-	    if (ovalue != null && !ovalue.isEmpty()) {
-		Set nvalue = new CaseInsensitiveHashSet();
-		for (Iterator i = ovalue.iterator(); i.hasNext();) {
-		    try {
-			nvalue.add((String) AccessController.doPrivileged(
-			    new DecodeAction((String) i.next())));
-		    } catch (Throwable e) {
-			// Printing the attribute value could be security issue
-			debug.error("FilesRepo: unable to decode", e);
-		    }
-		}
-		attrs.put(key, nvalue);
-	    }
-	}
-	return (attrs);
+        if (encAttrs.isEmpty()) {
+            return (attrs);
+        }
+        // Decode the attributes
+        for (Iterator items = encAttrs.iterator(); items.hasNext();) {
+            Object key = items.next();
+            Set ovalue = (Set) attrs.get(key);
+            if (ovalue != null && !ovalue.isEmpty()) {
+                Set nvalue = new CaseInsensitiveHashSet();
+                for (Iterator i = ovalue.iterator(); i.hasNext();) {
+                    try {
+                        nvalue.add((String) AccessController.doPrivileged(
+                            new DecodeAction((String) i.next())));
+                    } catch (Throwable e) {
+                        // Printing the attribute value could be security issue
+                        debug.error("FilesRepo: unable to decode", e);
+                    }
+                }
+                attrs.put(key, nvalue);
+            }
+        }
+        return (attrs);
     }
-	    
+            
 
     static void convertIO2IdRepoException(IOException ioe)
         throws IdRepoException {
-	if (debug.messageEnabled()) {
-	    debug.message("FileRepo: converting IO to IdRepo Exception", ioe);
-	}
+        if (debug.messageEnabled()) {
+            debug.message("FileRepo: converting IO to IdRepo Exception", ioe);
+        }
         throw (new IdRepoException(ioe.getMessage()));
     }
 
     // File name filter inner class
     class FileRepoFileFilter implements FilenameFilter {
-	// Pattern to match
-	Pattern pattern;
+        // Pattern to match
+        Pattern pattern;
 
-	// Default constructor
-	FileRepoFileFilter(String p) {
-	    if (p != null && p.length() != 0 && !p.equals("*")) {
-		// Replace "*" with ".*"
-		int idx = p.indexOf('*');
-		while (idx != -1) {
-		    p = p.substring(0, idx) + ".*" +
-			p.substring(idx + 1);
-		    idx = p.indexOf('*', idx + 2);
-		}
-		pattern = Pattern.compile(p);
-	    }
-	}
+        // Default constructor
+        FileRepoFileFilter(String p) {
+            if (p != null && p.length() != 0 && !p.equals("*")) {
+                // Replace "*" with ".*"
+                int idx = p.indexOf('*');
+                while (idx != -1) {
+                    p = p.substring(0, idx) + ".*" +
+                        p.substring(idx + 1);
+                    idx = p.indexOf('*', idx + 2);
+                }
+                pattern = Pattern.compile(p);
+            }
+        }
 
-	public boolean accept(File dir, String name) {
-	    if (pattern == null) {
-		return (true);
-	    } else {
-		return (pattern.matcher(name).matches());
-	    }
-	}
+        public boolean accept(File dir, String name) {
+            if (pattern == null) {
+                return (true);
+            } else {
+                return (pattern.matcher(name).matches());
+            }
+        }
     }
 }

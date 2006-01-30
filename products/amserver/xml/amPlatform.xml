@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amPlatform.xml,v 1.3 2006-01-19 06:08:32 veiming Exp $
+   $Id: amPlatform.xml,v 1.4 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,76 +37,76 @@
             i18nFileName="amPlatform"
             revisionNumber="20"
             i18nKey="iplanet-am-platform-service-description"
-	    propertiesViewBeanURL="../service/SCPlatform">
-	    <Global>
+            propertiesViewBeanURL="../service/SCPlatform">
+            <Global>
                 <AttributeSchema name="serviceObjectClasses"
                     type="list"
                     syntax="string"
-		    i18nKey="">
-		    <DefaultValues>
+                    i18nKey="">
+                    <DefaultValues>
                         <Value>iplanet-am-platform-service</Value>
-		    </DefaultValues>
-		</AttributeSchema>
- 		<AttributeSchema name="iplanet-am-platform-site-list"
+                    </DefaultValues>
+                </AttributeSchema>
+                 <AttributeSchema name="iplanet-am-platform-site-list"
                     type="list"
                     syntax="string"
                     validator="SiteIDValidator"
                     i18nKey="a100">
- 		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-platform-server-list"
+                 </AttributeSchema>
+                <AttributeSchema name="iplanet-am-platform-server-list"
                     type="list"
                     syntax="string"
                     validator="ServerIDValidator"
                     i18nKey="a101">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@|01</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-platform-locale"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-platform-locale"
                     type="single"
                     syntax="string"
                     i18nKey="a102">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@PLATFORM_LOCALE@</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-platform-cookie-domains"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-platform-cookie-domains"
                     type="list"
                     syntax="string"
                     i18nKey="a103">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@COOKIE_DOMAIN@</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	        <AttributeSchema name="iplanet-am-platform-login-url"
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-platform-login-url"
                     type="single"
                     syntax="url"
                     i18nKey="a104">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@SERVER_URI@/UI/Login</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-platform-logout-url"
                     type="single"
                     syntax="url"
                     i18nKey="a105">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@SERVER_URI@/UI/Logout</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-platform-available-locales"
                     type="list"
                     syntax="string"
                     i18nKey="a106">
-		    <DefaultValues>
+                    <DefaultValues>
                         @AVAILABLE_LOCALES@
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-platform-client-charsets"
                     type="list"
                     syntax="string"
                     i18nKey="a107">
-		</AttributeSchema>
+                </AttributeSchema>
                 <AttributeSchema name="ServerIDValidator"
                     type="validator"
                     syntax="string">
@@ -121,7 +121,7 @@
                         <Value>com.sun.identity.sm.SiteIDValidator</Value>
                     </DefaultValues>
                 </AttributeSchema>
-	    </Global>
+            </Global>
         </Schema>
     </Service>
 </ServicesConfiguration>

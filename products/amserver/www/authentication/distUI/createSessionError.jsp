@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: createSessionError.jsp,v 1.1 2006-01-28 09:18:09 veiming Exp $
+   $Id: createSessionError.jsp,v 1.2 2006-01-30 20:58:49 veiming Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -62,15 +62,15 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
     <!-- branding -->
     <tr>
     <td width="110"><img src="<%= ServiceURI %>/login_images/logo_sun.gif" width="110"
-	height="82" alt="Sun Microsystems Logo"></td>
+        height="82" alt="Sun Microsystems Logo"></td>
     <td><img src="<%= ServiceURI %>/login_images/spacer.gif" width="9" height="1" 
         alt=""></td>
     <td valign="bottom" bgcolor="#ACACAC" width="100%"><img
-	src="<%= ServiceURI %>/login_images/Identity_LogIn.gif" alt="Sun Java System Access Manager"></td>
+        src="<%= ServiceURI %>/login_images/Identity_LogIn.gif" alt="Sun Java System Access Manager"></td>
     </tr>
     <tr>
     <td colspan="3"><img src="<%= ServiceURI %>/login_images/spacer.gif" width="1"
-	height="39" alt=""></td>
+        height="39" alt=""></td>
     </tr>
 
     <tr>
@@ -115,18 +115,18 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
 
     <tr>
     <td colspan="3"><img src="<%= ServiceURI %>/login_images/spacer.gif" width="1"
-	height="57" alt=""></td>
+        height="57" alt=""></td>
     </tr>
 
     <!-- copyrights -->
     <tr>
     <td width="110" align="right" valign="top"><img
-	src="<%= ServiceURI %>/login_images/Java.gif" width="52" height="83" 
+        src="<%= ServiceURI %>/login_images/Java.gif" width="52" height="83" 
         alt="Sun Java System Software"></td>
     <td><img src="<%= ServiceURI %>/login_images/spacer.gif" width="9" height="1" 
         alt=""></td>
     <td valign="top" class="footerText">
-	<auth:resBundle bundleName="amAuthUI" resourceKey="copyright.notice" />
+        <auth:resBundle bundleName="amAuthUI" resourceKey="copyright.notice" />
     </td>
     </tr>
       

@@ -1,8 +1,8 @@
 <iwt:Component name="iwtAuthNT"
-	ver="1.0"
-	desc="NT configuration profile"
-	resB="iwtAuthNT"
-	idx="">
+        ver="1.0"
+        desc="NT configuration profile"
+        resB="iwtAuthNT"
+        idx="">
 <iwt:Att name="iwtAuthNT-server"
          desc="NT authentication server"
          type="string"

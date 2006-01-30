@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.3 2006-01-19 06:08:31 veiming Exp $
+   $Id: amDelegation.xml,v 1.4 2006-01-30 20:58:54 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -77,37 +77,37 @@
             <Policy>
                 <AttributeSchema name="READ"
                     type="single"
-		    syntax="boolean"
+                    syntax="boolean"
                     uitype="radio"
                     i18nKey="READ">
-		    <IsResourceNameAllowed/>
-		    <BooleanValues>
+                    <IsResourceNameAllowed/>
+                    <BooleanValues>
                         <BooleanTrueValue i18nKey="allow">allow</BooleanTrueValue>
                         <BooleanFalseValue i18nKey="deny">deny</BooleanFalseValue>
-                    </BooleanValues>	
-		</AttributeSchema>
+                    </BooleanValues>        
+                </AttributeSchema>
                 <AttributeSchema name="MODIFY"
                     type="single"
-		    syntax="boolean"
+                    syntax="boolean"
                     uitype="radio"
                     i18nKey="MODIFY">
-		    <IsResourceNameAllowed/>
-		    <BooleanValues>
+                    <IsResourceNameAllowed/>
+                    <BooleanValues>
                         <BooleanTrueValue i18nKey="allow">allow</BooleanTrueValue>
                         <BooleanFalseValue i18nKey="deny">deny</BooleanFalseValue>
                     </BooleanValues>
-		</AttributeSchema>
+                </AttributeSchema>
                 <AttributeSchema name="DELEGATE"
                     type="single"
-		    syntax="boolean"
+                    syntax="boolean"
                     uitype="radio"
                     i18nKey="DELEGATE">
-		    <IsResourceNameAllowed/>
-		    <BooleanValues>
+                    <IsResourceNameAllowed/>
+                    <BooleanValues>
                         <BooleanTrueValue i18nKey="allow">allow</BooleanTrueValue>
                         <BooleanFalseValue i18nKey="deny">deny</BooleanFalseValue>
-                    </BooleanValues>	
-		</AttributeSchema>
+                    </BooleanValues>        
+                </AttributeSchema>
             </Policy>
 
             <PluginInterface
@@ -170,30 +170,30 @@
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
-		<SubConfiguration name="Privileges">
-		    <SubConfiguration name="RealmAdmin" id="Privilege">
-			<AttributeValuePair>
+                <SubConfiguration name="Privileges">
+                    <SubConfiguration name="RealmAdmin" id="Privilege">
+                        <AttributeValuePair>
                             <Attribute name="listOfPermissions" />
-			    <Value>RealmAdmin</Value>
-		        </AttributeValuePair>
+                            <Value>RealmAdmin</Value>
+                        </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="defaultSubjectInLegacyMode" />
                             <Value>id=Organization Admin Role,ou=role,REALM,amsdkdn=cn=Organization Admin Role,REALM</Value>
                         </AttributeValuePair>
-		    </SubConfiguration>
-		    <SubConfiguration name="PolicyAdmin" id="Privilege">
-			<AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="PolicyAdmin" id="Privilege">
+                        <AttributeValuePair>
                             <Attribute name="listOfPermissions" />
-			    <Value>PolicyAdmin</Value>
-			    <Value>RealmReadOnly</Value>
-			    <Value>DatastoresReadOnly</Value>
-		        </AttributeValuePair>
+                            <Value>PolicyAdmin</Value>
+                            <Value>RealmReadOnly</Value>
+                            <Value>DatastoresReadOnly</Value>
+                        </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="defaultSubjectInLegacyMode" />
                             <Value>id=Organization Policy Admin Role,ou=role,REALM,amsdkdn=cn=Organization Policy Admin Role,REALM</Value>
                         </AttributeValuePair>
-		    </SubConfiguration>
-		</SubConfiguration>
+                    </SubConfiguration>
+                </SubConfiguration>
             </GlobalConfiguration>
         </Configuration>
     </Service>

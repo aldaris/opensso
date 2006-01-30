@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSAMECallbackHandler.java,v 1.1 2006-01-28 09:16:42 veiming Exp $
+ * $Id: DSAMECallbackHandler.java,v 1.2 2006-01-30 20:58:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,14 +81,13 @@ public class DSAMECallbackHandler implements CallbackHandler {
      * instance(s) of the <code>Callback</code> object(s) passed in
      * to retrieve or display the requested information.
      * @param callbacks an array of <code>Callback</code> objects provided
-     *		by an underlying security service which contains
-     *		the information requested to be retrieved or displayed.
+     *        by an underlying security service which contains
+     *        the information requested to be retrieved or displayed.
      *
-     * @exception java.io.IOException if an input or output error occurs. <p>
-     *
+     * @exception java.io.IOException if an input or output error occurs.
      * @exception UnsupportedCallbackException if the implementation of this
-     *		method does not support one or more of the Callbacks
-     *		specified in the <code>callbacks</code> parameter.
+     *            method does not support one or more of the Callbacks
+     *            specified in the <code>callbacks</code> parameter.
      */
     public void handle(Callback[] callbacks)
         throws IOException, UnsupportedCallbackException {

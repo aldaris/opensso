@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amG11NSettings.xml,v 1.3 2006-01-19 06:08:32 veiming Exp $
+   $Id: amG11NSettings.xml,v 1.4 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,50 +35,50 @@
             serviceHierarchy="/DSAMEConfig/iPlanetG11NSettings"
             i18nFileName="amG11NSettings"
             i18nKey="sun-identity-g11n-settings-service-description"
-	    propertiesViewBeanURL="../service/SMG11N"
-	    >
- 	    <Global>
+            propertiesViewBeanURL="../service/SMG11N"
+            >
+             <Global>
                 <AttributeSchema name="sun-identity-g11n-settings-locale-charset-mapping"
                     type="list"
                     syntax="string"
-		    uitype="name_value_list"
+                    uitype="name_value_list"
                     i18nKey="a100">
-		<DefaultValues>
-		<Value>locale=en|charset=UTF-8;ISO-8859-1</Value>
-		<Value>locale=ja|charset=UTF-8;Shift_JIS;EUC-JP</Value>
-		<Value>locale=fr|charset=UTF-8;ISO-8859-15</Value>
-		<Value>locale=de|charset=UTF-8;ISO-8859-15</Value>
-		<Value>locale=es|charset=UTF-8;ISO-8859-15</Value>
-		<Value>locale=ko|charset=UTF-8;EUC-KR</Value>
-		<Value>locale=zh|charset=UTF-8;GB2312</Value>
-		<Value>locale=ar|charset=UTF-8;ISO-8859-6</Value>
-		<Value>locale=th|charset=UTF-8;TIS-620</Value>
-		<Value>locale=zh_TW|charset=UTF-8;BIG5</Value>
-		</DefaultValues>
-		</AttributeSchema>
+                <DefaultValues>
+                <Value>locale=en|charset=UTF-8;ISO-8859-1</Value>
+                <Value>locale=ja|charset=UTF-8;Shift_JIS;EUC-JP</Value>
+                <Value>locale=fr|charset=UTF-8;ISO-8859-15</Value>
+                <Value>locale=de|charset=UTF-8;ISO-8859-15</Value>
+                <Value>locale=es|charset=UTF-8;ISO-8859-15</Value>
+                <Value>locale=ko|charset=UTF-8;EUC-KR</Value>
+                <Value>locale=zh|charset=UTF-8;GB2312</Value>
+                <Value>locale=ar|charset=UTF-8;ISO-8859-6</Value>
+                <Value>locale=th|charset=UTF-8;TIS-620</Value>
+                <Value>locale=zh_TW|charset=UTF-8;BIG5</Value>
+                </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="sun-identity-g11n-settings-charset-alias-mapping"
                     type="list"
                     syntax="string"
-		    uitype="name_value_list"
+                    uitype="name_value_list"
                     i18nKey="a101">
-		    <DefaultValues>
-		<Value>mimeName=Shift_JIS|javaName=SJIS</Value>
-		<Value>mimeName=EUC-JP|javaName=EUC_JP</Value>
-		<Value>mimeName=EUC-KR|javaName=EUC_KR</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	    </Global>
+                    <DefaultValues>
+                <Value>mimeName=Shift_JIS|javaName=SJIS</Value>
+                <Value>mimeName=EUC-JP|javaName=EUC_JP</Value>
+                <Value>mimeName=EUC-KR|javaName=EUC_KR</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+            </Global>
 
-	    <Organization>
+            <Organization>
                 <AttributeSchema name="sun-identity-g11n-settings-common-name-format"
                     type="list"
                     syntax="string"
                     i18nKey="a102">
-		    <DefaultValues>
-		    <Value>zh={sn}{givenname}</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-	    </Organization>
+                    <DefaultValues>
+                    <Value>zh={sn}{givenname}</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+            </Organization>
         </Schema>
     </Service>
 </ServicesConfiguration>

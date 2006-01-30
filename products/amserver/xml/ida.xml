@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ida.xml,v 1.1 2005-11-01 00:31:43 arvindp Exp $
+   $Id: ida.xml,v 1.2 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -90,15 +90,15 @@
                 <ServiceSubConfig name="StructureTemplates">
                     <ServiceSubConfig name="Organization" id="StructureUmsObjects">
                         <AttributeValuePair>
-			    <Attribute name="class" />
+                            <Attribute name="class" />
                             <Value>com.iplanet.ums.Organization</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
-			    <Attribute name="name" />
+                            <Attribute name="name" />
                             <Value>o org</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
-			    <Attribute name="childNode" />
+                            <Attribute name="childNode" />
                             <Value>OrganizationalUnit</Value>
                             <Value>PeopleContainer</Value>
                         </AttributeValuePair>

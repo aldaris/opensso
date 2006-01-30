@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthHTTPBasic.xml,v 1.1 2006-01-28 09:18:39 veiming Exp $
+    $Id: amAuthHTTPBasic.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,21 +38,21 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/iPlanetAMAuthHTTPBasicService"
             i18nFileName="amAuthHTTPBasic"
-	    revisionNumber="20"
+            revisionNumber="20"
             i18nKey="iplanet-am-auth-http-basic-service-description">
-	    
+            
             <Organization>
                 <AttributeSchema name="iplanet-am-auth-http-basic-module-configured"
                     type="single_choice"
                     syntax="string"
                     i18nKey="a101">
-		    <ChoiceValues>
+                    <ChoiceValues>
                         <ChoiceValuesClassName
                             className=
                     "com.sun.identity.authentication.service.ConfiguredModuleInstances" />
-		    </ChoiceValues>
+                    </ChoiceValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-httpbasic-auth-level"
+                <AttributeSchema name="iplanet-am-auth-httpbasic-auth-level"
                     type="single"
                     syntax="number"
                     i18nKey="a102">
@@ -60,18 +60,18 @@
                         <Value>0</Value>
                     </DefaultValues>
                 </AttributeSchema>
-		<SubSchema name="serverconfig" inheritance="multiple">
+                <SubSchema name="serverconfig" inheritance="multiple">
                     <AttributeSchema name="iplanet-am-auth-http-basic-module-configured"
                         type="single_choice"
                         syntax="string"
                         i18nKey="a101">
-    		    <ChoiceValues>
+                        <ChoiceValues>
                         <ChoiceValuesClassName
                             className=
                     "com.sun.identity.authentication.service.ConfiguredModuleInstances" />
-    		    </ChoiceValues>
+                        </ChoiceValues>
                     </AttributeSchema>
-    		    <AttributeSchema name="iplanet-am-auth-httpbasic-auth-level"
+                        <AttributeSchema name="iplanet-am-auth-httpbasic-auth-level"
                         type="single"
                         syntax="number"
                         i18nKey="a102">
@@ -79,7 +79,7 @@
                             <Value>0</Value>
                         </DefaultValues>
                     </AttributeSchema>
-		</SubSchema>
+                </SubSchema>
             </Organization>
         </Schema>
     </Service>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: server-config.dtd,v 1.1 2005-11-01 00:31:43 arvindp Exp $
+   $Id: server-config.dtd,v 1.2 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,9 +29,9 @@
 
 <!ELEMENT ServerGroup Server+ User+ BaseDN MiscConfig*>
 <!ATTLIST ServerGroup
-    name	ID		#REQUIRED
-    minConnPool	NMTOKEN		"1"
-    maxConnPool	NMTOKEN		"10"
+    name        ID                #REQUIRED
+    minConnPool        NMTOKEN                "1"
+    maxConnPool        NMTOKEN                "10"
 >
 
 
@@ -40,9 +40,9 @@
 <!-- An Server contains an id, host name and port. -->
 <!ELEMENT Server>
 <!ATTLIST Server
-    name	ID		#REQUIRED
-    host	CDATA		#REQUIRED
-    port	NMTOKEN		"389"
+    name        ID                #REQUIRED
+    host        CDATA                #REQUIRED
+    port        NMTOKEN                "389"
     type        (SIMPLE|SSL)    "SIMPLE"
 >
 
@@ -52,7 +52,7 @@ User it is associated with or it contains.-->
 <!ELEMENT User (DirDN, DirPassword)>
 <!ATTLIST User
     name         ID         #REQUIRED
-    type	(auth|proxy|rebind|admin)	"auth"
+    type        (auth|proxy|rebind|admin)        "auth"
 >
 
 <!ELEMENT DirDN (#PCDATA)>

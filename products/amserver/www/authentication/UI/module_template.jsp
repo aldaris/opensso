@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: module_template.jsp,v 1.1 2006-01-28 09:17:34 veiming Exp $
+   $Id: module_template.jsp,v 1.2 2006-01-30 20:58:46 veiming Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -58,7 +58,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
         var hiddenFrm = document.forms['Login'];
 
         if (hiddenFrm != null) {
-	    hiddenFrm.elements['IDButton'].value = value;
+            hiddenFrm.elements['IDButton'].value = value;
             hiddenFrm.submit();
         }
     }
@@ -100,8 +100,8 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">
-		      <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />		    	    
-		  </td>
+                      <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />                                
+                  </td>
                 </tr>            
                 <tr>
                   <td>&nbsp;</td>
@@ -126,36 +126,36 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
                 </td></tr></table></div></td>
                 </tr>
 
-	<jato:content name="hasButton">	
-	<tr>
-	<td><img src="<%= ServiceURI %>/images/dot.gif" 
+        <jato:content name="hasButton">        
+        <tr>
+        <td><img src="<%= ServiceURI %>/images/dot.gif" 
         width="1" height="15" alt="" /></td>
-	<td>
-	    <table border=0 cellpadding=0 cellspacing=0>
-	    <tr>
-	    <jato:tiledView name="tiledButtons"
-		type="com.sun.identity.authentication.UI.ButtonTiledView">	    
-		<script language="javascript">
-		    markupButton(
-			'<jato:text name="txtButton" />',
-			"javascript:LoginSubmit('<jato:text name="txtButton" />')");
-		</script>	    
-	    </jato:tiledView>	
+        <td>
+            <table border=0 cellpadding=0 cellspacing=0>
+            <tr>
+            <jato:tiledView name="tiledButtons"
+                type="com.sun.identity.authentication.UI.ButtonTiledView">            
+                <script language="javascript">
+                    markupButton(
+                        '<jato:text name="txtButton" />',
+                        "javascript:LoginSubmit('<jato:text name="txtButton" />')");
+                </script>            
+            </jato:tiledView>        
             </tr>
-	    </table>
-	</td>
-	</tr>
-	<!-- end of hasButton -->
-	</jato:content>
+            </table>
+        </td>
+        </tr>
+        <!-- end of hasButton -->
+        </jato:content>
 
         <tr>
             <td>&nbsp;</td>
         </tr>
-	<tr>
+        <tr>
             <td><img src="<%= ServiceURI %>/images/dot.gif" 
             width="1" height="33" alt="" /></td>
-	    <td>&nbsp;</td>
-	</tr>
+            <td>&nbsp;</td>
+        </tr>
         </table>
       </td>
       <td width="45"><img src="<%= ServiceURI %>/images/dot.gif" 

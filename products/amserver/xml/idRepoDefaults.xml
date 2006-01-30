@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoDefaults.xml,v 1.1 2005-11-01 00:31:42 arvindp Exp $
+   $Id: idRepoDefaults.xml,v 1.2 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,16 +44,16 @@
 <!-- Set the organization status and organization alias attributes -->
 <RealmRequests>
     <SetAttributes realm="/" serviceName="sunIdentityRepositoryService">
-	<AttributeValuePair>
-	    <Attribute name="sunOrganizationStatus" />
-	    <Value>Active</Value>
-	</AttributeValuePair>
-	<AttributeValuePair>
-	    <Attribute name="sunOrganizationAliases" />
-	    <Value>SERVER_HOST</Value>
+        <AttributeValuePair>
+            <Attribute name="sunOrganizationStatus" />
+            <Value>Active</Value>
+        </AttributeValuePair>
+        <AttributeValuePair>
+            <Attribute name="sunOrganizationAliases" />
+            <Value>SERVER_HOST</Value>
             <Value>RS_RDN</Value>
-	</AttributeValuePair>        
+        </AttributeValuePair>        
     </SetAttributes>
 </RealmRequests>
-</Requests>	
+</Requests>        
 

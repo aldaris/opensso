@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.3 2006-01-12 18:06:11 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.4 2006-01-30 20:58:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,7 +132,7 @@ public class LDAPv3EventService implements Runnable {
         "sun-idrepo-ldapv3-config-numretires";
 
     private static final String LDAPv3Config_LDAP_RETRY_INTERVAL = 
-	"com.iplanet.am.ldap.connection.delay.between.retries";
+        "com.iplanet.am.ldap.connection.delay.between.retries";
 
     private static final String LDAPv3Config_LDAP_ERROR_CODES = 
         "sun-idrepo-ldapv3-config-errorcodes";
@@ -746,8 +746,8 @@ public class LDAPv3EventService implements Runnable {
 
     private void dispatchEventAllChanged(Request request) {
         IdRepoListener el = request.getListener();
-	LDAPv3Repo myldapv3 = request.getOwner();
-	myldapv3.clearCache();
+        LDAPv3Repo myldapv3 = request.getOwner();
+        myldapv3.clearCache();
         el.allObjectsChanged();
     }
 
@@ -762,11 +762,11 @@ public class LDAPv3EventService implements Runnable {
                     + " changeType=" + changeType + " configParams="
                     + configParams);
         }
-	LDAPv3Repo myldapv3 = request.getOwner();
-	myldapv3.objectChanged(dn, changeType);
+        LDAPv3Repo myldapv3 = request.getOwner();
+        myldapv3.objectChanged(dn, changeType);
         el.objectChanged(dn, changeType, configParams);
 
-	debugger.error("exit dispatchEvent. configParams=" + configParams);
+        debugger.error("exit dispatchEvent. configParams=" + configParams);
     }
 
     /**
@@ -779,9 +779,9 @@ public class LDAPv3EventService implements Runnable {
         while (iter.hasNext()) {
             Request req = (Request) iter.next();
             IdRepoListener el = req.getListener();
-	    el.allObjectsChanged();
-	    LDAPv3Repo myldapv3 = req.getOwner();
-	    myldapv3.clearCache();
+            el.allObjectsChanged();
+            LDAPv3Repo myldapv3 = req.getOwner();
+            myldapv3.clearCache();
         }
     }
 

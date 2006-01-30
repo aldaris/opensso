@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: login_denied.jsp,v 1.1 2006-01-28 09:17:27 veiming Exp $
+   $Id: login_denied.jsp,v 1.2 2006-01-30 20:58:46 veiming Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -83,8 +83,8 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">
-		      <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />		    	    
-		  </td>
+                      <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />                                
+                  </td>
                 </tr>            
                 <tr>
                   <td>&nbsp;</td>
@@ -116,7 +116,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
             <tr>
             <td><img src="<%= ServiceURI %>/images/dot.gif" 
             width="1" height="33" alt="" /></td>
-	    <td>&nbsp;</td>
+            <td>&nbsp;</td>
             </tr>
         </table>
       </td>

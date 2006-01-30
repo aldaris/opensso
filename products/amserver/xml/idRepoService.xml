@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.3 2006-01-12 18:07:51 kenwho Exp $
+   $Id: idRepoService.xml,v 1.4 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,245 +30,245 @@
 
 <ServicesConfiguration>
     <Service name="sunIdentityRepositoryService" version="1.0">
-	<Schema
-	    i18nFileName="amIdRepoService"
-	    revisionNumber="20"
-	    i18nKey="">
-	    
-	    <Global>
-		<AttributeSchema name="coexistenceMode"
-		    type="single" syntax="string">
-		    <DefaultValues><Value>AM_COEXIST</Value></DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="realmMode"
-		    type="single" syntax="string">
-		    <DefaultValues><Value>AM_REALM</Value></DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="serviceNamesForAutoAssignment"
-		    type="list"
-		    syntax="string">
-		    <DefaultValues>
-			<Value>sunIdentityRepositoryService</Value>
-			<Value>iPlanetAMAuthService</Value>
-			<Value>iPlanetAMAuthLDAPService</Value>
-			<Value>iPlanetAMAuthConfiguration</Value>
-			<Value>iPlanetAMPolicyConfigService</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-		<SubSchema name="SupportedIdentities"
-		    inheritance="multiple" >
-			<AttributeSchema name="servicename">
-			</AttributeSchema>
-			<AttributeSchema name="canBeMemberOf">
-			</AttributeSchema>
-			<AttributeSchema name="canHaveMembers">
-			</AttributeSchema>
-			<AttributeSchema name="canAddMembers">
-			</AttributeSchema>
-		</SubSchema>
-		<SubSchema name="users" i18nKey="users">
-		    <SubSchema name="user" inheritance="multiple"
-			i18nKey="user">
-			<AttributeSchema name="userPassword"
-			    type="single" syntax="password"
-			    i18nKey="password" />
+        <Schema
+            i18nFileName="amIdRepoService"
+            revisionNumber="20"
+            i18nKey="">
+            
+            <Global>
+                <AttributeSchema name="coexistenceMode"
+                    type="single" syntax="string">
+                    <DefaultValues><Value>AM_COEXIST</Value></DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="realmMode"
+                    type="single" syntax="string">
+                    <DefaultValues><Value>AM_REALM</Value></DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="serviceNamesForAutoAssignment"
+                    type="list"
+                    syntax="string">
+                    <DefaultValues>
+                        <Value>sunIdentityRepositoryService</Value>
+                        <Value>iPlanetAMAuthService</Value>
+                        <Value>iPlanetAMAuthLDAPService</Value>
+                        <Value>iPlanetAMAuthConfiguration</Value>
+                        <Value>iPlanetAMPolicyConfigService</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <SubSchema name="SupportedIdentities"
+                    inheritance="multiple" >
+                        <AttributeSchema name="servicename">
+                        </AttributeSchema>
+                        <AttributeSchema name="canBeMemberOf">
+                        </AttributeSchema>
+                        <AttributeSchema name="canHaveMembers">
+                        </AttributeSchema>
+                        <AttributeSchema name="canAddMembers">
+                        </AttributeSchema>
+                </SubSchema>
+                <SubSchema name="users" i18nKey="users">
+                    <SubSchema name="user" inheritance="multiple"
+                        i18nKey="user">
+                        <AttributeSchema name="userPassword"
+                            type="single" syntax="password"
+                            i18nKey="password" />
                         <AttributeSchema name="inetUserStatus"
                             type="single" syntax="string"
                             i18nKey="staturs">
                             <DefaultValues><Value>Active</Value></DefaultValues>
                         </AttributeSchema>
-			<AttributeSchema name="dn"
-			    type="single"
-			    isSearchable="yes"
-			    i18nKey="dn" />
-			<AttributeSchema name="roles" i18nKey="roles" />
-		    </SubSchema>
-		</SubSchema>
-		<SubSchema name="roles" i18nKey="roles">
-		    <SubSchema name="role" inheritance="multiple"
-			i18nKey="role">
-			<AttributeSchema name="dn"
-			    type="single"
-			    isSearchable="yes"
-			    i18nKey="dn" />
-			<AttributeSchema name="members"
-			    i18nKey="members" />
-		    </SubSchema>
-		</SubSchema>		    
-	    </Global>
-	    <Organization>
-	        <AttributeSchema name="sunIdRepoAttributeCombiner"
-		    type = "single"
-		    syntax = "string"
-		    i18nKey = "a100">
-		    <DefaultValues>
-		        <!-- The plugin class will combine the
-			     attributes from different identity
-			     repositories and return them -->
-			   <Value>com.iplanet.am.sdk.AttributeCombiner</Value>
-	           </DefaultValues>
-		</AttributeSchema>
-		<!-- The following attribute defines the attribute mappings
-		     that will be used in co-existence mode to map IdRepo
-		     attributes defined in OrganizationAttributeSchema to
-		     SunDS Organization Entry -->
-		<AttributeSchema name="sunCoexistenceAttributeMapping"
-		    type = "list"
-		    syntax = "string"
-		    i18nKey = "a1001">
-		    <DefaultValues>
-			<Value>sunOrganizationStatus=inetDomainStatus</Value>
-			<Value>sunOrganizationAliases=sunOrganizationAlias</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                        <AttributeSchema name="dn"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="dn" />
+                        <AttributeSchema name="roles" i18nKey="roles" />
+                    </SubSchema>
+                </SubSchema>
+                <SubSchema name="roles" i18nKey="roles">
+                    <SubSchema name="role" inheritance="multiple"
+                        i18nKey="role">
+                        <AttributeSchema name="dn"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="dn" />
+                        <AttributeSchema name="members"
+                            i18nKey="members" />
+                    </SubSchema>
+                </SubSchema>                    
+            </Global>
+            <Organization>
+                <AttributeSchema name="sunIdRepoAttributeCombiner"
+                    type = "single"
+                    syntax = "string"
+                    i18nKey = "a100">
+                    <DefaultValues>
+                        <!-- The plugin class will combine the
+                             attributes from different identity
+                             repositories and return them -->
+                           <Value>com.iplanet.am.sdk.AttributeCombiner</Value>
+                   </DefaultValues>
+                </AttributeSchema>
+                <!-- The following attribute defines the attribute mappings
+                     that will be used in co-existence mode to map IdRepo
+                     attributes defined in OrganizationAttributeSchema to
+                     SunDS Organization Entry -->
+                <AttributeSchema name="sunCoexistenceAttributeMapping"
+                    type = "list"
+                    syntax = "string"
+                    i18nKey = "a1001">
+                    <DefaultValues>
+                        <Value>sunOrganizationStatus=inetDomainStatus</Value>
+                        <Value>sunOrganizationAliases=sunOrganizationAlias</Value>
+                    </DefaultValues>
+                </AttributeSchema>
 
-		<!-- Schema for linking SMS's organization to
-		     AMSDK's organization. -->
-		<SubSchema name= "amSDK"
-		    inheritance = "multiple"
-		    i18nKey = "AMSDK_I18N_KEY">
-		    <!-- The two attributes below, if defined, allow the IdRepo SDK to
-			map attribute names and to determine entities supported and
-			operations supported by this plugin. If no mapping is provided,
-			the assumption is that the attribute names are the same (no
-			mapping needed. If the list of entities supported is not provided
-			then the assumption is that no entities are supported -->
-	            <AttributeSchema name="sunIdRepoClass"
-		        type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a102">
-			<DefaultValues>
-			    <Value>com.iplanet.am.sdk.AMSDKRepo</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <AttributeSchema name="RequiredValueValidator"
-			type="validator"
-			syntax="string">
-			<DefaultValues>
-			    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <AttributeSchema name="sunIdRepoNamingAttribute"
-			type="list"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>user=uid</Value>
-			    <Value>group=cn</Value>
-			    <Value>role=cn</Value>
-			    <Value>agent=uid</Value>
-			    <Value>filteredrole=cn</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <AttributeSchema name="sunIdRepoAttributeMapping"
-			type="list"
-			syntax="string"
-			i18nKey="">
-		    </AttributeSchema>
-		    <AttributeSchema name="sunIdRepoSupportedOperations"
-			type="list"
-			syntax="string"
-			validator="validatatorClass for verifying this list against supported list"
-			i18nKey="">
-			<DefaultValues>
-			    <!-- IdRepos can provide the object types
-			       it can manage and the operations that can
-			       be performed on these objects, as a key-value
-			       pair. Object types could be User, Group, Role,
-			       etc., and the operations are limited to create,
-			       read, edit and modify. The values are case
-			       insenstive. -->
-			       <Value>user=read,create,edit,delete,service</Value>
-			       <Value>agent=read,edit</Value>
-			       <Value>role=read,edit,service</Value>
-			       <Value>filteredrole=read,edit,service</Value>
-			       <Value>group=read</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <!-- From here on the list of plugin specific attributes for determing
-   		       things like organization relating to this realm, authentication source,
-		       user containers, group containers etc etc. -->
-		    <AttributeSchema name="amSDKOrgName"
-			type = "single"
-			    syntax = "string"
-			    i18nKey = "a106">
-			    <DefaultValues>
-				<Value>NORMALIZED_ORGBASE</Value>
-			    </DefaultValues>
-		    </AttributeSchema>
-		</SubSchema>
+                <!-- Schema for linking SMS's organization to
+                     AMSDK's organization. -->
+                <SubSchema name= "amSDK"
+                    inheritance = "multiple"
+                    i18nKey = "AMSDK_I18N_KEY">
+                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
+                        map attribute names and to determine entities supported and
+                        operations supported by this plugin. If no mapping is provided,
+                        the assumption is that the attribute names are the same (no
+                        mapping needed. If the list of entities supported is not provided
+                        then the assumption is that no entities are supported -->
+                    <AttributeSchema name="sunIdRepoClass"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a102">
+                        <DefaultValues>
+                            <Value>com.iplanet.am.sdk.AMSDKRepo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdRepoNamingAttribute"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>user=uid</Value>
+                            <Value>group=cn</Value>
+                            <Value>role=cn</Value>
+                            <Value>agent=uid</Value>
+                            <Value>filteredrole=cn</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdRepoAttributeMapping"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdRepoSupportedOperations"
+                        type="list"
+                        syntax="string"
+                        validator="validatatorClass for verifying this list against supported list"
+                        i18nKey="">
+                        <DefaultValues>
+                            <!-- IdRepos can provide the object types
+                               it can manage and the operations that can
+                               be performed on these objects, as a key-value
+                               pair. Object types could be User, Group, Role,
+                               etc., and the operations are limited to create,
+                               read, edit and modify. The values are case
+                               insenstive. -->
+                               <Value>user=read,create,edit,delete,service</Value>
+                               <Value>agent=read,edit</Value>
+                               <Value>role=read,edit,service</Value>
+                               <Value>filteredrole=read,edit,service</Value>
+                               <Value>group=read</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- From here on the list of plugin specific attributes for determing
+                          things like organization relating to this realm, authentication source,
+                       user containers, group containers etc etc. -->
+                    <AttributeSchema name="amSDKOrgName"
+                        type = "single"
+                            syntax = "string"
+                            i18nKey = "a106">
+                            <DefaultValues>
+                                <Value>NORMALIZED_ORGBASE</Value>
+                            </DefaultValues>
+                    </AttributeSchema>
+                </SubSchema>
 
-		<!-- LDAPv3 plugin original 70 (generic ds)  -->
-		<SubSchema name= "LDAPv3"
-		    inheritance = "multiple"
-		    i18nKey = "a2039">
-		    <AttributeSchema name="RequiredValueValidator"
-			type="validator"
-			syntax="string">
-			<DefaultValues>
-			    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <!-- The two attributes below, if defined, allow the IdRepo SDK to
-			map attribute names and to determine entities supported and
-			operations supported by this plugin. If no mapping is provided,
-			the assumption is that the attribute names are the same (no
-			mapping needed. If the list of entities supported is not provided
-			then the assumption is that no entities are supported -->
-	            <AttributeSchema name="sunIdRepoClass"
-		        type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2013">
-			<DefaultValues>
-			    <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                <!-- LDAPv3 plugin original 70 (generic ds)  -->
+                <SubSchema name= "LDAPv3"
+                    inheritance = "multiple"
+                    i18nKey = "a2039">
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
+                        map attribute names and to determine entities supported and
+                        operations supported by this plugin. If no mapping is provided,
+                        the assumption is that the attribute names are the same (no
+                        mapping needed. If the list of entities supported is not provided
+                        then the assumption is that no entities are supported -->
+                    <AttributeSchema name="sunIdRepoClass"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2013">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                    <AttributeSchema name="sunIdRepoAttributeMapping"
                         type="list"
                         syntax="string"
                         i18nKey="a20131">
                      </AttributeSchema>
-	    
-		    <AttributeSchema name="sunIdRepoSupportedOperations"
-			type="list"
-			syntax="string"
-			validator="validatatorClass for verifying this list against supported list"
-			i18nKey="a2014">
-			<DefaultValues>
-			    <!-- IdRepos can provide the object types
-			       it can manage and the operations that can
-			       be performed on these objects, as a key-value
-			       pair. Object types could be User, Group, Role,
-			       etc., and the operations are limited to create,
-			       read, edit and modify. The values are case
-			       insenstive. -->
-			       <Value>realm=read,create,edit,delete,service</Value>
-			       <Value>user=read,create,edit,delete,service</Value>
-			       <Value>agent=read,create,edit,delete</Value>
-			       <Value>group=read,create,edit,delete</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-
-		    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3Generic"
-			type="single"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapv3Generic</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <!-- From here on the list of plugin specific attributes for determing
-   		       things like organization relating to this realm, authentication source,
-		       user containers, group containers etc etc. -->
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+            
+                    <AttributeSchema name="sunIdRepoSupportedOperations"
                         type="list"
                         syntax="string"
-			any="required"
-			validator="RequiredValueValidator"
+                        validator="validatatorClass for verifying this list against supported list"
+                        i18nKey="a2014">
+                        <DefaultValues>
+                            <!-- IdRepos can provide the object types
+                               it can manage and the operations that can
+                               be performed on these objects, as a key-value
+                               pair. Object types could be User, Group, Role,
+                               etc., and the operations are limited to create,
+                               read, edit and modify. The values are case
+                               insenstive. -->
+                               <Value>realm=read,create,edit,delete,service</Value>
+                               <Value>user=read,create,edit,delete,service</Value>
+                               <Value>agent=read,create,edit,delete</Value>
+                               <Value>group=read,create,edit,delete</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3Generic"
+                        type="single"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapv3Generic</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- From here on the list of plugin specific attributes for determing
+                          things like organization relating to this realm, authentication source,
+                       user containers, group containers etc etc. -->
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+                        type="list"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
                         i18nKey="a2000">
                         <DefaultValues>
                             <Value>DIRECTORY_SERVER:DIRECTORY_PORT</Value>
@@ -289,18 +289,18 @@
                         syntax="password"
                         i18nKey="a2004">
                     </AttributeSchema>
-		    
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
-			type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2006">
-			<DefaultValues>
-			    <Value>NORMALIZED_ORGBASE</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    
+                    
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2006">
+                        <DefaultValues>
+                            <Value>NORMALIZED_ORGBASE</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    
                     <AttributeSchema name="sun-idrepo-ldapv3-config-ssl-enabled"
                         type="single"
                         syntax="boolean"
@@ -373,15 +373,15 @@
                         </DefaultValues>
                     </AttributeSchema>
                     
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2017">
-			<DefaultValues>
-			    <Value>organizationalPerson</Value>
-			    <Value>person</Value>
-			    <Value>top</Value>
-			    <Value>user</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2017">
+                        <DefaultValues>
+                            <Value>organizationalPerson</Value>
+                            <Value>person</Value>
+                            <Value>top</Value>
+                            <Value>user</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -392,15 +392,15 @@
                         <DefaultValues>
                             <Value>cn</Value>
                             <Value>dn</Value>
-			    <Value>employeeNumber</Value>
+                            <Value>employeeNumber</Value>
                             <Value>entrydn</Value>
                             <Value>entryid</Value>
-			    <Value>givenname</Value>
+                            <Value>givenname</Value>
                             <Value>inetuserstatus</Value>
                             <Value>objectclass</Value>
                             <Value>ou</Value>
                             <Value>sn</Value>
-			    <Value>telephoneNumber</Value>
+                            <Value>telephoneNumber</Value>
                             <Value>uid</Value>
                             <Value>userpassword</Value>
                         </DefaultValues>
@@ -410,10 +410,10 @@
                         type="list"
                         syntax="string"
                         i18nKey="a201711">
-			<DefaultValues>
-			    <Value>cn</Value>
-			    <Value>sn</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>cn</Value>
+                            <Value>sn</Value>
+                        </DefaultValues>
                     </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-isactive"
@@ -461,13 +461,13 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2022">
-			<DefaultValues>
-			    <Value>groupofuniquenames</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2022">
+                        <DefaultValues>
+                            <Value>groupofuniquenames</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -545,28 +545,28 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nsmanagedroledefinition</Value>
-			    <Value>nsroledefinition</Value>
-			    <Value>nssimpleroledefinition</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nsmanagedroledefinition</Value>
+                            <Value>nsroledefinition</Value>
+                            <Value>nssimpleroledefinition</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nscomplexroledefinition</Value>
-			    <Value>nsfilteredroledefinition</Value>
-			    <Value>nsroledefinition</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nscomplexroledefinition</Value>
+                            <Value>nsfilteredroledefinition</Value>
+                            <Value>nsroledefinition</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -651,22 +651,22 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
                         type="single"
-			syntax="string"
-			i18nKey="a20371">
-			<DefaultValues>
-			    <Value>(objectClass=sunIdentityServerDevice)</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        syntax="string"
+                        i18nKey="a20371">
+                        <DefaultValues>
+                            <Value>(objectClass=sunIdentityServerDevice)</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2038">
-			<DefaultValues>
-			    <Value>sunIdentityServerDevice</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2038">
+                        <DefaultValues>
+                            <Value>sunIdentityServerDevice</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -693,21 +693,21 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
-			type="multiple_choice"
-			syntax="string"
-			i18nKey="a20385">
-			<ChoiceValues>
-			    <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a20385">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
-			<DefaultValues>
-			    <Value>User</Value>
-			    <Value>Group</Value>
-			    <Value>Agent</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        <DefaultValues>
+                            <Value>User</Value>
+                            <Value>Group</Value>
+                            <Value>Agent</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-auth-naming-attr"
                         type="single"
@@ -745,7 +745,7 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
+                    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
                         type="single"
                         syntax="number"
                         i18nKey="a2046">
@@ -754,14 +754,14 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
-			type="list"
-			syntax="string"
-			i18nKey="a2047">
-			<DefaultValues>
-			    <Value>80</Value>
-			    <Value>81</Value>
-			    <Value>91</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2047">
+                        <DefaultValues>
+                            <Value>80</Value>
+                            <Value>81</Value>
+                            <Value>91</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -792,86 +792,86 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
-			type="list"
-			syntax="xml"
-			i18nKey="">
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
+                        type="list"
+                        syntax="xml"
+                        i18nKey="">
                     </AttributeSchema>
 
-		</SubSchema>
+                </SubSchema>
 
-		<!-- LDAPv3 plugin for sun ds with AM-->
-		<SubSchema name= "LDAPv3ForAMDS"
-		    inheritance = "multiple"
-		    i18nKey = "a2052">
-		    <AttributeSchema name="RequiredValueValidator"
-			type="validator"
-			syntax="string">
-			<DefaultValues>
-			    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <!-- The two attributes below, if defined, allow the IdRepo SDK to
-			map attribute names and to determine entities supported and
-			operations supported by this plugin. If no mapping is provided,
-			the assumption is that the attribute names are the same (no
-			mapping needed. If the list of entities supported is not provided
-			then the assumption is that no entities are supported -->
-	            <AttributeSchema name="sunIdRepoClass"
-		        type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2013">
-			<DefaultValues>
-			    <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                <!-- LDAPv3 plugin for sun ds with AM-->
+                <SubSchema name= "LDAPv3ForAMDS"
+                    inheritance = "multiple"
+                    i18nKey = "a2052">
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
+                        map attribute names and to determine entities supported and
+                        operations supported by this plugin. If no mapping is provided,
+                        the assumption is that the attribute names are the same (no
+                        mapping needed. If the list of entities supported is not provided
+                        then the assumption is that no entities are supported -->
+                    <AttributeSchema name="sunIdRepoClass"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2013">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                    <AttributeSchema name="sunIdRepoAttributeMapping"
                         type="list"
                         syntax="string"
                         i18nKey="a20131">
                      </AttributeSchema>
-	    
-		    <AttributeSchema name="sunIdRepoSupportedOperations"
-			type="list"
-			syntax="string"
-			validator="validatatorClass for verifying this list against supported list"
-			i18nKey="a2014">
-			<DefaultValues>
-			    <!-- IdRepos can provide the object types
-			       it can manage and the operations that can
-			       be performed on these objects, as a key-value
-			       pair. Object types could be User, Group, Role,
-			       etc., and the operations are limited to create,
-			       read, edit and modify. The values are case
-			       insenstive. -->
-			       <Value>realm=read,create,edit,delete,service</Value>
-			       <Value>user=read,create,edit,delete,service</Value>
-			       <Value>agent=read,create,edit,delete</Value>
-			       <Value>group=read,create,edit,delete</Value>
-			       <Value>role=read,create,edit,delete</Value>
-			       <Value>filteredrole=read</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-
-		    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3AMDS"
-			type="single"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapv3AMDS</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-
-		    <!-- From here on the list of plugin specific attributes for determing
-   		       things like organization relating to this realm, authentication source,
-		       user containers, group containers etc etc. -->
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+            
+                    <AttributeSchema name="sunIdRepoSupportedOperations"
                         type="list"
                         syntax="string"
-			any="required"
-			validator="RequiredValueValidator"
+                        validator="validatatorClass for verifying this list against supported list"
+                        i18nKey="a2014">
+                        <DefaultValues>
+                            <!-- IdRepos can provide the object types
+                               it can manage and the operations that can
+                               be performed on these objects, as a key-value
+                               pair. Object types could be User, Group, Role,
+                               etc., and the operations are limited to create,
+                               read, edit and modify. The values are case
+                               insenstive. -->
+                               <Value>realm=read,create,edit,delete,service</Value>
+                               <Value>user=read,create,edit,delete,service</Value>
+                               <Value>agent=read,create,edit,delete</Value>
+                               <Value>group=read,create,edit,delete</Value>
+                               <Value>role=read,create,edit,delete</Value>
+                               <Value>filteredrole=read</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3AMDS"
+                        type="single"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapv3AMDS</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <!-- From here on the list of plugin specific attributes for determing
+                          things like organization relating to this realm, authentication source,
+                       user containers, group containers etc etc. -->
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+                        type="list"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
                         i18nKey="a2000">
                         <DefaultValues>
                             <Value>DIRECTORY_SERVER:DIRECTORY_PORT</Value>
@@ -892,18 +892,18 @@
                         syntax="password"
                         i18nKey="a2004">
                     </AttributeSchema>
-		    
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
-			type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2006">
-			<DefaultValues>
-			    <Value>NORMALIZED_ORGBASE</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    
+                    
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2006">
+                        <DefaultValues>
+                            <Value>NORMALIZED_ORGBASE</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    
                     <AttributeSchema name="sun-idrepo-ldapv3-config-ssl-enabled"
                         type="single"
                         syntax="boolean"
@@ -976,20 +976,20 @@
                         </DefaultValues>
                     </AttributeSchema>
                     
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2017">
-			<DefaultValues>
-			    <Value>inetadmin</Value>
-			    <Value>inetorgperson</Value>
-			    <Value>inetuser</Value>
-			    <Value>iplanet-am-managed-person</Value>
-			    <Value>iplanet-am-user-service</Value>
-			    <Value>iPlanetPreferences</Value>
-			    <Value>organizationalperson</Value>
-			    <Value>person</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2017">
+                        <DefaultValues>
+                            <Value>inetadmin</Value>
+                            <Value>inetorgperson</Value>
+                            <Value>inetuser</Value>
+                            <Value>iplanet-am-managed-person</Value>
+                            <Value>iplanet-am-user-service</Value>
+                            <Value>iPlanetPreferences</Value>
+                            <Value>organizationalperson</Value>
+                            <Value>person</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1003,8 +1003,8 @@
                             <Value>employeeNumber</Value>
                             <Value>entrydn</Value>
                             <Value>entryid</Value>
-			    <Value>givenName</Value>
-			    <Value>inetUserStatus</Value>
+                            <Value>givenName</Value>
+                            <Value>inetUserStatus</Value>
                             <Value>iplanet-am-static-group-dn</Value>
                             <Value>iplanet-am-user-account-life</Value>
                             <Value>iplanet-am-user-alias-list</Value>
@@ -1013,7 +1013,7 @@
                             <Value>iplanet-am-user-success-url</Value>
                             <Value>mail</Value>
                             <Value>nsrole</Value>
-			    <Value>objectClass</Value>
+                            <Value>objectClass</Value>
                             <Value>postalAddress</Value>
                             <Value>preferredLocale</Value>
                             <Value>sn</Value>
@@ -1028,10 +1028,10 @@
                         type="list"
                         syntax="string"
                         i18nKey="a201711">
-			<DefaultValues>
-			    <Value>cn</Value>
-			    <Value>sn</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>cn</Value>
+                            <Value>sn</Value>
+                        </DefaultValues>
                     </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-isactive"
@@ -1079,16 +1079,16 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2022">
-			<DefaultValues>
-			    <Value>groupofuniquenames</Value>
-			    <Value>groupofurls</Value>
-			    <Value>iplanet-am-managed-static-group</Value>
-			    <Value>iplanet-am-managed-group</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2022">
+                        <DefaultValues>
+                            <Value>groupofuniquenames</Value>
+                            <Value>groupofurls</Value>
+                            <Value>iplanet-am-managed-static-group</Value>
+                            <Value>iplanet-am-managed-group</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1166,28 +1166,28 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2029">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nsmanagedroledefinition</Value>
-			    <Value>nsroledefinition</Value>
-			    <Value>nssimpleroledefinition</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2029">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nsmanagedroledefinition</Value>
+                            <Value>nsroledefinition</Value>
+                            <Value>nssimpleroledefinition</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a20291">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nscomplexroledefinition</Value>
-			    <Value>nsfilteredroledefinition</Value>
-			    <Value>nsroledefinition</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a20291">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nscomplexroledefinition</Value>
+                            <Value>nsfilteredroledefinition</Value>
+                            <Value>nsroledefinition</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1272,24 +1272,24 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
                         type="single"
-			syntax="string"
-			i18nKey="a20371">
-			<DefaultValues>
-			    <Value>(objectClass=sunIdentityServerDevice)</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        syntax="string"
+                        i18nKey="a20371">
+                        <DefaultValues>
+                            <Value>(objectClass=sunIdentityServerDevice)</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2038">
-			<DefaultValues>
-			    <Value>iplanet-am-user-service</Value>
-			    <Value>iplanetPreferences</Value>
-			    <Value>sunIdentityServerDevice</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2038">
+                        <DefaultValues>
+                            <Value>iplanet-am-user-service</Value>
+                            <Value>iplanetPreferences</Value>
+                            <Value>sunIdentityServerDevice</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1322,21 +1322,21 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
-			type="multiple_choice"
-			syntax="string"
-			i18nKey="a20385">
-			<ChoiceValues>
-			    <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a20385">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
-			<DefaultValues>
-			    <Value>User</Value>
-			    <Value>Group</Value>
-			    <Value>Agent</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        <DefaultValues>
+                            <Value>User</Value>
+                            <Value>Group</Value>
+                            <Value>Agent</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-auth-naming-attr"
                         type="single"
@@ -1374,7 +1374,7 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
+                    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
                         type="single"
                         syntax="number"
                         i18nKey="a2046">
@@ -1383,14 +1383,14 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
-			type="list"
-			syntax="string"
-			i18nKey="a2047">
-			<DefaultValues>
-			    <Value>80</Value>
-			    <Value>81</Value>
-			    <Value>91</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2047">
+                        <DefaultValues>
+                            <Value>80</Value>
+                            <Value>81</Value>
+                            <Value>91</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1421,93 +1421,93 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
-			type="list"
-			syntax="xml"
-			i18nKey="">
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
+                        type="list"
+                        syntax="xml"
+                        i18nKey="">
                     </AttributeSchema>
 
-		</SubSchema>
+                </SubSchema>
 
 
-		<!-- LDAPv3 plugin for AD -->
-		<SubSchema name= "LDAPv3ForAD"
-		    inheritance = "multiple"
-		    i18nKey = "a2051">
-		    <AttributeSchema name="RequiredValueValidator"
-			type="validator"
-			syntax="string">
-			<DefaultValues>
-			    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <!-- The two attributes below, if defined, allow the IdRepo SDK to
-			map attribute names and to determine entities supported and
-			operations supported by this plugin. If no mapping is provided,
-			the assumption is that the attribute names are the same (no
-			mapping needed. If the list of entities supported is not provided
-			then the assumption is that no entities are supported -->
-	            <AttributeSchema name="sunIdRepoClass"
-		        type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2013">
-			<DefaultValues>
-			    <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                <!-- LDAPv3 plugin for AD -->
+                <SubSchema name= "LDAPv3ForAD"
+                    inheritance = "multiple"
+                    i18nKey = "a2051">
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
+                        map attribute names and to determine entities supported and
+                        operations supported by this plugin. If no mapping is provided,
+                        the assumption is that the attribute names are the same (no
+                        mapping needed. If the list of entities supported is not provided
+                        then the assumption is that no entities are supported -->
+                    <AttributeSchema name="sunIdRepoClass"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2013">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                    <AttributeSchema name="sunIdRepoAttributeMapping"
                         type="list"
                         syntax="string"
                         i18nKey="a20131">
-			<DefaultValues>
-			    <Value>employeeNumber=distinguishedName</Value>
-			    <Value>iplanet-am-user-alias-list=objectGUID</Value>
-			    <Value>mail=userPrincipalName</Value>
-			    <Value>portalAddress=sAMAccountName</Value>
-			    <Value>telephonenumber=displayName</Value>
-			    <Value>uid=sAMAccountName</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>employeeNumber=distinguishedName</Value>
+                            <Value>iplanet-am-user-alias-list=objectGUID</Value>
+                            <Value>mail=userPrincipalName</Value>
+                            <Value>portalAddress=sAMAccountName</Value>
+                            <Value>telephonenumber=displayName</Value>
+                            <Value>uid=sAMAccountName</Value>
+                        </DefaultValues>
                      </AttributeSchema>
-	    
-		    <AttributeSchema name="sunIdRepoSupportedOperations"
-			type="list"
-			syntax="string"
-			validator="validatatorClass for verifying this list against supported list"
-			i18nKey="a2014">
-			<DefaultValues>
-			    <!-- IdRepos can provide the object types
-			       it can manage and the operations that can
-			       be performed on these objects, as a key-value
-			       pair. Object types could be User, Group, Role,
-			       etc., and the operations are limited to create,
-			       read, edit and modify. The values are case
-			       insenstive. -->
-			       <Value>realm=read,create,edit,delete,service</Value>
-			       <Value>user=read,create,edit,delete,service</Value>
-			       <Value>agent=read,create,edit,delete</Value>
-			       <Value>group=read,create,edit,delete</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-
-		    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3AD"
-			type="single"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapv3AD</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-
-		    <!-- From here on the list of plugin specific attributes for determing
-   		       things like organization relating to this realm, authentication source,
-		       user containers, group containers etc etc. -->
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+            
+                    <AttributeSchema name="sunIdRepoSupportedOperations"
                         type="list"
                         syntax="string"
-			any="required"
-			validator="RequiredValueValidator"
+                        validator="validatatorClass for verifying this list against supported list"
+                        i18nKey="a2014">
+                        <DefaultValues>
+                            <!-- IdRepos can provide the object types
+                               it can manage and the operations that can
+                               be performed on these objects, as a key-value
+                               pair. Object types could be User, Group, Role,
+                               etc., and the operations are limited to create,
+                               read, edit and modify. The values are case
+                               insenstive. -->
+                               <Value>realm=read,create,edit,delete,service</Value>
+                               <Value>user=read,create,edit,delete,service</Value>
+                               <Value>agent=read,create,edit,delete</Value>
+                               <Value>group=read,create,edit,delete</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-ldapv3-ldapv3AD"
+                        type="single"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapv3AD</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <!-- From here on the list of plugin specific attributes for determing
+                          things like organization relating to this realm, authentication source,
+                       user containers, group containers etc etc. -->
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-ldap-server"
+                        type="list"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
                         i18nKey="a2000">
                         <DefaultValues>
                             <Value>DIRECTORY_SERVER:DIRECTORY_PORT</Value>
@@ -1528,18 +1528,18 @@
                         syntax="password"
                         i18nKey="a2004">
                     </AttributeSchema>
-		    
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
-			type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a2006">
-			<DefaultValues>
-			    <Value>NORMALIZED_ORGBASE</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    
+                    
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-organization_name"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a2006">
+                        <DefaultValues>
+                            <Value>NORMALIZED_ORGBASE</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    
                     <AttributeSchema name="sun-idrepo-ldapv3-config-ssl-enabled"
                         type="single"
                         syntax="boolean"
@@ -1612,15 +1612,15 @@
                         </DefaultValues>
                     </AttributeSchema>
                     
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2017">
-			<DefaultValues>
-			    <Value>organizationalPerson</Value>
-			    <Value>person</Value>
-			    <Value>top</Value>
-			    <Value>user</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-user-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2017">
+                        <DefaultValues>
+                            <Value>organizationalPerson</Value>
+                            <Value>person</Value>
+                            <Value>top</Value>
+                            <Value>user</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1640,8 +1640,8 @@
                             <Value>objectGUID</Value>
                             <Value>sAMAccountName</Value>
                             <Value>sn</Value>
-			    <Value>userpassword</Value>
-			    <Value>userPrincipalname</Value>
+                            <Value>userpassword</Value>
+                            <Value>userPrincipalname</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1649,10 +1649,10 @@
                         type="list"
                         syntax="string"
                         i18nKey="a201711">
-			<DefaultValues>
-			    <Value>cn</Value>
-			    <Value>sn</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>cn</Value>
+                            <Value>sn</Value>
+                        </DefaultValues>
                     </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-isactive"
@@ -1700,13 +1700,13 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2022">
-			<DefaultValues>
-			    <Value>group</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-group-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2022">
+                        <DefaultValues>
+                            <Value>group</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1787,28 +1787,28 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nssimpleroledefinition</Value>
-			    <Value>nsmanagedroledefinition</Value>
-			    <Value>nsroledefinition</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-role-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nssimpleroledefinition</Value>
+                            <Value>nsmanagedroledefinition</Value>
+                            <Value>nsroledefinition</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="">
-			<DefaultValues>
-			    <Value>ldapsubentry</Value>
-			    <Value>nscomplexroledefinition</Value>
-			    <Value>nsfilteredroledefinition</Value>
-			    <Value>nsroledefinition</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-filterrole-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="">
+                        <DefaultValues>
+                            <Value>ldapsubentry</Value>
+                            <Value>nscomplexroledefinition</Value>
+                            <Value>nsfilteredroledefinition</Value>
+                            <Value>nsroledefinition</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1893,22 +1893,22 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-search-filter"
                         type="single"
-			syntax="string"
-			i18nKey="a20371">
-			<DefaultValues>
-			    <Value>(objectClass=sunIdentityServerDevice)</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        syntax="string"
+                        i18nKey="a20371">
+                        <DefaultValues>
+                            <Value>(objectClass=sunIdentityServerDevice)</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
-			type="list"
-			syntax="string"
-			i18nKey="a2038">
-			<DefaultValues>
-			    <Value>sunIdentityServerDevice</Value>
-			    <Value>top</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-agent-objectclass"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2038">
+                        <DefaultValues>
+                            <Value>sunIdentityServerDevice</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1935,21 +1935,21 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
-			type="multiple_choice"
-			syntax="string"
-			i18nKey="a20385">
-			<ChoiceValues>
-			    <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-authenticatable-type"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a20385">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
-			<DefaultValues>
-			    <Value>User</Value>
-			    <Value>Group</Value>
-			    <Value>Agent</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        <DefaultValues>
+                            <Value>User</Value>
+                            <Value>Group</Value>
+                            <Value>Agent</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-auth-naming-attr"
                         type="single"
@@ -1987,7 +1987,7 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
+                    <AttributeSchema name="com.iplanet.am.ldap.connection.delay.between.retries"
                         type="single"
                         syntax="number"
                         i18nKey="a2046">
@@ -1996,14 +1996,14 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
-			type="list"
-			syntax="string"
-			i18nKey="a2047">
-			<DefaultValues>
-			    <Value>80</Value>
-			    <Value>81</Value>
-			    <Value>91</Value>
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-errorcodes"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a2047">
+                        <DefaultValues>
+                            <Value>80</Value>
+                            <Value>81</Value>
+                            <Value>91</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -2034,66 +2034,66 @@
                         </DefaultValues>
                     </AttributeSchema>
 
-		    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
-			type="list"
-			syntax="xml"
-			i18nKey="">
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-service-attributes"
+                        type="list"
+                        syntax="xml"
+                        i18nKey="">
                     </AttributeSchema>
 
-		</SubSchema>
+                </SubSchema>
 
                 <SubSchema name="files"
                     inheritance="multiple"
                     i18nKey="a3000">
                     <AttributeSchema name="RequiredValueValidator"
-			type="validator"
-			syntax="string">
-			<DefaultValues>
-			    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-	            <AttributeSchema name="sunIdRepoClass"
-		        type = "single"
-			syntax = "string"
-			any="required"
-			validator="RequiredValueValidator"
-			i18nKey = "a3010">
-			<DefaultValues>
-			    <Value>com.sun.identity.idm.plugins.files.FilesRepo</Value>
-			</DefaultValues>
-		    </AttributeSchema>
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdRepoClass"
+                        type = "single"
+                        syntax = "string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey = "a3010">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.files.FilesRepo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                     <AttributeSchema name="sunFilesIdRepoDirectory"
                         type="single"
                         syntax="string"
-			validator="RequiredValueValidator"
+                        validator="RequiredValueValidator"
                         i18nKey="a3020">
-			<DefaultValues>
-			    <Value>/var/opt/SUNWam/idm/flatfiles</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>/var/opt/SUNWam/idm/flatfiles</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesPasswordAttr"
                         type="single"
                         syntax="string"
                         i18nKey="a3030">
-			<DefaultValues>
-			    <Value>userPassword</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>userPassword</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesStatusAttr"
                         type="single"
                         syntax="string"
                         i18nKey="a3040">
-			<DefaultValues>
-			    <Value>inetUserStatus</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>inetUserStatus</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesHashAttrs"
                         type="list"
                         syntax="string"
                         i18nKey="a3050">
-			<DefaultValues>
-			    <Value>userPassword</Value>
-			</DefaultValues>
+                        <DefaultValues>
+                            <Value>userPassword</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesEncryptAttrs"
                         type="list"
@@ -2102,143 +2102,143 @@
                     </AttributeSchema>
                 </SubSchema>
 
-		<OrganizationAttributeSchema>
-		    <AttributeSchema name="sunOrganizationStatus"
-		        type = "single_choice"
-			syntax = "string"
-			i18nKey = "a108">
-			<ChoiceValues>
-			    <ChoiceValue i18nKey="choiceActive">Active</ChoiceValue>
-			    <ChoiceValue i18nKey="choiceInactive">Inactive</ChoiceValue>
-			</ChoiceValues>
-			<DefaultValues>
-			    <Value>Active</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		    <AttributeSchema name="sunOrganizationAliases"
-			type = "list"
-			syntax = "string"
-			isSearchable="yes"
-			i18nKey = "a109">
-			<DefaultValues>
-			    <Value>SERVER_HOST</Value>
-			</DefaultValues>
-		    </AttributeSchema>
-		</OrganizationAttributeSchema>
-	    </Organization>
-	</Schema>
-	<Configuration>
-	    <GlobalConfiguration>
-		<SubConfiguration name="user" id="SupportedIdentities" >
-			<AttributeValuePair> <Attribute name="servicename" />
-			        <Value>iPlanetAMUserService</Value>
-			</AttributeValuePair>
-			<AttributeValuePair> <Attribute name="canBeMemberOf" />
-			        <Value>role</Value>
-			        <Value>filteredrole</Value>
-			        <Value>group</Value>
-			</AttributeValuePair>
-		</SubConfiguration>
-		<SubConfiguration name="role" id="SupportedIdentities" >
-			<AttributeValuePair> <Attribute name="canHaveMembers" />
-			        <Value>user</Value>
-			</AttributeValuePair>
-			<AttributeValuePair> <Attribute name="canAddMembers" />
-			        <Value>user</Value>
-			</AttributeValuePair>
-		</SubConfiguration>
-		<SubConfiguration name="group" id="SupportedIdentities" >
-			<AttributeValuePair> <Attribute name="canHaveMembers" />
-			        <Value>user</Value>
-			</AttributeValuePair>
-			<AttributeValuePair> <Attribute name="canAddMembers" />
-			        <Value>user</Value>
-			</AttributeValuePair>
-		</SubConfiguration>
-		<SubConfiguration name="agent" id="SupportedIdentities" >
-			<AttributeValuePair> <Attribute name="servicename" />
-			        <Value>sunIdentityAgentService</Value>
-			</AttributeValuePair>
-		</SubConfiguration>
-		<SubConfiguration name="filteredrole" id="SupportedIdentities" >
-			<AttributeValuePair> <Attribute name="servicename" />
-			    <Value>sunIdentityFilteredRoleService</Value>
-			</AttributeValuePair>
-			<AttributeValuePair> <Attribute name="canHaveMembers" />
-			    <Value>user</Value>
-			</AttributeValuePair>
-		</SubConfiguration>
-		<SubConfiguration name="realm" id="SupportedIdentities" >
-		</SubConfiguration>
-		<SubConfiguration name="users" id="users">
-		    <SubConfiguration name="amAdmin"
-			id="user">
-			<AttributeValuePair>
-			    <Attribute name="userPassword" />
-			    <Value>HASHADMINPASSWD</Value>
-			</AttributeValuePair>
+                <OrganizationAttributeSchema>
+                    <AttributeSchema name="sunOrganizationStatus"
+                        type = "single_choice"
+                        syntax = "string"
+                        i18nKey = "a108">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="choiceActive">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="choiceInactive">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunOrganizationAliases"
+                        type = "list"
+                        syntax = "string"
+                        isSearchable="yes"
+                        i18nKey = "a109">
+                        <DefaultValues>
+                            <Value>SERVER_HOST</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                </OrganizationAttributeSchema>
+            </Organization>
+        </Schema>
+        <Configuration>
+            <GlobalConfiguration>
+                <SubConfiguration name="user" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="servicename" />
+                                <Value>iPlanetAMUserService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canBeMemberOf" />
+                                <Value>role</Value>
+                                <Value>filteredrole</Value>
+                                <Value>group</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="role" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="canHaveMembers" />
+                                <Value>user</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canAddMembers" />
+                                <Value>user</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="group" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="canHaveMembers" />
+                                <Value>user</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canAddMembers" />
+                                <Value>user</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="agent" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="servicename" />
+                                <Value>sunIdentityAgentService</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="filteredrole" id="SupportedIdentities" >
+                        <AttributeValuePair> <Attribute name="servicename" />
+                            <Value>sunIdentityFilteredRoleService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="canHaveMembers" />
+                            <Value>user</Value>
+                        </AttributeValuePair>
+                </SubConfiguration>
+                <SubConfiguration name="realm" id="SupportedIdentities" >
+                </SubConfiguration>
+                <SubConfiguration name="users" id="users">
+                    <SubConfiguration name="amAdmin"
+                        id="user">
+                        <AttributeValuePair>
+                            <Attribute name="userPassword" />
+                            <Value>HASHADMINPASSWD</Value>
+                        </AttributeValuePair>
                        <AttributeValuePair>
                             <Attribute name="inetUserStatus" />
                             <Value>Active</Value>
                         </AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="dn" />
-			    <Value>USER_NAMING_ATTR=amAdmin,ou=people,NORMALIZED_ORGBASE</Value>
-			</AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="roles" />
-			    <Value>Top-level Admin Role</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		    <SubConfiguration name="dsameuser"
-			id="user">
-			<AttributeValuePair>
-			    <Attribute name="userPassword" />
-			    <Value>HASHADMINPASSWD</Value>
-			</AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="dn" />
+                            <Value>USER_NAMING_ATTR=amAdmin,ou=people,NORMALIZED_ORGBASE</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="roles" />
+                            <Value>Top-level Admin Role</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="dsameuser"
+                        id="user">
+                        <AttributeValuePair>
+                            <Attribute name="userPassword" />
+                            <Value>HASHADMINPASSWD</Value>
+                        </AttributeValuePair>
                        <AttributeValuePair>
                             <Attribute name="inetUserStatus" />
                             <Value>Active</Value>
                         </AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="dn" />
-			    <Value>cn=dsameuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		    <SubConfiguration name="anonymous"
-			id="user">
-			<AttributeValuePair>
-			    <Attribute name="userPassword" />
-			    <Value>CpL6syMBNMym6t2YmDJbmyrmeZg=</Value>
-			</AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="dn" />
-			    <Value>USER_NAMING_ATTR=anonymous,ou=people,NORMALIZED_ORGBASE</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		    <SubConfiguration name="amldapuser"
-			id="user">
-			<AttributeValuePair>
-			    <Attribute name="userPassword" />
-			    <Value>HASHLDAPUSERPASSWD</Value>
-			</AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="dn" />
-			    <Value>cn=amldapuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		    <SubConfiguration name="amService-URLAccessAgent"
-			id="user">
-			<AttributeValuePair>
-			    <Attribute name="userPassword" />
-			    <Value>HASHLDAPUSERPASSWD</Value>
-			</AttributeValuePair>
-			<AttributeValuePair>
-			    <Attribute name="dn" />
-			    <Value>cn=amService-URLAccessAgent,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
-			</AttributeValuePair>
-		    </SubConfiguration>
-		</SubConfiguration>
+                        <AttributeValuePair>
+                            <Attribute name="dn" />
+                            <Value>cn=dsameuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="anonymous"
+                        id="user">
+                        <AttributeValuePair>
+                            <Attribute name="userPassword" />
+                            <Value>CpL6syMBNMym6t2YmDJbmyrmeZg=</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="dn" />
+                            <Value>USER_NAMING_ATTR=anonymous,ou=people,NORMALIZED_ORGBASE</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="amldapuser"
+                        id="user">
+                        <AttributeValuePair>
+                            <Attribute name="userPassword" />
+                            <Value>HASHLDAPUSERPASSWD</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="dn" />
+                            <Value>cn=amldapuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="amService-URLAccessAgent"
+                        id="user">
+                        <AttributeValuePair>
+                            <Attribute name="userPassword" />
+                            <Value>HASHLDAPUSERPASSWD</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="dn" />
+                            <Value>cn=amService-URLAccessAgent,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
                 <SubConfiguration name="roles" >
                     <SubConfiguration name="Top-level Admin Role" id="role">
                         <AttributeValuePair>
@@ -2251,12 +2251,12 @@
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
-	    </GlobalConfiguration>
+            </GlobalConfiguration>
 XML_COMMENT_START
-	    <OrganizationConfiguration name="NORMALIZED_ORGBASE">
-		<SubConfiguration name="amSDK1" id="amSDK" />
-	    </OrganizationConfiguration>
+            <OrganizationConfiguration name="NORMALIZED_ORGBASE">
+                <SubConfiguration name="amSDK1" id="amSDK" />
+            </OrganizationConfiguration>
 XML_COMMENT_END
-	</Configuration>
+        </Configuration>
     </Service>
 </ServicesConfiguration>

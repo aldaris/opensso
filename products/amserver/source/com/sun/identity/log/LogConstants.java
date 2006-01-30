@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.1 2006-01-28 09:17:14 veiming Exp $
+ * $Id: LogConstants.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ public class LogConstants {
      * @supported.api
      */
     public static final String MAX_FILE_SIZE =
-	"iplanet-am-logging-max-file-size";
+        "iplanet-am-logging-max-file-size";
     /**
      * Attribute defining the location where the logs go.
      * @supported.api
@@ -85,7 +85,7 @@ public class LogConstants {
      * Attribute defining the FileHandler class
      */
     public static final String FILE_HANDLER =
-	"iplanet-am-logging-file-handler";
+        "iplanet-am-logging-file-handler";
     /**
      * Attribute defining the Database Handler class
      */
@@ -96,12 +96,12 @@ public class LogConstants {
      * @supported.api
      */
     public static final String NUM_HISTORY_FILES =
-	"iplanet-am-logging-num-hist-file";
+        "iplanet-am-logging-num-hist-file";
     /**
      * Attribute defining the RemoteHandler class
      */
     public static final String REMOTE_HANDLER =
-	"iplanet-am-logging-remote-handler";
+        "iplanet-am-logging-remote-handler";
     /**
      * Default value for remote handler class
      */
@@ -114,7 +114,7 @@ public class LogConstants {
      * should be associated with a ELFFormatter).
      */
     public static final String ELF_FORMATTER =
-	"iplanet-am-logging-elf-formatter";
+        "iplanet-am-logging-elf-formatter";
 
     /**
      * Attribute defining the RemoteFormatter class which creates a
@@ -122,17 +122,17 @@ public class LogConstants {
      * Sun Java System Access Manager.
      */
     public static final String REMOTE_FORMATTER =
-	"iplanet-am-logging-remote-formatter";
+        "iplanet-am-logging-remote-formatter";
     /**
      * Default value for remote formatter class
      */
     public static final String DEFAULT_REMOTE_FORMATTER =
-	"com.sun.identity.log.handlers.RemoteFormatter";
+        "com.sun.identity.log.handlers.RemoteFormatter";
     /**
      * Attribute defining the DBFormatter class
      */
     public static final String DB_FORMATTER =
-	"iplanet-am-logging-db-formatter";
+        "iplanet-am-logging-db-formatter";
     /**
      * Attribute defining the Authorization class used to see if a particular
      * user is authorized to perform a particular task.
@@ -143,7 +143,7 @@ public class LogConstants {
      * for use within the logging components.
      */
     public static final String TOKEN_PROVIDER =
-	"iplanet-am-logging-token-class";
+        "iplanet-am-logging-token-class";
     /**
      * Attribute defining the Archiver class
      *
@@ -181,15 +181,15 @@ public class LogConstants {
      * Defines the secure LoggingService log verify period.
      */
     public static final String LOGVERIFY_PERIODINSECONDS =
-	"iplanet-am-logging-verify-period-in-seconds";
+        "iplanet-am-logging-verify-period-in-seconds";
     
     public static final long LOGVERIFY_PERIODINSECONDS_DEFAULT = 3600;
 
     /**
      * Defines the LogSign period in seconds.
      */
-    public static final String LOGSIGN_PERIODINSECONDS 	=
-	"iplanet-am-logging-signature-period-in-seconds";
+    public static final String LOGSIGN_PERIODINSECONDS         =
+        "iplanet-am-logging-signature-period-in-seconds";
     
     public static final long LOGSIGN_PERIODINSECONDS_DEFAULT = 600;
     
@@ -197,28 +197,28 @@ public class LogConstants {
      * Attribute defining the Log Security status; ON or OFF.
      */
     public static final String SECURITY_STATUS =
-	"iplanet-am-logging-security-status";
+        "iplanet-am-logging-security-status";
     
     /**
      * Defines the File Read Handler class.
      */
     public static final String FILE_READ_HANDLER =
-	"iplanet-am-logging-file-read-handler";
+        "iplanet-am-logging-file-read-handler";
     /**
      * Defines the Secure File Handler class.
      */
     public static final String SECURE_FILE_HANDLER =
-	"iplanet-am-logging-secure-file-handler";
+        "iplanet-am-logging-secure-file-handler";
     /**
      * Defines the Secure ELF Formatter class.
      */
     public static final String SECURE_ELF_FORMATTER =
-	"iplanet-am-logging-secure-elf-formatter";
+        "iplanet-am-logging-secure-elf-formatter";
     /**
      * Defines the DB Read Handler class.
      */
     public static final String DB_READ_HANDLER =
-	"sun-am-logging-db-read-handler";
+        "sun-am-logging-db-read-handler";
     
     /**
      * Attribute defining the maximum records for flat file logs.
@@ -240,37 +240,37 @@ public class LogConstants {
      * the keystore should be reinitialized.
      */
     public static final String FILES_PER_KEYSTORE =
-	"iplanet-am-logging-files-per-keystore";
+        "iplanet-am-logging-files-per-keystore";
 
     /**
      * Attribute defining the Class that implements what the
      * Verifier does when verification fails
      */
     public static final String VERIFIER_ACTION_CLASS =
-	"iplanet-am-logging-verifier-action-class";
+        "iplanet-am-logging-verifier-action-class";
 
     /**
      * Attribute defining the Directory where the certificate DB is stored.
      */
     public static final String CERT_DB_DIR =
-	"iplanet-am-logging-certificate-database-directory";
+        "iplanet-am-logging-certificate-database-directory";
 
     /**
      * Property defining the Prefix for the certificate database.
      */
     public static final String CERT_DB_PREFIX =
-	"iplanet-am-logging-certificate-database-prefix";
+        "iplanet-am-logging-certificate-database-prefix";
 
     /**
      * Property defining the Prefix for the key database
      */
     public static final String KEY_DB_PREFIX =
-	"iplanet-am-logging-key-database-prefix";
+        "iplanet-am-logging-key-database-prefix";
     /**
      * Attribute defining the Security Module Name
      */
     public static final String SECMOD_DB_NAME =
-	"iplanet-am-logging-security-module-name";
+        "iplanet-am-logging-security-module-name";
     
     /**
      * Attribute defining the Class that implements the custom
@@ -295,34 +295,34 @@ public class LogConstants {
      * @supported.api
      */
     public static final String DB_MEM_MAX_RECS =
-	"sun-am-logging-db-max-in-mem";
+        "sun-am-logging-db-max-in-mem";
     /**
      * Attribute defining the Buffering time.
      * @supported.api
      */
     public static final String BUFFER_TIME =
-	"iplanet-am-logging-buffer-time-in-seconds";
+        "iplanet-am-logging-buffer-time-in-seconds";
     public static final long BUFFER_TIME_DEFAULT = 3600;
     /**
      * Attribute defining the Time Buffering Status; ON or OFF.
      * @supported.api
      */
     public static final String TIME_BUFFERING_STATUS =
-	"iplanet-am-logging-time-buffering-status";
+        "iplanet-am-logging-time-buffering-status";
     /**
      * Attribute defining the Filter Class Name
      */
     public static final String FILTER_CLASS_NAME =
-	"iplanet-am-logging-filter-class-name";
+        "iplanet-am-logging-filter-class-name";
     
     /**
      * Attribute defining the Secure Timestamp generator class
      */
     public static final String SECURE_TIMESTAMP_GENERATOR =
-	"iplanet-am-logging-secure-timestamp-generator";
+        "iplanet-am-logging-secure-timestamp-generator";
     
     public static final String SECURITY_INITIALIZER =
-	"iplanet-am-logging-security-initializer-class-name";
+        "iplanet-am-logging-security-initializer-class-name";
     
 
     /**
@@ -330,7 +330,7 @@ public class LogConstants {
      * @supported.api
      */
     public static final String LOG_STATUS =
-	"com.iplanet.am.logstatus";
+        "com.iplanet.am.logstatus";
 
     public static final String LOG_READ = "READ";
     
@@ -417,24 +417,24 @@ public class LogConstants {
     public static final String POLICY_ACCESS = "amPolicy.access";
     public static final String CONSOLE_ACCESS = "amConsole.access";
     public static final String AUTHENTICATION_ACCESS =
-	"amAuthentication.access";
+        "amAuthentication.access";
     public static final String AUTHENTICATION_ERROR =
-	"amAuthentication.error";
+        "amAuthentication.error";
     public static final String PASSWORDRESET_ACCESS =
-	"amPasswordReset.access";
+        "amPasswordReset.access";
     public static final String SSO_ACCESS = "amSSO.access";
     public static final String ADMIN_ACCESS = "amAdmin.access";
     public static final String ADMIN_ERROR = "amAdmin.error";
     public static final String [] LOGFILENAMES = {
-	DEFAULT_AGENT_FILE,
-	POLICY_ACCESS,
-	CONSOLE_ACCESS,
-	AUTHENTICATION_ACCESS,
-	AUTHENTICATION_ERROR,
-	PASSWORDRESET_ACCESS,
-	SSO_ACCESS,
-	ADMIN_ACCESS,
-	ADMIN_ERROR };
+        DEFAULT_AGENT_FILE,
+        POLICY_ACCESS,
+        CONSOLE_ACCESS,
+        AUTHENTICATION_ACCESS,
+        AUTHENTICATION_ERROR,
+        PASSWORDRESET_ACCESS,
+        SSO_ACCESS,
+        ADMIN_ACCESS,
+        ADMIN_ERROR };
 
     public static final int NUM_RECORDS = 0;
     public static final int NUM_BYTES = 1;

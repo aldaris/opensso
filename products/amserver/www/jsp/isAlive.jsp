@@ -18,17 +18,17 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: isAlive.jsp,v 1.1 2005-11-01 00:31:38 arvindp Exp $
+   $Id: isAlive.jsp,v 1.2 2006-01-30 20:58:52 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <%@ page language="java" 
     import="java.security.AccessController,
-	com.sun.identity.security.AdminTokenAction,
-	com.iplanet.sso.SSOToken,
-	com.sun.identity.sm.ServiceManager,
-	com.sun.identity.sm.SMSEntry"
+        com.sun.identity.security.AdminTokenAction,
+        com.iplanet.sso.SSOToken,
+        com.sun.identity.sm.ServiceManager,
+        com.sun.identity.sm.SMSEntry"
 %>
 
 <html>
@@ -42,7 +42,7 @@
 <%
     // Get valid SSOToken
     SSOToken token = (SSOToken) AccessController.doPrivileged(
-	AdminTokenAction.getInstance());
+        AdminTokenAction.getInstance());
 
     // Construct the name to lookup
     String name = "ou=services," + ServiceManager.getBaseDN();
@@ -50,25 +50,25 @@
     // Check if the configuration data store is up
     Object attributes = null;
     try {
-	attributes = SMSEntry.getSMSObject().read(token, name);
+        attributes = SMSEntry.getSMSObject().read(token, name);
     } catch (Exception e) {
-	attributes = null;
+        attributes = null;
     }
 
     if (attributes == null) {
-	/**
-	 * Identity Server or directory is down, have failure message here
- 	 * or throw an exception. This currently throws an exception
-	 * which will cause web server to return error code of 500,
-	 * to return an error message, comment the "throw" line
-	 */
-	out.println("<h1>Server is DOWN</h1>");
-	throw (new ServletException("directory is down"));
+        /**
+         * Identity Server or directory is down, have failure message here
+          * or throw an exception. This currently throws an exception
+         * which will cause web server to return error code of 500,
+         * to return an error message, comment the "throw" line
+         */
+        out.println("<h1>Server is DOWN</h1>");
+        throw (new ServletException("directory is down"));
     } else {
-	/**
-	 * Identity Server is alive, have success message below
-	 */
-	out.println("<h1>Server is ALIVE: </h1>");
+        /**
+         * Identity Server is alive, have success message below
+         */
+        out.println("<h1>Server is ALIVE: </h1>");
     }
 %>
 

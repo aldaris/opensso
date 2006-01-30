@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthDataStore.xml,v 1.1 2006-01-28 09:18:39 veiming Exp $
+    $Id: amAuthDataStore.xml,v 1.2 2006-01-30 20:58:54 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,7 +38,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/sunAMAuthDataStoreService"
             i18nFileName="amAuthDataStore"
-	    revisionNumber="10"
+            revisionNumber="10"
             i18nKey="sunAMAuthDataStoreServiceDescription">
 
             <Organization>
@@ -47,19 +47,19 @@
                     syntax="number"
                     i18nKey="a500">
                     <DefaultValues>
-			<Value>0</Value>
+                        <Value>0</Value>
                     </DefaultValues>
-		</AttributeSchema>
-		<SubSchema name="serverconfig" inheritance="multiple">
+                </AttributeSchema>
+                <SubSchema name="serverconfig" inheritance="multiple">
                     <AttributeSchema name="sunAMAuthDataStoreAuthLevel"
-			type="single"
-			syntax="number"
-			i18nKey="a500">
-			<DefaultValues>
+                        type="single"
+                        syntax="number"
+                        i18nKey="a500">
+                        <DefaultValues>
                             <Value>0</Value>
-			</DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
-		</SubSchema>
+                </SubSchema>
             </Organization>
         </Schema>
         <Configuration>
@@ -69,6 +69,6 @@
                     <Value>0</Value>
                 </AttributeValuePair>
             </OrganizationConfiguration>
-	</Configuration>
+        </Configuration>
     </Service>
 </ServicesConfiguration>

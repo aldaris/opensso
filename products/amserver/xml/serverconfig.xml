@@ -20,33 +20,33 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: serverconfig.xml,v 1.3 2006-01-19 06:08:35 veiming Exp $
+   $Id: serverconfig.xml,v 1.4 2006-01-30 20:58:56 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
 
 
 <iPlanetDataAccessLayer>
-	<ServerGroup name="default" minConnPool="1" maxConnPool="10">
-		<Server name="Server1" host="@DIR_HOST@" port="@DIR_PORT@" type="SIMPLE" />
-		<User name="User1" type="proxy">
-			<DirDN>
-				cn=puser,ou=DSAME Users,@ORG_BASE@
-			</DirDN>
-			<DirPassword>
-				@ENCADMINPASSWD@
-			</DirPassword>
-		</User>
-		<User name="User2" type="admin">
-			<DirDN>
-				cn=dsameuser,ou=DSAME Users,@ORG_BASE@
-			</DirDN>
-			<DirPassword>
-				@ENCADMINPASSWD@
-			</DirPassword>
-		</User>
-		<BaseDN>
-			@ORG_BASE@
-		</BaseDN>		
-	</ServerGroup>
+    <ServerGroup name="default" minConnPool="1" maxConnPool="10">
+        <Server name="Server1" host="@DIR_HOST@" port="@DIR_PORT@" type="SIMPLE" />
+        <User name="User1" type="proxy">
+            <DirDN>
+                cn=puser,ou=DSAME Users,@ORG_BASE@
+            </DirDN>
+            <DirPassword>
+                @ENCADMINPASSWD@
+            </DirPassword>
+        </User>
+        <User name="User2" type="admin">
+            <DirDN>
+                cn=dsameuser,ou=DSAME Users,@ORG_BASE@
+            </DirDN>
+            <DirPassword>
+                @ENCADMINPASSWD@
+            </DirPassword>
+        </User>
+        <BaseDN>
+            @ORG_BASE@
+        </BaseDN>                
+    </ServerGroup>
 </iPlanetDataAccessLayer>

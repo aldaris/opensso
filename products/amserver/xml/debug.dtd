@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: debug.dtd,v 1.1 2005-11-01 00:31:42 arvindp Exp $
+   $Id: debug.dtd,v 1.2 2006-01-30 20:58:55 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,21 +30,21 @@ debug level for a component or service -->
 <!ELEMENT Debug (Default, Component*) >
 
 <!-- Attribute that specifies the levels of debug messages -->
-<!ENTITY  % debugLevel	"level (OFF | ERROR | WARNING | MESSAGE)" >
+<!ENTITY  % debugLevel        "level (OFF | ERROR | WARNING | MESSAGE)" >
 
 <!-- Attribute that specfies the where the debug messages
 are to be written. Options are stdout or a file -->
 <!ENTITY  % debugOutput "typeofOutput (STDOUT | FILE)" >
 
-<!ENTITY  % debugFileName "fileName	CDATA		#IMPLIED" >
+<!ENTITY  % debugFileName "fileName        CDATA                #IMPLIED" >
 
 <!-- Default element defines the default action to be taken
 for components and services for which debug information is
 not provided -->
-<!ELEMENT Default	EMPTY>
+<!ELEMENT Default        EMPTY>
 <!ATTLIST Default
-    %debugLevel;	"OFF"
-    %debugOutput;	"FILE"
+    %debugLevel;        "OFF"
+    %debugOutput;        "FILE"
     %debugFileName;
 >
 
@@ -52,8 +52,8 @@ not provided -->
 a component or a service -->
 <!ELEMENT Component EMPTY>
 <!ATTLIST Component
-    name		NMTOKEN		#REQUIRED
-    %debugLevel;	"OFF"
-    %debugOutput;	"FILE"
+    name                NMTOKEN                #REQUIRED
+    %debugLevel;        "OFF"
+    %debugOutput;        "FILE"
     %debugFileName;
 >

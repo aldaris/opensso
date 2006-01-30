@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthAD.xml,v 1.1 2006-01-28 09:18:36 veiming Exp $
+    $Id: amAuthAD.xml,v 1.2 2006-01-30 20:58:53 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,66 +37,66 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/sunAMAuthADService"
             i18nFileName="amAuthAD"
-	    revisionNumber="20"
+            revisionNumber="20"
             i18nKey="sunAMAuthADServiceDescription">
 
             <Organization>
-	        <AttributeSchema name="iplanet-am-auth-ldap-server"
+                <AttributeSchema name="iplanet-am-auth-ldap-server"
                     type="list"
                     syntax="string"
                     i18nKey="a101">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-ldap-server2"
+                <AttributeSchema name="iplanet-am-auth-ldap-server2"
                     type="list"
                     syntax="string"
                     i18nKey="a102">
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-base-dn"
+                <AttributeSchema name="iplanet-am-auth-ldap-base-dn"
                     type="list"
                     syntax="dn"
                     i18nKey="a103">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@NORMALIZED_ORGBASE@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-bind-dn"
                     type="single"
                     syntax="dn"
                     i18nKey="a104">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-bind-passwd"
                     type="single"
                     syntax="password"
                     i18nKey="a105">
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-user-naming-attribute"
+                <AttributeSchema name="iplanet-am-auth-ldap-user-naming-attribute"
                     type="single"
                     syntax="string"
                     i18nKey="a106">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@USER_NAMING_ATTR@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-user-search-attributes"
+                <AttributeSchema name="iplanet-am-auth-ldap-user-search-attributes"
                     type="list"
                     syntax="string"
                     i18nKey="a107">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>@USER_NAMING_ATTR@</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-search-filter"
+                <AttributeSchema name="iplanet-am-auth-ldap-search-filter"
                     type="single"
                     syntax="xml"
                     i18nKey="a108">
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-search-scope"
+                <AttributeSchema name="iplanet-am-auth-ldap-search-scope"
                     type="single_choice"
                     syntax="string"
                     i18nKey="a109">
@@ -105,57 +105,57 @@
                         <ChoiceValue i18nKey="choiceOneLevel">ONELEVEL</ChoiceValue>
                         <ChoiceValue i18nKey="choiceSubTree">SUBTREE</ChoiceValue>
                     </ChoiceValues>
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>SUBTREE</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-ssl-enabled"
+                <AttributeSchema name="iplanet-am-auth-ldap-ssl-enabled"
                     type="single"
                     syntax="boolean"
                     i18nKey="a110">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>false</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-	        <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
+                <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
                     type="single"
                     syntax="boolean"
                     i18nKey="a111">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>true</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sunAMAuthADAuthLevel"
                     type="single"
                     syntax="number"
                     i18nKey="a500">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>0</Value>
-		    </DefaultValues>
+                    </DefaultValues>
                 </AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-ldap-server-check"
-		    type="single"
+                <AttributeSchema name="iplanet-am-auth-ldap-server-check"
+                    type="single"
                     syntax="number"
                     i18nKey="a113">
-		    <DefaultValues>
+                    <DefaultValues>
                         <Value>15</Value>
-		    </DefaultValues>
-                </AttributeSchema>	
-		<AttributeSchema name="iplanet-am-ldap-user-creation-attr-list"
-		    type="list"
-		    syntax="string"
-		    i18nKey="a114">
-		</AttributeSchema>
-		<AttributeSchema name="iplanet-am-auth-ldap-invalid-chars"
-		    type="list"
-		    syntax="string"
-		    i18nKey="">
-		    <DefaultValues>
+                    </DefaultValues>
+                </AttributeSchema>        
+                <AttributeSchema name="iplanet-am-ldap-user-creation-attr-list"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a114">
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-ldap-invalid-chars"
+                    type="list"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
                         <Value>*|(|)|&amp;|!</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 <SubSchema name="serverconfig" inheritance="multiple">
-	            <AttributeSchema name="iplanet-am-auth-ldap-server"
+                    <AttributeSchema name="iplanet-am-auth-ldap-server"
                         type="list"
                         syntax="string"
                         i18nKey="a101">
@@ -163,12 +163,12 @@
                             <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
                         </DefaultValues>
                     </AttributeSchema>
-		    <AttributeSchema name="iplanet-am-auth-ldap-server2"
+                    <AttributeSchema name="iplanet-am-auth-ldap-server2"
                         type="list"
                         syntax="string"
                         i18nKey="a102">
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-base-dn"
+                    <AttributeSchema name="iplanet-am-auth-ldap-base-dn"
                         type="list"
                         syntax="dn"
                         i18nKey="a103">
@@ -189,7 +189,7 @@
                         syntax="password"
                         i18nKey="a105">
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-user-naming-attribute"
+                    <AttributeSchema name="iplanet-am-auth-ldap-user-naming-attribute"
                         type="single"
                         syntax="string"
                         i18nKey="a106">
@@ -197,7 +197,7 @@
                             <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-user-search-attributes"
+                    <AttributeSchema name="iplanet-am-auth-ldap-user-search-attributes"
                         type="list"
                         syntax="string"
                         i18nKey="a107">
@@ -205,12 +205,12 @@
                             <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-search-filter"
+                    <AttributeSchema name="iplanet-am-auth-ldap-search-filter"
                         type="single"
                         syntax="xml"
                         i18nKey="a108">
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-search-scope"
+                    <AttributeSchema name="iplanet-am-auth-ldap-search-scope"
                         type="single_choice"
                         syntax="string"
                         i18nKey="a109">
@@ -219,58 +219,58 @@
                             <ChoiceValue i18nKey="choiceOneLevel">ONELEVEL</ChoiceValue>
                             <ChoiceValue i18nKey="choiceSubTree">SUBTREE</ChoiceValue>
                         </ChoiceValues>
-		        <DefaultValues>
+                        <DefaultValues>
                             <Value>SUBTREE</Value>
-		        </DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-ssl-enabled"
+                    <AttributeSchema name="iplanet-am-auth-ldap-ssl-enabled"
                         type="single"
                         syntax="boolean"
                         i18nKey="a110">
-		        <DefaultValues>
+                        <DefaultValues>
                             <Value>false</Value>
-		        </DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
-	            <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
+                    <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
                         type="single"
                         syntax="boolean"
                         i18nKey="a111">
-		        <DefaultValues>
+                        <DefaultValues>
                             <Value>true</Value>
-		        </DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
                     
                     <AttributeSchema name="sunAMAuthADAuthLevel"
                         type="single"
                         syntax="number"
                         i18nKey="a500">
-		        <DefaultValues>
+                        <DefaultValues>
                             <Value>0</Value>
-		        </DefaultValues>
+                        </DefaultValues>
                     </AttributeSchema>
-		   <AttributeSchema name="iplanet-am-auth-ldap-server-check"
-		        type="single"
+                   <AttributeSchema name="iplanet-am-auth-ldap-server-check"
+                        type="single"
                         syntax="number"
                         i18nKey="a113">
-		        <DefaultValues>
+                        <DefaultValues>
                             <Value>15</Value>
-		        </DefaultValues>
-                    </AttributeSchema>			
-		    <AttributeSchema name="iplanet-am-ldap-user-creation-attr-list"
-			type="list"
-			syntax="string"
-			i18nKey="a114">
-		    </AttributeSchema>
-		    <AttributeSchema name="iplanet-am-auth-ldap-invalid-chars"
-		    type="list"
-		    syntax="string"
-		    i18nKey="">
-		    <DefaultValues>
+                        </DefaultValues>
+                    </AttributeSchema>                        
+                    <AttributeSchema name="iplanet-am-ldap-user-creation-attr-list"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a114">
+                    </AttributeSchema>
+                    <AttributeSchema name="iplanet-am-auth-ldap-invalid-chars"
+                    type="list"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
                         <Value>*|(|)|&amp;|!</Value>
-		    </DefaultValues>
-		</AttributeSchema>
+                    </DefaultValues>
+                </AttributeSchema>
                 </SubSchema>
-	    </Organization>
+            </Organization>
         </Schema>
     </Service>
 </ServicesConfiguration>

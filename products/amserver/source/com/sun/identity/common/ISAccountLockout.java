@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.1 2006-01-28 09:17:13 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,20 +85,20 @@ public class ISAccountLockout {
      * @param failureLockoutMode a boolean indicating whether account locking
      *        is enabled or not
      * @param failureLockoutTime a long which is the interval in minutes
-     *	      between 2 failed attempts
+     *        between 2 failed attempts
      * @param failureLockoutCount an integer indicating the number of allowed
      *        failed attempts before account will be locked.
      * @param lockoutNotification a String , email address to notify when
-     *	      account is locked.
+     *        account is locked.
      * @param lockoutUserWarning an integer , the number of failed counts after
-     *	      which user will be warned about the remaining failed attempts
-     *	      before account will be locked.
+     *        which user will be warned about the remaining failed attempts
+     *        before account will be locked.
      * @param lockoutAttrName a String , name of attribute to be used for
-     *	      account locking
+     *        account locking
      * @param lockoutAttrValue a String , value of lockoutAttrName to be used
-     *	      for account locking
+     *        for account locking
      * @param lockoutFailureDuration a long, lockout duration in minutes
-     *	      used for memory locking
+     *        used for memory locking
      * @param bundleName a String, name of the resource bundle
      */
     
@@ -252,7 +252,7 @@ public class ISAccountLockout {
             String xmlFromDS = null;
             if ((attrValueSet != null) && (!attrValueSet.isEmpty())) {
                 Iterator i = attrValueSet.iterator();
-	        xmlFromDS = (String) i.next();
+                xmlFromDS = (String) i.next();
             }
             int invalid_attempts = 0;
             long last_failed = 0;
@@ -269,7 +269,7 @@ public class ISAccountLockout {
                 LOCKEDOUT_AT_BEGIN, LOCKEDOUT_AT_END);
                 locked_out_at = Long.parseLong(locked_out_at_str);
 
-	    }
+            }
 
             acInfo.setLastFailTime(last_failed);
             acInfo.setFailCount(invalid_attempts);
@@ -678,16 +678,18 @@ public class ISAccountLockout {
         }
         
     }
-    /** This method generates XML to be stored in data store the format is like this 
+
+    /**
+     * Returns XML to be stored in data store the format is like this 
      *  <InvalidPassword>
-     *	  <InvalidCount>failureLockoutCount</LockoutCount>
-     *	  <LastInvalidAt>failureLockoutDuration</LockoutDuration>
+     *    <InvalidCount>failureLockoutCount</LockoutCount>
+     *    <LastInvalidAt>failureLockoutDuration</LockoutDuration>
      *    <LockedoutAt>failureLockoutTime</LockoutTime>
-     *	</InvalidPassword>
+     *  </InvalidPassword>
      *
      */
-     private static String createInvalidAttemptsXML(int invalidCount, long lastFailed, 
-     long lockedOutAt) {
+     private static String createInvalidAttemptsXML(
+        int invalidCount, long lastFailed, long lockedOutAt) {
      StringBuffer xmlBuffer = new StringBuffer(150);
      xmlBuffer.append(BEGIN_XML).append(INVALID_PASS_COUNT_BEGIN)
      .append(String.valueOf(invalidCount)).append(INVALID_PASS_COUNT_END)
@@ -702,17 +704,17 @@ public class ISAccountLockout {
      * method gets values in the elements of given XML String
      */ 
      private static String getElement(String content, String start,
-	String end) {
-	String answer = null;
-	if (content != null) {
-	    int startIndex = content.indexOf(start);
-	    int endIndex = content.indexOf(end);
+        String end) {
+        String answer = null;
+        if (content != null) {
+            int startIndex = content.indexOf(start);
+            int endIndex = content.indexOf(end);
             if (startIndex != -1 && endIndex != -1 &&
-		startIndex + start.length() < endIndex ) {
-		answer = content.substring(startIndex + start.length(),
+                startIndex + start.length() < endIndex ) {
+                answer = content.substring(startIndex + start.length(),
                     endIndex);
             }
-	}
+        }
         return (answer);
     }
 

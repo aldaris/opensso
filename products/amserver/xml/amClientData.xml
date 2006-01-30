@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amClientData.xml,v 1.3 2006-01-19 06:08:30 veiming Exp $
+   $Id: amClientData.xml,v 1.4 2006-01-30 20:58:54 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -189,23 +189,23 @@
           <SubSchema name="clientData">
 
             <!-- validator for required properties -->
-	    <AttributeSchema name="RequiredValueValidator"
-		type="validator"
-		syntax="string">
-		<DefaultValues>
-		    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-		</DefaultValues>
-	    </AttributeSchema>
+            <AttributeSchema name="RequiredValueValidator"
+                type="validator"
+                syntax="string">
+                <DefaultValues>
+                    <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                </DefaultValues>
+            </AttributeSchema>
 
             <AttributeSchema name="clientType" i18nKey="clientType"
-		any="required|display"
-		validator="RequiredValueValidator"
-		type="single"
-		syntax="string">
-		<DefaultValues>
-		    <Value>&#160;</Value>
-		</DefaultValues>
-	    </AttributeSchema>
+                any="required|display"
+                validator="RequiredValueValidator"
+                type="single"
+                syntax="string">
+                <DefaultValues>
+                    <Value>&#160;</Value>
+                </DefaultValues>
+            </AttributeSchema>
 
             <AttributeSchema name="parentId" i18nKey="parentId"
                  any="display" type="single_choice" syntax="string">
@@ -232,14 +232,14 @@
             </AttributeSchema>
 
             <AttributeSchema name="userAgent" i18nKey="userAgent"
-		any="required|display"
-		type="single"
-		syntax="string"
-		validator="RequiredValueValidator">
-		<DefaultValues>
-		    <Value>&#160;</Value>
-		</DefaultValues>
-	    </AttributeSchema>
+                any="required|display"
+                type="single"
+                syntax="string"
+                validator="RequiredValueValidator">
+                <DefaultValues>
+                    <Value>&#160;</Value>
+                </DefaultValues>
+            </AttributeSchema>
 
             <!-- optional properties -->
             <AttributeSchema name="contentType" i18nKey="contentType"

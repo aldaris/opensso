@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: mail.xml,v 1.1 2005-11-01 00:31:43 arvindp Exp $
+   $Id: mail.xml,v 1.2 2006-01-30 20:58:56 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,30 +31,30 @@
 
 <iPlanetServicesConfiguration>
     <Service name="MailServer5.0">
-	<LDAPSchema>
-	   <LDAPAttribute name="umsMailSpecifier" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
-	   <LDAPAttribute name="umsMailStatus" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
-	   <LDAPAttribute name="umsMailQuota" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
-	   <LDAPAttribute name="umsMailServer" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
-	   <Objectclass name="umsMailObjectClass" mayHave="umsMailQuota,umsMailServer,umsMailStatus" />
-	</LDAPSchema>
+        <LDAPSchema>
+           <LDAPAttribute name="umsMailSpecifier" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
+           <LDAPAttribute name="umsMailStatus" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
+           <LDAPAttribute name="umsMailQuota" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
+           <LDAPAttribute name="umsMailServer" syntax="1.3.6.1.4.1.1466.115.121.1.15"/>
+           <Objectclass name="umsMailObjectClass" mayHave="umsMailQuota,umsMailServer,umsMailStatus" />
+        </LDAPSchema>
         <ServiceSchema>
-	    <ServiceSubSchema name="Mail Service 5.0">
-		<SchemaType type="User"/>
-		<AttributeSchema name="umsMailStatus">
-		    <IsStatusAttribute/>
-		    <DefaultValues><Value>inactive</Value></DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="umsMailSpecifier">
-		    <IsServiceIdentifier/>
-		</AttributeSchema>
-		<AttributeSchema name="umsMailQuota">
-		    <DefaultValues><Value>100</Value></DefaultValues>
-		</AttributeSchema>
-		<AttributeSchema name="umsMailServer">
-		    <DefaultValues><Value>bigserver</Value></DefaultValues>
-		</AttributeSchema>
-	    </ServiceSubSchema>
+            <ServiceSubSchema name="Mail Service 5.0">
+                <SchemaType type="User"/>
+                <AttributeSchema name="umsMailStatus">
+                    <IsStatusAttribute/>
+                    <DefaultValues><Value>inactive</Value></DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="umsMailSpecifier">
+                    <IsServiceIdentifier/>
+                </AttributeSchema>
+                <AttributeSchema name="umsMailQuota">
+                    <DefaultValues><Value>100</Value></DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="umsMailServer">
+                    <DefaultValues><Value>bigserver</Value></DefaultValues>
+                </AttributeSchema>
+            </ServiceSubSchema>
         </ServiceSchema>
     </Service>
 </iPlanetServicesConfiguration>

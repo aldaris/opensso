@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: noUserProfile.jsp,v 1.1 2006-01-28 09:17:43 veiming Exp $
+   $Id: noUserProfile.jsp,v 1.2 2006-01-30 20:58:47 veiming Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -83,13 +83,13 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
             <auth:form name="Login" method="post"
             defaultCommandChild="DefaultLoginURL" > 
             <input type='hidden' name='Login.ButtonLogin'
-		    value="<jato:text name="cmdContinue" />" >
+                    value="<jato:text name="cmdContinue" />" >
 
             <table border="0" cellspacing="0" cellpadding="0">            
             <tr>
             <td colspan="2">
-		    <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />		    	    
-		    </td>
+                    <img src="<%= ServiceURI %>/images/dot.gif" width="1" height="25" alt="" />                                
+                    </td>
             </tr>            
             <tr>
             <td>&nbsp;</td>
@@ -100,27 +100,27 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
             <div class="AlrtErrTxt"> 
             <img name="Login.AlertImage" src="<%= ServiceURI %>/images/error_large.gif" alt="Error" 
             height="21" width="21" />
-            <auth:resBundle bundleName="amAuthUI" resourceKey="nouser.profile" />	
+            <auth:resBundle bundleName="amAuthUI" resourceKey="nouser.profile" />        
             </div>
             </td></tr></table></div></td>
             </tr>
             <tr>
-	    <td><img src="<%= ServiceURI %>/images/dot.gif" 
+            <td><img src="<%= ServiceURI %>/images/dot.gif" 
             width="1" height="15" alt="" /></td>
-	    <script language="javascript">
-		markupButton(
-		    '<jato:text name="lblContinue" />',
-		   	"javascript:document.Login.submit()");
-	    </script>
-	    </tr>
-	    <tr>
+            <script language="javascript">
+                markupButton(
+                    '<jato:text name="lblContinue" />',
+                           "javascript:document.Login.submit()");
+            </script>
+            </tr>
+            <tr>
             <td>&nbsp;</td>
             </tr>
-	    <tr>
+            <tr>
             <td><img src="<%= ServiceURI %>/images/dot.gif" 
             width="1" height="33" alt="" /></td>
-	    <td>&nbsp;</td>
-	    </tr>
+            <td>&nbsp;</td>
+            </tr>
         </table>
         </auth:form>
       </td>
