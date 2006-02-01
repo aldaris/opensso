@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ums.xml,v 1.2 2006-01-30 20:58:56 veiming Exp $
+   $Id: ums.xml,v 1.3 2006-02-01 08:55:24 mrudul_uchil Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -542,7 +542,7 @@
                             <Value>BasicResourceSearch</Value>
                         </AttributeValuePair>
                         <AttributeValuePair> <Attribute name="searchfilter" />
-                            <Value>&(objectclass=icsCalendarResource)(icsStatus != deleted)</Value>
+                            <Value>(&amp;(objectclass=icsCalendarResource)(icsStatus != deleted))</Value>
                         </AttributeValuePair>
                         <AttributeValuePair> <Attribute name="attrs" />
                             <Value>objectclass</Value>

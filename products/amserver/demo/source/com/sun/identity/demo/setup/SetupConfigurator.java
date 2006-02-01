@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConfigurator.java,v 1.1 2005-11-01 00:28:36 arvindp Exp $
+ * $Id: SetupConfigurator.java,v 1.2 2006-02-01 08:55:21 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.jar.JarOutputStream;
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
@@ -62,14 +67,37 @@ public class SetupConfigurator {
     public static final String SERVERCONFIG_XML_FILENAME =
         "serverconfig.xml";
     
+    public static final String SERVER_HOST = "@SERVER_HOST@";
+    public static final String SERVER_PORT = "@SERVER_PORT@";
+    public static final String SERVER_PROTO = "@SERVER_PROTO@";
+    public static final String CLIENT_HOST = "@CLIENT_HOST@";
+    public static final String CLIENT_PORT = "@CLIENT_PORT@";
+    public static final String CLIENT_PROTO = "@CLIENT_PROTO@";
+
     public static final String[] SERVICES_TO_LOAD = new String [] {
-        "amPlatform.xml", "amNaming.xml", "amSession.xml"
+        "amPlatform.xml", "amNaming.xml", "amSession.xml", 
+        "amClientDetection.xml", "amAuthConfig.xml", 
+        "amAuth.xml", "amAuthDataStore.xml", "ums.xml",
+        "idRepoService.xml"
     };
 
     /**
      * @param args
      */
     public static void main(String[] args) throws Exception {
+        if (args.length < 6) {
+            log("Usage: java -jar amsetup.jar"+
+                " <server_protocol> <server_host> <server_port>"+
+                " <client_protocol> <client_host> <client_port>");
+            System.exit(0);
+        }
+        String server_proto = args[0];
+        String server_host = args[1];
+        String server_port = args[2];
+        String client_proto = args[3];
+        String client_host = args[4];
+        String client_port = args[5];
+        
         log("Starting configuration setup");
         
         File ldapjdkJar = extractFile("ldapjdk.jar");
@@ -81,7 +109,23 @@ public class SetupConfigurator {
         if (serverWar == null) {
             throw new Exception("Failed to extract amserver.war");
         }
+
+        // Tag Swap host, port and proto in server AMConfig.properties
+        String zipName = "amserver.war";
+        String entryName = "WEB-INF/classes/AMConfig.properties";
+        tagSwap(server_proto, server_host, server_port, SERVER_PROTO, 
+            SERVER_HOST, SERVER_PORT, entryName, zipName);
+        tagSwap(client_proto, client_host, client_port, CLIENT_PROTO, 
+            CLIENT_HOST, CLIENT_PORT, entryName, zipName);       
         
+        // Tag Swap host, port and proto in client AMConfig.properties
+        zipName = "amdemoclient.war";
+        entryName = "WEB-INF/classes/AMConfig.properties";
+        tagSwap(server_proto, server_host, server_port, SERVER_PROTO, 
+            SERVER_HOST, SERVER_PORT, entryName, zipName);
+        tagSwap(client_proto, client_host, client_port, CLIENT_PROTO, 
+            CLIENT_HOST, CLIENT_PORT, entryName, zipName);
+
         // Mark this file for automatic cleanup
         ldapjdkJar.deleteOnExit();
         
@@ -176,10 +220,29 @@ public class SetupConfigurator {
             String serviceFileName = SERVICES_TO_LOAD[i];
             log("Attempting to load: " + serviceFileName);
             InputStream serviceStream = null;
+            InputStream servRawStream = null;
             try {
-                serviceStream = 
+                servRawStream = 
                     ClassLoader.getSystemResourceAsStream(serviceFileName);
+                byte [] buffer = new byte[1024];
+                int bytesRead = 0;
+                StringBuffer strBuff = new StringBuffer();
+                while ((bytesRead = servRawStream.read(buffer)) != -1) {
+                    strBuff.append(new String(buffer, 0, bytesRead));
+                }
                 
+                searchReplace(strBuff,SERVER_HOST,server_host);
+                searchReplace(strBuff,SERVER_PORT,server_port);
+                searchReplace(strBuff,SERVER_PROTO,server_proto);
+                if (serviceFileName.equals("amAuth.xml")) {
+                    searchReplace(strBuff,CLIENT_HOST,client_host);
+                    searchReplace(strBuff,CLIENT_PORT,client_port);
+                    searchReplace(strBuff,CLIENT_PROTO,client_proto);
+                }
+
+                serviceStream = (InputStream)new java.io.ByteArrayInputStream
+                    ((strBuff.toString()).getBytes());
+
                 if (serviceStream == null) {
                     throw new Exception("Faild to find " + serviceFileName);
                 }
@@ -196,11 +259,104 @@ public class SetupConfigurator {
                         // No handling requried
                     }
                 }
+                if (servRawStream != null) {
+                    try {
+                        servRawStream.close();
+                    } catch (Exception ex) {
+                        // No handling requried
+                    }
+                }
             }
         }
         
         log("Configuration load complete.");
         log("You can now deploy amserver.war file created in this directory");
+    }
+
+    // Searches the 'fromProto', 'fromHost', 'fromPort', in 'entryName' 
+    // from 'jarFileName' and replaces the 'fromProto', 'fromHost', 'fromPort'
+    // with 'proto', 'host', 'port'.
+    private static void tagSwap(String proto, String host, String port,
+    String fromProto, String fromHost, String fromPort, 
+    String entryName, String jarFileName) {
+        
+        JarOutputStream newZip = null;
+        try {
+            // Allocate a buffer for reading the entry data.
+            byte [] buffer = new byte[1024];
+            int bytesRead = 0;
+            
+            // Read the entry data and write it to the output file.
+            log("Extract " + entryName + " From : " + jarFileName);
+            JarFile origJar = new JarFile(jarFileName);
+            newZip = new JarOutputStream(new FileOutputStream(jarFileName+"+"));
+            JarEntry entry = new JarEntry(entryName);
+            Enumeration enumeration1 = origJar.entries();
+            while (enumeration1.hasMoreElements()) {
+                JarEntry ent1 = (JarEntry)enumeration1.nextElement();
+                InputStream stream1 = origJar.getInputStream(ent1);
+                buffer = new byte[1024];
+                bytesRead = 0;
+                //newZip.putNextEntry(new JarEntry(ent1.getName()));
+                if (entry.getName().equals(ent1.getName())) {
+                    newZip.putNextEntry(entry);
+                    log("doing tag swap in : " + entryName);
+                    StringBuffer sb = new StringBuffer();
+                    while ((bytesRead = stream1.read(buffer)) != -1) {
+                        sb.append(new String(buffer, 0, bytesRead));
+                    }                 
+                    
+                    searchReplace(sb,fromHost,host); 
+                    searchReplace(sb,fromPort,port); 
+                    searchReplace(sb,fromProto,proto);
+                    
+                    newZip.write(sb.toString().getBytes(), 0, sb.length());
+                } else {
+                    newZip.putNextEntry(ent1);
+                    //System.out.println("doing other files");
+                    while ((bytesRead = stream1.read(buffer)) != -1) {
+                        newZip.write(buffer, 0, bytesRead);
+                    }
+                }
+                stream1.close();
+            }
+            newZip.close();
+            File oldFile = new File(jarFileName);
+            oldFile.delete();
+            File newFile = new File(jarFileName+"+");
+            newFile.renameTo(new File(jarFileName));
+            
+        } catch (Exception exp) {
+            exp.printStackTrace();
+        } finally {
+            if (newZip != null) {
+                try {
+                    newZip.close();
+                } catch (IOException ioExp) {
+                }
+            }
+        }
+    }
+    
+    // Searches the 'fromString' in 'strBuff' and replaces the 'fromString'
+    // with 'toString'.
+    static void searchReplace(StringBuffer strBuff, String 
+        fromString, String toString) {        
+        int toStringLength = toString.length();
+        int fromStringLength = fromString.length();
+        int counter = 0;
+        int found = 0;
+        int prev_found = 0;
+        while (counter + fromString.length() <= strBuff.length()) {
+            prev_found = found;
+            found = strBuff.indexOf(fromString, counter);
+            if (found >= 0) {
+                strBuff.replace(found, found + fromStringLength, toString);
+                counter += (found - prev_found + toStringLength);
+            } else {
+                break;
+            }
+        } 
     }
     
     private static File extractFile(String name) throws Exception {

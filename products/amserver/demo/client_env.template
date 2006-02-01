@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: client_env.template,v 1.1 2005-11-01 00:28:31 arvindp Exp $
+# $Id: client_env.template,v 1.2 2006-02-01 08:55:18 mrudul_uchil Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -42,13 +42,7 @@
 # - CLIENT_PORT : port used by the web container where client is deployed
 #
 
-OUTPUT_DIR=/opt/opensso/work
-SERVER_PROTO=http
-SERVER_HOST=myserverhost.mydomain.com
-SERVER_PORT=80
-CLIENT_PROTO=http
-CLIENT_HOST=myclienthost.mydomain.com
-CLIENT_PORT=80
+OUTPUT_DIR=/tmp/opensso/client/work
 
 #
 # The following properties values should be kept as the suggested defaults.

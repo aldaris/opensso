@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-01-06 19:49:59 arviranga Exp $
+   $Id: build.xml,v 1.3 2006-02-01 08:55:18 mrudul_uchil Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -121,29 +121,81 @@
 
     <target name="package-server" depends="setup">
         <mkdir dir="${demo.pkg.dir}/serverweb"/>
+        <mkdir dir="${demo.pkg.dir}/serverweb/config/auth/default"/>
+        <mkdir dir="${demo.pkg.dir}/serverweb/config/auth/default_en"/>
+        <mkdir dir="${demo.pkg.dir}/serverweb/css"/>
+        <mkdir dir="${demo.pkg.dir}/serverweb/images/button"/>
+        <mkdir dir="${demo.pkg.dir}/serverweb/js"/>
         <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF"/>
         <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF/lib"/>
         <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF/classes"/>
+
+        <copy todir="${demo.pkg.dir}/serverweb/config/auth/default">
+            <fileset dir="${www.authentication.dir}/UI">
+                <include name="**/*.jsp"/>
+            </fileset>
+            <fileset dir="${demo.pkg.dir}/server">
+                <include name="DataStore.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/config/auth/default_en">
+            <fileset dir="${demo.pkg.dir}/server">
+                <include name="DataStore.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/css">
+            <fileset dir="${lockhart.dir}/css">
+                <include name="**/*.css"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/images">
+            <fileset dir="${lockhart.dir}/images">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/images/button">
+            <fileset dir="${lockhart.dir}/images/button">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/js">
+            <fileset dir="${lockhart.dir}/js">
+                <include name="**/*.*"/>
+            </fileset>
+            <fileset dir="${www.authentication.dir}/UI/js">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF">
+            <fileset dir="${xml.dir}">
+                <include name="**/auth.tld"/>
+            </fileset>        
+            <fileset dir="${jatolib.dir}">
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
         <copy todir="${demo.pkg.dir}/serverweb/WEB-INF/classes">
             <fileset dir="${classes.dir}"/>
             <fileset dir="${demo.classes.dir}"/>
+            <fileset dir="${demo.pkg.dir}/server"/>
         </copy>
         <copy todir="${demo.pkg.dir}/serverweb/WEB-INF/lib">
             <fileset dir="${demobase.dir}/libserver">
                 <include name="**/*.jar"/>
             </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF/classes">
-            <fileset dir="${demo.pkg.dir}/server"/>
-        </copy>
+            <fileset dir="${jatolib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>        
         <copy todir="${demo.pkg.dir}/serverweb">
             <fileset dir="${demo.www.dir}/server/jsp">
                 <include name="**/*.jsp"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb">
+            </fileset>        
             <fileset dir="${www.jsp.dir}">
                 <include name="**/*.jsp"/>
+            </fileset>
+            <fileset dir="${www.authentication.dir}/UI">
+                <include name="**/index.html"/>
             </fileset>
         </copy>
         <copy todir="${demo.pkg.dir}/serverweb/WEB-INF">

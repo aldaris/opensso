@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WelcomeServlet.java,v 1.1 2005-11-01 00:28:33 arvindp Exp $
+ * $Id: WelcomeServlet.java,v 1.2 2006-02-01 08:55:19 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,63 +31,97 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.common.Constants;
 
 public class WelcomeServlet extends HttpServlet {
-
+    
     public static final String NEWLINE = 
         System.getProperty("line.separator", "\n");
-
-    protected void doPost(HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException 
-    {
+    static String server_url = SystemProperties.get(Constants.
+        AM_SERVER_PROTOCOL)+ "://" + SystemProperties.get(
+        Constants.AM_SERVER_HOST)+ ":" + SystemProperties.
+        get(Constants.AM_SERVER_PORT) + SystemProperties.
+        get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR)
+        + "/UI/Login";
+    
+    protected void doPost(HttpServletRequest request,
+    HttpServletResponse response) throws ServletException, IOException {
         try {
             SSOTokenManager mgr = SSOTokenManager.getInstance();
             SSOToken token = mgr.createSSOToken(request);
             if (mgr.isValidToken(token)) {
-                String principal = "" + token.getPrincipal();
-                String p1 = token.getProperty("p1");
-                String p2 = token.getProperty("p2");
-                String p3 = token.getProperty("p3");
+                String principal = "" + token.getProperty("Principal");
+                String authLevel = token.getProperty("AuthLevel");
+                String authType = token.getProperty("AuthType");
+                String organization = token.getProperty("Organization");
+                String authInstant = token.getProperty("authInstant");
+                String indexType = token.getProperty("IndexType");
+                String locale = token.getProperty("Locale");
+                String clientType = token.getProperty("clientType");
+                String charSet = token.getProperty("CharSet");
+                String loginURL = token.getProperty("loginURL");
+                String successURL = token.getProperty("successURL");
+                String userId = token.getProperty("UserId");
                 
                 StringBuffer buff = new StringBuffer("<pre>");
                 buff.append(NEWLINE);
-                buff.append("You are already logged in as: ");
+                buff.append("You are already logged in as : ");
                 buff.append(principal).append(NEWLINE);
                 buff.append(NEWLINE);
                 buff.append("Your custom properties are: ").append(NEWLINE);
-                buff.append("    p1 = ").append(p1).append(NEWLINE);
-                buff.append("    p2 = ").append(p2).append(NEWLINE);
-                buff.append("    p3 = ").append(p3).append(NEWLINE);
+                buff.append("    UserId = ").append(userId).
+                append(NEWLINE);
+                buff.append("    Organization = ").append(organization).
+                append(NEWLINE);
+                buff.append("    authInstant = ").append(authInstant).
+                append(NEWLINE);
+                buff.append("    IndexType = ").append(indexType).
+                append(NEWLINE);
+                buff.append("    Locale = ").append(locale).
+                append(NEWLINE);
+                buff.append("    AuthLevel = ").append(authLevel).
+                append(NEWLINE);
+                buff.append("    AuthType = ").append(authType).
+                append(NEWLINE);
+                buff.append("    ClienType = ").append(clientType).
+                append(NEWLINE);
+                buff.append("    CharSet = ").append(charSet).
+                append(NEWLINE);
+                buff.append("    LoginURL = ").append(loginURL).
+                append(NEWLINE);
+                buff.append("    SuccessURL = ").append(successURL).
+                append(NEWLINE);
                 buff.append("</pre>");
                 
                 sendResponse(response, buff.toString());
                 return;
             }
         } catch (Exception ex) {
-            sendResponse(response, "You do not have a valid session!");
+            String request_url = request.getRequestURL().toString();
+            String redirect_url = server_url + "?goto=" + request_url;
+            response.sendRedirect(redirect_url);            
         }
     }
-
-    private void sendResponse(HttpServletResponse response, String message) 
-        throws IOException 
-    {
-       response.setContentType("text/html");
-       PrintWriter writer = response.getWriter();
-       
-       writer.println("<html><head><title>Client Response</title></head>");
-       writer.println("<body bgcolor=\"#FFFFFF\" text=\"#000000\">");
-       writer.println("<br><h3>Demo Client</h3>");
-       writer.println("<p><p><b>" + message + "</b>");
-       writer.println("</body></html>");
-       writer.flush();
-       writer.close();
+    
+    private void sendResponse(HttpServletResponse response, String message)
+    throws IOException {
+        response.setContentType("text/html");
+        PrintWriter writer = response.getWriter();
+        
+        writer.println("<html><head><title>Client Response</title></head>");
+        writer.println("<body bgcolor=\"#FFFFFF\" text=\"#000000\">");
+        writer.println("<br><h3>Demo Client</h3>");
+        writer.println("<p><p><b>" + message + "</b>");
+        writer.println("</body></html>");
+        writer.flush();
+        writer.close();
     }
     
-    protected void doGet(HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException 
-    {
+    protected void doGet(HttpServletRequest request,
+    HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
-    }    
+    }
 }

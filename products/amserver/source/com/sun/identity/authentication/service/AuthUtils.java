@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.2 2006-02-01 00:24:44 beomsuk Exp $
+ * $Id: AuthUtils.java,v 1.3 2006-02-01 08:55:22 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2942,7 +2942,7 @@ public class AuthUtils {
             orgName = IdUtils.getOrganization(token,orgParam);
         } catch (Exception oe) {
             if (utilDebug.messageEnabled()) {
-                utilDebug.message("Could not get orgName",oe);
+                utilDebug.message("Could not get orgName : ",oe);
             }
         }
         
@@ -2964,7 +2964,7 @@ public class AuthUtils {
                     orgName = IdUtils.getOrganization(token,orgParam);
                 } catch (Exception e) {
                     if (utilDebug.messageEnabled()) {
-                        utilDebug.message("Could not get orgName"+orgParam,e);
+                        utilDebug.message("Could not get orgName : "+orgParam,e);
                     }
                 }
             }

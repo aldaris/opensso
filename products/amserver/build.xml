@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-01-28 09:15:10 veiming Exp $
+   $Id: build.xml,v 1.5 2006-02-01 08:55:17 mrudul_uchil Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,6 +36,7 @@
     <property name="xml.dir" location="xml"/>
     <property name="extlib.dir" location="extlib"/>
     <property name="jatolib.dir" location="../../resources/jato"/>
+    <property name="lockhart.dir" location="../../resources/lockhart"/>
     <property name="demobase.dir" location="demo"/>
 
     <!-- nested directory structure -->
@@ -43,6 +44,7 @@
     <property name="script.ldap.dir" location="${script.dir}/ldap"/>
     <property name="script.sql.dir" location="${script.dir}/sql"/>
     <property name="www.jsp.dir" location="${www.dir}/jsp"/>
+    <property name="www.authentication.dir" location="${www.dir}/authentication"/>
    
     <!-- generated directory structure -->
     <property name="built.dir" location="built"/>

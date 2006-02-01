@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.4 2006-01-30 20:58:56 veiming Exp $
+   $Id: idRepoService.xml,v 1.5 2006-02-01 08:55:24 mrudul_uchil Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,11 +38,11 @@
             <Global>
                 <AttributeSchema name="coexistenceMode"
                     type="single" syntax="string">
-                    <DefaultValues><Value>AM_COEXIST</Value></DefaultValues>
+                    <DefaultValues><Value>@AM_COEXIST@</Value></DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="realmMode"
                     type="single" syntax="string">
-                    <DefaultValues><Value>AM_REALM</Value></DefaultValues>
+                    <DefaultValues><Value>@AM_REALM@</Value></DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="serviceNamesForAutoAssignment"
                     type="list"
@@ -2252,11 +2252,9 @@
                     </SubConfiguration>
                 </SubConfiguration>
             </GlobalConfiguration>
-XML_COMMENT_START
-            <OrganizationConfiguration name="NORMALIZED_ORGBASE">
-                <SubConfiguration name="amSDK1" id="amSDK" />
+            <OrganizationConfiguration name="/">
+                <SubConfiguration name="amFiles1" id="files" />
             </OrganizationConfiguration>
-XML_COMMENT_END
         </Configuration>
     </Service>
 </ServicesConfiguration>

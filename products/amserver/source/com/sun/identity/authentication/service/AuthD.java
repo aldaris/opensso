@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.2 2006-02-01 00:24:44 beomsuk Exp $
+ * $Id: AuthD.java,v 1.3 2006-02-01 08:55:22 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,8 +133,7 @@ public class AuthD  {
     /**
      * Configured directory server port number for auth
      */
-    public static int directoryPort =
-    Integer.parseInt(SystemProperties.get(Constants.AM_DIRECTORY_PORT));
+    public static int directoryPort;
 
     /**
      * Configured revisionNumber for auth service
