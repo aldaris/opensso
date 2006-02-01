@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.1 2006-01-28 09:15:26 veiming Exp $
+ * $Id: LoginViewBean.java,v 1.2 2006-02-01 00:22:36 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,55 +26,53 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import java.net.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.jsp.*;
-import java.security.Principal;
-import javax.security.auth.*;
-import javax.security.auth.login.*;
-import javax.security.auth.callback.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import com.iplanet.jato.*;
-import com.iplanet.jato.model.*;
-import com.iplanet.jato.model.sql.*;
-import com.iplanet.jato.util.*;
-import com.iplanet.jato.view.*;
-import com.iplanet.jato.view.event.*;
-import com.iplanet.jato.view.html.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.ChoiceCallback;
+import javax.security.auth.callback.ConfirmationCallback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.Debug;
 import com.iplanet.dpro.session.SessionID;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.jato.RequestContext;
+import com.iplanet.jato.model.ModelControlException;
+import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.ChildDisplayEvent;
+import com.iplanet.jato.view.event.DisplayEvent;
+import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.ImageField;
+import com.iplanet.jato.view.html.StaticTextField;
 import com.iplanet.services.util.CookieUtils;
-
-import com.sun.identity.authentication.server.AuthContextLocal;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.HttpCallback;
+import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
-
-import com.sun.identity.common.L10NMessage;
-import com.sun.identity.common.L10NMessageImpl;
 import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.L10NMessage;
+import com.sun.identity.common.L10NMessageImpl;
 
 /**
- *
- *
- *
+ * This class is a default implementation of <code>LoginViewBean</code> 
+ * auth Login UI.
  */
 public class LoginViewBean extends AuthViewBeanBase {
     /**
-     *
-     *
+     * Creates <code>LoginViewBean</code> object.
      */
     public LoginViewBean() {
         super(PAGE_NAME);
@@ -232,6 +230,14 @@ public class LoginViewBean extends AuthViewBeanBase {
         }
     }
     
+	/**
+	 * Forwards the request to this view bean, displaying the page. This
+	 * method is the equivalent of <code>RequestDispatcher.forward()</code>,
+	 * meaning that the same semantics apply to the use of this method.
+	 * This method makes implicit use of the display URL returned
+	 * by the <code>getDisplayURL()</code> method.
+	 * @param requestContext servlet context for auth request
+	 */
     public void forwardTo(RequestContext requestContext) {
         
         loginDebug.message("In forwardTo()");
@@ -474,6 +480,11 @@ public class LoginViewBean extends AuthViewBeanBase {
         clearGlobals();
     }
     
+    /**
+     * Returns display url for auth auth Login UI
+     * 
+     * @return display url for auth auth Login  UI
+     */
     public String getDisplayURL() {
         loginDebug.message("In getDisplayURL()");
         
@@ -563,6 +574,17 @@ public class LoginViewBean extends AuthViewBeanBase {
     }
     
     
+	/**
+	 * Called as notification that the JSP has begun its display 
+	 * processing. In addition to performing the default behavior in the 
+	 * superclass's version, this method executes any auto-retrieving or auto-
+	 * executing models associated with this view unless auto-retrieval is
+	 * disabled.
+	 * @param	event	The DisplayEvent.
+	 * @throws	ModelControlException
+	 *			Thrown if manipulation of a model fails during display 
+	 *			preparation or execution of auto-retrieving models
+	 */
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         setPageEncoding(request,response);
@@ -714,13 +736,17 @@ public class LoginViewBean extends AuthViewBeanBase {
     }
     
     /**
-     *
-     *
+     * Handles button login request
+     * @param event request invocation event
      */
     public void handleButtonLoginRequest(RequestInvocationEvent event) {
         forwardTo();
     }
     
+    /**
+     * Handles href login request
+     * @param event request invocation event.
+     */
     public void handleHrefRequest(RequestInvocationEvent event) {
         forwardTo();
     }
@@ -1446,9 +1472,10 @@ public class LoginViewBean extends AuthViewBeanBase {
         }
     }
     
-    /** Method to clear cookie based on the cookie
+    /** 
+     *  Method to clear cookie based on the cookie
      *  name passed (Auth or AM Cookie)
-     *  @param cookieName, name of cookie to be cleared.
+     *  @param cookieName  name of cookie to be cleared.
      */
     private void clearCookie(String cookieName) {
         String cookieDomain = null;
@@ -1667,7 +1694,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     }
     
     /** Clear cookie and destroy session
-     *  @param ac, AuthContext for this request
+     *  @param ac AuthContext for this request
      */
     private void clearCookieAndDestroySession(AuthContextLocal ac) {
         // clear cookie, destroy orignal invalid session
@@ -1684,10 +1711,20 @@ public class LoginViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     
     // StaticTextResult ( Result )
+    /**
+     * Returns if it begins static text result display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginStaticTextResultDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content static text result display
+     * @param event child display event
+     * @return <code>false</code> if result value if null or empty.
+     */ 
     public boolean beginContentStaticTextResultDisplay(ChildDisplayEvent event){
         if (( ResultVal == null ) || (ResultVal.length() == 0)) {
             return false;
@@ -1697,6 +1734,11 @@ public class LoginViewBean extends AuthViewBeanBase {
         }
     }
     
+    /**
+     * Returns if it begins content static warning display
+     * @param event child display event
+     * @return <code>true</code> if lock warning is not null or not empty.
+     */ 
     public boolean beginContentStaticWarningDisplay(ChildDisplayEvent event) {
         lockWarning = ac.getLockoutMsg();
         accountLocked = ac.isLockedOut();
@@ -1706,43 +1748,79 @@ public class LoginViewBean extends AuthViewBeanBase {
         return ((lockWarning != null) && (lockWarning.length() > 0));
     }
     
-    // StaticTextMessage ( Error message )
+    /**
+     * Returns if it begins static text message display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginStaticTextMessageDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content static text message display
+     * @param event child display event
+     * @return <code>true</code> if error message is not null or not empty.
+     */ 
     public boolean beginContentStaticTextMessageDisplay(
         ChildDisplayEvent event
     ) {
         return ((ErrorMessage != null) && (ErrorMessage.length() > 0));
     }
     
-    // StaticTextHeader ( Header )
+    /**
+     * Returns if it begins static text header display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginStaticTextHeaderDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content static text header display
+     * @param event child display event
+     * @return <code>true</code> if text header is not null or not empty.
+     */ 
     public boolean beginContentStaticTextHeaderDisplay(ChildDisplayEvent event){
         return ((TextHeaderVal != null ) && (TextHeaderVal.length() > 0));
     }
     
-    // Href ( Return to login )
+    /**
+     * Returns if it begins href display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginHrefDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content href display
+     * @param event child display event
+     * @return <code>true</code> if result value is not null and account is not 
+     *  locked or error template is not null and not empty.
+     */ 
     public boolean beginContentHrefDisplay(ChildDisplayEvent event) {
         return (((ResultVal != null) &&
             ( ResultVal.length() > 0) && LoginFail && !accountLocked)
             || ((errorTemplate != null) && ( errorTemplate.length() > 0)));
     }
     
-    // ButtonLogin ( Submit )
+    /**
+     * Returns if it begins content button login display
+     * @param event child display event
+     * @return <code>true</code> if login is not completed.
+     */ 
     public boolean beginContentButtonLoginDisplay(ChildDisplayEvent event) {
         return (!LoginSuccess && !LoginFail);
     }
     
-    // Image
+    /**
+     * Returns if it begins content image display
+     * @param event child display event
+     * @return <code>true</code> if page image is not null or not empty.
+     */ 
     public boolean beginContentImageDisplay(ChildDisplayEvent event) {
         return ((pageImage != null ) && (pageImage.length() > 0));
     }
@@ -1797,24 +1875,43 @@ public class LoginViewBean extends AuthViewBeanBase {
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
     
+    /** Page name for login */
     public static final String PAGE_NAME="Login";
+    /** Result value */
     public String ResultVal = "";
+    /** Error message */
     public String ErrorMessage = "";
+    /** Error template */
     public String errorTemplate = "";
+    /** Error code */
     public String errorCode = "";
+    /** Lock warning */
     public String lockWarning = "";
+    /** Account lock */
     public boolean accountLocked=false;
+    /** Text header value */
     public String TextHeaderVal = "";
+    /** Redirect url */
     public String redirect_url = null;
+    /** Page state */
     public String pageState = null;
+    /** Choice */
     public String choice = "";
+    /** Page template */
     public String pageTemplate = "";
+    /** Page image */
     public String pageImage = "";
+    /** Login failure */
     public boolean LoginFail = false;
+    /** Login success */
     public boolean LoginSuccess = false;
+    /** Auth level */
     public boolean bAuthLevel = false;
+    /** Session is valid */
     public boolean bValidSession = false;
+    /** Request is post */
     public boolean isPost = false;
+    /** Required list */
     public List requiredList = null;
     AuthContextLocal ac;
     private Hashtable reqDataHash = new Hashtable();
@@ -1835,76 +1932,128 @@ public class LoginViewBean extends AuthViewBeanBase {
     String orgName = "";
     String indexName = "";
     AuthContext.IndexType indexType;
+    /** List of callback */
     public Callback[] callbacks = null;
+    /** List of button options */
     public String[] buttonOptions = null;
+    /** Default button index */
     public int defaultButtonIndex = 0;
     String jsp_page=null;
     String param=null;   
     
+    /** Default parameter name for old token */
     public static final String TOKEN_OLD = "Login.Token";
+    /** Default parameter name for token */
     public static final String TOKEN = "IDToken";
+    /** Default parameter name for old button */
     public static final String BUTTON_OLD = "Login.ButtonLogin";
+    /** Default parameter name for id button */
     public static final String BUTTON = "IDButton";
     
+    /** Default parameter name for page state  */
     public static final String PAGE_STATE = "PageState";
+    /** Default parameter name for login url */
     public static final String LOGIN_URL = "LoginURL";
+    /** Default parameter name for default login url */
     public static final String DEFAULT_LOGIN_URL = "DefaultLoginURL";
+    /** Default parameter name for redirect url */
     public static final String REDIRECT_URL = "RedirectURL";
+    /** Default parameter name for tiled callback */
     public static final String TILED_CALLBACKS = "tiledCallbacks";
+    /** Default parameter name for tiled buttons */
     public static final String TILED_BUTTONS = "tiledButtons";
+    /** Default parameter name for default buttons */
     public static final String DEFAULT_BTN = "defaultBtn";
+    /** Default parameter name for text goto login after failure  */
     public static final String TXT_GOTO_LOGIN_AFTER_FAIL =
     "txtGotoLoginAfterFail";
+    /** Default parameter name for submit command */
     public static final String CMD_SUBMIT = "cmdSubmit";
+    /** Default parameter name for submit label */
     public static final String LBL_SUBMIT = "lblSubmit";
+    /** Default parameter name for continue command */
     public static final String CMD_CONTINUE = "cmdContinue";
+    /** Default parameter name for continue label */
     public static final String LBL_CONTINUE = "lblContinue";
+    /** Default parameter name for agree command */
     public static final String CMD_AGREE = "cmdAgree";
+    /** Default parameter name for agree label */
     public static final String LBL_AGREE = "lblAgree";
+    /** Default parameter name for disagree command */
     public static final String CMD_DISAGREE = "cmdDisagree";
+    /** Default parameter name for disagree label */
     public static final String LBL_DISAGREE = "lblDisagree";
+    /** Default parameter name for command yes */
     public static final String CMD_YES = "cmdYes";
+    /** Default parameter name for label yes */
     public static final String LBL_YES = "lblYes";
+    /** Default parameter name for command no */
     public static final String CMD_NO = "cmdNo";
+    /** Default parameter name for label no */
     public static final String LBL_NO = "lblNo";
+    /** Default parameter name for new user command */
     public static final String CMD_NEW_USER = "cmdNewUser";
+    /** Default parameter name for new user label */
     public static final String LBL_NEW_USER = "lblNewUser";
+    /** Default parameter name for reset label */
     public static final String LBL_RESET = "lblReset";
     
+    /** Default parameter name for login html title */
     public static final String HTML_TITLE_LOGIN = "htmlTitle_Login";
+    /** Default parameter name for login title message */
     public static final String HTML_TITLE_MESSAGE = "htmlTitle_Message";
+    /** Default parameter name for redirect html title */
     public static final String HTML_TITLE_REDIRECT = "htmlTitle_Redirect";
+    /** Default parameter name of html title for account expired */
     public static final String HTML_TITLE_ACCOUNTEXPIRED =
         "htmlTitle_AccountExpired";
+    /** Default parameter name of html title for auth error */
     public static final String HTML_TITLE_AUTHERROR = "htmlTitle_AuthError";
+    /** Default parameter name of html title for self registration error */
     public static final String HTML_TITLE_SELFREGERROR =
         "htmlTitle_SelfRegError";
+    /** Default parameter name of html title for disclaimer */
     public static final String HTML_TITLE_DISCLAIMER = "htmlTitle_Disclaimer";
+    /** Default parameter name of html title for invalid cookie id */
     public static final String HTML_TITLE_INVALIDPCOOKIEUID =
         "htmlTitle_InvalidPCookieUID";
+    /** Default parameter name of html title for invalid password */
     public static final String HTML_TITLE_INVALIDPASSWORD =
         "htmlTitle_InvalidPassword";
+    /** Default parameter name of html title for invalid domain */
     public static final String HTML_TITLE_INVALIDDOMAIN =
         "htmlTitle_InvalidDomain";
+    /** Default parameter name of html title for user profile not found */
     public static final String HTML_TITLE_USERPROFILENOTFOUND =
         "htmlTitle_UserProfileNotFound";
+    /** Default parameter name of html title for auth failure */
     public static final String HTML_TITLE_AUTHFAILED = "htmlTitle_AuthFailed";
+    /** Default parameter name of html title for membership */
     public static final String HTML_TITLE_MEMBERSHIP = "htmlTitle_Membership";
+    /** Default parameter name of html title for auth module denied */
     public static final String HTML_TITLE_AUTHMODULEDENIED =
         "htmlTitle_AuthModuleDenied";
+    /** Default parameter name of html title for no config error */
     public static final String HTML_TITLE_NOCONFIGERROR =
         "htmlTitle_NoConfigError";
+    /** Default parameter name of html title for org inactive */
     public static final String HTML_TITLE_ORGINACTIVE =
         "htmlTitle_OrgInactive";
+    /** Default parameter name of html title for self module registration */
     public static final String HTML_TITLE_SELFREGMODULE =
         "htmlTitle_SelfRegModule";
+    /** Default parameter name of html title for session timeout */
     public static final String HTML_TITLE_SESSIONTIMEOUT =
         "htmlTitle_SessionTimeOut";
+    /** Default parameter name of html title for user not found */
     public static final String HTML_TITLE_USERNOTFOUND =
         "htmlTitle_UserNotFound";
+    /** Default parameter name of html title for user inactive */
     public static final String HTML_TITLE_USERINACTIVE =
         "htmlTitle_UserInactive";
+    /** Default parameter name of html title for new organization */
     public static final String HTML_TITLE_NEWORG = "htmlTitle_NewOrg";
+    /** Default parameter name of html title for max session */
     public static final String HTML_TITLE_MAXSESSIONS = "htmlTitle_MaxSessions";
     
     ////////////////////////////////////////////////////////////////////////////

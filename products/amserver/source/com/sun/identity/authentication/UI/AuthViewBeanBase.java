@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.1 2006-01-28 09:15:22 veiming Exp $
+ * $Id: AuthViewBeanBase.java,v 1.2 2006-02-01 00:22:34 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,41 +26,35 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.Hashtable;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
-import com.iplanet.jato.*;
-import com.iplanet.jato.model.*;
-import com.iplanet.jato.model.sql.*;
-import com.iplanet.jato.util.*;
-import com.iplanet.jato.view.*;
-import com.iplanet.jato.view.event.*;
-import com.iplanet.jato.view.html.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.AMResourceBundleCache;
 import com.iplanet.am.util.BrowserEncoding;
-import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.Debug;
-
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.ViewBeanBase;
+import com.iplanet.jato.view.html.StaticTextField;
+import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.Constants;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.authentication.service.AuthUtils;
 
 /**
- *
- *
+ * This class is a default implementation of <code>ViewBean</code> auth UI.
  */
 public abstract class AuthViewBeanBase extends ViewBeanBase {
-    /**
-     *
-     *
-     */
     private  java.util.Locale accLocale ;
     static Debug loginDebug = Debug.getInstance("amLoginViewBean");
+    
+    /**
+     * Creates <code>AuthViewBeanBase</code> object.
+     * @param pageName name of page for auth UI.
+     */
     public AuthViewBeanBase(String pageName ) {
         super(pageName);
         registerChildren();
@@ -73,10 +67,6 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     }
     
     
-    /**
-     *
-     *
-     */
     protected View createChild(String name) {
         if (name.equals(PAGE_ENCODING)) {
             return new StaticTextField(this, PAGE_ENCODING, "");
@@ -167,16 +157,32 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
         }
     }
     
+    /**
+     * Returns <code>Locale</code> for auth request.
+     * @return <code>Locale</code> for auth request.
+     */
     public java.util.Locale getRequestLocale() {
         return accLocale;
     }
     
+    /**
+     * Returns tile index for auth UI.
+     * @return tile index for auth UI.
+     */
     public abstract String getTileIndex();
     
-    
+    /**
+     * Parameter name for page encoding.
+     */
     public static final String PAGE_ENCODING = "gx_charset";
+    /**
+     * Parameter name for service uri.
+     */
     public static final String SERVICE_URI = "ServiceUri";
     
+    /**
+     * Configured service uri.
+     */
     public static String serviceUri =
     SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     
@@ -193,7 +199,13 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     
     public static AMResourceBundleCache rbCache =
     AMResourceBundleCache.getInstance();
+    /**
+     * Resource bundle with <code>Locale</code>
+     */
     public ResourceBundle rb = null;
+    /**
+     * AuthUtils object.
+     */
     public static AuthUtils au = new AuthUtils();
     
     private static boolean isSessionHijackingEnabled =

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.1 2006-01-28 09:15:25 veiming Exp $
+ * $Id: LoginLogoutMapping.java,v 1.2 2006-02-01 00:22:35 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,10 @@ public class LoginLogoutMapping extends HttpServlet {
 
     ServletConfig config = null;
     
-    /** Initializes the servlet.
+    /** 
+     * Initializes the servlet.
+     * @param config servlet config
+     * @throws ServletException if it fails to get servlet context.
     */  
     public void init(ServletConfig config) throws ServletException {
         super.init(config);

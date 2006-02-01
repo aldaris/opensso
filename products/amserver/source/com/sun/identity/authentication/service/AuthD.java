@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.1 2006-01-28 09:16:28 veiming Exp $
+ * $Id: AuthD.java,v 1.2 2006-02-01 00:24:44 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,10 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 /**
- * 
- *
+ * This class is used to initialize the Authentication service and retrieve 
+ * the Global attributes for the Authentication service.
+ * It also initializes the other dependent services in the OpenSSO system and 
+ * hence used as bootstrap class for the authentication server.
  */
 public class AuthD  {
     /**

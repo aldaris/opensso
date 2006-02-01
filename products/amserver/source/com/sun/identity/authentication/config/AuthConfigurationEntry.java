@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigurationEntry.java,v 1.1 2006-01-28 09:15:35 veiming Exp $
+ * $Id: AuthConfigurationEntry.java,v 1.2 2006-02-01 00:23:21 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,6 +111,7 @@ public class AuthConfigurationEntry implements Serializable {
 
     /**
      * Returns login module name
+     * @return login module name
      */
     public String getLoginModuleName() {
         return module;

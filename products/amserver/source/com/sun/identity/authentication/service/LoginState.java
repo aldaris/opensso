@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.1 2006-01-28 09:16:44 veiming Exp $
+ * $Id: LoginState.java,v 1.2 2006-02-01 00:24:45 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,8 +89,10 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
 
 /**
- * 
- *
+ * This class maintains the User's login state information from the time user 
+ * requests for authentication till the time the user either logs out of the 
+ * OpenSSO system or the session is destroyed by any privileged application of 
+ * the OpenSSO system.
  */
 public class LoginState {
     

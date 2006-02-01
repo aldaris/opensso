@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKEventListener.java,v 1.1 2006-01-28 09:15:35 veiming Exp $
+ * $Id: AMSDKEventListener.java,v 1.2 2006-02-01 00:23:21 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,7 @@ public class AMSDKEventListener implements AMEventListener {
     /**
      * Implements <code>com.iplanet.am.sdk.AMEventListener</code>.
      *
-     * @param event.
+     * @param event AM event 
      * @see com.iplanet.am.sdk.AMEventListener#objectRemoved
      */
     public void objectRemoved(AMEvent event) {
@@ -105,7 +105,7 @@ public class AMSDKEventListener implements AMEventListener {
     /**
      * Implements <code>com.iplanet.am.sdk.AMEventListener</code>.
      *
-     * @param event.
+     * @param event AM event
      * @see com.iplanet.am.sdk.AMEventListener#objectRenamed
      */
     public void objectRenamed(AMEvent event) {

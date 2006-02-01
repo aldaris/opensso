@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ButtonTiledView.java,v 1.1 2006-01-28 09:15:24 veiming Exp $
+ * $Id: ButtonTiledView.java,v 1.2 2006-02-01 00:22:35 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,15 +27,13 @@
 package com.sun.identity.authentication.UI;
 
 import com.iplanet.jato.RequestHandler;
-import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.model.DatasetModel;
+import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.RequestHandlingTiledViewBase;
-import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.TiledView;
+import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
-import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.html.StaticTextField;
-import java.util.List;
 
 /**
  * This class contains a set of buttons for login view bean

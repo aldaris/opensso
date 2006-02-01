@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationServletBase.java,v 1.1 2006-01-28 09:15:37 veiming Exp $
+ * $Id: AuthenticationServletBase.java,v 1.2 2006-02-01 00:23:56 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,14 @@
  
 package com.sun.identity.authentication.distUI;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
+
 import com.iplanet.jato.ApplicationServletBase;
 import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.ViewBeanManager;
-import com.iplanet.jato.view.ViewBean;
-import java.io.IOException;
 
 /**
  * This is the front controller of authentication UI

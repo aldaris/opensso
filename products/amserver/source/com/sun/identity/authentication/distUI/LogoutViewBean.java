@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.1 2006-01-28 09:15:39 veiming Exp $
+ * $Id: LogoutViewBean.java,v 1.2 2006-02-01 00:23:57 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,42 +26,40 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
 
-import com.iplanet.jato.*;
-import com.iplanet.jato.model.*;
-import com.iplanet.jato.model.sql.*;
-import com.iplanet.jato.util.*;
-import com.iplanet.jato.view.*;
-import com.iplanet.jato.view.event.*;
-import com.iplanet.jato.view.html.*;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.Debug;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionException;
-import com.iplanet.dpro.session.service.SessionService;
-import com.sun.identity.common.Constants;
-import com.sun.identity.common.L10NMessage;
+import com.iplanet.jato.RequestContext;
+import com.iplanet.jato.model.ModelControlException;
+import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.ChildDisplayEvent;
+import com.iplanet.jato.view.event.DisplayEvent;
+import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.L10NMessage;
 
 /**
- *
- *
- *
+ * This class is a default implementation of <code>LogoutViewBean</code> auth 
+ * Logout UI.
  */
 public class LogoutViewBean 
 extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     
     /**
-     *
-     *
+     * Creates <code>LoginViewBean</code> object.
      */
     public LogoutViewBean() {
         super(PAGE_NAME);
@@ -77,6 +75,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         registerChild(TXT_GOTO_LOGIN_AFTER_LOGOUT, StaticTextField.class);
     }
     
+	/**
+	 * Forwards the request to this view bean, displaying the page. This
+	 * method is the equivalent of <code>RequestDispatcher.forward()</code>,
+	 * meaning that the same semantics apply to the use of this method.
+	 * This method makes implicit use of the display URL returned
+	 * by the <code>getDisplayURL()</code> method.
+	 * @param requestContext servlet context for auth request
+	 */
     public void forwardTo(RequestContext requestContext) {        
         logoutDebug.message("In forwardTo()");
         
@@ -295,6 +301,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         }
     }
     
+    /**
+     * Returns display url for auth auth Logout UI
+     * 
+     * @return display url for auth auth Logout  UI
+     */
     public String getDisplayURL() {
         if (logoutDebug.messageEnabled()) {
             logoutDebug.message("In getDisplayURL() jsp_page " + jsp_page);
@@ -329,6 +340,17 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         }
     }
     
+	/**
+	 * Called as notification that the JSP has begun its display 
+	 * processing. In addition to performing the default behavior in the 
+	 * superclass's version, this method executes any auto-retrieving or auto-
+	 * executing models associated with this view unless auto-retrieval is
+	 * disabled.
+	 * @param	event	The DisplayEvent.
+	 * @throws	ModelControlException
+	 *			Thrown if manipulation of a model fails during display 
+	 *			preparation or execution of auto-retrieving models
+	 */
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         logoutDebug.message("In beginDisplay()");
@@ -381,8 +403,10 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     }
     
     /**
-     *
-     *
+     * Handles href logout request
+     * @param event request invocation event
+     * @throws ServletException if it fails to forward logout request
+     * @throws IOException  if it fails to forward logout request
      */
     public void handleHrefLogoutRequest(RequestInvocationEvent event)
     throws ServletException, IOException {
@@ -401,11 +425,20 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
      * Using the display cycle event to adjust the value of a given field
      *
      */
-    // HrefLogout ( Return to login )
+    /**
+     * Returns if it begins href logout display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginHrefLogoutDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content href logout display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginContentHrefLogoutDisplay(ChildDisplayEvent event) {
         setDisplayFieldValue(
         TXT_GOTO_LOGIN_AFTER_LOGOUT,
@@ -413,15 +446,30 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         return true;
     }
     
-    // StaticTextLogout
+    /**
+     * Returns if it begins static text logout display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginStaticTextLogoutDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns tile Index.
+     *
+     * @return Tile index.
+     */
     public String getTileIndex() {
         return "";
     }
     
+    /**
+     * Returns <code>true</code> to display static text content.
+     *
+     * @param event Child display event.
+     * @return <code>true</code> to display static text content.
+     */
     public boolean beginContentStaticTextLogoutDisplay(ChildDisplayEvent event){
         return true;
     }
@@ -439,6 +487,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
     
+    /** Default page name */
     public static final String PAGE_NAME="Logout";
     
     static Debug logoutDebug = Debug.getInstance("amLogoutViewBean");
@@ -457,19 +506,27 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     String indexName = "";
     AuthContext.IndexType indexType;
     String client_type = "";
+    /** Logout result value */
     public String ResultVal = "";
+    /** Goto url */
     public String gotoUrl = "";
+    /** JSP page */
     public String jsp_page = "";
     private static String LOGINURL = "";
     private String loginURL = "";
+    /** Resource bundle for <code>Locale</code> */
     public ResourceBundle rb = null;
     private static final String LOGOUTCOOKIEVAULE = "LOGOUT";
     private String logoutCookie = null;
     private boolean cookieSupported;
+    /** Default parameter name for login url */
     public static final String URL_LOGIN = "urlLogin";
+    /** Default parameter name for logout text */
     public static final String TXT_LOGOUT = "txtLogout";
+    /** Default parameter name for goto login text after logout */
     public static final String TXT_GOTO_LOGIN_AFTER_LOGOUT =
     "txtGotoLoginAfterLogout";
+    /** Default parameter name for logout html title */
     public static final String HTML_TITLE_LOGOUT = "htmlTitle_Logout";
     private String clientType=null;
     private static final String LOGOUT_JSP = "Logout.jsp";

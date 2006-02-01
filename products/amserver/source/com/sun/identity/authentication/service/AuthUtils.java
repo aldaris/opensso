@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.1 2006-01-28 09:16:33 veiming Exp $
+ * $Id: AuthUtils.java,v 1.2 2006-02-01 00:24:44 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,10 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
- * This class is utility class for all the auth related methods
+ * This class has utility methods for domain cookie management, URL formatting, 
+ * getting handle to AuthContext and LoginState objects, retrieving and 
+ * validation session from session identifier, retrieving the client types 
+ * attribute fields that determines the client type , etc.
  */
 public class AuthUtils {
     /**

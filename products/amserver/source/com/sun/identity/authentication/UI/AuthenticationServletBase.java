@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationServletBase.java,v 1.1 2006-01-28 09:15:23 veiming Exp $
+ * $Id: AuthenticationServletBase.java,v 1.2 2006-02-01 00:22:35 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,14 @@
  
 package com.sun.identity.authentication.UI;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
+
 import com.iplanet.jato.ApplicationServletBase;
 import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.ViewBeanManager;
-import com.iplanet.jato.view.ViewBean;
-import java.io.IOException;
 
 /**
  * This is the front controller of authentication UI
@@ -47,7 +48,7 @@ public class AuthenticationServletBase extends ApplicationServletBase {
     }
 
     /**
-     * forwards to login view bean, in case of an invalid target
+     * Forwards to login view bean, in case of an invalid target
      * request handler (page).
      *
      * @param requestContext - request context
@@ -69,7 +70,7 @@ public class AuthenticationServletBase extends ApplicationServletBase {
 
 
     /**
-     * forwards to login view bean, in case of no handler specified
+     * Forwards to login view bean, in case of no handler specified
      *
      * @param requestContext - request context
      * @throws ServletException

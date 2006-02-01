@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.1 2006-01-28 09:15:36 veiming Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.2 2006-02-01 00:23:55 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,35 +26,40 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
 
-import com.iplanet.jato.*;
-import com.iplanet.jato.model.*;
-import com.iplanet.jato.model.sql.*;
-import com.iplanet.jato.util.*;
-import com.iplanet.jato.view.*;
-import com.iplanet.jato.view.event.*;
-import com.iplanet.jato.view.html.*;
-import com.iplanet.jato.RequestContext;
-import com.iplanet.jato.view.event.DisplayEvent;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.service.AuthUtils;
 import com.iplanet.am.util.Debug;
-import com.sun.identity.common.L10NMessage;
-import com.sun.identity.common.ISLocaleContext;
 import com.iplanet.dpro.session.SessionID;
+import com.iplanet.jato.RequestContext;
+import com.iplanet.jato.model.ModelControlException;
+import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.ViewBean;
+import com.iplanet.jato.view.event.ChildDisplayEvent;
+import com.iplanet.jato.view.event.DisplayEvent;
+import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.StaticTextField;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.L10NMessage;
 /**
- *
- *
- *
+ * A default implementation of <code>ViewBean</code> auth exception UI.
  */
 public class AuthExceptionViewBean extends
     com.sun.identity.authentication.UI.AuthViewBeanBase
 {
+    /**
+     * Creates <code>AuthExceptionViewBean</code> object.
+     */
     public AuthExceptionViewBean() {
         super(PAGE_NAME);
         exDebug.message("AuthExceptionViewBean() constructor called");
@@ -69,6 +74,14 @@ public class AuthExceptionViewBean extends
         registerChild(TXT_GOTO_LOGIN_AFTER_FAIL, StaticTextField.class);
     }
     
+	/**
+	 * Forwards the request to this view bean, displaying the page. This
+	 * method is the equivalent of <code>RequestDispatcher.forward()</code>,
+	 * meaning that the same semantics apply to the use of this method.
+	 * This method makes implicit use of the display URL returned
+	 * by the <code>getDisplayURL()</code> method.
+	 * @param requestContext servlet context for auth request
+	 */
     public void forwardTo(RequestContext requestContext) {
         exDebug.message("In forwardTo()");
         
@@ -122,6 +135,11 @@ public class AuthExceptionViewBean extends
         }
     }
     
+    /**
+     * Returns display url for auth exception UI
+     * 
+     * @return display url for auth exception UI
+     */
     public String getDisplayURL() {
         exDebug.message("In getDisplayURL()");
         
@@ -161,6 +179,17 @@ public class AuthExceptionViewBean extends
         }
     }
     
+	/**
+	 * Called as notification that the JSP has begun its display 
+	 * processing. In addition to performing the default behavior in the 
+	 * superclass's version, this method executes any auto-retrieving or auto-
+	 * executing models associated with this view unless auto-retrieval is
+	 * disabled.
+	 * @param	event	The DisplayEvent.
+	 * @throws	ModelControlException
+	 *			Thrown if manipulation of a model fails during display 
+	 *			preparation or execution of auto-retrieving models
+	 */
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException {
         SessionID sessionID = au.getSessionIDFromRequest(request);
@@ -199,8 +228,10 @@ public class AuthExceptionViewBean extends
     }
     
     /**
-     *
-     *
+     * Handles href exception request
+     * @param event request invocation event.
+     * @throws ServletException if it fails to foward request
+     * @throws IOException if it fails to foward request
      */
     public void handleHrefExceptionRequest(RequestInvocationEvent event)
     throws ServletException, IOException {
@@ -218,11 +249,20 @@ public class AuthExceptionViewBean extends
      * Using the display cycle event to adjust the value of a given field
      *
      */
-    // HrefLogout ( Return to login )
+    /**
+     * Returns if it begins href exception display
+     * @param event child display event
+     * @return <code>true</code> by default
+     */ 
     public boolean beginHrefExceptionDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns if it begins content href exception display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginContentHrefExceptionDisplay(ChildDisplayEvent event) {
         setDisplayFieldValue(
         TXT_GOTO_LOGIN_AFTER_FAIL,
@@ -230,15 +270,30 @@ public class AuthExceptionViewBean extends
         return true;
     }
     
-    // StaticTextLogout
+    /**
+     * Returns if it begins static text exception display
+     * @param event child display event
+     * @return <code>true</code> by default.
+     */ 
     public boolean beginStaticTextExceptionDisplay(ChildDisplayEvent event) {
         return true;
     }
     
+    /**
+     * Returns tile index for auth exception UI.
+     * @return default empty string 
+     */
     public String getTileIndex() {
         return "";
     }
     
+    /**
+     * Return <code>true</code> if it begins content static text exception 
+     * display.
+     * @param event The DisplayEvent
+     * @return <code>true</code> if it begins content static text exception 
+     * display.
+     */
     public boolean beginContentStaticTextExceptionDisplay(
         ChildDisplayEvent event
     ) {
@@ -250,6 +305,9 @@ public class AuthExceptionViewBean extends
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Page name for auth exception.
+     */
     public static final String PAGE_NAME="AuthException";
     
     static Debug exDebug = Debug.getInstance("amAuthExceptionViewBean");
@@ -263,18 +321,36 @@ public class AuthExceptionViewBean extends
     HttpSession session;
     ServletContext servletContext;
     AuthContext ac = null;
+    /**
+     * Result value
+     */
     public String ResultVal = "";
     private static String LOGINURL = "";
+    /**
+     * Resource bundle
+     */
     public ResourceBundle rb = null;
     private java.util.Locale locale = null;
     String orgName = "";    
     String indexName = "";
     AuthContext.IndexType indexType;
     
+    /**
+     * Property name for url login.
+     */
     public static final String URL_LOGIN = "urlLogin";
+    /**
+     * Property name for text exception
+     */
     public static final String TXT_EXCEPTION = "StaticTextException";
+    /**
+     * Property name for goto login after failure.
+     */
     public static final String TXT_GOTO_LOGIN_AFTER_FAIL =
         "txtGotoLoginAfterFail";
+    /**
+     * Property name for auth exception UI html title.
+     */
     public static final String HTML_TITLE_AUTH_EXCEPTION =
         "htmlTitle_AuthException";
     static {

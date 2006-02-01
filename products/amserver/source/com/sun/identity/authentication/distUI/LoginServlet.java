@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.1 2006-01-28 09:15:38 veiming Exp $
+ * $Id: LoginServlet.java,v 1.2 2006-02-01 00:23:56 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,21 +26,21 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.HashMap;
 
-import com.iplanet.jato.*;
-import com.iplanet.jato.util.*;
-import com.iplanet.jato.view.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.iplanet.am.util.Debug;
+import com.iplanet.jato.CompleteRequestException;
+import com.iplanet.jato.RequestContext;
+import com.iplanet.jato.RequestContextImpl;
+import com.iplanet.jato.ViewBeanManager;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.L10NMessageImpl;
 import com.sun.identity.common.RequestUtils;
-import com.iplanet.am.util.Debug;
-import com.iplanet.dpro.session.SessionID;
 
 /**
  *
@@ -50,19 +50,12 @@ import com.iplanet.dpro.session.SessionID;
 public class LoginServlet
 extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
     /**
-     *
-     *
+     * Creates <code>LoginServlet</code> object.
      */
-    
     public LoginServlet() {
         super();
-        
     }
     
-    /**
-     *
-     *
-     */
     protected void initializeRequestContext(RequestContext requestContext) {
         super.initializeRequestContext(requestContext);
         
@@ -155,8 +148,8 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
     }    
    
     /**
-     *
-     *
+     * Returns url for auth module.
+     * @return url for auth module.
      */
     public String getModuleURL() {
         // The superclass can be configured from init params specified at
@@ -185,7 +178,9 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
     
+    /** Default module uri. */
     public static final String DEFAULT_MODULE_URL="../UI";
+    /** Confiured page name for configured servlet */
     public static String PACKAGE_NAME=
     getPackageName(LoginServlet.class.getName());
     
