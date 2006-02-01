@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2006-01-28 09:16:21 veiming Exp $
+ * $Id: package-info.java,v 1.2 2006-02-01 22:16:06 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@
  * functionality such as the implementation of  request for  
  * authenticating ,user  credential call backs
  *
- * @supported.api
  */
 package com.sun.identity.authentication.server;
 

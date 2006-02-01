@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2006-01-28 09:15:36 veiming Exp $
+ * $Id: package-info.java,v 1.2 2006-02-01 22:16:05 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,10 @@
 
 
 /**
- * TODO:
+ * This package contains the classes that represent server side  
+ * functionality such as the implementation of Authentication configuration
+ * and utilities for this configuration management.
  *
- * @supported.api
  */
 package com.sun.identity.authentication.config;
 

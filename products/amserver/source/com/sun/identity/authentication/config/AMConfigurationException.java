@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfigurationException.java,v 1.1 2006-01-28 09:15:34 veiming Exp $
+ * $Id: AMConfigurationException.java,v 1.2 2006-02-01 22:16:05 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import com.sun.identity.common.L10NMessageImpl;
  * Exception that is thrown when there are error in manipulating authentication
  * configuration.
  *
- * @supported.all.api
  */
 public class AMConfigurationException extends L10NMessageImpl {
 

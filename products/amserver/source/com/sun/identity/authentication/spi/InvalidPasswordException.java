@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidPasswordException.java,v 1.2 2005-12-08 01:16:39 veiming Exp $
+ * $Id: InvalidPasswordException.java,v 1.3 2006-02-01 22:16:06 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,7 @@ public class InvalidPasswordException extends AuthLoginException {
      * 
      * @param rbName
      *            Resource bundle name for the message.
-     * @param errorCode
+     * @param errCode
      *            Key to the message in resource bundle.
      * @param args
      *            Arguments to the message.

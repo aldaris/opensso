@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.1 2006-01-28 09:16:16 veiming Exp $
+ * $Id: AuthContextLocal.java,v 1.2 2006-02-01 22:16:06 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,6 @@ import com.sun.identity.authentication.spi.PagePropertiesCallback;
  * <p>
  * It should be serializable as a requirement to be stored in HttpSession.
  *
- * @supported.api
  */
 public final class AuthContextLocal extends Object 
     implements java.io.Serializable {
