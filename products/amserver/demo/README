@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2006-02-02 03:56:05 mrudul_uchil Exp $
+$Id: README,v 1.5 2006-02-02 08:40:19 mrudul_uchil Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -288,8 +288,9 @@ know the hostname and web container details about where you wish to deploy the
 client and the server, these can be passed on to the install process by 
 command line options as described below.
 
-To install the server and client, copy the file amsetup.jar to the machine where the 
-server will be deployed. Once copied, execute this jar by giving the command:
+To install the server and client, copy the file amsetup.jar and amdemoclient.war
+to the machine where the server will be deployed. 
+Once copied, execute the amsetup.jar by giving the command:
 
     $ java -jar amsetup.jar <server_protocol> <server_host> <server_port> 
                             <client_protocol> <client_host> <client_port>  

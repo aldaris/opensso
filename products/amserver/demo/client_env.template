@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: client_env.template,v 1.2 2006-02-01 08:55:18 mrudul_uchil Exp $
+# $Id: client_env.template,v 1.3 2006-02-02 08:40:25 mrudul_uchil Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,12 +34,6 @@
 # applicable to your client deployment.
 #
 # - OUTPUT_DIR  : where generated files will be kept
-# - SERVER_PROTO: protocol of the web container where server is deployed
-# - SERVER_HOST : hostname of the web container where server is deployed
-# - SERVER_PORT : port used by the web container where server is deployed
-# - CLIENT_PROTO: protocol of the web container where client is deployed
-# - CLIENT_HOST : hostname used by the web container where client is deployed
-# - CLIENT_PORT : port used by the web container where client is deployed
 #
 
 OUTPUT_DIR=/tmp/opensso/client/work

@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.3 2006-02-01 08:55:19 mrudul_uchil Exp $
+# $Id: server_env.template,v 1.4 2006-02-02 08:40:27 mrudul_uchil Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -35,9 +35,6 @@
 #
 # - OUTPUT_DIR  : where generated files will be kept
 # - CONFIG_DIR  : where bootstrap configuration will be kept
-# - SERVER_PROTO: protocol of the web container where server is deployed
-# - SERVER_HOST : hostname of the web container where server is deployed
-# - SERVER_PORT : port used by the web container where server is deployed
 # - AM_ENC_KEY  : the encryption key to use for encrypting information
 # - ADMIN_PASSWD: the password of amadmin (super) user
 #
@@ -50,10 +47,7 @@ ADMIN_PASSWD=password
 #
 # The following properties values should be kept as the suggested defaults.
 #
-# - CLIENT_PROTO     : same as SERVER_PROTO
-# - CLIENT_HOST      : same as SERVER_HOST
-# - CLIENT_PORT      : same as SERVER_PORT
-# - CLIENT_URI       : /amserver
+# - CLIENT_URI       : /amdemoclient
 # - SERVER_URI       : /amserver
 # - SERVER_MODE      : true
 # - ORG_BASE         : dc=sun,dc=com
@@ -67,8 +61,14 @@ ADMIN_PASSWD=password
 # - APPSSOPROVIDER_FACTORY: Application SSO Token provider factory
 # - SMS_OBJECT_CLASS : com.sun.identity.sm.flatfile.SMSFlatFileObject
 # - PLATFORM_LOCALE  : Locale of server (en_US)
+# - CURRENT_PLATFORM_LOCALE: Current Locale of server (en_US)
 # - AVAILABLE_LOCALE : SMS schema fragment (<Value>en_US</Value>)
 # - SESSION_LOGGER   : the session logger implementation
+# - AM_COEXIST       : Co-existence mode (false)
+# - AM_REALM         : Realm mode (true)
+# - COOKIE_DOMAIN    : the domain value to which the session cookie is required to be set
+# - USER_PROFILE_CHOICE: User profile search option
+# - AUTHENTICATION_LOGGER: the Authentication logger implementation
 #
 
 CLIENT_URI=/amdemoclient
