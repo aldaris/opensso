@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.3 2006-02-01 08:55:18 mrudul_uchil Exp $
+$Id: README,v 1.4 2006-02-02 03:56:05 mrudul_uchil Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -36,7 +36,8 @@ Copyright 2005 Sun Microsystems Inc. All Rights Reserved
     %% 4. Installing the demo
         %% 4.1 Installing client
         %% 4.2 Installing server
-    %% 5. Running the demo
+    %% 5. Creating the user
+    %% 6. Running the demo
 
 %% 1. About this demo
 
@@ -325,7 +326,14 @@ Note that the deployment URI and other environment settings must match
 the values provided in the server_env.properties file prior to building the demo. 
 If any of these properties do not match, the demo may fail to work correctly.
 
-%% 5. Running the demo
+%% 5. Creating the user
+
+New user can be created in the user management datastore, to be used with 
+Authentication demo in order to authenticate to OpenSSO system, with the 
+following utility jsp page. 
+<server_protocol>://<server_host>:<server_port>/amserver/CreateUser.jsp
+
+%% 6. Running the demo
 
 Once both the amserver.war and amdemoclient.war files have been deployed, 
 the demo is ready to use. Simply startup a browser and point it to the
@@ -336,6 +344,8 @@ credentials against the Datastore authentication module. Upon valid
 credentials submission, this will allow you to authenticate and create a session.
 During authentication process, multiple user properties will be added to 
 your successful authenticated session.
+(Note : Enter the username and password of the user you created with the 
+create user utility jsp page as described in [%% 5] above.)
 
 Once authenticated, point your browser to the client application. 
 For example, <client_protocol>://<client_host>:<client_port>/amdemoclient
