@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: css_ns4win.css,v 1.1 2006-01-28 09:18:51 veiming Exp $
+ * $Id: css_ns4win.css,v 1.2 2006-02-02 08:01:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -385,7 +385,7 @@ div.MstStatDiv {padding:5px 10px 0px}
 .logHlp {margin:0px 15px 7px 10px}
 .logErr {margin:5px 15px 5px 10px}
 .logCpy {width :720px;margin-top:5px}
-.logTxtCpy {font-size:10px;color:#999}
+.logTxtCpy {font-size:10px;color:#CCC}
 
 
 /* LOCKHART LAUNCH PAGE */
