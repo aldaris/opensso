@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
+ * $Id: AMIdentityRepository.java,v 1.3 2006-02-03 20:08:06 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,7 +147,26 @@ public final class AMIdentityRepository {
     public IdSearchResults getSpecialIdentities(IdType type)
             throws IdRepoException, SSOException {
         AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.getSpecialIdentities(token, type, org);
+        IdSearchResults results = amdm.getSpecialIdentities(token, type, org);
+
+        if (type.equals(IdType.USER)) {
+            // Iterating through to get out the names and remove only amadmin
+            // anonymous as per AM console requirement.
+
+            IdSearchResults newResults = new IdSearchResults(type, org);
+            Set identities = results.getSearchResults();
+            if ((identities != null) && !identities.isEmpty()) {
+                for (Iterator i = identities.iterator(); i.hasNext(); ) {
+                    AMIdentity amid = ((AMIdentity)i.next());
+                    String remUser = amid.getName().toLowerCase();
+                    if (!remUser.equalsIgnoreCase(IdConstants.AMADMIN_USER) &&
+                        !remUser.equalsIgnoreCase(IdConstants.ANONYMOUS_USER)) {                        newResults.addResult(amid, amid.getAttributes());
+                    }
+                }
+                results = newResults;
+            }
+        }
+        return results;
     }
 
     /**
