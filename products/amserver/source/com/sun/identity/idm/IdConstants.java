@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdConstants.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
+ * $Id: IdConstants.java,v 1.3 2006-02-03 20:07:00 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,5 +70,16 @@ public interface IdConstants {
 
     public static final String SERVICE_ATTRS = 
         "sun-idrepo-ldapv3-config-service-attributes";
+
+    /**
+     *  amadmin user from SunIdentityRepositoryService
+     */
+    public static final String AMADMIN_USER = "amadmin";
+
+
+    /**
+     *  anonymous user from SunIdentityRepositoryService
+     */
+    public static final String ANONYMOUS_USER = "anonymous";
 
 }
