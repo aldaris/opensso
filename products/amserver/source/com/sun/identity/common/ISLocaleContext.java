@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.4 2006-01-27 09:53:07 mrudul_uchil Exp $
+ * $Id: ISLocaleContext.java,v 1.5 2006-02-03 07:54:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,7 +124,7 @@ public class ISLocaleContext {
             clientDt = new AMClientDetector();
             if (clientDt != null 
                 && (clientDt.detectionEnabled()).equalsIgnoreCase("true")) {
-                defaultClient = ClientsManager.getDefaultInstance();                
+                defaultClient = ClientsManager.getDefaultInstance();
             }
         }
         g11nSettings = G11NSettings.getInstance();

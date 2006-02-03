@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.4 2006-01-30 20:58:44 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.5 2006-02-03 07:54:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2542,10 +2542,12 @@ public class LDAPv3Repo extends IdRepo {
                     allEntries.add(idName);
                     allEntryMap.put(idName, attrEntryMap);
                 } else {
-                    // returnAllAttrs is false and list of attr to return is null
-                    // do not return any attribute  
-                    // Get the naming attribute for results
-                    // return entry DN if empty
+                    /*
+                     * returnAllAttrs is false and list of attr to return is
+                     * null do not return any attribute.
+                     * Get the naming attribute for results
+                     * return entry DN if empty
+                     */
                     String idName = entryDN;
                     LDAPAttribute ldapAttr = entry.getAttribute(namingAttr);
                     if (ldapAttr != null ) { 
@@ -2593,8 +2595,8 @@ public class LDAPv3Repo extends IdRepo {
      */
     public RepoSearchResults search(SSOToken token, IdType type,
             String pattern, Map avPairs, boolean recursive, int maxResults,
-            int maxTime, Set returnAttrs) throws IdRepoException, SSOException {
-
+            int maxTime, Set returnAttrs)
+    throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: old search called" + type + ": "
                     + pattern + ": " + avPairs);
@@ -2610,9 +2612,8 @@ public class LDAPv3Repo extends IdRepo {
      *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Map, boolean)
      */
     public void setAttributes(SSOToken token, IdType type, String name,
-            Map attributes, boolean isAdd) throws IdRepoException, SSOException
-            {
-
+            Map attributes, boolean isAdd)
+    throws IdRepoException, SSOException {
         setAttributes(token, type, name, attributes, isAdd, true);
     }
 
@@ -3492,7 +3493,10 @@ public class LDAPv3Repo extends IdRepo {
             }
         } else {
             // not an authenticable type or user not found.
-            debug.message("LDAPv3.authenticate: userDN is null or zero length.");
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "LDAPv3.authenticate: userDN is null or zero length.");
+            }
         }
 
         return (success);
@@ -3539,17 +3543,25 @@ public class LDAPv3Repo extends IdRepo {
             DN parentDN = fqdn.getParent();
 
             do {  
-                flushStatus = ldapCache.flushEntries(parentDN.toString(), LDAPv2.SCOPE_ONE);
+                flushStatus = ldapCache.flushEntries(parentDN.toString(),
+                    LDAPv2.SCOPE_ONE);
                 if (debug.messageEnabled()) {
-                    debug.message("objectChanged LDAPPersistSearchControl.ADD: " +
+                    debug.message(
+                        "objectChanged LDAPPersistSearchControl.ADD: " +
                         "parent  scope_one flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
 
-            do {  // did not work by itself. still in cache while open subject after add user.
-                flushStatus = ldapCache.flushEntries(parentDN.toString(), LDAPv2.SCOPE_BASE);
+            /*
+             * did not work by itself. still in cache while open subject after
+             * add user.
+             */
+            do {
+                flushStatus = ldapCache.flushEntries(
+                    parentDN.toString(), LDAPv2.SCOPE_BASE);
                 if (debug.messageEnabled()) {
-                    debug.message("objectChanged LDAPPersistSearchControl.ADD: " +
+                    debug.message(
+                        "objectChanged LDAPPersistSearchControl.ADD: " +
                         "parent  scope_base flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
@@ -3557,7 +3569,8 @@ public class LDAPv3Repo extends IdRepo {
             do {
                 flushStatus = ldapCache.flushEntries(dn, LDAPv2.SCOPE_BASE);
                 if (debug.messageEnabled()) {
-                    debug.message("objectChanged LDAPPersistSearchControl.MODIFY " +
+                    debug.message(
+                        "objectChanged LDAPPersistSearchControl.MODIFY " +
                         "dn scope_base flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
@@ -3566,9 +3579,11 @@ public class LDAPv3Repo extends IdRepo {
             DN parentDN = fqdn.getParent();
             String parent = parentDN.toString();
             do {
-                flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_ONE); // this includes self.
+                flushStatus = ldapCache.flushEntries(
+                    parent, LDAPv2.SCOPE_ONE); // this includes self.
                 if (debug.messageEnabled()) {
-                    debug.message("objectChanged LDAPPersistSearchControl.MODDN " +
+                    debug.message(
+                        "objectChanged LDAPPersistSearchControl.MODDN " +
                         "parent scope_one: flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
@@ -3576,7 +3591,8 @@ public class LDAPv3Repo extends IdRepo {
             do {
                 flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_BASE);
                 if (debug.messageEnabled()) {
-                    debug.message("objectChanged LDAPPersistSearchControl.MODDN " +
+                    debug.message(
+                        "objectChanged LDAPPersistSearchControl.MODDN " +
                         "parent scope_base: flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
@@ -3608,9 +3624,8 @@ public class LDAPv3Repo extends IdRepo {
      * if a password has expired or password is expiring and password
      * policy is enabled on the server.
      * @return PASSWOR_EXPIRED if password has expired
-     * @return number of seconds until expiration if password is going to expire
+     * Return number of seconds until expiration if password is going to expire
      */
-
     private int checkControls(LDAPConnection ld) {
         LDAPControl[] controls = ld.getResponseControls();
         int status = NO_PASSWORD_CONTROLS;
@@ -4200,7 +4215,8 @@ public class LDAPv3Repo extends IdRepo {
         return value;
     }
 
-    private String getPropertyStringValue(Map configParams, String key, String defaultVal) {
+    private String getPropertyStringValue(
+        Map configParams, String key, String defaultVal) {
         String value = getPropertyStringValue(configParams, key);
         if (value == null) {
             value = defaultVal;

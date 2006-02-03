@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
+ * $Id: FilesRepo.java,v 1.3 2006-02-03 07:54:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -682,7 +682,7 @@ public class FilesRepo extends IdRepo {
             !membersType.equals(IdType.AGENT)) {
             if (debug.messageEnabled()) {
                 debug.message(
-                       "FilesRepo.modifyMembership: A non user/agent type cannot "
+                   "FilesRepo.modifyMembership: A non user/agent type cannot "
                     + " be made a member of any identity"
                     + membersType.getName());
             }

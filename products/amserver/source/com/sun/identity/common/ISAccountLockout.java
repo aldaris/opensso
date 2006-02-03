@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.3 2006-02-03 07:54:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,12 +134,16 @@ public class ISAccountLockout {
         return (failureLockoutMode && failureLockoutCount > 0
         && failureLockoutTime > 0);
     }
+
     public boolean getStoreInvalidAttemptsInDS () {
         return storeInvalidAttemptsInDS;
     }
-    public void setStoreInvalidAttemptsInDS (boolean aStoreInvalidAttemptsInDS) {
+
+    public void setStoreInvalidAttemptsInDS (boolean aStoreInvalidAttemptsInDS
+    ) {
         storeInvalidAttemptsInDS = aStoreInvalidAttemptsInDS;
     }
+
     /**
      * Returns true if memory locking mode is enabled otherwise false.
      * Memory locking mode is enabled when the failureLockoutDuration
@@ -166,7 +170,8 @@ public class ISAccountLockout {
             loginFailHash.put(userDN,acInfo);
         }
         if (debug.messageEnabled()) {
-            debug.message("ISAccountLockout::invalidPasswd with userDN,AMIdentity");
+            debug.message(
+                "ISAccountLockout.invalidPasswd with userDN, AMIdentity");
             debug.message("userDN : " + userDN);
         }
         long now = System.currentTimeMillis();
@@ -181,7 +186,8 @@ public class ISAccountLockout {
         if (storeInvalidAttemptsInDS) {
             Map attrMap = new HashMap();
             Set invalidAttempts = new HashSet();
-            String invalidXML = createInvalidAttemptsXML(fail_count,now,lockedAt);
+            String invalidXML = createInvalidAttemptsXML(
+                fail_count,now,lockedAt);
             invalidAttempts.add(invalidXML);
             if (debug.messageEnabled()) {
                 debug.message("Invalid Attempt XML being inserted= "
@@ -244,9 +250,11 @@ public class ISAccountLockout {
             acInfo =  new AccountLockoutInfo();
             Set attrValueSet = Collections.EMPTY_SET;
             try {
-                attrValueSet = amIdentity.getAttribute(INVALID_ATTEMPTS_XML_ATTR);
+                attrValueSet = amIdentity.getAttribute(
+                    INVALID_ATTEMPTS_XML_ATTR);
             } catch (Exception idExp) {
-                debug.error("Idrepo exception while getting identity attribute");
+                debug.error(
+                    "Idrepo exception while getting identity attribute");
                 return null;
             }
             String xmlFromDS = null;

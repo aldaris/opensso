@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.2 2006-02-01 00:22:37 beomsuk Exp $
+ * $Id: LogoutViewBean.java,v 1.3 2006-02-03 07:54:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,14 +75,14 @@ public class LogoutViewBean extends AuthViewBeanBase {
         registerChild(TXT_GOTO_LOGIN_AFTER_LOGOUT, StaticTextField.class);
     }
     
-	/**
-	 * Forwards the request to this view bean, displaying the page. This
-	 * method is the equivalent of <code>RequestDispatcher.forward()</code>,
-	 * meaning that the same semantics apply to the use of this method.
-	 * This method makes implicit use of the display URL returned
-	 * by the <code>getDisplayURL()</code> method.
-	 * @param requestContext servlet context for auth request
-	 */
+    /**
+     * Forwards the request to this view bean, displaying the page. This
+     * method is the equivalent of <code>RequestDispatcher.forward()</code>,
+     * meaning that the same semantics apply to the use of this method.
+     * This method makes implicit use of the display URL returned
+     * by the <code>getDisplayURL()</code> method.
+     * @param requestContext servlet context for auth request
+     */
     public void forwardTo(RequestContext requestContext) {
         SessionID sessionID = null;
         java.util.Locale locale = null;
@@ -369,17 +369,16 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
     }
     
-	/**
-	 * Called as notification that the JSP has begun its display 
-	 * processing. In addition to performing the default behavior in the 
-	 * superclass's version, this method executes any auto-retrieving or auto-
-	 * executing models associated with this view unless auto-retrieval is
-	 * disabled.
-	 * @param	event	The DisplayEvent.
-	 * @throws	ModelControlException
-	 *			Thrown if manipulation of a model fails during display 
-	 *			preparation or execution of auto-retrieving models
-	 */
+    /**
+     * Called as notification that the JSP has begun its display 
+     * processing. In addition to performing the default behavior in the 
+     * superclass's version, this method executes any auto-retrieving or auto-
+     * executing models associated with this view unless auto-retrieval is
+     * disabled.
+     * @param event Display Event.
+     * @throws ModelControlException if manipulation of a model fails during
+     *         display preparation or execution of auto-retrieving models.
+     */
     public void beginDisplay(DisplayEvent event)
     throws ModelControlException {
         logoutDebug.message("In beginDisplay()");

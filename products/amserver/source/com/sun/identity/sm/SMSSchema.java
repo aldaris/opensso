@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.2 2005-12-21 22:00:37 goodearth Exp $
+ * $Id: SMSSchema.java,v 1.3 2006-02-03 07:54:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -381,7 +381,7 @@ public class SMSSchema {
                    DocumentBuilderFactory class.
                 */
                     docBuildFactoryClass = Class.forName(
-                        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+          "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
                 } catch (ClassNotFoundException cfe) {
                     if (SMSEntry.debug.warningEnabled()) {
                         SMSEntry.debug.warning("SMSSchema:getXMLDocument():"+
