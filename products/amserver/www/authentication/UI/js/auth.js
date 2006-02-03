@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: auth.js,v 1.2 2006-01-30 20:58:48 veiming Exp $
+ * $Id: auth.js,v 1.3 2006-02-03 00:21:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,17 +91,12 @@ function writeCSS(serviceUri) {
 function markupButton(label, href) {
     label = "&nbsp;" + strTrim(label) + "&nbsp;";
     document.write("<td>");
-    document.write("<div class=\"logBtn\">");    
     document.write("<input name=\"Login.Submit\" type=\"submit\"");
-    document.write(" class=\"Btn1Def\" value=\"");
+    document.write(" value=\"");
     document.write(label);
     document.write("\" onclick=\"");
     document.write(href);
-    document.write("\" onmouseover=\"javascript: if (this.disabled==0) this.className='Btn1DefHov'\"");
-    document.write(" onmouseout=\"javascript: if (this.disabled==0) this.className='Btn1Def'\"");
-    document.write(" onblur=\"javascript: if (this.disabled==0) this.className='Btn1Def'\"");
-    document.write(" onfocus=\"javascript: if (this.disabled==0) this.className='Btn1DefHov'\"");    
-    document.write("/></div></td>");
+    document.write("\"/></td>");
 }
 
 /**
