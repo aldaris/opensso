@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.2 2006-02-03 20:08:38 goodearth Exp $
+ * $Id: SpecialRepo.java,v 1.3 2006-02-05 06:29:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -224,7 +224,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                                 if (name.equalsIgnoreCase(
                                     IdConstants.AMADMIN_USER)
                                         || name.equalsIgnoreCase(
-                                    IdConstants.ANONYMOUS_USER")) {
+                                    IdConstants.ANONYMOUS_USER)) {
                                     // The passwords for these would
                                     // be returned from LDAP
                                     answer.remove("userPassword");
@@ -607,7 +607,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                         if (u.equalsIgnoreCase(
                                     IdConstants.AMADMIN_USER)
                                 || u.equalsIgnoreCase(
-                                    IdConstants.ANONYMOUS_USER")) {
+                                    IdConstants.ANONYMOUS_USER)) {
                             // The passwords for these would
                             // be returned from LDAP
                             attrs.remove("userPassword");
