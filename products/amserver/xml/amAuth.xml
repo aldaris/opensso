@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.3 2006-02-01 08:55:23 mrudul_uchil Exp $
+    $Id: amAuth.xml,v 1.4 2006-02-06 20:16:36 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,6 +55,7 @@
                         <Value>com.sun.identity.authentication.modules.ad.AD</Value>
                         <Value>com.sun.identity.authentication.modules.membership.Membership</Value>
                         <Value>com.sun.identity.authentication.modules.anonymous.Anonymous</Value>
+                        <Value>com.sun.identity.authentication.modules.cert.Cert</Value>
                         <Value>com.sun.identity.authentication.modules.application.Application</Value>
                         <Value>com.sun.identity.authentication.modules.httpbasic.HTTPBasic</Value>
                         <Value>com.sun.identity.authentication.modules.nt.NT</Value>
