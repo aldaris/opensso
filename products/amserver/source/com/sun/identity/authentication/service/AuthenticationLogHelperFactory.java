@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationLogHelperFactory.java,v 1.1 2006-01-28 09:16:36 veiming Exp $
+ * $Id: AuthenticationLogHelperFactory.java,v 1.2 2006-02-07 21:29:39 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,10 @@ public class AuthenticationLogHelperFactory {
             logHelper = (AuthenticationLogHelper)Class.forName(className)
                 .newInstance();
         } catch (Exception e) {
-            AuthD.debug.error("Failed to instantiate : " + className 
-                + e.toString());
+            if (AuthD.debug.messageEnabled()) {
+                AuthD.debug.message("Failed to instantiate : " + className 
+                    + e.toString());
+            }
         } 
      }
 

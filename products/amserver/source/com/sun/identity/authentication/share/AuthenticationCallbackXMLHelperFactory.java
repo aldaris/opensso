@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCallbackXMLHelperFactory.java,v 1.1 2006-01-28 09:16:54 veiming Exp $
+ * $Id: AuthenticationCallbackXMLHelperFactory.java,v 1.2 2006-02-07 21:29:39 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,8 +65,10 @@ public class AuthenticationCallbackXMLHelperFactory {
                 (AuthenticationCallbackXMLHelper)Class.forName(className)
                 .newInstance();
         } catch (Exception e) {
-            AuthXMLUtils.debug.error("Failed to instantiate : " + className 
-                + e.toString());
+            if (AuthXMLUtils.debug.messageEnabled()) {
+                AuthXMLUtils.debug.message("Failed to instantiate : " 
+                    + className + e.toString());
+            }
         } 
      }
 
