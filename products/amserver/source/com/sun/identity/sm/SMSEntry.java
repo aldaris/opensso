@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.2 2006-01-14 03:21:46 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.3 2006-02-07 00:29:18 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -651,6 +651,22 @@ public class SMSEntry implements Cloneable {
     Set subEntries(SSOToken token, String filter, int numOfEntries,
             boolean sortResults, boolean ascendingOrder) throws SMSException,
             SSOException {
+        // If backend has proxy enabled, check for delegation
+        // permissions and use admin token
+        if (backendProxyEnabled) {
+            if (isAllowed(token, normalizedDN, readActionSet)) {
+                if (adminSSOToken == null) {
+                    adminSSOToken = (SSOToken) AccessController
+                        .doPrivileged(com.sun.identity.security
+                        .AdminTokenAction.getInstance());
+                }
+                token = adminSSOToken;
+            }
+        } else {
+            // Check for delegation permission throws exception if
+            // permission is denied
+            getDelegationPermission(token, normalizedDN, readActionSet);
+        }
         Set subEntries = smsObject.subEntries(token, dn, filter, numOfEntries,
                 sortResults, ascendingOrder);
         // Need to check if the user has permissions before returning
@@ -667,6 +683,22 @@ public class SMSEntry implements Cloneable {
     Set schemaSubEntries(SSOToken token, String filter, String sidFilter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
+        // If backend has proxy enabled, check for delegation
+        // permissions and use admin token
+        if (backendProxyEnabled) {
+            if (isAllowed(token, normalizedDN, readActionSet)) {
+                if (adminSSOToken == null) {
+                    adminSSOToken = (SSOToken) AccessController
+                        .doPrivileged(com.sun.identity.security
+                        .AdminTokenAction.getInstance());
+                }
+                token = adminSSOToken;
+            }
+        } else {
+            // Check for delegation permission throws exception if
+            // permission is denied
+            getDelegationPermission(token, normalizedDN, readActionSet);
+        }
         Set subEntries = smsObject.schemaSubEntries(token, dn, filter,
                 sidFilter, numOfEntries, sortResults, ascendingOrder);
         // Need to check if the user has permissions before returning
