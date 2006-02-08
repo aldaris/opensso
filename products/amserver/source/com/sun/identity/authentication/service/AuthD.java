@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.3 2006-02-01 08:55:22 mrudul_uchil Exp $
+ * $Id: AuthD.java,v 1.4 2006-02-08 18:59:45 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -752,10 +752,12 @@ public class AuthD  {
             SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
 
-            if (type == LOG_ERROR) {
-                logHelper.logError(messageName, s, ssoProperties, ssoToken);
-            } else {
-                logHelper.logMessage(messageName, s, ssoProperties, ssoToken);
+            if (logHelper != null) {
+                if (type == LOG_ERROR) {
+                    logHelper.logError(messageName, s, ssoProperties, ssoToken);
+                } else {
+                    logHelper.logMessage(messageName, s, ssoProperties, ssoToken);
+                }
             }
         }
     }
