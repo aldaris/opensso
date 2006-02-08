@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.4 2006-02-08 18:59:45 mrudul_uchil Exp $
+ * $Id: AuthD.java,v 1.5 2006-02-08 19:04:05 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -756,7 +756,8 @@ public class AuthD  {
                 if (type == LOG_ERROR) {
                     logHelper.logError(messageName, s, ssoProperties, ssoToken);
                 } else {
-                    logHelper.logMessage(messageName, s, ssoProperties, ssoToken);
+                    logHelper.logMessage(messageName, s, 
+                        ssoProperties, ssoToken);
                 }
             }
         }
