@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.5 2006-02-01 08:55:24 mrudul_uchil Exp $
+   $Id: idRepoService.xml,v 1.6 2006-02-10 18:16:56 mrudul_uchil Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2068,7 +2068,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a3020">
                         <DefaultValues>
-                            <Value>/var/opt/SUNWam/idm/flatfiles</Value>
+                            <Value>@CONFIG_DIR@/idRepo/flatfiles</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesPasswordAttr"

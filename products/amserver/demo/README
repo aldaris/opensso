@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2006-02-02 08:40:19 mrudul_uchil Exp $
+$Id: README,v 1.6 2006-02-10 18:16:55 mrudul_uchil Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -151,8 +151,10 @@ NOTE:
 - The OUTPUT_DIR variable contains the path to a directory where the server
   will house the generated files like debug files and stats files. 
 - The CONFIG_DIR variable contains the path to a directory where the 
-  service configuration store will be created. This directory will also contain
-  the UMS configuration file serverconfig.xml.
+  service configuration store (under sub-directory 'sms') and user flatfile 
+  datastore (under sub-directory 'idRepo') will be created. 
+  This directory will also contain the UMS configuration file serverconfig.xml
+  under sub-directory 'ums'.
 - The AM_ENC_KEY is the encryption key used for encrypting the passwords and
   other sensitive information within the configuration settings as needed.
 - The ADMIN_PASSWD is the password value that is assigned to the default 
@@ -178,7 +180,8 @@ NOTE:
   server. It is recommended to use the same web container for both client and
   server for demo purposes.
 - The COOKIE_DOMAIN must be set to the domain value to which the session cookie 
-  is required to be set.
+  is required to be set. This is the domain (or super domain) of the server and 
+  client host specified.
 - The NOTIFICATION_ENDPOINT represents the node that listens for notifications
   sent by the server. Its value should be left as the default value:
   notificationservice.

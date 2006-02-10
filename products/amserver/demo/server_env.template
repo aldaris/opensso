@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.4 2006-02-02 08:40:27 mrudul_uchil Exp $
+# $Id: server_env.template,v 1.5 2006-02-10 18:16:55 mrudul_uchil Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,7 +34,8 @@
 # applicable to your server deployment.
 #
 # - OUTPUT_DIR  : where generated files will be kept
-# - CONFIG_DIR  : where bootstrap configuration will be kept
+# - CONFIG_DIR  : where bootstrap configuration will be kept and 
+#                 flatfile user database will be created
 # - AM_ENC_KEY  : the encryption key to use for encrypting information
 # - ADMIN_PASSWD: the password of amadmin (super) user
 #
@@ -66,7 +67,8 @@ ADMIN_PASSWD=password
 # - SESSION_LOGGER   : the session logger implementation
 # - AM_COEXIST       : Co-existence mode (false)
 # - AM_REALM         : Realm mode (true)
-# - COOKIE_DOMAIN    : the domain value to which the session cookie is required to be set
+# - COOKIE_DOMAIN    : the domain value to which the session cookie is required 
+#                      to be set
 # - USER_PROFILE_CHOICE: User profile search option
 # - AUTHENTICATION_LOGGER: the Authentication logger implementation
 #
