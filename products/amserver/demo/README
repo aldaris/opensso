@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2006-02-10 18:16:55 mrudul_uchil Exp $
+$Id: README,v 1.7 2006-02-11 03:57:11 mrudul_uchil Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -124,8 +124,10 @@ The various values contained in the server_env.properties could be as follows:
    CONFIG_DIR=/tmp/opensso/config
    AM_ENC_KEY=myencryptionkey
    ADMIN_PASSWD=password
-*  CLIENT_URI=/amserver    [ SEE SPECIAL NOTE BELOW ]
-*  SERVER_URI=/amserver    [ SEE SPECIAL NOTE BELOW ]
+   COOKIE_DOMAIN=.iplanet.com
+
+*  CLIENT_URI=/amdemoclient [ SEE SPECIAL NOTE BELOW ]
+*  SERVER_URI=/amserver     [ SEE SPECIAL NOTE BELOW ]
    SERVER_MODE=true
    ORG_BASE=dc=sun,dc=com
    DEFAULT_ORG=dc=sun,dc=com
@@ -142,7 +144,8 @@ The various values contained in the server_env.properties could be as follows:
    SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger
    AM_COEXIST=false
    AM_REALM=true
-   COOKIE_DOMAIN=.iplanet.com
+   IDREPO_DATABASE=files
+   AUTH_DEFAULT_CONFIG=datastoreService
    USER_PROFILE_CHOICE=ignore
    SUCCESS_REDIRECT_URL=@CLIENT_PROTO@://@CLIENT_HOST@:@CLIENT_PORT@/amdemoclient
    AUTHENTICATION_LOGGER=com.sun.identity.demo.server.AuthenticationLogger
@@ -160,14 +163,13 @@ NOTE:
 - The ADMIN_PASSWD is the password value that is assigned to the default 
   special user accounts such as the super user (amadmin) and proxy/application
   users as configured in the serverconfig.xml file.
-* The CLIENT_URI and SERVER_URI must be set as the same value which is
-  the URI for deployment of amserver.war application. It is recommended for
-  demo purposes to not change these values from their default /amserver. Note
-  that in client_env.properties file, you are required to use different values
-  for CLIENT_URI and SERVER_URI based on the individual deployment URIs of the
-  the client and server applications. However, in the case of 
-  server_env.properties both of these must be set to the same value matching 
-  the deployment user of the server application.
+- The COOKIE_DOMAIN must be set to the domain value to which the session cookie 
+  is required to be set. This is the domain (or super domain) of the server and 
+  client host specified.
+* The SERVER_URI and CLIENT_URI must match the deployment URI of the server 
+  and client web applications. It is recommended for demo purposes to not 
+  change these values from /amserver and /amdemoclient values as present 
+  by default. 
 - The SERVER_MODE flag must be set to true for server environment always.
 - The ORG_BASE, DEFAULT_ORG, USER_NAMING_ATTR values must be kept as their
   suggested defaults.
@@ -179,18 +181,16 @@ NOTE:
   the case when the web container types are different for the client and 
   server. It is recommended to use the same web container for both client and
   server for demo purposes.
-- The COOKIE_DOMAIN must be set to the domain value to which the session cookie 
-  is required to be set. This is the domain (or super domain) of the server and 
-  client host specified.
 - The NOTIFICATION_ENDPOINT represents the node that listens for notifications
   sent by the server. Its value should be left as the default value:
   notificationservice.
 - The AUTHENTICATION_LOGGER, AUTH_DONOTINCLUDE_SMS, APPSSOPROVIDER_FACTORY, 
   SMS_OBJECT_CLASS, PLATFORM_LOCALE, AVAILABLE_LOCALES, CURRENT_PLATFORM_LOCALE,
-  AM_COEXIST, AM_REALM, USER_PROFILE_CHOICE, SUCCESS_REDIRECT_URL and 
-  SESSION_LOGGER values must be kept as their suggested defaults. These
-  values are necessary for the Authentication service to function in the server
-  environment. 
+  AM_COEXIST, AM_REALM, IDREPO_DATABASE, AUTH_DEFAULT_CONFIG, 
+  USER_PROFILE_CHOICE, SUCCESS_REDIRECT_URL and SESSION_LOGGER values 
+  must be kept as their suggested defaults. 
+  These values are necessary for the Authentication service to function 
+  in the server environment. 
 
 %% 2.3 Bundling 3rd party libraries
 

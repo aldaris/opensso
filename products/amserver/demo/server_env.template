@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.5 2006-02-10 18:16:55 mrudul_uchil Exp $
+# $Id: server_env.template,v 1.6 2006-02-11 03:57:12 mrudul_uchil Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -38,12 +38,15 @@
 #                 flatfile user database will be created
 # - AM_ENC_KEY  : the encryption key to use for encrypting information
 # - ADMIN_PASSWD: the password of amadmin (super) user
+# - COOKIE_DOMAIN: the domain value to which the session cookie is required 
+#                  to be set
 #
 
 OUTPUT_DIR=/tmp/opensso/work
 CONFIG_DIR=/tmp/opensso/config
 AM_ENC_KEY=myencryptionkey
 ADMIN_PASSWD=password
+COOKIE_DOMAIN=.iplanet.com
 
 #
 # The following properties values should be kept as the suggested defaults.
@@ -67,8 +70,8 @@ ADMIN_PASSWD=password
 # - SESSION_LOGGER   : the session logger implementation
 # - AM_COEXIST       : Co-existence mode (false)
 # - AM_REALM         : Realm mode (true)
-# - COOKIE_DOMAIN    : the domain value to which the session cookie is required 
-#                      to be set
+# - IDREPO_DATABASE  : The type of IdRepo database used
+# - AUTH_DEFAULT_CONFIG: Default Authentication configuration used
 # - USER_PROFILE_CHOICE: User profile search option
 # - AUTHENTICATION_LOGGER: the Authentication logger implementation
 #
@@ -92,7 +95,8 @@ AVAILABLE_LOCALES=<Value>en_US</Value>
 SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger
 AM_COEXIST=false
 AM_REALM=true
-COOKIE_DOMAIN=.iplanet.com
+IDREPO_DATABASE=files
+AUTH_DEFAULT_CONFIG=datastoreService
 USER_PROFILE_CHOICE=ignore
 SUCCESS_REDIRECT_URL=@CLIENT_PROTO@://@CLIENT_HOST@:@CLIENT_PORT@/amdemoclient
 AUTHENTICATION_LOGGER=com.sun.identity.demo.server.AuthenticationLogger

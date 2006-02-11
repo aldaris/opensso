@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.6 2006-02-10 18:16:56 mrudul_uchil Exp $
+   $Id: idRepoService.xml,v 1.7 2006-02-11 03:57:13 mrudul_uchil Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2253,7 +2253,7 @@
                 </SubConfiguration>
             </GlobalConfiguration>
             <OrganizationConfiguration name="/">
-                <SubConfiguration name="amFiles1" id="files" />
+                <SubConfiguration name="@IDREPO_DATABASE@" id="@IDREPO_DATABASE@" />
             </OrganizationConfiguration>
         </Configuration>
     </Service>

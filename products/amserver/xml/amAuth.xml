@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.4 2006-02-06 20:16:36 veiming Exp $
+    $Id: amAuth.xml,v 1.5 2006-02-11 03:57:12 mrudul_uchil Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -329,11 +329,11 @@
                 </AttributeValuePair>
                 <AttributeValuePair>
                     <Attribute name="iplanet-am-auth-admin-auth-module" />
-                    <Value>datastoreService</Value>
+                    <Value>@AUTH_DEFAULT_CONFIG@</Value>
                 </AttributeValuePair>
                 <AttributeValuePair>
                     <Attribute name="iplanet-am-auth-org-config" />
-                    <Value>datastoreService</Value>
+                    <Value>@AUTH_DEFAULT_CONFIG@</Value>
                 </AttributeValuePair>
             </OrganizationConfiguration>
         </Configuration>
