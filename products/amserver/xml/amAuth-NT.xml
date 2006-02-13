@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth-NT.xml,v 1.3 2006-02-06 20:16:36 veiming Exp $
+    $Id: amAuth-NT.xml,v 1.4 2006-02-13 20:44:58 mrudul_uchil Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -98,7 +98,7 @@
                           <ChoiceValue i18nKey="Required">false</ChoiceValue>
                      </ChoiceValues>
                      <DefaultValues>
-                          <Value>false</Value>
+                          <Value>@USER_PROFILE_CHOICE@</Value>
                      </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-admin-auth-module" 
@@ -256,7 +256,7 @@
                     syntax="string"
                     i18nKey="a133">
                     <DefaultValues>
-                         <Value>@CONSOLE_URI@</Value>
+                         <Value>@SUCCESS_REDIRECT_URL@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-login-failure-url"
@@ -301,5 +301,21 @@
                     </DefaultValues>
             </Organization>
         </Schema>
+        <Configuration>
+            <OrganizationConfiguration name="/">
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-alias-attr-name" />
+                    <Value>@USER_NAMING_ATTR@</Value>
+                </AttributeValuePair>
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-admin-auth-module" />
+                    <Value>@AUTH_DEFAULT_CONFIG@</Value>
+                </AttributeValuePair>
+                <AttributeValuePair>
+                    <Attribute name="iplanet-am-auth-org-config" />
+                    <Value>@AUTH_DEFAULT_CONFIG@</Value>
+                </AttributeValuePair>
+            </OrganizationConfiguration>
+        </Configuration>
     </Service>
 </ServicesConfiguration>
