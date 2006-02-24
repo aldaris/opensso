@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilege.java,v 1.1 2005-11-01 00:31:01 arvindp Exp $
+ * $Id: DelegationPrivilege.java,v 1.2 2006-02-24 00:45:55 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,114 +97,124 @@ public class DelegationPrivilege {
      *             if anything is wrong
      */
 
-    public DelegationPrivilege(String name, Set subjects, String orgName)
-            throws DelegationException {
+    public DelegationPrivilege(String name, Set subjects, String orgName) 
+        throws DelegationException {
         this.name = name;
+        int revisionNum = DelegationUtils.getRevisionNumber();
         try {
             // convert the orgName to DN format
             orgName = DNMapper.orgNameToDN(orgName);
 
-            // Get service config for the privileges
-            ServiceConfig priv = null;
-            try {
-                if (debug.messageEnabled()) {
-                    debug.message("DelegationPrivilege: "
-                            + "Getting org privileges; org=" + orgName);
-                }
-                priv = DelegationUtils.getPrivilegeConfig(orgName, name, false);
-            } catch (DelegationException de) {
-                if (debug.messageEnabled()) {
-                    debug.message("DelegationPrivilege: privilege " + name
-                            + " not defined in realm " + orgName);
-                }
-                priv = null;
-            }
-            if (priv == null) {
-                if (debug.messageEnabled()) {
-                    debug.message("DelegationPrivilege: "
-                            + "Getting global privileges");
-                }
+            Set permNames = null;
+            Map attrs = null;
+            if (revisionNum != DelegationUtils.AM70_DELEGATION_REVISION) {
+                // Get service config for the privileges
+                ServiceConfig priv = null;
                 try {
-                    priv = DelegationUtils.getPrivilegeConfig(null, name, true);
+                    if (debug.messageEnabled()) {
+                        debug.message("DelegationPrivilege: " + 
+                            "Getting org privileges; org=" + orgName);
+                    }
+                    priv = DelegationUtils.getPrivilegeConfig(
+                               orgName, name, false);
                 } catch (DelegationException de) {
-                    debug.error("DelegationPrivilege: privilege " + name
-                            + " is not defined in any configuration.", de);
-                    String[] objs = { name };
-                    throw new DelegationException(ResBundleUtils.rbName,
-                            "privilege_not_configured", objs, null);
+                    if (debug.messageEnabled()) {
+                        debug.message("DelegationPrivilege: privilege " + 
+                            name + " not defined in realm " + orgName);
+                    }
+                    priv = null;
                 }
-            }
-
-            // get the permission names defined in the privilege
-            Map attrs = priv.getAttributes();
-            if ((attrs == null) || attrs.isEmpty()) {
-                throw new DelegationException(ResBundleUtils.rbName,
+                if (priv == null) {
+                    if (debug.messageEnabled()) {
+                        debug.message("DelegationPrivilege: " + 
+                            "Getting global privileges");
+                    }
+                    try {
+                        priv = DelegationUtils.getPrivilegeConfig(null, 
+                                                     name, true);
+                    } catch (DelegationException de) {
+                        debug.error("DelegationPrivilege: privilege " +
+                         name + " is not defined in any configuration.", de);
+                        String[] objs = {name};
+                        throw new DelegationException(ResBundleUtils.rbName,
+                            "privilege_not_configured", objs, null);
+                    }
+                }
+                     
+                // get the permission names defined in the privilege 
+                attrs = priv.getAttributes();
+                if ((attrs == null) || attrs.isEmpty()) {
+                    throw new DelegationException(ResBundleUtils.rbName, 
                         "get_privilege_attrs_failed", null, null);
+                }
+    
+                permNames = (Set)attrs.get(
+                             DelegationManager.LIST_OF_PERMISSIONS);
+                if ((permNames == null) || permNames.isEmpty()) {
+                    throw new DelegationException(ResBundleUtils.rbName, 
+                      "no_permission_defined_in_the_privilege", null, null);
+                }
+            } else {
+                permNames = new HashSet();
+                permNames.add(name);
             }
 
-            Set permNames = (Set) attrs
-                    .get(DelegationManager.LIST_OF_PERMISSIONS);
-            if ((permNames == null) || permNames.isEmpty()) {
-                throw new DelegationException(ResBundleUtils.rbName,
-                        "no_permission_defined_in_the_privilege", null, null);
-            }
             Iterator it = permNames.iterator();
             while (it.hasNext()) {
-                String permName = (String) it.next();
+                String permName = (String)it.next(); 
                 // Get service config for the privileges
                 ServiceConfig perm = null;
                 try {
                     if (debug.messageEnabled()) {
-                        debug.message("DelegationPrivilege: "
-                                + "Getting org permissions; org=" + orgName);
+                        debug.message("DelegationPrivilege: " + 
+                            "Getting org permissions; org=" + orgName);
                     }
-                    perm = DelegationUtils.getPermissionConfig(orgName,
-                            permName, false);
+                    perm = DelegationUtils.getPermissionConfig(orgName, 
+                               permName, false);
                 } catch (DelegationException de) {
                     if (debug.messageEnabled()) {
-                        debug
-                                .message("DelegationPrivilege: privilege "
-                                        + permName + " not defined in realm "
-                                        + orgName);
+                        debug.message("DelegationPrivilege: privilege " + 
+                         permName + " not defined in realm " + orgName);
                     }
                     perm = null;
                 }
                 if (perm == null) {
                     if (debug.messageEnabled()) {
-                        debug.message("DelegationPrivilege: "
-                                + "Getting global permissions");
+                        debug.message("DelegationPrivilege: " + 
+                            "Getting global permissions");
                     }
                     try {
                         perm = DelegationUtils.getPermissionConfig(null,
-                                permName, true);
+                                   permName, true);
                     } catch (DelegationException de) {
-                        debug.error("DelegationPrivilege: permission "
-                                + permName
-                                + " is not defined in any configuration.", de);
-                        String[] objs = { permName };
+                        debug.error("DelegationPrivilege: permission " +
+                             permName + 
+                             " is not defined in any configuration.", 
+                             de);
+                        String[] objs = {permName};
                         throw new DelegationException(ResBundleUtils.rbName,
-                                "permission_not_configured", objs, null);
+                            "permission_not_configured", objs, null);
                     }
                 }
-
+                     
                 // get the resource and actions defined in the privilege
                 attrs = perm.getAttributes();
                 if ((attrs == null) || attrs.isEmpty()) {
                     throw new DelegationException(ResBundleUtils.rbName,
-                            "get_privilege_attrs_failed", null, null);
+                        "get_privilege_attrs_failed", null, null);
                 }
-
-                Set resources = (Set) attrs.get(RESOURCE);
-                Set actions = (Set) attrs.get(ACTIONS);
-                if ((resources == null) || (actions == null)
-                        || resources.isEmpty() || actions.isEmpty()) {
+    
+                Set resources = (Set)attrs.get(RESOURCE);
+                Set actions = (Set)attrs.get(ACTIONS);
+                if ((resources == null) || (actions == null) 
+                    || resources.isEmpty() || actions.isEmpty()) {
                     throw new DelegationException(ResBundleUtils.rbName,
-                            "get_permission_res_or_actions_failed", null, null);
+                        "get_permission_res_or_actions_failed", null, null);
                 }
-
-                Iterator iter = resources.iterator();
-                String resource = (String) iter.next();
-
+    
+                Iterator iter = resources.iterator(); 
+                String resource = (String)iter.next();
+    
                 // replace the realm name tag with the real realm name
                 resource = DelegationUtils.swapRealmTag(orgName, resource);
                 StringTokenizer st = new StringTokenizer(resource, DELIMITER);
@@ -222,29 +232,31 @@ public class DelegationPrivilege {
                             if (st.hasMoreTokens()) {
                                 subconfigName = st.nextToken();
                                 while (st.hasMoreTokens()) {
-                                    subconfigName += DELIMITER + st.nextToken();
+                                    subconfigName += 
+                                        DELIMITER + st.nextToken();
                                 }
                             }
                         }
                     }
                 }
 
-                DelegationPermission dp = new DelegationPermission(realmName,
-                        serviceName, version, configType, subconfigName,
-                        actions, null);
+                DelegationPermission dp = new DelegationPermission(
+                        realmName, serviceName, version, configType,
+                        subconfigName, actions, null); 
                 permissions.add(dp);
             }
             this.subjects = subjects;
             if (debug.messageEnabled()) {
                 debug.message("DelegationPrivilege: org=" + orgName
-                        + "; privilege name=" + name + "; permissions="
-                        + permissions + "; subjects=" + subjects);
+                  + "; privilege name=" + name + "; permissions=" 
+                  + permissions + "; subjects=" + subjects);
             }
         } catch (SSOException sse) {
             debug.error("DelegationPrivilege: ", sse);
             throw new DelegationException(sse);
         }
     }
+
 
     /**
      * Returns the privilege name in the privilege

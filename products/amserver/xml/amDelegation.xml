@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.4 2006-01-30 20:58:54 veiming Exp $
+   $Id: amDelegation.xml,v 1.5 2006-02-24 00:47:08 huacui Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,6 +33,7 @@
     <Service name="sunAMDelegationService" version="1.0">
         <Schema
             i18nFileName="amDelegation"
+            revisionNumber="30"
             i18nKey="">
 
             <Global>

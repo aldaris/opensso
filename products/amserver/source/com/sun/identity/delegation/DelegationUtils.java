@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationUtils.java,v 1.1 2005-11-01 00:31:02 arvindp Exp $
+ * $Id: DelegationUtils.java,v 1.2 2006-02-24 00:46:18 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceSchemaManager;
 
 /* A utility class for delegation service */
 public class DelegationUtils {
@@ -49,6 +50,10 @@ public class DelegationUtils {
     static final String REALM_NAME_TAG = "REALM";
 
     static final String SUBJECTS_IN_LEGACY_MODE = "defaultSubjectInLegacyMode";
+    
+    static final int AM70_DELEGATION_REVISION = 10;
+
+    private static int revisionNum = 0;
 
     /*
      * Create default privileges for a newly created realm This method should be
@@ -72,10 +77,17 @@ public class DelegationUtils {
         if (debug.messageEnabled()) {
             debug.message("DelegationUtils:Getting global privileges");
         }
+        int revisionNum = getRevisionNumber();
         Iterator it = privs.iterator();
         while (it.hasNext()) {
             String privName = (String) it.next();
-            perm = DelegationUtils.getPrivilegeConfig(null, privName, true);
+            if (revisionNum == AM70_DELEGATION_REVISION) {
+                perm = DelegationUtils.getPermissionConfig(
+                           null, privName, true);
+            } else {
+                perm = DelegationUtils.getPrivilegeConfig(
+                           null, privName, true);
+            }
             // get the defaultSubjectInLegacyMode in the privilege
             Map attrs = perm.getAttributes();
             if ((attrs == null) || attrs.isEmpty()) {
@@ -308,5 +320,29 @@ public class DelegationUtils {
             idx = value.indexOf(REALM_NAME_TAG);
         }
         return value;
+    }
+
+    // get the Delegation Service revision number
+    static int getRevisionNumber() {
+        if (revisionNum == 0) {
+            try {
+                ServiceSchemaManager ssm = new ServiceSchemaManager(
+                                 DelegationManager.DELEGATION_SERVICE,
+                                 DelegationManager.getAdminToken());
+                revisionNum = ssm.getRevisionNumber();
+                if (debug.messageEnabled()) {
+                    debug.message("DelegationUtils.getRevisionNumber(): " +
+                        "Delegation Service revision number is " + 
+                        revisionNum);
+                }
+            } catch (SMSException sme) {
+                debug.error("DelegationUtils.getRevisionNumber(): " +
+                    "Unable to get Delegation revision number", sme);
+            } catch (SSOException ssoe) {
+                debug.error("DelegationUtils.getRevisionNumber(): " +
+                    "Unable to get Delegation revision number", ssoe);
+            }
+        }
+        return revisionNum;
     }
 }

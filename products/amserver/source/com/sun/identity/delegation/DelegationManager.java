@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.2 2006-01-19 21:57:38 huacui Exp $
+ * $Id: DelegationManager.java,v 1.3 2006-02-24 00:45:29 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,13 +121,22 @@ public final class DelegationManager {
         Set orgPrivNames = null;
         ServiceConfig privsConfig;
         ServiceConfig sc;
+
+        String subConfigName = null;
+        int revisionNum = DelegationUtils.getRevisionNumber();
+        if (revisionNum == DelegationUtils.AM70_DELEGATION_REVISION) {
+            subConfigName = DelegationManager.PERMISSIONS;
+        } else {
+            subConfigName = DelegationManager.PRIVILEGES;
+        }
+
         try {
             ServiceConfigManager scm = new ServiceConfigManager(
                     DELEGATION_SERVICE, getAdminToken());
             // get the globally defined privilege names
             sc = scm.getGlobalConfig(null);
             if (sc != null) {
-                privsConfig = sc.getSubConfig(DelegationManager.PRIVILEGES);
+                privsConfig = sc.getSubConfig(subConfigName);
                 if (privsConfig != null) {
                     globalPrivNames = privsConfig.getSubConfigNames();
                 }
@@ -135,7 +144,7 @@ public final class DelegationManager {
             // get the organizationally defined privilege names
             sc = scm.getOrganizationConfig(orgName, null);
             if (sc != null) {
-                privsConfig = sc.getSubConfig(DelegationManager.PRIVILEGES);
+                privsConfig = sc.getSubConfig(subConfigName);
                 if (privsConfig != null) {
                     orgPrivNames = privsConfig.getSubConfigNames();
                 }
