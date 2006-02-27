@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientsManager.java,v 1.2 2005-12-08 01:16:14 veiming Exp $
+ * $Id: ClientsManager.java,v 1.3 2006-02-27 06:49:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public class ClientsManager {
     }
 
     /**
-     * Get Client instance for a specific client type.
+     * Returns Client instance for a specific client type.
      * 
      * @param clientType
      *            Client Type.
@@ -70,11 +70,14 @@ public class ClientsManager {
         if (clientType == null) {
             throw new ClientException(CDMBundle.getString("null_clientType"));
         }
-        Client client = clientTypesManager.getClientInstance(clientType);
+        Client client = (clientTypesManager != null) ?
+            clientTypesManager.getClientInstance(clientType) : null;
+
         if (client == null) {
-            throw new ClientException(CDMBundle.getString("unknown_clientType")
-                    + " :: " + clientType);
+            throw new ClientException(
+                CDMBundle.getString("unknown_clientType") + ", " + clientType);
         }
+
         return client;
     }
 
