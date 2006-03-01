@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.2 2006-02-01 00:24:45 beomsuk Exp $
+ * $Id: LoginState.java,v 1.3 2006-03-01 00:56:25 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -5534,24 +5534,41 @@ public class LoginState {
         if ( result.isEmpty() && (aliasAttrNames != null) &&
         (!aliasAttrNames.isEmpty())) {
             if (messageEnabled) {
-                debug.message("No identity found, try alias attrname.");
+                debug.message("No identity found, try Alias attrname.");
             }
             pattern="*";
             avPairs= toAvPairMap(aliasAttrNames, userTokenID);
             if (messageEnabled) {
-                debug.message("Search for Filter :" + avPairs);
-                debug.message("idType :" + idType);
-                debug.message("pattern :" + pattern);
-                debug.message("avPairs :" + avPairs);
-                debug.message("isRecursive :" + isRecursive);
-                debug.message("maxResults :" + maxResults);
-                debug.message("maxTime :" + maxTime);
-                debug.message("returnSet :" + returnSet);
+                ad.debug.message("Search for Filter (avPairs) :" + avPairs);
+                ad.debug.message("userTokenID : " + userTokenID);
+                ad.debug.message("userDN : " + userDN);
+                ad.debug.message("idType :" + idType);
+                ad.debug.message("pattern :" + pattern);                
+                ad.debug.message("isRecursive :" + isRecursive);
+                ad.debug.message("maxResults :" + maxResults);
+                ad.debug.message("maxTime :" + maxTime);
+                ad.debug.message("returnSet :" + returnSet);
             }
+            Set resultAlias = Collections.EMPTY_SET;
             try {
                 idsc.setMaxResults(maxResults);
                 idsc.setSearchModifiers(IdSearchOpModifier.OR, avPairs);
                 searchResults = amIdRepo.searchIdentities(idType,pattern,idsc);
+                if (searchResults != null) {
+                    resultAlias = searchResults.getSearchResults();
+                }
+                if ((resultAlias.isEmpty()) && 
+                    (!userDN.equalsIgnoreCase(userTokenID))) {
+                    avPairs= toAvPairMap(aliasAttrNames, userDN);
+                    if (messageEnabled) {
+                        ad.debug.message("Search for Filter (avPairs) " + 
+                        "with userDN : " + avPairs);
+                    }
+                    idsc.setMaxResults(maxResults);
+                    idsc.setSearchModifiers(IdSearchOpModifier.OR, avPairs);
+                    searchResults = 
+                        amIdRepo.searchIdentities(idType,pattern,idsc);
+                }
             } catch (SSOException sso) {
                 if (messageEnabled) {
                     debug.message("SSOException : Error searching "

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.3 2006-02-03 07:54:47 veiming Exp $
+ * $Id: LoginViewBean.java,v 1.4 2006-03-01 00:56:24 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -442,7 +442,6 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message(
                             "Login failure, current session destroyed!");
                     } else if (ac.getStatus()==AuthContext.Status.SUCCESS) {
-                        response.setHeader("X-AuthErrorCode", "0");
                         if (au.isCookieSupported(ac)) {
                             setCookie();
                             clearCookie(AuthUtils.getAuthCookieName());
@@ -514,9 +513,6 @@ public class LoginViewBean extends AuthViewBeanBase {
                 loginDebug.message("Previous AC : " + prevAC);
             }
             if (ac.getStatus() == AuthContext.Status.SUCCESS) {
-                // set error code in HTTP header
-                response.setHeader("X-AuthErrorCode", "0");
-                loginDebug.message("set X-AuthErrorCode to 0");
                 if (au.isCookieSupported(ac)) {
                     setCookie();
                     clearCookie(AuthUtils.getAuthCookieName());
@@ -1630,8 +1626,6 @@ public class LoginViewBean extends AuthViewBeanBase {
             loginDebug.message("Error Template = " + errorTemplate);
             loginDebug.message("Error Code = " + errorCode);
         }
-        
-        response.setHeader("X-AuthErrorCode", errorCode);
     }
     
     // Method to retrieve filename
