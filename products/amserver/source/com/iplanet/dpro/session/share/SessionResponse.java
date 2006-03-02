@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionResponse.java,v 1.1 2005-11-01 00:29:59 arvindp Exp $
+ * $Id: SessionResponse.java,v 1.2 2006-03-02 20:15:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import com.iplanet.am.sdk.AMSearchResults;
 import com.iplanet.dpro.session.SessionException;
+import com.sun.identity.common.SearchResults;
 
 /**
  * This <code>SessionResponse</code> class represents a
@@ -116,7 +116,7 @@ public class SessionResponse {
 
     private String exception = null;
 
-    private int status = AMSearchResults.UNDEFINED_RESULT_COUNT;
+    private int status = SearchResults.UNDEFINED_RESULT_COUNT;
 
     /**
      * This constructor shall only be used at the server side to construct a

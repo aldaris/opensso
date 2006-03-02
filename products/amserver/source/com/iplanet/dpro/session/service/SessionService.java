@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.1 2005-11-01 00:29:57 arvindp Exp $
+ * $Id: SessionService.java,v 1.2 2006-03-02 20:15:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,7 +56,6 @@ import javax.servlet.http.HttpSession;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.sdk.AMRole;
-import com.iplanet.am.sdk.AMSearchResults;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.util.AMURLEncDec;
@@ -89,6 +88,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.Constants;
+import com.sun.identity.common.SearchResults;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.DecodeAction;
@@ -994,14 +994,14 @@ public class SessionService {
                 }
 
                 if (sessions.size() == SessionConfigListener.getMaxsize()) {
-                    status[0] = AMSearchResults.SIZE_LIMIT_EXCEEDED;
+                    status[0] = SearchResults.SIZE_LIMIT_EXCEEDED;
                     break;
                 }
                 sessions.addElement(sess);
 
                 if ((System.currentTimeMillis() - startTime) >= 
                     SessionConfigListener.getTimeout()) {
-                    status[0] = AMSearchResults.TIME_LIMIT_EXCEEDED;
+                    status[0] = SearchResults.TIME_LIMIT_EXCEEDED;
                     break;
                 }
             }

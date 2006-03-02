@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.2 2005-12-08 01:16:19 veiming Exp $
+ * $Id: SSOProviderImpl.java,v 1.3 2006-03-02 20:15:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.iplanet.am.sdk.AMSearchResults;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
@@ -41,6 +40,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOProvider;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
+import com.sun.identity.common.SearchResults;
 
 /**
  * This <code>final</code> class <code>SSOProviderImpl</code> implements 
@@ -359,7 +359,7 @@ public final class SSOProviderImpl implements SSOProvider {
         Set results = new HashSet();
         try {
 
-            AMSearchResults result = ((SSOTokenImpl) requester).getSession()
+            SearchResults result = ((SSOTokenImpl) requester).getSession()
                     .getValidSessions(server, null);
 
             for (Iterator iter = result.getResultAttributes().values()

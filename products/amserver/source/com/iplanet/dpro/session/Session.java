@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.1 2005-11-01 00:29:47 arvindp Exp $
+ * $Id: Session.java,v 1.2 2006-03-02 20:15:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.iplanet.am.sdk.AMSearchResults;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.service.SessionService;
@@ -45,6 +44,7 @@ import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.common.Constants;
+import com.sun.identity.common.SearchResults;
 import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
@@ -788,7 +788,7 @@ public class Session {
      * @exception SessionException if there was an error during
      *                communication with session service.
      */
-    public AMSearchResults getValidSessions(String server, String pattern)
+    public SearchResults getValidSessions(String server, String pattern)
             throws SessionException {
         String protocol = sessionID.getSessionServerProtocol();
         String host = server;
@@ -933,7 +933,7 @@ public class Session {
      * @param svcurl Session Service URL.
      * @exception SessionException.
      */
-    private AMSearchResults getValidSessions(URL svcurl, String pattern)
+    private SearchResults getValidSessions(URL svcurl, String pattern)
             throws SessionException {
         try {
             int status[] = { 0 };
@@ -966,7 +966,7 @@ public class Session {
                 session.update(info);
                 sessions.put(info.sid, session);
             }
-            return new AMSearchResults(sessions.size(), sessions.keySet(),
+            return new SearchResults(sessions.size(), sessions.keySet(),
                     status[0], sessions);
         } catch (Exception e) {
             sessionDebug.error("Session:getValidSession : ", e);
