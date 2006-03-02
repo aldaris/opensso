@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.3 2006-01-26 22:34:18 mrudul_uchil Exp $
+ * $Id: AMClientDetector.java,v 1.4 2006-03-02 07:16:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -246,7 +246,7 @@ public class AMClientDetector {
                 defaultClientDetector = (ClientDetectionInterface) (Class
                         .forName(clientDetectionClass).newInstance());
             } catch (Exception ex) {
-                debug.error("Error instantiating Client Detector", ex);
+                debug.warning("AMClientDetector.executeClientDetector", ex);
             }
         }
     }
