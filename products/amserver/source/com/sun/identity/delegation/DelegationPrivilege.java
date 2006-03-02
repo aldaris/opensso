@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilege.java,v 1.2 2006-02-24 00:45:55 huacui Exp $
+ * $Id: DelegationPrivilege.java,v 1.3 2006-03-02 15:36:28 huacui Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -245,7 +245,7 @@ public class DelegationPrivilege {
                         subconfigName, actions, null); 
                 permissions.add(dp);
             }
-            this.subjects = subjects;
+            setSubjects(subjects);
             if (debug.messageEnabled()) {
                 debug.message("DelegationPrivilege: org=" + orgName
                   + "; privilege name=" + name + "; permissions=" 
@@ -325,7 +325,10 @@ public class DelegationPrivilege {
      */
 
     public void setSubjects(Set names) throws DelegationException {
-        subjects = names;
+        subjects = new HashSet();
+        if (names != null) {
+            subjects.addAll(names);
+        }
     }
 
     public String toString() {
