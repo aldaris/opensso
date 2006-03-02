@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.3 2006-03-01 00:56:25 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.4 2006-03-02 07:32:04 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -5557,7 +5557,7 @@ public class LoginState {
                 if (searchResults != null) {
                     resultAlias = searchResults.getSearchResults();
                 }
-                if ((resultAlias.isEmpty()) && 
+                if ((resultAlias.isEmpty()) && (userDN != null) &&
                     (!userDN.equalsIgnoreCase(userTokenID))) {
                     avPairs= toAvPairMap(aliasAttrNames, userDN);
                     if (messageEnabled) {
