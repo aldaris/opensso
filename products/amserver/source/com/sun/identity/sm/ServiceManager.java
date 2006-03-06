@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.3 2005-12-12 20:11:50 goodearth Exp $
+ * $Id: ServiceManager.java,v 1.4 2006-03-06 21:29:57 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,14 +105,14 @@ public class ServiceManager {
 
     private static Map serviceNameAndOCs = new CaseInsensitiveHashMap();
 
-    private static Map schemaAndServiceNames = new HashMap();
+    private static Map schemaAndServiceNames = new CaseInsensitiveHashMap();
 
     // List of sub-services
     protected static SMSEntry smsEntry;
 
     protected static CachedSubEntries serviceNames;
 
-    protected static HashMap serviceVersions = new HashMap();
+    protected static HashMap serviceVersions = new CaseInsensitiveHashMap();
 
     protected static HashMap serviceNameDefaultVersion = 
         new CaseInsensitiveHashMap();
@@ -128,10 +128,10 @@ public class ServiceManager {
     protected HashMap serviceSchemaMgrs = new HashMap();
 
     // List of service config managers
-    protected HashMap serviceConfigMgrs = new HashMap();
+    protected HashMap serviceConfigMgrs = new CaseInsensitiveHashMap();
 
     // List of organization config managers
-    protected HashMap organizationConfigMgrs = new HashMap();
+    protected HashMap organizationConfigMgrs = new CaseInsensitiveHashMap();
 
     // Debug & I18n
     private static Debug debug = SMSEntry.debug;
@@ -682,14 +682,31 @@ public class ServiceManager {
      * @supported.api
      */
     public synchronized void clearCache() {
+        // Clear the local caches
+        serviceNameAndOCs = new CaseInsensitiveHashMap();
+        schemaAndServiceNames = new CaseInsensitiveHashMap();
+        serviceVersions = new CaseInsensitiveHashMap();
+        serviceNameDefaultVersion = new CaseInsensitiveHashMap();
         serviceSchemaMgrs = new HashMap();
         serviceConfigMgrs = new HashMap();
+
         // Call respective Impl classes
         CachedSMSEntry.clearCache();
+        CachedSubEntries.clearCache();
         ServiceSchemaManagerImpl.clearCache();
         PluginSchemaImpl.clearCache();
         ServiceInstanceImpl.clearCache();
         ServiceConfigImpl.clearCache();
+
+        // Re-initialize the flags
+        try {
+            checkFlags(token);
+            OrganizationConfigManager.initializeFlags();
+            DNMapper.clearCache();
+        } catch (Exception e) {
+            debug.error("ServiceManager::clearCache unable to " +
+                "re-initialize global flags", e);
+        }
     }
 
     /**

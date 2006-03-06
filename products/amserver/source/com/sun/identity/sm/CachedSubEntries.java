@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.1 2005-11-01 00:31:21 arvindp Exp $
+ * $Id: CachedSubEntries.java,v 1.2 2006-03-06 21:29:57 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -225,5 +225,9 @@ class CachedSubEntries {
 
         return (entry.searchOrganizationNames(token, 0, true, true,
                 serviceName, attrName, values));
+    }
+
+    static void clearCache() {
+        smsEntries = new CaseInsensitiveHashMap(100);
     }
 }

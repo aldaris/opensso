@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.1 2005-11-01 00:31:21 arvindp Exp $
+ * $Id: DNMapper.java,v 1.2 2006-03-06 21:29:57 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,5 +355,10 @@ public class DNMapper {
             }
         }
         return (buf);
+    }
+
+    static void clearCache() {
+        cache = new HashMap();
+        realmEnabled = ServiceManager.isRealmEnabled();
     }
 }

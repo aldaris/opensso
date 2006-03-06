@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.3 2006-01-06 22:51:51 arviranga Exp $
+ * $Id: IdUtils.java,v 1.4 2006-03-06 21:29:56 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,13 @@ public final class IdUtils {
     // ServiceConfigManager for sunidentityrepository service
     private static ServiceConfigManager serviceConfigManager;
 
+    private static String notificationId;
+
     static {
+        initialize();
+    }
+
+    private static void initialize() {
         if (ServiceManager.isConfigMigratedTo70()) {
             // IdRepo service schema exists. Read the supported
             // entities from there
@@ -144,6 +150,19 @@ public final class IdUtils {
             }
         } else {
             loadDefaultTypes();
+        }
+
+        // Register for SMS notifications to root realm
+        if (notificationId == null) {
+            try {
+                SSOToken adminToken = (SSOToken) AccessController
+                    .doPrivileged(AdminTokenAction.getInstance());
+                OrganizationConfigManager rootOrg =
+                    new OrganizationConfigManager(adminToken, "/");
+                notificationId = rootOrg.addListener(new IdUtilsListener());
+            } catch (SMSException e) {
+                debug.error("IdUtils: Register notification:exception", e);
+            }
         }
     }
 
@@ -640,5 +659,39 @@ public final class IdUtils {
             memberSet.add(new IdType(currType));
         }
         return memberSet;
+    }
+
+    // SMS service listener to reinitialize if IdRepo service changes
+    static class IdUtilsListener implements com.sun.identity.sm.ServiceListener {
+
+        public void schemaChanged(String serviceName, String version) {
+            if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {
+                initialize();
+            }
+        }
+
+        public void globalConfigChanged(
+            String serviceName,
+            String version,
+            String groupName,
+            String serviceComponent,
+            int type) {
+            if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {
+                initialize();
+            }
+        }
+
+        public void organizationConfigChanged(
+            String serviceName,
+            String version,
+            String orgName,
+            String groupName,
+            String serviceComponent,
+            int type) {
+            if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE) &&
+                orgName.equalsIgnoreCase(ServiceManager.getBaseDN())) {
+                initialize();
+            }
+        }
     }
 }

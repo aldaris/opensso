@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.2 2005-12-08 01:16:51 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.3 2006-03-06 21:29:57 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,10 @@ public class OrganizationConfigManager {
 
     protected static final String SERVICES_NODE = SMSEntry.SERVICES_RDN
             + SMSEntry.COMMA + SMSEntry.baseDN;
+
+    static {
+        initializeFlags();
+    }
 
     /**
      * Constructor to obtain an instance of
@@ -1385,6 +1389,12 @@ public class OrganizationConfigManager {
         }
     }
 
+    static void initializeFlags() {
+        realmEnabled = ServiceManager.isRealmEnabled();
+        coexistMode = ServiceManager.isCoexistenceMode();
+        migratedTo70 = ServiceManager.isConfigMigratedTo70();
+    }
+
     class OrganizationConfigManagerListener implements ServiceListener {
         public void schemaChanged(String serviceName, String version) {
             serviceSchemaSet = null;
@@ -1439,9 +1449,9 @@ public class OrganizationConfigManager {
     private static boolean registeredForConfigNotifications;
 
     // Realm & Co-existence modes
-    private static boolean realmEnabled = ServiceManager.isRealmEnabled();
+    private static boolean realmEnabled;
 
-    private static boolean coexistMode = ServiceManager.isCoexistenceMode();
+    private static boolean coexistMode;
 
-    private static boolean migratedTo70 = ServiceManager.isConfigMigratedTo70();
+    private static boolean migratedTo70;
 }
