@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.4 2006-03-06 21:29:56 arviranga Exp $
+ * $Id: IdUtils.java,v 1.5 2006-03-06 21:52:52 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,7 @@ public final class IdUtils {
         initialize();
     }
 
-    private static void initialize() {
+    protected static void initialize() {
         if (ServiceManager.isConfigMigratedTo70()) {
             // IdRepo service schema exists. Read the supported
             // entities from there
