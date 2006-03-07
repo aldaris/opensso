@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.1 2006-01-28 09:16:17 veiming Exp $
+ * $Id: AuthXMLHandler.java,v 1.2 2006-03-07 00:07:30 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -311,7 +311,8 @@ public class AuthXMLHandler implements RequestHandler {
                         authResponse, loginState, authContext);
                     }
                     authContext.login();
-                    processRequirements(authContext,authResponse, params);
+                    processRequirements(authContext,authResponse, params,
+                        servletRequest);
                     postProcess(loginState, authResponse);
                     checkACException(authResponse, authContext);
                 } catch (Exception le) {
@@ -336,7 +337,8 @@ public class AuthXMLHandler implements RequestHandler {
                         authResponse, loginState, authContext);
                     }
                     authContext.login(indexType,indexName);
-                    processRequirements(authContext,authResponse, params);
+                    processRequirements(authContext,authResponse, params,
+                        servletRequest);
                     postProcess(loginState, authResponse);
                     checkACException(authResponse, authContext);
                 } catch (Exception le) {
@@ -351,7 +353,8 @@ public class AuthXMLHandler implements RequestHandler {
                 try {
                     Subject subject = authXMLRequest.getSubject();
                     authContext.login(subject);
-                    processRequirements(authContext,authResponse, params);
+                    processRequirements(authContext,authResponse, params,
+                        servletRequest);
                     postProcess(loginState, authResponse);
                     checkACException(authResponse, authContext);
                 } catch (AuthLoginException le) {
@@ -464,23 +467,12 @@ public class AuthXMLHandler implements RequestHandler {
         LoginState loginState, 
         AuthContextLocal authContext
     ) throws AuthException {
-        // get X509 attribute
         if ( authContext == null ) {
             throw new AuthException(
             AMAuthErrorCode.AUTH_INVALID_DOMAIN, null);
         }
-        Object obj = servletRequest.getAttribute(
-            "javax.servlet.request.X509Certificate");
-        X509Certificate[] allCerts = (X509Certificate[]) obj;
         AuthContextLocal prevAuthContext =  loginState.getPrevAuthContext();
         authResponse.setPrevAuthContext(prevAuthContext);
-        if ( (allCerts != null) && (allCerts.length != 0) ) {
-            if (messageEnabled) {
-                debug.message("length of cert array : " + allCerts.length);
-            }
-            loginState.setX509Certificate(allCerts[0]);
-        }
-                 
         String clientHost = null;
         if (servletRequest != null) {
             clientHost = servletRequest.getRemoteAddr();
@@ -528,7 +520,8 @@ public class AuthXMLHandler implements RequestHandler {
     private void processRequirements(
         AuthContextLocal authContext, 
         AuthXMLResponse authResponse,
-        String params) {
+        String params,
+        HttpServletRequest servletRequest) {
         String[] paramArray = null;
         StringTokenizer paramsSet = null;
         if (params != null) {
@@ -541,9 +534,28 @@ public class AuthXMLHandler implements RequestHandler {
             Callback[] reqdCallbacks = authContext.getRequirements();
             for (int i = 0 ; i < reqdCallbacks.length ; i++) {
                 if (reqdCallbacks[i] instanceof X509CertificateCallback) {
+                    LoginState loginState = null;
+                    if (servletRequest != null) {
+                        loginState =AuthUtils.getLoginState
+                            (authContext);
+                        if ((loginState != null) &&
+                            (loginState.getX509Certificate() == null)) { 
+                                Object obj = servletRequest.getAttribute(
+                                "javax.servlet.request.X509Certificate");
+                                X509Certificate[] allCerts = 
+                                    (X509Certificate[]) obj;
+                                if ( (allCerts != null) && 
+                                    (allCerts.length != 0) ) {
+                                    if (messageEnabled) {
+                                       debug.message("length of cert array : " 
+                                           + allCerts.length);
+                                    }
+                                    loginState.setX509Certificate(allCerts[0]);
+                                }
+                        }
+                    }
                     X509CertificateCallback certCallback =
                     (X509CertificateCallback) reqdCallbacks[i];
-                    LoginState loginState =AuthUtils.getLoginState(authContext);
                     if (loginState != null) {
                         X509Certificate cert = loginState.getX509Certificate();
                         certCallback.setCertificate(cert);
