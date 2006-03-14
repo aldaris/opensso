@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConfigurator.java,v 1.2 2006-02-01 08:55:21 mrudul_uchil Exp $
+ * $Id: SetupConfigurator.java,v 1.3 2006-03-14 23:27:21 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,10 @@ import java.util.Enumeration;
 import java.util.jar.JarOutputStream;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
+import java.util.HashSet;
+import java.util.HashMap;
+
+import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
@@ -43,6 +47,8 @@ import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 
 public class SetupConfigurator {
     
@@ -75,9 +81,9 @@ public class SetupConfigurator {
     public static final String CLIENT_PROTO = "@CLIENT_PROTO@";
 
     public static final String[] SERVICES_TO_LOAD = new String [] {
-        "amPlatform.xml", "amNaming.xml", "amSession.xml", 
+        "ums.xml", "amPlatform.xml", "amNaming.xml", "amSession.xml", 
         "amClientDetection.xml", "amAuthConfig.xml", 
-        "amAuth.xml", "amAuthDataStore.xml", "ums.xml",
+        "amAuth.xml", "amAuthDataStore.xml",
         "idRepoService.xml"
     };
 
@@ -269,6 +275,32 @@ public class SetupConfigurator {
             }
         }
         
+        // Set the organization alias & status
+        try {
+            mgr.clearCache();
+            OrganizationConfigManager ocm = new OrganizationConfigManager(
+                ssoToken, "/");
+            HashSet values = new HashSet();
+            values.add(server_host);
+            // Get organization name
+            String rootSuffix = SystemProperties.get("com.iplanet.am.rootsuffix");
+            if (rootSuffix != null && DN.isDN(rootSuffix)) {
+                DN rootDN = new DN(rootSuffix);
+                String[] dns = rootDN.explodeDN(true);
+                values.add(dns[0]);
+            }
+            HashMap attributes = new HashMap();
+            attributes.put("sunOrganizationAliases", values);
+            values = new HashSet();
+            values.add("Active");
+            attributes.put("sunOrganizationStatus", values);
+            ocm.setAttributes("sunIdentityRepositoryService", attributes);
+        } catch (SMSException e) {
+            log("Unable to set organization aliases for login");
+            log("Error: " + e.getMessage());
+            throw (e);
+        }
+
         log("Configuration load complete.");
         log("You can now deploy amserver.war file created in this directory");
     }

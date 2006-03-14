@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.1 2005-11-01 00:31:26 arvindp Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.2 2006-03-14 23:27:22 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -220,41 +220,55 @@ class OrganizationConfigManagerImpl {
         // Check if the DN matches with organization name
         if ((index = dn.indexOf(orgNotificationSearchString)) != -1) {
             orgIndex = SMSEntry.SERVICES_RDN.length();
-            // Get the DN ignoring the organization name
-            DN ndn = new DN(dn.substring(0, index - 1));
 
-            // Needs to check if the DN has more realm names
-            String rdns[] = ndn.explodeDN(false);
-            int size = rdns.length;
-            if (rdns[size - 1].startsWith("o=")) {
-                // More realm names are present, changes not meant for
-                // this organization
-                if (SMSEntry.eventDebug.messageEnabled()) {
-                    SMSEntry.eventDebug.message(
+            // Initialize parameters
+            String serviceName = "";
+            String version = "";
+            String groupName = "";
+            String compName = "";
+
+            // Get the DN ignoring the organization name
+            if (index != 0) {
+                DN ndn = new DN(dn.substring(0, index - 1));
+
+                // Needs to check if the DN has more realm names
+                String rdns[] = ndn.explodeDN(false);
+                int size = (rdns == null) ? 0 : rdns.length;
+                if ((size != 0) && (rdns[size - 1].startsWith("o="))) {
+                    // More realm names are present, changes not meant for
+                    // this organization
+                    if (SMSEntry.eventDebug.messageEnabled()) {
+                        SMSEntry.eventDebug.message(
                             "OrgConfigMgrImpl::entryChanged  Notification " +
                             "not sent since realms names donot match. \nDN: " +
                             dn + " And orgNotificationSearchString: " + 
                             orgNotificationSearchString);
+                    }
+                    return;
                 }
-                return;
-            }
 
-            // Get the version, service, group and component name
-            rdns = ndn.explodeDN(true);
-            String serviceName = (size < 1) ? "" : rdns[size - 1];
-            String version = (size < 2) ? "" : rdns[size - 2];
-            String groupName = (size < 4) ? "" : rdns[size - 4];
-
-            // The subconfig names should be "/" separated and left to right
-            String compName = "";
-            if (size >= 5) {
-                StringBuffer sbr = new StringBuffer();
-                for (int i = size - 4; i >= 0; i--) {
-                    sbr.append('/').append(rdns[i]);
+                // Get the version, service, group and component name
+                rdns = ndn.explodeDN(true);
+                if (size > 0) {
+                    serviceName = rdns[size - 1];
                 }
-                compName = sbr.toString();
-            } else {
-                compName = "/";
+                if (size > 1) {
+                    version = rdns[size - 2];
+                }
+                if (size >= 4) {
+                    groupName = rdns[size - 4];
+                }
+
+                // The subconfig names should be "/" separated and left to right
+                if (size >= 5) {
+                    StringBuffer sbr = new StringBuffer();
+                    for (int i = size - 4; i >= 0; i--) {
+                        sbr.append('/').append(rdns[i]);
+                    }
+                    compName = sbr.toString();
+                } else {
+                    compName = "/";
+                }
             }
 
             // Convert changeType from JNDI to netscape.ldap
