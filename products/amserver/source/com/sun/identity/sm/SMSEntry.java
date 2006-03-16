@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.3 2006-02-07 00:29:18 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.4 2006-03-16 18:31:13 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1045,6 +1045,41 @@ public class SMSEntry implements Cloneable {
                         indx = rfcDNlc.lastIndexOf(baseDN);
                     }
                     String origStr = rfcDN.substring(0, indx - 1);
+
+                    if (!ServiceManager.isRealmEnabled()) {
+                        // Continue in the case of Containers in the node in
+                        // legacy install.
+                        // eg., o=coke,ou=ContainerOne,dc=planet,dc=com
+                        ArrayList rdns = new ArrayList();
+                        StringTokenizer strtok =
+                            new StringTokenizer(origStr, COMMA);
+                        while(strtok.hasMoreElements()) {
+                            String token = (String) strtok.nextToken().trim();
+                            if (debug.messageEnabled()) {
+                                debug.message("SMSEntry:parseResult().token "+
+                                    token);
+                            }
+                            rdns.add(token);
+                        }
+                        int size = rdns.size();
+                        Set dnKeyset = new HashSet();
+                        for (int is = 0; is < size; is++) {
+                            String[] strArr =
+                                DNMapper.splitString((String)rdns.get(is));
+                            dnKeyset.add(strArr[0]);
+                        }
+                        String orgUnitAttr =
+                            OrgConfigViaAMSDK.getNamingAttrForOrgUnit();
+
+                        if (dnKeyset.contains(orgUnitAttr)) {
+                            if (debug.messageEnabled()) {
+                                debug.message("SMSEntry.parseResult(): "+
+                                    "Container node: "+origStr);
+                            }
+                            continue;
+                        }
+                    }
+
                     // If orgAttr is not null,replace with the org naming
                     // attribute which is defined for legacy mode.
                     // Replace orgAttr= to '/' and ',' to "" (or)

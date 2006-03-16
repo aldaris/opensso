@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.3 2006-03-06 21:29:57 arviranga Exp $
+ * $Id: OrganizationConfigManager.java,v 1.4 2006-03-16 18:30:49 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -980,7 +980,7 @@ public class OrganizationConfigManager {
                     + "normalizeDN()-subOrgName " + subOrgName);
         }
         String subOrgDN = null;
-        if (DN.isDN(subOrgName)) {
+        if (DN.isDN(subOrgName) && (!subOrgName.startsWith("///"))) {
             int ndx = subOrgName.lastIndexOf(DNMapper.serviceDN);
             if (ndx == -1) {
                 // Check for baseDN
