@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchControl.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
+ * $Id: IdSearchControl.java,v 1.3 2006-03-16 21:36:12 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -216,7 +216,7 @@ public final class IdSearchControl {
     }
 
     /**
-     * Set the recursive flat to be true or false. It is false by default so
+     * Sets the recursive flag to be true or false. It is false by default so
      * plugin searches are not recursive.
      * 
      * @param rec
