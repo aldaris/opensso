@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSMigration70.java,v 1.1 2005-11-01 00:31:28 arvindp Exp $
+ * $Id: SMSMigration70.java,v 1.2 2006-03-16 20:48:08 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,23 @@ public class SMSMigration70 {
 
             // Migrate sub-orgs to realms
             migrateToRealms(token, entryDN);
+
+            // After migration of config data, Set the realmEnabled/realmMode
+            // flag to true in the Global Schema of the identity repository
+            // service.
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                ServiceManager.REALM_SERVICE, token);
+            ServiceSchema gss = ssm.getGlobalSchema();
+            if (gss != null) {
+                Map attrSet = new HashMap(2);
+                Set realmValue = new HashSet(2);
+                realmValue.add("true");
+                attrSet.put(ServiceManager.REALM_ATTR_NAME, realmValue);
+                Set coExistValue = new HashSet(2);
+                coExistValue.add("false");
+                attrSet.put(ServiceManager.COEXISTENCE_ATTR_NAME, coExistValue);
+                gss.setAttributeDefaults(attrSet);
+            }
 
             // After migration of config data, Set the realmEnabled/realmMode
             // flag to true
