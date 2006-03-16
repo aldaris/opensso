@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.1 2005-11-01 00:31:25 arvindp Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.2 2006-03-16 18:30:25 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -585,6 +585,10 @@ public class OrgConfigViaAMSDK {
 
     static String getNamingAttrForOrg() {
         return AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATION);
+    }
+
+    static String getNamingAttrForOrgUnit() {
+        return AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATIONAL_UNIT);
     }
 
     public Set getSDKAttributeValue(String key) {

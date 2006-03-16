@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.2 2006-03-06 21:29:57 arviranga Exp $
+ * $Id: DNMapper.java,v 1.3 2006-03-16 18:29:55 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -233,8 +233,7 @@ public class DNMapper {
      * Returns realm name in "/" separated format for the provided
      * realm/organization name in DN format.
      * 
-     * @param orgName
-     *            Name of organization.
+     * @param orgName Name of organization.
      * @return DN format "/" separated realm name of organization name.
      */
     public static String orgNameToRealmName(String orgName) {
@@ -266,8 +265,8 @@ public class DNMapper {
     /*
      * Splits a string and returns the tokens.
      * 
-     * @param str original String. @return a String Array object of tokens after
-     * split.
+     * @param str original String. 
+     * @return a String Array object of tokens after split.
      */
     static String[] splitString(String str) {
         String[] strArray = new String[2];
@@ -283,9 +282,11 @@ public class DNMapper {
     /*
      * Replaces a string with another string in a String object.
      * 
-     * @param originalString original String. @param token string to be
-     * replaced. @param newString new string to replace token. @return a String
-     * object after replacement.
+     * @param originalString original String. 
+     * @param token string to be replaced. 
+     * @param newString new string to replace token. 
+     * @return a String object after replacement.
+     * 
      */
     static String replaceString(String originalString, String token,
             String newString) {
