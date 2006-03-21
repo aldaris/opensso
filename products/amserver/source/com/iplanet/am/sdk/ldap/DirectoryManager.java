@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManager.java,v 1.1 2005-11-01 00:29:29 arvindp Exp $
+ * $Id: DirectoryManager.java,v 1.2 2006-03-21 20:18:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3015,8 +3015,11 @@ public class DirectoryManager implements AMConstants,
                     + "access rights to register service: " + serviceName, e);
             throw new AMException(token, "460");
         } catch (EntryAlreadyExistsException e) {
-            debug.error("DirectoryManager.registerService() Service "
-                    + serviceName + " already registered", e);
+            // Log it as warning. Definition already exists. That's OK.
+            if (debug.warningEnabled()) {
+                debug.warning("DirectoryManager.registerService() Service " +
+                    serviceName + " already registered", e);
+            }
             Object args[] = { serviceName };
             String locale = CommonUtils.getUserLocale(token);
             throw new AMException(AMSDKBundle.getString("464", args, locale),
