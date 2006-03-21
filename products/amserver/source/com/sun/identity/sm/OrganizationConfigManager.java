@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.4 2006-03-16 18:30:49 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.5 2006-03-21 18:57:26 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.Set;
 
 import netscape.ldap.util.DN;
@@ -67,6 +68,10 @@ public class OrganizationConfigManager {
     private OrganizationConfigManagerImpl orgConfigImpl;
 
     static String orgNamingAttrInLegacyMode;
+
+    static Pattern svcDNpattern = Pattern.compile(DNMapper.serviceDN);
+
+    static Pattern baseDNpattern = Pattern.compile(SMSEntry.baseDN);
 
     protected static final String SERVICES_NODE = SMSEntry.SERVICES_RDN
             + SMSEntry.COMMA + SMSEntry.baseDN;
@@ -412,6 +417,12 @@ public class OrganizationConfigManager {
             throws SMSException {
         // Delete the sub-organization
         String subOrgDN = normalizeDN(subOrgName, orgDN);
+        OrganizationConfigManager subRlmConfigMgr =
+            getSubOrgConfigManager(subOrgName);
+        //set the filter "*" to be passed for the search.
+        Set subRlmSet =
+            subRlmConfigMgr.getSubOrganizationNames("*", true);
+
         if (realmEnabled) {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
@@ -422,9 +433,7 @@ public class OrganizationConfigManager {
                     // and if exist
                     // throw exception that this sub organization cannot be
                     // deleted.
-                    OrganizationConfigManager subOrgConfigMgr = 
-                        getSubOrgConfigManager(subOrgName);
-                    if (!subOrgConfigMgr.getSubOrganizationNames().isEmpty()) {
+                    if ((subRlmSet !=null) && (!subRlmSet.isEmpty())) {
                         throw (new SMSException(SMSEntry.bundle
                                 .getString("sms-entries-exists"),
                                 "sms-entries-exists"));
@@ -444,27 +453,77 @@ public class OrganizationConfigManager {
                         "sms-INVALID_SSO_TOKEN"));
             }
         }
+
         // If in coexistenceMode, delete the corresponding organization
         if (coexistMode) {
             String amsdkName = DNMapper.realmNameToAMSDKName(subOrgDN);
             amsdk.deleteSubOrganization(amsdkName);
         }
+
+        // remove the delegation privileges for the subrealms.
+        if ((recursive) && (subRlmSet !=null) && (!subRlmSet.isEmpty())) {
+            // if recursive check if there are sub organization entries
+            // and if exist delete the delegation privileges for the
+            // sub realms.
+            // This is for both realm and legacy modes.
+
+            try {
+                Iterator subRlms = subRlmSet.iterator();
+                while (subRlms.hasNext()) {
+                    String subRlmDN =
+                        normalizeDN((String) subRlms.next(), subOrgDN);
+                    if (subRlmDN.indexOf(subOrgDN) < 0) {
+                        subRlmDN =
+                            svcDNpattern.matcher(subRlmDN).replaceAll(subOrgDN);
+                    }
+                    // In legacy mode, the 'ou=services' is removed by
+                    // the normalizeDN code while
+                    // converting the realm to sdk name. Look for that
+                    // and add again to delete the privileges.
+
+                    if (subRlmDN.indexOf(DNMapper.serviceDN) < 0) {
+                        subRlmDN = baseDNpattern.matcher(subRlmDN).
+                            replaceAll(DNMapper.serviceDN);
+                    }
+                    com.sun.identity.delegation.DelegationUtils
+                        .deleteRealmPrivileges(token, subRlmDN);
+                }
+            } catch (SSOException ssoe) {
+                SMSEntry.debug.error("OrganizationConfigManager" +
+                    "::deleteSubOrganization "+
+                        "SSOException in deleting permissions for subrealms",
+                            ssoe);
+                throw (new SMSException(SMSEntry.bundle.getString(
+                    "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
+            } catch (DelegationException de) {
+                SMSEntry.debug.error("OrganizationConfigManager" +
+                    "::deleteSubOrganization " +
+                        "DelegationException in deleting permission " +
+                            "for subrealms", de);
+                throw (new SMSException(SMSEntry.bundle.getString(
+                    "sms-invalid_delegation_privilege"),
+                        "sms-invalid_delegation_privilege"));
+            }
+        }
+
         // remove the delegation privileges for the realm.
         try {
             com.sun.identity.delegation.DelegationUtils.deleteRealmPrivileges(
                     token, subOrgDN);
         } catch (SSOException ssoe) {
-            if (SMSEntry.debug.messageEnabled()) {
-                SMSEntry.debug.message("OrganizationConfigManager"
-                        + "::deleteSubOrganization "
-                        + "SSOException in deleting permissions ", ssoe);
-            }
+            SMSEntry.debug.error("OrganizationConfigManager"
+                + "::deleteSubOrganization "
+                    + "SSOException in deleting permissions for realms", ssoe);
+            throw (new SMSException(SMSEntry.bundle.getString(
+                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
+
         } catch (DelegationException de) {
-            if (SMSEntry.debug.messageEnabled()) {
-                SMSEntry.debug.message("OrganizationConfigManager"
-                        + "::deleteSubOrganization "
-                        + "DelegationException in deleting permission ", de);
-            }
+            SMSEntry.debug.error("OrganizationConfigManager"
+                + "::deleteSubOrganization "
+                 + "DelegationException in deleting permission for realms", de);
+            throw (new SMSException(SMSEntry.bundle.getString(
+                "sms-invalid_delegation_privilege"),
+                    "sms-invalid_delegation_privilege"));
         }
     }
 
