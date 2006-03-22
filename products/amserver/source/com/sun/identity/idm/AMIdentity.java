@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.3 2006-01-06 22:51:50 arviranga Exp $
+ * $Id: AMIdentity.java,v 1.4 2006-03-22 07:44:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -959,7 +959,7 @@ public final class AMIdentity {
      * 
      * @return String representing the universal identifier of this object.
      */
-    protected String getUniversalId() {
+    public String getUniversalId() {
         return univId;
     }
 
