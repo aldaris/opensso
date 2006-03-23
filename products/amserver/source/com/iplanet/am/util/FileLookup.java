@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileLookup.java,v 1.1 2005-11-01 00:29:38 arvindp Exp $
+ * $Id: FileLookup.java,v 1.2 2006-03-23 19:10:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.common.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -240,7 +241,7 @@ public class FileLookup {
                 }
 
                 if (haveComponent) {
-                    thisFilePath += (File.separator + component);
+                    thisFilePath += (Constants.FILE_SEPARATOR + component);
 
                     if (haveClientPath) {
                         int len = clientkeys.length;
@@ -271,7 +272,7 @@ public class FileLookup {
                     int z = 0;
                     while (orgKeys > 0) {
                         String iPath = orgPathKeys[z++];
-                        oPath = thisFilePath + File.separator + iPath;
+                        oPath = thisFilePath + Constants.FILE_SEPARATOR + iPath;
 
                         if (haveClientPath) {
                             int len = clientkeys.length;
@@ -488,16 +489,16 @@ public class FileLookup {
     private static String buildClientPath(String[] keys, int len) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < len; i++) {
-            sb.append(File.separator).append(keys[i]);
+            sb.append(Constants.FILE_SEPARATOR).append(keys[i]);
         }
         return sb.toString();
     }
 
     /*
-     * Tokenize clientPath on File.separator.
+     * Tokenize clientPath on "/".
      */
     private static String[] getClientPathKeys(String cp) {
-        StringTokenizer st = new StringTokenizer(cp, File.separator);
+        StringTokenizer st = new StringTokenizer(cp, Constants.FILE_SEPARATOR);
         int numTokens = st.countTokens();
         String[] keyArray = new String[numTokens];
         for (int i = 0; i < numTokens; i++) {
@@ -507,12 +508,13 @@ public class FileLookup {
     }
 
     private static String[] getOrgPathKeys(String orgPath) {
-        StringTokenizer st = new StringTokenizer(orgPath, File.separator);
+        StringTokenizer st = new StringTokenizer(
+            orgPath, Constants.FILE_SEPARATOR);
         int numTokens = st.countTokens();
         String[] keyArray = new String[numTokens];
         for (int i = 0; i < numTokens; i++) {
             keyArray[i] = orgPath;
-            int k = orgPath.lastIndexOf(File.separator);
+            int k = orgPath.lastIndexOf(Constants.FILE_SEPARATOR);
             if (k != -1) {
                 orgPath = orgPath.substring(0, k);
             }

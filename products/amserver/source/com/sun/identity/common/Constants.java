@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.3 2006-01-18 00:52:37 mrudul_uchil Exp $
+ * $Id: Constants.java,v 1.4 2006-03-23 19:10:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -962,4 +962,9 @@ public interface Constants {
     /** Default organization location properties name. */
     public static final String DEFAULT_ORGANIZATION =
         "com.iplanet.am.defaultOrg";
+
+    /**
+     * Constant for file separator
+     */
+    String FILE_SEPARATOR = "/";
 }

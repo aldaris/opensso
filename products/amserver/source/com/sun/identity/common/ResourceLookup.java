@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceLookup.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
+ * $Id: ResourceLookup.java,v 1.3 2006-03-23 19:10:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,9 +94,8 @@ public class ResourceLookup {
                     null, orgFilePath, clientPath, filename);
 
             for (int i = 0; i < orderedPaths.length; i++) {
-                resourceName = new StringBuffer(resourceDir).append(
-                        File.separator).append(orderedPaths[i].toString())
-                        .toString();
+                resourceName = resourceDir + Constants.FILE_SEPARATOR +
+                    orderedPaths[i].toString();
                 if ((resourceUrl = getResourceURL(context, resourceName))
                         != null)
                 {

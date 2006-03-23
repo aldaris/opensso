@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.4 2006-02-03 07:54:49 veiming Exp $
+ * $Id: AuthUtils.java,v 1.5 2006-03-23 19:10:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@
 package com.sun.identity.authentication.service;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -147,8 +146,8 @@ public class AuthUtils {
         SystemProperties.get(Constants.REWRITE_AS_PATH,"")).booleanValue();
 
     private static final String templatePath =
-        File.separator + ISAuthConstants.CONFIG_DIR + File.separator +
-            ISAuthConstants.AUTH_DIR;
+        Constants.FILE_SEPARATOR + ISAuthConstants.CONFIG_DIR +
+        Constants.FILE_SEPARATOR + ISAuthConstants.AUTH_DIR;
     private static final String rootSuffix = SMSEntry.getRootSuffix();
     
     // dsame version
@@ -720,8 +719,7 @@ public class AuthUtils {
         LoginState loginState = getLoginState(authContext);
         String relFileName = null;
         if (loginState != null) {
-            relFileName =
-            getLoginState(authContext).getFileName(fileName);
+            relFileName = getLoginState(authContext).getFileName(fileName);
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getFileName:AuthUtilsFile name is :"
@@ -1253,9 +1251,8 @@ public class AuthUtils {
             fileRoot,locale,null,filePath,fileName,
             templatePath,true);
         } catch (Exception e) {
-            templateFile = new StringBuffer().append(templatePath)
-            .append(fileRoot).append(File.separator)
-            .append(fileName).toString();
+            templateFile = templatePath + fileRoot +
+                Constants.FILE_SEPARATOR + fileName;
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getDefaultFileName:templateFile is :" +
@@ -3446,13 +3443,11 @@ public class AuthUtils {
         String templateFile = null;
         try {
             templateFile = ResourceLookup.getFirstExisting(
-            servletContext,
-            fileRoot,strlocale,null,filePath,fileName,
-            templatePath,true);
+                servletContext, fileRoot, strlocale, null, filePath, fileName,
+                templatePath, true);
         } catch (Exception e) {
-            templateFile = new StringBuffer().append(templatePath)
-            .append(fileRoot).append(File.separator)
-            .append(fileName).toString();
+            templateFile = templatePath + fileRoot +
+                Constants.FILE_SEPARATOR + fileName;
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getDefaultFileName:templateFile is :" +
@@ -3585,11 +3580,11 @@ public class AuthUtils {
         }
         
         if ((filePath != null) && (filePath.length() > 0))  {
-            filePathBuffer.append(File.separator).append(filePath);
+            filePathBuffer.append(Constants.FILE_SEPARATOR).append(filePath);
         }
         
         if ((serviceName != null) && (serviceName.length() >0)) {
-            filePathBuffer.append(File.separator).append(serviceName);
+            filePathBuffer.append(Constants.FILE_SEPARATOR).append(serviceName);
         }
         
         String newFilePath = filePathBuffer.toString();
@@ -3618,7 +3613,8 @@ public class AuthUtils {
             while ((remOrgDN != null) && (remOrgDN.length() != 0)
             && !remOrgDN.equals(getRootSuffix())) {
                 orgName = DNUtils.DNtoName(remOrgDN);
-                orgFilePath = orgFilePath.insert(0,File.separator + orgName);
+                orgFilePath = orgFilePath.insert(
+                    0, Constants.FILE_SEPARATOR + orgName);
                 int i = remOrgDN.indexOf(",");
                 if (i != -1) {
                     remOrgDN = remOrgDN.substring(i+1);
@@ -3674,11 +3670,9 @@ public class AuthUtils {
             filePath,fileName,templatePath,servletContext,servletRequest);
         } catch (Exception e) {
             utilDebug.message("Error getting File : " + e.getMessage());
-            templateFile = new StringBuffer().append(templatePath)
-            .append(File.separator)
-            .append(ISAuthConstants.DEFAULT_DIR)
-            .append(File.separator)
-            .append(fileName).toString();
+            templateFile = templatePath + Constants.FILE_SEPARATOR +
+                ISAuthConstants.DEFAULT_DIR + Constants.FILE_SEPARATOR +
+                fileName;
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("File/Resource is : " + templateFile);

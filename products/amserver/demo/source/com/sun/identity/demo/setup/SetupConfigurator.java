@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConfigurator.java,v 1.3 2006-03-14 23:27:21 arviranga Exp $
+ * $Id: SetupConfigurator.java,v 1.4 2006-03-23 19:10:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,11 +32,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.jar.JarOutputStream;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
-import java.util.HashSet;
-import java.util.HashMap;
 
 import netscape.ldap.util.DN;
 
@@ -119,18 +121,19 @@ public class SetupConfigurator {
         // Tag Swap host, port and proto in server AMConfig.properties
         String zipName = "amserver.war";
         String entryName = "WEB-INF/classes/AMConfig.properties";
-        tagSwap(server_proto, server_host, server_port, SERVER_PROTO, 
-            SERVER_HOST, SERVER_PORT, entryName, zipName);
-        tagSwap(client_proto, client_host, client_port, CLIENT_PROTO, 
-            CLIENT_HOST, CLIENT_PORT, entryName, zipName);       
+        Map mapSwap = new HashMap();
+        mapSwap.put(SERVER_PROTO, server_proto);
+        mapSwap.put(SERVER_HOST, server_host);
+        mapSwap.put(SERVER_PORT, server_port);
+        mapSwap.put(CLIENT_PROTO, client_proto);
+        mapSwap.put(CLIENT_HOST, client_host);
+        mapSwap.put(CLIENT_PORT, client_port);
+        tagSwap(mapSwap, entryName, zipName);       
         
         // Tag Swap host, port and proto in client AMConfig.properties
         zipName = "amdemoclient.war";
         entryName = "WEB-INF/classes/AMConfig.properties";
-        tagSwap(server_proto, server_host, server_port, SERVER_PROTO, 
-            SERVER_HOST, SERVER_PORT, entryName, zipName);
-        tagSwap(client_proto, client_host, client_port, CLIENT_PROTO, 
-            CLIENT_HOST, CLIENT_PORT, entryName, zipName);
+        tagSwap(mapSwap, entryName, zipName);
 
         // Mark this file for automatic cleanup
         ldapjdkJar.deleteOnExit();
@@ -305,13 +308,19 @@ public class SetupConfigurator {
         log("You can now deploy amserver.war file created in this directory");
     }
 
-    // Searches the 'fromProto', 'fromHost', 'fromPort', in 'entryName' 
-    // from 'jarFileName' and replaces the 'fromProto', 'fromHost', 'fromPort'
-    // with 'proto', 'host', 'port'.
-    private static void tagSwap(String proto, String host, String port,
-    String fromProto, String fromHost, String fromPort, 
-    String entryName, String jarFileName) {
-        
+    /**
+     * Swaps the tags of a resource in a <code>.war</code> file and 
+     * re-generate the <code>.war</code> file.
+     *
+     * @param mapSwap Map of tag to value of tag.
+     * @parma entryName Name of resource to be tag swapped.
+     * @param jarFileName Name of <code>.war</code> file.
+     */
+    private static void tagSwap(
+        Map mapSwap,
+        String entryName,
+        String jarFileName
+    ) {
         JarOutputStream newZip = null;
         try {
             // Allocate a buffer for reading the entry data.
@@ -320,8 +329,13 @@ public class SetupConfigurator {
             
             // Read the entry data and write it to the output file.
             log("Extract " + entryName + " From : " + jarFileName);
-            JarFile origJar = new JarFile(jarFileName);
-            newZip = new JarOutputStream(new FileOutputStream(jarFileName+"+"));
+
+            String origFileName = jarFileName + ".tmp";
+            File newFile = new File(jarFileName);
+            newFile.renameTo(new File(origFileName));
+
+            JarFile origJar = new JarFile(origFileName);
+            newZip = new JarOutputStream(new FileOutputStream(jarFileName));
             JarEntry entry = new JarEntry(entryName);
             Enumeration enumeration1 = origJar.entries();
             while (enumeration1.hasMoreElements()) {
@@ -329,35 +343,38 @@ public class SetupConfigurator {
                 InputStream stream1 = origJar.getInputStream(ent1);
                 buffer = new byte[1024];
                 bytesRead = 0;
-                //newZip.putNextEntry(new JarEntry(ent1.getName()));
+
                 if (entry.getName().equals(ent1.getName())) {
                     newZip.putNextEntry(entry);
                     log("doing tag swap in : " + entryName);
                     StringBuffer sb = new StringBuffer();
                     while ((bytesRead = stream1.read(buffer)) != -1) {
                         sb.append(new String(buffer, 0, bytesRead));
-                    }                 
-                    
-                    searchReplace(sb,fromHost,host); 
-                    searchReplace(sb,fromPort,port); 
-                    searchReplace(sb,fromProto,proto);
-                    
+                    }
+
+                    for (Iterator iter = mapSwap.keySet().iterator();
+                         iter.hasNext(); 
+                    ) {
+                        String key = (String)iter.next();
+                        searchReplace(sb, key, (String)mapSwap.get(key)); 
+                    }
+
                     newZip.write(sb.toString().getBytes(), 0, sb.length());
                 } else {
                     newZip.putNextEntry(ent1);
-                    //System.out.println("doing other files");
+                    // direct copy other files
                     while ((bytesRead = stream1.read(buffer)) != -1) {
                         newZip.write(buffer, 0, bytesRead);
                     }
                 }
                 stream1.close();
+                System.gc();
             }
             newZip.close();
-            File oldFile = new File(jarFileName);
+            newZip = null;
+            System.gc();
+            File oldFile = new File(origFileName);
             oldFile.delete();
-            File newFile = new File(jarFileName+"+");
-            newFile.renameTo(new File(jarFileName));
-            
         } catch (Exception exp) {
             exp.printStackTrace();
         } finally {
