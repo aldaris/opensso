@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryManager.java,v 1.3 2006-01-06 22:51:48 arviranga Exp $
+ * $Id: AMDirectoryManager.java,v 1.4 2006-03-24 20:52:15 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1639,9 +1639,14 @@ public class AMDirectoryManager implements AMConstants {
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
             // Map cMap = idRepo.getConfiguration();
-            exists = idRepo.isExists(token, type, name);
-            if (exists) {
-                continue;
+
+            // This is to avoid checking the hidden Special Repo plugin.
+            if (!idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN)) {
+                exists = idRepo.isExists(token, type, name);
+                if (exists) {
+                    continue;
+                }
             }
         }
         return exists;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.4 2006-03-22 07:44:05 veiming Exp $
+ * $Id: AMIdentity.java,v 1.5 2006-03-24 20:52:42 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,7 +175,7 @@ public final class AMIdentity {
      * is active and returns true.
      * 
      * @return true if the identity is active or if it is not configured for a
-     *         status attribute, flase otherwise.
+     *         status attribute, false otherwise.
      * @throws IdRepoException
      *             If there are repository related error conditions.
      * @throws SSOException
@@ -981,5 +981,19 @@ public final class AMIdentity {
         }
 
         return result;
+    }
+
+    /**
+     * This method determines if the identity exists and returns true or false.
+     * @return true if the identity exists or false otherwise.
+     * @throws IdRepoException If there are repository related error 
+     *         conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * @supported.api
+     */
+    public boolean isExists() throws IdRepoException, SSOException {
+
+        AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
+        return dm.isExists(token, type, name, orgName);
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.3 2006-02-05 06:29:21 veiming Exp $
+ * $Id: SpecialRepo.java,v 1.4 2006-03-24 20:53:09 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -480,7 +480,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public boolean isExists(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName() };
+        Object args[] = { NAME, IdOperation.SERVICE.getName(), type };
         throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
                 args);
     }
