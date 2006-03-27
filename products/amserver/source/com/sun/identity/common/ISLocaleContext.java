@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.5 2006-02-03 07:54:50 veiming Exp $
+ * $Id: ISLocaleContext.java,v 1.6 2006-03-27 10:00:49 rajesh_mohapatra Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,16 +53,19 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * must be in a well defined locale. Even if the user has not logged in, Access
  * Manager should respond in a locale. Hence Access Manager consults various
  * parameter to find out the locale for any given response. The order and
- * priorty of local setting is as follows Priority 0 - OS_LOCALE - value
- * returned by java.util.Locale.getDefault() Priority 1 - PLATFORM_LOCALE -
- * iplanet-am-platform-locale attribute value in iPlanetAMPlatform Service -
- * Global value for entire Access Manager Priority 2 - AUTH-LOCALE
- * iplanet-am-auth-locale attribute value in iPlantAMAuth service - Org specific
- * locale value Priority 3 - HTTP_HEADER_LOCALE - Accept-Language header of HTTP
- * Request Priority 4 - USER_LOCALE preferredlocale - iPlanetAMUser service and
- * it can be configured per org and user level Priority 5 - URL_LOCALE - locale
- * value passed as URL parameter
- * 
+ * priorty of local setting is as follows:
+ *
+ * Priority 0 - OS_LOCALE - value returned by java.util.Locale.getDefault()
+ * Priority 1 - PLATFORM_LOCALE - iplanet-am-platform-locale attribute value
+ *              in iPlanetAMPlatform Service - Global value for entire 
+ *              Access Manager
+ * Priority 2 - AUTH-LOCALE - iplanet-am-auth-locale attribute value in 
+ *              iPlantAMAuth service - Org specific locale value
+ * Priority 3 - USER_LOCALE - preferredlocale - iPlanetAMUser service and 
+ *              it can be configured per org and user level
+ * Priority 4 - HTTP_HEADER_LOCALE - Accept-Language header of HTTP Request
+ * Priority 5 - URL_LOCALE - locale value passed as URL parameter
+ *
  * Usage: There are three key parameters in the request that can decide the
  * locale of a given request. This class expects application to pass all these
  * parameters whenever they are available and use getLocale method to get the
@@ -87,9 +90,9 @@ public class ISLocaleContext {
 
     public static final int CORE_AUTH_LOCALE = 2;
 
-    public static final int HTTP_HEADER_LOCALE = 3;
-
-    public static final int USER_PREFERRED_LOCALE = 4;
+    public static final int USER_PREFERRED_LOCALE = 3;
+    
+    public static final int HTTP_HEADER_LOCALE = 4;
 
     public static final int URL_LOCALE = 5;
 
