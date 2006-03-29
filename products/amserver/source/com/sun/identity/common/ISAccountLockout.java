@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.3 2006-02-03 07:54:50 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.4 2006-03-29 23:03:38 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,8 @@ public class ISAccountLockout {
     private static final String FROM_ADDRESS = "lockOutEmailFrom";
     private static final String EMAIL_SUBJECT = "lockOutEmailSub";
     private static final String EMAIL_MESSAGE = "lockOutEmailMsg";
+    private static final String INVALID_ATTEMPTS_XML_OBJECT_CLASS =
+        "sunAMAuthAccountLockout";
     private static final String INVALID_ATTEMPTS_XML_ATTR =
         "sunAMAuthInvalidAttemptsData";
 
@@ -195,6 +197,7 @@ public class ISAccountLockout {
             }
             attrMap.put(INVALID_ATTEMPTS_XML_ATTR,invalidAttempts);
             try {
+                setLockoutObjectClass(amIdentity);
                 amIdentity.setAttributes(attrMap);
                 amIdentity.store();
                 debug.message("Stored Invalid Attempt XML ");
@@ -291,6 +294,33 @@ public class ISAccountLockout {
             acInfo = (AccountLockoutInfo) loginFailHash.get(userDN);
         }
         return acInfo;
+    }
+
+    /**
+      * Sets Lockout Object Class Attribute in <code>AMIdentity</code> Object
+      * if it's not already present.
+      *
+      * @param amIdentity the user object.
+      */
+
+    private void setLockoutObjectClass(AMIdentity amIdentity) {
+        try {
+            Set attrValueSetObjectClass = amIdentity.
+            getAttribute("objectClass");
+            if ((attrValueSetObjectClass != null) &&
+                (!attrValueSetObjectClass.contains
+                (INVALID_ATTEMPTS_XML_OBJECT_CLASS))) {
+                attrValueSetObjectClass.
+                    add(INVALID_ATTEMPTS_XML_OBJECT_CLASS);
+                Map map = new HashMap(2);
+                map.put("ObjectClass", attrValueSetObjectClass);
+                amIdentity.setAttributes(map);
+            }
+        } catch (IdRepoException e) {
+            debug.message("ISAccountLockout.setLockoutObjectClass", e);
+        } catch (SSOException e) {
+            debug.message("ISAccountLockout.setLockoutObjectClass", e);
+        }
     }
     
     /**
@@ -674,6 +704,7 @@ public class ISAccountLockout {
                     String invalidXML = createInvalidAttemptsXML(0,0,0);
                     invalidAttempts.add(invalidXML);
                     attrMap.put(INVALID_ATTEMPTS_XML_ATTR,invalidAttempts);
+                    setLockoutObjectClass(amIdentity);
                     amIdentity.setAttributes(attrMap);
                     amIdentity.store();
                 }
