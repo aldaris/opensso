@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509KeyManager.java,v 1.1 2006-01-28 09:28:37 veiming Exp $
+ * $Id: AMX509KeyManager.java,v 1.2 2006-03-30 06:53:11 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,19 +54,16 @@ public class AMX509KeyManager implements X509KeyManager {
     static ResourceBundle bundle = null;
     static AMResourceBundleCache amCache = AMResourceBundleCache.getInstance(); 
     public static Debug debug = SecurityDebug.debug;
-    static private String keyStoreType = 
+    private String keyStoreType = 
                      System.getProperty("javax.net.ssl.keyStoreType", "JKS");
-    static private String keyStoreFile = 
+    private String keyStoreFile = 
                      System.getProperty("javax.net.ssl.keyStore", null);
-    static private String keyStoreProvider = 
+    private String keyStoreProvider = 
                      System.getProperty("javax.net.ssl.keyStoreProvider", null);
     static private String certAlias = null;
     private X509KeyManager sunX509KeyManager = null;
     private KeyStore keyStore = null;
     KeyStore.Builder builder = null;
-    KeyStore.CallbackHandlerProtection callback = null;
-    private KeyManagerFactory kmf = null;
-    String passwdPrompt = null;
   
     // create sunX509KeyManager
     //
@@ -75,20 +72,57 @@ public class AMX509KeyManager implements X509KeyManager {
     //     Get instance of a "SunX509" KeyManagerFactory "kmf"
     //     init the KeyManagerFactory with the keystore
     public AMX509KeyManager() {
+        sunX509KeyManager = 
+        	initX509KeyManager(keyStoreType, keyStoreFile, keyStoreProvider, null);
+    }
+    
+    // create sunX509KeyManager
+    //
+    // for example:
+    //     Create/load a keystore
+    //     Get instance of a "SunX509" KeyManagerFactory "kmf"
+    //     init the KeyManagerFactory with the keystore
+    public AMX509KeyManager(String ksType, 
+    		                String ksFile, 
+    		                String ksProvider,
+    		                AMCallbackHandler cbHandle) {
+    	keyStoreType = ksType;
+    	keyStoreFile = ksFile;
+    	keyStoreProvider = ksProvider;
+    	
+        sunX509KeyManager = 
+        	initX509KeyManager(keyStoreType, keyStoreFile, keyStoreProvider, cbHandle);
+    }
+    
+    // create sunX509KeyManager
+    //
+    // for example:
+    //     Create/load a keystore
+    //     Get instance of a "SunX509" KeyManagerFactory "kmf"
+    //     init the KeyManagerFactory with the keystore
+    public X509KeyManager initX509KeyManager(String ksType, String ksFile, String ksProvider, AMCallbackHandler cbHandle) {
+        KeyManagerFactory kmf = null;
         // initialize KeyStore and get KeyManagerFactory 
         try {
             bundle = amCache.getResBundle(bundleName, Locale.getDefault());
-            passwdPrompt = bundle.getString("KeyStorePrompt");
-            callback = new KeyStore.CallbackHandlerProtection
+            KeyStore.CallbackHandlerProtection callback = null;
+            
+            if (cbHandle != null) {
+    	        callback = new KeyStore.CallbackHandlerProtection(cbHandle);
+    	    } else {
+                String passwdPrompt = bundle.getString("KeyStorePrompt");
+                callback = new KeyStore.CallbackHandlerProtection
                                        (new AMCallbackHandler(passwdPrompt));
-            if (keyStoreType.equalsIgnoreCase("JKS") 
-                             || keyStoreType.equalsIgnoreCase("PKCS12")) {
-                builder = KeyStore.Builder.newInstance(keyStoreType, 
-                             Security.getProvider(keyStoreProvider), 
-                             new File(keyStoreFile), callback);
+    	    }
+
+            if (ksType.equalsIgnoreCase("JKS") 
+                             || ksType.equalsIgnoreCase("PKCS12")) {
+                builder = KeyStore.Builder.newInstance(ksType, 
+                             Security.getProvider(ksProvider), 
+                             new File(ksFile), callback);
             } else if (keyStoreType.equalsIgnoreCase("PKCS11")) {
-                builder = KeyStore.Builder.newInstance(keyStoreType, 
-                             Security.getProvider(keyStoreProvider), callback);
+                builder = KeyStore.Builder.newInstance(ksType, 
+                             Security.getProvider(ksProvider), callback);
             }
                     
             KeyStoreBuilderParameters param = 
@@ -99,8 +133,7 @@ public class AMX509KeyManager implements X509KeyManager {
         } catch (Exception e) {
             debug.error(e.toString());
         }
-
-        sunX509KeyManager = (X509KeyManager) kmf.getKeyManagers()[0];
+        return (X509KeyManager) kmf.getKeyManagers()[0];
     }
 
     /**
@@ -182,9 +215,9 @@ public class AMX509KeyManager implements X509KeyManager {
     */
     public X509Certificate[]  getCertificateChain(String alias)
     {
-             X509Certificate[] certchain = null;
+        X509Certificate[] certchain = null;
         try {
-                   KeyStore keystore = builder.getKeyStore();
+            KeyStore keystore = builder.getKeyStore();
             KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) 
                 keystore.getEntry(alias, builder.getProtectionParameter(alias));
             if (entry != null) {

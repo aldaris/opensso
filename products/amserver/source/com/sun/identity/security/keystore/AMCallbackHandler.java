@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCallbackHandler.java,v 1.1 2006-01-28 09:28:37 veiming Exp $
+ * $Id: AMCallbackHandler.java,v 1.2 2006-03-30 06:53:10 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,47 +50,45 @@ public class AMCallbackHandler implements CallbackHandler {
     static ResourceBundle bundle = null;
     static AMResourceBundleCache amCache = AMResourceBundleCache.getInstance(); 
     static String passwdPrompt = null;
-    static String passWDFile = System.getProperty(
-        "com.sun.identity.security.keyStorePasswordFile", null);
-    static transient String keystorePW = System.getProperty(
-        "javax.net.ssl.keyStorePassword", null);
     
     static {
-        if (SecurityDebug.debug.messageEnabled()) {
-            SecurityDebug.debug.message(
-                "AMCallbackHandler() : Keystore Password File ---> " +
-                    passWDFile); 
-        }
-
         bundle = amCache.getResBundle(bundleName, Locale.getDefault());
         passwdPrompt = bundle.getString("KeyStorePrompt");
-
-        if (passWDFile != null) {
-            try {
-                    FileInputStream fis = new FileInputStream(passWDFile);
-                    InputStreamReader isr = new InputStreamReader(fis);
-                    BufferedReader br = new BufferedReader(isr);
-                    keystorePW = (String) AccessController.doPrivileged(
-                    new DecodeAction(br.readLine())); 
-                fis.close(); 
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                    SecurityDebug.debug.error("AMCallbackHandler: Unable to " +
-                        "read keystore password file " + passWDFile);
-            }
-        }
     }
     
     public AMCallbackHandler() {
-            this(passwdPrompt);
+        this(passwdPrompt);
     }
     
     public AMCallbackHandler(String prompt) {
-            super();
+        super();
+        String passWDFile = System.getProperty(
+                       "com.sun.identity.security.keyStorePasswordFile", null);
+        String keystorePW = System.getProperty(
+                       "javax.net.ssl.keyStorePassword", null);
             
-            if (prompt != null) {
-                passwdPrompt = prompt;
+        if (prompt == null) {
+            prompt = passwdPrompt;
+        }
+        
+        if (passWDFile != null) {
+            try {
+                FileInputStream fis = new FileInputStream(passWDFile);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                keystorePW = (String) AccessController.doPrivileged(
+                    new DecodeAction(br.readLine()));
+                fis.close(); 
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                SecurityDebug.debug.error("AMCallbackHandler: Unable to " +
+                        "read keystore password file " + passWDFile);
             }
+        }
+
+        if (keystorePW != null) {
+        	password = keystorePW.toCharArray();
+        }
     }
     
     public void handle(Callback[] callbacks)
@@ -106,7 +104,7 @@ public class AMCallbackHandler implements CallbackHandler {
                     }
                     PasswordCallback pc = (PasswordCallback) callbacks[i];
                     
-                    if (keystorePW == null) {
+                    if (password == null) {
                         if (SecurityDebug.debug.messageEnabled()) {
                             SecurityDebug.debug.message(
                                 "AMCallbackHandler() :  Prompt Password ");
@@ -121,10 +119,10 @@ public class AMCallbackHandler implements CallbackHandler {
                         System.out.flush();
                         pc.setPassword(readPassword(System.in));
                     } else {
-                        pc.setPassword(keystorePW.toCharArray());
+                        pc.setPassword(password);
                     }
                 } else {
-                           SecurityDebug.debug.error("Got UnknownCallback");
+                    SecurityDebug.debug.error("Got UnknownCallback");
                     break;
                 }
             }
@@ -137,7 +135,7 @@ public class AMCallbackHandler implements CallbackHandler {
     }
 
     // Reads user password from given input stream.
-    private static char[] readPassword(InputStream in) throws IOException {
+    private char[] readPassword(InputStream in) throws IOException {
         char[] lineBuffer;
         char[] buf;
         int i;
@@ -182,19 +180,52 @@ public class AMCallbackHandler implements CallbackHandler {
                 return null;
             }
 
-            char[] ret = new char[offset];
-            System.arraycopy(buf, 0, ret, 0, offset);
+            password = new char[offset];
+            System.arraycopy(buf, 0, password, 0, offset);
             Arrays.fill(buf, ' ');
-
-            return ret;
+            cleared = false;
+            
+            return password;
     }
 
+    /**
+     * Clears the password so that sensitive data is no longer present
+     * in memory. This should be called as soon as the password is no
+     * longer needed.
+     */
+    public synchronized void clear() {
+        int i;
+        int len = password.length;
+
+        for(i=0; i < len; i++) {
+            password[i] = 0;
+        }
+        cleared = true;
+    }
+    
+    /**
+     * The finalizer clears the sensitive information before releasing
+     * it to the garbage collector, but it should have been cleared manually
+     * before this point anyway.
+     */
+    protected void finalize() throws Throwable {
+        clear();
+    }
+    
     /**
      * Set password for key store 
      * @param passwd Value of string to be set 
      */
-    static public void setPassword(String passwd) {
-            keystorePW = passwd;
+    public void setPassword(String pw) {
+        password = pw.toCharArray();
+        cleared = false;
     }
+
+    // The password, stored as a char[] so we can clear it.  Passwords
+    // should never be stored in Strings because Strings can't be cleared.
+    char[] password = null;
+
+    // true if the char[] has been cleared of sensitive information
+    boolean cleared;
 }
         
