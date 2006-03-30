@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryManager.java,v 1.4 2006-03-24 20:52:15 goodearth Exp $
+ * $Id: AMDirectoryManager.java,v 1.5 2006-03-30 22:50:33 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1564,6 +1564,40 @@ public class AMDirectoryManager implements AMConstants {
         boolean amsdkIncluded = false;
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
+
+            // This is to avoid checking the hidden Special Repo plugin
+            // for non special users while getting memberships.
+            if (idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN)) {
+
+                if (type.equals(IdType.USER)) {
+                    /* Iterating through to get out the special identities and
+                     * compare with the name sent to get memberships.
+                     * If name is not in the list of special identities go back.
+                     * This is for the scenerio, when no datastore is
+                     * configured, but need the special identity for
+                     * authentication.
+                     */
+
+                    IdSearchResults results =
+                        getSpecialIdentities(token, type, amOrgName);
+
+                    Set identities = results.getSearchResults();
+                    Set specialNames;
+                    //iterating through to get the special identity names.
+                    if ((identities != null) && (!identities.isEmpty())) {
+                        specialNames = new HashSet(identities.size() *2);
+                        for (Iterator i = identities.iterator();i.hasNext();){
+                            specialNames.add(((AMIdentity)i.next()).getName().
+                                toLowerCase());
+                        }
+                        if (!specialNames.contains(name)) {
+                            continue;
+                        }
+                    }
+                }
+            }
+
             if (!idRepo.getSupportedTypes().contains(membershipType)) {
                 // IdRepo plugin does not support the idType for
                 // memberships
