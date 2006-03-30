@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.2 2006-01-30 20:58:44 veiming Exp $
+ * $Id: LogConstants.java,v 1.3 2006-03-30 07:00:31 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,28 +250,12 @@ public class LogConstants {
         "iplanet-am-logging-verifier-action-class";
 
     /**
-     * Attribute defining the Directory where the certificate DB is stored.
+     * Attribute defining the Directory where the logger certificate 
+     * store is stored.
      */
-    public static final String CERT_DB_DIR =
-        "iplanet-am-logging-certificate-database-directory";
+    public static final String LOGGER_CERT_STORE =
+        "iplanet-am-logging-secure-certificate-store";
 
-    /**
-     * Property defining the Prefix for the certificate database.
-     */
-    public static final String CERT_DB_PREFIX =
-        "iplanet-am-logging-certificate-database-prefix";
-
-    /**
-     * Property defining the Prefix for the key database
-     */
-    public static final String KEY_DB_PREFIX =
-        "iplanet-am-logging-key-database-prefix";
-    /**
-     * Attribute defining the Security Module Name
-     */
-    public static final String SECMOD_DB_NAME =
-        "iplanet-am-logging-security-module-name";
-    
     /**
      * Attribute defining the Class that implements the custom
      * debug method in the case of log failure.
@@ -321,9 +305,35 @@ public class LogConstants {
     public static final String SECURE_TIMESTAMP_GENERATOR =
         "iplanet-am-logging-secure-timestamp-generator";
     
-    public static final String SECURITY_INITIALIZER =
-        "iplanet-am-logging-security-initializer-class-name";
+    /**
+     * Attribute defining the secure log helper class
+     */
+    public static final String SECURE_LOG_HELPER =
+        "iplanet-am-logging-secure-log-helper-class-name";
     
+    /**
+     * Attribute defining the default secure log helper class
+     */
+    public static final String SECURE_DEFAULT_LOG_HELPER =
+        "com.sun.identity.log.secure.SecureLogHelperJSSImpl";
+
+    /**
+     * Attribute defining the security initializer class name
+     */
+    public static final String SECURITY_INITIALIZER =
+	    "iplanet-am-logging-security-initializer-class-name";
+    
+    /**
+     * Attribute defining the security signing algorithm
+     */
+    public static final String SECURITY_SIGNING_ALGORITHM =
+	    "iplanet-am-logging-secure-signing-algorithm";
+    
+    /**
+     * Attribute defining the default security signing algorithm
+     */
+    public static final String DEFAULT_SECURITY_SIGNING_ALGORITHM =
+	    "SHA1withRSA";
 
     /**
      * Property defining whether logging is enabled
