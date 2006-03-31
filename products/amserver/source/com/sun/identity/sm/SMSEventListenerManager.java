@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.1 2005-11-01 00:31:28 arvindp Exp $
+ * $Id: SMSEventListenerManager.java,v 1.2 2006-03-31 04:21:12 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,8 +47,7 @@ class SMSEventListenerManager implements SMSObjectListener {
     protected static Map notificationObjects = Collections
             .synchronizedMap(new HashMap());
 
-    protected static Map allChanges = Collections
-            .synchronizedMap(new HashMap());
+    protected static HashMap allChanges = new HashMap();
 
     protected static Map nodeChanges = Collections
             .synchronizedMap(new HashMap());
@@ -170,7 +169,9 @@ class SMSEventListenerManager implements SMSObjectListener {
     {
         initialize(token);
         String id = SMSUtils.getUniqueID();
-        allChanges.put(id, object);
+        synchronized (allChanges) {
+            allChanges.put(id, object);
+        }
         return (id);
     }
 
@@ -205,7 +206,9 @@ class SMSEventListenerManager implements SMSObjectListener {
             no.set.remove(no);
         }
         // Also remove from allChanges
-        allChanges.remove(notificationID);
+        synchronized (allChanges) {
+            allChanges.remove(notificationID);
+        }
     }
 
     /**
@@ -229,20 +232,22 @@ class SMSEventListenerManager implements SMSObjectListener {
      * Send notification for all changes to ServiceConfigManagerImpls
      */
     private static void sendAllChangesNotification(String dn, int type) {
+        HashMap ac;
         synchronized (allChanges) {
-            Iterator items = allChanges.values().iterator();
-            while (items.hasNext()) {
-                Object obj = items.next();
-                if (obj instanceof ServiceConfigManagerImpl) {
-                    ServiceConfigManagerImpl scimpl = (
-                            ServiceConfigManagerImpl) obj;
-                    scimpl.entryChanged(dn, type);
-                }
-                if (obj instanceof OrganizationConfigManagerImpl) {
-                    OrganizationConfigManagerImpl ocimpl = 
-                        (OrganizationConfigManagerImpl) obj;
-                    ocimpl.entryChanged(dn, type);
-                }
+            ac = (HashMap) allChanges.clone();
+        }
+        Iterator items = ac.values().iterator();
+        while (items.hasNext()) {
+            Object obj = items.next();
+            if (obj instanceof ServiceConfigManagerImpl) {
+                ServiceConfigManagerImpl scimpl = (
+                        ServiceConfigManagerImpl) obj;
+                scimpl.entryChanged(dn, type);
+            }
+            if (obj instanceof OrganizationConfigManagerImpl) {
+                OrganizationConfigManagerImpl ocimpl = 
+                    (OrganizationConfigManagerImpl) obj;
+                ocimpl.entryChanged(dn, type);
             }
         }
     }
