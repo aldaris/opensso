@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2006-02-01 22:16:04 mrudul_uchil Exp $
+   $Id: build.xml,v 1.7 2006-03-31 05:07:01 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -112,6 +112,12 @@
         </concat>
         <copy file="${xml.dir}/sms.dtd" 
               todir="${classes.dir}/com/sun/identity/sm"/>
+        <copy todir="${classes.dir}/com/sun/identity/log/messageid">
+              <fileset dir="${xml.dir}/log">
+                <include name="*.xml" />
+                <include name="*.dtd" />
+              </fileset>
+        </copy>
     </target>
 
     <target name="doc" depends="preparebuild">
