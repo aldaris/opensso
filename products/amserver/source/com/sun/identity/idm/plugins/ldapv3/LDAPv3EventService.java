@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.4 2006-01-30 20:58:44 veiming Exp $
+ * $Id: LDAPv3EventService.java,v 1.5 2006-04-03 22:25:53 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,9 @@ public class LDAPv3EventService implements Runnable {
 
     private static final String LDAPv3Config_AUTHPW =
         "sun-idrepo-ldapv3-config-authpw";
+    
+    private static final String LDAPv3Config_LDAP_TIME_LIMIT =
+        "sun-idrepo-ldapv3-config-time-limit";
 
     private static final String CLASS_NAME = 
         "com.sun.identity.idm.plugins.ldapv3.LDAPv3EventService";
@@ -414,7 +417,7 @@ public class LDAPv3EventService implements Runnable {
             cons.setServerControls(adCtrl);
             attrs = new String[] { "objectclass", ATTR_WHEN_CREATED,
                     ATTR_WHEN_CHANGED, ATTR_IS_DELETED, ATTR_OBJECT_GUID };
-            if (filter == null || !filter.equalsIgnoreCase("(objectclass=*)")) {
+            if (filter == null) {
                 debugger.error("LDAPv3EventService.addListener: "
                         + "Filter has to be (objectclass=*)");
                 Object[] args = { CLASS_NAME };
@@ -985,34 +988,58 @@ public class LDAPv3EventService implements Runnable {
             conn = new LDAPConnection();
         }
 
+        int timeLimit = getPropertyIntValue(pluginConfig,
+                LDAPv3Config_LDAP_TIME_LIMIT, 3);
         int retry = 0;
-        while (retry <= connNumRetry) {
+        while(retry <= connNumRetry) {
             if (debugger.messageEnabled()) {
                 debugger.message("LDAPv3EventService.GetConnection retry: "
-                        + retry + " randomID=" + randomID);
+                    + retry + " randomID=" + randomID);
             }
 
             try {
+                conn.setOption(LDAPv3.PROTOCOL_VERSION, new Integer(3));
+                conn.setOption(LDAPv2.TIMELIMIT, new Integer(0));
+                conn.setOption(LDAPv2.SIZELIMIT, new Integer(0));
+                LDAPSearchConstraints constraints = conn.getSearchConstraints();
+                conn.setSearchConstraints(constraints);
+
+                if (timeLimit > 0) {
+                    conn.setConnectTimeout(timeLimit);
+                } else {
+                    conn.setConnectTimeout(3);
+                }
                 if ((authid != null) && (authpw != null)) {
                     conn.connect(3, serverNames, ldapPort, authid, authpw);
                 } else {
                     conn.setOption(LDAPv3.PROTOCOL_VERSION, new Integer(3));
                     conn.connect(serverNames, ldapPort);
                 }
+                constraints = conn.getSearchConstraints();
+                constraints.setServerTimeLimit(0);
+                conn.setSearchConstraints(constraints);
                 conn.setOption(LDAPv2.SIZELIMIT, new Integer(0));
                 break;
-            } catch (LDAPException e) {
-                if (!_retryErrorCodes.contains("" + e.getLDAPResultCode())
-                        || retry == connNumRetry) {
-                    debugger.error("LDAPv3EventService.Connection to "
-                            + "LDAP server threw exception: " + " randomID="
-                            + randomID, e);
+            }
+            catch (LDAPException e) {
+                try {
+                    conn.disconnect();
+                } catch (LDAPException lde) {
+                    debugger.message("LDAPv3EventService disconnct " +
+                        " excection: " + lde.getLDAPResultCode());
+                }
+                if (!_retryErrorCodes.contains(""+ e.getLDAPResultCode())||
+                    retry == connNumRetry ) {
+                    debugger.error("LDAPv3EventService.Connection to " +
+                        "LDAP server threw exception: " +
+                        " randomID=" + randomID, e);
                     throw e;
                 }
                 retry++;
                 try {
                     Thread.currentThread().sleep(connRetryInterval);
-                } catch (InterruptedException ex) {
+                }
+                catch (InterruptedException ex) {
                 }
             }
         }
