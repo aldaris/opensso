@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoException.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
+ * $Id: IdRepoException.java,v 1.3 2006-04-03 22:24:18 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import com.iplanet.am.util.AMResourceBundleCache;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.Locale;
 import com.sun.identity.common.L10NMessage;
+
+import netscape.ldap.LDAPException;
 
 /**
  * The exception class whose instance is thrown if there is any error during the
@@ -59,6 +61,13 @@ public class IdRepoException extends Exception implements L10NMessage {
     private String errorCode;
 
     private Object[] args;
+
+    private LDAPException rootCause = null;
+
+    private String ldapErrCode = null;
+
+    public IdRepoException() {
+    }
 
     /**
      * @param msg
@@ -143,6 +152,26 @@ public class IdRepoException extends Exception implements L10NMessage {
     public String getErrorCode() {
         return errorCode;
     }
+
+     /**
+      * Returns the LDAP error code associated with this error message.
+      *
+      * @return Error code associated with this error message.
+      * @returns null if not cause by LDAPException.
+      * @see #IdRepoException(String, String, Object[])
+      */
+     public String getLDAPErrorCode() {
+         return ldapErrCode;
+     }
+
+     /**
+      * Replace the LDAP error code associated with this error message.
+      *
+      * @see #IdRepoException(String, String, Object[])
+      */
+     public void setLDAPErrorCode(String errorCode) {
+         ldapErrCode = errorCode;
+     }
 
     /**
      * Returns arguments for formatting this error message.

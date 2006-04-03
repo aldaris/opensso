@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManager.java,v 1.2 2006-03-21 20:18:20 goodearth Exp $
+ * $Id: DirectoryManager.java,v 1.3 2006-04-03 22:26:57 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -775,7 +775,7 @@ public class DirectoryManager implements AMConstants,
                         + "Unable to get attributes: ", e);
             }
             String locale = CommonUtils.getUserLocale(token);
-            throw new AMException(AMSDKBundle.getString("330", locale), "330");
+            throw new AMException(AMSDKBundle.getString("330", locale), "330", e);
         }
     }
 
@@ -839,7 +839,7 @@ public class DirectoryManager implements AMConstants,
                         + "Unable to get attributes: ", e);
             }
             String locale = CommonUtils.getUserLocale(token);
-            throw new AMException(AMSDKBundle.getString("330", locale), "330");
+            throw new AMException(AMSDKBundle.getString("330", locale), "330", e);
         }
     }
 
@@ -2037,7 +2037,7 @@ public class DirectoryManager implements AMConstants,
             LDAPException lex = (LDAPException) ue.getRootCause();
             int errorCode = lex.getLDAPResultCode();
             if (retryErrorCodes.contains("" + errorCode)) {
-                throw new AMException(token, Integer.toString(errorCode));
+                throw new AMException(token, Integer.toString(errorCode), ue);
             }
             if (debug.warningEnabled()) {
                 debug.warning("DirectoryManager.search(token:, entryDN: "
@@ -2642,7 +2642,7 @@ public class DirectoryManager implements AMConstants,
                     args);
         } catch (UMSException e) {
             debug.message("AMGroupImpl.searchUsers", e);
-            throw new AMException(AMSDKBundle.getString("341"), "341");
+            throw new AMException(AMSDKBundle.getString("341"), "341", e);
         }
         return result;
     }
@@ -4063,7 +4063,7 @@ public class DirectoryManager implements AMConstants,
             LDAPException lex = (LDAPException) ue.getRootCause();
             int errorCode = lex.getLDAPResultCode();
             if (retryErrorCodes.contains("" + errorCode)) {
-                throw new AMException(token, Integer.toString(errorCode));
+                throw new AMException(token, Integer.toString(errorCode), ue);
             }
         }
 

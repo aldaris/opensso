@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.5 2006-03-24 20:52:42 goodearth Exp $
+ * $Id: AMIdentity.java,v 1.6 2006-04-03 22:24:18 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.sdk.AMServiceUtils;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceManager;
@@ -221,8 +222,20 @@ public final class AMIdentity {
     public Map getAttributes(Set attrNames) throws IdRepoException,
             SSOException {
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
-        return dm
-                .getAttributes(token, type, name, attrNames, orgName, DN, true);
+
+        Map attrs = dm.getAttributes(token, type, name, attrNames,
+                orgName, DN, true);
+        CaseInsensitiveHashMap caseAttrs = new CaseInsensitiveHashMap(attrs);
+        Map resultMap = new HashMap();
+        Iterator it = attrNames.iterator();
+        while (it.hasNext()) {
+            String attrName = (String) it.next();
+            if (caseAttrs.containsKey(attrName)) {
+                resultMap.put(attrName, caseAttrs.get(attrName));
+            }
+        }
+
+        return resultMap;
     }
 
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.5 2006-03-06 21:52:52 arviranga Exp $
+ * $Id: IdUtils.java,v 1.6 2006-04-03 22:24:18 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -609,11 +609,14 @@ public final class IdUtils {
     public static IdRepoException convertAMException(AMException ame) {
         Object[] args = ame.getMessageArgs();
         String eCode = ame.getErrorCode();
+        IdRepoException ide = null;
         if (args == null) {
-            return new IdRepoException("amProfile", eCode, null);
+            ide = new IdRepoException("amProfile", eCode, null);
         } else {
-            return new IdRepoException("amProfile", ame.getErrorCode(), args);
+            ide = new IdRepoException("amProfile", ame.getErrorCode(), args);
         }
+        ide.setLDAPErrorCode(ame.getLDAPErrorCode());
+        return ide;
     }
 
     /**

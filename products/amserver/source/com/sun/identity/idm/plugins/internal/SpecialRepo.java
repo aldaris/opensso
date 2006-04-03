@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.4 2006-03-24 20:53:09 goodearth Exp $
+ * $Id: SpecialRepo.java,v 1.5 2006-04-03 22:25:08 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import com.sun.identity.authentication.internal.AuthSubject;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
@@ -187,7 +188,18 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
-        return getAttributes(token, type, name);
+        CaseInsensitiveHashMap allAtt = new CaseInsensitiveHashMap(
+            getAttributes(token, type, name));
+        Map resultMap = new HashMap();
+        Iterator it = attrNames.iterator();
+        while (it.hasNext()) {
+            String attrName = (String) it.next();
+            if (allAtt.containsKey(attrName)) {
+                resultMap.put(attrName, allAtt.get(attrName));
+            }
+        }
+        return resultMap;
+
     }
 
     /*

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryManager.java,v 1.5 2006-03-30 22:50:33 goodearth Exp $
+ * $Id: AMDirectoryManager.java,v 1.6 2006-04-03 22:32:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2247,7 +2247,12 @@ public class AMDirectoryManager implements AMConstants {
                 plugIns, IdOperation.SERVICE, type);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+            if (ServiceManager.getBaseDN().equalsIgnoreCase(amOrgName) &&
+                    (type.equals(IdType.REALM))) {
+                return (configuredPluginClasses);
+            } else {
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+            }
         }
 
         Iterator it = configuredPluginClasses.iterator();
