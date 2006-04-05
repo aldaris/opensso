@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.6 2006-04-03 22:25:53 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.7 2006-04-05 19:49:08 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1447,7 +1447,16 @@ public class LDAPv3Repo extends IdRepo {
 
         Set predefinedAttr = null;
         if (type.equals(IdType.USER)) {
-            predefinedAttr = userAtttributesAllowed;
+            if (!userAtttributesAllowed.contains("nsrole")) {
+                predefinedAttr = new CaseInsensitiveHashSet();
+                Iterator itr = userAtttributesAllowed.iterator();
+                while (itr.hasNext()) {
+                    predefinedAttr.add(itr.next());
+                }
+                predefinedAttr.add("nsrole");
+            } else {
+                predefinedAttr = userAtttributesAllowed;
+            }
         } else if (type.equals(IdType.AGENT)) {
             predefinedAttr = agentAtttributesAllowed;
         } else if (type.equals(IdType.GROUP)) {
