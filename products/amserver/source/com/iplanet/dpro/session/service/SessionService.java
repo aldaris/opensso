@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.2 2006-03-02 20:15:54 veiming Exp $
+ * $Id: SessionService.java,v 1.3 2006-04-08 17:52:50 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,9 +48,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
-
 import javax.servlet.http.HttpSession;
 
 import com.iplanet.am.sdk.AMException;
@@ -89,6 +89,11 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.Constants;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.log.LogConstants;
+import com.sun.identity.log.LogRecord;
+import com.sun.identity.log.Logger;
+import com.sun.identity.log.messageid.LogMessageProvider;
+import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.DecodeAction;
@@ -104,7 +109,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  */
 public class SessionService {
 
-    // private static String LOG_PROVIDER = "Session";
+    private static String LOG_PROVIDER = "Session";
     static private ThreadPool threadPool = null;
 
     static SSOTokenManager ssoManager = null;
@@ -125,6 +130,13 @@ public class SessionService {
 
     private static boolean logStatus = false;
 
+    private static Logger logger = null;
+    private static Logger errorLogger = null;
+    private static final String amSSOErrorLogFile = "amSSO.error";
+    private static final String amSSOLogFile = "amSSO.access";
+    
+    private static LogMessageProvider logProvider = null;
+    
     public static final String SHANDLE_SCHEME_PREFIX = "shandle:";
 
     private static final String amSessionService = "iPlanetAMSessionService";
@@ -1426,37 +1438,88 @@ public class SessionService {
         }
     }
 
+    private Logger getLogger() {
+       if (logger == null) {
+           logger = (Logger) Logger.getLogger(amSSOLogFile);
+       }
+       return logger;
+    }
+    
+    private LogMessageProvider getLogMessageProvider() 
+        throws Exception {
+        
+        if (logProvider == null) {
+            logProvider =
+                MessageProviderFactory.getProvider(LOG_PROVIDER);
+        }
+        return logProvider;
+    }
+
     public void logIt(InternalSession sess, String id) {
-        if (!logStatus) {
+        if(!logStatus) {
             return;
         }
-        SessionLogHelper logHelper = SessionLogHelperFactory
-                .getSessionLogHelper();
-        if (logHelper != null) {
-            try {
-                logHelper.logMessage(sess, id, getSessionServiceToken());
-            } catch (Exception ex) {
-                sessionDebug.error("Failed to log message", ex);
-            }
+        try {            
+             String sidString = sess.getID().toString();
+             String clientID = sess.getClientID();
+             String uidData = null;
+             if ((clientID == null) || (clientID.length() < 1)) {
+                uidData = "N/A";
+             } else {
+                StringTokenizer st = new StringTokenizer(clientID, ",");
+                uidData = (st.hasMoreTokens()) ? st.nextToken() : clientID;  
+             }
+             String[] data = {uidData};
+             LogRecord lr = 
+                 getLogMessageProvider().createLogRecord(id, data, null);
+
+             lr.addLogInfo(LogConstants.LOGIN_ID_SID, sidString);
+
+             String amCtxID = sess.getProperty(Constants.AM_CTX_ID);
+             String clientDomain = sess.getClientDomain();
+             String ipAddress = sess.getProperty("Host");
+             String hostName = sess.getProperty("HostName");
+
+             lr.addLogInfo(LogConstants.CONTEXT_ID, amCtxID);
+             lr.addLogInfo(LogConstants.LOGIN_ID, clientID);
+             lr.addLogInfo(LogConstants.LOG_LEVEL, lr.getLevel().toString());
+             lr.addLogInfo(LogConstants.DOMAIN, clientDomain);
+             lr.addLogInfo(LogConstants.IP_ADDR, ipAddress);
+             lr.addLogInfo(LogConstants.HOST_NAME, hostName);
+             getLogger().log(lr, getSessionServiceToken());
+        } catch(Exception ex) {
+             sessionDebug.error("SessionService.logIt(): " +
+                  "Cannot write to the session log file: ", ex);
         }
     }
 
     public void logSystemMessage(String msgID, Level level) {
-
-        if (!logStatus) {
+        
+        if(!logStatus) {
             return;
+        }        
+        if (errorLogger == null) {
+            errorLogger = 
+                (Logger) Logger.getLogger(amSSOErrorLogFile);
         }
-        SessionLogHelper logHelper = SessionLogHelperFactory
-                .getSessionLogHelper();
-        if (logHelper != null) {
-            try {
-                logHelper.logSystemMessage(msgID, level,
-                        getSessionServiceToken());
-            } catch (Exception ex) {
-                sessionDebug.error("Failed to log error message", ex);
-            }
-        }
-    }
+        try {           
+            String[] data = {msgID};
+            LogRecord lr = 
+                getLogMessageProvider().createLogRecord(msgID, 
+                                                        data, 
+                                                        null);
+            SSOToken serviceToken = getSessionServiceToken();         
+            lr.addLogInfo(LogConstants.LOGIN_ID_SID, 
+                          serviceToken.getTokenID().toString());      
+            lr.addLogInfo(LogConstants.LOGIN_ID, 
+                          serviceToken.getPrincipal().getName());           
+            errorLogger.log(lr, serviceToken);
+        } catch(Exception ex) {
+            sessionDebug.error("SessionService.logSystemMessage(): " +
+                               "Cannot write to the session error " +
+                               "log file: ", ex);
+        }        
+    }    
 
     private SSOTokenManager getSSOTokenManager() throws SSOException {
         if (ssoManager == null) {

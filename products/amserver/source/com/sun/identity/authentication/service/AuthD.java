@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.5 2006-02-08 19:04:05 mrudul_uchil Exp $
+ * $Id: AuthD.java,v 1.6 2006-04-08 17:54:16 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 
 package com.sun.identity.authentication.service;
 
+import java.io.IOException;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,6 +67,10 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.log.Logger;
+import com.sun.identity.log.messageid.MessageProviderFactory;
+import com.sun.identity.log.messageid.LogMessageProvider;
+import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -729,6 +734,7 @@ public class AuthD  {
     ////////////////////////////////////////////////////////////////
     //  Other utilities
     ////////////////////////////////////////////////////////////////
+    com.sun.identity.log.Logger logger=null;
     
     /**
       * Writes a log record.
@@ -743,22 +749,46 @@ public class AuthD  {
       */
     public void logIt(
         String[] s,
-        int type,
-        String messageName,
+        int type, 
+        String messageName, 
         Hashtable ssoProperties) {
         if (logStatus && (s != null)) {
-            AuthenticationLogHelper logHelper =
-                AuthenticationLogHelperFactory.getLogHelper();
-            SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+            try {
+	        LogMessageProviderBase provider = 
+                (LogMessageProviderBase)MessageProviderFactory.getProvider(
+		"Authentication");
 
-            if (logHelper != null) {
-                if (type == LOG_ERROR) {
-                    logHelper.logError(messageName, s, ssoProperties, ssoToken);
+                com.sun.identity.log.LogRecord lr = null;
+                
+	        SSOToken ssot = (SSOToken) AccessController.doPrivileged(
+	                        AdminTokenAction.getInstance());
+                if(ssoProperties == null) {
+	            lr = provider.createLogRecord(messageName, s, ssot);
                 } else {
-                    logHelper.logMessage(messageName, s, 
-                        ssoProperties, ssoToken);
+	            lr = provider.createLogRecord(messageName, s,
+			ssoProperties);
                 }
+                
+                switch (type) {
+                    case LOG_ACCESS:
+                        logger = (com.sun.identity.log.Logger)
+                        Logger.getLogger("amAuthentication.access");
+                        logger.log(lr,ssot);
+                        break;
+                    case LOG_ERROR:
+                        logger = (com.sun.identity.log.Logger)
+                        Logger.getLogger("amAuthentication.error");
+                        logger.log(lr,ssot);
+                        break;
+                    default:
+                        logger = (com.sun.identity.log.Logger)
+                        Logger.getLogger("amAuthentication.access");
+                        logger.log(lr,ssot);
+                        break;
+                }
+            } catch(IOException ex) {
+                ex.printStackTrace();
+                debug.error("Logging exception : " + ex.getMessage());
             }
         }
     }
