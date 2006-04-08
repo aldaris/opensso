@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.6 2006-02-11 03:57:12 mrudul_uchil Exp $
+# $Id: server_env.template,v 1.7 2006-04-08 17:56:53 beomsuk Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -92,11 +92,9 @@ SMS_OBJECT_CLASS=com.sun.identity.sm.flatfile.SMSFlatFileObject
 PLATFORM_LOCALE=en_US
 CURRENT_PLATFORM_LOCALE=en_US
 AVAILABLE_LOCALES=<Value>en_US</Value>
-SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger
 AM_COEXIST=false
 AM_REALM=true
 IDREPO_DATABASE=files
 AUTH_DEFAULT_CONFIG=datastoreService
 USER_PROFILE_CHOICE=ignore
 SUCCESS_REDIRECT_URL=@CLIENT_PROTO@://@CLIENT_HOST@:@CLIENT_PORT@/amdemoclient
-AUTHENTICATION_LOGGER=com.sun.identity.demo.server.AuthenticationLogger
