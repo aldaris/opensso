@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.3 2006-02-24 00:45:29 huacui Exp $
+ * $Id: DelegationManager.java,v 1.4 2006-04-10 22:04:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,9 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.PluginSchema;
@@ -190,8 +193,8 @@ public final class DelegationManager {
      * Returns all the delegation privileges associated with the realm and
      * applicable to a subject.
      * 
-     * @param univeralId
-     *            The univeral ID of the subject
+     * @param universalId
+     *            The universal ID of the subject
      * 
      * @return set of applicable DelegationPrivilege objects.
      * 
@@ -199,23 +202,39 @@ public final class DelegationManager {
      *             for any abnormal condition
      */
 
-    public Set getPrivileges(String univeralId) throws DelegationException {
+    public Set getPrivileges(String universalId) throws DelegationException {
         Set privileges = getPrivileges();
-        if (univeralId == null) {
+        if (universalId == null) {
             return privileges;
         }
         Set applicablePrivileges = new HashSet();
         if ((privileges != null) && (!privileges.isEmpty())) {
-            Iterator iter = privileges.iterator();
-            while (iter.hasNext()) {
-                DelegationPrivilege dp = (DelegationPrivilege) iter.next();
+            AMIdentity identity = null;
+            try {
+                identity = IdUtils.getIdentity(token, universalId);
+            } catch (IdRepoException idrepo) {
+                throw (new DelegationException(idrepo.getMessage()));
+            }
+
+            for (Iterator i = privileges.iterator(); i.hasNext(); ) {
+                DelegationPrivilege dp = (DelegationPrivilege)i.next();
                 Set subjs = dp.getSubjects();
+
                 if ((subjs != null) && (!subjs.isEmpty())) {
-                    Iterator sit = subjs.iterator();
-                    while (sit.hasNext()) {
-                        String subject = (String) sit.next();
-                        if (univeralId.equalsIgnoreCase(subject)) {
-                            applicablePrivileges.add(dp);
+                    for (Iterator j = subjs.iterator(); j.hasNext(); ) {
+                        String subject = (String)j.next();
+                        try {
+                            AMIdentity id = IdUtils.getIdentity(
+                                token, subject);
+                            if (id.equals(identity)) {
+                                applicablePrivileges.add(dp);
+                                break;
+                            }
+                        } catch (IdRepoException e) {
+                            /*
+                             * ignore this exception because Identity may
+                             * not exist.
+                             */
                         }
                     }
                 }

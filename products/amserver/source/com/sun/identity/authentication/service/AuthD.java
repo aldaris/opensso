@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.6 2006-04-08 17:54:16 beomsuk Exp $
+ * $Id: AuthD.java,v 1.7 2006-04-10 22:04:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -754,21 +754,21 @@ public class AuthD  {
         Hashtable ssoProperties) {
         if (logStatus && (s != null)) {
             try {
-	        LogMessageProviderBase provider = 
-                (LogMessageProviderBase)MessageProviderFactory.getProvider(
-		"Authentication");
+                LogMessageProviderBase provider = 
+                    (LogMessageProviderBase)MessageProviderFactory.getProvider(
+                        "Authentication");
 
                 com.sun.identity.log.LogRecord lr = null;
                 
-	        SSOToken ssot = (SSOToken) AccessController.doPrivileged(
-	                        AdminTokenAction.getInstance());
+                SSOToken ssot = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
                 if(ssoProperties == null) {
-	            lr = provider.createLogRecord(messageName, s, ssot);
+                    lr = provider.createLogRecord(messageName, s, ssot);
                 } else {
-	            lr = provider.createLogRecord(messageName, s,
-			ssoProperties);
+                    lr = provider.createLogRecord(messageName, s,
+                        ssoProperties);
                 }
-                
+
                 switch (type) {
                     case LOG_ACCESS:
                         logger = (com.sun.identity.log.Logger)

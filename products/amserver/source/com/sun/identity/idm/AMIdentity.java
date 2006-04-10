@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.6 2006-04-03 22:24:18 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.7 2006-04-10 22:04:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,20 +122,23 @@ public final class AMIdentity {
         token = ssotoken;
     }
 
-    public AMIdentity(SSOToken token, String name, IdType type, String orgName,
-            String amsdkdn) {
+    public AMIdentity(
+        SSOToken token,
+        String name,
+        IdType type,
+        String orgName,
+        String amsdkdn
+    ) {
         this.name = name;
         this.type = type;
-        this.orgName = orgName;
+        this.orgName = com.sun.identity.sm.DNMapper.orgNameToDN(orgName);
         this.token = token;
         this.DN = amsdkdn;
-        if (amsdkdn == null) {
-            univId = "id=" + name + ",ou=" + type.getName() + "," + orgName;
-        } else {
-            univId = "id=" + name + ",ou=" + type.getName() + "," + orgName
-                    + ",amsdkdn=" + amsdkdn;
-            // ",amsdkdn=" + amsdkdn.replace(',','_');
-        }
+
+        univId = (amsdkdn == null) ?
+            "id=" + name + ",ou=" + type.getName() + "," + this.orgName :
+            "id=" + name + ",ou=" + type.getName() + "," + this.orgName +
+                ",amsdkdn=" + amsdkdn;
     }
 
     // General APIs
