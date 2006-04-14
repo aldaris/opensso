@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Validator.java,v 1.1 2006-04-03 18:37:41 veiming Exp $
+ * $Id: Validator.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public interface Validator {
      *         format.
      */
     public void validate(String strData)
-	throws ValidationException;
+        throws ValidationException;
 
     /**
      * Performs validation on a set of string.
@@ -49,5 +49,5 @@ public interface Validator {
      *         format.
      */
     public void validate(Set setData)
-	throws ValidationException;
+        throws ValidationException;
 }

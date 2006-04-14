@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.3 2006-04-03 22:28:16 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.4 2006-04-14 09:08:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1883,12 +1883,11 @@ public class AMSDKRepo extends IdRepo {
         String userid = username;
         try {
             if (type.equals(IdType.USER)) {
-                String pcNamingAttr =
-                    AMStoreConnection.getNamingAttribute(AMObject.PEOPLE_CONTAINER)
-;
+                String pcNamingAttr = AMStoreConnection.getNamingAttribute(
+                    AMObject.PEOPLE_CONTAINER);
                 baseDN = pcNamingAttr + "=" + getDefaultPeopleContainerName()
                     + "," + orgDN;
-                namingAttr = AMStoreConnection.getNamingAttribute(AMObject.USER);
+                namingAttr =AMStoreConnection.getNamingAttribute(AMObject.USER);
             } else if (type.equals(IdType.AGENT)) {
                 baseDN = "ou=" + getDefaultAgentContainerName() + "," + orgDN;
                 namingAttr = AMStoreConnection.getNamingAttribute(100);

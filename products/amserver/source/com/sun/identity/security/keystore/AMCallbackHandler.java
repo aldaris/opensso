@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCallbackHandler.java,v 1.2 2006-03-30 06:53:10 beomsuk Exp $
+ * $Id: AMCallbackHandler.java,v 1.3 2006-04-14 09:05:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class AMCallbackHandler implements CallbackHandler {
         }
 
         if (keystorePW != null) {
-        	password = keystorePW.toCharArray();
+            password = keystorePW.toCharArray();
         }
     }
     

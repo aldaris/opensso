@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidatorBase.java,v 1.1 2006-04-03 18:37:41 veiming Exp $
+ * $Id: ValidatorBase.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ public abstract class ValidatorBase
     implements Validator
 {
     protected static final String resourceBundleName =
-	"amValidation";
+        "amValidation";
 
     /**
      * Performs validation on a string.
@@ -44,9 +44,9 @@ public abstract class ValidatorBase
      *         format.
      */
     public void validate(String strData)
-	throws ValidationException
+        throws ValidationException
     {
-	performValidation(strData);
+        performValidation(strData);
     }
 
     /**
@@ -57,11 +57,11 @@ public abstract class ValidatorBase
      *         format.
      */
     public void validate(Set setData)
-	throws ValidationException
+        throws ValidationException
     {
-	for (Iterator iter = setData.iterator(); iter.hasNext(); ) {
-	    performValidation((String)iter.next());
-	}
+        for (Iterator iter = setData.iterator(); iter.hasNext(); ) {
+            performValidation((String)iter.next());
+        }
     }
 
     /**
@@ -72,5 +72,5 @@ public abstract class ValidatorBase
      *         format.
      */
     protected abstract void performValidation(String strData)
-	throws ValidationException;
+        throws ValidationException;
 }

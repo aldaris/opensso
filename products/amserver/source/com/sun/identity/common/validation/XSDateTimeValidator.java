@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XSDateTimeValidator.java,v 1.1 2006-04-03 18:37:41 veiming Exp $
+ * $Id: XSDateTimeValidator.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,34 +45,34 @@ public class XSDateTimeValidator
     }
 
     public static XSDateTimeValidator getInstance() {
-	return instance;
+        return instance;
     }
 
     protected void performValidation(String strData)
-	throws ValidationException
+        throws ValidationException
     {
-	if ((strData == null) || (strData.trim().length() == 0)) {
-	    throw new ValidationException(resourceBundleName, "errorCode1"); 
-	}
+        if ((strData == null) || (strData.trim().length() == 0)) {
+            throw new ValidationException(resourceBundleName, "errorCode1"); 
+        }
 
-	if (strData.charAt(strData.length() -1) != 'Z') {
-	    throw new ValidationException(resourceBundleName, "errorCode1"); 
-	}
+        if (strData.charAt(strData.length() -1) != 'Z') {
+            throw new ValidationException(resourceBundleName, "errorCode1"); 
+        }
 
-	try {
-	    DateUtils.stringToDate(strData);
+        try {
+            DateUtils.stringToDate(strData);
         } catch (ParseException pe) {
-	    throw new ValidationException(resourceBundleName, "errorCode1"); 
-	}
+            throw new ValidationException(resourceBundleName, "errorCode1"); 
+        }
     }
 
     /* Test */
     public static void main(String[] args) {
-	XSDateTimeValidator inst = getInstance();
-	try {
-	    inst.validate("2009-12-31T12:30:00.0Z");
-	} catch (ValidationException e) {
-	    System.out.println(e.getMessage());
-	}
+        XSDateTimeValidator inst = getInstance();
+        try {
+            inst.validate("2009-12-31T12:30:00.0Z");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

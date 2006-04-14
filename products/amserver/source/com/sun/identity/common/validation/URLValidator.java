@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLValidator.java,v 1.1 2006-04-03 18:37:41 veiming Exp $
+ * $Id: URLValidator.java,v 1.2 2006-04-14 09:07:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,31 +43,31 @@ public class URLValidator
     }
 
     public static URLValidator getInstance() {
-	return instance;
+        return instance;
     }
 
     protected void performValidation(String strData)
-	throws ValidationException
+        throws ValidationException
     {
-	if ((strData == null) || (strData.trim().length() == 0)) {
-	    throw new ValidationException(resourceBundleName, "errorCode3"); 
-	}
+        if ((strData == null) || (strData.trim().length() == 0)) {
+            throw new ValidationException(resourceBundleName, "errorCode3"); 
+        }
 
-	try {
-	    new URL(strData);
+        try {
+            new URL(strData);
         } catch (MalformedURLException e) {
-	    throw new ValidationException(resourceBundleName, "errorCode3"); 
-	}
+            throw new ValidationException(resourceBundleName, "errorCode3"); 
+        }
     }
 
     /** Test */
     public static void main(String[] args) {
-	URLValidator inst = getInstance();
-	try {
-	    inst.validate("http://thirdvoice.red.iplanet.com");
-	    inst.validate("abc");
-	} catch (ValidationException e) {
-	    System.out.println(e.getMessage());
-	}
+        URLValidator inst = getInstance();
+        try {
+            inst.validate("http://thirdvoice.red.iplanet.com");
+            inst.validate("abc");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

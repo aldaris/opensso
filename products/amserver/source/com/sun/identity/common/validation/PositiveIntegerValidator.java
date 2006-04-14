@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PositiveIntegerValidator.java,v 1.1 2006-04-03 18:37:40 veiming Exp $
+ * $Id: PositiveIntegerValidator.java,v 1.2 2006-04-14 09:07:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ public class PositiveIntegerValidator
     extends ValidatorBase
 {
     private static PositiveIntegerValidator instance =
-	new PositiveIntegerValidator();
+        new PositiveIntegerValidator();
 
     /**
      * Avoid instantiation of this class.
@@ -42,35 +42,35 @@ public class PositiveIntegerValidator
     }
 
     public static PositiveIntegerValidator getInstance() {
-	return instance;
+        return instance;
     }
 
     protected void performValidation(String strData)
-	throws ValidationException
+        throws ValidationException
     {
-	if ((strData == null) || (strData.trim().length() == 0)) {
-	    throw new ValidationException(resourceBundleName, "errorCode2"); 
-	}
+        if ((strData == null) || (strData.trim().length() == 0)) {
+            throw new ValidationException(resourceBundleName, "errorCode2"); 
+        }
 
-	try {
-	    int value = Integer.parseInt(strData);
+        try {
+            int value = Integer.parseInt(strData);
 
-	    if (value < 0) {
-		throw new ValidationException(resourceBundleName, "errorCode2");
-	    }
+            if (value < 0) {
+                throw new ValidationException(resourceBundleName, "errorCode2");
+            }
         } catch (NumberFormatException nfe) {
-	    throw new ValidationException(resourceBundleName, "errorCode2"); 
-	}
+            throw new ValidationException(resourceBundleName, "errorCode2"); 
+        }
     }
 
     /** Test */
     public static void main(String[] args) {
-	PositiveIntegerValidator inst = getInstance();
-	try {
-	    inst.validate("1");
-	    inst.validate("-1");
-	} catch (ValidationException e) {
-	    System.out.println(e.getMessage());
-	}
+        PositiveIntegerValidator inst = getInstance();
+        try {
+            inst.validate("1");
+            inst.validate("-1");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

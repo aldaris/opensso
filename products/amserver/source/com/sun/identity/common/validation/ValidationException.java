@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidationException.java,v 1.1 2006-04-03 18:37:41 veiming Exp $
+ * $Id: ValidationException.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,24 +37,24 @@ public class ValidationException
      * @param msg message of the exception
      */
     public ValidationException(String msg) {
-	super(msg);
+        super(msg);
     }
-										
+
     /**
      * Creates an instance of Validation Exception.
      * @param rbName Resource bundle name of the error message.
      * @param errorCode Key of the error message in the resource bundle.
      */
     public ValidationException(String rbName, String errorCode) {
-	super(rbName, errorCode, (Object[])null);
+        super(rbName, errorCode, (Object[])null);
     }
-										
+                                                                                
     /**
      * Creates an instance of Validation Exception.
      *
      * @param t Root cause of this exception.
      */
     public ValidationException(Throwable t) {
-	super(t);
+        super(t);
     }
 }

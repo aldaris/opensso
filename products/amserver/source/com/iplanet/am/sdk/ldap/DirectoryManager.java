@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManager.java,v 1.3 2006-04-03 22:26:57 kenwho Exp $
+ * $Id: DirectoryManager.java,v 1.4 2006-04-14 09:08:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -775,7 +775,8 @@ public class DirectoryManager implements AMConstants,
                         + "Unable to get attributes: ", e);
             }
             String locale = CommonUtils.getUserLocale(token);
-            throw new AMException(AMSDKBundle.getString("330", locale), "330", e);
+            throw new AMException(
+                AMSDKBundle.getString("330", locale), "330", e);
         }
     }
 
@@ -839,7 +840,8 @@ public class DirectoryManager implements AMConstants,
                         + "Unable to get attributes: ", e);
             }
             String locale = CommonUtils.getUserLocale(token);
-            throw new AMException(AMSDKBundle.getString("330", locale), "330", e);
+            throw new AMException(
+                AMSDKBundle.getString("330", locale), "330", e);
         }
     }
 

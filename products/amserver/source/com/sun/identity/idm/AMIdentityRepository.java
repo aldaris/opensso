@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.3 2006-02-03 20:08:06 goodearth Exp $
+ * $Id: AMIdentityRepository.java,v 1.4 2006-04-14 09:06:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,7 +160,8 @@ public final class AMIdentityRepository {
                     AMIdentity amid = ((AMIdentity)i.next());
                     String remUser = amid.getName().toLowerCase();
                     if (!remUser.equalsIgnoreCase(IdConstants.AMADMIN_USER) &&
-                        !remUser.equalsIgnoreCase(IdConstants.ANONYMOUS_USER)) {                        newResults.addResult(amid, amid.getAttributes());
+                        !remUser.equalsIgnoreCase(IdConstants.ANONYMOUS_USER)) {
+                        newResults.addResult(amid, amid.getAttributes());
                     }
                 }
                 results = newResults;

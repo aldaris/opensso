@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParseOutput.java,v 1.1 2006-03-31 05:07:02 veiming Exp $
+ * $Id: ParseOutput.java,v 1.2 2006-04-14 09:07:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,11 +35,12 @@ public interface ParseOutput {
     /**
      * Processes request to information key. This is called
      * by the SAX parser.
-     * @param name name of request
-     * @param elems vector that has parsing elements
-     * @param atts parsing attributes
-     * @param pcdata given data to be parsed.
+     *
+     * @param name Name of request
+     * @param elems Vector that has parsing elements.
+     * @param atts Parsing attributes.
+     * @param pcdata Data to be parsed.
      */
-    public void process(String name, Vector elems, 
-	                Hashtable atts, String pcdata);
+    public void process(String name, Vector elems,
+        Hashtable atts, String pcdata);
 }

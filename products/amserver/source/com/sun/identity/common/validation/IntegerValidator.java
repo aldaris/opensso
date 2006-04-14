@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IntegerValidator.java,v 1.1 2006-04-03 18:37:40 veiming Exp $
+ * $Id: IntegerValidator.java,v 1.2 2006-04-14 09:07:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ public class IntegerValidator
     extends ValidatorBase
 {
     private static IntegerValidator instance =
-	new IntegerValidator();
+        new IntegerValidator();
 
     /**
      * Avoid instantiation of this class.
@@ -42,32 +42,32 @@ public class IntegerValidator
     }
 
     public static IntegerValidator getInstance() {
-	return instance;
+        return instance;
     }
 
     protected void performValidation(String strData)
-	throws ValidationException
+        throws ValidationException
     {
-	if ((strData == null) || (strData.trim().length() == 0)) {
-	    throw new ValidationException(resourceBundleName, "errorCode5");
-	}
+        if ((strData == null) || (strData.trim().length() == 0)) {
+            throw new ValidationException(resourceBundleName, "errorCode5");
+        }
 
-	try {
-	    int value = Integer.parseInt(strData);
+        try {
+            int value = Integer.parseInt(strData);
         } catch (NumberFormatException nfe) {
-	    throw new ValidationException(resourceBundleName, "errorCode5"); 
-	}
+            throw new ValidationException(resourceBundleName, "errorCode5"); 
+        }
     }
 
     /** Test */
     public static void main(String[] args) {
-	IntegerValidator inst = getInstance();
-	try {
-	    inst.validate("1");
-	    inst.validate("-1");
-	    inst.validate("1-1");
-	} catch (ValidationException e) {
-	    System.out.println(e.getMessage());
-	}
+        IntegerValidator inst = getInstance();
+        try {
+            inst.validate("1");
+            inst.validate("-1");
+            inst.validate("1-1");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

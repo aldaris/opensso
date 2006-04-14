@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.6 2006-04-03 22:24:18 kenwho Exp $
+ * $Id: IdUtils.java,v 1.7 2006-04-14 09:06:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -665,7 +665,7 @@ public final class IdUtils {
     }
 
     // SMS service listener to reinitialize if IdRepo service changes
-    static class IdUtilsListener implements com.sun.identity.sm.ServiceListener {
+    static class IdUtilsListener implements com.sun.identity.sm.ServiceListener{
 
         public void schemaChanged(String serviceName, String version) {
             if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {

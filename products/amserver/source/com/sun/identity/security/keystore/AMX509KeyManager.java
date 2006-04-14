@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509KeyManager.java,v 1.2 2006-03-30 06:53:11 beomsuk Exp $
+ * $Id: AMX509KeyManager.java,v 1.3 2006-04-14 09:05:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,8 @@ public class AMX509KeyManager implements X509KeyManager {
     //     Get instance of a "SunX509" KeyManagerFactory "kmf"
     //     init the KeyManagerFactory with the keystore
     public AMX509KeyManager() {
-        sunX509KeyManager = 
-        	initX509KeyManager(keyStoreType, keyStoreFile, keyStoreProvider, null);
+        sunX509KeyManager = initX509KeyManager(
+            keyStoreType, keyStoreFile, keyStoreProvider, null);
     }
     
     // create sunX509KeyManager
@@ -82,16 +82,17 @@ public class AMX509KeyManager implements X509KeyManager {
     //     Create/load a keystore
     //     Get instance of a "SunX509" KeyManagerFactory "kmf"
     //     init the KeyManagerFactory with the keystore
-    public AMX509KeyManager(String ksType, 
-    		                String ksFile, 
-    		                String ksProvider,
-    		                AMCallbackHandler cbHandle) {
-    	keyStoreType = ksType;
-    	keyStoreFile = ksFile;
-    	keyStoreProvider = ksProvider;
-    	
-        sunX509KeyManager = 
-        	initX509KeyManager(keyStoreType, keyStoreFile, keyStoreProvider, cbHandle);
+    public AMX509KeyManager(
+        String ksType,
+        String ksFile,
+        String ksProvider,
+        AMCallbackHandler cbHandle
+    ) {
+        keyStoreType = ksType;
+        keyStoreFile = ksFile;
+        keyStoreProvider = ksProvider;
+        sunX509KeyManager = initX509KeyManager(
+            keyStoreType, keyStoreFile, keyStoreProvider, cbHandle);
     }
     
     // create sunX509KeyManager
@@ -100,7 +101,12 @@ public class AMX509KeyManager implements X509KeyManager {
     //     Create/load a keystore
     //     Get instance of a "SunX509" KeyManagerFactory "kmf"
     //     init the KeyManagerFactory with the keystore
-    public X509KeyManager initX509KeyManager(String ksType, String ksFile, String ksProvider, AMCallbackHandler cbHandle) {
+    public X509KeyManager initX509KeyManager(
+        String ksType,
+        String ksFile,
+        String ksProvider,
+        AMCallbackHandler cbHandle
+    ) {
         KeyManagerFactory kmf = null;
         // initialize KeyStore and get KeyManagerFactory 
         try {
@@ -108,12 +114,12 @@ public class AMX509KeyManager implements X509KeyManager {
             KeyStore.CallbackHandlerProtection callback = null;
             
             if (cbHandle != null) {
-    	        callback = new KeyStore.CallbackHandlerProtection(cbHandle);
-    	    } else {
-                String passwdPrompt = bundle.getString("KeyStorePrompt");
-                callback = new KeyStore.CallbackHandlerProtection
-                                       (new AMCallbackHandler(passwdPrompt));
-    	    }
+                    callback = new KeyStore.CallbackHandlerProtection(cbHandle);
+                } else {
+                    String passwdPrompt = bundle.getString("KeyStorePrompt");
+                    callback = new KeyStore.CallbackHandlerProtection
+                        (new AMCallbackHandler(passwdPrompt));
+                }
 
             if (ksType.equalsIgnoreCase("JKS") 
                              || ksType.equalsIgnoreCase("PKCS12")) {

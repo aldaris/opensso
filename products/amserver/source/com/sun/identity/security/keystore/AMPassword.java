@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPassword.java,v 1.1 2006-03-30 06:53:10 beomsuk Exp $
+ * $Id: AMPassword.java,v 1.2 2006-04-14 09:05:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,14 +100,13 @@ public class AMPassword extends AMCallbackHandler implements  Cloneable,
      * clearing the copy (with <code>wipeBytes</code>, for example).
      *
      * @param charArray A character array, which should not be null. It will
-     *		be wiped with zeroes.
+     *        be wiped with zeroes.
      * @return A copy of the charArray, converted from Unicode to UTF8. It
-     * 	is the responsibility of the caller to clear the output byte array;
-     *	<code>wipeBytes</code> is ideal for this purpose.
+     *         is the responsibility of the caller to clear the output byte
+     *         array; *	<code>wipeBytes</code> is ideal for this purpose.
      * @see Password#wipeBytes
      */
-    public static byte[] charToByte(char[] charArray)
-    {
+    public static byte[] charToByte(char[] charArray) {
 	byte bytearray[] = null;
 	try {
 	    if (charArray != null) {
