@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.1 2006-03-31 05:07:05 veiming Exp $
+ * $Id: ISArchiveVerify.java,v 1.2 2006-04-14 09:05:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,8 +96,8 @@ public class ISArchiveVerify{
      * @throws Exception if it fails to processing verification.
      */
     public static void main(String[] args) throws Exception {
-	    if ((args.length == 0) || (args.length != 8)) {
-	        System.err.println(USAGE);
+        if ((args.length == 0) || (args.length != 8)) {
+            System.err.println(USAGE);
             System.exit(1);
         }
 
@@ -105,73 +105,73 @@ public class ISArchiveVerify{
     }
 
     static private void runCommand(String[] argv) throws Exception {
-	int ln = 0;
-	int path = 0;
-	int uname = 0;
-	int passwd= 0;
+        int ln = 0;
+        int path = 0;
+        int uname = 0;
+        int passwd= 0;
         int i = 0;
 
-	try {
-	    while (i < argv.length) {
-		int opt = getToken(argv[i]);
+        try {
+            while (i < argv.length) {
+                int opt = getToken(argv[i]);
 
                 switch(opt) {
-		case LOGNAME:
-		    i++;
-		    ln = i;
-		    break;
-		case PATH:
-		    i++;
-		    path = i;
-		    break;
-		case USERNAME:
-		    i++;
-		    uname = i;
-		    break;
-		case PASSWORD:
-		    i++;
-		    passwd = i;
-		    break;
-		default:
-		    throw new Exception();//bundle.getString("invalidOpt"));
-		}
-		i++;
-	    }
-	} catch (Exception e) {
-	    if (e.getMessage() != null) {
-		System.err.println(e.getMessage());
-	    }
+                case LOGNAME:
+                    i++;
+                    ln = i;
+                    break;
+                case PATH:
+                    i++;
+                    path = i;
+                    break;
+                case USERNAME:
+                    i++;
+                    uname = i;
+                    break;
+                case PASSWORD:
+                    i++;
+                    passwd = i;
+                    break;
+                default:
+                    throw new Exception();//bundle.getString("invalidOpt"));
+                }
+                i++;
+            }
+        } catch (Exception e) {
+            if (e.getMessage() != null) {
+                System.err.println(e.getMessage());
+            }
 
-	    e.printStackTrace();
-	    System.err.println(USAGE);
-	    System.exit(1);
-	}
+            e.printStackTrace();
+            System.err.println(USAGE);
+            System.exit(1);
+        }
 
-	try {
-	    ISArchiveVerify iav = new ISArchiveVerify();
-	    boolean verified = iav.verifyArchive(
-		argv[ln], argv[path], argv[uname], argv[passwd]);
+        try {
+            ISArchiveVerify iav = new ISArchiveVerify();
+            boolean verified = iav.verifyArchive(
+                argv[ln], argv[path], argv[uname], argv[passwd]);
 
-	    if (verified) {
-		System.out.println(
-		    bundle.getString("verificationOfLogArchiveFor") + " " + 
+            if (verified) {
+                System.out.println(
+                    bundle.getString("verificationOfLogArchiveFor") + " " + 
                         argv[ln] + " " +
                         bundle.getString("archiveVerificationPassed"));
-	    } else {
-		System.out.println(
-		    bundle.getString("verificationOfLogArchiveFor") + " " +
+            } else {
+                System.out.println(
+                    bundle.getString("verificationOfLogArchiveFor") + " " +
                         argv[ln] + " " +
-			bundle.getString("archiveVerificationFailed"));
-	    }
-	} catch(Exception e) {
-	    if (e.getMessage() != null) {
-		System.err.println(e.getMessage());
-	    }
-	    e.printStackTrace();
-	    System.exit(1);
-	}
+                        bundle.getString("archiveVerificationFailed"));
+            }
+        } catch(Exception e) {
+            if (e.getMessage() != null) {
+                System.err.println(e.getMessage());
+            }
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-	System.exit(0);
+        System.exit(0);
     }
     
     /**
@@ -204,16 +204,16 @@ public class ISArchiveVerify{
      * @throws Exception if it fails to verify the signature.
      */
     private boolean verifySignature(String[] record, int signPos, int recPos)
-    throws Exception {
+        throws Exception {
         String curSign = new String(record[signPos]);
         
-	//
-	//  if curMAC is null, there's apparently a missing
-	//  _secure.<file>.access.<date> (or .error.date)
-	//
-	if (curMAC == null) {
-	    return false;
-	}
+        //
+        //  if curMAC is null, there's apparently a missing
+        //  _secure.<file>.access.<date> (or .error.date)
+        //
+        if (curMAC == null) {
+            return false;
+        }
 
         // Regenerate the MAC that was signed.
         byte[] prevMAC = helper.toByteArray(curMAC);
@@ -249,29 +249,32 @@ public class ISArchiveVerify{
      *  @return value of the status of verification.
      *  @throws Exception if it fails to verify the archive.
      */
-    public boolean verifyArchive(String logName, String path, 
-	                         String uname, String passwd)
-    throws Exception{
+    public boolean verifyArchive(
+        String logName,
+        String path, 
+        String uname,
+        String passwd
+    ) throws Exception{
         String log = logName;
         LogManager lm = (LogManager)LogManagerUtil.getLogManager();
         lm.readConfiguration();
         verPassword = new AMPassword(passwd.toCharArray());
 
         SSOToken ssoToken = null;
-	SSOTokenManager ssoMngr = null;
-	try {
+        SSOTokenManager ssoMngr = null;
+        try {
             ssoMngr = SSOTokenManager.getInstance();
-	    ssoToken = 
-	            ssoMngr.createSSOToken(new AuthPrincipal(uname), passwd);
-	} catch (SSOException ssoe) {
-	    System.out.println(bundle.getString("archiveVerification")
-		                     + "SSOException: " + ssoe.getMessage());
-	    return false;
-	} catch (UnsupportedOperationException uoe) {
-	    System.out.println(bundle.getString("archiveVerification")
-		     + "UnsupportedOperationException: " + uoe.getMessage());
-	    return false;
-	}
+            ssoToken = 
+                    ssoMngr.createSSOToken(new AuthPrincipal(uname), passwd);
+        } catch (SSOException ssoe) {
+            System.out.println(bundle.getString("archiveVerification")
+                                     + "SSOException: " + ssoe.getMessage());
+            return false;
+        } catch (UnsupportedOperationException uoe) {
+            System.out.println(bundle.getString("archiveVerification")
+                     + "UnsupportedOperationException: " + uoe.getMessage());
+            return false;
+        }
 
         // This function will be used to verify all the files in the current and
         // previous sets for the logname and types.
@@ -313,8 +316,8 @@ public class ISArchiveVerify{
             prevSignature = null;
             for(int j = 0; j < logFiles.size(); j++) {
                 // flag to indicate that last record in the file is being 
-        	// verified. This record is the same for the first record 
-        	// of the next file.
+                // verified. This record is the same for the first record 
+                // of the next file.
                 System.out.println(bundle.getString("fileBeingVerified") 
                     + (String)logFiles.elementAt(j));
                 int lastRecInFile = 0;
@@ -322,7 +325,7 @@ public class ISArchiveVerify{
                 String[][] result = new String[1][1];
                 try{
                     result = 
-                	LogReader.read((String)logFiles.elementAt(j), ssoToken);
+                        LogReader.read((String)logFiles.elementAt(j), ssoToken);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -341,14 +344,14 @@ public class ISArchiveVerify{
                     macFldName = LogConstants.MAC_FIELDNAME;
                     for(int l = 0; l < header.size(); l++){
                         if((((String)header.get(l))).
-                        	equalsIgnoreCase(signFldName)) {
+                                equalsIgnoreCase(signFldName)) {
                             signPos = l;
                             break;
                         }
                     } // end of loop l
                     for(int l = 0; l < header.size(); l++){
                         if((((String)header.get(l))).
-                        	equalsIgnoreCase(macFldName)) {
+                                equalsIgnoreCase(macFldName)) {
                             macPos = l;
                             break;
                         }
@@ -384,8 +387,8 @@ public class ISArchiveVerify{
                             // for the next file.
                             lastRecInFile = (result.length - 1)  - k;
                             verified = 
-                        	verifySignature(result[k], signPos, 
-                        		        lastRecInFile);
+                                verifySignature(result[k], signPos,
+                                    lastRecInFile);
                             if(!verified){
                                 System.err.println(
                                  bundle.getString("signatureVerificationFailed")

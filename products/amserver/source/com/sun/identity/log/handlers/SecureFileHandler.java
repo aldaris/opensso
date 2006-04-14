@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.1 2006-03-31 05:07:08 veiming Exp $
+ * $Id: SecureFileHandler.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,7 +184,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
         if (out == null) {
             if (Debug.warningEnabled()) {
                 Debug.warning(logName+":SecureFileHandler: " +
-                		"OutputStream is null");
+                    "OutputStream is null");
             }
         }
         output = out;
@@ -197,7 +197,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 writer = new OutputStreamWriter(output, encoding);
             } catch (UnsupportedEncodingException ex) {
                 Debug.error(logName+":SecureFileHandler: " +
-                		"Unsupported Encoding", ex);
+                    "Unsupported Encoding", ex);
                 throw new UnsupportedEncodingException(ex.getMessage());
             }
         }
@@ -209,12 +209,12 @@ public class SecureFileHandler extends java.util.logging.Handler {
      * to the <tt>Handler</tt>.
      *
      * @param encoding  The name of a supported character encoding.
-     *	      May be null, to indicate the default platform encoding.
+     *              May be null, to indicate the default platform encoding.
      * @exception  SecurityException  if a security manager exists and if
      *             the caller does not have <tt>LoggingPermission("control")
      *             </tt>.
      * @exception  UnsupportedEncodingException if the named encoding is
-     *		not supported.
+     *             not supported.
      */
     public void setEncoding(String encoding) throws SecurityException,
     UnsupportedEncodingException {
@@ -271,14 +271,14 @@ public class SecureFileHandler extends java.util.logging.Handler {
             (filesPerKeyStoreString.length() == 0)) {
             if (Debug.warningEnabled()) {
                 Debug.warning(logName+":Archiver: could not get the files " +
-                		"per keystore str setting it to 1");
+                    "per keystore str setting it to 1");
             }
             filesPerKeyStoreString = "5";
         }
         filesPerKeyStore = Integer.parseInt(filesPerKeyStoreString);
         if (Debug.messageEnabled()) {
             Debug.message(logName+":Files per Key Store = " 
-        	    + filesPerKeyStoreString);
+                + filesPerKeyStoreString);
         }
         String archiverClassString = 
             lmanager.getProperty(LogConstants.ARCHIVER);
@@ -325,15 +325,15 @@ public class SecureFileHandler extends java.util.logging.Handler {
             configure();
         } catch (NullLocationException nle) {
             Debug.error(logName +
-		":SecureFileHandler: Location not specified", nle);
+                ":SecureFileHandler: Location not specified", nle);
         } catch (FormatterInitException fie) {
             Debug.error(logName +
-		":SecureFileHandler: could not instantiate Formatter", fie);
+                ":SecureFileHandler: could not instantiate Formatter", fie);
         }
         fileName = location + PREFIX + fileName;
         Logger logger = (Logger)Logger.getLogger(logName);
         if (logger.getLevel() != Level.OFF) {
-        	try {
+                try {
                 openFiles(fileName);
             } catch (IOException ioe) {
                 Debug.error(logName +
@@ -354,7 +354,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 writer.flush();
             } catch (Exception ex) {
                 Debug.error(logName+":SecureFileHandler: " +
-                		"Could not Flush Output", ex);
+                                "Could not Flush Output", ex);
             }
         }
     }
@@ -373,7 +373,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             }
         } catch (IOException ioe) {
             Debug.error(logName +
-		":SecureFileHandler: Could not close writer", ioe);
+                ":SecureFileHandler: Could not close writer", ioe);
         }
         if(signTimer != null) {
             stopPeriodicLogSigner();
@@ -417,7 +417,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             writer.write(message);
         } catch (IOException ex) {
             Debug.error(logName +
-		":SecureFileHandler: could not write to file", ex);
+                ":SecureFileHandler: could not write to file", ex);
         }
         flush();
         // This flag is set only when the Verification is on and at that time
@@ -455,7 +455,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
     public static Archiver getArchiver(String logName) {
         if ((logName == null) || (logName.length() == 0)) {
             Debug.warning(logName +
-		":Logger: could not get archiver, null logName");
+                ":Logger: could not get archiver, null logName");
             return null;
         }
         return ((Archiver)archiverTable.get(logName));
@@ -470,7 +470,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
         if ((logName == null) || (logName.length() == 0)) {
             if (Debug.warningEnabled()) {
                 Debug.warning(logName +
-		    ":Logger: Could not set archiver, null logName");
+                    ":Logger: Could not set archiver, null logName");
             }
             return;
         }
@@ -497,7 +497,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             signature = ls.sign();
         } catch (Exception e) {
             Debug.error(logName +
-		":SecureFileHandler: could not generate signature");
+                ":SecureFileHandler: could not generate signature");
         }
         com.sun.identity.log.LogRecord lr =
         new com.sun.identity.log.LogRecord(Level.INFO, "Signature");
@@ -508,7 +508,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             writer.write(message);
         } catch (IOException ioe) {
             Debug.error(logName +
-		":SecureLogHelper: could not write signature to file", ioe);
+                ":SecureLogHelper: could not write signature to file", ioe);
         }
         flush();
         try {
@@ -517,7 +517,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             }
         } catch (IOException ioe) {
             Debug.error(logName +
-		":SecureFileHandler: Couldnot close writer", ioe);
+                ":SecureFileHandler: Couldnot close writer", ioe);
         }
         try {
             archiver.archive(logName, location);
@@ -531,12 +531,12 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 Debug.message(logName+":Keystore limit reached");
                 archiver.archiveKeyStore(logName, location);
                 Debug.message(logName +
-		    ":FilesPerKeystore counter = " + archiver.checkCount());
+                    ":FilesPerKeystore counter = " + archiver.checkCount());
                 initializeKeyStore();
             }
         } catch(Exception ioe) {
             Debug.error(logName +
-		":SecureFileHandler: Could not archive file", ioe);
+                ":SecureFileHandler: Could not archive file", ioe);
         }
         try {
             open(new File(location + PREFIX + logName), false);
@@ -547,7 +547,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 writer.write(message);
         } catch (IOException ex) {
             Debug.error(logName +
-		":SecureFileHandler: could not write to file", ex);
+                ":SecureFileHandler: could not write to file", ex);
         }
         flush();
     }
@@ -559,7 +559,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             fins.read(bytes);
         } catch (IOException ioe) {
             Debug.error(logName +
-		":SecureFileHandler: could not read file content", ioe);
+                ":SecureFileHandler: could not read file content", ioe);
         }
         String fileContent = new String(bytes);
         fileContent = fileContent.trim();
@@ -611,12 +611,12 @@ public class SecureFileHandler extends java.util.logging.Handler {
      * @return SecureLogHelper instance
      */
     public static SecureLogHelper getSecureLogHelperInst() {
-    	SecureLogHelper helper = null;
+            SecureLogHelper helper = null;
         String helperClass = LogManagerUtil.getLogManager().
                                    getProperty(LogConstants.SECURE_LOG_HELPER);
         if (Debug.messageEnabled()) {
             Debug.message("Configured SecureLogHelper Impl class : " + 
-            		      helperClass);
+                                  helperClass);
         }
         
         try {
@@ -639,7 +639,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
     public static SecureLogHelper getSecureLogHelper(String logName) {
         if ((logName == null) || (logName.length() == 0)) {
             Debug.warning(logName +
-		":Logger: could not get SecureLogHelper , null logName");
+                ":Logger: could not get SecureLogHelper , null logName");
             return null;
         }
         
@@ -650,10 +650,10 @@ public class SecureFileHandler extends java.util.logging.Handler {
      * This method is to set the helper corresponding to a  loggerName
      */
     private static void setSecureLogHelper(String logName, 
-	                                   SecureLogHelper helper) {
+                                           SecureLogHelper helper) {
         if ((logName == null) || (logName.length() == 0)) {
             Debug.warning(logName +
-		":Logger: Could not set SecureLogHelper , null logName");
+                ":Logger: Could not set SecureLogHelper , null logName");
             return;
         }
         helperTable.put(logName, helper);
@@ -674,15 +674,15 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 setSecureLogHelper(logName, helper);
             }
             helper.initializeSecureLogHelper(loggerFileName, logPassword, 
-        	                             verifierFileName, logPassword);
+                                             verifierFileName, logPassword);
             if(verificationInitialized) {
                 helper.initializeVerifier(verifierFileName, 
-                	                  logPassword, verPassword);
+                                          logPassword, verPassword);
             }
         } catch (Exception e) {
             Debug.error(logName +
-		":Logger: exception thrown while initializing secure logger",
-		e);
+                ":Logger: exception thrown while initializing secure logger",
+                e);
             //throw custom defined exception
         }
         Archiver archiver = null;
@@ -694,7 +694,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
             }
         } catch (Exception e) {
             Debug.error(logName +
-		":SecureFileHandler: Could Not set Archiver", e);
+                ":SecureFileHandler: Could Not set Archiver", e);
         }
         
         String Interval = 
@@ -765,19 +765,19 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 // explicit auditor role in DSAME to initialize ver.
                 if (helper != null) {
                     helper.initializeVerifier(verifierFileName, 
-                	    logPassword, verPassword);
+                            logPassword, verPassword);
                     try {
                         Debug.message(FileName +
-			    ":Trying to start the Verifier Thread");
+                            ":Trying to start the Verifier Thread");
                         Logger logger = (com.sun.identity.log.Logger)Logger.
                                         getLogger(FileName);
                         Handler[] handlers = logger.getHandlers();
                         ((com.sun.identity.log.handlers.SecureFileHandler)
-                        	handlers[0]).startVerifierThread();
+                                handlers[0]).startVerifierThread();
                         Debug.message(FileName+":Started Log Verifier thread");
                     } catch (Exception ex) {
                         Debug.error(FileName +
-			    ":Unable to start Verifier Thread", ex);
+                            ":Unable to start Verifier Thread", ex);
                         // throw custom exception
                     }
                 }
@@ -814,12 +814,12 @@ public class SecureFileHandler extends java.util.logging.Handler {
      * @param logName logger name for this file list.
      */
     public static void addToCurrentFileList(
-	String oldFileName, 
-	String newFileName, 
-	String logName) {
+        String oldFileName, 
+        String newFileName, 
+        String logName) {
         ArrayList fileList = (ArrayList)currentFileList.get(PREFIX + logName);
         if(fileList == null) {
-	    fileList = new ArrayList();
+            fileList = new ArrayList();
         }
         currentFileList.remove(PREFIX + logName);
         fileList.remove(PREFIX + oldFileName);
@@ -853,7 +853,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
     public void initializeKeyStore(){
         try{
             Logger logger = 
-        	   (com.sun.identity.log.Logger)Logger.getLogger(logName);
+                   (com.sun.identity.log.Logger)Logger.getLogger(logName);
             resetCurrentFileList(logName);
             addToCurrentFileList(logName, logName, logName);
             String logPath = lmanager.getProperty(LogConstants.LOG_LOCATION);
@@ -864,16 +864,16 @@ public class SecureFileHandler extends java.util.logging.Handler {
             String verifierFileName = logPath + PREFIX + "ver." +fileName;
             Debug.message(logName+":Logger Keystore name = " + loggerFileName);
             Debug.message(logName +
-		":Verifier Keystore name= " + verifierFileName);
+                ":Verifier Keystore name= " + verifierFileName);
             helper.initializeSecureLogHelper(loggerFileName, logPassword, 
-        	                             verifierFileName, logPassword);
+                                             verifierFileName, logPassword);
             Debug.message(logName+":Initialized SecureLogHelper");
             helper.initializeVerifier(verifierFileName, 
-        	                      logPassword, verPassword);
+                                      logPassword, verPassword);
             Debug.message(logName+":Done init of SecureLogHelper and Verifier");
         } catch (Exception e) {
             Debug.error(logName +
-		":Logger: exception thrown while initializing secure logger",e);
+                ":Logger: exception thrown while initializing secure logger",e);
         }
     }
     
@@ -929,7 +929,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
         if (signTimer == null){
             signTimer = new Timer();
             signTimer.scheduleAtFixedRate(new SignTask(), 
-        	                          signInterval, signInterval);
+                                          signInterval, signInterval);
         }
     }
     
@@ -955,23 +955,23 @@ public class SecureFileHandler extends java.util.logging.Handler {
          */
         public void run(){
             Logger logger = 
-        	(com.sun.identity.log.Logger)Logger.getLogger(logName);
+                (com.sun.identity.log.Logger)Logger.getLogger(logName);
             try {
                 Logger.rwLock.readRequest();
                 synchronized(logger) {
                     try {
                         String[][] result = LogReader.read(PREFIX + logName, 
-                        		new LogQuery(1), 
+                                        new LogQuery(1), 
                                         Token.createToken("Auditor", 
                                         new String(logPassword.getChars())));
                         if (!((result == null) || (result.length == 0))) {
                             LogSign logSign = new LogSign(logName);
                             int signPos=-1;
                             String signFieldName = 
-                        	        LogConstants.SIGNATURE_FIELDNAME;
+                                        LogConstants.SIGNATURE_FIELDNAME;
                             for(int j = 0; j < result[0].length; j++){
-                                if(result[0][j].equalsIgnoreCase(signFieldName)) 
-                                {
+                                if(result[0][j].equalsIgnoreCase(signFieldName)
+                                ) {
                                     signPos = j;
                                     break;
                                 }
@@ -989,22 +989,22 @@ public class SecureFileHandler extends java.util.logging.Handler {
                                       signature.equals(""))){
                                     com.sun.identity.log.LogRecord lr =
                                     new com.sun.identity.log.LogRecord(
-                                	    Level.SEVERE, "Signature");
+                                            Level.SEVERE, "Signature");
                                     ((com.sun.identity.log.LogRecord)lr).
-                                    addLogInfo(LogConstants.SIGNATURE_FIELDNAME, 
-                                	       signature);
+                                    addLogInfo(LogConstants.SIGNATURE_FIELDNAME,
+                                        signature);
                                     publish(lr);
                                 } else {
                                     Debug.warning(logName+"Signature is Null");
                                 }
                             } else {
                                 Debug.message(logName +
-				    ": Read returned only header or last " +
-				    "record was a signature ");
+                                    ": Read returned only header or last " +
+                                    "record was a signature ");
                             }
                         } else {
-                            Debug.message(logName +
-				": Read returned null records");
+                            Debug.message(
+                                logName + ": Read returned null records");
                         }
                     }catch (Exception e) {
                         Debug.error(logName+":Error Writing Signature", e);

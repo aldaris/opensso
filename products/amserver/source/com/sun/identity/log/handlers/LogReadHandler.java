@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadHandler.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: LogReadHandler.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,12 +50,12 @@ public interface LogReadHandler {
      * @throws RuntimeException if it fails to retrieve log record.
      * @throws Exception if it fails any of operation.
      */
-    public String [][] logRecRead(String fileName,
-	    com.sun.identity.log.LogQuery qry,
-	    boolean sourceData)
-	throws IOException, NoSuchFieldException,
-	IllegalArgumentException, RuntimeException,
-	Exception;
+    public String [][] logRecRead(
+        String fileName,
+        com.sun.identity.log.LogQuery qry,
+        boolean sourceData
+    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
+        RuntimeException, Exception;
 
     /**
      * LogReader calls this method method. It collects header, records,
@@ -73,10 +73,10 @@ public interface LogReadHandler {
      * @throws RuntimeException if it fails to retrieve log record.
      * @throws Exception if it fails any of operation.
      */
-    public String [][] logRecRead(Set fileNames,
-	    com.sun.identity.log.LogQuery qry,
-	    boolean sourceData)
-	throws IOException, NoSuchFieldException,
-	IllegalArgumentException, RuntimeException,
-	Exception;
+    public String [][] logRecRead(
+        Set fileNames,
+        com.sun.identity.log.LogQuery qry,
+        boolean sourceData
+    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
+        RuntimeException, Exception;
 }

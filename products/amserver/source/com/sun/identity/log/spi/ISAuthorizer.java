@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthorizer.java,v 1.1 2006-03-31 05:07:15 veiming Exp $
+ * $Id: ISAuthorizer.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,16 +41,18 @@ import com.iplanet.sso.SSOTokenManager;
 
 public class ISAuthorizer implements IAuthorizer {
     /**
-     * Static method which returns boolean.
+     * Returns <code>true</code> if a given log record should be published.
      *
-     * @param logName The name of the log.
+     * @param logName Log name on which operation is to be performed.
      * @param operation The log operation to be performed.
-     * @param credential The token that authorizes to log.
-     * @return boolean value which indicates authorization.
+     * @param credential The credential to be authorized.
+     * @return <code>true</code> if the credential is authorized.
      */
-    public boolean isAuthorized(String logName, String operation, 
-	                        Object credential) {
-
+    public boolean isAuthorized(
+        String logName,
+        String operation, 
+        Object credential
+    ) {
         SSOToken ssoToken = null;
         if (credential instanceof SSOToken) {
             ssoToken = (SSOToken)credential;
@@ -77,8 +79,12 @@ public class ISAuthorizer implements IAuthorizer {
     }
     
     /**
-     *  Check if the given subject is authorized to change the password or not.
-     *  @param  credential  The credential to be checked for authorization.
+     * Returns <code>true</code> if given subject is authorized to change the
+     * password.
+     *
+     * @param credential Credential to be checked for authorization.
+     * @return <code>true</code> if given subject is authorized to change the
+     *         password.
      */
     public boolean isAuthorized(Object credential) {
         return true;

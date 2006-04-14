@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: RemoteHandler.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,14 +97,14 @@ public class RemoteHandler extends Handler {
         setLevel(Level.INFO);
         setFilter(null);
 
-	String urlString =
-	    manager.getProperty(LogConstants.LOGGING_SERVICE_URL);
-	try {
-	    logServURL = new URL(urlString);
-	} catch (MalformedURLException mue) {
-	    Debug.error("RemoteHandler.getLogHostURL(): '" +
-		urlString + "' is malformed. " + mue.getMessage());
-	}
+        String urlString =
+            manager.getProperty(LogConstants.LOGGING_SERVICE_URL);
+        try {
+            logServURL = new URL(urlString);
+        } catch (MalformedURLException mue) {
+            Debug.error("RemoteHandler.getLogHostURL(): '" +
+                urlString + "' is malformed. " + mue.getMessage());
+        }
     }
     
     /**
@@ -174,7 +174,7 @@ public class RemoteHandler extends Handler {
         if (recCount <= 0) {
             if (Debug.messageEnabled()) {
                 Debug.message("RemoteHandler.flush(): no records " +
-                		"in buffer to send");
+                                "in buffer to send");
             }
             return;
         }
@@ -220,21 +220,21 @@ public class RemoteHandler extends Handler {
         String sessionHost = sid.getSessionServer();
         String sessionPort = sid.getSessionServerPort();
 
-	//
-	//  if remote logging service and protocol, host, and port
-	//  are null, get them from the logging service url in the
-	//  AMConfig.properties file.
-	//
-	if ((!manager.isLocal) &&
-	    ((sessionProtocol == null) || (sessionProtocol.length() <= 0) ||
-	     (sessionHost == null) || (sessionHost.length() <= 0)))
-	{
-	    if (Debug.messageEnabled()) {
-		Debug.message("RemoteHandler.getLogHostURL(): remote serv = " +
-		    logServURL);
-	    }
-	    return (logServURL);
-	}
+        //
+        //  if remote logging service and protocol, host, and port
+        //  are null, get them from the logging service url in the
+        //  AMConfig.properties file.
+        //
+        if ((!manager.isLocal) &&
+            ((sessionProtocol == null) || (sessionProtocol.length() <= 0) ||
+             (sessionHost == null) || (sessionHost.length() <= 0)))
+        {
+            if (Debug.messageEnabled()) {
+                Debug.message("RemoteHandler.getLogHostURL(): remote serv = " +
+                    logServURL);
+            }
+            return (logServURL);
+        }
         
         if (Debug.messageEnabled()) {
             Debug.message("RemoteHandler.getLogHostURL(): " + 

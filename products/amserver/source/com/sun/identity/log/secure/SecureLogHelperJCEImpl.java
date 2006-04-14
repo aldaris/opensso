@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelperJCEImpl.java,v 1.1 2006-03-31 05:07:10 veiming Exp $
+ * $Id: SecureLogHelperJCEImpl.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,11 +58,9 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
     
     void initializeKeyStoreManager(AMPassword passwd) 
         throws Exception {
-    	String keystore = LogManagerUtil.getLogManager().
-    	                  getProperty(LogConstants.LOGGER_CERT_STORE);
-    	ksManager = new AMX509KeyManager("JKS", keystore, (String)null, passwd);
-    	
-    	return;
+        String keystore = LogManagerUtil.getLogManager().
+            getProperty(LogConstants.LOGGER_CERT_STORE);
+        ksManager = new AMX509KeyManager("JKS", keystore, (String)null, passwd);
     }    
     
     /**
@@ -81,12 +79,12 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
                 Debug.error("SecureLogHelper.signMAC() : " +
                     " Exception : ", e);
             }
-    	    Signature loggerSign = Signature.getInstance(signingAlgorithm);
-    		loggerSign.initSign(loggerPrivKey);
-    	    loggerSign.update(mac);
+            Signature loggerSign = Signature.getInstance(signingAlgorithm);
+                loggerSign.initSign(loggerPrivKey);
+            loggerSign.update(mac);
             byte[] signedBytes = loggerSign.sign();
             writeToSecretStore(signedBytes, logFileName,
-            		           loggerPass, currentSignature);
+                loggerPass, currentSignature);
             return signedBytes;
         }catch(Exception e){
             Debug.error("SecureLogHelper.signMAC() : " +
@@ -136,26 +134,26 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
      * @return secure data that is matched with dataType
      * @throws Exception if it fails to read secret data from secret store
      */
-    byte[] readFromSecretStore(String filename, 
-    		                           String dataType, 
-    		                           AMPassword password)
-    throws Exception{
+    byte[] readFromSecretStore(String filename,
+        String dataType, 
+        AMPassword password
+    ) throws Exception {
         byte[] cryptoData = null;
         File file = new File(filename);
         // open input file for reading
         FileInputStream fis = new FileInputStream(file);
-	KeyStore store = KeyStore.getInstance("jceks");
-	store.load(fis, password.getChars());
-	fis.close();
+        KeyStore store = KeyStore.getInstance("jceks");
+        store.load(fis, password.getChars());
+        fis.close();
 
-	KeyStore.ProtectionParameter params = 
-		    new KeyStore.PasswordProtection(password.getChars());
-	KeyStore.SecretKeyEntry keyentry = 
-	            (KeyStore.SecretKeyEntry)store.getEntry(dataType, params);
-	if (keyentry != null) {
+        KeyStore.ProtectionParameter params = 
+            new KeyStore.PasswordProtection(password.getChars());
+        KeyStore.SecretKeyEntry keyentry = 
+            (KeyStore.SecretKeyEntry)store.getEntry(dataType, params);
+        if (keyentry != null) {
             SecretKey sdata = keyentry.getSecretKey();
             cryptoData = (byte[]) sdata.getEncoded();
-	}
+        }
 
         return cryptoData;
     }
@@ -171,34 +169,35 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
      * or a key
      * @throws Exception if it fails to write secret data from secret store
      */
-    void writeToSecretStore(byte[] cryptoMaterial, 
-    		                        String filename, 
-    		                        AMPassword password, 
-    		                        String dataType)
-    throws Exception {
-	KeyStore store = KeyStore.getInstance("jceks");
-    	File file = new File(filename);
-    	if (file.exists()) {
+    void writeToSecretStore(
+        byte[] cryptoMaterial, 
+        String filename, 
+        AMPassword password, 
+        String dataType
+    ) throws Exception {
+        KeyStore store = KeyStore.getInstance("jceks");
+        File file = new File(filename);
+        if (file.exists()) {
             FileInputStream fis = new FileInputStream(file);
             store.load(fis, password.getChars());
             fis.close();
-    	} else {
-    	    store.load(null, new char[0]);			
-    	}
-		
-	if (store.containsAlias(dataType)) {
-		store.deleteEntry(dataType);
-	}
-	
-	SecretKeySpec data = new SecretKeySpec(cryptoMaterial, "DES");
-	KeyStore.SecretKeyEntry secKeyEntry = 
-		           new KeyStore.SecretKeyEntry(data);
-	KeyStore.ProtectionParameter params = 
-		           new KeyStore.PasswordProtection(password.getChars());
-	store.setEntry(dataType, secKeyEntry, params);
-	
-	FileOutputStream fos = new FileOutputStream(file);
-	store.store(fos, password.getChars());
+        } else {
+            store.load(null, new char[0]);
+        }
+
+        if (store.containsAlias(dataType)) {
+            store.deleteEntry(dataType);
+        }
+
+        SecretKeySpec data = new SecretKeySpec(cryptoMaterial, "DES");
+        KeyStore.SecretKeyEntry secKeyEntry = 
+            new KeyStore.SecretKeyEntry(data);
+        KeyStore.ProtectionParameter params =
+            new KeyStore.PasswordProtection(password.getChars());
+        store.setEntry(dataType, secKeyEntry, params);
+
+        FileOutputStream fos = new FileOutputStream(file);
+        store.store(fos, password.getChars());
         fos.close();
     }
 }

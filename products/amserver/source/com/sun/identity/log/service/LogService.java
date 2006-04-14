@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogService.java,v 1.1 2006-03-31 05:07:13 veiming Exp $
+ * $Id: LogService.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,7 @@ public class LogService implements RequestHandler {
             Debug.message("LogService.process() called :requests are");
             for (int i=0; i<requests.size(); i++) {
                 Debug.message("xml = " 
-                	+ ((Request)requests.elementAt(i)).getContent());
+                    + ((Request)requests.elementAt(i)).getContent());
             }
         }
         
@@ -131,7 +131,7 @@ public class LogService implements RequestHandler {
                     // for 6.1 session hijacking hotpatch
 
                     InetAddress remoteClient =
-			        SessionUtils.getClientAddress(servletRequest);
+                        SessionUtils.getClientAddress(servletRequest);
                         
                     SSOToken ssoToken =
                         RestrictedTokenHelper.resolveRestrictedToken(

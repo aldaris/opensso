@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.3 2006-03-30 07:00:31 beomsuk Exp $
+ * $Id: LogConstants.java,v 1.4 2006-04-14 09:05:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -321,19 +321,19 @@ public class LogConstants {
      * Attribute defining the security initializer class name
      */
     public static final String SECURITY_INITIALIZER =
-	    "iplanet-am-logging-security-initializer-class-name";
+        "iplanet-am-logging-security-initializer-class-name";
     
     /**
      * Attribute defining the security signing algorithm
      */
     public static final String SECURITY_SIGNING_ALGORITHM =
-	    "iplanet-am-logging-secure-signing-algorithm";
+        "iplanet-am-logging-secure-signing-algorithm";
     
     /**
      * Attribute defining the default security signing algorithm
      */
     public static final String DEFAULT_SECURITY_SIGNING_ALGORITHM =
-	    "SHA1withRSA";
+        "SHA1withRSA";
 
     /**
      * Property defining whether logging is enabled

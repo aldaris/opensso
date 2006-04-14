@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLogException.java,v 1.1 2006-03-31 05:07:04 veiming Exp $
+ * $Id: AMLogException.java,v 1.2 2006-04-14 09:05:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ public class AMLogException extends RuntimeException {
     public static final String LOG_DB_CSTATEMENT = "createStatement failure";
     public static final String LOG_DB_EXECUPDATE = "executeUpdate failure";
     public static final String LOG_DB_TOOMANYRECORDS =
-  "More than max number of records returned; Increase Max Records in configuration";
+"More than max number of records returned; Increase Max Records in configuration";
     public static final String LOG_WRT_AUTH_FAILED =
         "Log write authorization failure";
     public static final String LOG_RD_AUTH_FAILED =

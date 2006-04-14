@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReadDBHandler.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: ReadDBHandler.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,13 +55,12 @@ public interface ReadDBHandler {
      * @throws Exception if it fails any of operation.
      */
     public String [][] logRecRead(
-	    String tableName,
-	    com.sun.identity.log.LogQuery qry,
-	    java.util.logging.LogManager logMgr,
-	    boolean sourceData)
-	throws IOException, NoSuchFieldException,
-	IllegalArgumentException, RuntimeException,
-	SQLException, Exception;
+        String tableName,
+        com.sun.identity.log.LogQuery qry,
+        java.util.logging.LogManager logMgr,
+        boolean sourceData
+    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
+        RuntimeException, SQLException, Exception;
 
     /**
      * LogReader calls this method. It collects header, records,
@@ -82,11 +81,10 @@ public interface ReadDBHandler {
      * @throws Exception if it fails any of operation.
      */
     public String [][] logRecRead(
-	    Set tableNames,
-	    com.sun.identity.log.LogQuery qry,
-	    java.util.logging.LogManager logMgr,
-	    boolean sourceData)
-	throws IOException, NoSuchFieldException,
-	IllegalArgumentException, RuntimeException,
-	SQLException, Exception;
+        Set tableNames,
+        com.sun.identity.log.LogQuery qry,
+        java.util.logging.LogManager logMgr,
+        boolean sourceData
+    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
+        RuntimeException, SQLException, Exception;
 }

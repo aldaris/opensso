@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogVerifier.java,v 1.1 2006-03-31 05:07:10 veiming Exp $
+ * $Id: LogVerifier.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,7 +111,7 @@ public class LogVerifier{
         if(verifyTimer == null){
             verifyTimer = new Timer();
             verifyTimer.scheduleAtFixedRate(new VerifyTask(), 
-        	                            interval, interval);
+                interval, interval);
             if (Debug.messageEnabled()) {
                 Debug.message(name+":Verifier Thread Started");
             }
@@ -249,14 +249,14 @@ public class LogVerifier{
                 // a log record.
                 for(int k = 1; k < result.length; k++) {
                     if (Debug.messageEnabled()) {
-                        Debug.message(name+":Start checking records " + 
-                        	result.length+":"+fileList.get(i));
+                        Debug.message(name + ":Start checking records " + 
+                            result.length + ":" + fileList.get(i));
                     }
                     if(result[k][signPos].equals("-")) {
                         verified = verifyLogRecord(result[k], macPos);
                         if(!verified) {
                             Debug.error("Log Record Verification " +
-                            		"Failed in file:" +
+                                "Failed in file:" +
                                 (String)fileList.get(i) + " at record no. "+ k);
                             break;
                         }
@@ -266,29 +266,31 @@ public class LogVerifier{
                                 (String)fileList.get(i) + "at record no."+ k);
                         }
                     } else {
-                        // To check if this is the last signature in the file 
-                	// an additional parameter has to be passed to the 
-                	// verifySignature since the signature is the same
-                        // as the first signature in the next file. This is 
-                	// to ensure that prevSignature is not updated with 
-                	// the last signature in the file.
-                        // Bcos the checking of the last signature in the file 
-                	// will be the same for the first signature for the 
-                	// next file.
+                        /*
+                         * To check if this is the last signature in the file 
+                         * an additional parameter has to be passed to the 
+                         * verifySignature since the signature is the same
+                         * as the first signature in the next file. This is 
+                         * to ensure that prevSignature is not updated with 
+                         * the last signature in the file.
+                         * Bcos the checking of the last signature in the file 
+                         * will be the same for the first signature for the 
+                         * next file.
+                         */
                         int lastRecInFile = 0;
                         lastRecInFile = (result.length - 1)  - k;
                         verified = 
                             verifySignature(result[k], signPos, lastRecInFile);
                         if(!verified) {
                             Debug.error("Log Signature Verification " +
-                            		"Failed in file:" +
+                                "Failed in file:" +
                                 (String)fileList.get(i) + " at record no. "+ k);
                             break;
                         }
                             
                         if (Debug.messageEnabled()) {
                             Debug.message("Log Signature Verification " +
-                            		"Succeeded in file:" +
+                                "Succeeded in file:" +
                                 (String)fileList.get(i) + "at record no."+ k);
                         }
                     }
@@ -297,8 +299,8 @@ public class LogVerifier{
             } else {
                 if (Debug.messageEnabled()) {
                     Debug.message("LogVerifier::verify::Empty return " +
-                    		"from read of "
-                                + (String)fileList.get(i)+":"+fileList.get(i));
+                        "from read of " + (String)fileList.get(i) +
+                        ":" + fileList.get(i));
                 }
                 verified = false;
                 break;
@@ -348,7 +350,7 @@ public class LogVerifier{
             for(int k = 1; k < tmpResult.length; k++) {
                 if (Debug.messageEnabled()) {
                     Debug.message(name+":Start checking records " + 
-                	tmpResult.length+":"+fileList.get(fileList.size() - 1));
+                        tmpResult.length+":"+fileList.get(fileList.size() - 1));
                 }
                 if(tmpResult[k][signPos].equals("-")) {
                     verified = verifyLogRecord(tmpResult[k], macPos);
@@ -361,9 +363,9 @@ public class LogVerifier{
                     
                     if (Debug.messageEnabled()) {
                         Debug.message(name+":Log Record Verification " +
-                        	    "Succeeded in file:" +
-                                    (String)fileList.get(fileList.size() - 1) + 
-                                    "at record no."+ k);
+                            "Succeeded in file:" +
+                            (String)fileList.get(fileList.size() - 1) + 
+                            "at record no."+ k);
                     }
                 } else {
                     // To check if this is the last signature in the file an 
@@ -378,22 +380,22 @@ public class LogVerifier{
                     int lastRecInFile = 0;
                     lastRecInFile = (tmpResult.length - 1)  - k;
                     verified = verifySignature(tmpResult[k], 
-                	                       signPos, lastRecInFile);
+                        signPos, lastRecInFile);
                     if(!verified) {
                         Debug.error("Log Signature Verification Failed " +
-                        	    "in file:" +
-                                    (String)fileList.get(fileList.size() - 1) + 
-                                    " at record no. "+ k);
+                            "in file:" +
+                            (String)fileList.get(fileList.size() - 1) + 
+                            " at record no. " + k);
                         break;
                     }
                     if (Debug.messageEnabled()) {
                         Debug.message("Log Signature Verification Succeeded" +
-                        	      " in file:"+
-                                      (String)fileList.get(fileList.size() - 1) 
-                                      + "at record no."+ k);
+                            " in file:"+
+                            (String)fileList.get(fileList.size() - 1) +
+                            "at record no."+ k);
                     }
                 }
-            } // end of loop k . i.e. verification check for current file is over
+            } // end of loop k. i.e. verification check for current file is over
         } else {
             if (Debug.messageEnabled()) {
                 Debug.message("LogVerifier::verify::Empty return from read of "

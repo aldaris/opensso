@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenProvider.java,v 1.1 2006-03-31 05:07:16 veiming Exp $
+ * $Id: SSOTokenProvider.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,16 +43,15 @@ public class SSOTokenProvider implements ITokenProvider{
     
     /**
      * Return <code>SSOToken</code> that is casted to <code>Object</code>
-     * Given paramers are used to get SSOToken.
-     * @param name user name
-     * @param Password password for user
+     * Given parameters are used to get SSOToken.
+     *
+     * @param name User name.
+     * @param Password Password for user.
      * @return <code>SSOToken</code> that is casted to <code>Object</code>
      */
     public Object createToken(String name, String Password){
-        SSOToken ssoToken = null;
-	ssoToken = (SSOToken) AccessController.doPrivileged(
-		AdminTokenAction.getInstance());
-        return ssoToken;
+        return (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
     }
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageID.java,v 1.1 2006-03-31 05:07:08 veiming Exp $
+ * $Id: LogMessageID.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,13 +52,13 @@ public class LogMessageID {
     private static Map mapLogLevel = new HashMap();
 
     static {
-	mapLogLevel.put("LL_CONFIG", Level.CONFIG);
-	mapLogLevel.put("LL_FINE", Level.FINE);
-	mapLogLevel.put("LL_FINER", Level.FINER);
-	mapLogLevel.put("LL_FINEST", Level.FINEST);
-	mapLogLevel.put("LL_INFO", Level.INFO);
-	mapLogLevel.put("LL_SEVERE", Level.SEVERE);
-	mapLogLevel.put("LL_ALL", Level.ALL);
+        mapLogLevel.put("LL_CONFIG", Level.CONFIG);
+        mapLogLevel.put("LL_FINE", Level.FINE);
+        mapLogLevel.put("LL_FINER", Level.FINER);
+        mapLogLevel.put("LL_FINEST", Level.FINEST);
+        mapLogLevel.put("LL_INFO", Level.INFO);
+        mapLogLevel.put("LL_SEVERE", Level.SEVERE);
+        mapLogLevel.put("LL_ALL", Level.ALL);
     }
 
     /**
@@ -73,19 +73,19 @@ public class LogMessageID {
      * @param triggers Possible events that trigger this log.
      */
     public LogMessageID(
-	Level logLevel,
-	String prefix,
-	int id,
-	String name,
-	String description,
-	int dataInfo
+        Level logLevel,
+        String prefix,
+        int id,
+        String name,
+        String description,
+        int dataInfo
     ) {
-	this.logLevel = logLevel;
-	this.prefix = prefix;
-	this.id = id;
-	this.name = name;
-	this.description = description;
-	this.dataInfo = dataInfo;
+        this.logLevel = logLevel;
+        this.prefix = prefix;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.dataInfo = dataInfo;
     }
 
     /**
@@ -94,7 +94,7 @@ public class LogMessageID {
      * @return log level.
      */
     public Level getLogLevel() {
-	return logLevel;
+        return logLevel;
     }
 
     /**
@@ -103,7 +103,7 @@ public class LogMessageID {
      * @return prefix.
      */
     public String getPrefix() {
-	return prefix;
+        return prefix;
     }
 
     /**
@@ -112,7 +112,7 @@ public class LogMessageID {
      * @return name.
      */
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
@@ -121,7 +121,7 @@ public class LogMessageID {
      * @return name.
      */
     public int getID() {
-	return id;
+        return id;
     }
 
     /**
@@ -130,7 +130,7 @@ public class LogMessageID {
      * @return description.
      */
     public String getDescription() {
-	return description;
+        return description;
     }
 
     /**
@@ -139,74 +139,74 @@ public class LogMessageID {
      * @return number of entries in the data column.
      */
     public int getNumberOfEntriesInDataColumn() {
-	return dataInfo;
+        return dataInfo;
     }
 
     static LogMessageID createInstance(String prefix, Node node) {
-	LogMessageID messageID = null;
+        LogMessageID messageID = null;
 
-	if ((node != null) &&  (node.getNodeType() == Node.ELEMENT_NODE)) {
-	    String nodeName = node.getNodeName();
+        if ((node != null) &&  (node.getNodeType() == Node.ELEMENT_NODE)) {
+            String nodeName = node.getNodeName();
 
-	    if (nodeName.equals(LogMessageConstants.XML_LOG_MESSAGE_TAG_NAME)){
-		String name = ((Element)node).getAttribute(
-		    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_NAME);
-		String id = ((Element)node).getAttribute(
-		    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_ID);
-		String logLevel = ((Element)node).getAttribute(
-		    LogMessageConstants.XML_ATTRNAME_LOG_LEVEL);
-		String description = ((Element)node).getAttribute(
-		    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_DESCRIPTION);
+            if (nodeName.equals(LogMessageConstants.XML_LOG_MESSAGE_TAG_NAME)){
+                String name = ((Element)node).getAttribute(
+                    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_NAME);
+                String id = ((Element)node).getAttribute(
+                    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_ID);
+                String logLevel = ((Element)node).getAttribute(
+                    LogMessageConstants.XML_ATTRNAME_LOG_LEVEL);
+                String description = ((Element)node).getAttribute(
+                    LogMessageConstants.XML_ATTRNAME_LOG_MESSAGE_DESCRIPTION);
 
-		if ((name.length() > 0) && (id.length() > 0)) {
-		    try {
-			messageID = new LogMessageID(
-			    (Level)mapLogLevel.get(logLevel), prefix,
-			    Integer.parseInt(id), name, description,
-			    getArrayCount(node,
-				LogMessageConstants.XML_DATAINFO_TAG_NAME));
-		    } catch (NumberFormatException e) {
-			Debug.error("LogMessageID.createInstance", e);	
-		    }
-		} else {
-		    Debug.error("LogMessageID.createInstance: " +
-		 "unable to create log message ID because its name is missing");
-		}
-	    }
-	}
+                if ((name.length() > 0) && (id.length() > 0)) {
+                    try {
+                        messageID = new LogMessageID(
+                            (Level)mapLogLevel.get(logLevel), prefix,
+                            Integer.parseInt(id), name, description,
+                            getArrayCount(node,
+                                LogMessageConstants.XML_DATAINFO_TAG_NAME));
+                    } catch (NumberFormatException e) {
+                        Debug.error("LogMessageID.createInstance", e);        
+                    }
+                } else {
+                    Debug.error("LogMessageID.createInstance: " +
+                 "unable to create log message ID because its name is missing");
+                }
+            }
+        }
 
-	return messageID;
+        return messageID;
     }
 
     private static int getArrayCount(Node node, String tagName) {
-	int count = 0;
-	Node target = getNodeOfName(node, tagName);
+        int count = 0;
+        Node target = getNodeOfName(node, tagName);
 
-	if (target != null) {
-	    NodeList items = target.getChildNodes();
-	    if (items != null) {
-		count = items.getLength();
-	    }
-	}
+        if (target != null) {
+            NodeList items = target.getChildNodes();
+            if (items != null) {
+                count = items.getLength();
+            }
+        }
 
-	return count;
+        return count;
     }
 
     private static Node getNodeOfName(Node node, String tagName) {
-	Node target = null;
-	NodeList nodelist = node.getChildNodes();
+        Node target = null;
+        NodeList nodelist = node.getChildNodes();
 
-	if (nodelist != null) {
-	    int sz = nodelist.getLength();
+        if (nodelist != null) {
+            int sz = nodelist.getLength();
 
-	    for (int i = 0; (i < sz) && (target == null); i++) {
-		Node item = nodelist.item(i);
-		if (item.getNodeName().equals(tagName)) {
-		    target = item;
-		}
-	    }
-	}
+            for (int i = 0; (i < sz) && (target == null); i++) {
+                Node item = nodelist.item(i);
+                if (item.getNodeName().equals(tagName)) {
+                    target = item;
+                }
+            }
+        }
 
-	return target;
+        return target;
     }
 }

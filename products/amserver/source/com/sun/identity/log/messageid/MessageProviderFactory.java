@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessageProviderFactory.java,v 1.1 2006-03-31 05:07:09 veiming Exp $
+ * $Id: MessageProviderFactory.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public final class MessageProviderFactory {
      * Default package for message XML file.
      */
     public static final String DEFAULT_MESSAGE_ID_XML_DIR =
-	"com/sun/identity/log/messageid";
+        "com/sun/identity/log/messageid";
 
     /**
      * Suffix of message ID XML file.
@@ -64,7 +64,7 @@ public final class MessageProviderFactory {
      * Instance of factory.
      */
     private static MessageProviderFactory instance = new
-	MessageProviderFactory();
+        MessageProviderFactory();
 
     /**
      * Map contains references to message provider.
@@ -82,8 +82,8 @@ public final class MessageProviderFactory {
      * @throws IOException if corresponding XML file is not found.
      */
     public static LogMessageProvider getProvider(String name)
-	throws IOException {
-	return instance.getMessageProvider(name, null);
+        throws IOException {
+        return instance.getMessageProvider(name, null);
     }
 
     /**
@@ -95,10 +95,10 @@ public final class MessageProviderFactory {
      * @throws IOException if corresponding XML file is not found.
      */
     public static LogMessageProvider getProvider(
-	String name,
-	String packageName
+        String name,
+        String packageName
     ) throws IOException {
-	return instance.getMessageProvider(name, packageName);
+        return instance.getMessageProvider(name, packageName);
     }
 
     /**
@@ -110,20 +110,20 @@ public final class MessageProviderFactory {
      * @throws IOException if corresponding XML file is not found.
      */
     private synchronized LogMessageProvider getMessageProvider(
-	String name,
-	String packageName
+        String name,
+        String packageName
     ) throws IOException {
-	LogMessageProvider p = (LogMessageProvider)mapProviders.get(name);
+        LogMessageProvider p = (LogMessageProvider)mapProviders.get(name);
 
-	if (p == null) {
-	    if (packageName == null) {
-		packageName = DEFAULT_MESSAGE_ID_XML_DIR;
-	    }
-	    p = new LogMessageProviderBase(
-		packageName + "/" + name + MESSAGEID_XML_SUFFIX);
-	    mapProviders.put(name, p);
-	}
+        if (p == null) {
+            if (packageName == null) {
+                packageName = DEFAULT_MESSAGE_ID_XML_DIR;
+            }
+            p = new LogMessageProviderBase(
+                packageName + "/" + name + MESSAGEID_XML_SUFFIX);
+            mapProviders.put(name, p);
+        }
 
-	return p;
+        return p;
     }
 }

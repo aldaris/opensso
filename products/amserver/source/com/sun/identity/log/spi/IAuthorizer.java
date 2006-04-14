@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAuthorizer.java,v 1.1 2006-03-31 05:07:15 veiming Exp $
+ * $Id: IAuthorizer.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,23 +30,25 @@ package com.sun.identity.log.spi;
  */
 public interface IAuthorizer {
     /**
-     * Returns true if a given log record should be published.
+     * Returns <code>true</code> if a given log record should be published.
      *
      * @param logName Log name on which operation is to be performed.
      * @param operation The log operation to be performed.
      * @param credential The credential to be authorized.
-     * @return true if the credential is authorized.
+     * @return <code>true</code> if the credential is authorized.
      */
     public boolean isAuthorized (
-	String logName,
-	String operation,
-	Object credential);
+        String logName,
+        String operation,
+        Object credential);
     
     /**
-     * Returns true if given subject is authorized to change the password.
+     * Returns <code>true</code> if given subject is authorized to change the
+     * password.
      *
      * @param credential Credential to be checked for authorization.
-     * @return true if given subject is authorized to change the password.
+     * @return <code>true</code> if given subject is authorized to change the
+     *         password.
      */
-    public boolean isAuthorized (Object credential);
+    public boolean isAuthorized(Object credential);
 }

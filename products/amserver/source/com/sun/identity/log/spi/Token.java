@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Token.java,v 1.1 2006-03-31 05:07:16 veiming Exp $
+ * $Id: Token.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public class Token {
     
     private static ITokenProvider tokenProvider;
     private static LogManager lmanager = 
-	(LogManager)LogManagerUtil.getLogManager();
+        (LogManager)LogManagerUtil.getLogManager();
     
     
     static {

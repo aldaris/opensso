@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteFormatter.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: RemoteFormatter.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,7 @@ public class RemoteFormatter extends Formatter {
         if (loggedBySid == null) {
             if (Debug.warningEnabled()) {
                 Debug.warning("RemoteFormatter : returning null" +
-		    " because logRecord doesn't have loggedBySid");
+                    " because logRecord doesn't have loggedBySid");
             }
             return null;
         }

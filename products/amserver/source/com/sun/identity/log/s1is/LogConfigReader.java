@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.1 2006-03-31 05:07:09 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,18 +113,18 @@ public class LogConfigReader implements ServiceListener{
             getDefaultAttributes(ssoToken);
         } catch (SMSException smse) {
             debug.warning("LogConfigReader: Could not " +
-            		"get defaultAttributes", smse);
+                "get defaultAttributes", smse);
             return;
         } catch (SSOException ssoe) {
             debug.error("LogConfigReader: Could not " +
-            		"get defaultAttributes", ssoe);
+                "get defaultAttributes", ssoe);
             return;
         }
         String configString = constructInputStream();
         ByteArrayInputStream inputStream = null;
         try {
             inputStream = 
-        	new ByteArrayInputStream(configString.getBytes("ISO8859-1"));
+                new ByteArrayInputStream(configString.getBytes("ISO8859-1"));
         } catch (UnsupportedEncodingException unse) {
             debug.error("LogConfigReader: unsupported Encoding" + unse);
         }
@@ -281,7 +281,8 @@ public class LogConfigReader implements ServiceListener{
             key = LogConstants.FILE_HANDLER;
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
-                debug.warning("LogConfigReader: FileHandler class string is null");
+                debug.warning(
+                    "LogConfigReader: FileHandler class string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -301,7 +302,7 @@ public class LogConfigReader implements ServiceListener{
             }
         }   catch (Exception e) {
             debug.error("LogConfigReader: Could not read " +
-            		"secure filehandler ", e);
+                "secure filehandler ", e);
         }
         // db handler class
         try {
@@ -349,7 +350,7 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Secure " +
-                		"ELFFormatter string is null");
+                    "ELFFormatter string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -408,7 +409,8 @@ public class LogConfigReader implements ServiceListener{
             key = LogConstants.SECURITY_STATUS;
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
-                debug.warning("LogConfigReader: Security status string is null");
+                debug.warning(
+                    "LogConfigReader: Security status string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -418,16 +420,16 @@ public class LogConfigReader implements ServiceListener{
         }
 
         // secure log signing algorithm name 
-	// MD2withRSA, MD5withRSA, SHA1withDSA, SHA1withRSA
+        // MD2withRSA, MD5withRSA, SHA1withDSA, SHA1withRSA
         try {
             key = LogConstants.SECURITY_SIGNING_ALGORITHM;
             value = Misc.getMapAttr(logAttributes, key, 
-        	               LogConstants.DEFAULT_SECURITY_SIGNING_ALGORITHM);
+                LogConstants.DEFAULT_SECURITY_SIGNING_ALGORITHM);
             sbuffer.append(key).append("=")
-                   .append(value).append(LogConstants.CRLF);
+                .append(value).append(LogConstants.CRLF);
         } catch (Exception e) {
             debug.error("LogConfigReader: Could not read secure " +
-            		"log signing alogorithm ", e);
+                "log signing alogorithm ", e);
         }
 
         // secure log helper class name 
@@ -436,12 +438,12 @@ public class LogConfigReader implements ServiceListener{
         try {
             key = LogConstants.SECURE_LOG_HELPER;
             value = Misc.getMapAttr(logAttributes, key, 
-        	                    LogConstants.SECURE_DEFAULT_LOG_HELPER);
+                LogConstants.SECURE_DEFAULT_LOG_HELPER);
             sbuffer.append(key).append("=")
                    .append(value).append(LogConstants.CRLF);
         } catch (Exception e) {
             debug.error("LogConfigReader: Could not read secure " +
-            		"log helper class name ", e);
+                "log helper class name ", e);
         }
         
         // secure logger certificate store
@@ -450,14 +452,14 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: secure logger " +
-                		"certificate store is null");
+                    "certificate store is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
         } catch (Exception e) {
             debug.error("LogConfigReader: Could not read secure " +
-            		"logger certificate store ", e);
+                "logger certificate store ", e);
         }
         // log verification period in seconds
         try {
@@ -491,14 +493,14 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: file readhandler " +
-                		"string is null");
+                    "string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
         }   catch (Exception e) {
             debug.error("LogConfigReader: Could not read " +
-            		"filehandler class ", e);
+                "filehandler class ", e);
         }
         // DB read handler class
         try {
@@ -512,7 +514,7 @@ public class LogConfigReader implements ServiceListener{
             }
         }   catch (Exception e) {
             debug.error("LogConfigReader: could not read DBreadhandler class ",
-		e);
+                e);
         }
         // MAX_RECORDS
         try {
@@ -533,7 +535,7 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: filesper " +
-                		"keystore string is null");
+                    "keystore string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -553,7 +555,7 @@ public class LogConfigReader implements ServiceListener{
             }
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read Token " +
-            		"Generation Class name");
+                "Generation Class name");
         }
         // Secure Timestamp generator class
         try {
@@ -561,14 +563,14 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: timestamp " +
-                		"generator string is null");
+                    "generator string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read Token " +
-            		"Generation Class name");
+                "Generation Class name");
         }
         // Verifier Action Output Class
         try {
@@ -576,14 +578,14 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: verifier " +
-                		"actionclass string is null");
+                    "actionclass string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read verifier " +
-            		"output Class name");
+                "output Class name");
         }
         // filter class name
         try {
@@ -591,7 +593,7 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: filter class " +
-                		"name string is null");
+                    "name string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -627,20 +629,20 @@ public class LogConfigReader implements ServiceListener{
             debug.error("LogConfigReader:Could not read buf size");
         }
 
-	// Max DB Mem Buffer size
-	try {
-	    key = LogConstants.DB_MEM_MAX_RECS;
-	    value = Misc.getMapAttr(logAttributes, key);
-	    if ((value == null) || (value.length() == 0)) {
-		debug.warning(
-		    "LogConfigReader: Max DB mem buffer size string is null");
-	    } else {
-		sbuffer.append(key).append("=").append(value).
-		    append(LogConstants.CRLF);
-	    }
-	} catch(Exception e) {
-	    debug.error("LogConfigReader:Could not read max db mem buf size");
-	}
+        // Max DB Mem Buffer size
+        try {
+            key = LogConstants.DB_MEM_MAX_RECS;
+            value = Misc.getMapAttr(logAttributes, key);
+            if ((value == null) || (value.length() == 0)) {
+                debug.warning(
+                "LogConfigReader: Max DB mem buffer size string is null");
+            } else {
+                sbuffer.append(key).append("=").append(value).
+                    append(LogConstants.CRLF);
+            }
+        } catch(Exception e) {
+            debug.error("LogConfigReader:Could not read max db mem buf size");
+        }
 
         // Buffer Time
         try {
@@ -661,14 +663,14 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: time " +
-                		"buffering status string is null");
+                    "buffering status string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read time " +
-            		"buffering status ");
+                "buffering status ");
         }
 
         // Log status from the AMConfig.properties file
@@ -706,7 +708,7 @@ public class LogConfigReader implements ServiceListener{
             value = Misc.getMapAttr(namingAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: loggins " +
-                		"service url string is null");
+                    "service url string is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
@@ -763,14 +765,12 @@ public class LogConfigReader implements ServiceListener{
      * @throws SSOException
      */
     private SSOToken getSSOToken() throws SSOException {
-	SSOTokenManager mgr = SSOTokenManager.getInstance();
-	String adminDN = 
-	    (String)AccessController.doPrivileged(new AdminDNAction());
-	String adminPassword =
-	    (String)AccessController.doPrivileged(new AdminPasswordAction());
-	SSOToken ssoToken =
-	    mgr.createSSOToken(new AuthPrincipal(adminDN), adminPassword);
-        return ssoToken;
+        SSOTokenManager mgr = SSOTokenManager.getInstance();
+        String adminDN = 
+            (String)AccessController.doPrivileged(new AdminDNAction());
+        String adminPassword =
+            (String)AccessController.doPrivileged(new AdminPasswordAction());
+        return mgr.createSSOToken(new AuthPrincipal(adminDN), adminPassword);
     }
     
     /**
@@ -782,7 +782,7 @@ public class LogConfigReader implements ServiceListener{
     private void setLocalFlag() {
         if (debug.messageEnabled()) {
             debug.message("LogConfigReader: logserviceID is" 
-        	    + localLogServiceID);
+                + localLogServiceID);
         }
         try{
             // can't do this here because NamingService is not
@@ -791,7 +791,7 @@ public class LogConfigReader implements ServiceListener{
             // protocol, host, port);
             
             String urlString = 
-        	manager.getProperty(LogConstants.LOGGING_SERVICE_URL);
+                manager.getProperty(LogConstants.LOGGING_SERVICE_URL);
             String logHost = null;
             if (urlString.indexOf("%") == -1) {
                 logHost = urlString;
@@ -815,14 +815,24 @@ public class LogConfigReader implements ServiceListener{
     // following methods
     // to implement ServiceListener
     
-    public void globalConfigChanged(String servName,String ver,String frpName,
-	                            String servComp,int type) {
+    public void globalConfigChanged(
+        String servName,
+        String ver,
+        String frpName,
+        String servComp,
+        int type
+    ) {
         debug.message("Global config change");
     }
     
-    public void organizationConfigChanged(String servName,String ver,
-	        String orgName,String grpName,String servComp,int type) {
-        
+    public void organizationConfigChanged(
+        String servName,
+        String ver,
+        String orgName,
+        String grpName,
+        String servComp,
+        int type
+    ) {
         debug.message("Org config change");
     }
     

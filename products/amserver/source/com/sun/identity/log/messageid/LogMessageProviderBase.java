@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProviderBase.java,v 1.1 2006-03-31 05:07:09 veiming Exp $
+ * $Id: LogMessageProviderBase.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,9 +65,9 @@ public class LogMessageProviderBase
     private String xmlDefinitionFilename;
 
     protected LogMessageProviderBase(String xmlDef)
-	throws IOException {
-	xmlDefinitionFilename = xmlDef;
-	registerMessageIDs();
+        throws IOException {
+        xmlDefinitionFilename = xmlDef;
+        registerMessageIDs();
     }
 
     /**
@@ -76,7 +76,7 @@ public class LogMessageProviderBase
      * @return all message IDs.
      */
     public List getAllMessageIDs() {
-	return messageIDs;
+        return messageIDs;
     }
 
     /**
@@ -91,29 +91,29 @@ public class LogMessageProviderBase
      * @return Log Record.
      */
     public LogRecord createLogRecord(
-	String messageIDName,
-	String[] dataInfo,
-	Object ssoToken
+        String messageIDName,
+        String[] dataInfo,
+        Object ssoToken
     ) {
-	LogRecord logRec = null;
-	LogMessageID logMsgId = (LogMessageID)hashMessageIDs.get(messageIDName);
+        LogRecord logRec = null;
+        LogMessageID logMsgId = (LogMessageID)hashMessageIDs.get(messageIDName);
 
-	if (logMsgId != null) {
-	    logRec = (ssoToken != null) ?
-	        new LogRecord(logMsgId.getLogLevel(),
-		    formatMessage(dataInfo, logMsgId), ssoToken):
-		new LogRecord(logMsgId.getLogLevel(),
-		    formatMessage(dataInfo, logMsgId));
+        if (logMsgId != null) {
+            logRec = (ssoToken != null) ?
+                new LogRecord(logMsgId.getLogLevel(),
+                    formatMessage(dataInfo, logMsgId), ssoToken):
+                new LogRecord(logMsgId.getLogLevel(),
+                    formatMessage(dataInfo, logMsgId));
 
-	    logRec.addLogInfo(
-		LogConstants.MESSAGE_ID,
-		logMsgId.getPrefix() + "-" + logMsgId.getID());
-	} else {
-	    Debug.error("LogMessageProviderBase.createLogRecord: " +
-		"unable to locale message ID object for " + messageIDName);
-	}
+            logRec.addLogInfo(
+                LogConstants.MESSAGE_ID,
+                logMsgId.getPrefix() + "-" + logMsgId.getID());
+        } else {
+            Debug.error("LogMessageProviderBase.createLogRecord: " +
+                "unable to locale message ID object for " + messageIDName);
+        }
 
-	return logRec;
+        return logRec;
     }
 
     /**
@@ -128,147 +128,147 @@ public class LogMessageProviderBase
      * @return Log Record.
      */
     public LogRecord createLogRecord(
-	String messageIDName,
-	String[] dataInfo,
-	Hashtable ssoProperties
+        String messageIDName,
+        String[] dataInfo,
+        Hashtable ssoProperties
     ) {
-	LogRecord logRec = null;
-	LogMessageID logMsgId = (LogMessageID)hashMessageIDs.get(messageIDName);
+        LogRecord logRec = null;
+        LogMessageID logMsgId = (LogMessageID)hashMessageIDs.get(messageIDName);
 
-	if (logMsgId != null) {
-	    logRec = new LogRecord(logMsgId.getLogLevel(),
-		formatMessage(dataInfo, logMsgId), ssoProperties);
-	    logRec.addLogInfo(
-		LogConstants.MESSAGE_ID,
-		logMsgId.getPrefix() + "-" + logMsgId.getID());
-	} else {
-	    Debug.error("LogMessageProviderBase.createLogRecord: " +
-		"unable to locale message ID object for " + messageIDName);
-	}
+        if (logMsgId != null) {
+            logRec = new LogRecord(logMsgId.getLogLevel(),
+                formatMessage(dataInfo, logMsgId), ssoProperties);
+            logRec.addLogInfo(
+                LogConstants.MESSAGE_ID,
+                logMsgId.getPrefix() + "-" + logMsgId.getID());
+        } else {
+            Debug.error("LogMessageProviderBase.createLogRecord: " +
+                "unable to locale message ID object for " + messageIDName);
+        }
 
-	return logRec;
+        return logRec;
     }
 
     private String formatMessage(String[] dataInfo, LogMessageID logMsgId) {
-	StringBuffer buff = new StringBuffer();
+        StringBuffer buff = new StringBuffer();
 
-	if (dataInfo != null) {
-	    int sz = dataInfo.length;
+        if (dataInfo != null) {
+            int sz = dataInfo.length;
 
-	    if (logMsgId.getNumberOfEntriesInDataColumn() != sz) {
-		Debug.error("LogMessageProviderBase.formatMessage: " +
-		    logMsgId.getName() + 
-		    " mismatch in number of elements in string array with " +
-		    "that is defined in message ID XML file");
-	    }
+            if (logMsgId.getNumberOfEntriesInDataColumn() != sz) {
+                Debug.error("LogMessageProviderBase.formatMessage: " +
+                    logMsgId.getName() + 
+                    " mismatch in number of elements in string array with " +
+                    "that is defined in message ID XML file");
+            }
 
-	    for (int i = 0; i < sz; i++) {
-		if (i > 0) {
-		    buff.append(LogMessageConstants.SEPARATOR_DATA);
-		}
-		buff.append(dataInfo[i]);
-	    }
-	}
+            for (int i = 0; i < sz; i++) {
+                if (i > 0) {
+                    buff.append(LogMessageConstants.SEPARATOR_DATA);
+                }
+                buff.append(dataInfo[i]);
+            }
+        }
 
-	return buff.toString();
+        return buff.toString();
     }
 
     protected void registerMessageIDs()
-	throws IOException {
-	Document doc = getXMLDoc();
-	if (doc != null) {
-	    Element topElement = doc.getDocumentElement();
-	    String tagName = topElement.getNodeName();
+        throws IOException {
+        Document doc = getXMLDoc();
+        if (doc != null) {
+            Element topElement = doc.getDocumentElement();
+            String tagName = topElement.getNodeName();
 
-	    if (tagName.equals(LogMessageConstants.XML_ROOT_TAG_NAME)) {
-		String prefix = topElement.getAttribute(
-		    LogMessageConstants.XML_ATTRNAME_PREFIX);
-		NodeList children = topElement.getChildNodes();
-		int numChildren = children.getLength();
+            if (tagName.equals(LogMessageConstants.XML_ROOT_TAG_NAME)) {
+                String prefix = topElement.getAttribute(
+                    LogMessageConstants.XML_ATTRNAME_PREFIX);
+                NodeList children = topElement.getChildNodes();
+                int numChildren = children.getLength();
 
-		for (int i = 0; i < numChildren; i++) {
-		    LogMessageID id =
-			LogMessageID.createInstance(prefix, children.item(i));
+                for (int i = 0; i < numChildren; i++) {
+                    LogMessageID id =
+                        LogMessageID.createInstance(prefix, children.item(i));
 
-		    if (id != null) {
-			messageIDs.add(id);
-			hashMessageIDs.put(id.getName(), id);
-		    }
-		}
-	    }
-	}
+                    if (id != null) {
+                        messageIDs.add(id);
+                        hashMessageIDs.put(id.getName(), id);
+                    }
+                }
+            }
+        }
     }
 
     private Document getXMLDoc()
-	throws IOException {
-	Document xmlDoc = null;
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setValidating(true);
-	factory.setNamespaceAware(true);
+        throws IOException {
+        Document xmlDoc = null;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(true);
+        factory.setNamespaceAware(true);
 
-	try {
-	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    builder.setErrorHandler(new ValidationErrorHandler());
-	    builder.setEntityResolver(new XMLHandler());
-	    InputStream is = getClass().getClassLoader().getResourceAsStream(
-		xmlDefinitionFilename);
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setErrorHandler(new ValidationErrorHandler());
+            builder.setEntityResolver(new XMLHandler());
+            InputStream is = getClass().getClassLoader().getResourceAsStream(
+                xmlDefinitionFilename);
 
-	    if (is != null) {
-		xmlDoc = builder.parse(is);
-	    } else {
-		throw new IOException(xmlDefinitionFilename +
-		    " cannot be found.");
-	    }
-	} catch (SAXParseException e) {
-	    Debug.error("LogMessageProviderBase.getXMLDoc", e);
-	} catch (SAXException e) {
-	    Debug.error("LogMessageProviderBase.getXMLDoc", e);
-	} catch (ParserConfigurationException e) {
-	    Debug.error("LogMessageProviderBase.getXMLDoc", e);
-	}
+            if (is != null) {
+                xmlDoc = builder.parse(is);
+            } else {
+                throw new IOException(xmlDefinitionFilename +
+                    " cannot be found.");
+            }
+        } catch (SAXParseException e) {
+            Debug.error("LogMessageProviderBase.getXMLDoc", e);
+        } catch (SAXException e) {
+            Debug.error("LogMessageProviderBase.getXMLDoc", e);
+        } catch (ParserConfigurationException e) {
+            Debug.error("LogMessageProviderBase.getXMLDoc", e);
+        }
 
-	return xmlDoc;
+        return xmlDoc;
     }
 
     class ValidationErrorHandler implements ErrorHandler {
-	public void fatalError(SAXParseException e)
-	    throws SAXParseException {
-	    System.err.println(xmlDefinitionFilename +
-		"\n" + e.getMessage() +
-		"\nLine Number in XML file : " + e.getLineNumber() +
-		"\nColumn Number in XML file : " + e.getColumnNumber());
-	}
-									       
-	public void error(SAXParseException e)
-	    throws SAXParseException {
-	    System.err.println(xmlDefinitionFilename +
-		"\n" + e.getMessage() +
-		"\nLine Number in XML file : " + e.getLineNumber() +
-		"\nColumn Number in XML file : " + e.getColumnNumber());
-	    throw e;
-	}
+        public void fatalError(SAXParseException e)
+            throws SAXParseException {
+            System.err.println(xmlDefinitionFilename +
+                "\n" + e.getMessage() +
+                "\nLine Number in XML file : " + e.getLineNumber() +
+                "\nColumn Number in XML file : " + e.getColumnNumber());
+        }
+                                                                               
+        public void error(SAXParseException e)
+            throws SAXParseException {
+            System.err.println(xmlDefinitionFilename +
+                "\n" + e.getMessage() +
+                "\nLine Number in XML file : " + e.getLineNumber() +
+                "\nColumn Number in XML file : " + e.getColumnNumber());
+            throw e;
+        }
 
-	public void warning(SAXParseException e)
-	    throws SAXParseException
-	{
-	    System.err.println(xmlDefinitionFilename +
-		"\n" + e.getMessage() +
-		"\nLine Number in XML file : " + e.getLineNumber() +
-		"\nColumn Number in XML file : " + e.getColumnNumber());
-	}
+        public void warning(SAXParseException e)
+            throws SAXParseException
+        {
+            System.err.println(xmlDefinitionFilename +
+                "\n" + e.getMessage() +
+                "\nLine Number in XML file : " + e.getLineNumber() +
+                "\nColumn Number in XML file : " + e.getColumnNumber());
+        }
     }
 
     class XMLHandler extends DefaultHandler {
-	public InputSource resolveEntity(String aPublicID, String aSystemID) {
-	    InputSource source = null;
-	    String sysid = aSystemID.trim();
+        public InputSource resolveEntity(String aPublicID, String aSystemID) {
+            InputSource source = null;
+            String sysid = aSystemID.trim();
                                                                                
-	    if( sysid.toLowerCase().startsWith("jar://") ) {
-		String dtdname = sysid.substring(5);
-		String dtdValue = Resource.read(dtdname).trim();
-		source = new InputSource(new StringReader(dtdValue));
-	    }
-	    return source;
-	}
+            if( sysid.toLowerCase().startsWith("jar://") ) {
+                String dtdname = sysid.substring(5);
+                String dtdValue = Resource.read(dtdname).trim();
+                source = new InputSource(new StringReader(dtdValue));
+            }
+            return source;
+        }
     }
 }

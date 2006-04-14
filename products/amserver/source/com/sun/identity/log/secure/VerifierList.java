@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VerifierList.java,v 1.1 2006-03-31 05:07:11 veiming Exp $
+ * $Id: VerifierList.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,8 +110,12 @@ public class VerifierList {
      *  @param key2 The key against which the search is conducted.
      *  @return a Vector of the results of the search in sorted order.
      */
-    public Vector getLogFilesForKey(File dir, String log, 
-	                            String key1, String key2) {
+    public Vector getLogFilesForKey(
+        File dir,
+        String log, 
+        String key1,
+        String key2
+    ) {
         Vector logList = new Vector();
         // get the list of logfiles for a log+type
         String[] logFiles = dir.list(new LogFileFilter("_secure."+log+"*") );

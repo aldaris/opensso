@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.1 2006-03-31 05:07:06 veiming Exp $
+ * $Id: ELFFormatter.java,v 1.2 2006-04-14 09:05:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,13 +66,13 @@ public class ELFFormatter extends Formatter {
             secureTimestampGenerator = (ITimestampGenerator)clz.newInstance();
         } catch (ClassNotFoundException cnfe) {
             Debug.error("ELFFormatter: TimeStamp Generator Class " +
-            		"not found", cnfe);
+                "not found", cnfe);
         } catch (InstantiationException ie) {
             Debug.error("ELFFormatter: Timestamp Generator Could " +
-            		"not be Instantiated", ie);
+                "not be Instantiated", ie);
         } catch (IllegalAccessException iae) {
             Debug.error("ELFFormatter: Timestamp Generator Could " +
-            		"not be Instantiated", iae);
+                "not be Instantiated", iae);
         }
     }
     
@@ -120,7 +120,7 @@ public class ELFFormatter extends Formatter {
             String key = null;
             String value = null;
             for (int i = 2; i < allFields.length; i ++) { 
-        	// first 2 fields r compulsory
+                // first 2 fields r compulsory
                 key = allFields[i];
                 if ((key != null) && (key.length() != 0) &&
                 (selectedFields != null) &&
@@ -133,7 +133,7 @@ public class ELFFormatter extends Formatter {
                         value = "Not Available";
                     }
                     if ((value.indexOf(' ') != -1) || 
-                	(value.indexOf('\t') != -1)) {
+                        (value.indexOf('\t') != -1)) {
                         sbuffer.append("\"").append(value).append("\"\t");
                     } else {
                         sbuffer.append(value).append("\t");
@@ -192,7 +192,7 @@ public class ELFFormatter extends Formatter {
                         lmanager.getProperty(LogConstants.LOG_FIELDS);
         if ((strSelectedFields != null) && (strSelectedFields.length() != 0)) {
             StringTokenizer stoken = 
-        	new StringTokenizer(strSelectedFields, ", ");
+                new StringTokenizer(strSelectedFields, ", ");
             
             while(stoken.hasMoreElements()) {
                 selectedFields.add(stoken.nextToken());

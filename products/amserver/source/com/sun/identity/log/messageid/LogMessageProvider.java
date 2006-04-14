@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProvider.java,v 1.1 2006-03-31 05:07:08 veiming Exp $
+ * $Id: LogMessageProvider.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,8 +50,7 @@ public interface LogMessageProvider {
      *        details like client IP address into the log record.
      */
     LogRecord createLogRecord(
-	String messageIDName,
-	String[] dataInfo,
-	Object ssoToken
-    );
+        String messageIDName,
+        String[] dataInfo,
+        Object ssoToken);
 }

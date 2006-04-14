@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.1 2006-03-31 05:07:06 veiming Exp $
+ * $Id: DBFormatter.java,v 1.2 2006-04-14 09:05:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,13 +67,13 @@ public class DBFormatter extends Formatter {
             secureTimestampGenerator = (ITimestampGenerator)clz.newInstance();
         } catch (ClassNotFoundException cnfe) {
             Debug.error("DBFormatter: TimeStamp Generator Class " +
-            		"not found", cnfe);
+                "not found", cnfe);
         } catch (InstantiationException ie) {
             Debug.error("DBFormatter: Timestamp Generator Could not " +
-            		"be Instantiated", ie);
+                "be Instantiated", ie);
         } catch (IllegalAccessException iae) {
             Debug.error("DBFormatter: Timestamp Generator Could not " +
-            		"be Instantiated", iae);
+                "be Instantiated", iae);
         }
     }
 
@@ -96,7 +96,7 @@ public class DBFormatter extends Formatter {
         String retString = lmanager.getProperty(LogConstants.ALL_FIELDS);
         if (Debug.messageEnabled()) {
             Debug.message("DBFormatter: Returned String from getHead is " 
-            		      + retString);
+                + retString);
         }
         return retString;
     }
@@ -131,7 +131,7 @@ public class DBFormatter extends Formatter {
         getAllFields();
         StringBuffer sbuffer = new StringBuffer();
         Map logInfoTable = 
-        	((com.sun.identity.log.LogRecord)logRecord).getLogInfoMap();
+            ((com.sun.identity.log.LogRecord)logRecord).getLogInfoMap();
         Set selectedFields = getSelectedFieldSet();
         String strTime = "";
         if(secureTimestampGenerator != null) {
@@ -148,8 +148,7 @@ public class DBFormatter extends Formatter {
             StringTokenizer tmps = new StringTokenizer(tstr, "'");
             StringBuffer thisfield = new StringBuffer();
             if (Debug.messageEnabled()) {
-		Debug.message("DBFormatter:found single-quote in data: " 
-		        		       + tstr);
+                Debug.message("DBFormatter:found single-quote in data: " +tstr);
             }
             
             /*
@@ -162,84 +161,85 @@ public class DBFormatter extends Formatter {
                 }
                 if (Debug.messageEnabled()) {
                     Debug.message("DBFormatter:thisfield1 = #" + 
-                    		      thisfield.toString() + "#");
+                        thisfield.toString() + "#");
                 }
             } else {
                 if (tmps.hasMoreTokens()) {
                     thisfield.append(tmps.nextToken());
                 }
             }
-	    while (tmps.hasMoreTokens()) {
-		thisfield.append("''").append(tmps.nextToken());
-		if (Debug.messageEnabled()) {
-		    Debug.message("DBFormatter:thisfield2 = #" + 
-			              thisfield.toString() + "#");
-		}
-	    }
+            while (tmps.hasMoreTokens()) {
+                thisfield.append("''").append(tmps.nextToken());
+                if (Debug.messageEnabled()) {
+                    Debug.message("DBFormatter:thisfield2 = #" + 
+                                      thisfield.toString() + "#");
+                }
+            }
 
-	    /*
-	     *  See if it ends in "'"
-	     */
-	    if (tstr.indexOf("'", tstr.length()-1) != -1) {
-		thisfield.append("''");
-	    }
+            /*
+             *  See if it ends in "'"
+             */
+            if (tstr.indexOf("'", tstr.length()-1) != -1) {
+                thisfield.append("''");
+            }
 
-	    tstr = thisfield.toString();
-	}
-	sbuffer.append("'").append(tstr).append("', ");
-	if (Debug.messageEnabled()) {
-	    Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString() 
-		          + "#");
-	}
+            tstr = thisfield.toString();
+        }
+        sbuffer.append("'").append(tstr).append("', ");
+        if (Debug.messageEnabled()) {
+            Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString() 
+                          + "#");
+        }
 
         int len = allFields.length;
         for (int i = 2; i < len-1; i ++) { // first 2 fields are compulsory
             if ((logInfoTable != null) &&
             (selectedFields != null) &&
             (selectedFields.contains(allFields[i]))) {
-		//
-		// if there are any single-quotes in the data, they have to be
-		// made double-single-quotes, so it'll pass through sql
-		//
-		String tempstr = (String)logInfoTable.get(allFields[i]);
-		if ((tempstr != null) &&
-			(tempstr.length() > 0) &&
-			(tempstr.indexOf("'") != -1)) {
-		    StringTokenizer tmps = new StringTokenizer(tempstr, "'");
-		    StringBuffer thisfield = new StringBuffer();
-		    if (Debug.messageEnabled()) {
-			Debug.message("DBFormatter:found single-quote in: " 
-				      + tempstr);
-		    }
-		    //
-		    // funky case of "'" at the beginning
-		    //
-		    if (tempstr.indexOf("'") == 0) {
-			thisfield.append("''");
-			if (tmps.hasMoreTokens()) {
-			    thisfield.append(tmps.nextToken());
-			}
-		    } else {
-			if (tmps.hasMoreTokens()) {
-			    thisfield.append(tmps.nextToken());
-			}
-		    }
+                //
+                // if there are any single-quotes in the data, they have to be
+                // made double-single-quotes, so it'll pass through sql
+                //
+                String tempstr = (String)logInfoTable.get(allFields[i]);
+                if ((tempstr != null) &&
+                    (tempstr.length() > 0) &&
+                    (tempstr.indexOf("'") != -1)
+                ) {
+                    StringTokenizer tmps = new StringTokenizer(tempstr, "'");
+                    StringBuffer thisfield = new StringBuffer();
+                    if (Debug.messageEnabled()) {
+                        Debug.message("DBFormatter:found single-quote in: " 
+                                      + tempstr);
+                    }
+                    //
+                    // funky case of "'" at the beginning
+                    //
+                    if (tempstr.indexOf("'") == 0) {
+                        thisfield.append("''");
+                        if (tmps.hasMoreTokens()) {
+                            thisfield.append(tmps.nextToken());
+                        }
+                    } else {
+                        if (tmps.hasMoreTokens()) {
+                            thisfield.append(tmps.nextToken());
+                        }
+                    }
 
-		    while (tmps.hasMoreTokens()) {
-			thisfield.append("''").append(tmps.nextToken());
-		    }
-		    //
-		    // if string ends in "'"
-		    //
-		    if (tempstr.indexOf("'", tempstr.length()-1) != -1) {
-			thisfield.append("''");
-		    }
-		    tempstr = thisfield.toString();
-		}
-		if (tempstr == null) {
-		    tempstr = NOTAVAIL;
-		}
-		sbuffer.append("'").append(tempstr).append("', ");
+                    while (tmps.hasMoreTokens()) {
+                        thisfield.append("''").append(tmps.nextToken());
+                    }
+                    //
+                    // if string ends in "'"
+                    //
+                    if (tempstr.indexOf("'", tempstr.length()-1) != -1) {
+                        thisfield.append("''");
+                    }
+                    tempstr = thisfield.toString();
+                }
+                if (tempstr == null) {
+                    tempstr = NOTAVAIL;
+                }
+                sbuffer.append("'").append(tempstr).append("', ");
             } else {
                 sbuffer.append("'" + NOTAVAIL + "'").append(", ");
             }
@@ -247,14 +247,14 @@ public class DBFormatter extends Formatter {
 
         if (Debug.messageEnabled()) {
             Debug.message("DBFormatter:format1: sbuffer = " 
-        	          + sbuffer.toString());
+                          + sbuffer.toString());
         }
 
         if (selectedFields.contains(allFields[len-1])) {
-	    String tmpstr = (String)logInfoTable.get(allFields[len-1]);
-	    if (tmpstr == null) {
-		tmpstr = NOTAVAIL;
-	    }
+            String tmpstr = (String)logInfoTable.get(allFields[len-1]);
+            if (tmpstr == null) {
+                tmpstr = NOTAVAIL;
+            }
             sbuffer.append("'").append(tmpstr).append("'");
         } else {
             sbuffer.append("'" + NOTAVAIL + "'");
@@ -262,7 +262,7 @@ public class DBFormatter extends Formatter {
 
         if (Debug.messageEnabled()) {
             Debug.message("DBFormatter:format2: sbuffer = " 
-        	    + sbuffer.toString());
+                    + sbuffer.toString());
         }
 
         return sbuffer.toString();
@@ -292,8 +292,8 @@ public class DBFormatter extends Formatter {
         while(stoken.hasMoreElements()) {
             temp1 = stoken.nextToken();
             if (Debug.messageEnabled()) {
-        	Debug.message("DBFormatter:getSelectedFieldSet: temp1 = " 
-        		+ temp1);
+                Debug.message("DBFormatter:getSelectedFieldSet: temp1 = " 
+                    + temp1);
             }
             selectedFields.add(temp1);
             temp += temp1 + "\t";

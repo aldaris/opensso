@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelper.java,v 1.1 2006-03-31 05:07:10 veiming Exp $
+ * $Id: SecureLogHelper.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,9 +80,9 @@ public abstract class SecureLogHelper {
     static {
         try {
             signingAlgorithm = LogManagerUtil.getLogManager().
-                           getProperty(LogConstants.SECURITY_SIGNING_ALGORITHM);
+                getProperty(LogConstants.SECURITY_SIGNING_ALGORITHM);
         } catch (Exception e) {
-    	    signingAlgorithm = LogConstants.DEFAULT_SECURITY_SIGNING_ALGORITHM;
+            signingAlgorithm = LogConstants.DEFAULT_SECURITY_SIGNING_ALGORITHM;
         }
     }
 
@@ -108,9 +108,11 @@ public abstract class SecureLogHelper {
      * @return secure data that is matched with dataType
      * @throws Exception if it fails to read secret data from secret store
      */
-    abstract byte[] readFromSecretStore(String filename, String dataType, 
-    		                           AMPassword password )
-    throws Exception;
+    abstract byte[] readFromSecretStore(
+        String filename,
+        String dataType, 
+        AMPassword password
+    ) throws Exception;
 
     /**
      * Writes to the secret Storage. If the data to be written is a key, then
@@ -123,9 +125,12 @@ public abstract class SecureLogHelper {
      * or a key
      * @throws Exception if it fails to write secret data from secret store
      */
-    abstract void writeToSecretStore(byte[] cryptoMaterial, String filename, 
-    		                        AMPassword password, String dataType)
-    throws Exception;
+    abstract void writeToSecretStore(
+        byte[] cryptoMaterial,
+        String filename, 
+        AMPassword password,
+        String dataType
+    ) throws Exception;
     
     /**
      * Verifies the given MAC
@@ -170,8 +175,8 @@ public abstract class SecureLogHelper {
             initializeKeyStoreManager(LoggerPassword);
             
             // Generate an initial  key
-	    KeyGenerator keygen = KeyGenerator.getInstance("DES3");
-	    SecretKey k0 = keygen.generateKey();
+            KeyGenerator keygen = KeyGenerator.getInstance("DES3");
+            SecretKey k0 = keygen.generateKey();
             currentLoggerKey = k0.getEncoded();
             // Store the key securely
             // Should use a public / private keypair but limitations of JSS
@@ -182,19 +187,19 @@ public abstract class SecureLogHelper {
             // secret store. Write twice to the logger's PKCS12 file as the 
             // initialKey remains the same but the currentKey changes
             writeToSecretStore(currentLoggerKey, loggerFileName, 
-        		       loggerPass, initialKey);
+                loggerPass, initialKey);
             loggerInitialized = true;
             writeToSecretStore(currentLoggerKey, loggerFileName, 
-        		       loggerPass, currentKey);
+                loggerPass, currentKey);
             writeToSecretStore(currentLoggerKey, verifierFileName, 
-        		       tempVerifierPass, initialKey);
-        }else{
+                tempVerifierPass, initialKey);
+        } else {
             if (Debug.messageEnabled()) {
                 Debug.message(logFileName + " Logger Module is already " + 
-                	      " initialized");
+                    " initialized");
             }
             currentLoggerKey = readFromSecretStore(loggerFileName, 
-        		                           currentKey, loggerPass);
+                currentKey, loggerPass);
         }
     }
     
@@ -207,10 +212,11 @@ public abstract class SecureLogHelper {
      * @param newPassword The administrator / auditor's new password
      * @throws Exception if it fails to replace the password 
      */
-    public synchronized void initializeVerifier(String verFileName, 
-    		                                    AMPassword oldPassword,
-    		                                    AMPassword newPassword)
-    throws Exception {
+    public synchronized void initializeVerifier(
+        String verFileName, 
+        AMPassword oldPassword,
+        AMPassword newPassword
+    ) throws Exception {
         verifierFileName = verFileName;
         AMPassword oldPass = oldPassword;
         verifierPass = newPassword;
@@ -223,7 +229,7 @@ public abstract class SecureLogHelper {
         
         if(!verifierInitialized){
             currentVerifierKey = readFromSecretStore(verifierFileName, 
-            		                                 initialKey, oldPass);
+                initialKey, oldPass);
             
             // Password is erased from the object, so we need to keep this
             AMPassword newverpass = verifierPass;
@@ -231,14 +237,14 @@ public abstract class SecureLogHelper {
             // Re-write the verifier file with the new password. Also create the
             // currentKey in the secret Storage
             writeToSecretStore(currentVerifierKey, verifierFileName, 
-            		           verifierPass, initialKey);
+                verifierPass, initialKey);
             verifierInitialized = true;
             
             writeToSecretStore(currentVerifierKey, verifierFileName, 
-            		           newverpass, currentKey);
+                newverpass, currentKey);
         }else{
             currentVerifierKey = readFromSecretStore(verifierFileName, 
-            		           currentKey,verifierPass);
+                currentKey,verifierPass);
         }
     }
     
@@ -248,19 +254,20 @@ public abstract class SecureLogHelper {
      * @param password administrator / auditor password
      * @throws Exception if it fails to reinitialize verifier
      */
-    public synchronized void reinitializeVerifier(String verFileName, 
-	                                          AMPassword password)
-    throws Exception {
+    public synchronized void reinitializeVerifier(
+        String verFileName, 
+        AMPassword password
+    ) throws Exception {
         initializeKeyStoreManager(password);
         verifierInitialized = isInitialized(verFileName, password);
         if(verifierInitialized){
             currentVerifierKey = readFromSecretStore(verifierFileName, 
-        	                                     initialKey, password);
+                initialKey, password);
             
             // Password is erased from the object, so we need to keep this
             AMPassword newverpass = (AMPassword) password.clone();
             writeToSecretStore(currentVerifierKey, verifierFileName, 
-        	               newverpass, currentKey);
+                newverpass, currentKey);
             
         }else{
             throw new Exception(logFileName + " Verifier is not initialized");
@@ -332,7 +339,7 @@ public abstract class SecureLogHelper {
         
         // Write the key to the secret store
         writeToSecretStore(currentLoggerKey, logFileName,
-        		           loggerPass, currentKey);
+                loggerPass, currentKey);
         return currentMAC;
     }
     
@@ -345,16 +352,16 @@ public abstract class SecureLogHelper {
      * @throws Exception if it fails to verify mac value for log entry
      */
     public boolean verifyMAC(String LogEntry, byte[] mac)
-    throws Exception {
-    	boolean macValid = false;
+        throws Exception {
+        boolean macValid = false;
         
         try{
             byte[] verifierKey = readFromSecretStore(verifierFileName, 
-            		                            currentKey, verifierPass);
+                currentKey, verifierPass);
             if((currentVerifierKey!= null ) && 
              !(new String(currentVerifierKey).equals(new String(verifierKey)))){
                 throw new Exception(verifierFileName + 
-                	" Possible Intrusion or " + " Misconfiguration");
+                    " Possible Intrusion or " + " Misconfiguration");
             }
             
             currentVerifierKey = verifierKey;
@@ -367,7 +374,7 @@ public abstract class SecureLogHelper {
                 currentVerifierKey = md.digest();
                 // Write the key to the secret store
                 writeToSecretStore(currentVerifierKey, verifierFileName, 
-                		           verifierPass, currentKey);
+                    verifierPass, currentKey);
                 macValid = true;
             } 
         }catch (Exception e){
@@ -388,7 +395,7 @@ public abstract class SecureLogHelper {
             lastLoggerKey = new byte[currentLoggerKey.length];
         }
         System.arraycopy(currentLoggerKey, 0, lastLoggerKey, 0, 
-        		         currentLoggerKey.length);
+            currentLoggerKey.length);
     }
     
     /**
@@ -404,10 +411,10 @@ public abstract class SecureLogHelper {
      * @return false if LoggerLastLine and VerifierLastLine are equal
      */
     public boolean isIntrusionTrue() {
-    	boolean intrusion = false;
+        boolean intrusion = false;
         if(LoggerLastLine && VerifierLastLine){
-        	intrusion = !(new String(currentVerifierKey).
-            		equals(new String(lastLoggerKey)));
+            intrusion = !(new String(currentVerifierKey).
+                equals(new String(lastLoggerKey)));
         }
         
         return intrusion;

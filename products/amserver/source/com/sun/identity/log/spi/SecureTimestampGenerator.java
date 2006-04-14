@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureTimestampGenerator.java,v 1.1 2006-03-31 05:07:16 veiming Exp $
+ * $Id: SecureTimestampGenerator.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,20 +35,21 @@ import com.sun.identity.log.spi.ITimestampGenerator;
 public class SecureTimestampGenerator implements ITimestampGenerator {
     
     private static SimpleDateFormat sdf = 
-	           new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     /** 
-     * Creates new SecureTimestampGenerator 
+     * Creates new <code>SecureTimestampGenerator</code>.
      */
-    public SecureTimestampGenerator() {}
+    public SecureTimestampGenerator() {
+    }
     
     /**
-     * Return generated time stamp
-     * @return generated time stamp
+     * Returns generated time stamp.
+     *
+     * @return generated time stamp.
      */
     public String getTimestamp() {
         Date date = new Date();
         return sdf.format(date);
     }
-    
 }

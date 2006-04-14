@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureELFFormatter.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: SecureELFFormatter.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,13 +68,13 @@ public class SecureELFFormatter extends Formatter {
             secureTimestampGenerator = (ITimestampGenerator)clz.newInstance();
         } catch (ClassNotFoundException cnfe) {
             Debug.error("SecureELFFormatter: TimeStamp Generator Class " +
-            		"not found", cnfe);
+                "not found", cnfe);
         } catch (InstantiationException ie) {
             Debug.error("SecureELFFormatter: Timestamp Generator Could " +
-            		"not be Instantiated", ie);
+                "not be Instantiated", ie);
         } catch (IllegalAccessException iae) {
             Debug.error("SecureELFFormatter: Timestamp Generator Could " +
-            		"not be Instantiated", iae);
+                "not be Instantiated", iae);
         }
     }
     
@@ -137,7 +137,9 @@ public class SecureELFFormatter extends Formatter {
                     // the following check is to check if the string has
                     // a white space ... if it does then it should be
                     // enclosed within quotes.
-                    if ((value.indexOf(' ') != -1) || (value.indexOf('\t') != -1)) {
+                    if ((value.indexOf(' ') != -1) ||
+                        (value.indexOf('\t') != -1)
+                    ) {
                         sbuffer.append("\"").append(value).append("\"\t");
                         stringForMAC.append("\"").append(value).append("\"");
                     } else {
@@ -222,7 +224,7 @@ public class SecureELFFormatter extends Formatter {
         
         if ((strSelectedFields != null) && (strSelectedFields.length() != 0)) {
             StringTokenizer stoken = 
-        	new StringTokenizer(strSelectedFields, ", ");
+                new StringTokenizer(strSelectedFields, ", ");
             while(stoken.hasMoreElements()) {
                 selectedFields.add( stoken.nextToken());
             }

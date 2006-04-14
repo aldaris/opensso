@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogQuery.java,v 1.1 2006-03-31 05:07:04 veiming Exp $
+ * $Id: LogQuery.java,v 1.2 2006-04-14 09:05:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class LogQuery {
     private int maxRecord;
     private int globalOperand;
     private ArrayList queries;  /* list of QueryElement object */
-    private ArrayList columns;	/* columns requested */
+    private ArrayList columns;  /* columns requested */
     private String sortBy;
     
     /**
@@ -78,7 +78,7 @@ public class LogQuery {
         this.maxRecord = LogQuery.MOST_RECENT_MAX_RECORDS;
         this.globalOperand = LogQuery.MATCH_ANY_CONDITION;
         this.queries = null;
-	this.columns = null;
+        this.columns = null;
         this.sortBy = null;
     }
     
@@ -119,7 +119,7 @@ public class LogQuery {
         {
             throw new IllegalArgumentException(
                 "matchCriteria should be LogQuery.MATCH_ANY_CONDITION or " +
-	        "LogQuery.MATCH_ALL_CONDITIONS");
+                "LogQuery.MATCH_ALL_CONDITIONS");
         } else {
             this.globalOperand = matchCriteria;
         }

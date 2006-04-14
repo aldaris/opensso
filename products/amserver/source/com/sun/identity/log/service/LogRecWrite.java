@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecWrite.java,v 1.1 2006-03-31 05:07:12 veiming Exp $
+ * $Id: LogRecWrite.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,7 @@ public class LogRecWrite implements LogOperation, ParseOutput {
         
         if (logInfoMap != null) {
             String loginIDSid = 
-        	   (String)logInfoMap.get(LogConstants.LOGIN_ID_SID);
+                (String)logInfoMap.get(LogConstants.LOGIN_ID_SID);
             if (loginIDSid != null && loginIDSid.length() > 0) {
                 SSOToken loginIDToken = null;
                 try {
@@ -171,7 +171,7 @@ public class LogRecWrite implements LogOperation, ParseOutput {
         
         for (int i = 1; i < elems.size(); i++) {
             com.sun.identity.log.service.LogRecord lr = 
-        	(com.sun.identity.log.service.LogRecord)elems.elementAt(i);
+                (com.sun.identity.log.service.LogRecord)elems.elementAt(i);
             _records.addElement(lr);
         }
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.1 2006-03-31 05:07:06 veiming Exp $
+ * $Id: FileHandler.java,v 1.2 2006-04-14 09:05:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,10 +54,10 @@ import com.sun.identity.log.spi.Debug;
  * of files. <P>
  * For a rotating set of files, as each file reaches the limit
  * (<i> LogConstants.MAX_FILE_SIZE</I>), it is closed, rotated out, and a
- * new file opened. Successively older files and named by adding "-1", "-2" etc.,
- * to the base filename. The Locking mechanism is much more relaxed(in JDK's
- * FileHandler an exclusive lock is created on the file till the handler is
- * closed which makes reading impossible)
+ * new file opened. Successively older files and named by adding "-1", "-2",
+ * etc., * to the base filename. The Locking mechanism is much more relaxed 
+ * (in JDK's  FileHandler an exclusive lock is created on the file till the
+ * handler is closed which makes reading impossible)
  */
 public class FileHandler extends java.util.logging.Handler {
     
@@ -168,11 +168,12 @@ public class FileHandler extends java.util.logging.Handler {
      * to the <tt>Handler</tt>.
      *
      * @param encoding  The name of a supported character encoding.
-     *	      May be null, to indicate the default platform encoding.
+     *        May be null, to indicate the default platform encoding.
      * @exception  SecurityException  if a security manager exists and if
-     *             the caller does not have <tt>LoggingPermission("control")</tt>.
-     * @exception  UnsupportedEncodingException if the named encoding is
-     *		not supported.
+     *             the caller does not have
+     *             <tt>LoggingPermission("control")</tt>.
+     * @exception UnsupportedEncodingException if the named encoding is
+     *           not supported.
      */
     public void setEncoding(String encoding) throws SecurityException,
     UnsupportedEncodingException {
@@ -219,7 +220,8 @@ public class FileHandler extends java.util.logging.Handler {
             recCountLimit = 1;
         }
         
-        String status = lmanager.getProperty(LogConstants.TIME_BUFFERING_STATUS);
+        String status = lmanager.getProperty(
+            LogConstants.TIME_BUFFERING_STATUS);
          
         if ( status != null && status.equalsIgnoreCase("ON")) 
         {
@@ -233,7 +235,8 @@ public class FileHandler extends java.util.logging.Handler {
             count = Integer.parseInt(strCount);
         }
         
-        String strMaxFileSize = lmanager.getProperty(LogConstants.MAX_FILE_SIZE);
+        String strMaxFileSize = lmanager.getProperty(
+            LogConstants.MAX_FILE_SIZE);
         if ((strMaxFileSize == null) || (strMaxFileSize.length() == 0)) {
             maxFileSize = 0;
         } else {
@@ -241,7 +244,8 @@ public class FileHandler extends java.util.logging.Handler {
         }
         location = lmanager.getProperty(LogConstants.LOG_LOCATION);
         if ((location == null) || (location.length() == 0)) {
-            throw new NullLocationException("Location Not Specified"); //localize
+            throw new NullLocationException(
+                "Location Not Specified"); //localize
         }
         if (!location.endsWith(File.separator)) {
             location += File.separator;
@@ -277,7 +281,7 @@ public class FileHandler extends java.util.logging.Handler {
      * Create a file of the name of FileOutputStream.
      */
     private void open(File fileName, boolean append) throws IOException {
-	String filename = fileName.toString();
+        String filename = fileName.toString();
         int len = 0;
         len = (int)fileName.length();
         FileOutputStream fout = new FileOutputStream(filename, append);
@@ -309,14 +313,14 @@ public class FileHandler extends java.util.logging.Handler {
         }
         fileName = location + fileName;
         Logger logger = (Logger)Logger.getLogger(this.fileName);
-	if (logger.getLevel() != Level.OFF) {
-	    try {
-		openFiles(fileName);
-	    } catch (IOException ioe) {
-		Debug.error(fileName + ":FileHandler: Unable to open Files",
-		    ioe);
-	    }
-	}
+        if (logger.getLevel() != Level.OFF) {
+            try {
+                openFiles(fileName);
+            } catch (IOException ioe) {
+                Debug.error(fileName + ":FileHandler: Unable to open Files",
+                    ioe);
+            }
+        }
         logger.setCurrentFile(this.fileName);
         
         recordBuffer = new String[recCountLimit];
@@ -332,7 +336,7 @@ public class FileHandler extends java.util.logging.Handler {
                 writer.flush();
             } catch (Exception ex) {
                 Debug.error(fileName + 
-                	":FileHandler: Couldnot Flush Output", ex);
+                    ":FileHandler: Couldnot Flush Output", ex);
             }
         }
     }
@@ -375,7 +379,7 @@ public class FileHandler extends java.util.logging.Handler {
         if (this.recCount == recCountLimit) {
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + ":FileHandler.publish(): got " + 
-                	recCount + " records, writing all");
+                        recCount + " records, writing all");
             }
             flush();
         }
@@ -405,7 +409,7 @@ public class FileHandler extends java.util.logging.Handler {
         }
         if (Debug.messageEnabled()) {
             Debug.message(fileName + ":FileHandler.flush: writing " +
-            		"buffered records");
+                            "buffered records");
         }
         for (int i=0; i < recCount; ++i) {
             String message = recordBuffer[i];
@@ -426,7 +430,7 @@ public class FileHandler extends java.util.logging.Handler {
                 writer.write(message);
             } catch (IOException ex) {
                 Debug.error(fileName + ":FileHandler: couldnot write " +
-                		"to file", ex);
+                                "to file", ex);
             }
             cleanup();
         }
@@ -440,24 +444,24 @@ public class FileHandler extends java.util.logging.Handler {
                 writer.close();
             } catch (Exception ex) {
                 Debug.error(fileName + ":FileHandler: " +
-                		"Error closing writer", ex);
+                                "Error closing writer", ex);
             }
         }
-	//
-	//  delete file<n>; file<n-1> becomes file<n>; and so on.
-	//
+        //
+        //  delete file<n>; file<n-1> becomes file<n>; and so on.
+        //
         for (int i = count-2; i >= 0; i--) {
             File f1 = files[i];
             File f2 = files[i+1];
             if (f1.exists()) {
                 if (f2.exists()) {
-		    try {
-			f2.delete();
-		    } catch (SecurityException secex) {
-			Debug.error(fileName +
-			    ":FileHandler: could not delete file. msg = " +
-			    secex.getMessage());
-		    }
+                    try {
+                        f2.delete();
+                    } catch (SecurityException secex) {
+                        Debug.error(fileName +
+                            ":FileHandler: could not delete file. msg = " +
+                            secex.getMessage());
+                    }
                 }
                 boolean renameSuccess = f1.renameTo(f2);
                 // In case renaming fails, copy the contents of source file
@@ -489,10 +493,10 @@ public class FileHandler extends java.util.logging.Handler {
             }
         } catch(FileNotFoundException fnfe) {
             Debug.error(fileName + ":FileHandler: copyFile: File not found: ", 
-        	        fnfe);
+                fnfe);
         } catch(IOException ioex) {
             Debug.error(fileName + ":FileHandler: copyFile: IOException", 
-        	        ioex);
+                ioex);
         }
     }
     
@@ -503,7 +507,7 @@ public class FileHandler extends java.util.logging.Handler {
             fins.read(bytes);
         } catch (IOException ioe) {
             Debug.error(fileName + ":FileHandler: couldnot read file content", 
-        	        ioe);
+                ioe);
         }
         String fileContent = new String(bytes);
         fileContent = fileContent.trim();

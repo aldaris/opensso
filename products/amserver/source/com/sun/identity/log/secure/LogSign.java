@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSign.java,v 1.1 2006-03-31 05:07:10 veiming Exp $
+ * $Id: LogSign.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,8 +86,10 @@ public class LogSign {
      */
     public synchronized String sign()
     throws Exception {
-        // Get instance of the Logger for which the signing operation is 
-	// to be done.
+        /*
+         * Get instance of the Logger for which the signing operation is 
+         * to be done.
+         */
         logger = (com.sun.identity.log.Logger)Logger.getLogger(name);
         Handler[] handlers = logger.getHandlers();
         SecureLogHelper helper = 
@@ -115,7 +117,8 @@ public class LogSign {
         } else {
             newMAC = new byte[prevMAC.length + prevSign.length];
             System.arraycopy(prevMAC, 0, newMAC, 0, prevMAC.length);
-            System.arraycopy(prevSign, 0, newMAC, prevMAC.length, prevSign.length);
+            System.arraycopy(prevSign, 0, newMAC, prevMAC.length,
+                prevSign.length);
         }
         // Sign the newly generated MAC
         byte[] curSign = helper.signMAC(newMAC);

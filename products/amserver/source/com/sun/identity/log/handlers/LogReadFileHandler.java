@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadFileHandler.java,v 1.1 2006-03-31 05:07:07 veiming Exp $
+ * $Id: LogReadFileHandler.java,v 1.2 2006-04-14 09:05:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,92 +191,93 @@ public class LogReadFileHandler implements LogReadHandler  {
      * @throws RuntimeException if it fails to retrieve log record.
      * @throws Exception if it fails any of operation.
      */
-    public String [][]logRecRead(Set fileNames, LogQuery logQuery,
-	    boolean sourceData)
-	throws IOException, NoSuchFieldException,
-	IllegalArgumentException, RuntimeException,
-	Exception
+    public String [][]logRecRead(
+        Set fileNames,
+        LogQuery logQuery,
+        boolean sourceData
+    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
+        RuntimeException, Exception
     {
         // if the object is persistence use it otherwise don't
         this.cleaner();
 
-	Set fNames = new HashSet();
-	boolean isFirstFile = true;
-	for (Iterator it = fileNames.iterator(); it.hasNext(); ) {
-	    String ss = (String)it.next();
-	    fNames.add(ss);
-	    this.logFileName = ss;
+        Set fNames = new HashSet();
+        boolean isFirstFile = true;
+        for (Iterator it = fileNames.iterator(); it.hasNext(); ) {
+            String ss = (String)it.next();
+            fNames.add(ss);
+            this.logFileName = ss;
 
-	    if (Debug.messageEnabled()) {
-		Debug.message ("File:logRecRead/2: processing file " + ss +
-		    ", sourceData = " + sourceData);
-	    }
+            if (Debug.messageEnabled()) {
+                Debug.message ("File:logRecRead/2: processing file " + ss +
+                    ", sourceData = " + sourceData);
+            }
 
-	    boolean hdrExist = false;
-	    if (sourceData == true) {
-		queryChriteria = logQuery;
-	    }
-	    // to collect field names
-	    try {
-		hdrExist = this.getFieldNames(isFirstFile, logQuery);
-		isFirstFile = false;
-	    } catch (IOException e) {
-		throw e; // catch & rethrow it
-	    } catch (RuntimeException e) {
-		throw e; // catch & rethrow it
-	    } catch (Exception e) {
-		throw e; // catch & rethrow it
-	    }
-	    if (hdrExist == false) {
-		return queryResult;
-	    }
+            boolean hdrExist = false;
+            if (sourceData == true) {
+                queryChriteria = logQuery;
+            }
+            // to collect field names
+            try {
+                hdrExist = this.getFieldNames(isFirstFile, logQuery);
+                isFirstFile = false;
+            } catch (IOException e) {
+                throw e; // catch & rethrow it
+            } catch (RuntimeException e) {
+                throw e; // catch & rethrow it
+            } catch (Exception e) {
+                throw e; // catch & rethrow it
+            }
+            if (hdrExist == false) {
+                return queryResult;
+            }
 
-	    //
-	    //  maxNoOfRecs starts out as MOST_RECENT_MAX_RECORDS (-1).
-	    //
-	    //  when MOST_RECENT_MAX_RECORDS (-1) specified in the LogQuery,
-	    //  LogReader will change it to the value read from the
-	    //  attribute LogConstants.MAX_RECORDS.
-	    //
-	    //  getNumRecordsWanted will be the max (default 500),
-	    //  ALL_RECORDS (-2), or some positive non-zero number
-	    //
+            //
+            //  maxNoOfRecs starts out as MOST_RECENT_MAX_RECORDS (-1).
+            //
+            //  when MOST_RECENT_MAX_RECORDS (-1) specified in the LogQuery,
+            //  LogReader will change it to the value read from the
+            //  attribute LogConstants.MAX_RECORDS.
+            //
+            //  getNumRecordsWanted will be the max (default 500),
+            //  ALL_RECORDS (-2), or some positive non-zero number
+            //
 
-	    if (logQuery != null) {
-		// caller has to handle what is MOST_RECENT_MAX_RECORDS
-		// this class has no idea about the value
-		if ((logQuery.getNumRecordsWanted() ==
-		    LogQuery.MOST_RECENT_MAX_RECORDS) ||
-		    (logQuery.getNumRecordsWanted() <  LogQuery.ALL_RECORDS))
-		{
-		    this.maxNoOfRecs = 1;
-		} else {
-		    this.maxNoOfRecs = logQuery.getNumRecordsWanted();
-		}
-	    } else {
-		this.maxNoOfRecs = 1;// can't be 0, headers will be returned
-	    }
+            if (logQuery != null) {
+                // caller has to handle what is MOST_RECENT_MAX_RECORDS
+                // this class has no idea about the value
+                if ((logQuery.getNumRecordsWanted() ==
+                    LogQuery.MOST_RECENT_MAX_RECORDS) ||
+                    (logQuery.getNumRecordsWanted() <  LogQuery.ALL_RECORDS))
+                {
+                    this.maxNoOfRecs = 1;
+                } else {
+                    this.maxNoOfRecs = logQuery.getNumRecordsWanted();
+                }
+            } else {
+                this.maxNoOfRecs = 1;// can't be 0, headers will be returned
+            }
 
-	    //
-	    //  getRecordsMulti() uses maxNoOfRecs
-	    //
+            //
+            //  getRecordsMulti() uses maxNoOfRecs
+            //
 
-	    try {
-		if (sourceData == true) {
-		    this.getRecordsMulti(true);
-		} else {
-		    this.getRecordsMulti(false);
-		}
-	    } catch (IOException e) {
-		throw e; // catch & rethrow
-	    } catch (IllegalArgumentException e) {
-		throw e; // catch & rethrow
-	    } catch (RuntimeException e) {
-		throw e; // catch & rethrow
-	    } catch (Exception e) {
-		throw e; // catch & rethrow
-	    }
-	} // end of for loop for all files
+            try {
+                if (sourceData == true) {
+                    this.getRecordsMulti(true);
+                } else {
+                    this.getRecordsMulti(false);
+                }
+            } catch (IOException e) {
+                throw e; // catch & rethrow
+            } catch (IllegalArgumentException e) {
+                throw e; // catch & rethrow
+            } catch (RuntimeException e) {
+                throw e; // catch & rethrow
+            } catch (Exception e) {
+                throw e; // catch & rethrow
+            }
+        } // end of for loop for all files
         
         int recSize = listOfValidRecords.size();
 
@@ -316,8 +317,8 @@ public class LogReadFileHandler implements LogReadHandler  {
     
     // This method collects all the ELF header fields.
     private boolean getFieldNames(boolean addFields, LogQuery logQry)
-	throws IOException,
-	RuntimeException, Exception
+        throws IOException,
+        RuntimeException, Exception
     {
         String fieldBuffer;
         boolean foundHeader = false;
@@ -338,52 +339,52 @@ public class LogReadFileHandler implements LogReadHandler  {
                         break; // this is error.
                     }
                     ArrayList tmpList = getFields(hdrStr,true);
-		    String [] spltHdrStr = null;
+                    String [] spltHdrStr = null;
 
-		    ArrayList al = null;
-		    if (logQry != null) {
-			al = logQry.getColumns();
-			if (al != null) {
-			    columnIndices = new ArrayList();
-			    spltHdrStr = new String [al.size()];
-			} else {
-			    spltHdrStr = new String [tmpList.size()];
-			}
-		    } else {
-			spltHdrStr = new String [tmpList.size()];
-		    }
+                    ArrayList al = null;
+                    if (logQry != null) {
+                        al = logQry.getColumns();
+                        if (al != null) {
+                            columnIndices = new ArrayList();
+                            spltHdrStr = new String [al.size()];
+                        } else {
+                            spltHdrStr = new String [tmpList.size()];
+                        }
+                    } else {
+                        spltHdrStr = new String [tmpList.size()];
+                    }
 
-		    int j = 0;
-		    int tmpListSz = tmpList.size();
+                    int j = 0;
+                    int tmpListSz = tmpList.size();
 
                     for (int i = 0; i < tmpListSz; i++) {
-			String tmps = (String)tmpList.get(i);
-			if (al != null) {
-			    if (al.contains(tmps)) {
-				columnIndices.add(j, Integer.toString(i));
-				spltHdrStr[j++] = tmps;
-			    }
-			} else {
-			    spltHdrStr[j++] = tmps;
-			}
+                        String tmps = (String)tmpList.get(i);
+                        if (al != null) {
+                            if (al.contains(tmps)) {
+                                columnIndices.add(j, Integer.toString(i));
+                                spltHdrStr[j++] = tmps;
+                            }
+                        } else {
+                            spltHdrStr[j++] = tmps;
+                        }
                     }
-		    
-		    //
-		    //  don't add Field names "record" if not first file
-		    //
-		    //  also find out if specific columns (fields) where
-		    //  requested.  if so, then only include those, and
-		    //  make a list of indices that should be stored from
-		    //  the subsequent records read.
-		    //
-		    if (addFields) {
-			listOfValidRecords.add(spltHdrStr);
-		    }
+                    
+                    //
+                    //  don't add Field names "record" if not first file
+                    //
+                    //  also find out if specific columns (fields) where
+                    //  requested.  if so, then only include those, and
+                    //  make a list of indices that should be stored from
+                    //  the subsequent records read.
+                    //
+                    if (addFields) {
+                        listOfValidRecords.add(spltHdrStr);
+                    }
                     foundHeader = true;
                     break;
                 }
             }
-	    fileReader.close();
+            fileReader.close();
         } catch (IOException e) {
             String msg = "Problem in reading " + logFileName;
             throw new IOException(msg);
@@ -416,23 +417,23 @@ public class LogReadFileHandler implements LogReadHandler  {
                 // temporary field holder
                 ArrayList listOfFields = new ArrayList();
                 listOfFields = this.getFields(bufferedStr,isSourceData);
-		String [] spltStrArr = null;
+                String [] spltStrArr = null;
 
-		if (columnIndices != null) {
-		    spltStrArr = new String [columnIndices.size()];
-		} else {
-		    spltStrArr = new String [listOfFields.size()];
-		}
+                if (columnIndices != null) {
+                    spltStrArr = new String [columnIndices.size()];
+                } else {
+                    spltStrArr = new String [listOfFields.size()];
+                }
 
-		int j = 0;
+                int j = 0;
                 for (int i = 0; i < listOfFields.size(); i++) {
-		    if (columnIndices != null) {
-			if (columnIndices.contains(Integer.toString(i))) {
-			    spltStrArr[j++] = (String)listOfFields.get(i);
-			}
-		    } else {
-			spltStrArr[i] = (String)listOfFields.get(i);
-		    }
+                    if (columnIndices != null) {
+                        if (columnIndices.contains(Integer.toString(i))) {
+                            spltStrArr[j++] = (String)listOfFields.get(i);
+                        }
+                    } else {
+                        spltStrArr[i] = (String)listOfFields.get(i);
+                    }
                 }
                 if (queryChriteria == null) {
                     this.collect(spltStrArr);
@@ -461,86 +462,86 @@ public class LogReadFileHandler implements LogReadHandler  {
     // listOfValueRecords
     //
     private boolean getRecordsMulti (boolean isSourceData)
-	throws IOException, RuntimeException
+        throws IOException, RuntimeException
     {
-	String bufferedStr;
-	int localNumRecs = 0;
-	ArrayList localListOfValidRecords = new ArrayList();
-	try {
-	    BufferedReader flRead = new
-	    BufferedReader(new FileReader(logFileName));
-	    while((bufferedStr = flRead.readLine()) != null) {
-		if (bufferedStr.trim().length() <= 0) {
-		    continue; // no field value, so ignore
-		}
-		if (bufferedStr.startsWith(version) == true) {
-		    continue; // line contains version of the elf file
-		}
-		if (bufferedStr.startsWith(fieldName) == true) {
-		    continue; // header already collected, ignore it
-		}
-		// temporary field holder
-		ArrayList listOfFields = new ArrayList();
-		listOfFields = this.getFields(bufferedStr,isSourceData);
-		String [] spltStrArr = null;
+        String bufferedStr;
+        int localNumRecs = 0;
+        ArrayList localListOfValidRecords = new ArrayList();
+        try {
+            BufferedReader flRead = new
+            BufferedReader(new FileReader(logFileName));
+            while((bufferedStr = flRead.readLine()) != null) {
+                if (bufferedStr.trim().length() <= 0) {
+                    continue; // no field value, so ignore
+                }
+                if (bufferedStr.startsWith(version) == true) {
+                    continue; // line contains version of the elf file
+                }
+                if (bufferedStr.startsWith(fieldName) == true) {
+                    continue; // header already collected, ignore it
+                }
+                // temporary field holder
+                ArrayList listOfFields = new ArrayList();
+                listOfFields = this.getFields(bufferedStr,isSourceData);
+                String [] spltStrArr = null;
 
-		if (columnIndices != null) {
-		    spltStrArr = new String [columnIndices.size()];
-		} else {
-		    spltStrArr = new String [listOfFields.size()];
-		}
+                if (columnIndices != null) {
+                    spltStrArr = new String [columnIndices.size()];
+                } else {
+                    spltStrArr = new String [listOfFields.size()];
+                }
 
-		int j = 0;
+                int j = 0;
 
-		for (int i = 0; i < listOfFields.size(); i++) {
-		    if (columnIndices != null) {
-			if (columnIndices.contains(Integer.toString(i))) {
-			    spltStrArr[j++] = (String)listOfFields.get(i);
-			}
-		    } else {
-			spltStrArr[i] = (String)listOfFields.get(i);
-		    }
-		}
+                for (int i = 0; i < listOfFields.size(); i++) {
+                    if (columnIndices != null) {
+                        if (columnIndices.contains(Integer.toString(i))) {
+                            spltStrArr[j++] = (String)listOfFields.get(i);
+                        }
+                    } else {
+                        spltStrArr[i] = (String)listOfFields.get(i);
+                    }
+                }
 
-		int rec_size = localListOfValidRecords.size();
+                int rec_size = localListOfValidRecords.size();
 
-		if ((queryChriteria == null) ||
-		    (this.applyQuery(spltStrArr) == true))
-		{
-		    if (this.maxNoOfRecs != LogQuery.ALL_RECORDS) {
-			if (localNumRecs > this.maxNoOfRecs) {
-			    localListOfValidRecords.remove(1);
-			}
-		    }
-        	    localListOfValidRecords.add(spltStrArr);
-		    localNumRecs++;
-		}
-	    }
+                if ((queryChriteria == null) ||
+                    (this.applyQuery(spltStrArr) == true))
+                {
+                    if (this.maxNoOfRecs != LogQuery.ALL_RECORDS) {
+                        if (localNumRecs > this.maxNoOfRecs) {
+                            localListOfValidRecords.remove(1);
+                        }
+                    }
+                    localListOfValidRecords.add(spltStrArr);
+                    localNumRecs++;
+                }
+            }
 
-	    //
-	    //  might have to do something about max most recent...
-	    //
-	    if (localNumRecs > this.maxNoOfRecs) {
-		localNumRecs = this.maxNoOfRecs;
-	    }
+            //
+            //  might have to do something about max most recent...
+            //
+            if (localNumRecs > this.maxNoOfRecs) {
+                localNumRecs = this.maxNoOfRecs;
+            }
 
-	    String [] tmpxx = null;
-	    for (int i = 0; i < localNumRecs; i++) {
-		tmpxx = (String [])localListOfValidRecords.get(i);
-		listOfValidRecords.add(tmpxx);
-	    }
+            String [] tmpxx = null;
+            for (int i = 0; i < localNumRecs; i++) {
+                tmpxx = (String [])localListOfValidRecords.get(i);
+                listOfValidRecords.add(tmpxx);
+            }
 
-	    flRead.close();
+            flRead.close();
 
-	} catch (RuntimeException e) {
-	    String msg = "Problem in reading " + logFileName;
-	    throw new IOException(msg);
-	} catch (Exception e) {
-	    String msg = "Problem in reading " + logFileName;
-	    throw new RuntimeException(msg);
-	}
+        } catch (RuntimeException e) {
+            String msg = "Problem in reading " + logFileName;
+            throw new IOException(msg);
+        } catch (Exception e) {
+            String msg = "Problem in reading " + logFileName;
+            throw new RuntimeException(msg);
+        }
 
-	return true;
+        return true;
     }
     
     // applies query to find out whether the record matches or not
@@ -595,16 +596,16 @@ public class LogReadFileHandler implements LogReadHandler  {
         int result = 0;
         int rel = elem.getRelation();
 
-	switch(rel) {
-	    case QueryElement.CN:  // contains
-		return (record[fieldPos].indexOf(fldValue) != -1);
-	    case QueryElement.SW:  // starts with
-		return (record[fieldPos].startsWith(fldValue));
-	    case QueryElement.EW:  // ends with
-		return (record[fieldPos].endsWith(fldValue));
-	    default:
-		result = record[fieldPos].compareTo(fldValue);
-	}
+        switch(rel) {
+            case QueryElement.CN:  // contains
+                return (record[fieldPos].indexOf(fldValue) != -1);
+            case QueryElement.SW:  // starts with
+                return (record[fieldPos].startsWith(fldValue));
+            case QueryElement.EW:  // ends with
+                return (record[fieldPos].endsWith(fldValue));
+            default:
+                result = record[fieldPos].compareTo(fldValue);
+        }
 
         switch(rel) {
             case QueryElement.EQ :
