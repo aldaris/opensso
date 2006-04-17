@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.3 2006-01-06 22:51:48 arviranga Exp $
+ * $Id: AMOrganizationImpl.java,v 1.4 2006-04-17 20:20:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2269,8 +2269,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             String tmpS = (String) it.next();
             if (!registered.contains(tmpS)) {
                 Object[] args = { tmpS };
-                throw new AMException(AMSDKBundle.getString("459", args),
-                        "459", args);
+                throw new AMException(AMSDKBundle.getString(
+                    "459", args, super.locale), "459", args);
             }
         }
 
@@ -2309,8 +2309,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 debug.error("AMOrganizationImpl: Data validation failed-> "
                         + thisService, se);
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString("976", args),
-                        "976", args);
+                throw new AMException(AMSDKBundle.getString(
+                    "976", args, super.locale), "976", args);
             }
         }
         if (objectClasses != null && !objectClasses.isEmpty()) {
@@ -2382,8 +2382,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 null);
         if (users.size() > 1) {
             Object args[] = { uid };
-            throw new AMException(AMSDKBundle.getString("969", args), "969",
-                    args);
+            throw new AMException(AMSDKBundle.getString(
+                "969", args, super.locale), "969", args);
         } else {
             Iterator it = users.iterator();
             if (it.hasNext())
@@ -2667,7 +2667,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                     } else {
                         Object args[] = { serviceName };
                         throw new AMException(AMSDKBundle
-                                .getString("464", args), "464", args);
+                            .getString("464", args, super.locale), "464", args);
                     }
                 }
             }
@@ -2718,7 +2718,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                             null);
                 }
             } catch (SMSException smsex) {
-                throw new AMException(AMSDKBundle.getString("451"), "451");
+                throw new AMException(AMSDKBundle.getString(
+                    "451", super.locale), "451");
             }
         }
     }
@@ -2743,8 +2744,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         // error message
         if (isRegisteredForSubOrgs(serviceName)) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString("445", args), "445",
-                    args);
+            throw new AMException(AMSDKBundle.getString(
+                "445", args, super.locale), "445", args);
         }
 
         try {
@@ -2788,8 +2789,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             }
         } catch (SMSException smsex) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString("913", args), "913",
-                    args);
+            throw new AMException(AMSDKBundle.getString(
+                "913", args, super.locale), "913", args);
         }
     }
 
@@ -2981,8 +2982,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 String tmpS = (String) it.next();
                 if (!registered.contains(tmpS)) {
                     Object[] args = { tmpS };
-                    throw new AMException(AMSDKBundle.getString("459", args),
-                            "459", args);
+                    throw new AMException(AMSDKBundle.getString(
+                        "459", args, super.locale), "459", args);
                 }
             }
 
@@ -3011,8 +3012,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                             + "Data validation failed.. ", se);
                 }
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString("976", args),
-                        "976", args);
+                throw new AMException(AMSDKBundle.getString(
+                    "976", args, super.locale), "976", args);
             }
             if (objectClasses != null && !objectClasses.isEmpty()) {
                 groupImpl.setAttribute("objectclass", objectClasses);
@@ -3350,7 +3351,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 return ou.searchEntities(wildcard, ctrl, avfilter,
                         searchTemplate);
             } else {
-                throw new AMException(AMSDKBundle.getString("461"), "461");
+                throw new AMException(AMSDKBundle.getString(
+                    "461", super.locale), "461");
             }
 
         case PEOPLE_CONTAINER:
@@ -3358,7 +3360,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             if (pc.isExists()) {
                 pc.searchEntities(wildcard, ctrl, avfilter, searchTemplate);
             } else {
-                throw new AMException(AMSDKBundle.getString("461"), "461");
+                throw new AMException(AMSDKBundle.getString(
+                    "461", super.locale), "461");
             }
 
         case ORGANIZATION:
@@ -3373,7 +3376,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         String stype = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         if (stype == null) {
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.getString(
+                "117", super.locale), "117");
         }
         if (type == AMObject.USER) {
             // create users.
@@ -3408,7 +3412,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         String stype = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         if (stype == null) {
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.getString(
+                "117", super.locale), "117");
         }
         if (type == AMObject.USER) {
             // create users.

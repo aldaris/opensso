@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFilteredRoleImpl.java,v 1.1 2005-11-01 00:29:06 arvindp Exp $
+ * $Id: AMFilteredRoleImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,11 +88,13 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
             throws AMException, SSOException {
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
         }
 
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.getString("122"), "122");
+            throw new AMException(AMSDKBundle.
+                getString("122", super.locale), "122");
         }
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
@@ -154,11 +156,13 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
         }
 
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.getString("122"), "122");
+            throw new AMException(AMSDKBundle.
+                getString("122", super.locale), "122");
         }
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
@@ -223,7 +227,8 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
         }
 
         String filter = "(&" + getFilter() + avFilter + ")";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationalUnitImpl.java,v 1.1 2005-11-01 00:29:13 arvindp Exp $
+ * $Id: AMOrganizationalUnitImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2385,8 +2385,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 String status = (String) iter.next();
                 if (status.equalsIgnoreCase(serviceName)) {
                     Object args[] = { serviceName };
-                    throw new AMException(AMSDKBundle.getString("464", args),
-                            "464", args);
+                    throw new AMException(AMSDKBundle.
+                        getString("464", args, super.locale), "464", args);
                 }
             }
         } else {
@@ -2436,7 +2436,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                             null);
                 }
             } catch (SMSException smsex) {
-                throw new AMException(AMSDKBundle.getString("451"), "451");
+                throw new AMException(AMSDKBundle.
+                    getString("451", super.locale), "451");
             }
         }
     }
@@ -2464,7 +2465,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         // error message
         if (isRegisteredForSubOrgs(serviceName)) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString("445", args), "445",
+            throw new AMException(AMSDKBundle.
+                getString("445", args, super.locale), "445",
                     args);
         }
 
@@ -2499,13 +2501,13 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
             }
 
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString("463", args), "463",
-                    args);
+            throw new AMException(AMSDKBundle.
+                getString("463", args, super.locale), "463", args);
 
         } catch (SMSException smsex) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString("913", args), "913",
-                    args);
+            throw new AMException(AMSDKBundle.
+                getString("913", args, super.locale), "913", args);
         }
     }
 
@@ -2708,7 +2710,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.
+                getString("117", super.locale), "117");
         }
         Set resultSet = new HashSet();
         int createType = Integer.parseInt(type);
@@ -2798,7 +2801,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 .toLowerCase());
         if (type == null) {
 
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.
+                getString("117", super.locale), "117");
         }
         int createType = Integer.parseInt(type);
         Set entitySet = new HashSet();

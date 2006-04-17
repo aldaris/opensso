@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMRoleImpl.java,v 1.1 2005-11-01 00:29:17 arvindp Exp $
+ * $Id: AMRoleImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,10 +194,12 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
             throws AMException, SSOException {
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
 
         if ((wildcard == null) || (wildcard.length() == 0))
-            throw new AMException(AMSDKBundle.getString("122"), "122");
+            throw new AMException(AMSDKBundle.
+                getString("122", super.locale), "122");
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
                 + "=" + wildcard + ")" + getSearchFilter(AMObject.USER) + "("
@@ -260,10 +262,12 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         int level = searchControl.getSearchScope();
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
 
         if ((wildcard == null) || (wildcard.length() == 0))
-            throw new AMException(AMSDKBundle.getString("122"), "122");
+            throw new AMException(AMSDKBundle.
+                getString("122", super.locale), "122");
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
                 + "=" + wildcard + ")" + getSearchFilter(AMObject.USER) + "("
@@ -328,7 +332,8 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         int level = searchControl.getSearchScope();
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.getString("123"), "123");
+            throw new AMException(AMSDKBundle.
+                getString("123", super.locale), "123");
 
         String filter = "(&" + getSearchFilter(AMObject.USER) + "(" + roleDNsAN
                 + "=" + super.entryDN + ")" + avFilter + ")";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.2 2005-11-22 18:24:10 veiming Exp $
+ * $Id: AMObjectImpl.java,v 1.3 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,6 +125,8 @@ class AMObjectImpl implements AMObject {
 
     protected int profileType;
 
+    protected String locale = "en_US";
+
     // Don't initialize until needed
     private AMHashMap byteValueModMap;
 
@@ -151,6 +153,7 @@ class AMObjectImpl implements AMObject {
     AMObjectImpl(SSOToken ssoToken, String dn, int type) {
         entryDN = dn;
         token = ssoToken;
+        locale = AMCommonUtils.getUserLocale(token);
         profileType = type;
         dsManager = AMDirectoryWrapper.getInstance();
         amDirectoryManager = AMDirectoryManager.getInstance();
@@ -348,14 +351,14 @@ class AMObjectImpl implements AMObject {
                 return false;
             }
 
-            throw new AMException(AMSDKBundle.getString("154"), "154");
+            throw new AMException(AMSDKBundle.getString("154", locale), "154");
         }
 
         if (attributeValue.size() == 0) {
-            throw new AMException(AMSDKBundle.getString("155"), "155");
+            throw new AMException(AMSDKBundle.getString("155", locale), "155");
         }
 
-        throw new AMException(AMSDKBundle.getString("154"), "154");
+        throw new AMException(AMSDKBundle.getString("154", locale), "154");
     }
 
     public String getDN() {
@@ -410,15 +413,17 @@ class AMObjectImpl implements AMObject {
 
                 return Integer.parseInt(str);
             } catch (NumberFormatException nfex) {
-                throw new AMException(AMSDKBundle.getString("152"), "152");
+                throw new AMException(AMSDKBundle.getString(
+                    "152", locale), "152");
             }
         }
 
         if (attributeValue.size() == 0) {
-            throw new AMException(AMSDKBundle.getString("153"), "153");
+            throw new AMException(AMSDKBundle.getString(
+                "153", locale), "153");
         }
 
-        throw new AMException(AMSDKBundle.getString("152"), "152");
+        throw new AMException(AMSDKBundle.getString("152", locale), "152");
     }
 
     /**
@@ -474,7 +479,7 @@ class AMObjectImpl implements AMObject {
                         smsex);
             }
 
-            throw new AMException(AMSDKBundle.getString("498"), "498");
+            throw new AMException(AMSDKBundle.getString("498", locale), "498");
         }
     }
 
@@ -524,7 +529,7 @@ class AMObjectImpl implements AMObject {
                         + serviceName + ")", smsex);
             }
 
-            throw new AMException(AMSDKBundle.getString("915"), "915");
+            throw new AMException(AMSDKBundle.getString("915", locale), "915");
         }
     }
 
@@ -546,7 +551,8 @@ class AMObjectImpl implements AMObject {
         Set assignedServices = getAssignedServices();
 
         if (!assignedServices.contains(sname)) {
-            throw new AMException(AMSDKBundle.getString("126"), "126");
+            throw new AMException(AMSDKBundle.getString(
+                "126", locale), "126");
         }
 
         try {
@@ -570,14 +576,14 @@ class AMObjectImpl implements AMObject {
             // throw new AMException
             debug.error("AMObjectImpl.setServiceStatus: " + "SMSException: ",
                     se);
-            throw new AMException(AMSDKBundle.getString("908"), "908");
+            throw new AMException(AMSDKBundle.getString("908", locale), "908");
         }
 
         Set attrVal = new HashSet();
         attrVal.add(status);
 
         if (stAttributeName == null) {
-            throw new AMException(AMSDKBundle.getString("705"), "705");
+            throw new AMException(AMSDKBundle.getString("705", locale), "705");
         }
 
         // TODO validate service attribute value.
@@ -623,7 +629,7 @@ class AMObjectImpl implements AMObject {
             // throw new AMException
             debug.error("AMObjectImpl.getServiceStatus: " + "SMSException: ",
                     se);
-            throw new AMException(AMSDKBundle.getString("908"), "908");
+            throw new AMException(AMSDKBundle.getString("908", locale), "908");
         }
 
         if (stAttributeName != null) {
@@ -676,7 +682,7 @@ class AMObjectImpl implements AMObject {
         } else if ((values == null) || values.isEmpty()) {
             return "";
         } else {
-            throw new AMException(AMSDKBundle.getString("150"), "150");
+            throw new AMException(AMSDKBundle.getString("150", locale), "150");
         }
     }
 
@@ -704,8 +710,8 @@ class AMObjectImpl implements AMObject {
 
             if (sc == null) {
                 Object[] args = { serviceName };
-                throw new AMException(AMSDKBundle.getString("480", args),
-                        "480", args);
+                throw new AMException(AMSDKBundle.
+                    getString("480", args, locale), "480", args);
             }
 
             return new AMOrgTemplateImpl(token, sc.getDN(), serviceName, sc,
@@ -900,7 +906,8 @@ class AMObjectImpl implements AMObject {
             it = canAssign.iterator();
             while (it.hasNext()) {
                 if (!registered.contains(it.next())) {
-                    throw new AMException(AMSDKBundle.getString("126"), "126");
+                    throw new AMException(AMSDKBundle.getString(
+                       "126", locale), "126");
                 }
             }
         } else {
@@ -954,8 +961,8 @@ class AMObjectImpl implements AMObject {
 
                 if (ss == null) {
                     debug.warning(AMSDKBundle.getString("1001"));
-                    throw new AMException(AMSDKBundle.getString("1001", args),
-                            "1001", args);
+                    throw new AMException(AMSDKBundle.getString(
+                        "1001", args, locale), "1001", args);
                 }
 
                 if (ss.getServiceType() != SchemaType.DYNAMIC) {
@@ -976,7 +983,7 @@ class AMObjectImpl implements AMObject {
                 debug.error("AMObjectImpl:assignService-> "
                         + "unable to validate attributes for " + thisService,
                         smse);
-                throw new AMException(AMSDKBundle.getString("908"), "908");
+                throw new AMException(AMSDKBundle.getString("908", locale), "908");
             }
 
             // TODO validate the attributes here...
@@ -996,7 +1003,8 @@ class AMObjectImpl implements AMObject {
         }
 
         if (!DN.isDN(entryDN)) {
-            throw new AMInvalidDNException(AMSDKBundle.getString("157"), "157");
+            throw new AMInvalidDNException(
+                AMSDKBundle.getString("157", locale), "157");
         }
 
         DN dn = new DN(entryDN);
@@ -1253,7 +1261,7 @@ class AMObjectImpl implements AMObject {
                             smsex);
                 }
 
-                throw new AMException(AMSDKBundle.getString("451"), "451");
+                throw new AMException(AMSDKBundle.getString("451", locale), "451");
             }
         }
 
@@ -1265,11 +1273,11 @@ class AMObjectImpl implements AMObject {
             ss = ssm.getSchema(SchemaType.DYNAMIC);
         } catch (SMSException sme) {
             debug.error("AMObjectImpl.createTemplate()", sme);
-            throw new AMException(AMSDKBundle.getString("484"), "484");
+            throw new AMException(AMSDKBundle.getString("484", locale), "484");
         }
 
         if (ss == null) {
-            throw new AMException(AMSDKBundle.getString("484"), "484");
+            throw new AMException(AMSDKBundle.getString("484", locale), "484");
         }
 
         attributes = AMCrypt.encryptPasswords(attributes, ss);
@@ -1341,7 +1349,6 @@ class AMObjectImpl implements AMObject {
                     String ldapErr = ame.getLDAPErrorCode();
                     int ldapError = Integer.parseInt(ldapErr);
                     if (ldapErr != null && (ldapError == 4 || ldapError == 11)){
-                        String locale = AMCommonUtils.getUserLocale(token);
                         throw new AMException(AMSDKBundle.getString("977",
                                 locale), "977");
                     } else {
@@ -1354,7 +1361,6 @@ class AMObjectImpl implements AMObject {
                     }
                 }
                 if (pcEntries != null && !pcEntries.isEmpty()) {
-                    String locale = AMCommonUtils.getUserLocale(token);
                     throw new AMException(AMSDKBundle.getString("977", locale),
                             "977");
                 } else {
@@ -1375,7 +1381,6 @@ class AMObjectImpl implements AMObject {
                     String ldapErr = ame.getLDAPErrorCode();
                     int ldapError = Integer.parseInt(ldapErr);
                     if (ldapErr != null && (ldapError == 4 || ldapError == 11)){
-                        String locale = AMCommonUtils.getUserLocale(token);
                         throw new AMException(AMSDKBundle.getString("977",
                                 locale), "977");
                     } else {
@@ -1387,7 +1392,6 @@ class AMObjectImpl implements AMObject {
                     }
                 }
                 if (gcEntries != null && !gcEntries.isEmpty()) {
-                    String locale = AMCommonUtils.getUserLocale(token);
                     throw new AMException(AMSDKBundle.getString("977", locale),
                             "977");
                 } else {
@@ -1439,7 +1443,7 @@ class AMObjectImpl implements AMObject {
         Set assignedServices = getAssignedServices();
 
         if (!assignedServices.contains(sname)) {
-            throw new AMException(AMSDKBundle.getString("126"), "126");
+            throw new AMException(AMSDKBundle.getString("126", locale), "126");
         }
 
         try {
@@ -1463,7 +1467,8 @@ class AMObjectImpl implements AMObject {
             debug.error("AMObjectImpl:modifyService-> "
                     + "unable to validate attributes for " + sname, smse);
             Object args[] = { sname };
-            throw new AMException(AMSDKBundle.getString("976", args), "976",
+            throw new AMException(
+                AMSDKBundle.getString("976", args, locale), "976",
                     args);
         }
 
@@ -1486,7 +1491,7 @@ class AMObjectImpl implements AMObject {
         }
 
         if (entryDN.equals(AMStoreConnection.defaultOrg)) {
-            throw new AMException(AMSDKBundle.getString("160"), "160");
+            throw new AMException(AMSDKBundle.getString("160", locale), "160");
         }
 
         if ((graceperiod > -1)
@@ -1500,7 +1505,7 @@ class AMObjectImpl implements AMObject {
                         + " has not expired");
             }
 
-            throw new AMException(AMSDKBundle.getString("974"), "974");
+            throw new AMException(AMSDKBundle.getString("974", locale), "974");
         }
 
         if ((profileType == GROUP) || (profileType == DYNAMIC_GROUP)
@@ -1877,7 +1882,8 @@ class AMObjectImpl implements AMObject {
 
             if (!assignedServices.contains(serviceName)) {
                 debug.error(AMSDKBundle.getString("126"));
-                throw new AMException(AMSDKBundle.getString("126"), "126");
+                throw new AMException(
+                    AMSDKBundle.getString("126", locale), "126");
             }
         }
 
@@ -2744,7 +2750,7 @@ class AMObjectImpl implements AMObject {
                     ADMINISTRATION_SERVICE, SchemaType.GLOBAL);
         } catch (SMSException smsex) {
             debug.error(smsex.toString());
-            throw new AMException(AMSDKBundle.getString("158"), "158");
+            throw new AMException(AMSDKBundle.getString("158", locale), "158");
         }
 
         Set defaultAcis = (Set) map
@@ -2763,13 +2769,13 @@ class AMObjectImpl implements AMObject {
         }
 
         if (aci == null) {
-            throw new AMException(AMSDKBundle.getString("158"), "158");
+            throw new AMException(AMSDKBundle.getString("158", locale), "158");
         }
 
         StringTokenizer stz = new StringTokenizer(aci, "|");
 
         if (stz.countTokens() < 3) {
-            throw new AMException(AMSDKBundle.getString("159"), "159");
+            throw new AMException(AMSDKBundle.getString("159", locale), "159");
         }
 
         permission = stz.nextToken();
@@ -2856,7 +2862,7 @@ class AMObjectImpl implements AMObject {
                     token, permission);
         } catch (SMSException smse) {
             debug.error("AMObjectImpl.getDefaultDisplayOptions", smse);
-            throw new AMException(AMSDKBundle.getString("158"), "158");
+            throw new AMException(AMSDKBundle.getString("158", locale), "158");
         }
 
         return displayOptions;

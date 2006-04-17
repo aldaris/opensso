@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntityImpl.java,v 1.1 2005-11-01 00:29:02 arvindp Exp $
+ * $Id: AMEntityImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,7 +165,7 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
             profileType = Integer.parseInt(type);
             super.create();
         } else {
-            throw new AMException(AMSDKBundle.getString("156"), "156");
+            throw new AMException(AMSDKBundle.getString("156", super.locale), "156");
         }
     }
 

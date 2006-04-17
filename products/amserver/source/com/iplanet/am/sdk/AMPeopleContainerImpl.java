@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPeopleContainerImpl.java,v 1.1 2005-11-01 00:29:14 arvindp Exp $
+ * $Id: AMPeopleContainerImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -214,8 +214,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
             String tmpS = (String) it.next();
             if (!registered.contains(tmpS)) {
                 Object[] args = { tmpS };
-                throw new AMException(AMSDKBundle.getString("459", args),
-                        "459", args);
+                throw new AMException(AMSDKBundle.getString(
+                    "459", args, super.locale), "459", args);
             }
         }
 
@@ -254,8 +254,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                 debug.error("AMPeopleContainerImpl: data validation failed-> "
                         + thisService, se);
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString("976", args),
-                        "976", args);
+                throw new AMException(AMSDKBundle.getString(
+                    "976", args, super.locale), "976", args);
             }
         }
         if (objectClasses != null && !objectClasses.isEmpty()) {
@@ -772,7 +772,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.getString(
+                "117", super.locale), "117");
         }
 
         int createType = Integer.parseInt(type);
@@ -861,7 +862,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.getString("117"), "117");
+            throw new AMException(AMSDKBundle.getString(
+                "117", super.locale), "117");
         }
         int createType = Integer.parseInt(type);
         Set entitySet = new HashSet();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserImpl.java,v 1.1 2005-11-01 00:29:22 arvindp Exp $
+ * $Id: AMUserImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -465,8 +465,9 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         while (iter.hasNext()) {
             String serviceName = (String) iter.next();
             if (assignedSerivces.contains(serviceName)) {
-                debug.error(AMSDKBundle.getString("125"));
-                throw new AMException(AMSDKBundle.getString("125"), "125");
+                debug.error(AMSDKBundle.getString("125", super.locale));
+                throw new AMException(AMSDKBundle.getString(
+                    "125", super.locale), "125");
             }
             canAssign.add(serviceName);
             Set serviceOCs = AMServiceUtils.getServiceObjectClasses(token,
@@ -500,9 +501,9 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
                     ss = ssm.getSchema(SchemaType.DYNAMIC);
                 }
                 if (ss == null) {
-                    debug.error(AMSDKBundle.getString("1001"));
-                    throw new AMException(AMSDKBundle.getString("1001", args),
-                            "1001", args);
+                    debug.error(AMSDKBundle.getString("1001", super.locale));
+                    throw new AMException(AMSDKBundle.getString(
+                        "1001", args, super.locale), "1001", args);
                 }
             } catch (SMSException se) {
                 debug.error("AMUserImpl: schema type validation failed-> "

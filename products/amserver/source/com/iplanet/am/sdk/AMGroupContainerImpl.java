@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupContainerImpl.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
+ * $Id: AMGroupContainerImpl.java,v 1.3 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -343,8 +343,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                 String tmpS = (String) it.next();
                 if (!registered.contains(tmpS)) {
                     Object[] args = { tmpS };
-                    throw new AMException(AMSDKBundle.getString("459", args),
-                            "459", args);
+                    throw new AMException(AMSDKBundle.
+                        getString("459", args, super.locale), "459", args);
                 }
             }
 
@@ -372,7 +372,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                     debug.error("AMGroupContainerImpl.createStaticGroup: "
                             + "Data validation failed.. ", se);
                     Object args[] = { thisService };
-                    throw new AMException(AMSDKBundle.getString("976", args),
+                    throw new AMException(AMSDKBundle.
+                        getString("976", args, super.locale),
                             "976", args);
                 }
             }

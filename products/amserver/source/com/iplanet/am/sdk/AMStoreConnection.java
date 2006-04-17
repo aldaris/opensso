@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.3 2006-01-06 22:51:49 arviranga Exp $
+ * $Id: AMStoreConnection.java,v 1.4 2006-04-17 20:19:29 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,6 +163,8 @@ public final class AMStoreConnection implements AMConstants {
 
     private SSOToken token;
 
+    private String locale = "en_US";
+
     // ~ Constructors
     // -----------------------------------------------------------
 
@@ -180,6 +182,7 @@ public final class AMStoreConnection implements AMConstants {
         // initialize whatever you want to here.
         SSOTokenManager.getInstance().validateToken(ssoToken);
         this.token = ssoToken;
+        this.locale =  AMCommonUtils.getUserLocale(ssoToken);
         dsManager = AMDirectoryWrapper.getInstance();
     }
 
@@ -417,11 +420,13 @@ public final class AMStoreConnection implements AMConstants {
         } catch (SSOException se) {
             debug.message("AMStoreConnection.getAttributeNames(String, " +
                     "AMSchema.Type)", se);
-            throw new AMException(AMSDKBundle.getString("902"), "902");
+            throw new AMException(
+                AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.message("AMStoreConnection.getAttributeNames(String, " +
                     "AMSchema.Type)", se);
-            throw new AMException(AMSDKBundle.getString("911"), "911");
+            throw new AMException(
+                AMSDKBundle.getString("911", locale), "911");
         }
     }
 
@@ -529,10 +534,10 @@ public final class AMStoreConnection implements AMConstants {
             return scm.getI18NFileName();
         } catch (SSOException so) {
             debug.error("AMStoreConnection.getI18NPropertiesFileName(): ", so);
-            throw new AMException(AMSDKBundle.getString("902"), "902");
+            throw new AMException(AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.error("AMStoreConnection.getServiceNames(): ", se);
-            throw new AMException(AMSDKBundle.getString("909"), "909");
+            throw new AMException(AMSDKBundle.getString("909", locale), "909");
         }
     }
 
@@ -618,7 +623,6 @@ public final class AMStoreConnection implements AMConstants {
                 return (orgdn);
             } else {
                 Object[] args = { orgdn };
-                String locale = AMCommonUtils.getUserLocale(token);
                 throw new AMException(AMSDKBundle
                         .getString("467", args, locale), "467", args);
             }
@@ -685,7 +689,6 @@ public final class AMStoreConnection implements AMConstants {
             if ((orgSet == null) || (orgSet.size() > 1) || orgSet.isEmpty()) {
                 // throw an exception
                 Object[] args = { domainname };
-                String locale = AMCommonUtils.getUserLocale(token);
                 throw new AMException(AMSDKBundle
                         .getString("971", args, locale), "971", args);
             } else {
@@ -803,10 +806,10 @@ public final class AMStoreConnection implements AMConstants {
             return scm.getPropertiesViewBeanURL();
         } catch (SSOException so) {
             debug.error("AMStoreConnection.getPropertiesViewBeanURL(): ", so);
-            throw new AMException(AMSDKBundle.getString("902"), "902");
+            throw new AMException(AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.error("AMStoreConnection.getServiceNames(): ", se);
-            throw new AMException(AMSDKBundle.getString("910"), "910");
+            throw new AMException(AMSDKBundle.getString("910", locale), "910");
         }
     }
 
@@ -935,10 +938,10 @@ public final class AMStoreConnection implements AMConstants {
             return retSet;
         } catch (SSOException so) {
             debug.error("AMStoreConnection.getServiceNames(): ", so);
-            throw new AMException(AMSDKBundle.getString("902"), "902");
+            throw new AMException(AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.error("AMStoreConnection.getServiceNames(): ", se);
-            throw new AMException(AMSDKBundle.getString("905"), "905");
+            throw new AMException(AMSDKBundle.getString("905", locale), "905");
         }
     }
 
@@ -958,10 +961,10 @@ public final class AMStoreConnection implements AMConstants {
             return sm.getServiceNames();
         } catch (SSOException so) {
             debug.error("AMStoreConnection.getServiceNames(): ", so);
-            throw new AMException(AMSDKBundle.getString("902"), "902");
+            throw new AMException(AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.error("AMStoreConnection.getServiceNames(): ", se);
-            throw new AMException(AMSDKBundle.getString("906"), "906");
+            throw new AMException(AMSDKBundle.getString("906", locale), "906");
         }
     }
 
@@ -1388,8 +1391,8 @@ public final class AMStoreConnection implements AMConstants {
         if ((uSet == null) || (uSet.size() > 1) || uSet.isEmpty()) {
             // throw an exception
             Object args[] = { uid };
-            throw new AMException(AMSDKBundle.getString("971", args), "971",
-                    args);
+            throw new AMException(AMSDKBundle.
+                getString("971", args, locale), "971", args);
         }
 
         String uDN = (String) uSet.iterator().next();
@@ -1440,8 +1443,8 @@ public final class AMStoreConnection implements AMConstants {
         if ((uSet == null) || (uSet.size() > 1) || uSet.isEmpty()) {
             // throw an exception
             Object args[] = { rid };
-            throw new AMException(AMSDKBundle.getString("971", args), "971",
-                    args);
+            throw new AMException(AMSDKBundle.
+                getString("971", args, locale), "971", args);
         }
 
         String uDN = (String) uSet.iterator().next();
@@ -1493,8 +1496,8 @@ public final class AMStoreConnection implements AMConstants {
         if ((gSet == null) || (gSet.size() > 1) || gSet.isEmpty()) {
             // throw an exception
             Object args[] = { gid };
-            throw new AMException(AMSDKBundle.getString("971", args), "971",
-                    args);
+            throw new AMException(AMSDKBundle.
+                getString("971", args, locale), "971", args);
         }
 
         String uDN = (String) gSet.iterator().next();

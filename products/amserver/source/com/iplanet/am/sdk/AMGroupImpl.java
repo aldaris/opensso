@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupImpl.java,v 1.1 2005-11-01 00:29:07 arvindp Exp $
+ * $Id: AMGroupImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
      */
     public Set searchUsers(String wildcard) throws AMException, SSOException {
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.getString("122"), "122");
+            throw new AMException(AMSDKBundle.
+                getString("122", super.locale), "122");
         }
 
         Set resultSet;
@@ -110,7 +111,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             if (wildcard.equals("*")) {
                 resultSet = usersSet;
             } else {
-                throw new AMException(AMSDKBundle.getString("122"), "122");
+                throw new AMException(AMSDKBundle.
+                    getString("122", super.locale), "122");
             }
         } else {
             resultSet = new HashSet();
@@ -118,7 +120,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             if (wildcard.startsWith("*")) {
                 String pattern = wildcard.substring(1);
                 if (pattern.indexOf('*') != -1) {
-                    throw new AMException(AMSDKBundle.getString("122"), "122");
+                    throw new AMException(AMSDKBundle.
+                        getString("122", super.locale), "122");
                 }
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
@@ -132,7 +135,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             } else if (wildcard.endsWith("*")) {
                 String pattern = wildcard.substring(0, wildcard.length() - 1);
                 if (pattern.indexOf('*') != -1) {
-                    throw new AMException(AMSDKBundle.getString("122"), "122");
+                    throw new AMException(AMSDKBundle.
+                        getString("122", super.locale), "122");
                 }
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
@@ -144,7 +148,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                     }
                 }
             } else {
-                throw new AMException(AMSDKBundle.getString("122"), "122");
+                throw new AMException(AMSDKBundle.
+                    getString("122", super.locale), "122");
             }
         }
 
@@ -659,7 +664,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                 // Generic "unable to set attributes" exception
                 debug.error("AMGroupImpl.addNestedGroups: Unable to add " +
                         "groups: -> ", am);
-                throw new AMException(AMSDKBundle.getString("771"), "771");
+                throw new AMException(AMSDKBundle.
+                    getString("771", super.locale), "771");
             } else {
                 throw am;
             }
@@ -721,7 +727,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                 // Genere "unable to set attributes" exception
                 debug.error("AMGroupImpl.removeNestedGroups: Unable to " +
                         "remove groups: -> ",am);
-                throw new AMException(AMSDKBundle.getString("772"), "772");
+                throw new AMException(AMSDKBundle.
+                    getString("772", super.locale), "772");
             } else {
                 throw am;
             }
