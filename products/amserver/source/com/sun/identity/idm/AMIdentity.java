@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.7 2006-04-10 22:04:48 veiming Exp $
+ * $Id: AMIdentity.java,v 1.8 2006-04-17 19:57:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.iplanet.am.sdk.AMDirectoryManager;
 import com.iplanet.am.sdk.AMDirectoryWrapper;
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.sdk.AMServiceUtils;
+import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
@@ -105,6 +106,8 @@ public final class AMIdentity {
     private AMHashMap binaryModMap = new AMHashMap(true);
 
     protected String DN = null;
+
+    private static Debug debug = Debug.getInstance("amIdm");
 
     /**
      * Protected constructor for AMIdentity.
@@ -206,7 +209,11 @@ public final class AMIdentity {
      */
     public Map getAttributes() throws IdRepoException, SSOException {
         AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.getAttributes(token, type, name, orgName, DN);
+        Map attrs = amdm.getAttributes(token, type, name, orgName, DN);
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.getAttributes all: attrs=" + attrs);
+        }
+        return attrs;
     }
 
     /**
@@ -229,7 +236,7 @@ public final class AMIdentity {
         Map attrs = dm.getAttributes(token, type, name, attrNames,
                 orgName, DN, true);
         CaseInsensitiveHashMap caseAttrs = new CaseInsensitiveHashMap(attrs);
-        Map resultMap = new HashMap();
+        CaseInsensitiveHashMap resultMap = new CaseInsensitiveHashMap();
         Iterator it = attrNames.iterator();
         while (it.hasNext()) {
             String attrName = (String) it.next();
@@ -238,6 +245,11 @@ public final class AMIdentity {
             }
         }
 
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.getAttributes 6: attrNames=" +
+                attrNames + ";  resultMap=" + resultMap +
+                "; attrs=" + attrs);
+        }
         return resultMap;
     }
 

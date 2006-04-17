@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.8 2006-04-14 09:06:38 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.9 2006-04-17 19:57:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2082,7 +2082,29 @@ public class LDAPv3Repo extends IdRepo {
             }
             Set managedRoleDNs = getManagedRoleMemberShips(token, type, name,
                     membershipType);
-            allRoleDNs.removeAll(managedRoleDNs);
+            if (debug.messageEnabled()) {
+                debug.message("    managedRoleDNs=" + managedRoleDNs);
+                debug.message("    allRoleDNs=" + allRoleDNs);
+            }
+            // need to convert to lowercaes before comparision because
+            // ds is case insensitive and will sometime return all lowercase
+            // and sometime return mix case for filtered and static role.
+            Set normManagedRoleDNs = new HashSet();
+            Iterator iter = managedRoleDNs.iterator();
+            while(iter.hasNext()) {
+                normManagedRoleDNs.add((
+                    new DN((String)iter.next())).toRFCString().toLowerCase());
+            }
+            Set result = new HashSet();
+            iter = allRoleDNs.iterator();
+            while(iter.hasNext()) {
+                String nsroleName = (String)iter.next();
+                if (!normManagedRoleDNs.contains(
+                    new DN(nsroleName).toRFCString().toLowerCase())) {
+                    result.add(nsroleName);
+                }
+            }
+            allRoleDNs = result;
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
             if (debug.messageEnabled()) {

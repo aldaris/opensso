@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.5 2006-04-03 22:25:53 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.6 2006-04-17 19:57:37 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -547,7 +547,7 @@ public class LDAPv3EventService implements Runnable {
                     // anyway.
 
         if (debugger.warningEnabled()) {
-            debugger.error("LDAPv3EventService.run() - Monitor thread is "
+            debugger.warning("LDAPv3EventService.run() - Monitor thread is "
                     + "terminating! Persistent Searches will no longer be "
                     + "operational." + " randomID=" + randomID);
         }
@@ -629,7 +629,7 @@ public class LDAPv3EventService implements Runnable {
      * @supported.api
      */
     protected void removeListener(Request request) {
-        if (debugger.warningEnabled()) {
+        if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.removeListener: " +
                     "_requestList.size()=" + _requestList.size());
         }
@@ -725,7 +725,7 @@ public class LDAPv3EventService implements Runnable {
             }
         } // end while loop
         if (debugger.warningEnabled()) {
-            debugger.message("LDAPv3EventService.resetAllSearches exit: "
+            debugger.warning("LDAPv3EventService.resetAllSearches exit: "
                     + "_requestList.size()=" + _requestList.size());
         }
         return false;
@@ -740,10 +740,12 @@ public class LDAPv3EventService implements Runnable {
     }
 
     private void dispatchException(Exception e, Request request) {
-        debugger.error("LDAPv3EventService.dispatchException() - dispatching "
+        if (debugger.messageEnabled()) {
+            debugger.message("LDAPv3EventService.dispatchException() - dispatching "
                 + "exception to the listener: " + request.getRequestID()
                 + " Listener: " + request.getListener() + " randomID="
                 + randomID + " serverNames=" + request.getServerNames(), e);
+        }
         // el.eventError(e.toString());
     }
 
