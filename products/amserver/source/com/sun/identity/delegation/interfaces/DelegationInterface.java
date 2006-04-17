@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationInterface.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
+ * $Id: DelegationInterface.java,v 1.3 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,16 +46,16 @@ public interface DelegationInterface {
      * Usually it will be initialized with the environmrnt parameters set by the
      * system administrator.
      * 
-     * @param appToken
-     *            SSO token of the administrative user.
-     * @param configParams
-     *            configuration parameters as a map. The values in the map is
-     *            <code>java.util.Set</code>, which contains one or more
-     *            configuration parameters.
+     * Usually it will be initialized with the environment parameters set by the
+     * system administrator.
      * 
-     * @throws DelegationException
-     *             if an error occurred during initialization of
-     *             <code>DelegationInterface</code> instance
+     * @param  appToken <code>SSOToken</code> of the administrative user.
+     * @param  configParams configuration parameters as a <code>Map</code>. 
+     *         The values in the map is <code>java.util.Set</code>, which 
+     *         contains one or more configuration parameters.
+     * 
+     * @throws DelegationException if an error occurred during initialization 
+     *         of <code>DelegationInterface</code> instance
      */
 
     public void initialize(SSOToken appToken, Map configParams)
@@ -64,18 +64,15 @@ public interface DelegationInterface {
     /**
      * Returns all the delegation privileges associated with a realm.
      * 
-     * @param token
-     *            The SSO token of the requesting user
-     * @param orgName
-     *            The name of the realm from which the delegation privileges are
-     *            fetched.
+     * @param  token  The <code>SSOToken</code> of the requesting user
+     * @param  orgName The name of the realm from which the 
+     *         delegation privileges are fetched.
      * 
-     * @return set of DelegationPrivilege objects associated with the realm.
+     * @return <code>Set</code> of <code>DelegationPrivilege</code> objects 
+     *         associated with the realm.
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws SSOException  if invalid or expired single-sign-on token
+     * @throws DelegationException  for any abnormal condition
      */
 
     public Set getPrivileges(SSOToken token, String orgName)
@@ -84,18 +81,13 @@ public interface DelegationInterface {
     /**
      * Adds a delegation privilege to a specific realm.
      * 
-     * @param token
-     *            The SSO token of the requesting user
-     * @param orgName
-     *            The name of the realm to which the delegation privilege is to
-     *            be added.
-     * @param privilege
-     *            The delegation privilege to be added.
+     * @param token  The <code>SSOToken</code> of the requesting user
+     * @param orgName The name of the realm to which the delegation privilege 
+     *        is to be added.
+     * @param privilege  The delegation privilege to be added.
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws SSOException if invalid or expired single-sign-on token
+     * @throws DelegationException  for any abnormal condition
      */
 
     public void addPrivilege(SSOToken token, String orgName,
@@ -105,18 +97,13 @@ public interface DelegationInterface {
     /**
      * Removes a delegation privilege from a specific realm.
      * 
-     * @param token
-     *            The SSO token of the requesting user
-     * @param orgName
-     *            The name of the realm from which the delegation privilege is
-     *            removed.
-     * @param privilegeName
-     *            The name of the delegation privilege to be removed.
+     * @param token The <code>SSOToken</code> of the requesting user
+     * @param orgName The name of the realm from which the delegation 
+     *         privilege is to be removed.
+     * @param privilegeName The name of the delegation privilege to be removed.
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws SSOException  if invalid or expired single-sign-on token
+     * @throws DelegationException for any abnormal condition
      */
 
     public void removePrivilege(SSOToken token, String orgName,
@@ -128,21 +115,15 @@ public interface DelegationInterface {
      * searching subjects. For example, "a*c" matches with any subject starting
      * with a and ending with c.
      * 
-     * @param token
-     *            The SSO token of the requesting user
-     * @param orgName
-     *            The name of the realm from which the subjects are fetched.
-     * @param types
-     *            a set of subject types. e.g. ROLE, GROUP.
-     * @param pattern
-     *            a filter used to select the subjects.
+     * @param token The <code>SSOToken</code> of the requesting user
+     * @param orgName The name of the realm from which the subjects are fetched.
+     * @param types a set of subject types. e.g. ROLE, GROUP.
+     * @param pattern a filter used to select the subjects.
      * 
      * @return a set of subjects associated with the realm.
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws SSOException if invalid or expired single-sign-on token
+     * @throws DelegationException for any abnormal condition
      */
 
     public Set getSubjects(SSOToken token, String orgName, Set types,
@@ -153,18 +134,15 @@ public interface DelegationInterface {
      * <code>organizationNames</code>, in which the "user" has some
      * delegation permissions.
      * 
-     * @param token
-     *            The SSO token of the requesting user
-     * @param organizationNames
-     *            a set of realm names.
+     * @param token The <code>SSOToken</code> of the requesting user
+     * @param organizationNames  a <code>Set</code> of realm names.
      * 
-     * @return a set of realm names in which the user has some delegation
-     *         permissions. It is a subset of <code>organizationNames</code>
+     * @return a <code>Set</code> of realm names in which the user has some 
+     *         delegation permissions. It is a subset of 
+     *         <code>organizationNames</code>
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws SSOException if invalid or expired single-sign-on token
+     * @throws DelegationException for any abnormal condition
      */
 
     public Set getManageableOrganizationNames(SSOToken token,
@@ -179,7 +157,7 @@ public interface DelegationInterface {
      * @param envParams Run-time environment parameters.
      * @return the result of the evaluation as a boolean value
      * 
-     * @throws SSOException single-sign-on token invalid or expired.
+     * @throws SSOException if single-sign-on token invalid or expired.
      * @throws DelegationException for any other abnormal condition.
      */
     public boolean isAllowed(SSOToken token, DelegationPermission permission,
@@ -188,17 +166,14 @@ public interface DelegationInterface {
     /**
      * Returns a set of permissions that a user has.
      * 
-     * @param token
-     *            sso token of the user requesting permissions
-     * @param orgName
-     *            The name of the realm from which the delegation are fetched.
+     * @param token sso token of the user requesting permissions
+     * @param orgName The name of the realm from which the delegation 
+     *        permissions are fetched.
      * 
-     * @return a set of permissions that a user has
+     * @return a <code>Set</code> of permissions that a user has
      * 
-     * @throws SSOException
-     *             single-sign-on token invalid or expired
-     * @throws DelegationException
-     *             for any other abnormal condition
+     * @throws SSOException if single-sign-on token invalid or expired
+     * @throws DelegationException for any other abnormal condition
      */
 
     public Set getPermissions(SSOToken token, String orgName)

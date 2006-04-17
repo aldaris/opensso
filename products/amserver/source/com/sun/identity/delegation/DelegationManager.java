@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.4 2006-04-10 22:04:47 veiming Exp $
+ * $Id: DelegationManager.java,v 1.5 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,15 +87,12 @@ public final class DelegationManager {
      * the specified realm, or <code>DelegationException</code> will be
      * thrown.
      * 
-     * @param token
-     *            SSO token of the user delegating privileges.
-     * @param orgName
-     *            The name of the realm for which the user delegates privileges.
+     * @param token  <code.SSOToken</code> of the user delegating privileges.
+     * @param orgName  The name of the realm for which the user delegates 
+     *         privileges.
      * 
-     * @throws SSOException
-     *             invalid or expired single-sign-on token
-     * @throws DelegationException
-     *             for any other abnormal condition
+     * @throws SSOException  if invalid or expired single-sign-on token
+     * @throws DelegationException for any other abnormal condition
      */
 
     public DelegationManager(SSOToken token, String orgName)
@@ -113,10 +110,10 @@ public final class DelegationManager {
      * Returns all the names of the delegation privileges that are configured
      * with the realm.
      * 
-     * @return set of DelegationPrivilege names configured with the realm.
+     * @return <code>Set</code> of <code>DelegationPrivilege</code> names 
+     * configured with the realm.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException  for any abnormal condition
      */
     public Set getConfiguredPrivilegeNames() throws DelegationException {
         Set privNames = null;
@@ -170,10 +167,10 @@ public final class DelegationManager {
     /**
      * Returns all the delegation privileges associated with the realm.
      * 
-     * @return set of DelegationPrivilege objects associated with the realm.
+     * @return <code>Set</code> of <code>DelegationPrivilege</code> objects 
+     *         associated with the realm.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException for any abnormal condition
      */
 
     public Set getPrivileges() throws DelegationException {
@@ -193,13 +190,12 @@ public final class DelegationManager {
      * Returns all the delegation privileges associated with the realm and
      * applicable to a subject.
      * 
-     * @param universalId
-     *            The universal ID of the subject
+     * @param universalId  The universal ID of the subject
      * 
-     * @return set of applicable DelegationPrivilege objects.
+     * @return <code>Set</code> of applicable <code>DelegationPrivilege</code> 
+     *         objects.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException for any abnormal condition
      */
 
     public Set getPrivileges(String universalId) throws DelegationException {
@@ -246,11 +242,9 @@ public final class DelegationManager {
     /**
      * Adds a delegation privilege to the realm.
      * 
-     * @param privilege
-     *            The delegation privilege to be added.
+     * @param privilege The delegation privilege to be added.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException  for any abnormal condition
      */
 
     public void addPrivilege(DelegationPrivilege privilege)
@@ -278,11 +272,10 @@ public final class DelegationManager {
     /**
      * Removes a delegation privilege to the realm.
      * 
-     * @param privilegeName
-     *            The name of the delegation privilege to be removed.
+     * @param privilegeName The name of the <code>DelegationPrivilege</code>
+     *         to be removed.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException for any abnormal condition
      */
 
     public void removePrivilege(String privilegeName)
@@ -305,13 +298,11 @@ public final class DelegationManager {
      * For example, "a*c" matches with any subject starting with a and ending
      * with c.
      * 
-     * @param pattern
-     *            a filter used to select the subjects.
+     * @param pattern a filter used to select the subjects.
      * 
-     * @return a set of subjects associated with the realm.
+     * @return a <code>Set</code> of subjects associated with the realm.
      * 
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @throws DelegationException  for any abnormal condition
      */
 
     public Set getSubjects(String pattern) throws DelegationException {
@@ -333,13 +324,12 @@ public final class DelegationManager {
      * <code>organizationNames</code>, in which the "user" has some
      * delegation permissions.
      * 
-     * @param organizationNames
-     *            a set of realm names.
+     * @param organizationNames a <code>Set</code> of realm names.
      * 
-     * @return a set of realm names in which the user has some delegation
-     *         permissions. It is a subset of <code>organizationNames</code>
-     * @throws DelegationException
-     *             for any abnormal condition
+     * @return a <code>Set</code> of realm names in which the user has some 
+     *         delegation permissions. It is a subset of 
+     *         <code>organizationNames</code>
+     * @throws DelegationException  for any abnormal condition
      */
 
     public Set getManageableOrganizationNames(Set organizationNames)
@@ -357,7 +347,10 @@ public final class DelegationManager {
         }
     }
 
-    // Gets an instance of DelegationInterface
+    /** 
+      * Gets an instance of <code>DelegationInterface</code>
+      * which is the default configured delegation plugin instance.
+      */
     static DelegationInterface getDelegationPlugin()
         throws DelegationException {
         if (pluginInstance != null) {
@@ -367,7 +360,9 @@ public final class DelegationManager {
     }
 
 
-    // Loads an instance of DelegationInterface
+    /** 
+      * Loads the default implementation of DelegationInterface
+      */
     synchronized static DelegationInterface loadDelegationPlugin()
             throws DelegationException {
         if (pluginInstance == null) {
@@ -436,7 +431,9 @@ public final class DelegationManager {
         return pluginInstance;
     }
 
-    // Return the SSOToken of the admin configured in serverconfig.xml
+    /** 
+      * Return the SSOToken of the admin configured in serverconfig.xml
+      */
     static SSOToken getAdminToken() throws SSOException {
         SSOToken adminToken = (SSOToken) AccessController
                 .doPrivileged(AdminTokenAction.getInstance());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.2 2006-01-19 21:56:50 huacui Exp $
+ * $Id: DelegationEvaluator.java,v 1.3 2006-04-17 17:29:26 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,14 +46,6 @@ public class DelegationEvaluator {
 
     private DelegationInterface pluginInstance = null;
 
-    /**
-     * Constructor of <code>DelegationEvaluator</code> to get access control
-     * permissions for users.
-     * 
-     * @throws DelegationException
-     *             for any abnormal condition
-     */
-
     static {
         try {
             privilegedUserName = DelegationManager.getAdminToken()
@@ -63,6 +55,12 @@ public class DelegationEvaluator {
         }
     }
 
+    /**
+     * Constructor of <code>DelegationEvaluator</code> to get access control
+     * permissions for users.
+     *
+     * @throws DelegationException for any abnormal condition
+     */
     public DelegationEvaluator() throws DelegationException {
         if (debug.messageEnabled()) {
             debug.message("Instantiated a DelegationEvaluator.");
@@ -72,20 +70,15 @@ public class DelegationEvaluator {
     /**
      * Returns a boolean value indicating if a user has the specified
      * permission.
-     * 
-     * @param token
-     *            sso token of the user evaluating permission
-     * @param permission
-     *            delegation permission to be evaluated
-     * @param envParameters
-     *            run-time environment parameters
+     * @param token sso token of the user evaluating permission
+     * @param permission delegation permission to be evaluated
+     * @param envParameters run-time environment parameters
      * 
      * @return the result of the evaluation as a boolean value
      * 
-     * @throws SSOException
-     *             single-sign-on token invalid or expired
-     * @throws DelegationException
-     *             for any other abnormal condition
+     * @throws SSOException if single-sign-on token invalid or expired
+     * @throws DelegationException for any other abnormal condition
+     * 
      */
 
     public boolean isAllowed(SSOToken token, DelegationPermission permission,
@@ -119,19 +112,14 @@ public class DelegationEvaluator {
 
     /**
      * Returns a set of permissions that a user has.
+     * @param token  <code>SSOToken</code> of the user requesting permissions
+     * @param orgName The name of the realm in which a user's delegation 
+     * permissions are evaluated.
      * 
-     * @param token
-     *            sso token of the user requesting permissions
-     * @param orgName
-     *            The name of the realm in which a user's delegation permissions
-     *            are evaluated.
+     * @return a <code>Set</code> of permissions that a user has
      * 
-     * @return a set of permissions that a user has
-     * 
-     * @throws SSOException
-     *             single-sign-on token invalid or expired
-     * @throws DelegationException
-     *             for any other abnormal condition
+     * @throws SSOException  if single-sign-on token invalid or expired
+     * @throws DelegationException for any other abnormal condition
      */
 
     public Set getPermissions(SSOToken token, String orgName)

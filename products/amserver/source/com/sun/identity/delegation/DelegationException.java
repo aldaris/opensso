@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationException.java,v 1.1 2005-11-01 00:31:00 arvindp Exp $
+ * $Id: DelegationException.java,v 1.2 2006-04-17 17:29:26 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,9 +35,9 @@ public class DelegationException extends ChainedException {
     /**
      * Constructs an instance of the <code>DelegationException</code> class.
      * 
-     * @param message
-     *            The message provided by the object that is throwing the
-     *            exception.
+     * @param message The message provided by the object that is throwing 
+     *        the exception.
+
      */
     public DelegationException(String message) {
         super(message);
@@ -46,8 +46,8 @@ public class DelegationException extends ChainedException {
     /**
      * Constructs an instance of the <code>DelegationException</code> class.
      * 
-     * @param nestedException
-     *            the exception caught by the code block creating this exception
+     * @param nestedException the exception caught by the code block creating 
+     *        this exception
      * 
      */
     public DelegationException(Throwable nestedException) {
@@ -57,10 +57,9 @@ public class DelegationException extends ChainedException {
     /**
      * Constructs an instance of the <code>DelegationException</code> class.
      * 
-     * @param message
-     *            message of this exception
-     * @param nestedException
-     *            the exception caught by the code block creating this exception
+     * @param message message of this exception
+     * @param nestedException the exception caught by the code block creating 
+     *        this exception
      * 
      */
     public DelegationException(String message, Throwable nestedException) {
@@ -74,13 +73,11 @@ public class DelegationException extends ChainedException {
      * level. Instead this constructor provides Resource Bundle name and error
      * code for correctly locating the error message. The default
      * <code>getMessage()</code> will always return English messages only. 
-     * This is inconsistent with current JRE
+     * This is consistent with current JRE
      * 
-     * @param rbName
-     *            Resource Bundle Name to be used for getting localized error
-     *            message.
-     * @param errorCode
-     *            Key to resource bundle. You can use
+     * @param rbName Resource Bundle Name to be used for getting localized 
+     *               error message.
+     * @param errorCode Key to resource bundle. You can use:
      * 
      * <pre>
      * ResourceBundle rb = ResourceBunde.getBundle(rbName, locale);
@@ -88,10 +85,8 @@ public class DelegationException extends ChainedException {
      * String localizedStr = rb.getString(errorCode);
      * </pre>
      * 
-     * @param args
-     *            arguments to message. If it is not present pass the as null
-     * @param nestedException
-     *            The root cause of this error
+     * @param args arguments to message. If it is not present pass the as null
+     * @param nestedException The root cause of this error
      */
     public DelegationException(String rbName, String errorCode, Object[] args,
             Throwable nestedException) {

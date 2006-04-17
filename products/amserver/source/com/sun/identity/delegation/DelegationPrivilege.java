@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilege.java,v 1.3 2006-03-02 15:36:28 huacui Exp $
+ * $Id: DelegationPrivilege.java,v 1.4 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,20 +64,18 @@ public class DelegationPrivilege {
      * delegation privilege object with a name, a set of
      * <code>DelegationPermission</code>, and a set of subjects.
      * 
-     * @param name
-     *            The name of the privilege
-     * @param permissions
-     *            The set of <code>DelegationPermission</code> that the
-     *            privilege contains
-     * @param subjects
-     *            The set of subjects that the privilege applies to
+     * @param name  The name of the privilege
+     * @param permissions  The set of <code>DelegationPermission</code> that 
+     *        the  privilege contains.
+     *
+     * @param subjects The set of subjects that the privilege applies to
      * 
-     * @throws DelegationException
-     *             if any input value is incorrect.
+     * @throws DelegationException if any input value is incorrect.
      */
 
     public DelegationPrivilege(String name, Set permissions, Set subjects)
-            throws DelegationException {
+            throws DelegationException 
+    {
         setName(name);
         setPermissions(permissions);
         setSubjects(subjects);
@@ -86,19 +84,17 @@ public class DelegationPrivilege {
     /**
      * Constructor for <code>DelegationPrivilege</code>.
      * 
-     * @param name
-     *            The name of the privilege
-     * @param subjects
-     *            The set of subjects the privilege applies to
-     * @param orgName
-     *            The name of the realm where the privilege is defined
+     * @param name   The name of the privilege
+     * @param subjects  The set of subjects the privilege applies to
+     * @param orgName The name of the realm where the privilege is defined
      * 
-     * @throws DelegationException
-     *             if anything is wrong
+     * @throws DelegationException if unable to create <code>
+     *         DelegationPrivilege</code> instance.
      */
 
     public DelegationPrivilege(String name, Set subjects, String orgName) 
-        throws DelegationException {
+        throws DelegationException 
+    {
         this.name = name;
         int revisionNum = DelegationUtils.getRevisionNumber();
         try {
@@ -271,10 +267,8 @@ public class DelegationPrivilege {
     /**
      * Sets the privilege name in the privilege
      * 
-     * @param name
-     *            The privilege name in the delegation privilege
-     * @throws DelegationException
-     *             if name already exists in the realm
+     * @param name The privilege name in the delegation privilege
+     * @throws DelegationException if name already exists in the realm
      */
 
     public void setName(String name) throws DelegationException {
@@ -294,11 +288,10 @@ public class DelegationPrivilege {
     /**
      * Sets the <code>DelegationPermission</code>s in the privilege
      * 
-     * @param permissions
-     *            The <code>DelegationPermission</code>s in the delegation
-     *            privilege
-     * @throws DelegationException
-     *             if anything is wrong
+     * @param permissions The <code>DelegationPermission</code>s in the 
+     *         delegation  privilege
+     * @throws DelegationException if unable to set 
+     *         <code>DelegationPermission</code>
      */
 
     public void setPermissions(Set permissions) throws DelegationException {
@@ -318,10 +311,8 @@ public class DelegationPrivilege {
     /**
      * Sets the subject names in the privilege
      * 
-     * @param names
-     *            The subject names in the delegation privilege
-     * @throws DelegationException
-     *             if anything is wrong
+     * @param names  The subject names in the delegation privilege
+     * @throws DelegationException  if unable to set subjects
      */
 
     public void setSubjects(Set names) throws DelegationException {
@@ -331,6 +322,13 @@ public class DelegationPrivilege {
         }
     }
 
+     /**
+      * Returns the <code>String</code> representation of this
+      * object.
+      *
+      * @return the <code>String</code> representation of the
+      * <code>DelegationPrivilege</code> object.
+      */
     public String toString() {
         StringBuffer sb = new StringBuffer(200);
         sb.append("DelegationPrivilege Object:");

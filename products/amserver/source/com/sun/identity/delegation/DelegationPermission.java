@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPermission.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
+ * $Id: DelegationPermission.java,v 1.3 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import com.sun.identity.sm.DNMapper;
  * permission on a resource in a realm. It consists of a realm name, a service
  * name, a version number, a config type, a subconfig name, and a set of actions
  * that a user with the permission can perform. Additionally it also contains a
- * map that can be used for future extensions.
+ * <code>Map</code> that can be used for future extensions.
  */
 
 public class DelegationPermission {
@@ -69,23 +69,24 @@ public class DelegationPermission {
      * Constructor for <code>DelegationPermission</code>. Constructs a
      * delegation permission object with a realm name, a service name, a service
      * version number, a config type, a subconfig name, a set of actions, and a
-     * map for extensions.
+     * <code>Map</code> for extensions.
      * 
-     * @param orgName
-     *            The realm name in the delegation permission
-     * @param serviceName
-     *            The service name in the delegation permission
-     * @param version
-     *            The service version in the delegation permission
-     * @param configType
-     *            The config type in the delegation permission
-     * @param subConfigName
-     *            The subconfig name in the delegation permission
-     * @param actions
-     *            The action names in the delegation permission
-     * @param extensions
-     *            a placeholder for future extensions
-     * @throws DelegationException if anything is wrong.
+     * @param orgName The realm name in the delegation permission
+     *
+     * @param serviceName The service name in the delegation permission
+     *
+     * @param version The service version in the delegation permission
+     *
+     * @param configType The config type in the delegation permission
+     *
+     * @param subConfigName The subconfig name in the delegation permission
+     *
+     * @param actions The action names in the delegation permission
+     *
+     * @param extensions a placeholder for future extensions
+     *
+     * @throws DelegationException if unable to create the <code>
+     *         DelegationPermission</code> object.
      */
     public DelegationPermission(
             String orgName,
@@ -108,7 +109,7 @@ public class DelegationPermission {
     /**
      * Returns the realm name in the permission
      * 
-     * @return the realm name in the permission
+     * @return <code>String</code> representing the realm name in the permission
      */
 
     public String getOrganizationName() {
@@ -118,10 +119,9 @@ public class DelegationPermission {
     /**
      * Sets the realm name in the permission
      * 
-     * @param name
-     *            The realm name in the delegation permission
-     * @throws DelegationException
-     *             if name is invalid
+     * @param name  <code>String</code> representing the realm name in the 
+              <code>DelegationPermission</code>.
+     * @throws DelegationException if name is invalid
      */
 
     public void setOrganizationName(String name) throws DelegationException {
@@ -138,7 +138,8 @@ public class DelegationPermission {
     /**
      * Returns the service name in the permission
      * 
-     * @return the service name in the permission
+     * @return <code>String</code> representing the service name in the 
+               <code>DelegationPermission</code>
      */
 
     public String getServiceName() {
@@ -148,10 +149,8 @@ public class DelegationPermission {
     /**
      * Sets the service name in the permission
      * 
-     * @param name
-     *            The service name in the delegation permission
-     * @throws DelegationException
-     *             if name is invalid
+     * @param name  The service name in the delegation permission
+     * @throws DelegationException if name is invalid
      */
 
     public void setServiceName(String name) throws DelegationException {
@@ -171,10 +170,8 @@ public class DelegationPermission {
     /**
      * Sets the service version in the permission
      * 
-     * @param version
-     *            The service version in the delegation permission
-     * @throws DelegationException
-     *             if version is invalid
+     * @param version The service version in the delegation permission
+     * @throws DelegationException if version is invalid
      */
 
     public void setVersion(String version) throws DelegationException {
@@ -194,10 +191,8 @@ public class DelegationPermission {
     /**
      * Sets the config type in the permission
      * 
-     * @param configType
-     *            The config type in the delegation permission
-     * @throws DelegationException
-     *             if config type is invalid
+     * @param configType  The config type in the delegation permission
+     * @throws DelegationException if config type is invalid
      */
 
     public void setConfigType(String configType) throws DelegationException {
@@ -217,10 +212,8 @@ public class DelegationPermission {
     /**
      * Sets the subconfig name in the permission
      * 
-     * @param name
-     *            The subconfig name in the delegation permission
-     * @throws DelegationException
-     *             if subconfig name is invalid
+     * @param name The subconfig name in the delegation permission
+     * @throws DelegationException if subconfig name is invalid
      */
 
     public void setSubConfigName(String name) throws DelegationException {
@@ -240,10 +233,8 @@ public class DelegationPermission {
     /**
      * Sets the action names in the permission
      * 
-     * @param actions
-     *            The action names in the delegation permission
-     * @throws DelegationException
-     *             if an action name is invalid
+     * @param actions  The action names in the delegation permission
+     * @throws DelegationException if an action name is invalid
      */
 
     public void setActions(Set actions) throws DelegationException {
@@ -263,16 +254,21 @@ public class DelegationPermission {
     /**
      * Sets the extensions in the permission
      * 
-     * @param extensions
-     *            The extensions in the delegation permission
-     * @throws DelegationException
-     *             if some info in extensions is invalid
+     * @param extensions   The extensions in the delegation permission
+     * @throws DelegationException if some info in extensions is invalid
      */
 
     public void setExtensions(Map extensions) throws DelegationException {
         this.extensions = extensions;
     }
 
+     /**
+      * Returns the <code>String</code> representation of this
+      * object.
+      *
+      * @return the <code>String</code> representation of the
+      * <code>DelegationPermission</code> object.
+      */
     public String toString() {
         StringBuffer sb = new StringBuffer(200);
         sb.append("\nDelegationPermission Object:");

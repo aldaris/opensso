@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResBundleUtils.java,v 1.1 2005-11-01 00:31:02 arvindp Exp $
+ * $Id: ResBundleUtils.java,v 1.2 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,14 @@ import java.util.ResourceBundle;
 
 import com.iplanet.am.util.Locale;
 
+ /**
+  * This is a utility class providing methods to obtain localized 
+  * messages for the delegation service.
+  */
 public class ResBundleUtils {
-    /** resource bundle name */
+    /** 
+     * resource bundle name 
+     */
     public static final String rbName = "amDelegation";
 
     /**
@@ -45,8 +51,7 @@ public class ResBundleUtils {
      * gets localized string for the default locale specified in
      * AMConfig.properties or if null based on the default OS locale.
      * 
-     * @param key
-     *            to localized string
+     * @param key to localized string
      * @return localized string or <code>key</code> if localized string is
      *         missing
      */
@@ -61,10 +66,8 @@ public class ResBundleUtils {
     /**
      * gets localized formatted string
      * 
-     * @param key
-     *            to localized string
-     * @param params
-     *            parameters to be applied to the message
+     * @param key to localized string
+     * @param params parameters to be applied to the message
      * 
      * @return localized string or <code>key</code> if localized string is
      *         missing, uses locale as set in AMConfig.properties or default OS

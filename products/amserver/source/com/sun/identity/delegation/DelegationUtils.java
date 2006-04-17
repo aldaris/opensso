@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationUtils.java,v 1.2 2006-02-24 00:46:18 huacui Exp $
+ * $Id: DelegationUtils.java,v 1.3 2006-04-17 17:29:27 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,11 @@ import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchemaManager;
 
-/* A utility class for delegation service */
+/**
+ * A utility class for delegation service providing utility methods.
+ * All methods in this class are <code>static</code>, so can be invoked
+ * directly.
+ */
 public class DelegationUtils {
 
     static final Debug debug = DelegationManager.debug;
@@ -55,9 +59,13 @@ public class DelegationUtils {
 
     private static int revisionNum = 0;
 
-    /*
-     * Create default privileges for a newly created realm This method should be
-     * called in legacy mode only.
+    /**
+     * Creates default privileges for a newly created realm This method should 
+     * be called in legacy mode only.
+     * @param token <code>SSOToken</code> of a privileged user who has
+     *        permission to create the privileges, mostly the admin token.
+     * @param realmName name of the realm under which privileges need
+     *        to be created.
      */
     public static void createRealmPrivileges(SSOToken token, String realmName)
             throws SSOException, DelegationException {
@@ -113,9 +121,15 @@ public class DelegationUtils {
         }
     }
 
-    /*
-     * Create default privileges for a newly created realm This method should be
-     * called in realm mode only.
+    /**
+     * Creates default privileges for a newly created realm This method should 
+     * be called in realm mode only.
+     * @param token <code>SSOToken</code> of a privileged user who has
+     *        permission to create the privileges, mostly the admin token.
+     * @param parent parent realm's <code>OrganizationConfigManager</code>
+              where default privileges are picked from.
+     * @param child realm where default privileges are copied from the
+     *        </code>parent</code>.
      */
     public static void copyRealmPrivilegesFromParent(SSOToken token,
             OrganizationConfigManager parent, OrganizationConfigManager child)
@@ -187,8 +201,12 @@ public class DelegationUtils {
         }
     }
 
-    /*
-     * Delete all the delegation privileges of a specific realm
+    /**
+     * Deletes all the delegation privileges of a specific realm
+     * @param token <code>SSOToken</code> of a privileged user who has
+     *        permission to delete the privileges, mostly the admin token.
+     * @param realmName name of the realm from where the delegation privileges
+     *        need to be removed.
      */
     public static void deleteRealmPrivileges(SSOToken token, String realmName)
             throws SSOException, DelegationException {
@@ -211,8 +229,16 @@ public class DelegationUtils {
         }
     }
 
-    /*
+    /**
      * Returns service config information for a delegation privilege
+     * @param orgName name of the organization whose organization config
+     *        is searched.
+     * @param name name of the delegation privilege whose information is
+              sought.
+     * @param global <code>boolean</code> indicating if global config
+     *        of the delegation service is expected.
+     *
+     * @return <code>ServiceConfig</code> information for a delegation privilege
      */
     static ServiceConfig getPrivilegeConfig(String orgName, String name,
             boolean global) throws SSOException, DelegationException {
@@ -260,8 +286,17 @@ public class DelegationUtils {
         return (priv);
     }
 
-    /*
-     * Returns service config information for a delegation permission
+     
+    /**
+     * Returns service config information for a delegation permission.
+     * @param  orgName name of the organization whose organization config
+     *         is searched.
+     * @param  name name of the delegation permission whose information is.
+               sought.
+     * @param  global <code>boolean</code> indicating if global config
+     *         of the delegation service is expected.
+     * @return <code>ServiceConfig</code> information for a delegation 
+     *         permission
      */
     static ServiceConfig getPermissionConfig(String orgName, String name,
             boolean global) throws SSOException, DelegationException {
@@ -309,7 +344,12 @@ public class DelegationUtils {
         return (perm);
     }
 
-    // replace the realm name tag with the real realm name
+    /**
+     * replaces the realm name tag with the real realm name
+     * @param realm name of the realm 
+     * @param value String on which the REALM_NAME_TAG needs to be replaced
+     *        with the realm name <code>realm</code>
+     */
     static String swapRealmTag(String realm, String value) {
         int tagLen = REALM_NAME_TAG.length();
         int idx = value.indexOf(REALM_NAME_TAG);
@@ -322,7 +362,11 @@ public class DelegationUtils {
         return value;
     }
 
-    // get the Delegation Service revision number
+    /** 
+     * gets the Delegation Service revision number
+     * @return the revision number of the delegation service.
+     * 
+     */
     static int getRevisionNumber() {
         if (revisionNum == 0) {
             try {
