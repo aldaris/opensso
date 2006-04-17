@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2006-03-31 05:07:01 veiming Exp $
+   $Id: build.xml,v 1.8 2006-04-17 17:30:19 bhavnab Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -128,6 +128,7 @@
                 <include name="com/iplanet/dpro/**"/>
                 <include name="com/sun/identity/session/**"/>
                 <include name="com/sun/identity/authentication/**"/>
+                <include name="com/sun/identity/delegation/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
