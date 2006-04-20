@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2006-04-17 17:30:19 bhavnab Exp $
+   $Id: build.xml,v 1.9 2006-04-20 03:35:14 goodearth Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,6 +38,7 @@
     <property name="jatolib.dir" location="../../resources/jato"/>
     <property name="lockhart.dir" location="../../resources/lockhart"/>
     <property name="demobase.dir" location="demo"/>
+    <property name="clientsdkbase.dir" location="clientsdk"/>
 
     <!-- nested directory structure -->
     <property name="script.bin.dir" location="${script.dir}/bin"/>
@@ -181,6 +182,15 @@
              inheritRefs="true" target="clean"/>
     </target>
 
+    <target name="clientsdk" depends="build">
+        <ant antfile="${clientsdkbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="clientsdk-clean">
+        <ant antfile="${clientsdkbase.dir}/build.xml"
+             inheritRefs="true" target="clean"/>
+    </target>
+
     <target name="usage">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
@@ -191,6 +201,8 @@
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" demo       : builds the demo application"/>
         <echo message=" demo-clean : deletes generated demo files"/>
+        <echo message=" clientsdk  : builds the clientsdk jar/war"/>
+        <echo message=" clientsdk-clean : deletes generated clientsdk files"/>
         <echo message=" usage      : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
