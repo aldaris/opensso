@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.1 2006-01-28 09:15:56 veiming Exp $
+ * $Id: LDAPAuthUtils.java,v 1.2 2006-04-20 18:50:15 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,9 +110,12 @@ public class LDAPAuthUtils {
     public static final int SERVER_DOWN = 31;
     static final int PASSWORD_RESET_STATE = 32;
     public static final int USER_FOUND=33;
+    public static final String STATUS_UP="UP";
+    public static final String STATUS_DOWN="DOWN";
     
-    private static HashMap connectionPools = new HashMap();
-    private static HashMap adminConnectionPools = new HashMap();
+    static HashMap connectionPools = new HashMap();
+    static HashMap adminConnectionPools = new HashMap();
+    static HashMap adminConnectionPoolsStatus = new HashMap();
     private ConnectionPool cPool = null;
     private ConnectionPool acPool = null;
     
@@ -212,6 +215,7 @@ public class LDAPAuthUtils {
     
     private static ConnectionPool createConnectionPool(
         HashMap connectionPools,
+        HashMap aConnectionPoolsStatus,
         String hostName,
         int portNumber,
         int verNum,
@@ -297,6 +301,9 @@ public class LDAPAuthUtils {
                         ldc.authenticate(verNum, bindingUser, bindingPwd);
                         conPool = new ConnectionPool(min, max, ldc);
                         connectionPools.put(key, conPool);
+                        if (aConnectionPoolsStatus != null) {
+                            aConnectionPoolsStatus.put(key, STATUS_UP);
+                        }
                     }
                 }
             }
@@ -371,7 +378,7 @@ public class LDAPAuthUtils {
             throws LDAPException {
         if (cPool == null) {
             cPool = createConnectionPool(connectionPools,
-            serverHost, serverPort, version,
+            null, serverHost, serverPort, version,
             ldapSSL, authDN, authPassword);
         }
         LDAPConnection ldc = cPool.getConnection();
@@ -398,8 +405,8 @@ public class LDAPAuthUtils {
     private LDAPConnection getAdminConnection() throws LDAPException {
         if (acPool == null) {
             acPool = createConnectionPool(adminConnectionPools,
-             serverHost, serverPort, version,
-             ldapSSL, authDN, authPassword);
+             adminConnectionPoolsStatus, serverHost, serverPort,
+             version, ldapSSL, authDN, authPassword);
         }
         LDAPConnection ldc = acPool.getConnection();
          

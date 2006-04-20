@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.1 2006-01-28 09:15:55 veiming Exp $
+ * $Id: LDAP.java,v 1.2 2006-04-20 18:50:15 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,9 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import netscape.ldap.util.ConnectionPool;
+import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPException;
 
 public class LDAP extends AMLoginModule {
     // static variables
@@ -82,7 +85,7 @@ public class LDAP extends AMLoginModule {
     private final int PASSWORD_EXPIRED_SCREEN = 3;
     private final int USER_INACTIVE = 4;
     private LDAPAuthUtils ldapUtil;
-    private volatile FailbackManager fMgr;
+    private static volatile FailbackManager fMgr;
     private boolean isReset;
     private int primaryServerPort;
     private String primaryServerHost;
@@ -96,6 +99,8 @@ public class LDAP extends AMLoginModule {
     private Set userCreationAttrs = new HashSet();
     private HashMap userAttrMap = new HashMap();
     private Map sharedState;
+    private String serverHost;
+    private int serverPort;
     public Map currentConfig;
     
     protected Debug debug = null;
@@ -143,7 +148,7 @@ public class LDAP extends AMLoginModule {
      */
     public boolean initializeLDAP() throws AuthLoginException {
         debug.message("LDAP initialize()");
-        String serverHost = null;
+        serverHost = null;
         
         try {
             if (currentConfig != null) {
@@ -160,9 +165,6 @@ public class LDAP extends AMLoginModule {
                 }
                 setInterval(interval);
                 if (primary) {
-                    if (fMgr!=null && fMgr.isAlive()) {
-                        fMgr = null;
-                    }
                     serverHost = Misc.getServerMapAttr(currentConfig,
                     "iplanet-am-auth-ldap-server");
                     if (serverHost == null) {
@@ -230,16 +232,37 @@ public class LDAP extends AMLoginModule {
                 
                 // set LDAP Parameters
                 int index = serverHost.indexOf(':');
-                int serverPort = 389;
+                serverPort = 389;
                 
                 if (index != -1) {
                     serverPort = Integer.parseInt(
                     serverHost.substring(index + 1));
                     serverHost = serverHost.substring(0, index);
                 }
-                if (primary) {
-                    primaryServerHost = serverHost;
-                    primaryServerPort = serverPort;
+                if (!primary) {
+                    primaryServerHost = Misc.getServerMapAttr(currentConfig,
+                        "iplanet-am-auth-ldap-server");
+                    primaryServerPort = 389;
+                    int colonIndex = primaryServerHost.indexOf(':');
+                    if (colonIndex != -1) {
+                        primaryServerPort = Integer.parseInt(
+                        primaryServerHost.substring(colonIndex + 1));
+                        primaryServerHost = primaryServerHost.substring(0,
+                            colonIndex);
+                    }
+                    if (LDAPAuthUtils.adminConnectionPoolsStatus != null) {
+                        String poolKey = primaryServerHost + ":" +
+                            primaryServerPort;
+                        String adminPoolStatus = (String)LDAPAuthUtils.
+                            adminConnectionPoolsStatus.get(poolKey);
+                        if ( (adminPoolStatus == null) ||
+                            (adminPoolStatus.equals(LDAPAuthUtils.STATUS_UP))) {
+                             setPrimaryFlag(currentConfigName, true);
+                             primary = true;
+                             serverHost = primaryServerHost;
+                             serverPort = primaryServerPort;
+                        }
+                    }
                 }
                 
                 isProfileCreationEnabled = isDynamicProfileCreationEnabled();
@@ -514,8 +537,6 @@ public class LDAP extends AMLoginModule {
         regEx = null;
         subConfigNamesIter = null;
         sc = null;
-        fMgr = null;
-        
         userCreationAttrs = null;
         userAttrMap = null;
         sharedState = null;
@@ -575,13 +596,22 @@ public class LDAP extends AMLoginModule {
                     break;
                 case LDAPAuthUtils.SERVER_DOWN:
                     if (firstTry) {
+                        String key = serverHost+":"+serverPort;
+                        synchronized(LDAPAuthUtils.adminConnectionPoolsStatus){
+                            LDAPAuthUtils.adminConnectionPoolsStatus.put(key,
+                                LDAPAuthUtils.STATUS_DOWN);
+                        }
                         firstTry = false;
                         primary = !primary;
                         setPrimaryFlag(currentConfigName, primary);
                         if (fMgr == null || !fMgr.isAlive()) {
                             fMgr = new FailbackManager();
+                            fMgr.start();
+                        } else {
+                            if (interval < fMgr.sleepTime) {
+                                fMgr.sleepTime = interval;
+                            }
                         }
-                        fMgr.start();
                         if (initializeLDAP()) {
                             ldapUtil.authenticateUser(userName, userPassword);
                             newState = ldapUtil.getState();
@@ -601,6 +631,7 @@ public class LDAP extends AMLoginModule {
                         newState = LDAPAuthUtils.SERVER_DOWN;
                     }
                     processLoginScreen(newState);
+                    break;
                 default:
             }
         } catch (LDAPUtilException ex) {
@@ -723,25 +754,45 @@ public class LDAP extends AMLoginModule {
     // This class checks in regular intervals whether the connection is open
     // if connection is open it sets primary to true.
     class FailbackManager  extends Thread {
+        public long sleepTime = interval;
         public FailbackManager() {}
         public void run() {
             Thread thisThread = Thread.currentThread();
-            while (!primary) {
+            boolean foundDown = true;
+            while (foundDown) {
                 try {
-                    if (ldapUtil.isServerRunning( primaryServerHost,
-                    primaryServerPort)) {
-                        debug.message("primary is up");
-                        primary = true;
-                        setPrimaryFlag(currentConfigName, primary);
-                        fMgr = null;
-                    } else {
-                        thisThread.sleep(interval);
+                    foundDown = false;
+                    Set set1 = LDAPAuthUtils.adminConnectionPoolsStatus.
+                        keySet();
+                    Iterator iter1 = set1.iterator();
+                    while (iter1.hasNext()){
+                        String key = (String)iter1.next();
+                        String status  = (String)LDAPAuthUtils.
+                            adminConnectionPoolsStatus.get(key);
+                        if ( status.equals(LDAPAuthUtils.STATUS_DOWN)) {
+                            foundDown = true;
+                            if (LDAPAuthUtils.connectionPools != null) {
+                                ConnectionPool cPool = (ConnectionPool)
+                                    LDAPAuthUtils.adminConnectionPools.get(key);
+                                LDAPConnection ldapConn = cPool.getConnection();
+                                try {
+                                    ldapConn.reconnect();
+                                } catch(LDAPException ex) {
+                                }
+                                if(ldapConn.isConnected()) {
+                                    LDAPAuthUtils.adminConnectionPoolsStatus.
+                                        put(key,LDAPAuthUtils.STATUS_UP);
+                                }
+                    
+                            }
+                        } 
                     }
+                } catch (Exception exp) {
+                    debug.error("Error in Fallback Manager Thread",exp);
+                }
+                try {
+                    thisThread.sleep(sleepTime);
                 } catch (InterruptedException e) {
-                } catch (Exception e) {
-                    if (debug.messageEnabled()) {
-                        debug.message("Primary server checking failed", e);
-                    }
                 }
             }
         }
