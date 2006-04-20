@@ -1,0 +1,108 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-04-20 03:37:26 goodearth Exp $
+
+   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso-clientsdk" default="package-clientsdk">
+                
+    <description>Open Web Single Sign-On ClientSDK</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** clientsdk may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="clientsdkbase.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <!-- clientsdk environment variables -->
+    <property name="clientsdk.lib.dir" location="${clientsdkbase.dir}/lib"/>
+    <property name="clientsdk.xml.dir" location="${clientsdkbase.dir}/xml"/>
+    <property name="clientsdk.res.dir" location="${clientsdkbase.dir}/resources"/>
+
+    <!-- properties for clientsdk -->
+    <property name="clientsdk.name" value="am_client_sdk"/>
+    <property name="clientsdk.version" value="8.0"/>
+    <property name="clientsdk.built.dir" 
+        value="${clientsdkbase.dir}/${clientsdk.name}_${clientsdk.version}"/>
+    <tstamp>
+        <format property="pstamp" pattern="yyyy-MMMM-d"/>
+    </tstamp>
+    <property name="clientsdk.stamp" 
+        value="${clientsdk.version}_${DSTAMP}${TSTAMP}"/>
+
+    <!-- clientsdk class path -->
+    <path id="build.class.path">
+        <path refid="build.class.path"/>
+    </path>
+
+    <target name="package-clientsdk" depends="preparebuild">
+        <echo message="Building clientSDK"/>
+
+        <jar destfile="${clientsdk.lib.dir}/amclientsdk.jar">
+            <fileset dir="${classes.dir}">
+                <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
+            </fileset>
+            <fileset dir="${res.dir}">
+                <includesfile name="${clientsdkbase.dir}/ClientSDKProperties"/>
+            </fileset>
+            <manifest>
+                <section name="com.sun.identity">
+                    <attribute name="Specification-Title"
+                        value="AM Client SDK"/>
+                    <attribute name="Specification-Version"
+                        value="8.0"/>
+                    <attribute name="Specification-Vendor"
+                        value="Sun Microsystems, Inc."/>
+                    <attribute name="Implementation-Title"
+                        value="com.sun.identity"/>
+                    <attribute name="Implementation-Version"
+                        value="${clientsdk.stamp}"/>
+                    <attribute name="Implementation-Vendor"
+                        value="Sun Microsystems, Inc."/>
+                </section>
+            </manifest>
+        </jar>
+
+        <jar destfile="${clientsdk.lib.dir}/amclientsdkcopy.jar"
+             filesetmanifest="merge">
+                <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
+                <zipfileset src="${clientsdk.lib.dir}/amclientsdk.jar"/>
+        </jar>
+
+        <copy file="${clientsdk.lib.dir}/amclientsdkcopy.jar" 
+            tofile="${clientsdk.lib.dir}/amclientsdk.jar"/>
+         <delete file="${clientsdk.lib.dir}/amclientsdkcopy.jar"/>
+
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${clientsdk.lib.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${clientsdk.lib.dir}"/>
+    </target>
+   
+</project>
