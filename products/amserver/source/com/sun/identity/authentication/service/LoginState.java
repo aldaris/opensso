@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.4 2006-03-02 07:32:04 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.5 2006-04-20 18:46:57 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
@@ -1996,9 +1998,7 @@ public class LoginState {
                 throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
             }
             amIdentityUser= (AMIdentity) amIdentitySet.iterator().next();
-            if (userDN == null) {
-                userDN = getUserDN(amIdentityUser);
-            }
+            userDN = getUserDN(amIdentityUser);
             idt = amIdentityUser.getType();
             if (messageEnabled) {
                 debug.message("userDN is : "+ userDN);
@@ -2150,9 +2150,7 @@ public class LoginState {
                     amIdentityUser = ad.getIdentity(
                         IdType.USER,userDN,getOrgDN());
                 }
-                if (userDN == null) {
-                    userDN = getUserDN(amIdentityUser);
-                }
+                userDN = getUserDN(amIdentityUser);
                 populateDefaultUserAttributes();
                 return true;
             }            
@@ -5379,10 +5377,28 @@ public class LoginState {
      */
     public String getUserDN(AMIdentity amIdentityUser) {
         String returnUserDN = null;
-        if (amIdentityUser != null) {
-            returnUserDN = IdUtils.getDN(amIdentityUser);
-        } else {
-            returnUserDN = tokenToDN(this.token);
+    
+        if (principalList.indexOf("|") != -1) {
+            StringTokenizer st = new StringTokenizer(principalList,"|");
+            while (st.hasMoreTokens()) {
+                String sToken = (String)st.nextToken();
+                if (DN.isDN(sToken)) {
+                    returnUserDN = sToken;
+                    break;
+                }
+            }
+        } else if (DN.isDN(principalList)) {
+            returnUserDN = principalList;
+        }
+    
+        if (returnUserDN == null || (returnUserDN.length() == 0)) {
+            if (amIdentityUser != null) {
+                returnUserDN = IdUtils.getDN(amIdentityUser);
+            } else if (userDN != null) {
+                returnUserDN = userDN;
+            } else {
+                returnUserDN = tokenToDN(principalList);
+            }
         }
         return returnUserDN;
     }
