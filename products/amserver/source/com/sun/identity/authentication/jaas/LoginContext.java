@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginContext.java,v 1.1 2006-01-28 09:15:40 veiming Exp $
+ * $Id: LoginContext.java,v 1.2 2006-04-22 00:51:25 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,7 +162,8 @@ public class LoginContext {
 
                     // instantiate the LoginModule
                     Class c = Class.forName(
-                        moduleStack[i].entry.getLoginModuleName());
+                        moduleStack[i].entry.getLoginModuleName(), true,
+                        Thread.currentThread().getContextClassLoader());
 
                     Constructor constructor = c.getConstructor(PARAMS);
                     Object[] args = { };

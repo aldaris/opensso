@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.5 2006-03-23 19:10:09 veiming Exp $
+ * $Id: AuthUtils.java,v 1.6 2006-04-22 00:50:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2056,7 +2056,9 @@ public class AuthUtils {
             }
             
             try {
-                Object classObject = Class.forName(className).newInstance();
+                Object classObject = Class.forName(className, true,
+                    Thread.currentThread().getContextClassLoader()
+                    ).newInstance();
                 if (classObject instanceof AMLoginModule) {
                     if (utilDebug.messageEnabled()) {
                         utilDebug.message(className +
