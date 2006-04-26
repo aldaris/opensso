@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: web.xml,v 1.1 2005-11-01 00:28:38 arvindp Exp $
+   $Id: web.xml,v 1.2 2006-04-26 18:41:59 bhavnab Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,6 @@
       <servlet-name>WelcomeServlet</servlet-name>
       <url-pattern>/welcome</url-pattern>
    </servlet-mapping>
-
    <welcome-file-list>
       <welcome-file>/index.jsp</welcome-file>
    </welcome-file-list>

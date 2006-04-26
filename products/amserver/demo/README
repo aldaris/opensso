@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.7 2006-02-11 03:57:11 mrudul_uchil Exp $
+$Id: README,v 1.8 2006-04-26 18:41:55 bhavnab Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -37,13 +37,21 @@ Copyright 2005 Sun Microsystems Inc. All Rights Reserved
         %% 4.1 Installing client
         %% 4.2 Installing server
     %% 5. Creating the user
-    %% 6. Running the demo
+    %% 6. Creating the policies
+    %% 7. Deleting the policies
+    %% 8. Evaluating the policies
+    %% 9. Running the demo
+	%% 9.1 Authentication demo
+        %% 9.2.Policy demo
 
 %% 1. About this demo
 
 This demo illustrates how a web application can use the OpenSSO Authentication
-and Session service to achieve single sign-on. This OpenSSO does include
-a full-fledged authentication service. 
+and Session service to achieve single sign-on. It also demonstrates 
+the features of the policy service like adding policies, deleting policies
+and making policy evaluations based on the defined policies.
+
+This OpenSSO does include a full-fledged authentication service. 
 
 When the demo is built, it results in the creation of two files in the 
 distribution directory under built/demo/dist. These two files are:
@@ -58,14 +66,23 @@ distribution directory under built/demo/dist. These two files are:
                        It also extracts the amserver.war file that can be then
                        deployed on the same machine where the backend 
                        service configuration store has been created. The
-                       amserver.war is an Authentication web application that 
-                       bundles the OpenSSO Authentication service along with 
-                       other infrastructure services such as Session, Naming,
-                       Communication, Configuration management and User 
+                       amserver.war is a web application that 
+                       bundles the OpenSSO policy service , OpenSSO 
+		       Authentication service and other infrastructure 
+                       services such as Session, Naming,Communication, 
+		       Configuration management and User 
                        management services. Along with these, the 
                        amserver.war provides a full-fledged authentication 
                        mechanism that can be used to authenticate a user and 
                        create a session using OpenSSO Session service. 
+
+		       The amserver.war also bundles complete functionality
+                       provided by the policy service like the policy 
+                       framework, remote layer and the policy client SDK. It 
+                       includes a demo which provides servlets and JSPs, for
+		       performing policy tasks like policy creation, evaluation
+		       and deletion.
+                   
                        This amserver.war application is referred to as 
                        the server in the rest of this document.
 
@@ -300,8 +317,7 @@ Once copied, execute the amsetup.jar by giving the command:
 
 where the client will be deployed on <client_host> and server will be deployed 
 on <server_host>. Further, the client is deployed on a web container that listens on 
-port <client_port> using <client_protocol>, and the server is deployed on a 
-web container that listens on port <server_port> using <server_protocol>.
+port <client_port> using <client_protocol>, and the server is deployed on a web container that listens on port <server_port> using <server_protocol>.
 
 The above command will result in the creation of a configuration data store on this
 machine and will also result in the extraction of amserver.war file as well as
@@ -337,13 +353,60 @@ Authentication demo in order to authenticate to OpenSSO system, with the
 following utility jsp page. 
 <server_protocol>://<server_host>:<server_port>/amserver/CreateUser.jsp
 
-%% 6. Running the demo
+%% 6. Creating the policies
+
+Policies can be created in the configuration data store using the 
+CreatePolicy.jsp which can be invoked by the following URL.
+<server_protocol>://<server_host>:<server_port>/amserver/CreatePolicy.jsp
+The CreatePolicy.jsp accepts:
+policy name - name of the policy
+resource name - resource name to be used while creating the policy rule
+user - user name for who the policy is being defined.
+
+During policy creation, the following defaults are assumed:
+1. Policy is created for default realm as defined in 
+   "com.iplanet.am.defaultOrg" in server_env.properties.
+2. policy is created for "iPlanetAMWebAgentService" service.
+3. only one rule is created for the policy, the resource name  
+   taken as input is used in the creation of this rule.
+4. only one subject is created in the policy of type "AMIdentitySubject" which 
+   is the universal Identifier  of the user whose name has been provided in 
+   input.
+5. Only "GET" action is defined with value being "ALLOW".
+
+Mutlple policies can be created invoking the same URL multiple times.
+
+%% 7. Deleting the policies
+
+Policies can be deleted from the configuration data store using the 
+DeletePolicy.jsp using the following URL.
+<server_protocol>://<server_host>:<server_port>/amserver/DeletePolicy.jsp
+This jsp takes in "," separated names of policies which are to be deleted.
+
+%% 8. Evaluating the policies
+
+Access to a resource for a user can be checked using the following URL
+<server_protocol>://<server_host>:<server_port>/amserver/EvaluatePolicy.jsp
+It takes as input the resource which the user needs to access.
+
+if the user is not logged in prior to invoking this EvaluatePolicy.jsp,
+the user gets redirected to the amserver login page to log in first.
+Once the user logs in , the access permissions for the requested resource
+is computed and displayed for the logged in user. The results shows the policy 
+evaluation result for the isAllowed API and getPolicyDecision API.
+ 
+
+%% 9. Running the demo
 
 Once both the amserver.war and amdemoclient.war files have been deployed, 
 the demo is ready to use. Simply startup a browser and point it to the
 server application. 
 For example, <server_protocol>://<server_host>:<server_port>/amserver
-This will present you the User Interface in order to submit your 
+
+%% 9.1. Authentication demo
+
+Invoking <server_protocol>://<server_host>:<server_port>/amserver
+will present you the User Interface in order to submit your 
 credentials against the Datastore authentication module. Upon valid 
 credentials submission, this will allow you to authenticate and create a session.
 During authentication process, multiple user properties will be added to 
@@ -356,3 +419,10 @@ For example, <client_protocol>://<client_host>:<client_port>/amdemoclient
 The client application should be able to validate your session and assert 
 your identity and also show you the value of the properties that were 
 added/assigned during authentication process.
+
+%% 9.2. Policy demo
+
+Policy demo show cases different policy management and evaluation features
+provided by the policy service. Please refer to section 6, 7 and 8 above for
+feature details. In order to run policy evaluation one needs to make sure that
+relevant policies have been created first.

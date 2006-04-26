@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="XML_ENCODING"?>
+<?xml version="1.0" encoding="@XML_ENCODING@"?>
 
 <!--
     The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicyConfig.xml,v 1.1 2006-04-26 05:17:44 dillidorai Exp $
+    $Id: amPolicyConfig.xml,v 1.2 2006-04-26 18:42:00 bhavnab Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->

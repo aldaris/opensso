@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2006-04-20 03:35:14 goodearth Exp $
+   $Id: build.xml,v 1.10 2006-04-26 18:41:55 bhavnab Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -129,6 +129,7 @@
                 <include name="com/iplanet/dpro/**"/>
                 <include name="com/sun/identity/session/**"/>
                 <include name="com/sun/identity/authentication/**"/>
+                <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/delegation/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
@@ -144,6 +145,7 @@
                 <include name="com/iplanet/sso/**"/>
                 <include name="com/iplanet/dpro/**"/>
                 <include name="com/sun/identity/session/**"/>
+                <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/authentication/**"/>
             </packageset>
             <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"

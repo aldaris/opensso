@@ -20,9 +20,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: sun-web.xml,v 1.1 2005-11-01 00:28:39 arvindp Exp $
+   $Id: sun-web.xml,v 1.2 2006-04-26 18:42:00 bhavnab Exp $
   
-   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <!DOCTYPE sun-web-app 

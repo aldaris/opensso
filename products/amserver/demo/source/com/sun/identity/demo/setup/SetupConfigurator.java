@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConfigurator.java,v 1.4 2006-03-23 19:10:08 veiming Exp $
+ * $Id: SetupConfigurator.java,v 1.5 2006-04-26 18:41:58 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,8 +85,9 @@ public class SetupConfigurator {
     public static final String[] SERVICES_TO_LOAD = new String [] {
         "ums.xml", "amPlatform.xml", "amNaming.xml", "amSession.xml", 
         "amClientDetection.xml", "amAuthConfig.xml", 
-        "amAuth.xml", "amAuthDataStore.xml",
-        "idRepoService.xml"
+        "amAuth.xml", "amAuthDataStore.xml", 
+        "idRepoService.xml","amPolicy.xml","amPolicyConfig.xml",
+        "amWebAgent.xml"
     };
 
     /**
@@ -286,7 +287,8 @@ public class SetupConfigurator {
             HashSet values = new HashSet();
             values.add(server_host);
             // Get organization name
-            String rootSuffix = SystemProperties.get("com.iplanet.am.rootsuffix");
+            String rootSuffix = 
+                  SystemProperties.get("com.iplanet.am.rootsuffix");
             if (rootSuffix != null && DN.isDN(rootSuffix)) {
                 DN rootDN = new DN(rootSuffix);
                 String[] dns = rootDN.explodeDN(true);

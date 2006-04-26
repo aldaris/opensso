@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordEncryptor.java,v 1.1 2005-11-01 00:28:36 arvindp Exp $
+ * $Id: PasswordEncryptor.java,v 1.2 2006-04-26 18:41:58 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,12 +80,15 @@ public class PasswordEncryptor {
         String clearTextPassword = 
             properties.getProperty(PROPERTY_CLEARTEXT_PASSWORD);
         if (clearTextPassword == null || clearTextPassword.trim().length() == 0)
+        {
             throw new Exception("Property not found: " 
                     + PROPERTY_CLEARTEXT_PASSWORD);
+        }
         
         String encKey = properties.getProperty(PROPERTY_ENC_KEY);
-        if (encKey == null || encKey.trim().length() == 0) 
+        if (encKey == null || encKey.trim().length() == 0) {
             throw new Exception("Property not found: " + PROPERTY_ENC_KEY);
+        }
         
         File outputFile = new File(args[1]);
         if (outputFile.exists()) {

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="@XML_ENCODING@"?>
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="iPlanetAMWebAgentService" version="1.0">
+        <Schema
+            i18nFileName="amWebAgent"
+            i18nKey="iplanet-am-web-agent-service-description">
+	    <Global>
+                <AttributeSchema name="serviceObjectClasses"
+                    type="list"
+                    syntax="string"
+		    i18nKey="">
+		    <DefaultValues>
+                	<Value>iplanet-am-web-agent-service</Value>
+		    </DefaultValues>
+	        </AttributeSchema>
+	    </Global>
+
+            <Policy>
+                <AttributeSchema name="GET"
+                    type="single"
+		    syntax="boolean"
+                    uitype="radio"
+                    i18nKey="GET">
+		    <IsResourceNameAllowed/>
+		    <BooleanValues>
+                        <BooleanTrueValue i18nKey="allow">allow</BooleanTrueValue>
+                        <BooleanFalseValue i18nKey="deny">deny</BooleanFalseValue>
+                    </BooleanValues>	
+		</AttributeSchema>
+                <AttributeSchema name="POST"
+                    type="single"
+		    syntax="boolean"
+                    uitype="radio"
+                    i18nKey="POST">
+		    <IsResourceNameAllowed/>
+		    <BooleanValues>
+                        <BooleanTrueValue i18nKey="allow">allow</BooleanTrueValue>
+                        <BooleanFalseValue i18nKey="deny">deny</BooleanFalseValue>
+                    </BooleanValues>
+		</AttributeSchema>
+            </Policy>
+        </Schema>
+    </Service>
+</ServicesConfiguration>
