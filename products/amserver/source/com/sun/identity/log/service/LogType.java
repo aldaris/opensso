@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogType.java,v 1.1 2006-03-31 05:07:13 veiming Exp $
+ * $Id: LogType.java,v 1.2 2006-04-27 07:53:36 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 

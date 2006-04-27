@@ -20,9 +20,9 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: logDTD.xml,v 1.1 2006-03-31 05:07:18 veiming Exp $
+    $Id: logDTD.xml,v 1.2 2006-04-27 07:53:39 veiming Exp $
 
-    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <!--This DTD is used by Logging operation-->

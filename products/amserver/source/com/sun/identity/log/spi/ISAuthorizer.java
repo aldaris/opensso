@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthorizer.java,v 1.2 2006-04-14 09:05:25 veiming Exp $
+ * $Id: ISAuthorizer.java,v 1.3 2006-04-27 07:53:37 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 

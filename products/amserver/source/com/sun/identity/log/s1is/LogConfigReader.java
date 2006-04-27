@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.2 2006-04-14 09:05:24 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.3 2006-04-27 07:53:33 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 

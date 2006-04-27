@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProvider.java,v 1.2 2006-04-14 09:05:23 veiming Exp $
+ * $Id: LogMessageProvider.java,v 1.3 2006-04-27 07:53:33 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 

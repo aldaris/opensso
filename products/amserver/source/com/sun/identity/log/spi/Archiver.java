@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Archiver.java,v 1.1 2006-03-31 05:07:14 veiming Exp $
+ * $Id: Archiver.java,v 1.2 2006-04-27 07:53:37 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.log.spi;

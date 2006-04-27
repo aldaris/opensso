@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2006-03-31 05:07:05 veiming Exp $
+ * $Id: package-info.java,v 1.2 2006-04-27 07:53:31 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 /**
