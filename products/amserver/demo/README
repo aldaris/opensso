@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.8 2006-04-26 18:41:55 bhavnab Exp $
+$Id: README,v 1.9 2006-04-27 16:38:02 veiming Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -152,20 +152,19 @@ The various values contained in the server_env.properties could be as follows:
    DEBUG_LEVEL=message
    COOKIE_ENCODE=false
    NOTIFICATION_ENDPOINT=notificationservice
+   ADMIN_AUTH_CLASS=com.sun.identity.demo.server.DemoAdminAuthLoginModule
    AUTH_DONOTINCLUDE_SMS=true
    APPSSOPROVIDER_FACTORY=com.sun.identity.demo.server.DemoAdminTokenFactory
    SMS_OBJECT_CLASS=com.sun.identity.sm.flatfile.SMSFlatFileObject
    PLATFORM_LOCALE=en_US
    CURRENT_PLATFORM_LOCALE=en_US
    AVAILABLE_LOCALES=<Value>en_US</Value>
-   SESSION_LOGGER=com.sun.identity.demo.server.SessionLogger
    AM_COEXIST=false
    AM_REALM=true
    IDREPO_DATABASE=files
    AUTH_DEFAULT_CONFIG=datastoreService
    USER_PROFILE_CHOICE=ignore
    SUCCESS_REDIRECT_URL=@CLIENT_PROTO@://@CLIENT_HOST@:@CLIENT_PORT@/amdemoclient
-   AUTHENTICATION_LOGGER=com.sun.identity.demo.server.AuthenticationLogger
 
 NOTE:
 - The OUTPUT_DIR variable contains the path to a directory where the server
@@ -201,11 +200,11 @@ NOTE:
 - The NOTIFICATION_ENDPOINT represents the node that listens for notifications
   sent by the server. Its value should be left as the default value:
   notificationservice.
-- The AUTHENTICATION_LOGGER, AUTH_DONOTINCLUDE_SMS, APPSSOPROVIDER_FACTORY, 
+- The ADMIN_AUTH_CLASS, AUTH_DONOTINCLUDE_SMS, APPSSOPROVIDER_FACTORY, 
   SMS_OBJECT_CLASS, PLATFORM_LOCALE, AVAILABLE_LOCALES, CURRENT_PLATFORM_LOCALE,
   AM_COEXIST, AM_REALM, IDREPO_DATABASE, AUTH_DEFAULT_CONFIG, 
-  USER_PROFILE_CHOICE, SUCCESS_REDIRECT_URL and SESSION_LOGGER values 
-  must be kept as their suggested defaults. 
+  USER_PROFILE_CHOICE and SUCCESS_REDIRECT_URL values must be kept as their
+  suggested defaults. 
   These values are necessary for the Authentication service to function 
   in the server environment. 
 

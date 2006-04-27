@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: server_env.template,v 1.7 2006-04-08 17:56:53 beomsuk Exp $
+# $Id: server_env.template,v 1.8 2006-04-27 16:38:02 veiming Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -67,13 +67,13 @@ COOKIE_DOMAIN=.iplanet.com
 # - PLATFORM_LOCALE  : Locale of server (en_US)
 # - CURRENT_PLATFORM_LOCALE: Current Locale of server (en_US)
 # - AVAILABLE_LOCALE : SMS schema fragment (<Value>en_US</Value>)
-# - SESSION_LOGGER   : the session logger implementation
 # - AM_COEXIST       : Co-existence mode (false)
 # - AM_REALM         : Realm mode (true)
 # - IDREPO_DATABASE  : The type of IdRepo database used
 # - AUTH_DEFAULT_CONFIG: Default Authentication configuration used
 # - USER_PROFILE_CHOICE: User profile search option
-# - AUTHENTICATION_LOGGER: the Authentication logger implementation
+# - SUCCESS_REDIRECT_URL: The URL that HTTP/HTTPs request shall be redirected to
+#                         after user has successfully authentication.
 #
 
 CLIENT_URI=/amdemoclient
