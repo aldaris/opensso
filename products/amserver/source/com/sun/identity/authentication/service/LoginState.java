@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.5 2006-04-20 18:46:57 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.6 2006-04-28 17:17:16 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2149,6 +2149,9 @@ public class LoginState {
                 if (ad.isSuperAdmin(userDN)) {
                     amIdentityUser = ad.getIdentity(
                         IdType.USER,userDN,getOrgDN());
+                } else {
+                    amIdentityUser =
+                        new AMIdentity(null,userDN,IdType.USER,getOrgDN(),null);
                 }
                 userDN = getUserDN(amIdentityUser);
                 populateDefaultUserAttributes();
@@ -5377,18 +5380,20 @@ public class LoginState {
      */
     public String getUserDN(AMIdentity amIdentityUser) {
         String returnUserDN = null;
-    
-        if (principalList.indexOf("|") != -1) {
-            StringTokenizer st = new StringTokenizer(principalList,"|");
-            while (st.hasMoreTokens()) {
-                String sToken = (String)st.nextToken();
-                if (DN.isDN(sToken)) {
-                    returnUserDN = sToken;
-                    break;
+        
+        if (principalList != null) { 
+            if (principalList.indexOf("|") != -1) {
+                StringTokenizer st = new StringTokenizer(principalList,"|");
+                while (st.hasMoreTokens()) {
+                    String sToken = (String)st.nextToken();
+                    if (DN.isDN(sToken)) {
+                        returnUserDN = sToken;
+                        break;
+                    }
                 }
+            } else if (DN.isDN(principalList)) {
+                returnUserDN = principalList;
             }
-        } else if (DN.isDN(principalList)) {
-            returnUserDN = principalList;
         }
     
         if (returnUserDN == null || (returnUserDN.length() == 0)) {
