@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManager.java,v 1.4 2006-04-14 09:08:30 veiming Exp $
+ * $Id: DirectoryManager.java,v 1.5 2006-05-01 18:53:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -752,6 +752,13 @@ public class DirectoryManager implements AMConstants,
                     entryDN));
 
             AttrSet attrSet = po.getAttributes(po.getAttributeNames());
+
+            /* Add this 'dn' explicitly to the result set and return.
+             * reason: when queried with this entrydn/dn the lower level api/
+             * ldapjdk does not return this attribute,but returns other ones.
+             */
+
+            attrSet.add(new Attr("dn", entryDN));
 
             // Perform Compliance related checks
             checkComplianceAttributes(attrSet, ignoreCompliance);
