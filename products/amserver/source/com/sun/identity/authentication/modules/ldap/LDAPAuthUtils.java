@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.2 2006-04-20 18:50:15 pawand Exp $
+ * $Id: LDAPAuthUtils.java,v 1.3 2006-05-02 22:15:28 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -224,6 +224,7 @@ public class LDAPAuthUtils {
         String bindingPwd
     ) throws LDAPException {
         ConnectionPool conPool = null;
+        LDAPConnection ldc = null;
         try {
             String key = hostName + ":" + portNumber;
             conPool = (ConnectionPool)connectionPools.get(key);
@@ -288,7 +289,6 @@ public class LDAPAuthUtils {
                     conPool = (ConnectionPool)connectionPools.get(key);
                     
                     if (conPool == null) {
-                        LDAPConnection ldc;
                         if (isSSL) {
                             ldc = new LDAPConnection(
                                 new JSSESocketFactory(null));
@@ -308,6 +308,9 @@ public class LDAPAuthUtils {
                 }
             }
         } catch (LDAPException e) {
+            if (ldc != null) {
+                ldc.disconnect();
+            }
             throw e;
         } catch (Exception e) {
             if (debug2.messageEnabled()) {
