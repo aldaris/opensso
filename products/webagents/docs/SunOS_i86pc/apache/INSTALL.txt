@@ -42,7 +42,7 @@ installation tool to perform the following steps.
 
 1.1.1 Create the following Apache Agent install directory (/opt/apache-agent)
 1.1.2 cp <apache-agent-src-dir>/products/dsame/webagents/agents/source/apache/libamapc2.so /opt/apache-agent
-1.1.3 cp <apache-agent-src-dir>/products/dsame/webagents/external/SunOS_i86pc/libxml2/lib/libxml2.so.2 /opt/apache-agent
+1.1.3 cp <apache-agent-src-dir>/products/dsame/webagents/extlib/SunOS_i86pc/libxml2/lib/libxml2.so.2 /opt/apache-agent
 1.1.4 cp <apache-agent-src-dir>/products/dsame/webagents/conf/AMAgent.properties /opt/apache-agent
 1.1.5 cp <apache-agent-src-dir>/products/dsame/webagents/agents/source/apache/dsame.conf /opt/apache-agent
 1.1.6 Open /opt/apache-agent/dsame.conf
