@@ -1,0 +1,98 @@
+------------------------------------------------------------------------------
+INSTALL file for Open Web Single Sign-On - Web Agents
+------------------------------------------------------------------------------
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+# 
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+#
+#
+
+%% Contents:
+    %% 1. Agent Installation
+        %% 1.1 Creating the Apache Agent Installation Directory
+        %% 1.2 Tag Swapping in AMAgent.properties file
+        %% 1.3 Updating Apache Server httpd.conf file
+
+%% 1. Agent Installation
+
+Please make sure that the Apache Server 2.0.55 is installed and running. Also
+make sure that the Apache Agent is compiled with steps indicated in README.txt.
+
+The installation steps are now manual but in future there will be an 
+installation tool to perform the following steps.
+
+%% 1.1 Creating the Apache Agent Installation Directory
+
+1.1.1 Create the following Apache Agent install directory (/opt/apache-agent)
+1.1.2 cp <apache-agent-src-dir>/products/dsame/webagents/agents/source/apache/libamapc2.so /opt/apache-agent
+1.1.3 cp <apache-agent-src-dir>/products/dsame/webagents/external/Linux/libxml2/lib/libxml2.so.2 /opt/apache-agent
+1.1.4 cp <apache-agent-src-dir>/products/dsame/webagents/conf/AMAgent.properties /opt/apache-agent
+1.1.5 cp <apache-agent-src-dir>/products/dsame/webagents/agents/source/apache/dsame.conf /opt/apache-agent
+1.1.6 Open /opt/apache-agent/dsame.conf
+1.1.7 Replace MODULE with /opt/apache-agent
+1.1.8 Replace EAPI with 2
+1.1.9 Replace DSAMECONFIG with /opt/apache-agent/AMAgent.properties
+1.1.10 Save the file
+
+%% 1.2 Tag Swapping in AMAgent.properties file
+
+The file AMAgent.properties which is used by the Apache Agent has few tags 
+which needs to be manually swapped with the information of where the 
+Access Manager (AM) is running and where the Apache Server is running.
+
+1.2.1 Open /opt/apache-agent/AMAgent.properties
+1.2.2 Please perform the below tag swapping
+
+PRIMARY_NAMING_URL = <AM Protocol>://<Fully Qualified AM Hostname>:<AM Port number>/amserver/namingservice 
+If Failover server is there, populate the below tag with Failover server 
+information else leave it blank (remove the tag).
+FAILOVER_NAMING_URL = <AM Protocol>://<Fully Qualified AM Hostname>:<AM Port number>/amserver/namingservice 
+
+PRIMARY_LOGIN_URL = <AM Protocol>://<Fully Qualified AM Hostname>:<AM Port number>/amserver/UI/Login
+If Failover server is there, populate the below tag with Failover server 
+information else leave it blank (remove the tag).
+FAILOVER_LOGIN_URL = <AM Protocol>://<Fully Qualified AM Hostname>:<AM Port number>/amserver/namingservice 
+LOG_ROTATION = false
+AGENT_HOST = <Enter the hostname of where agent is running>
+AGENT_PORT = <Enter the port number where agent protected apache server is 
+running>
+USER_NAME = UrlAccessAgent
+To populate the value for SHARED_SECRET, please perform the below steps:
+  a) <apache-agent-src-dir>/products/dsame/webagents/am/source/crypt_util <amldapuser password>
+  b) Get the encrypted value and assign it to SHARED_SECRET
+SERVER_DIR = If you are running SSL, this will be the location where the 
+certificates are kept else leave it blank (remove the tag).
+AGENT_CERT_PREFIX = If you are running SSL, this will be the certificate data
+base prefix else leave it blank (remove the tag).
+NOTIFICATION_ENABLE = false
+AGENT_URL_PREFIX = <Agent protocol>://<Fully qualified Agent Hostname>
+
+For the below property, specify the value as shown:
+com.sun.am.policy.agents.config.local.log.file = /opt/apache-agent/amAgent
+
+%% 1.3 Updating Apache Server httpd.conf file
+
+1.3.1 cd <apache-install-dir>/conf
+1.3.2 Open httpd.conf and go to the end of the file
+1.3.3 Add the below line
+      include /opt/apache-agent/dsame.conf
+1.3.4 Save the file
+1.3.5 Restart the server
