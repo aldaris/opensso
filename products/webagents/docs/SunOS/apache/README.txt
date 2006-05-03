@@ -27,7 +27,7 @@ README file for Open Web Single Sign-On - Web Agents
 %% Contents:
     %% 1. Build requirements
     %% 2. Library dependencies
-        %% 2.1 Sun Studio 11 Compiler for Solari Sparc
+        %% 2.1 Sun Studio 11 Compiler for Solaris Sparc
         %% 2.2 Obtaining make-3.80
         %% 2.3 Obtaining LIBXML2 2.6.23
         %% 2.4 Obtaining NSS 3.11
@@ -49,7 +49,7 @@ the library vendor or distributor. Some of these libraries are available in
 source distribution form and must be built locally before they can be used. 
 The libraries needed for compiling OpenSSO sources are:
 
-        - Sun Studio 11 Compiler for Solari Sparc
+        - Sun Studio 11 Compiler for Solaris Sparc
         - make 3.80
         - LIBXML2 2.6.23
         - NSS 3.11
@@ -66,9 +66,9 @@ must disregard those instructions and instead follow the ones provided by
 the library vendor or distributor in accordance with their terms and 
 conditions.
 
-%% 2.1 Sun Studio 11 Compiler for Solari Sparc
+%% 2.1 Sun Studio 11 Compiler for Solaris Sparc
 
-The Sun Studio 11 for Solaris Sparc is freely awailable of Sun downloads. 
+The Sun Studio 11 for Solaris Sparc is freely available from Sun downloads. 
 Please check the below url:
 http://developers.sun.com/prodtech/cc/downloads/index.jsp
 
