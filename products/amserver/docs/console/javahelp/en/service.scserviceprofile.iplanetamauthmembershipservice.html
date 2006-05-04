@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Membership
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthmembershipservice"></A><h3>Membership</h3>
+<p><A NAME="indexterm-175"></A>The Membership Authentication module is implemented for personalized sites.
+When membership authentication is enabled, a user can self-register. This means the
+user can create an account, personalize it, and access it as a registered user without
+the help of an administrator. The attributes are realm attributes. The attributes
+are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumys">Minimum Password Length</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyr">Default User Roles</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyt">User Status After Registration</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzt">Primary LDAP Server</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumza">Secondary LDAP Server</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyz">DN to Start User Search</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzb">DN for Root User Bind</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumze">Password for Root User Bind</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzd">Password for Root User Bind (confirm)</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzc">Attribute Used to Retrieve User Profile</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzh">Attributes Used to Search for a User to be Authenticated</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzg">User Search Filter</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzj">Search Scope</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzi">Enable SSL to Access LDAP Server</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzk">Return User DN to Authenticate</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzm">Authentication Level</A></p>
+</li>
+</ul>
+<A NAME="fumys"></A><h4>Minimum Password Length</h4>
+<p>Specifies the minimum number of characters required for a password set during
+self-registration. The default value is 8. </p>
+<p>If this value is changed, it should also be changed in the registration and
+error text in the following file: </p>
+<p><tt></tt><i>AcessManager-base<tt></i>/locale/amAuthMembership.properties</tt> (<i>PasswdMinChars</i> entry)</p>
+<A NAME="fumyr"></A><h4>Default User Roles</h4>
+<p>Specifies the roles assigned to new users whose profiles are created through
+self-registration. There is no default value. The administrator must specify the DNs
+of the roles that will be assigned to the new user.</p>
+<p><hr size="1" noshade><p><b>Note - </b>The role specified must be under the realm for which authentication is
+being configured. Only the roles that can be assigned to the user will be added during
+self-registration. All other DNs will be ignored. The role can be either an Access
+Manager role or an LDAP role, but filtered roles are not accepted.</p>
+<hr size="1" noshade></p><A NAME="fumyt"></A><h4>User Status After Registration</h4>
+<p>Specifies whether services are immediately made available to a user who has
+self-registered. The default value is Active and services are available to the new
+user. By selecting Inactive, the administrator chooses to make no services available
+to a new user.</p>
+<A NAME="fumzt"></A><h4>Primary LDAP Server</h4>
+<p>Specifies the host name and port number of the primary LDAP server specified
+during Access Manager installation. This is the first server contacted for authentication.
+The format is<tt></tt><i>hostname:port<tt></i></tt>. If there
+is no port number, assume <tt>389</tt>.</p>
+<p>If you have Access Manager deployed with multiple domains, you can specify the
+communication link between specific instances of Access Manager and Directory Server
+in the following format (multiple entries must be prefixed by the local server name): </p>
+<p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt>  </p>
+<p>For example, if you have two Access Manager instances deployed in different
+locations (L1-machine1-IS and L2- machine2-IS) communicating with different instances
+of Directory Server (L1-machine1-DS and L2-machine2-DS), it would look the following: </p>
+<p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt> </p>
+<p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
+<A NAME="fumza"></A><h4>Secondary LDAP Server</h4>
+<p>Specifies the host name and port number of a secondary LDAP server available
+to the Access Manager platform. If the primary LDAP server does not respond to a request
+for authentication, this server would then be contacted. If the primary server is
+up, Access Manager will switch back to the primary server. The format is also <tt></tt><i>hostname:port<tt></i></tt>. Multiple entries must be prefixed by the local
+server name.  </p>
+<hr size="1" noshade><p><IMG ALT="Caution" src="graphics/caution.gif">  <b>Caution - </b>When authenticating users from a Directory Server that is remote from
+the Access Manager enterprise, it is important that both the Primary and Secondary
+LDAP Server Ports have values. The value for one Directory Server location can be
+used for both fields.</p><hr size="1" noshade><A NAME="fumyz"></A><h4>DN to Start User Search</h4>
+<p>Specifies the DN of the node where the search for a user would start. (For performance
+reasons, this DN should be as specific as possible.) The default value is the root
+of the directory tree. Any valid DN will be recognized. If OBJECT is
+selected in the <b>Search Scope</b> attribute, the DN should specify
+one level above the level in which the profile exists. Multiple entries must be prefixed
+by the local server name. The format is <tt></tt><i>servername|search dn<tt></i></tt>.</p>
+<p>For multiple entries:</p>
+<p><tt></tt><i>servername1|search dn servername2|search dn servername3|search
+dn<tt></i>...</tt> </p>
+<p>If multiple users are found for the same search, authentication will fail.</p>
+<A NAME="fumzb"></A><h4>DN for Root User Bind</h4>
+<p>Specifies the DN of the user that will be used to bind to the Directory Server
+specified in the Primary LDAP Server and Port field as administrator. The authentication
+service needs to bind as this DN in order to search for a matching user DN based on
+the user login ID. The default is <tt>amldapuser.</tt> Any valid DN will
+be recognized.</p>
+<A NAME="fumze"></A><h4>Password for Root User Bind</h4>
+<p>Carries the password for the administrator profile specified in the DN for Root
+User Bind field. There is no default value. Only the administrator's valid LDAP password
+will be recognized.</p>
+<A NAME="fumzd"></A><h4>Password for Root User Bind (confirm)</h4>
+<p>Confirmation of the password.</p>
+<A NAME="fumzc"></A><h4>Attribute Used to Retrieve User Profile</h4>
+<p>Specifies the attribute used for the naming convention of user entries. By default,
+Access Manager assumes that user entries are identified by the uid attribute. If your
+Directory Server uses a different attribute (such as <i>givenname</i>)
+specify the attribute name in this field.</p>
+<A NAME="fumzh"></A><h4>Attributes Used to Search for a User to be Authenticated</h4>
+<p>Lists the attributes to be used to form the search filter for a user that is
+to be authenticated, and allows the user to authenticate with more than one attribute
+in the user's entry. For example, if this field is set to <i>uid</i>, <i>employeenumber</i>, and <i>mail</i>, the user could authenticate
+with any of these names.</p>
+<A NAME="fumzg"></A><h4>User Search Filter</h4>
+<p>Specifies an attribute to be used to find the user under the DN to Start User
+Search field. It works with the <b>User Naming Attribute</b>. There
+is no default value. Any valid user entry attribute will be recognized.</p>
+<A NAME="fumzj"></A><h4>Search Scope</h4>
+<p>Indicates the number of levels in the Directory Server that will be searched
+for a matching user profile. The search begins from the node specified in the attribute
+"DN to Start User Search" on page 315. The default value is SUBTREE.
+One of the following choices can be selected from the list: </p>
+<table border="0" cellspacing="5"><tr valign="top"><td>OBJECT</td><td><p>Searches only the specified node.</p>
+</td></tr><tr valign="top"><td>ONELEVEL</td><td><p>Searches at the level of the specified node and one level down.</p>
+</td></tr><tr valign="top"><td>SUBTREE</td><td><p>Search all entries at and below the specified node.</p>
+</td></tr></table>
+<A NAME="fumzi"></A><h4>Enable SSL to Access LDAP Server</h4>
+<p>Enables SSL access to the Directory Server specified in the Primary and Secondary
+LDAP Server and Port field. By default, the box is not checked and the SSL protocol
+will not be used to access the Directory Server. </p>
+<p>If the LDAP Server is running with SSL enabled (LDAPS), you must make sure that
+Access Manager is configured with proper SSL trusted certificates so that AM could
+connect to Directory server over LDAPS protocol </p>
+<A NAME="fumzk"></A><h4>Return User DN to Authenticate</h4>
+<p>When the Access Manager directory is the same as the directory configured for
+LDAP, this option may be enabled. If enabled, this option allows the LDAP authentication
+module to return the DN instead of the User ID, and no search is necessary. Normally,
+an authentication module returns only the User ID, and the authentication service
+searches for the user in the local Access Manager LDAP. If an external LDAP directory
+is used, this option is typically not enabled.</p>
+<A NAME="fumzm"></A><h4>Authentication Level</h4>
+<p>The authentication level is set separately for each method of authentication.
+The value indicates how much to trust an authentication mechanism. Once a user has
+authenticated, this value is stored in the SSO token for the session. When the SSO
+token is presented to an application the user wants to access, the application uses
+the stored value to determine whether the level is sufficient to grant the user access.
+If the authentication level stored in an SSO token does not meet the minimum value
+required, the application can prompt the user to authenticate again through a service
+with a higher authentication level. The default value is 0. </p>
+<p><hr size="1" noshade><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value
+specified in the Core Authentication attribute <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A>.</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

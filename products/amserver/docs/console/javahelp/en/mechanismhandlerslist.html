@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Mechanism Handlers List
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="mechanismhandlerslist"></A><h3>Mechanism Handlers List</h3>
+<A NAME="indexterm-161"></A><A NAME="indexterm-162"></A><p>The Mechanism Handler List attribute stores information about the SASL mechanisms
+supported by the Authentication Web Service. It displays entries that contain key/value pairs separated
+by a pipe as in:  <tt>key=PLAIN|class=com.sun.identity.liberty.ws.authnsvc.mechanism.PlainMechanismHandler</tt>. The parameters are explained in the following table.</p>
+
+<table cellspacing="5" border="1">
+<tr><th scope="col"><p>Parameter</p></th><th scope="col"><p>Value</p></th></tr>
+<tr><td><p><tt>key</tt></p></td><td><p>The required <tt>key</tt> parameter defines the SASL mechanism supported
+by the Authentication Web Service.</p></td></tr>
+<tr><td><p><tt>class</tt></p></td><td><p>The required <tt>class</tt> parameter specifies the name of the implementation
+class for the SASL mechanism. The Authentication Web Service layer provides a handler interface that
+needs to be implemented in order for each SASL mechanism to process the requested
+message and return a response.</p></td></tr>
+</table><p>To add a new Request Handler click <b>Add</b>, and
+see <A HREF="webservices.wsauthnserviceshandlersadd.html#webservices.wsauthnserviceshandlersadd">To Configure a New Mechanism Handler</A>.</p>
+
+<br />
+
+</body>
+</html>

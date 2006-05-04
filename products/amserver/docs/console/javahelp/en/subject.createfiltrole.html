@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title><IMG border="0" alt="Procedure" src="graphics/procedure-toc.gif">To Create a Filtered Role
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="subject.createfiltrole"></A><h4><IMG border="0" alt="Procedure" src="graphics/procedure.gif">To Create a Filtered Role</h4>
+<h5>Steps</h5><ol><li><p><b>In the Navigation pane, go the organization where the role will be created.</b></p></li>
+<li><p><b>Click New.</b></p></li>
+<li><p><b>Enter a name for the filtered role. </b></p></li>
+<li><p><b>Enter the information for the search criteria.</b></p><p>For example,</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(&amp;(uid=user1)(|(inetuserstatus=active)(!(inetuserstatus=*))))</pre>
+</td></table><br><p>If the filter is left blank, by default, the following role is created:</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(objectclass = inetorgperson)</pre>
+</td></table><br></li>
+<li><p><b>Click Create to initiate the search based on the filter criteria. The
+identities defined by the filter criteria are automatically assigned to the role.</b></p></li>
+<li><p><b>Once the filtered role is created click the name of the role to view the
+Users that belong to the role. You can also add services to the role by clicking the
+Services tab. See <A HREF="idm.entityservices.html#idm.entityservices">To Add Services to an Identity</A></b></p></li>
+</ol>
+<br />
+
+</body>
+</html>

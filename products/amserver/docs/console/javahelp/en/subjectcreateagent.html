@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title><IMG border="0" alt="Procedure" src="graphics/procedure-toc.gif">To Create or Modify an Agent
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="subjectcreateagent"></A><h4><IMG border="0" alt="Procedure" src="graphics/procedure.gif">To Create or Modify an Agent</h4>
+<h5>Steps</h5><ol><li><p><b>Click the Agents tab.</b></p></li>
+<li><p><b>Click New.</b></p></li>
+<li><p><b>Enter the values for the following fields:</b></p><p><b>Name.</b> Enter the name or identity of the agent. This is the name that the
+agent will use to log into Access Manager. Multi-byte names are not accepted.</p>
+<p><b>Password.</b> Enter the agent password. This
+password must be different than the password used by the agent during LDAP authentication.</p>
+<p><b>Confirm Password</b>. Confirm the password.</p>
+<p><b>Device Status.</b> Enter the device status
+of the agent. If set to Active, the agent will be able to authenticate to and communicate
+with Access Manager. If set to Inactive, the agent will not be able to authenticate
+to Access Manager.</p>
+</li>
+<li><p><b>Click Create.</b></p></li>
+<li><p><b>Once you have crated the agent, you can additionally edit the following
+fields:</b></p><p><b>Description.</b> Enter a brief
+description of the agent. For example, you can enter the agent instance name or the
+name of the application it is protecting.</p>
+<p><b>Agent
+Key Value.</b> Set the agent properties with a key/value pair. This property
+is used by Access Manager to receive agent requests for credential assertions about
+users. Currently, only one property is valid and all other properties will be ignored.
+Use the following format:</p>
+<p><tt></tt><i>agentRootURL<tt></i>=http://</tt><i>server_name:port<tt></i>/</tt></p>
+</li>
+</ol>
+<br />
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Client Detection
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamclientdetection"></A><h3>Client Detection</h3>
+<p><A NAME="indexterm-195"></A>An initial step in the authentication process is to identify the type
+of client making the HTTP(S) request. This Access Manager feature is known as client
+detection. The URL information is used to retrieve the client's characteristics. Based
+on these characteristics, the appropriate authentication pages are returned. For example,
+when a Netscape browser is used to request a web page, Access Manager 7 displays an
+HTML login page. Once the user is validated, the client type ( Netscape browser) is
+added to the session token. The attributes defined in the Client Detection service
+are global attributes. </p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxcei">Client Types</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxbxh">Default Client Type</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxccp">Client Detection Class</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxbvy">Enable Client Detection</A></p>
+</li>
+</ul>
+<A NAME="fxcei"></A><h4>Client Types</h4>
+<p>In order to detect client types, Access Manager needs to recognize their identifying
+characteristics. These characteristics identify the properties of all supported types
+in the form of client data. This attribute allows you to modify the client data through
+the Client Manager interface. To access the <A HREF="service.mapclientmanager.html#service.mapclientmanager">Client Manager</A>, click the Edit link.  Out of the box, Access Manager contains
+the following client types: </p>
+<ul><li><p>HDML</p>
+</li>
+<li><p>HTML</p>
+</li>
+<li><p>JHTML</p>
+</li>
+<li><p>VoiceX</p>
+</li>
+<li><p>WML</p>
+</li>
+<li><p>XHTML</p>
+</li>
+<li><p>cHTML</p>
+</li>
+<li><p>iHTML</p>
+</li>
+</ul>
+<p> </p>
+<p> For descriptions of these client types, see the Sun Java System Portal Server,
+Mobile Access 2005Q4 Administration Guide at <A HREF="http://docs.sun.com/app/docs/coll/PortalServer_05q4">http://docs.sun.com/app/docs/coll/PortalServer_05q4</A> . </p>
+<A NAME="fxbxh"></A><h4>Default Client Type</h4>
+<p>This attribute defines the default client type derived from the list of client
+types in the Client Types attribute. The default is genericHTML.</p>
+<A NAME="fxccp"></A><h4>Client Detection Class</h4>
+<p>This attribute defines the client detection class for which all client detection
+requests are routed. The string returned by this attribute should match one of the
+client types listed in the Client Types attribute. The default client detection class
+is <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. Access Manager also
+contains <tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl</tt>.</p>
+<A NAME="fxbvy"></A><h4>Enable Client Detection</h4>
+<p>Enables client detection. If client detection is enabled (default), every request
+is routed thought the class specified in the <b>Client Detection Class</b> attribute.
+ By default, the client detection capability is enabled. If this attribute is not
+selected, Access Manager assumes that the client is genericHTML and will be accessed
+from a HTML browser.</p>
+
+<br />
+
+</body>
+</html>

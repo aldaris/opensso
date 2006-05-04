@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>User
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamuserservice"></A><h3>User</h3>
+<p><A NAME="indexterm-193"></A>The default user preferences are defined through the user service. These
+include time zone, locale and DN starting view. The User service attributes are dynamic
+attributes.</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxckn">User Preferred Language</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcnb">User Preferred Timezone</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcte">Inherited Locale</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcpk">Administrator Starting View</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxciz">Default User Status</A></p>
+</li>
+</ul>
+<A NAME="fxckn"></A><h4>User Preferred Language</h4>
+<p>This field specifies the user's choice for the text language displayed in the
+Access Manager console. The default value is en. This value maps a set of localization
+keys to the user session so that the on-screen text appears in a language appropriate
+for the user.</p>
+<A NAME="fxcnb"></A><h4>User Preferred Timezone</h4>
+<p>This field specifies the time zone in which the user accesses the Access Manager
+console. There is no default value.</p>
+<A NAME="fxcte"></A><h4>Inherited Locale</h4>
+<p>This field specifies the locale for the user. The default value is en_US. See <A HREF="supportedlang.html#supportedlang">Supported Language Locales</A> for a list of locales.</p>
+<A NAME="fxcpk"></A><h4>Administrator Starting View</h4>
+<p>If this user is a Access Manager administrator, this field specifies the node
+that would be the starting point displayed in the Access Manager console when this
+user logs in. There is no default value. A valid DN for which the user has, at the
+least, read access can be used.</p>
+<A NAME="fxciz"></A><h4>Default User Status</h4>
+<p>This option indicates the default status for any newly created user. This status
+is superseded by the User Entry status. Only active users can authenticate through
+Access Manager. The default value is Active. Either of the following can be selected
+from the pull-down menu:     </p>
+<table border="0" cellspacing="5"><tr valign="top"><td><b>Active</b></td><td><p>The user can authenticate through Access Manager.</p>
+</td></tr><tr valign="top"><td><b>Inactive</b></td><td><p>The user cannot authenticate through Access Manager, but the user
+profile remains stored in the directory.</p>
+</td></tr></table>
+<p> The individual user status is set by registering the User service, choosing
+the value, applying it to a role and adding the role to the user's profile. </p>
+
+<br />
+
+</body>
+</html>

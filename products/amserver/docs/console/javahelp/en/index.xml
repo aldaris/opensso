@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<!-- ident   "%Z%%M% %I%   %E% SMI" -->
+<!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
+<index version="2.0">
+<indexitem target="accesscontrol" text="Access Control, Introduction"></indexitem>
+<indexitem text="Authentication attributes"><indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Anonymous"></indexitem><indexitem target="authentication.authconfig" text="Authentication Configuration"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificate"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthservice" text="Core"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic"></indexitem><indexitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Membership"></indexitem><indexitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></indexitem><indexitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows Desktop SSO"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></indexitem>
+</indexitem>
+<indexitem target="service.mapcreatedevice" text="Client Detection, To add a new client"></indexitem>
+<indexitem target="service.mapclientmanager" text="Client Manager"></indexitem>
+<indexitem target="policyconditions" text="Conditions"><indexitem target="policy.pmdefaultauthlevelconditionadd" text="Authentication Level"></indexitem><indexitem target="policy.pmdefaultauthschemecondition" text="Authentication Scheme"></indexitem><indexitem target="policy.pmdefaultipcondition" text="IP Address"></indexitem><indexitem target="leauth" text="LE Authentication"></indexitem><indexitem target="policy.pmdefaultsessioncondition" text="Session"></indexitem><indexitem target="policy.sessionpropertyconditionadd" text="Session Property"></indexitem><indexitem target="policy.pmdefaulttimeconditionadd" text="Time"></indexitem>
+</indexitem>
+<indexitem target="service.scconfig" text="Configuration"><indexitem target="authattrs" text="Authentication"></indexitem><indexitem target="consoleprops" text="Console Properties"></indexitem><indexitem target="global" text="Global Properties"></indexitem><indexitem target="systemprops" text="System Properties"></indexitem>
+</indexitem>
+<indexitem text="Console Properties"><indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administration"></indexitem><indexitem target="service.smg11n" text="Globalization Settings"></indexitem>
+</indexitem>
+<indexitem target="datastore" text="Data Stores"><indexitem target="realm.idrepoadd" text="LDPAv3 repository plug-in attributes"></indexitem><indexitem target="realm.idrepo" text="To create a new LDAPv3 data store"></indexitem>
+</indexitem>
+<indexitem target="dirmang" text="Directory Management"></indexitem>
+<indexitem text="Global Properties"><indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Password Reset"></indexitem><indexitem target="service.scpolicy" text="Policy Configuration"></indexitem><indexitem target="service.scserviceprofile.amsessionservice" text="Session"></indexitem><indexitem target="service.scserviceprofile.iplanetamuserservice" text="User"></indexitem>
+</indexitem>
+<indexitem text="Identity Management"><indexitem text="Users"><indexitem target="addusertogroup" text="Adding to Services, Roles and Groups"></indexitem>
+</indexitem>
+</indexitem>
+<indexitem target="invalidatesession" text="Invalidating a Session"></indexitem>
+<indexitem text="Platform"><indexitem target="service.scplatformclientcharsetsadd" text="To create a new character set"></indexitem><indexitem target="service.scplatformserverlistadd" text="To create a new instance name"></indexitem><indexitem target="service.scplatformsitelistadd" text="To create a new site name"></indexitem>
+</indexitem>
+<indexitem target="policy.policy" text="Policies"><indexitem target="policyconditions" text="Conditions"></indexitem><indexitem target="normalpolicy" text="Normal policies"></indexitem><indexitem target="fyfby" text="Referral Policies"></indexitem><indexitem target="responseprovider" text="Response Providers"></indexitem><indexitem target="normalrule" text="Rules"></indexitem><indexitem target="normalsubject" text="Subjects"></indexitem><indexitem target="policy.conditionadd" text="To add a condition to"></indexitem><indexitem target="policy.responseprovideradd" text="To add a response provider to"></indexitem><indexitem target="policy.ruleadd" text="To add a rule to"></indexitem><indexitem target="policy.subjectadd" text="To add a subject to"></indexitem><indexitem target="policy.policyreferraladd" text="To create a new referral policy"></indexitem>
+</indexitem>
+<indexitem target="policy.selectreferraltype" text="Policy, To add referrals to"></indexitem>
+<indexitem target="delegation.delegation" text="Privileges"></indexitem>
+<indexitem target="realm.rmrealm" text="Realms"><indexitem target="authentication.authproperties" text="Authentication"></indexitem><indexitem target="datastore" text="Data Stores"></indexitem><indexitem target="realm.realmproperties" text="General Properties"></indexitem><indexitem target="policy.policy" text="Policies"></indexitem><indexitem target="delegation.delegation" text="Privileges"></indexitem><indexitem target="realm.services" text="Services"></indexitem><indexitem target="idm.entities" text="Subjects"></indexitem><indexitem target="realm.servicesadd" text="To add a service to"></indexitem><indexitem target="realm.rmrealmadd" text="To create a new"></indexitem><indexitem target="authentication.newauthconfig" text="To create a new authentication chain"></indexitem><indexitem target="authentication.newauthinstance" text="To create a new authentication module"></indexitem>
+</indexitem>
+<indexitem target="fyfby" text="Referral Policies"></indexitem>
+<indexitem target="normalrule" text="Rules"></indexitem>
+<indexitem target="sessionsearch" text="Search"></indexitem>
+<indexitem target="sessions" text="Session module"></indexitem>
+<indexitem target="service.subconfigadd" text="Session Properties, To add a sub-configuration"></indexitem>
+<indexitem target="session.smprofile" text="Session Window"></indexitem>
+<indexitem target="normalsubject" text="Subjects"></indexitem>
+<indexitem target="idm.entities" text="Subjects"><indexitem target="subjectagents" text="Agents"></indexitem><indexitem target="subject.filteredrole" text="Filtered Roles"></indexitem><indexitem target="subject.group" text="Groups"></indexitem><indexitem target="subject.role" text="Roles"></indexitem><indexitem target="subjectuser" text="User"></indexitem>
+</indexitem>
+<indexitem target="supportedlang" text="Supported Language Locales"></indexitem>
+<indexitem text="System Properties"><indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Client Detection"></indexitem><indexitem target="service.scserviceprofile.iplanetamloggingservice" text="Logging"></indexitem><indexitem target="service.scserviceprofile.iplanetamnamingservice" text="Naming"></indexitem><indexitem target="service.scplatform" text="Platform"></indexitem>
+</indexitem>
+<indexitem target="dm.home" text="User Management"></indexitem>
+<indexitem target="addusertogroup" text="Users, Adding to Services, Roles, and Groups"></indexitem>
+<indexitem target="viewsession" text="View Session"></indexitem>
+</index>

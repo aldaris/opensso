@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Session
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.amsessionservice"></A><h3>Session</h3>
+<p><A NAME="indexterm-191"></A>The Session service defines values for an authenticated user session such
+as maximum session time and maximum idle time. The Session attributes are global,
+dynamic, or user attributes. The attributes are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfeu">Secondary Configuration Instance</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfew">Maximum Number of Search Results</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfex">Timeout for Search</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfez">Enable Property Change Notifications</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfey">Enable Quota Constraints</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffa">Read Timeout for Quota Constraint</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffb">Exempt Top-Level Admins From Constraint Checking</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffc">Resulting Behavior If Session Quota Exhausted</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffd">Notification Properties</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffe">Maximum Session Time</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfff">Maximum Idle Time</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffh">Maximum Caching Time</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffi">Active User Sessions</A></p>
+</li>
+</ul>
+<A NAME="fwfeu"></A><h4>Secondary Configuration Instance</h4>
+<p>Provides the connection information for the session repository used for the
+session failover functionality in Access Manager. The URL of the load balancer should
+be given as the identifier to this secondary configuration.  If the secondary configuration
+is defined in this case, the session failover feature will be automatically enabled
+and become effective after the server restart. See <A HREF="service.subconfigadd.html#service.subconfigadd">To Add a Sub Configuration</A> for more information.</p>
+<A NAME="fwfew"></A><h4>Maximum Number of Search Results</h4>
+<p>This attribute specifies the maximum number of results returned by a session
+search. The default value is 120.</p>
+<A NAME="fwfex"></A><h4>Timeout for Search</h4>
+<p>This attributed defines the maximum amount of time before a session search terminates.
+The default value is 5 seconds.</p>
+<A NAME="fwfez"></A><h4>Enable Property Change Notifications</h4>
+<p>Enables or disables the feature session property change notification. In a single
+sign-on environment, one Access Manager session can be shared by multiple applications.
+With this feature enabled, if one application changes any of the session properties
+specified in the <b>Notification Properties</b> list (defined as a separate
+session service attribute), the notification will be sent to other applications participating
+in the same single sign-on  environment.</p>
+<A NAME="fwfey"></A><h4>Enable Quota Constraints</h4>
+<p>Enables or disables session quota constraints. The enforcement of session quota
+constraints enables administrators to limit a user to have a specific number of active/concurrent
+sessions based on the constraint settings at the global level, or the configurations
+associated with the entities (realm/role/user) to which this particular user belongs
+ </p>
+<p>The default setting for this attribute is OFF. You must restart the server if
+the settings are changed.</p>
+<A NAME="fwffa"></A><h4>Read Timeout for Quota Constraint</h4>
+<p>Defines the amount of time (in number of milliseconds) that an inquiry to the
+session repository for the live user session counts will continue before timing out. </p>
+<p>After the maximum read time is reached, an error is returned.  This attribute
+will take effect only when the session quota constraint is enabled in the session
+failover deployment. The default value is 6000 milliseconds. You must restart the
+server if the settings are changed.</p>
+<A NAME="fwffb"></A><h4>Exempt Top-Level Admins From Constraint Checking</h4>
+<p>Specifies whether the users with the Top-level Admin Role should be exempt from
+the session constraint checking. If YES, even though the session constraint is enabled,
+there will be no session quota checking for these administrators. </p>
+<p>The default setting for this attribute is NO. You must restart the server if
+the settings are changed. This attribute will take effect only when the session quota
+constraint is enabled.</p>
+<p><hr size="1" noshade><p><b>Note - </b>the super user defined for the Access Manager in <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) is always
+exempt from the session quota constraint checking. </p>
+<hr size="1" noshade></p><A NAME="fwffc"></A><h4>Resulting Behavior If Session Quota Exhausted</h4>
+<p>Specifies the resulting behavior when the user session quota is exhausted. There
+are two selectable options for this attribute:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td>DESTROY_OLD_SESSION</td><td><p>The next expiring session will be destroyed.</p>
+</td></tr><tr valign="top"><td>DENY_ACCESS</td><td><p>The new session creation request will be denied.</p>
+</td></tr></table>
+<p>This attribute will take effect only when the session quota constraint is enabled
+and the default setting is DESTROY_OLD_SESSION.</p>
+<A NAME="fwffd"></A><h4>Notification Properties</h4>
+<p>When a change occurs on a session property defined in the list, the notification
+will be sent to the registered listeners.  The attribute will take effect when the
+feature of <b>Session Property Change Notification</b> is enabled.</p>
+<A NAME="fwffe"></A><h4>Maximum Session Time</h4>
+<p>This attribute accepts a value in minutes to express the maximum time before
+the session expires and the user must reauthenticate to regain access. A value of
+1 or higher will be accepted. The default value is 120. (To balance the requirements
+of security and convenience, consider setting the Max Session Time interval to a higher
+value and setting the Max Idle Time interval to a relatively low value.) Max Session
+Time limits the validity of the session. It does not get extended beyond the configured
+value.</p>
+<A NAME="fwfff"></A><h4>Maximum Idle Time</h4>
+<p>This attribute accepts a value (in minutes) equal to the maximum amount of time
+without activity before a session expires and the user must reauthenticate to regain
+access. A value of 1 or higher will be accepted. The default value is 30. (To balance
+the requirements of security and convenience, consider setting the Max Session Time
+interval to a higher value and setting the Max Idle Time interval to a relatively
+low value.)</p>
+<A NAME="fwffh"></A><h4>Maximum Caching Time</h4>
+<p>This attribute accepts a value (in minutes) equal to the maximum interval before
+the client contacts Access Manager to refresh cached session information. A value
+of 0 or higher will be accepted. The default value is 3. It is recommended that the
+maximum caching time should always be less than the maximum idle time.</p>
+<A NAME="fwffi"></A><h4>Active User Sessions</h4>
+<p>Specifies the maximum number of concurrent sessions allowed for a user.</p>
+
+<br />
+
+</body>
+</html>

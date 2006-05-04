@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Authentication
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="authentication.authproperties"></A><h3>Authentication</h3>
+<p><A NAME="indexterm-5"></A>The general authentication service must be registered as a service to
+a realm before any user can log in using the other authentication modules. The core
+authentication service allows the Access Manager 7 administrator to define default
+values for a realm's authentication parameters. These values can then be used if no
+overriding value is defined in the specified authentication module. The default values
+for the Core Authentication Service are defined in the <tt>amAuth.xml </tt>file
+and stored in Directory Server after installation.</p>
+<p>The Authentication properties are:</p>
+<ul><li><p><A HREF="authentication.authproperties.html#fxkij">Advanced Properties</A></p>
+</li>
+<li><p><A HREF="authentication.authproperties.html#fxqjx">Default Authentication Chain</A></p>
+</li>
+<li><p><A HREF="authentication.authproperties.html#fxxmt">Administrator Authentication Configuration</A></p>
+</li>
+<li><p><A HREF="authentication.authproperties.html#fxxmv">Module Instances</A></p>
+</li>
+<li><p><A HREF="authentication.authproperties.html#fxxmx">Authentication Chaining</A></p>
+</li>
+</ul>
+<A NAME="fxkij"></A><h4>Advanced Properties</h4>
+<p>Clicking the Advanced Properties button displays the Core authentication attributes
+that can be defined for the realm. The global attributes are not applicable to the
+realm so they are not displayed. </p>
+<A NAME="fxqjx"></A><h4>Default Authentication Chain</h4>
+<p>Defines the authentication chain to be used for the realm. Once you create a
+new chain in the <b>Authentication Chaining</b> attribute, it appears
+in the pull-down list and is available for you to select. See <A HREF="authentication.newauthconfig.html#authentication.newauthconfig">To Create a New Authentication Chain</A> for more information.</p>
+<A NAME="fxxmt"></A><h4>Administrator Authentication Configuration</h4>
+<p>Defines the authentication service for administrators only. This attribute can
+be used if the authentication module for administrators needs to be different from
+the module for end users. The modules configured in this attribute are picked up when
+the Access Manager console is accessed. </p>
+<A NAME="fxxmv"></A><h4>Module Instances</h4>
+<p>Enables you to define and configure the Access Manager default authentication
+modules for the realm. You can add multiple instances of the same authentication module.
+See <A HREF="authentication.newauthinstance.html#authentication.newauthinstance">To Create a New Authentication Module Instance</A> for more information.</p>
+<A NAME="fxxmx"></A><h4>Authentication Chaining</h4>
+<p>One or more authentication modules can be configured so a user must pass authentication
+credentials to all of them. This is referred to as authentication chaining. this attribute
+enables you to define the authentication chaining options for the realm. The chains
+you create are displayed in the <b>Default Authentication Chain</b> list.
+See <A HREF="authentication.newauthconfig.html#authentication.newauthconfig">To Create a New Authentication Chain</A> for more information.</p>
+
+<br />
+
+</body>
+</html>

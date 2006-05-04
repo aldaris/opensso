@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>6.&nbsp;&nbsp;Configuration
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scconfig"></A><h1>Configuration</h1>
+<p><A NAME="indexterm-165"></A>The Configuration page contains all of the attributes to configure Access
+Manager's default services. The attributes that comprise an Access Manager service
+are classified as one of the following types (some services may have more than one
+type):</p>
+<p><i>Global</i> - Applied across the Access Manager configuration.
+They cannot be applied to users, roles or realms as the goal of global attributes
+is to customize the Identity Server application.</p>
+<p><i>Realm</i> - Realm attributes are only assigned to realms.
+No object classes are associated with realm attributes. Attributes listed in the authentication
+services are defined as realm attributes because authentication is done at the realm
+level rather than at a subtree or user level.</p>
+<p><i>Dynamic</i> - Assigned to an Access Manager configured
+role or realm. When the role is assigned to a user or a user is created in an realm,
+the dynamic attribute then becomes a characteristic of the user.</p>
+<p><i>User</i> - Assigned directly to each user. They are not
+inherited from a role or an realm and, typically, are different for each user.</p>
+<p>The Configuration properties you can modify are:</p>
+<ul><li><p><A HREF="authattrs.html#authattrs">Authentication</A></p>
+</li>
+<li><p><A HREF="consoleprops.html#consoleprops">Console Properties</A></p>
+</li>
+<li><p><A HREF="global.html#global">Global Properties</A></p>
+</li>
+<li><p><A HREF="systemprops.html#systemprops">System Properties</A></p>
+</li>
+</ul>
+
+<br />
+
+</body>
+</html>

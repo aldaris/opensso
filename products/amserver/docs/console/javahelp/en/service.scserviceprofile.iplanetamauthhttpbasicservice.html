@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>HTTP Basic
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthhttpbasicservice"></A><h3>HTTP Basic</h3>
+<p><A NAME="indexterm-172"></A>The HTTP authentication module allows login using the HTTP basic authentication
+with no data encryption. A user name and password are requested through the use of
+a web browser. Credentials are validated internally using the LDAP authentication
+module. </p>
+<A NAME="funad"></A><h4>Authentication Level</h4>
+<p>The authentication level is set separately for each method of authentication.
+The value indicates how much to trust an authentication mechanism. Once a user has
+authenticated, this value is stored in the SSO token for the session. When the SSO
+token is presented to an application the user wants to access, the application uses
+the stored value to determine whether the level is sufficient to grant the user access.
+If the authentication level stored in an SSO token does not meet the minimum value
+required, the application can prompt the user to authenticate again through a service
+with a higher authentication level. The default value is 0. </p>
+<p><hr size="1" noshade><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value
+specified in the Core Authentication attribute <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A>.</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

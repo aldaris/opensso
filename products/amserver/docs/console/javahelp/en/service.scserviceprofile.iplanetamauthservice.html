@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Core
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthservice"></A><h3>Core</h3>
+<p><A NAME="indexterm-171"></A>This module is the general configuration base for the Access Manager authentication
+services. It must be registered and configured to use any of the specific authentication
+module instances. It enables the administrator to define default values that will
+be picked up for the values that are not specifically set in the Access Manager default
+authentication modules. The Core attributes are global and realm. The attributes are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbeg">Pluggable Authentication Module Classes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbek">Supported Authentication Module for Clients</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwben">LDAP Connection Pool Size</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbep">Default LDAP Connection Pool Size</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbeo">User Profile</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbeq">Administrator Authentication Configuration</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwber">User Profile Dynamic Creation Default Roles</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbet">Enable Persistent Cookie Mode</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbwr">Persistent Cookie Maximum Time</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbev">Alias Search Attribute Name</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbew">Default Authentication Locale</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbeu">Organization Authentication Configuration</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbex">Enable Login Failure Lockout Mode</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbey">Login Failure Lockout Count</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfb">Login Failure Lockout Interval</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbez">Email Address to Send Lockout Notification</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfa">Warn User After N Failures</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfd">Login Failure Lockout Duration</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbff">Lockout Attribute Name</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfe">Lockout Attribute Value</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfg">Default Success URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfh">Default Failure Login URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfj">Authentication Post Processing Class</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfi">Enable Generate UserID Mode</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfl">Pluggable User Name Generator Class</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfk">Identity Types</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfm">Pluggable User Status Event Classes</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A></p>
+</li>
+</ul>
+<A NAME="fwbeg"></A><h4>Pluggable Authentication Module Classes</h4>
+<p>Specifies the Java classes of the authentication modules available to any realm
+configured within the Access Manager platform. You can write custom authentication
+modules by implementing the AMLoginModule SPI or the JAAS LoginModule SPI. For more
+information, see the Access Manager Developer's Guide. To define new services, this
+field must take a text string specifying the full class name (including package name)
+of each new authentication service.</p>
+<A NAME="fwbek"></A><h4>Supported Authentication Module for Clients</h4>
+<p>Specifies a list of supported authentication modules for a specific client.
+The format is as follows: </p>
+<p><tt>clientType | module1,module2,module3</tt> </p>
+<p>This attribute is in effect when Client Detection is enabled.  </p>
+<A NAME="fwben"></A><h4>LDAP Connection Pool Size</h4>
+<p>Specifies the minimum and maximum connection pool to be used on a specific LDAP
+server and port. This attribute is for LDAP and Membership authentication services
+only. The format is as follows: </p>
+<p><tt>host:port:min:max</tt></p>
+<p><hr size="1" noshade><p><b>Note - </b>This connection pool is different than the SDK connection pool configured
+in <tt>serverconfig.xml</tt>.</p>
+<hr size="1" noshade></p><A NAME="fwbep"></A><h4>Default LDAP Connection Pool Size</h4>
+<p>Sets the default minimum and maximum connection pool to be used with all LDAP
+authentication module configurations. If an entry for the host and port exists in
+the LDAP Connection Pool Size attribute, the minimum and maximum settings will not
+be used from <b>LDAP Connection Default Pool Size</b>.</p>
+<A NAME="fwbeo"></A><h4>User Profile</h4>
+<p>This option enables you to specify options for a user profile. The options are:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td><b>Required</b></td><td><p>This specifies that on successful authentication, the user needs to
+have a profile in the local Directory Server installed with Access Manager for the
+authentication service to issue an SSOToken.</p>
+</td></tr><tr valign="top"><td><b>Dynamic</b></td><td><p>This specifies that on successful authentication, the authentication
+service will create the user profile if one does not already exist. The SSOToken will
+then be issued. The user profile is created in the local Directory Server installed
+with Access Manager.</p>
+</td></tr><tr valign="top"><td><b>Dynamic With User Alias</b></td><td><p>This specifies that on successful authentication, the authentication
+services will create the user profile with the User Alias List attribute. </p>
+</td></tr><tr valign="top"><td><b>Ignore</b></td><td><p>This specifies that the user profile is not required by the authentication
+service to issue the SSOToken for a successful authentication.</p>
+</td></tr></table>
+<A NAME="fwbeq"></A><h4>Administrator Authentication Configuration</h4>
+<p>Defines the authentication service for administrators only. This attribute can
+be used if the authentication module for administrators needs to be different from
+the module for end users. The modules configured in this attribute are picked up when
+the Access Manager console is accessed. For example: </p>
+<p><tt><b>http://</tt><i>servername.port/console_deploy_uri<tt></i></b></tt></p>
+<A NAME="fwber"></A><h4>User Profile Dynamic Creation Default Roles</h4>
+<p>This field specifies the roles assigned to a new user whose profiles are created
+if Dynamic Creation is selected through <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbeo">User Profile</A>.
+There is no default value. The administrator must specify the DNs of the roles that
+will be assigned to the new user.   	</p>
+<p><hr size="1" noshade><p><b>Note - </b>The role specified must be under the realm for which authentication is
+being configured. This role can be either an Access Manager or LDAP role, but it cannot
+be a filtered role.  </p>
+<p>If you wish to automatically assign specific services
+to the user, you have to configure the Required Services attribute in the <b>User Profile</b>.</p>
+<hr size="1" noshade></p><A NAME="fwbet"></A><h4>Enable Persistent Cookie Mode</h4>
+<p>This option determines whether users can restart the browser and still return
+to their authenticated session. User sessions can be retained by enabling Enable Persistent
+Cookie Mode. When Enable Persistent Cookie Mode is enabled, a user session does not
+expire until its persistent cookie expires, or the user explicitly logs out. The expiration
+time is specified in Persistent Cookie Maximum Time. The default value is that Persistent
+Cookie Mode is not enabled and the authentication service uses only memory cookies. </p>
+<p><hr size="1" noshade><p><b>Note - </b>A persistent cookie must be explicitly requested by the client using the <i>iPSPCookie=yes</i> parameter in the login URL. </p>
+<hr size="1" noshade></p><A NAME="fwbwr"></A><h4>Persistent Cookie Maximum Time</h4>
+<p>Specifies the interval after which a persistent cookie expires. The interval
+begins when the user's session is successfully authenticated. The default value is
+2147483 (time in seconds). The field will accept any integer value less than the default.</p>
+<A NAME="fwbev"></A><h4>Alias Search Attribute Name</h4>
+<p>After successful authentication by a user, the user's profile is retrieved.
+This field specifies a second LDAP attribute to search from if a search on the first
+LDAP attribute fails to locate a matching user profile. Primarily, this attribute
+will be used when the user identification returned from an authentication module is
+not the same as that specified in <b>User Naming Attribute</b>. For
+example, a RADIUS server might return <tt>abc1234</tt> but the user name
+is <tt>abc</tt>. There is no default value for this attribute. </p>
+<p>The field will take any valid LDAP attribute (for example, cn).</p>
+<A NAME="fwbew"></A><h4>Default Authentication Locale</h4>
+<p>Specifies the default language subtype to be used by the authentication service.
+The default value is en_US. See <A HREF="supportedlang.html#supportedlang">Supported Language Locales</A>for a listing of valid language subtypes.  	</p>
+<p>In order to use a different locale, all authentication templates for that locale
+must first be created. A new directory must then be created for these templates. See
+"Login URL Parameters" in the Administration Guide for more information. </p>
+<A NAME="fwbeu"></A><h4>Organization Authentication Configuration</h4>
+<p>Sets the authentication module for the organization. The default authentication
+module is LDAP.</p>
+<A NAME="fwbex"></A><h4>Enable Login Failure Lockout Mode</h4>
+<p>Specifies whether a user can attempt a second authentication if the first attempt
+failed. Selecting this attribute enables a lockout and the user will have only one
+chance at authentication. By default, the lockout feature is not enabled. This attribute
+works in conjunction with Lockout-related and notification attributes.</p>
+<A NAME="fwbey"></A><h4>Login Failure Lockout Count</h4>
+<p>Defines the number of attempts that a user may try to authenticate, within the
+time interval defined in <b>Login Failure Lockout Interval</b>, before
+being locked out. </p>
+<A NAME="fwbfb"></A><h4>Login Failure Lockout Interval</h4>
+<p>Defines (in minutes) the time between two failed login attempts. If a login
+fails and is followed by another failed login that occurs within the lockout interval,
+then the lockout count is incremented. Otherwise, the lockout count is reset.</p>
+<A NAME="fwbez"></A><h4>Email Address to Send Lockout Notification</h4>
+<p>Specifies an email address that will receive notification if a user lockout
+occurs. To send email notification to multiple addresses, separate each email address
+with a space. For non-English locales, the format is: </p>
+<p><tt>email_address|locale|charset </tt></p>
+<A NAME="fwbfa"></A><h4>Warn User After N Failures</h4>
+<p>Specifies the number of authentication failures that can occur before Access
+Manager sends a warning message that the user will be locked out.</p>
+<A NAME="fwbfd"></A><h4>Login Failure Lockout Duration</h4>
+<p>Enables memory locking. By default, the lockout mechanism will inactivate the
+User Profile (after a login failure) defined in <i>Lockout Attribute Name</i>. If the value of Login Failure Lockout Duration is greater than 0, then
+its memory locking and the user account will be locked for the number of minutes specified.</p>
+<A NAME="fwbff"></A><h4>Lockout Attribute Name</h4>
+<p>Designates any LDAP attribute that is to be set for lockout. The value in <b>Lockout Attribute Value</b> must also be changed to enable lockout for this
+attribute name. By default, Lockout Attribute Name is empty in the Access Manager
+Console. The default implementation values are <i>inetuserstatus</i> (LDAP
+attribute) and <i>inactive</i> when the user is locked out and <b>Login Failure Lockout Duration</b> is set to 0.</p>
+<A NAME="fwbfe"></A><h4>Lockout Attribute Value</h4>
+<p>This attribute specifies whether lockout is enabled or disabled for the attribute
+defined in Lockout Attribute Name. By default, the value is set to inactive for <i>inetuserstatus</i>.</p>
+<A NAME="fwbfg"></A><h4>Default Success URL</h4>
+<p>This field accepts a list of multiple values that specify the URL to which users
+are redirected after successful authentication. The format of this attribute is <tt>clientType|URL</tt>, although you can specify only the value of the URL which
+assumes a default type of HTML.   	The default value is <i>/amserver/console</i>. </p>
+<A NAME="fwbfh"></A><h4>Default Failure Login URL</h4>
+<p>This field accepts a list of multiple values that specify the URL to which users
+are redirected after an unsuccessful authentication. The format of this attribute
+is <tt>clientType|URL</tt>, although you can specify only the value of the
+URL which assumes a default type of HTML.</p>
+<A NAME="fwbfj"></A><h4>Authentication Post Processing Class</h4>
+<p>Specifies the name of the Java class used to customize post authentication processes
+for successful or unsuccessful logins. Example:</p>
+<p><tt>com.abc.authentication.PostProcessClass </tt></p>
+<p>The Java class must implement the following Java interface: </p>
+<p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface</tt> </p>
+<p>Additionally, you must add the path to where the class is located to the Web
+Server's Java Classpath attribute.</p>
+<A NAME="fwbfi"></A><h4>Enable Generate UserID Mode</h4>
+<p>This attribute is used by the Membership authentication module. If this attribute
+field is enabled, the Membership module is able to generate user IDs, during the Self
+Registration process, for a specific user if the user ID already exists. The user
+IDs are generated from the Java class specified in <b>Pluggable User Name Generator
+Class</b>.</p>
+<A NAME="fwbfl"></A><h4>Pluggable User Name Generator Class</h4>
+<p>Specifies the name of the Java class is used to generate User IDs when <b>Enable Generate UserID Mode</b> is used.</p>
+<A NAME="fwbfk"></A><h4>Identity Types</h4>
+<p>Lists the type or types of identities for which Access Manager will search.</p>
+<A NAME="fwbfm"></A><h4>Pluggable User Status Event Classes</h4>
+<p>Extends the authentication SPIs to provide a callback mechanism for user status
+changes during the authentication process. The following status changes are supported:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td><tt>account lockout</tt></td><td><p>The account lockout event is available for any authentication module.
+The features is configurable through the <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbex">Enable Login Failure Lockout Mode</A> attribute.</p>
+</td></tr><tr valign="top"><td><tt>password change</tt></td><td><p>Only available through the LDAP authentication module type, as the
+password change feature is only available for that module.</p>
+</td></tr></table>
+<A NAME="fwbfn"></A><h4>Default Authentication Level</h4>
+<p>The authentication level value indicates how much to trust authentications.
+Once a user has authenticated, this value is stored in the SSO token for the session.
+When the SSO token is presented to an application the user wants to access, the application
+can use the stored value to determine whether the level is sufficient to grant the
+user access. If the authentication level stored in an SSO token does not meet the
+minimum value required, the application can prompt the user to authenticate again
+through a service with a higher authentication level.  </p>
+<p>The authentication level should be set within the realm's specific authentication
+template. The Default Authentication Level value described here will apply only when
+no authentication level has been specified in the Authentication Level field for a
+specific realm's authentication template. The Default Authentication Level default
+value is 0. (The value in this attribute is not used by Access Manager but by any
+external application that may chose to use it.)</p>
+
+<br />
+
+</body>
+</html>

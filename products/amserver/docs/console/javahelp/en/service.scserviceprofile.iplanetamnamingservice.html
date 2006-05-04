@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Naming
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>Naming</h3>
+<p><A NAME="indexterm-199"></A>The Naming service is used to get and set URLs, plug-ins and configurations
+as well as request notifications for various other Access Manager services such as
+session, authentication, logging, SAML and Federation.</p>
+<p>This service enables clients to find the correct service URL if the platform
+is running more than one Access Manager. When a naming URL is found, the naming service
+will decode the session of the user and dynamically replace the protocol, host, and
+port with the parameters from the session. This ensures that the URL returned for
+the service is for the host that the user session was created on. The Naming attributes
+are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">Profile Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">Session Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">Logging Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">Policy Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">Authentication Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">SAML Web Profile/Artifact Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">SAML SOAP Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">SAML Web Profile/POST Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">SAML Assertion Manager Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">Federation Assertion Manager Service URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">Security Token Manager URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">JAXRPC Endpoint URL</A></p>
+</li>
+</ul>
+<A NAME="fwfgc"></A><h4>Profile Service URL</h4>
+<p>This field takes a value equal to :</p>
+<p> <tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice </tt> </p>
+<p>This syntax allows for dynamic substitution of the profile URL based on the
+specific session parameters. </p>
+<A NAME="fwfgg"></A><h4>Session Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p> <tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt>  </p>
+<p>This syntax allows for dynamic substitution of the session URL based on the
+specific session parameters. </p>
+<A NAME="fwfgf"></A><h4>Logging Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
+<p>  This syntax allows for dynamic substitution of the logging URL based on the
+specific session parameters. </p>
+<A NAME="fwfgh"></A><h4>Policy Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p> <tt> %protocol://%host:%port/Server_DEPLOY_URI/policyservice </tt> </p>
+<p>This syntax allows for dynamic substitution of the policy URL based on the specific
+session parameters. </p>
+<A NAME="fwfge"></A><h4>Authentication Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt>  </p>
+<p>This syntax allows for dynamic substitution of the authentication URL based
+on the specific session parameters. </p>
+<A NAME="fwfgl"></A><h4>SAML Web Profile/Artifact Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet</tt></p>
+<p>  This syntax allows for dynamic substitution of the SAML web profile/artifact
+URL based on the specific session parameters. </p>
+<A NAME="fwfgm"></A><h4>SAML SOAP Service URL</h4>
+<p>This field takes a value equal to</p>
+<p>  <tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver</tt></p>
+<p>  This syntax allows for dynamic substitution of the SAML SOAP URL based on
+the specific session parameters. </p>
+<A NAME="fwfgk"></A><h4>SAML Web Profile/POST Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p> <tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet</tt>  </p>
+<p>This syntax allows for dynamic substitution of the SAML web profile/POST URL
+based on the specific session parameters. </p>
+<A NAME="fwfgi"></A><h4>SAML Assertion Manager Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM
+anagerIF</tt>  </p>
+<p>This syntax allows for dynamic substitution of the SAML Assertion Manager Service
+URL based on the specific session parameters. </p>
+<A NAME="fwfgn"></A><h4>Federation Assertion Manager Service URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana
+gerIF </tt> </p>
+<p>This syntax allows for dynamic substitution of the Federation Assertion Manager
+Service URL based on the specific session parameters. </p>
+<A NAME="fwfgp"></A><h4>Security Token Manager URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken
+ManagerIF/</tt>  </p>
+<p>This syntax allows for dynamic substitution of the Security Token Manager URL
+based on the specific session parameters. </p>
+<A NAME="fwfgo"></A><h4>JAXRPC Endpoint URL</h4>
+<p>This field takes a value equal to:</p>
+<p>  <tt>%protocol://%host:%port/amserver/jaxrpc/</tt>  </p>
+<p>This syntax allows for dynamic substitution of the JAXRPC Endpoint URL based
+on the specific session parameters. </p>
+
+<br />
+
+</body>
+</html>

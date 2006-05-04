@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Subjects
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="normalsubject"></A><h3>Subjects</h3>
+<p><A NAME="indexterm-23"></A><A NAME="indexterm-24"></A>A <i>subject</i> defines the user or collection of users
+(for instance, a group or those who possess a specific role) that the policy affects.
+The general rule for subjects is that the policy would apply only if the user is a
+member of at least one subject in the policy. The default subjects are:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td>Access Manager Identity Subject</td><td><p>This subject implies that the identities you create and manage under
+the Realms Subject tab can be added as a member of the subject.</p>
+</td></tr><tr valign="top"><td>Access Manger Roles</td><td><p>This subject type implies that any member of an Access Manager role
+is a member of this subject. An Access Manager role is created using Access Manager.
+These roles have object classes mandated by Access Manager. Access Manager roles can
+only be accessed through the hosting Access Manager Policy Service.</p>
+</td></tr><tr valign="top"><td>Authenticated Users</td><td><p>This subject type implies that any user with a valid SSOToken is a
+member of this subject.</p>
+<p>All authenticated users would be member of this Subject, even if they have authenticated
+to an organization that is different from the organization in which the policy is
+defined. This is useful if the resource owner would like to give access to resources
+that is managed for users from other organizations. If you want to restrict access
+to resources being protected to members of a specific organization, please use the
+Organization subject.</p>
+</td></tr><tr valign="top"><td>LDAP Groups</td><td><p> This subject type implies that any member of an LDAP group is member
+of this subject.</p>
+</td></tr><tr valign="top"><td>LDAP Roles</td><td><p>This subject type implies that any member of an LDAP role is a member
+of this subject. An LDAP Role is any role definition that uses the Directory Server
+role capability. These roles have object classes mandated by Directory Server role
+definition. The LDAP Role Search filter can be modified in the Policy Configuration
+Service to narrow the scope and improve performance.</p>
+</td></tr><tr valign="top"><td>LDAP Users</td><td><p> This subject type implies that any LDAP user is a member of this
+subject.</p>
+</td></tr><tr valign="top"><td>Organization</td><td><p> This subject type implies that any member of an organization is a
+member of this subject</p>
+</td></tr><tr valign="top"><td>Web Services Clients</td><td><p>his subject type implies that a web service client (WSC) identified
+by the SSOToken is a member of this subject, if the DN of any principal contained
+in the SSOToken matches any selected value of this subject. Valid values are the DNs
+of trusted certificates in the local JKS keystore, which correspond to the certificates
+of trusted WSCs. This subject has dependency on the Liberty Web Services Framework
+and should be used only by Liberty Service Providers to authorize WSCs.</p>
+<p>Make sure that you have created the keystore before you add this Subject to
+a policy. Information on setting up the keystore can be found in the following location:</p>
+<p><tt></tt><i>AccessManager-base<tt></i></tt><tt>/SUNWam/samples/saml/xmlsig/keytool.html</tt></p>
+</td></tr></table>
+
+<br />
+
+</body>
+</html>

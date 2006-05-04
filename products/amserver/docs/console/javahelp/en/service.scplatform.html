@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Platform
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scplatform"></A><h3>Platform</h3>
+<p><A NAME="indexterm-200"></A>The Platform service is where additional servers can be added to the Access
+Manager configuration as well as other options applied at the top level of the Access
+Manger application. The Platform service attributes are global attributes. The attributes
+are:</p>
+<ul><li><p><A HREF="service.scplatform.html#fxcsy">Site Name</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcqf">Instance Name</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcgy">Platform Locale</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcpo">Cookie Domains</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcsh">Login Service URL</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcrt">Logout Service URL</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxcmi">Available Locales</A></p>
+</li>
+<li><p><A HREF="service.scplatform.html#fxctg">Client Character Sets</A></p>
+</li>
+</ul>
+<A NAME="fxcsy"></A><h4>Site Name</h4>
+<p>The naming service reads this attribute at initialization time. This list uniquely
+identifies the FQDN with the port number of the load balancer or SRA for load balancing
+on the back-end Access Manager servers. If the host specified in a request for a service
+URL is not in this list, the naming service will reject the request. Only the naming
+service protocol should be used in this attribute. See <A HREF="service.scplatformsitelistadd.html#service.scplatformsitelistadd">To Create a New Site Name</A>.</p>
+<A NAME="fxcqf"></A><h4>Instance Name</h4>
+<p>The naming service reads this attribute at initialization time. This list contains
+the Access Manager session servers in a single Access Manager configuration. For example,
+if two Access Managers are installed and should work as one, they must both be included
+in this list. If the host specified in a request for a service URL is not in this
+list, the naming service will reject the request. Only the naming service protocol
+should be used in this attribute. See <A HREF="service.scplatformserverlistadd.html#service.scplatformserverlistadd">To Create a New Instance Name</A>.</p>
+<A NAME="fxcgy"></A><h4>Platform Locale</h4>
+<p>The platform locale value is the default language subtype that Access Manager
+was installed with. The authentication, logging and administration services are administered
+in the language of this value. The default is en_US. See <A HREF="supportedlang.html#supportedlang">Supported Language Locales</A>for a listing of supported language subtypes.</p>
+<A NAME="fxcpo"></A><h4>Cookie Domains</h4>
+<p>The list of domains that will be returned in the cookie header when setting
+a cookie to the user's browser during authentication. If empty, no cookie domain will
+be set. In other words, the Access Manager session cookie will only be forwarded to
+the Access Manager itself and to no other servers in the domain. </p>
+<p>If SSO is required with other servers in the domain, this attribute must be
+set with the cookie domain. If you had two interfaces in different domains on one
+Access Manager then you would need to set both cookie domains in this attribute. If
+a load balancer is used, the cookie domain must be that of the load balancer's domain,
+not the servers behind the load balancer. The default value for this field is the
+domain of the installed Access Manager.</p>
+<A NAME="fxcsh"></A><h4>Login Service URL</h4>
+<p>This field specifies the URL of the login page. The default value for this attribute
+is <tt>/Service_DEPLOY_URI/UI/Login</tt>.</p>
+<A NAME="fxcrt"></A><h4>Logout Service URL</h4>
+<p>This field specifies the URL of the logout page. The default value for this
+attribute is <tt>/Service_DEPLOY_URI/UI/Logout</tt>.</p>
+<A NAME="fxcmi"></A><h4>Available Locales</h4>
+<p>This attribute stores all available locales configured for the platform. Consider
+an application that lets the user choose the user's locale. This application would
+get this attribute from the platform profile and present the list of locales to the
+user. The user would choose a locale and the application would set this in the user
+entry <i>preferredLocale</i>.</p>
+<A NAME="fxctg"></A><h4>Client Character Sets</h4>
+<p>This attribute specifies the character set for different clients at the platform
+level. It contains a list of client types and the corresponding character sets. See<A HREF="service.scplatformclientcharsetsadd.html#service.scplatformclientcharsetsadd">To Create a New Character Set</A> for
+more information.</p>
+
+<br />
+
+</body>
+</html>

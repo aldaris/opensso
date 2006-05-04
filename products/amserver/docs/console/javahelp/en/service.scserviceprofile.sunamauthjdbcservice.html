@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>JDBC
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.sunamauthjdbcservice"></A><h3>JDBC</h3>
+<p><A NAME="indexterm-173"></A>The Java Database Connectivity (JDBC) authentication module allows Access
+Manager to authenticate users through any Structured Query Language (SQL) databases
+that provide JDBC-enabled drivers. The connection to the SQL database can be either
+directly through a JDBC driver or through a JNDI connection pool. The JDBC attributes
+are realm attributes. The attributes are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">Connection Type</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwafb">Connection Pool JNDI Name</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaap">JDBC Driver</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwarc">JDBC URL</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaum">Connect This User to Database</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwaeu">Password for Connecting to Database</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavq">Password for Connecting to Database Confirm</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwads">Password Column String</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapb">Prepared Statement</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwapv">Class to Transform Password Syntax</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwavz">Authentication Level</A></p>
+</li>
+</ul>
+<A NAME="fwajx"></A><h4>Connection Type</h4>
+<p>Specifies the connection type to the SQL database, using either a JNDI (Java
+Naming and Directory Interface) connection pool or JDBC driver. The options are: </p>
+<ul><li><p>Connection pool is retrieved via JDNI</p>
+</li>
+<li><p>Non-persistent JDBC connection</p>
+</li>
+</ul>
+<p>The JNDI connection pool utilizes the configuration from the underlying web
+container.</p>
+<A NAME="fwafb"></A><h4>Connection Pool JNDI Name</h4>
+<p>If JNDI is selected in Connection Type, this field specifies the connection
+pool name. Because JDBC authentication uses the JNDI connection pool provided by the
+web container, the setup of JNDI connection pool may not be consistent among other
+web containers. See the Access Manager Administration Guide for examples </p>
+<A NAME="fwaap"></A><h4>JDBC Driver</h4>
+<p>If JDBC is selected in <A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">Connection Type</A>, this
+field specifies the JDBC driver provided by the SQL database. For example, <tt>com.mysql.jdbc.Driver</tt>.</p>
+<A NAME="fwarc"></A><h4>JDBC URL</h4>
+<p>Specifies the database URL if JDBC is select in <A HREF="service.scserviceprofile.sunamauthjdbcservice.html#fwajx">Connection Type</A>. For example, the URL for mySQL is <tt>jdbc.mysql://hostname:port/databaseName</tt>.</p>
+<A NAME="fwaum"></A><h4>Connect This User to Database</h4>
+<p>Specifies the user name from whom the database connection is made for the JDBC
+connection.</p>
+<A NAME="fwaeu"></A><h4>Password for Connecting to Database</h4>
+<p>Defines the password for the user specified in User to Connect to Database.</p>
+<A NAME="fwavq"></A><h4>Password for Connecting to Database Confirm</h4>
+<p>Confirm the password.</p>
+<A NAME="fwads"></A><h4>Password Column String</h4>
+<p>Specifies the password column name in the SQL database.</p>
+<A NAME="fwapb"></A><h4>Prepared Statement</h4>
+<p>Specifies the SQL statement that retrieves the password of the user that is
+logging in. For example:</p>
+<table cellpadding="4" border="1" cols="1" width="100%"><td><pre> select Password from Employees where USERNAME = ?</pre>
+</td></table><br><A NAME="fwapv"></A><h4>Class to Transform Password Syntax</h4>
+<p>Specifies the class name that transforms the password retrieved from the database,
+to the format of the user input, for password comparison. This class must implement
+the <tt>JDBCPasswordSyntaxTransform</tt> interface.</p>
+<A NAME="fwavz"></A><h4>Authentication Level</h4>
+<p>The authentication level is set separately for each method of authentication.
+The value indicates how much to trust an authentication mechanism. Once a user has
+authenticated, this value is stored in the SSO token for the session. When the SSO
+token is presented to an application the user wants to access, the application uses
+the stored value to determine whether the level is sufficient to grant the user access.
+If the authentication level stored in an SSO token does not meet the minimum value
+required, the application can prompt the user to authenticate again through a service
+with a higher authentication level. The default value is 0. </p>
+<p><hr size="1" noshade><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value
+specified in the Core Authentication attribute <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A>.</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

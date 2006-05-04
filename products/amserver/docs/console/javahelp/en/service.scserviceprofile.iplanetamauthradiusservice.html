@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>RADIUS
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scserviceprofile.iplanetamauthradiusservice"></A><h3>RADIUS</h3>
+<p><A NAME="indexterm-177"></A>This module allows for authentication using an external Remote Authentication
+Dial-In User Service (RADIUS) server. The RADIUS Authentication attributes are realm
+attributes. The attributes are:</p>
+<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwadp">Server 1</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwaom">Server 2</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwaka">Shared Secret</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwapc">Shared Secret Confirm</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwapn">Port Number</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwaad">Timeout</A></p>
+</li>
+<li><p><A HREF="service.scserviceprofile.iplanetamauthradiusservice.html#fwabo">Authentication Level</A></p>
+</li>
+</ul>
+<A NAME="fwadp"></A><h4>Server 1</h4>
+<p>Displays the IP address or fully qualified host name of the primary RADIUS server.
+The default IP address is 127.0.0.1. The field will recognize any valid IP address
+or host name. Multiple entries must be prefixed by the local server name as in the
+following syntax:</p>
+<p><tt>local_servername|ip_address local_servername2|ip_address ...</tt></p>
+<A NAME="fwaom"></A><h4>Server 2</h4>
+<p>Displays the IP address or fully qualified domain name (FQDN) of the secondary
+RADIUS server. It is a failover server which will be contacted if the primary server
+could not be contacted. The default IP address is 127.0.0.1. Multiple entries must
+be prefixed by the local server name as in the following syntax: </p>
+<p><tt>local_servername|ip_address local_servername2|ip_address ...</tt></p>
+<A NAME="fwaka"></A><h4>Shared Secret</h4>
+<p>Carries the shared secret for RADIUS authentication. The shared secret should
+have the same qualifications as a well-chosen password. There is no default value
+for this field.</p>
+<A NAME="fwapc"></A><h4>Shared Secret Confirm</h4>
+<p>Confirmation of the shared secret for RADIUS authentication.</p>
+<A NAME="fwapn"></A><h4>Port Number</h4>
+<p>Specifies the port on which the RADIUS server is listening. The default value
+is 1645.</p>
+<A NAME="fwaad"></A><h4>Timeout</h4>
+<p>Specifies the time interval in seconds to wait for the RADIUS server to respond
+before a timeout. The default value is 3 seconds. It will recognize any number specifying
+the timeout in seconds.</p>
+<A NAME="fwabo"></A><h4>Authentication Level</h4>
+<p>The authentication level is set separately for each method of authentication.
+The value indicates how much to trust an authentication mechanism. Once a user has
+authenticated, this value is stored in the SSO token for the session. When the SSO
+token is presented to an application the user wants to access, the application uses
+the stored value to determine whether the level is sufficient to grant the user access.
+If the authentication level stored in an SSO token does not meet the minimum value
+required, the application can prompt the user to authenticate again through a service
+with a higher authentication level. The default value is 0. </p>
+<p><hr size="1" noshade><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value
+specified in the Core Authentication attribute <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A>.</p>
+<hr size="1" noshade></p>
+<br />
+
+</body>
+</html>

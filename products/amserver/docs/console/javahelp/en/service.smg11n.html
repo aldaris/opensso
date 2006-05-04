@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Globalization Settings
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.smg11n"></A><h3>Globalization Settings</h3>
+<p><A NAME="indexterm-187"></A>The Globalization Settings service contains global attributes that enable
+you to configure Access Manager for different locales and character sets. The attributes
+are:</p>
+<ul><li><p><A HREF="service.smg11n.html#fsvdx">Charsets Supported By Each Locale</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsvec">Charset Aliases</A></p>
+</li>
+<li><p><A HREF="service.smg11n.html#fsveb">Auto Generated Common Name Format</A></p>
+</li>
+</ul>
+<A NAME="fsvdx"></A><h4>Charsets Supported By Each Locale</h4>
+<p>This attribute lists the character sets supported for each locale, which indicates
+the mapping between locale and character set. The format is as follows: </p>
+<p>To add a <b>New Supported Charset</b>, click Add and
+define the following parameters:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td><b>Locale</b></td><td><p>The new locale you wish to add. See<A HREF="supportedlang.html#supportedlang">Supported Language Locales</A> for more information.</p>
+</td></tr><tr valign="top"><td>Supported Charsets</td><td><p>Enter the supported charset for the specified locale. Charsets are
+delimited by a semicolon. For example, <tt>charset=charset1;charset2;charset3;...;charsetn</tt></p>
+</td></tr></table>
+<p>To edit any existing Supported Charset, click the name in the Supported Charset
+table. Click OK when you are finished.</p>
+<A NAME="fsvec"></A><h4>Charset Aliases</h4>
+<p>This attribute lists the codeset names (which map to IANA names) that will be
+used to send the response. These codeset names do not need to match Java codeset names.
+Currently, there is a hash table to map Java character sets into IANA charsets and
+vice versa. </p>
+<p>To add a New Charset Alias, click Add button and define
+the following parameters:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td><b>MIME name</b></td><td><p>The IANA mapping name. For example, <tt>Shift_JIS</tt></p>
+</td></tr><tr valign="top"><td><b>Java Name</b></td><td><p>The Java character set to map to the IANA character set. </p>
+</td></tr></table>
+<p>To edit any existing <b>Charset Alias</b>, click the name in the
+table. Click OK when you are finished.</p>
+<A NAME="fsveb"></A><h4>Auto Generated Common Name Format</h4>
+<p>This display option allows you to define the way in which a name is automatically
+generated to accommodate name formats for different locales and character sets. The
+default syntax is as follows (please note that including commas and/or spaces in the
+definition will display in the name format): </p>
+<p><tt>en_us = {givenname} {initials} {sn}</tt> </p>
+<p>For example, if you wanted to display a new name format for a user (User One)
+with a uid (11111) for the Chinese character set, define:</p>
+<p><tt>zh = {sn}{givenname}({uid})</tt> </p>
+<p>The display is:</p>
+<p><tt>OneUser 11111</tt></p>
+
+<br />
+
+</body>
+</html>

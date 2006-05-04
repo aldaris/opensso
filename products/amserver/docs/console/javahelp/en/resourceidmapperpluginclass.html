@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Classes for ResourceID Mapper Plugin
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="resourceidmapperpluginclass"></A><h3>Classes for ResourceID Mapper Plugin</h3>
+<A NAME="indexterm-135"></A><A NAME="indexterm-136"></A><p>The value of this attribute is a list of classes that generate identifiers for
+a resource offering configured for an organization or role. <tt>com.sun.identity.liberty.ws.interfaces.ResourceIDMapper</tt> is an interface used to map a user identifier to the resource identifier
+associated with it. The Discovery Service provides two implementations for this interface:</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.disco.plugins.Default64ResourceIDMapper</tt> (format: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p>
+</li>
+<li><p><tt>com.sun.identity.liberty.ws.disco.plugins.DefaultHexResourceIDMapper</tt> (format: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p>
+</li>
+</ul>
+<p>Different implementations may be developed with the implementing class and added
+as a value of this attribute by clicking New and using the
+following format:</p>
+<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i>class_name_and_path<tt></i></b></tt></p>
+<p>See <A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">To Configure a ResourceID Mapper</A>.</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/map_2_0.dtd">
+
+<map version="2.0">
+
+  <!-- 7.0 online help map -->
+
+  <mapID target="aawelcome" url="aawelcome.html" />
+  <mapID target="accesscontrol" url="accesscontrol.html" />
+  <mapID target="addusertogroup" url="addusertogroup.html" />
+  <mapID target="authattrs" url="authattrs.html" />
+  <mapID target="authentication.authconfig" url="authentication.authconfig.html" />
+  <mapID target="authentication.authproperties" url="authentication.authproperties.html" />
+  <mapID target="authentication.newauthconfig" url="authentication.newauthconfig.html" />
+  <mapID target="authentication.newauthinstance" url="authentication.newauthinstance.html" />
+  <mapID target="consoleprops" url="consoleprops.html" />
+  <mapID target="datastore" url="datastore.html" />
+  <mapID target="delegation.delegation" url="delegation.delegation.html" />
+  <mapID target="dirmang" url="dirmang.html" />
+  <mapID target="dm.home" url="dm.home.html" />
+  <mapID target="fyfby" url="fyfby.html" />
+  <mapID target="global" url="global.html" />
+  <mapID target="idm.entities" url="idm.entities.html" />
+  <mapID target="idm.entitymembers" url="idm.entitymembers.html" />
+  <mapID target="idm.entityservices" url="idm.entityservices.html" />
+  <mapID target="intro" url="intro.html" />
+  <mapID target="invalidatesession" url="invalidatesession.html" />
+  <mapID target="jdbcexample" url="jdbcexample.html" />
+  <mapID target="leauth" url="leauth.html" />
+  <mapID target="normalpolicy" url="normalpolicy.html" />
+  <mapID target="normalrule" url="normalrule.html" />
+  <mapID target="normalsubject" url="normalsubject.html" />
+  <mapID target="policy.conditionadd" url="policy.conditionadd.html" />
+  <mapID target="policy.pmdefaultauthlevelconditionadd" url="policy.pmdefaultauthlevelconditionadd.html" />
+  <mapID target="policy.pmdefaultauthschemecondition" url="policy.pmdefaultauthschemecondition.html" />
+  <mapID target="policy.pmdefaultipcondition" url="policy.pmdefaultipcondition.html" />
+  <mapID target="policy.pmdefaultsessioncondition" url="policy.pmdefaultsessioncondition.html" />
+  <mapID target="policy.pmdefaulttimeconditionadd" url="policy.pmdefaulttimeconditionadd.html" />
+  <mapID target="policy.policy" url="policy.policy.html" />
+  <mapID target="policy.policynormaladd" url="policy.policynormaladd.html" />
+  <mapID target="policy.policyreferraladd" url="policy.policyreferraladd.html" />
+  <mapID target="policy.responseprovideradd" url="policy.responseprovideradd.html" />
+  <mapID target="policy.ruleadd" url="policy.ruleadd.html" />
+  <mapID target="policy.selectreferraltype" url="policy.selectreferraltype.html" />
+  <mapID target="policy.sessionpropertyconditionadd" url="policy.sessionpropertyconditionadd.html" />
+  <mapID target="policy.subjectadd" url="policy.subjectadd.html" />
+  <mapID target="policyconditions" url="policyconditions.html" />
+  <mapID target="realm.idrepo" url="realm.idrepo.html" />
+  <mapID target="realm.idrepoadd" url="realm.idrepoadd.html" />
+  <mapID target="realm.realmproperties" url="realm.realmproperties.html" />
+  <mapID target="realm.rmrealm" url="realm.rmrealm.html" />
+  <mapID target="realm.rmrealmadd" url="realm.rmrealmadd.html" />
+  <mapID target="realm.services" url="realm.services.html" />
+  <mapID target="realm.servicesadd" url="realm.servicesadd.html" />
+  <mapID target="referrals" url="referrals.html" />
+  <mapID target="responseprovider" url="responseprovider.html" />
+  <mapID target="service.mapclientmanager" url="service.mapclientmanager.html" />
+  <mapID target="service.mapcreatedevice" url="service.mapcreatedevice.html" />
+  <mapID target="service.scconfig" url="service.scconfig.html" />
+  <mapID target="service.scplatform" url="service.scplatform.html" />
+  <mapID target="service.scplatformclientcharsetsadd" url="service.scplatformclientcharsetsadd.html" />
+  <mapID target="service.scplatformserverlistadd" url="service.scplatformserverlistadd.html" />
+  <mapID target="service.scplatformsitelistadd" url="service.scplatformsitelistadd.html" />
+  <mapID target="service.scpolicy" url="service.scpolicy.html" />
+  <mapID target="service.scserviceprofile.amadminconsoleservice" url="service.scserviceprofile.amadminconsoleservice.html" />
+  <mapID target="service.scserviceprofile.amsessionservice" url="service.scserviceprofile.amsessionservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthanonymousservice" url="service.scserviceprofile.iplanetamauthanonymousservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthcertservice" url="service.scserviceprofile.iplanetamauthcertservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthhttpbasicservice" url="service.scserviceprofile.iplanetamauthhttpbasicservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthldapservice" url="service.scserviceprofile.iplanetamauthldapservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthmembershipservice" url="service.scserviceprofile.iplanetamauthmembershipservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthntservice" url="service.scserviceprofile.iplanetamauthntservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthradiusservice" url="service.scserviceprofile.iplanetamauthradiusservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthsafewordservice" url="service.scserviceprofile.iplanetamauthsafewordservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthsecuridservice" url="service.scserviceprofile.iplanetamauthsecuridservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthservice" url="service.scserviceprofile.iplanetamauthservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthunixservice" url="service.scserviceprofile.iplanetamauthunixservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" url="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamclientdetection" url="service.scserviceprofile.iplanetamclientdetection.html" />
+  <mapID target="service.scserviceprofile.iplanetamloggingservice" url="service.scserviceprofile.iplanetamloggingservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamnamingservice" url="service.scserviceprofile.iplanetamnamingservice.html" />
+  <mapID target="service.scserviceprofile.iplanetampasswordresetservice" url="service.scserviceprofile.iplanetampasswordresetservice.html" />
+  <mapID target="service.scserviceprofile.iplanetamuserservice" url="service.scserviceprofile.iplanetamuserservice.html" />
+  <mapID target="service.scserviceprofile.sunamauthadservice" url="service.scserviceprofile.sunamauthadservice.html" />
+  <mapID target="service.scserviceprofile.sunamauthjdbcservice" url="service.scserviceprofile.sunamauthjdbcservice.html" />
+  <mapID target="service.scserviceprofile.sunamauthmsisdnservice" url="service.scserviceprofile.sunamauthmsisdnservice.html" />
+  <mapID target="service.scserviceprofile.sunamauthsamlservice" url="service.scserviceprofile.sunamauthsamlservice.html" />
+  <mapID target="service.smg11n" url="service.smg11n.html" />
+  <mapID target="service.subconfigadd" url="service.subconfigadd.html" />
+  <mapID target="session.smprofile" url="session.smprofile.html" />
+  <mapID target="sessionpage" url="sessionpage.html" />
+  <mapID target="sessions" url="sessions.html" />
+  <mapID target="sessionsearch" url="sessionsearch.html" />
+  <mapID target="subject.createfiltrole" url="subject.createfiltrole.html" />
+  <mapID target="subject.creategroup" url="subject.creategroup.html" />
+  <mapID target="subject.createrole" url="subject.createrole.html" />
+  <mapID target="subject.filteredrole" url="subject.filteredrole.html" />
+  <mapID target="subject.group" url="subject.group.html" />
+  <mapID target="subject.role" url="subject.role.html" />
+  <mapID target="subjectagents" url="subjectagents.html" />
+  <mapID target="subjectcreateagent" url="subjectcreateagent.html" />
+  <mapID target="subjectcreateuser" url="subjectcreateuser.html" />
+  <mapID target="subjectuser" url="subjectuser.html" />
+  <mapID target="supportedlang" url="supportedlang.html" />
+  <mapID target="systemprops" url="systemprops.html" />
+  <mapID target="viewsession" url="viewsession.html" />
+
+</map>

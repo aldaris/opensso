@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!-- GenHTML@12751-->
+<head>
+  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Policy Configuration
+  </title>
+  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
+  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
+  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
+  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+<A NAME="service.scpolicy"></A><h3>Policy Configuration</h3>
+<p><A NAME="indexterm-190"></A>The Policy Configuration attributes enable the administrator to set configuration
+global and realm properties used by the Policy service. serverThe policy configuration
+attributes are divided into the following properties:</p>
+<ul><li><p><A HREF="service.scpolicy.html#fufmb">LDAP Properties</A></p>
+</li>
+<li><p><A HREF="service.scpolicy.html#fufmh">Subject Search Properties</A></p>
+</li>
+<li><p><A HREF="service.scpolicy.html#fufnb">Available Objects Type</A></p>
+</li>
+<li><p><A HREF="service.scpolicy.html#fufnf">Miscellaneous</A></p>
+</li>
+<li><p><A HREF="service.scpolicy.html#fufnk">Resource Comparator</A></p>
+</li>
+</ul>
+<A NAME="fufmb"></A><h4>LDAP Properties</h4>
+<p>The LDAP Properties are:</p>
+<A NAME="fufmc"></A><h5>Base DN</h5>
+<p>Specifies the base DN in the LDAP server from which to begin the search. By
+default, it is the top-level realm of the Access Manager installation.</p>
+<A NAME="fufmd"></A><h5>Users Base DN</h5>
+<p>This attribute specifies the base DN used by the LDAP Users subject in the LDAP
+server from which to begin the search. By default, it is the top-level realm of the
+Access Manager installation base.</p>
+<A NAME="fufme"></A><h5>Bind DN</h5>
+<p>Specifies the bind DN in the LDAP server. </p>
+<A NAME="fufmf"></A><h5>LDAP Bind Password</h5>
+<p>Defines the password to be used for binding to the LDAP server. By default,
+the <tt>amldapuser</tt> password that was entered during installation is used
+as the bind user.</p>
+<A NAME="fufmg"></A><h5>Primary LDAP Server</h5>
+<p>Specifies the host name and port number of the primary LDAP server specified
+during Access Manager installation that will be used to search for Policy subjects,
+such as LDAP users, LDAP roles, LDAP groups, and so forth.  </p>
+<p>The format is <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt> </p>
+<p>For failover configuration to multiple LDAP server hosts, this value can be
+a space-delimited list of hosts. The format is <i>hostname1:port1 hostname2:port2...</i> </p>
+<p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389</tt></p>
+<p>Multiple entries must be prefixed by the local server name. This is to allow
+specific Access Managers to be configured to talk to specific Directory Servers. </p>
+<p>The format is <i>servername|hostname:port</i> For example: </p>
+<p><tt>machine1.example1.com|machine1.example1.com:389</tt></p>
+<p><tt>machine1.example2.com|machine1.example2.com:389</tt> </p>
+<p>For failover configuration: </p>
+<p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389</tt> </p>
+<p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389</tt></p>
+<A NAME="fufmi"></A><h5>SSL On Server</h5>
+<p>Specifies whether or not the LDAP server is running SSL. Selecting enables SSL,
+deselecting (default) disables SSL. </p>
+<p>If the LDAP Server is running with SSL enabled (LDAPS), you must make sure that
+Access Manager is configured with proper SSL-trusted certificates so that Access Manager
+can connect to Directory server over LDAPS protocol.</p>
+<A NAME="fufmk"></A><h5>Connection Pool Size Minimum</h5>
+<p>Specifies the minimal size of connection pools to be used for connecting to
+the Directory Server, as specified in the LDAP server attribute. The default is 1.</p>
+<A NAME="fufmj"></A><h5>Connection Pool Size Maximum</h5>
+<p>This attribute specifies the maximum size of connection pools to be used for
+connecting to the Directory Server, as specified in the LDAP server attribute. The
+default is 10.</p>
+<A NAME="fufmh"></A><h4>Subject Search Properties</h4>
+<p>The Subject Search Properties are:</p>
+<A NAME="fufml"></A><h5>Subject Results Time To Live</h5>
+<p>This attribute specifies the amount of time (in minutes) that a cached subject
+result can be used to evaluate the same policy request based on the single sign-on
+token. </p>
+<p>When a policy is initially evaluated for an SSO token, the subject instances
+in the policy are evaluated to determine whether the policy is applicable to a given
+user. The subject result, which is keyed by the SSO token ID, is cached in the policy.
+If another evaluation occurs for the same policy for the same SSO token ID within
+the time specified in the Subject Result Time To Live attribute, the policy framework
+retrieves the cached subjects result, instead of evaluating the subject instances.
+This significantly reduces the time for policy evaluation.</p>
+<A NAME="fufmn"></A><h5>Organizations Filter</h5>
+<p>Specifies the search filter to be used to find organization entries. The default
+is <tt>(objectclass=sunMangagedOrganization)</tt>.</p>
+<A NAME="fufmm"></A><h5>Organizations Scope</h5>
+<p>Defines the scope to be used to find organization entries. The scope must be
+one of the following: </p>
+<ul><li><p>SCOPE_BASE </p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (default)</p>
+</li>
+</ul>
+<A NAME="fufmo"></A><h5>Organizations Attribute</h5>
+<p>Defines the attribute type for which to conduct a search on an organization.
+The default is o.</p>
+<A NAME="fufmp"></A><h5>Groups Filter</h5>
+<p>Specifies the search filter to be used to find group entries. The default is <tt>(objectclass=groupOfUniqueNames)</tt>.</p>
+<A NAME="fufmq"></A><h5>Groups Scope</h5>
+<p>Defines the scope to be used to find group entries. The scope must be one of
+the following: </p>
+<ul><li><p>SCOPE_BASE </p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (default)</p>
+</li>
+</ul>
+<A NAME="fufmr"></A><h5>Groups Attribute</h5>
+<p>Defines the attribute type for which to conduct a search on a group. The default
+is <tt>cn</tt>.</p>
+<A NAME="fufms"></A><h5>Users Filter</h5>
+<p>Specifies the search filter to be used to find user entries. The default is <tt>(objectclass=inetorgperson)</tt>.</p>
+<A NAME="fufmt"></A><h5>Users Scope</h5>
+<p>Defines the scope to be used to find user entries. The scope must be one of
+the following: </p>
+<ul><li><p>SCOPE_BASE </p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (default)</p>
+</li>
+</ul>
+<A NAME="fufmu"></A><h5>Users Attribute</h5>
+<p>Defines the attribute type for which to conduct a search on a user. The default
+is <tt>uid.</tt></p>
+<A NAME="fufmv"></A><h5>LDAP Roles Filter</h5>
+<p>Specifies the search filter to be used to find entries for roles. The default
+is <tt>(&amp;(objectclass=ldapsubentry)(objectclass=nsroledefinitions))</tt>.</p>
+<A NAME="fufmw"></A><h5>LDAP Roles Scope</h5>
+<p>This attribute defines the scope to be used to find entries for roles. The scope
+must be one of the following: </p>
+<ul><li><p>SCOPE_BASE </p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (default)</p>
+</li>
+</ul>
+<A NAME="fufmx"></A><h5>LDAP Roles Attribute</h5>
+<p>This field defines the attribute type for which to conduct a search on a role.
+The default is <tt>cn</tt>.</p>
+<A NAME="fufmy"></A><h5>Access Manager Roles Scope</h5>
+<p>Defines the scope to be used to find entries for Access Manager Roles subject.</p>
+<ul><li><p>SCOPE_BASE </p>
+</li>
+<li><p>SCOPE_ONE</p>
+</li>
+<li><p>SCOPE_SUB (default)</p>
+</li>
+</ul>
+<A NAME="fufmz"></A><h5>Access Manager Roles Base DN</h5>
+<p>Defines the DN of the realm or organization which is used as a base while searching
+for  the values of Access Manager Roles. This attribute is used by the <i>AccessManagerRoles</i> policy subject.</p>
+<A NAME="fufnb"></A><h4>Available Objects Type</h4>
+<A NAME="fufna"></A><h5>Subjects</h5>
+<p>Allows you to select a set of subject types available to be used for policy
+definition in the organization.</p>
+<A NAME="fufnc"></A><h5>Conditions</h5>
+<p>Allows you to select a set of conditions types available to be used for policy
+definition in the organization.</p>
+<A NAME="fufnd"></A><h5>Referrals</h5>
+<p>Allows you to select a set of referral types available to be used for policy
+definition in the organization.</p>
+<A NAME="fufnf"></A><h4>Miscellaneous</h4>
+<A NAME="fufnh"></A><h5>Continue Evaluation on Deny Decision</h5>
+<p>Specifies whether or not the policy framework should continue evaluating subsequent
+policies, even if a DENY policy decision exists. If it is not selected (default),
+policy evaluation would skip subsequent policies once the DENY decision is recognized.</p>
+<A NAME="fufng"></A><h5>Advices Handleable by Access Manager</h5>
+<p>Defines the names of policy advice keys for which the Policy Enforcement Point
+(Policy Agent)  would redirect the user agent to Access Manager. If the agent receives
+a policy  decision that does not allow access to a resource, but does posses advices,
+ the agent checks  to see whether it has a advice key listed in this attribute.</p>
+<p> If such an advice is found, the user agent is redirected to Access Manager,
+potentially allowing  the access to the resource.</p>
+<A NAME="fufnm"></A><h5>Enable User Alias</h5>
+<p>This attribute must be enabled if you create a policy to protect a resource
+whose subject's member in a remote Directory Server aliases a local user. This attribute
+must be enabled, for example, if you create <tt>uid=rmuser</tt> in the remote
+Directory Server and then add <tt>rmuser</tt> as an alias to a local user
+(such as <tt>uid=luser</tt>) in Access Manager. When you login as <tt>rmuser</tt>, a session is created with the local user (<tt>luser</tt>)
+and policy enforcement is successful.</p>
+<A NAME="fufnj"></A><h5>Search Maximum Results</h5>
+<p>This field defines the maximum number of results returned from a search. The
+default value is 100. If the search limit exceeds the amount specified, the entries
+that have been found to that point will be returned.</p>
+<A NAME="fufnl"></A><h5>Search Timeout</h5>
+<p>Specifies the amount of time before a timeout on a search occurs. If the search
+exceeds the specified time, the entries that have been found to that point will be
+returned</p>
+<A NAME="fufnk"></A><h4>Resource Comparator</h4>
+<p>Specifies the resource comparator information, which is used to compare resources
+specified in a Policy rule definition. Resource comparison is used for both policy
+creation and evaluation. </p>
+<p>Click the Add Comparator button and define the following attributes:</p>
+<table border="0" cellspacing="5"><tr valign="top"><td>serviceType</td><td><p>Specifies the service to which the comparator should be used.</p>
+</td></tr><tr valign="top"><td>class	</td><td><p>Defines the Java class that implements the resource comparison algorithm. </p>
+</td></tr><tr valign="top"><td>wildcard</td><td><p>Specifies the wildcard that can be defined in resource names</p>
+</td></tr><tr valign="top"><td>delimiter</td><td><p>Specifies the delimiter to be used in the resource name. </p>
+</td></tr><tr valign="top"><td>caseSensitivity</td><td><p>Specifies if the comparison of the two resources should consider or
+ignore case. False ignores case, True considers case.</p>
+</td></tr></table>
+<A NAME="fufni"></A><h5>Selected Response Providers</h5>
+<p>Defines the policy response provider plug-ins that are enabled for the realm.
+Only the response provider plug-ins selected in this attribute can be added to policies
+ defined in the realm.</p>
+<A NAME="fufnn"></A><h5>Selected Dynamic Response Attributes</h5>
+<p>Defines the dynamic response attributes that are enabled for the realm. Only
+a subset of names selected in this attribute can be defined in the dynamic attributes
+list in <i>IDResponseProvider</i> to be added to policies defined
+in  the realm.</p>
+
+<br />
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<!-- ident   "%Z%%M% %I%   %E% SMI" -->
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+<tocitem target="aawelcome" text="Sun Java System Access Manager 7 2005Q4 Online Help">
+<tocitem target="intro" text="Introduction"></tocitem>
+<tocitem target="accesscontrol" text="Access Control">
+<tocitem target="realm.rmrealm" text="Realms">
+<tocitem target="realm.rmrealmadd" text="To Create a New Realm"></tocitem>
+<tocitem target="realm.realmproperties" text="General Properties"></tocitem>
+<tocitem target="authentication.authproperties" text="Authentication">
+<tocitem target="authentication.newauthinstance" text="To Create a New Authentication Module Instance"></tocitem>
+<tocitem target="authentication.newauthconfig" text="To Create a New Authentication Chain"></tocitem>
+</tocitem>
+<tocitem target="realm.services" text="Services">
+<tocitem target="realm.servicesadd" text="To Add a Service to a Realm"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="datastore" text="Data Stores">
+<tocitem target="realm.idrepo" text="To Create a New LDAPv3 Data Store"></tocitem>
+<tocitem target="realm.idrepoadd" text="LDAPv3 Repository Plug-in Attributes"></tocitem>
+</tocitem>
+<tocitem target="delegation.delegation" text="Privileges"></tocitem>
+<tocitem target="policy.policy" text="Policies">
+<tocitem target="normalpolicy" text="Normal Policies">
+<tocitem target="policy.policynormaladd" text="To Create a New Normal Policy"></tocitem>
+</tocitem>
+<tocitem target="normalrule" text="Rules">
+<tocitem target="policy.ruleadd" text="To Add a Rule to a Policy"></tocitem>
+</tocitem>
+<tocitem target="normalsubject" text="Subjects">
+<tocitem target="policy.subjectadd" text="To Add a Subject to a Policy"></tocitem>
+</tocitem>
+<tocitem target="policyconditions" text="Conditions">
+<tocitem target="policy.conditionadd" text="To Add a Condition to a Policy"></tocitem>
+</tocitem>
+<tocitem target="policy.pmdefaultauthlevelconditionadd" text="Authentication Level Condition"></tocitem>
+<tocitem target="policy.pmdefaultauthschemecondition" text="Authentication Scheme Condition "></tocitem>
+<tocitem target="policy.pmdefaultipcondition" text="IP Address Condition"></tocitem>
+<tocitem target="leauth" text="LE Authentication Condition"></tocitem>
+<tocitem target="policy.pmdefaultsessioncondition" text="Session Condition"></tocitem>
+<tocitem target="policy.sessionpropertyconditionadd" text="Session Property Condition"></tocitem>
+<tocitem target="policy.pmdefaulttimeconditionadd" text="Time Condition"></tocitem>
+<tocitem target="responseprovider" text="Response Providers">
+<tocitem target="policy.responseprovideradd" text="To Add a Response Provider to a Policy"></tocitem>
+</tocitem>
+<tocitem target="fyfby" text="Referral Policies">
+<tocitem target="policy.policyreferraladd" text="To Create a New Referral Policy"></tocitem>
+</tocitem>
+<tocitem target="referrals" text="Referrals">
+<tocitem target="policy.selectreferraltype" text="To Add Referrals to a Policy"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="idm.entities" text="Subjects">
+<tocitem target="subjectuser" text="User">
+<tocitem target="subjectcreateuser" text="To Create or Modify a User"></tocitem>
+<tocitem target="addusertogroup" text="To Add a User to Roles and Groups"></tocitem>
+<tocitem target="idm.entityservices" text="To Add Services to an Identity"></tocitem>
+</tocitem>
+<tocitem target="subjectagents" text="Agents">
+<tocitem target="subjectcreateagent" text="To Create or Modify an Agent"></tocitem>
+</tocitem>
+<tocitem target="subject.filteredrole" text="Filtered Role">
+<tocitem target="subject.createfiltrole" text="To Create a Filtered Role"></tocitem>
+</tocitem>
+<tocitem target="subject.role" text="Roles">
+<tocitem target="subject.createrole" text="To Create or Modify a Role"></tocitem>
+<tocitem target="idm.entitymembers" text="To Add Users to a Role or Group"></tocitem>
+</tocitem>
+<tocitem target="subject.group" text="Groups">
+<tocitem target="subject.creategroup" text="To Create or Modify a Group"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="dirmang" text="Directory Management">
+<tocitem target="dm.home" text="User Management"></tocitem>
+</tocitem>
+<tocitem target="service.scconfig" text="Configuration"><tocitem target="authattrs" text="Authentication"><tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Anonymous"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></tocitem>
+<tocitem target="authentication.authconfig" text="Authentication Configuration"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificate"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthservice" text="Core"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"><tocitem target="jdbcexample" text="To Configure a Connection Pool -- Example"></tocitem>
+</tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Membership"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></tocitem>
+<tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows Desktop SSO"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></tocitem>
+<tocitem target="supportedlang" text="Supported Language Locales"></tocitem>
+</tocitem>
+<tocitem target="consoleprops" text="Console Properties"><tocitem target="service.scserviceprofile.amadminconsoleservice" text="Administration"></tocitem>
+<tocitem target="service.smg11n" text="Globalization Settings"></tocitem>
+</tocitem>
+<tocitem target="global" text="Global Properties"><tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Password Reset"></tocitem>
+<tocitem target="service.scpolicy" text="Policy Configuration"></tocitem>
+<tocitem target="service.scserviceprofile.amsessionservice" text="Session"></tocitem>
+<tocitem target="service.subconfigadd" text="To Add a Sub Configuration"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamuserservice" text="User"></tocitem>
+</tocitem>
+<tocitem target="systemprops" text="System Properties"><tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Client Detection"></tocitem>
+<tocitem target="service.mapclientmanager" text="Client Manager"></tocitem>
+<tocitem target="service.mapcreatedevice" text="To Add a New Client "></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Logging"></tocitem>
+<tocitem target="service.scserviceprofile.iplanetamnamingservice" text="Naming"></tocitem>
+<tocitem target="service.scplatform" text="Platform"></tocitem>
+<tocitem target="service.scplatformsitelistadd" text="To Create a New Site Name"></tocitem>
+<tocitem target="service.scplatformserverlistadd" text="To Create a New Instance Name"></tocitem>
+<tocitem target="service.scplatformclientcharsetsadd" text="To Create a New Character Set"></tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="sessions" text="Sessions"><tocitem target="sessionpage" text="Sessions Page"><tocitem target="sessionsearch" text="Search"></tocitem>
+<tocitem target="viewsession" text="View Session"></tocitem>
+<tocitem target="session.smprofile" text="Session Window"></tocitem>
+<tocitem target="invalidatesession" text="Invalidating a Session"></tocitem>
+</tocitem>
+</tocitem>
+</tocitem>
+
+</toc>
