@@ -835,6 +835,7 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
             // Set the session attribute map
             if (fetchSessionAttrs) {
               KeyValueMap &session_attributes_map = *(new KeyValueMap());
+	      time_t retVal = (time_t)-1;
               policy_res->attr_session_map =
                           reinterpret_cast<am_map_t>(&session_attributes_map);
 
@@ -857,23 +858,38 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
                         }
                      }
                      try {
+					  char dataStr[50];
+                      if (!strcmp(sessionKey.c_str(),"maxtime")) {
+                         retVal = (time_t)(sessionInfo.getMaxSessionTime());
+						 PR_snprintf(dataStr, 50, "%ld", retVal);
+                         std::string tmpStr(dataStr);
+						 sessionValue = tmpStr;
+                      } else if (!strcmp(sessionKey.c_str(),"maxidle")) {
+                         retVal = (time_t)(sessionInfo.getMaxIdleTime());
+						 PR_snprintf(dataStr, 50, "%ld", retVal);
+                         std::string tmpStr(dataStr);
+                         sessionValue = tmpStr;
+                      } else {
                          sessionValue = 
-                                 sessionInfo.getProperties().get(sessionKey);
-						 if (tmpValue.size() > 0) {
-                         sessionValue = sessionValue + attrMultiValueSeparator + tmpValue;
-						 }
+                            sessionInfo.getProperties().get(sessionKey);
+                            if (tmpValue.size() > 0) {
+                               sessionValue = sessionValue + 
+                                            attrMultiValueSeparator + tmpValue;
+                            }
                          Log::log(logID, Log::LOG_MAX_DEBUG, "Attribute "
                                   "value for %s found in session = %s", 
                                   sessionKey.c_str(), sessionValue.c_str());
+                        }
                      } catch(std::invalid_argument &ex) {
                        Log::log(logID, Log::LOG_MAX_DEBUG, "Attribute "
                                 " value for %s not found in Session", 
                                 sessionKey.c_str());
                      }
                      if (!sessionAttr.empty() && !sessionValue.empty()) {
-                         session_attributes_map.insert(sessionAttr, sessionValue);
+                         session_attributes_map.insert(sessionAttr, 
+                                                       sessionValue);
                      }
-               }
+                }
             }
 
             // Set the response attribute map
