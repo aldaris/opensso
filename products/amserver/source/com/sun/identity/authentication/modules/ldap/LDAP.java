@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.2 2006-04-20 18:50:15 pawand Exp $
+ * $Id: LDAP.java,v 1.3 2006-05-10 21:07:23 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,7 @@ public class LDAP extends AMLoginModule {
     private String userPassword;
     private String regEx;
     private String currentConfigName;
+    private String bindDN;
     private Iterator subConfigNamesIter = null;
     private ServiceConfig sc;
     private boolean firstTry = true;
@@ -193,7 +194,7 @@ public class LDAP extends AMLoginModule {
                     debug.error("BaseDN for search is invalid: " + baseDN);
                 }
                 
-                String bindDN = Misc.getMapAttr(currentConfig,
+                bindDN = Misc.getMapAttr(currentConfig,
                 "iplanet-am-auth-ldap-bind-dn", "");
                 String bindPassword = Misc.getMapAttr(currentConfig,
                 "iplanet-am-auth-ldap-bind-passwd", "");
@@ -596,7 +597,7 @@ public class LDAP extends AMLoginModule {
                     break;
                 case LDAPAuthUtils.SERVER_DOWN:
                     if (firstTry) {
-                        String key = serverHost+":"+serverPort;
+                        String key = serverHost + ":"+serverPort + ":" + bindDN;
                         synchronized(LDAPAuthUtils.adminConnectionPoolsStatus){
                             LDAPAuthUtils.adminConnectionPoolsStatus.put(key,
                                 LDAPAuthUtils.STATUS_DOWN);

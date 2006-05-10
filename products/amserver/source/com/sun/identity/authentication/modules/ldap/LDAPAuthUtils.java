@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.3 2006-05-02 22:15:28 pawand Exp $
+ * $Id: LDAPAuthUtils.java,v 1.4 2006-05-10 21:07:23 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,7 +226,7 @@ public class LDAPAuthUtils {
         ConnectionPool conPool = null;
         LDAPConnection ldc = null;
         try {
-            String key = hostName + ":" + portNumber;
+            String key = hostName + ":" + portNumber + ":" + bindingUser;
             conPool = (ConnectionPool)connectionPools.get(key);
             
             if (conPool == null) {
