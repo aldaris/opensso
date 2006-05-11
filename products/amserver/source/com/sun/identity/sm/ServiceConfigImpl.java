@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceConfigImpl.java,v 1.2 2006-05-11 16:23:34 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -417,7 +417,9 @@ class ServiceConfigImpl implements ServiceListener {
             SSOToken t) throws SMSException, SSOException {
         ServiceConfigImpl answer = (ServiceConfigImpl) configImpls
                 .get(cacheName);
-        if (answer != null && !answer.smsEntry.isValid()) {
+
+        if ((answer != null) &&
+            ((!answer.smsEntry.isValid()) || (answer.smsEntry.isNewEntry()))){
             answer = null;
         }
         if (answer != null) {
