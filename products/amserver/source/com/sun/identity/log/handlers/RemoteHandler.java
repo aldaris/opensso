@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.3 2006-04-27 07:53:32 veiming Exp $
+ * $Id: RemoteHandler.java,v 1.4 2006-05-13 17:37:23 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,7 @@ public class RemoteHandler extends Handler {
         }
         
         this.recCount++;
-        if (this.recCount == recCountLimit) {
+        if (this.recCount >= recCountLimit) {
             if (Debug.messageEnabled()) {
                 Debug.message(logName + ":RemoteHandler.publish(): got " 
                     + recCount + " records, flushing all");
