@@ -1,29 +1,10 @@
-/* The contents of this file are subject to the terms
- * of the Common Development and Distribution License
- * (the License). You may not use this file except in
- * compliance with the License.
+/*
+ * ident "@(#)css_ns4sol.css 1.46 04/04/27 SMI"
  *
- * You can obtain a copy of the License at
- * https://opensso.dev.java.net/public/CDDLv1.0.html or
- * opensso/legal/CDDLv1.0.txt
- * See the License for the specific language governing
- * permission and limitations under the License.
- *
- * When distributing Covered Code, include this CDDL
- * Header Notice in each file and include the License file
- * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
- * with the fields enclosed by brackets [] replaced by
- * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
- *
- * $Id: css_ns4sol.css,v 1.2 2006-02-02 08:01:58 veiming Exp $
- *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ * Use is subject to license terms.
+ * Version:2004_04_26_v1_bde
  */
-
-
-
 
 /* Global Styles */
 BODY, TH, TD, P, DIV, SPAN, INPUT, SELECT, TEXTAREA, FORM, B, STRONG, I, U, DL, DD, DT, UL, LI, OL, OPTION, OPTGROUP, A {font-family:sans-serif;font-size:12pt}
@@ -379,7 +360,7 @@ div.MstStatDiv {padding:5px 10px 0px}
 .logHlp {margin:0px 15px 7px 10px}
 .logErr {margin:5px 15px 5px 10px}
 .logCpy {width :720px;margin-top:5px}
-.logTxtCpy {font-size:10pt;color:#CCC}
+.logTxtCpy {font-size:10pt;color:#999}
 
 
 /* LOCKHART LAUNCH PAGE */
