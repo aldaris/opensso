@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.7 2006-04-10 22:04:47 veiming Exp $
+ * $Id: AuthD.java,v 1.8 2006-05-19 00:21:11 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1034,7 +1034,8 @@ public class AuthD  {
     public boolean isSpecialUser(String dn) {
         // dn in all the invocation is normalized.
         boolean isSpecialUser = false;
-        if ((dn != null) && (specialUser != null)) {
+        String nDN = DNUtils.normalizeDN(dn);
+        if ((nDN != null) && (specialUser != null)) {
             StringTokenizer st = new StringTokenizer(specialUser,"|");
             while (st.hasMoreTokens()) {
                  String specialAdminDN = (String)st.nextToken();
@@ -1046,7 +1047,7 @@ public class AuthD  {
                          debug.message("normalized special dn is :" +
                             normSpecialAdmin);
                      }
-                     if (dn.equals(normSpecialAdmin)) {
+                     if (nDN.equals(normSpecialAdmin)) {
                          isSpecialUser = true;
                          break;
                      }
