@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonUtils.java,v 1.3 2006-01-30 20:58:43 veiming Exp $
+ * $Id: CommonUtils.java,v 1.4 2006-05-22 20:54:04 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,18 +341,22 @@ class CommonUtils {
         if (!byteValues) {
             Iterator itr = map.keySet().iterator();
             while (itr.hasNext()) {
-                String attrName = (String) (itr.next());
+                String attrName = (itr.next()).toString();
                 Set set = (Set) (map.get(attrName));
-                String attrValues[] = (set == null ? null : (String[]) set
-                        .toArray(new String[set.size()]));
-                attrSet.replace(new Attr(attrName, attrValues));
+                String attrValues[] = (set == null) ? null : (String[]) set
+                        .toArray(new String[set.size()]);
+                if (attrValues != null) {
+                    attrSet.replace(new Attr(attrName, attrValues));
+                }
             }
         } else {
             Iterator itr = map.keySet().iterator();
             while (itr.hasNext()) {
-                String attrName = (String) (itr.next());
+                String attrName = (itr.next()).toString();
                 byte[][] attrValues = (byte[][]) (map.get(attrName));
-                attrSet.replace(new Attr(attrName, attrValues));
+                if (attrValues != null) {
+                    attrSet.replace(new Attr(attrName, attrValues));
+                }
             }
         }
         return attrSet;

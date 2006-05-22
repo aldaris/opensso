@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.3 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMObjectImpl.java,v 1.4 2006-05-22 20:54:24 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -190,7 +190,7 @@ class AMObjectImpl implements AMObject {
         Set result = new HashSet(1);
         Set objectClasses = getAttribute("objectclass");
         String parentOrgDN = getOrganizationDN(); // better to check for org
-        AMOrganization parentOrg = new AMOrganizationImpl(null, parentOrgDN);
+        AMOrganization parentOrg = new AMOrganizationImpl(token, parentOrgDN);
 
         Set serviceNames = parentOrg.getRegisteredServiceNames();
         Iterator iter = serviceNames.iterator();
