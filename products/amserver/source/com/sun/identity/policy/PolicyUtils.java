@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.1 2006-04-26 05:14:04 dillidorai Exp $
+ * $Id: PolicyUtils.java,v 1.2 2006-05-22 19:52:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.am.util.XMLHandler;
 import com.iplanet.am.util.XMLUtils;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
@@ -41,6 +42,7 @@ import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,11 +52,16 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * The class <code>PolicyUtils</code> provides utility(static) methods
@@ -941,6 +948,46 @@ public class PolicyUtils {
         String uuid = token.getProperty(
                 com.sun.identity.common.Constants.UNIVERSAL_IDENTIFIER);
         return principalName.equals(uuid);
+    }
+    
+    /**
+     * Creates policy objects given an input stream of policy XML which
+     * confines to <code>com/sun/identity/policy/policyAdmin.dtd</code>.
+     *
+     * @param pm Policy manager.
+     * @param xmlPolicies Policy XML input stream.
+     * @throws PolicyException if policies cannot be created.
+     * @throws SSOException if Single Sign On token used to create policy
+     *         manager is no longer valid.
+     */
+    public static void createPolicies(PolicyManager pm, InputStream xmlPolicies)
+        throws PolicyException, SSOException {
+        try {
+            DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+            factory.setValidating(true);
+            factory.setNamespaceAware(true);
+            
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setErrorHandler(new ValidationErrorHandler());
+            builder.setEntityResolver(new XMLHandler());
+            Element topElement =builder.parse(xmlPolicies).getDocumentElement();
+            NodeList childElements = topElement.getChildNodes();
+            int len = childElements.getLength();
+            for (int i = 0; i < len; i++) {
+                Node node = childElements.item(i);
+                if ((node != null) && (node.getNodeType() == Node.ELEMENT_NODE)
+                ) {
+                    pm.addPolicy(new Policy(pm, node));
+                }
+            }
+        } catch (IOException e) {
+            throw new PolicyException(e);
+        } catch (SAXException e) {
+            throw new PolicyException(e);
+        } catch (ParserConfigurationException e) {
+            throw new PolicyException(e);
+        }
     }
 
     /** 
