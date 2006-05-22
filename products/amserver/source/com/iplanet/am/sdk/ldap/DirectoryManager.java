@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManager.java,v 1.5 2006-05-01 18:53:20 goodearth Exp $
+ * $Id: DirectoryManager.java,v 1.6 2006-05-22 22:00:54 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2487,16 +2487,18 @@ public class DirectoryManager implements AMConstants,
             Iterator itr = stringAttributes.keySet().iterator();
             while (itr.hasNext()) {
                 String attrName = (String) (itr.next());
-                Set set = (Set) (stringAttributes.get(attrName));
-                String attrValues[] = (set == null ? null : (String[]) set
-                        .toArray(new String[set.size()]));
-                Attr attr = new Attr(attrName, attrValues);
-                /*
-                 * 2005-02-17 Aravindan: AMObjectImpl.removeAttributes(...) sets
-                 * the values to be Collections.EMPTY_SET.
-                 */
-                modifyPersistentObject(po, attr, isAdd,
+                if (!attrName.equalsIgnoreCase("dn")) {
+                    Set set = (Set) stringAttributes.get(attrName);
+                    String attrValues[] = (set == null) ? null : (String[]) set
+                        .toArray(new String[set.size()]);
+                    Attr attr = new Attr(attrName, attrValues);
+                    /*
+                     * AMObjectImpl.removeAttributes(...) sets
+                     * the values to be Collections.EMPTY_SET.
+                     */
+                    modifyPersistentObject(po, attr, isAdd,
                         (set == AMConstants.REMOVE_ATTRIBUTE));
+                }
             }
         }
 
