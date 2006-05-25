@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.8 2006-04-17 19:57:34 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.9 2006-05-25 19:25:46 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.iplanet.am.sdk.AMServiceUtils;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -93,6 +94,8 @@ public final class AMIdentity {
 
     private String univId;
 
+    private String univIdWithoutDN;
+
     private SSOToken token;
 
     private String name;
@@ -105,9 +108,8 @@ public final class AMIdentity {
 
     private AMHashMap binaryModMap = new AMHashMap(true);
 
-    protected String DN = null;
+    protected String univDN = null;
 
-    private static Debug debug = Debug.getInstance("amIdm");
 
     /**
      * Protected constructor for AMIdentity.
@@ -116,9 +118,16 @@ public final class AMIdentity {
      * @param universalId
      */
     protected AMIdentity(SSOToken ssotoken, String universalId) {
-        univId = universalId;
+        univId = univIdWithoutDN = DNUtils.normalizeDN(universalId);
+        // Check for AMSDK DN
+        int index;
+        if ((index = univId.indexOf(",amsdkdn=")) != -1) {
+            // obtain DN and univIdWithoutDN
+            univIdWithoutDN = univId.substring(0, index);
+            univDN = univId.substring(index + 9);
+        }
         DN dnObject = new DN(univId);
-        String[] array = dnObject.explodeDN(true);
+        String [] array = dnObject.explodeDN(true);
         name = array[0];
         type = new IdType(array[1]);
         orgName = dnObject.getParent().getParent().toRFCString();
@@ -136,12 +145,23 @@ public final class AMIdentity {
         this.type = type;
         this.orgName = com.sun.identity.sm.DNMapper.orgNameToDN(orgName);
         this.token = token;
-        this.DN = amsdkdn;
-
-        univId = (amsdkdn == null) ?
-            "id=" + name + ",ou=" + type.getName() + "," + this.orgName :
-            "id=" + name + ",ou=" + type.getName() + "," + this.orgName +
-                ",amsdkdn=" + amsdkdn;
+        this.univDN = DNUtils.normalizeDN(amsdkdn);
+        StringBuffer sb = new StringBuffer(100);
+        if ((name != null) && DN.isDN(name)) {
+            sb.append("id=").append(((new DN(name))).explodeDN(true)[0])
+                .append(",ou=")
+                .append(type.getName()).append(",").append(this.orgName);
+        } else {
+            sb.append("id=").append(name).append(",ou=")
+                .append(type.getName()).append(",").append(this.orgName);
+        }
+        univId = univIdWithoutDN = sb.toString();
+        if (amsdkdn != null) {
+            sb.append(",amsdkdn=").append(amsdkdn);
+            univId = sb.toString();
+        }
+        univIdWithoutDN = DNUtils.normalizeDN(univIdWithoutDN);
+        univId = DNUtils.normalizeDN(univId);
     }
 
     // General APIs
@@ -193,7 +213,7 @@ public final class AMIdentity {
     public boolean isActive() throws IdRepoException, SSOException {
 
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
-        return dm.isActive(token, type, name, orgName, DN);
+        return dm.isActive(token, type, name, orgName, univDN);
     }
 
     /**
@@ -209,7 +229,7 @@ public final class AMIdentity {
      */
     public Map getAttributes() throws IdRepoException, SSOException {
         AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        Map attrs = amdm.getAttributes(token, type, name, orgName, DN);
+        Map attrs = amdm.getAttributes(token, type, name, orgName, univDN);
         if (debug.messageEnabled()) {
             debug.message("AMIdentity.getAttributes all: attrs=" + attrs);
         }
@@ -234,7 +254,7 @@ public final class AMIdentity {
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
 
         Map attrs = dm.getAttributes(token, type, name, attrNames,
-                orgName, DN, true);
+                orgName, univDN, true);
         CaseInsensitiveHashMap caseAttrs = new CaseInsensitiveHashMap(attrs);
         CaseInsensitiveHashMap resultMap = new CaseInsensitiveHashMap();
         Iterator it = attrNames.iterator();
@@ -269,8 +289,8 @@ public final class AMIdentity {
     public Map getBinaryAttributes(Set attrNames) throws IdRepoException,
             SSOException {
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
-        return dm.getAttributes(token, type, name, attrNames, orgName, DN,
-                false);
+        return dm.getAttributes(token, type, name, attrNames, orgName, 
+            univDN, false);
 
     }
 
@@ -294,7 +314,7 @@ public final class AMIdentity {
         attrNames.add(attrName);
         AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
         Map valMap = amdm.getAttributes(token, type, name, attrNames, orgName,
-                DN, true);
+                univDN, true);
         return ((Set) valMap.get(attrName));
     }
 
@@ -375,13 +395,13 @@ public final class AMIdentity {
     public void store() throws IdRepoException, SSOException {
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
         if (modMap != null && !modMap.isEmpty()) {
-            dm.setAttributes(token, type, name, modMap, false, orgName, DN,
-                    true);
+            dm.setAttributes(token, type, name, modMap, false, orgName, 
+                univDN, true);
             modMap.clear();
         }
         if (binaryModMap != null && !binaryModMap.isEmpty()) {
             dm.setAttributes(token, type, name, binaryModMap, false, orgName,
-                    DN, false);
+                    univDN, false);
             binaryModMap.clear();
         }
     }
@@ -414,7 +434,7 @@ public final class AMIdentity {
         Set assigned = Collections.EMPTY_SET;
         try {
             assigned = amdm.getAssignedServices(token, type, name, sMap,
-                    orgName, DN);
+                    orgName, univDN);
         } catch (IdRepoException ide) {
             // Check if this is permission denied exception
             if (!ide.getErrorCode().equals("402")) {
@@ -450,7 +470,7 @@ public final class AMIdentity {
         Set assigned = Collections.EMPTY_SET;
         try {
             assigned = amdm.getAssignedServices(token, type, name, sMap,
-                    orgName, DN);
+                    orgName, univDN);
         } catch (IdRepoException ide) {
             // Check if this is permission denied exception
             if (!ide.getErrorCode().equals("402")) {
@@ -490,7 +510,7 @@ public final class AMIdentity {
         Map tMap = new HashMap();
         tMap.put(serviceName, OCs);
         Set assignedServices = amdm.getAssignedServices(token, type, name,
-                tMap, orgName, DN);
+                tMap, orgName, univDN);
 
         if (assignedServices.contains(serviceName)) {
             Object args[] = { serviceName, type.getName() };
@@ -546,7 +566,7 @@ public final class AMIdentity {
         // name of the service, and attribute Map containing the
         // OCs to be set and validated attribute map
         amdm.assignService(token, type, name, serviceName, stype, attributes,
-                orgName, DN);
+                orgName, univDN);
     }
 
     /**
@@ -568,7 +588,7 @@ public final class AMIdentity {
         Map tMap = new HashMap();
         tMap.put(serviceName, OCs);
         Set assignedServices = amdm.getAssignedServices(token, type, name,
-                tMap, orgName, DN);
+                tMap, orgName, univDN);
 
         if (!assignedServices.contains(serviceName)) {
             Object args[] = { serviceName };
@@ -610,7 +630,7 @@ public final class AMIdentity {
         // The protocol is to pass service Name and Map of objectclasses
         // to be removed from entry.
         amdm.unassignService(token, type, name, serviceName, attrMap, orgName,
-                DN);
+                univDN);
     }
 
     /**
@@ -655,7 +675,7 @@ public final class AMIdentity {
 
         AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
         return amdm.getServiceAttributes(token, type, name, serviceName,
-                attrNames, orgName, DN);
+                attrNames, orgName, univDN);
     }
 
     /**
@@ -682,7 +702,7 @@ public final class AMIdentity {
         Map tMap = new HashMap();
         tMap.put(serviceName, OCs);
         Set assignedServices = amdm.getAssignedServices(token, type, name,
-                tMap, orgName, DN);
+                tMap, orgName, univDN);
         if (!assignedServices.contains(serviceName)) {
             Object args[] = { serviceName };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "101", args);
@@ -713,7 +733,7 @@ public final class AMIdentity {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "103", args);
         }
         amdm.modifyService(token, type, name, serviceName, stype, attrMap,
-                orgName, DN);
+                orgName, univDN);
 
     }
 
@@ -940,12 +960,14 @@ public final class AMIdentity {
     public boolean equals(Object o) {
         if (o instanceof AMIdentity) {
             AMIdentity compareTo = (AMIdentity) o;
-            if (univId.equalsIgnoreCase(compareTo.univId)) {
+            if (univId.equalsIgnoreCase(compareTo.univId) ||
+                univIdWithoutDN.equalsIgnoreCase(
+                compareTo.univIdWithoutDN)) {
                 return true;
-            } else if (DN != null) {
+            } else if (univDN != null) {
                 // check if the amsdkdn match
                 String dn = compareTo.getDN();
-                if (dn != null && dn.equalsIgnoreCase(DN)) {
+                if (dn != null && dn.equalsIgnoreCase(univDN)) {
                     return (true);
                 }
             }
@@ -957,8 +979,8 @@ public final class AMIdentity {
      * Non-javadoc, non-public methods
      */
     public int hashCode() {
-        if (DN != null) {
-            return (DN.toLowerCase().hashCode());
+        if (univDN != null) {
+            return (univDN.toLowerCase().hashCode());
         } else {
             return (univId.toLowerCase().hashCode());
         }
@@ -970,7 +992,7 @@ public final class AMIdentity {
      * @return
      */
     public void setDN(String dn) {
-        DN = dn;
+        univDN = dn;
     }
 
     /**
@@ -979,7 +1001,7 @@ public final class AMIdentity {
      * @return
      */
     public String getDN() {
-        return DN;
+        return univDN;
     }
 
     /**
@@ -1020,8 +1042,9 @@ public final class AMIdentity {
      * @supported.api
      */
     public boolean isExists() throws IdRepoException, SSOException {
-
         AMDirectoryManager dm = AMDirectoryWrapper.getInstance();
         return dm.isExists(token, type, name, orgName);
     }
+
+    private static Debug debug = Debug.getInstance("amIdm");
 }
