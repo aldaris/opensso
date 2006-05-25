@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.4 2006-04-14 09:06:38 veiming Exp $
+ * $Id: AMIdentityRepository.java,v 1.5 2006-05-25 19:26:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -220,7 +220,7 @@ public final class AMIdentityRepository {
      * @param type
      *            Type of identity being searched for.
      * @param pattern
-     *            Patter to be used when searching.
+     *            Pattern to be used when searching.
      * @param ctrl
      *            IdSearchControl which can be used to set up various search
      *            controls on the search to be performed.
@@ -335,7 +335,7 @@ public final class AMIdentityRepository {
         Iterator it = identities.iterator();
         while (it.hasNext()) {
             AMIdentity id = (AMIdentity) it.next();
-            amdm.delete(token, id.getType(), id.getName(), org, id.DN);
+            amdm.delete(token, id.getType(), id.getName(), org, id.getDN());
         }
     }
 
