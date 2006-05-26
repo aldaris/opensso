@@ -83,7 +83,7 @@ certificates are kept else leave it blank (remove the tag).
 AGENT_CERT_PREFIX = If you are running SSL, this will be the certificate data
 base prefix else leave it blank (remove the tag).
 NOTIFICATION_ENABLE = false
-AGENT_URL_PREFIX = <Agent protocol>://<Fully qualified Agent Hostname>
+AGENT_URL_PREFIX = <Agent protocol>://<Fully qualified Agent Hostname>:<Agent Port number>/amagent
 
 For the below property, specify the value as shown:
 com.sun.am.policy.agents.config.local.log.file = /opt/apache-agent/amAgent
