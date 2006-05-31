@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.1 2005-11-01 00:30:18 arvindp Exp $
+ * $Id: ServerConfigMgr.java,v 1.2 2006-05-31 21:52:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,6 @@ public class ServerConfigMgr {
         }
         configFile = path + System.getProperty("file.separator")
                 + SystemProperties.CONFIG_FILE_NAME;
-        // Debug messages
         if (debug.messageEnabled()) {
             debug.message("Server config file: " + configFile);
         }
@@ -138,8 +137,8 @@ public class ServerConfigMgr {
                         + "for file: " + configFile);
             }
             String objs[] = { configFile };
-            throw (new Exception(MessageFormat.format(i18n
-                    .getString("dscfg-no-file-permission"), objs)));
+            throw (new Exception(MessageFormat.format(
+                i18n.getString("dscfg-no-file-permission"), (Object[])objs)));
         }
 
         // Read the file and get the XML document, root node
@@ -151,20 +150,18 @@ public class ServerConfigMgr {
             if ((document = XMLUtils.getXMLDocument(fis)) == null) {
                 debug.error("Unable to read server config file: " + configFile
                         + " error in getting the document");
-                throw (new XMLException(i18n
-                        .getString("dscfg-error-reading-config-file")
-                        + "\n" 
-                        + i18n.getString("dscfg-corrupted-serverconfig")));
+                throw (new XMLException(
+                    i18n.getString("dscfg-error-reading-config-file") + "\n" +
+                    i18n.getString("dscfg-corrupted-serverconfig")));
             }
 
             if ((root = XMLUtils.getRootNode(document, DSConfigMgr.ROOT)) 
                     == null) {
                 debug.error("Unable to get root node: " + configFile
                         + " error in parsing the document");
-                throw (new XMLException(i18n
-                        .getString("dscfg-unable-to-find-root-node")
-                        + "\n" + i18n.getString(
-                                "dscfg-corrupted-serverconfig")));
+                throw (new XMLException(
+                    i18n.getString("dscfg-unable-to-find-root-node") + "\n" +
+                    i18n.getString("dscfg-corrupted-serverconfig")));
             }
 
             if ((defaultServerGroup = XMLUtils.getNamedChildNode(root,
@@ -172,10 +169,9 @@ public class ServerConfigMgr {
                     DSConfigMgr.DEFAULT)) == null) {
                 debug.error("Misconfigured server config file: " + configFile
                         + " unable to get default server group");
-                throw (new XMLException(i18n
-                        .getString("dscfg-unable-to-find-default-servergroup")
-                        + "\n" + i18n.getString(
-                                "dscfg-corrupted-serverconfig")));
+                throw (new XMLException(
+                    i18n.getString("dscfg-unable-to-find-default-servergroup")
+                    + "\n" + i18n.getString("dscfg-corrupted-serverconfig")));
             }
         } catch (Exception e) {
             exception = e;
@@ -207,8 +203,8 @@ public class ServerConfigMgr {
                 && !args[0].equals(ENCRYPT) && !args[0].equals(S_ENCRYPT)) {
             // Invalid subcommand
             String[] objs = { args[0] };
-            System.err.println(MessageFormat.format(i18n
-                    .getString("dscfg-invalid-option"), objs));
+            System.err.println(MessageFormat.format(
+                i18n.getString("dscfg-invalid-option"), (Object[])objs));
             System.err.println(i18n.getString("dscfg-usage"));
             System.exit(1);
         } else if ((args.length != 1) && (args.length != 2)
@@ -261,8 +257,8 @@ public class ServerConfigMgr {
                 newPassword = args[++i];
             } else {
                 String[] objs = { args[i] };
-                System.err.println(MessageFormat.format(i18n
-                        .getString("dscfg-invalid-option"), objs));
+                System.err.println(MessageFormat.format(
+                    i18n.getString("dscfg-invalid-option"), (Object[])objs));
                 System.err.println(i18n.getString("dscfg-usage"));
                 System.exit(1);
             }
@@ -275,8 +271,8 @@ public class ServerConfigMgr {
 
             // Get the password twice and check it
             String objs[] = { Integer.toString(MIN_PASSWORD_LEN) };
-            System.out.print(MessageFormat.format(i18n
-                    .getString("dscfg-enter-new-password"), objs));
+            System.out.print(MessageFormat.format(
+                i18n.getString("dscfg-enter-new-password"), (Object[])objs));
             String newPassword1 = readPassword();
             System.out.print(i18n.getString("dscfg-enter-new-password-again"));
             String newPassword2 = readPassword();
@@ -584,8 +580,9 @@ public class ServerConfigMgr {
         // Both passwords are present, check them
         if (newPassword.length() < MIN_PASSWORD_LEN) {
             String objs[] = { Integer.toString(MIN_PASSWORD_LEN) };
-            System.err.println(MessageFormat.format(i18n
-                    .getString("dscfg-password-lenght-not-met"), objs));
+            System.err.println(MessageFormat.format(
+                i18n.getString("dscfg-password-lenght-not-met"),
+                (Object[])objs));
             System.exit(1);
         } else if (newPassword.equals(oldPassword)) {
             System.err.println(i18n.getString("dscfg-passwords-are-same"));
