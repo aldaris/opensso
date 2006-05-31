@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2006-04-26 18:41:55 bhavnab Exp $
+   $Id: build.xml,v 1.11 2006-05-31 21:53:35 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,7 +61,7 @@
     <property file="${user.home}/.opensso"/>
 
     <!-- overridable properties -->
-    <property name="build.debug" value="off"/>
+    <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
     <!-- build class path -->
@@ -76,11 +76,14 @@
     </path>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+        <javac destdir="${classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
+            <exclude name="${src.dir}/com/sun/identity/cli/tools/*.java"/>
+            <exclude name="${src.dir}/com/sun/identity/cli/annotation/*.java"/>
+            <exclude name="${src.dir}/com/sun/identity/cli/definition/*.java"/>
         </javac>
         <copy todir="${built.res.dir}">
             <fileset dir="${res.dir}">
@@ -164,6 +167,33 @@
         <mkdir dir="${built.docs.dir}"/>
         <mkdir dir="${built.apidocs.dir}"/>
         <mkdir dir="${built.publicapidocs.dir}"/>
+
+        <javac destdir="${classes.dir}" source="1.5" target="1.5"
+            srcdir="${src.dir}/com/sun/identity/cli/annotation"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <classpath refid="build.class.path"/>
+            <include name="*.java"/>
+        </javac>
+                                                                               
+        <javac destdir="${classes.dir}" source="1.5" target="1.5"
+            srcdir="${src.dir}/com/sun/identity/cli/tools"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <classpath refid="build.class.path"/>
+            <include name="*.java"/>
+        </javac>
+                                                                               
+        <javac destdir="${classes.dir}" source="1.5" target="1.5"
+            srcdir="${src.dir}/com/sun/identity/cli/definition"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <classpath refid="build.class.path"/>
+            <include name="*.java"/>
+        </javac>
+                                                                               
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <arg value="${src.dir}"/>
+            <arg value="com.sun.identity.cli.definition.AccessManager"/>
+        </java>
     </target>
 
     <target name="clean">
