@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.3 2006-04-08 17:52:50 beomsuk Exp $
+ * $Id: SessionService.java,v 1.4 2006-05-31 22:29:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,11 +53,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.servlet.http.HttpSession;
 
-import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.sdk.AMObject;
-import com.iplanet.am.sdk.AMRole;
-import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.Misc;
@@ -76,7 +71,6 @@ import com.iplanet.dpro.session.TokenRestrictionFactory;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionInfo;
 import com.iplanet.dpro.session.share.SessionNotification;
-import com.iplanet.security.x509.X500Name;
 import com.iplanet.services.comm.server.PLLServer;
 import com.iplanet.services.comm.share.Notification;
 import com.iplanet.services.comm.share.NotificationSet;
@@ -88,7 +82,15 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.Constants;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.Logger;
@@ -214,6 +216,11 @@ public class SessionService {
 
     private static final String MAX_POOL_SIZE = 
         "iplanet-am-session-max-pool-size";
+
+    // constants for permissions
+    private static final String PERMISSION_READ = "READ";
+    private static final String PERMISSION_MODIFY = "MODIFY";
+    private static final String PERMISSION_DELEGATE = "DELEGATE";
 
     static String sessionStoreUserName = null;
 
@@ -979,8 +986,6 @@ public class SessionService {
             pattern = pattern.toLowerCase();
             Vector allValidSessions = getValidInternalSessions();
             Enumeration enumerator = allValidSessions.elements();
-            String nameAttr = AMStoreConnection.getUserNamingAttribute();
-
             boolean matchAll = pattern.equals("*");
 
             while (enumerator.hasMoreElements()) {
@@ -990,9 +995,9 @@ public class SessionService {
                 if (!matchAll) {
                     // For non-expiring (app) sessions, the client ID
                     // will not be in the DN format but just uid.
-                    String clientID = (sess.willExpire()) ? new X500Name(sess
-                            .getClientID()).getAttributeValue(nameAttr) : sess
-                            .getClientID();
+                    String clientID = (sess.willExpire()) ? 
+                        DNUtils.DNtoName(sess.getClientID()) :
+                        sess.getClientID();
 
                     if (clientID == null) {
                         continue;
@@ -1006,14 +1011,14 @@ public class SessionService {
                 }
 
                 if (sessions.size() == SessionConfigListener.getMaxsize()) {
-                    status[0] = SearchResults.SIZE_LIMIT_EXCEEDED;
+                    status[0] = IdSearchResults.SIZE_LIMIT_EXCEEDED;
                     break;
                 }
                 sessions.addElement(sess);
 
                 if ((System.currentTimeMillis() - startTime) >= 
                     SessionConfigListener.getTimeout()) {
-                    status[0] = SearchResults.TIME_LIMIT_EXCEEDED;
+                    status[0] = IdSearchResults.TIME_LIMIT_EXCEEDED;
                     break;
                 }
             }
@@ -1200,9 +1205,12 @@ public class SessionService {
                     + s.getID().toString());
         }
         try {
-            AMUser user = getUser(s);
-            Set orgList = user
-                    .getAttribute("iplanet-am-session-get-valid-sessions");
+            AMIdentity user = getUser(s);
+            Set orgList = user.getAttribute(
+                "iplanet-am-session-get-valid-sessions");
+            if (orgList == null) {
+                orgList = Collections.EMPTY_SET;
+            }
             Vector sessions = sessionService.getValidInternalSessions(pattern,
                     status);
 
@@ -1264,7 +1272,7 @@ public class SessionService {
                     sessionService.destroyInternalSession(sid);
                     return;
                 }
-                AMUser user = getUser(s);
+                AMIdentity user = getUser(s);
                 Set orgList = user
                         .getAttribute("iplanet-am-session-destroy-sessions");
                 if (!orgList.contains(s.getClientDomain())) {
@@ -1329,10 +1337,13 @@ public class SessionService {
             return;
         }
         try {
-            AMUser user = getUser(s);
-            String value = user.getStringAttribute(
-                    "iplanet-am-session-add-session-listener-on-all-sessions");
-            if (value.equals("false")) {
+            AMIdentity user = getUser(s);
+            Set values = user.getAttribute(
+                "iplanet-am-session-add-session-listener-on-all-sessions");
+            String value = ((values != null) && !values.isEmpty()) ?
+                (String)values.iterator().next() : null;
+            
+            if ((value == null) || value.equals("false")) {
                 throw new SessionException(SessionBundle.rbName, "noPrivilege",
                         null);
             }
@@ -2085,18 +2096,22 @@ public class SessionService {
     /**
      * Returns the User of the Session
      * 
+     * @param s Session
      * @exception SessionException
      * @exception SSOException
-     * @exception AMException
-     * @param s
-     *            Session
      */
-    private AMUser getUser(Session s) throws SessionException, SSOException,
-            AMException {
+    private AMIdentity getUser(Session s)
+        throws SessionException, SSOException {
         SSOToken ssoSession = getSSOTokenManager().createSSOToken(
                 s.getID().toString());
-        AMStoreConnection dpStore = new AMStoreConnection(ssoSession);
-        return dpStore.getUser(s.getClientID());
+        AMIdentity user = null;
+        try {
+            user = IdUtils.getIdentity(ssoSession);
+        } catch (IdRepoException e) {
+            sessionDebug.error(
+                "SessionService: failed to get the user's identity object", e);
+        }
+        return user;
     }
 
     /**
@@ -2104,33 +2119,29 @@ public class SessionService {
      * 
      * @exception SessionException
      * @exception SSOException
-     * @exception AMException
-     * @param s
-     *            Session
+     * @param s Session.
      */
-    private boolean hasTopLevelAdminRole(Session s) throws SessionException,
-            SSOException, AMException {
+    private boolean hasTopLevelAdminRole(Session s)
+        throws SessionException, SSOException
+    {
         SSOToken ssoSession = getSSOTokenManager().createSSOToken(
                 s.getID().toString());
-
         return hasTopLevelAdminRole(ssoSession, s.getClientID());
     }
 
     /**
      * Returns true if the user has top level admin role
      * 
-     * @param clientID
-     *            the client ID of the login user
+     * @param clientID the client ID of the login user
      */
     protected boolean hasTopLevelAdminRole(String clientID) {
-
         boolean isTopLevelAdmin = false;
         try {
             isTopLevelAdmin = hasTopLevelAdminRole(getAdminToken(), clientID);
         } catch (Exception e) {
             SessionService.sessionDebug.error(
-                    "Error occurs when checking whether the login "
-                            + "user has the top level admin role.", e);
+                "Error occurs when checking whether the login " +
+                "user has the top level admin role.", e);
         }
         return isTopLevelAdmin;
     }
@@ -2138,56 +2149,32 @@ public class SessionService {
     /**
      * Returns true if the user has top level admin role
      * 
+     * @param tokenUsedForSearch Single Sign on token used to do the search.
+     * @param clientID Client ID of the login user.
      * @exception SessionException
      * @exception SSOException
-     * @exception AMException
-     * @param tokenUsedForSearch
-     *            the sso token used to do the search
-     * @param clientID
-     *            the client ID of the login user
      */
-    private boolean hasTopLevelAdminRole(SSOToken tokenUsedForSearch,
-            String clientID) throws SessionException, SSOException, AMException 
+    private boolean hasTopLevelAdminRole(
+        SSOToken tokenUsedForSearch,
+        String clientID
+    ) throws SessionException, SSOException
     {
-
-        AMStoreConnection amStore = new AMStoreConnection(tokenUsedForSearch);
-        AMUser user = amStore.getUser(clientID);
-        AMRole role = null;
-        Set roles = user.getRoleDNs();
-        boolean isTopLevelAdmin = false;
-
-        // check if any of the user's role is top level admin role
-        if (roles != null && !roles.isEmpty()) {
-
-            Iterator iter = roles.iterator();
-            while (iter.hasNext() && !isTopLevelAdmin) {
-
-                String roleDN = (String) iter.next();
-
-                try {
-                    int roleType = amStore.getAMObjectType(roleDN);
-
-                    if (roleType == AMObject.ROLE
-                            || roleType == AMObject.FILTERED_ROLE) {
-                        if (amStore.isValidEntry(roleDN)) {
-                            role = amStore.getRole(roleDN);
-                            isTopLevelAdmin = (role.getRoleType() == 
-                                AMRole.TOP_LEVEL_ADMIN_ROLE);
-
-                        }
-                    }
-                } catch (AMException ame) {
-                    // bypass the cases where a role is not an IS
-                    // managed role
-                    if (sessionDebug.messageEnabled()) {
-                        sessionDebug.message(
-                                "SessionService.hasTopLevelAdminRole, role DN="
-                                        + roleDN, ame);
-                    }
-                }
-            }
+        boolean topLevelAdmin = false;
+        Set actions = new HashSet();
+        actions.add(PERMISSION_READ);
+        actions.add(PERMISSION_MODIFY);
+        actions.add(PERMISSION_DELEGATE);
+        try {
+            DelegationPermission perm = new DelegationPermission(
+                "/", "*", "*", "*", "*", actions, Collections.EMPTY_MAP);
+            DelegationEvaluator evaluator = new DelegationEvaluator();
+            topLevelAdmin = evaluator.isAllowed(
+                tokenUsedForSearch, perm, Collections.EMPTY_MAP);
+        } catch (DelegationException de) {
+            sessionDebug.error("SessionService.hasTopLevelAdminRole: " +
+                "failed to check the delegation permission.", de);
         }
-        return isTopLevelAdmin;
+        return topLevelAdmin;
     }
 
     /**
