@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.3 2006-01-19 00:30:55 rarcot Exp $
+ * $Id: SMSLdapObject.java,v 1.4 2006-05-31 21:50:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -511,7 +511,7 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
 
         // Construct the filter
         String[] objs = { filter };
-        String sfilter = MessageFormat.format(getSearchFilter(), objs);
+        String sfilter = MessageFormat.format(getSearchFilter(),(Object[])objs);
         Set answer = getSubEntries(token, dn, sfilter, numOfEntries,
                 sortResults, ascendingOrder);
         return (answer);
@@ -610,7 +610,8 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
 
         // Construct the filter
         String[] objs = { filter, sidFilter };
-        String sfilter = MessageFormat.format(getServiceIdSearchFilter(), objs);
+        String sfilter = MessageFormat.format(
+            getServiceIdSearchFilter(), (Object[])objs);
         Set answer = getSubEntries(token, dn, sfilter, numOfEntries,
                 sortResults, ascendingOrder);
         return (answer);
@@ -918,7 +919,8 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
                 + SMSEntry.OC_REALM_SERVICE + ")(" + SMSEntry.ORGANIZATION_RDN
                 + "={0}))";
 
-        String sfilter = MessageFormat.format(FILTER_PATTERN_ORG, objs);
+        String sfilter = MessageFormat.format(
+            FILTER_PATTERN_ORG, (Object[])objs);
         Set answer = searchSubOrganizationNames(token, dn, sfilter,
                 numOfEntries, sortResults, ascendingOrder, recursive);
         return (answer);
@@ -1072,7 +1074,8 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
                 + SMSEntry.OC_SERVICE_COMP + "){0}))";
 
         String[] objs = { filter };
-        String sfilter = MessageFormat.format(FILTER_PATTERN_SEARCH_ORG, objs);
+        String sfilter = MessageFormat.format(
+            FILTER_PATTERN_SEARCH_ORG, (Object[])objs);
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject:orgNames search filter: " + sfilter);
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCUtil.java,v 1.1 2005-11-01 00:31:15 arvindp Exp $
+ * $Id: JAXRPCUtil.java,v 1.2 2006-05-31 21:50:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -200,36 +200,33 @@ public class JAXRPCUtil {
             // Due to compilation errors, this function has been
             // made to use reflections
             Class imsClass = Class.forName(
-                    "com.sun.identity.jaxrpc.IdentityManagementServices_Impl");
+                "com.sun.identity.jaxrpc.IdentityManagementServices_Impl");
             Object imsImpl = imsClass.newInstance();
             Method method = null;
             if (iurl.endsWith(SMS_SERVICE)) {
                 // Obtain the method "getSMSObjectIFPort" and invoke it
-                method = imsClass.getMethod("getSMSObjectIFPort", null);
+                method = imsClass.getMethod(
+                    "getSMSObjectIFPort", (Class)null);
             } // %%% Add other service names here
 
             // Obtain the stub to be returned
-            s = (Stub) method.invoke(imsImpl, null);
+            s = (Stub)method.invoke(imsImpl, (Object[])null);
         } catch (ClassNotFoundException cnfe) {
-            // Debug it
             if (debug.warningEnabled()) {
                 debug.warning("JAXRPCUtil: unable to find class "
                         + "IdentityManagementServices_Impl", cnfe);
             }
         } catch (InstantiationException ne) {
-            // Debug it
             if (debug.warningEnabled()) {
                 debug.warning("JAXRPCUtil: unable to instantiate class "
                         + "IdentityManagementServices_Impl", ne);
             }
         } catch (IllegalAccessException iae) {
-            // Debug it
             if (debug.warningEnabled()) {
                 debug.warning("JAXRPCUtil: Illegal access to class "
                         + "IdentityManagementServices_Impl", iae);
             }
         } catch (Throwable t) {
-            // Catch the remaining
             if (debug.warningEnabled()) {
                 debug.warning("JAXRPCUtil:getServiceEndPoint exception", t);
             }

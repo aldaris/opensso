@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSMigration.java,v 1.1 2005-11-01 00:31:28 arvindp Exp $
+ * $Id: SMSMigration.java,v 1.2 2006-05-31 21:50:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,8 +98,8 @@ public class SMSMigration {
         // Search for entries with service name and version
         String[] objs = { serviceName, version };
         Iterator results = SMSEntry.search(
-                MessageFormat.format(SMSEntry.FILTER_PATTERN_SERVICE, objs))
-                .iterator();
+            MessageFormat.format(
+                SMSEntry.FILTER_PATTERN_SERVICE, (Object[])objs)).iterator();
         while (results.hasNext()) {
             SMSEntry smsEntry = (SMSEntry) results.next();
             String dn = smsEntry.getDN();

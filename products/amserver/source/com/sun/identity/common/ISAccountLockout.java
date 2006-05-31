@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.4 2006-03-29 23:03:38 pawand Exp $
+ * $Id: ISAccountLockout.java,v 1.5 2006-05-31 21:50:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -459,8 +459,8 @@ public class ISAccountLockout {
                 String fromAddress = rb.getString(FROM_ADDRESS);
                 String emailSubject = rb.getString(EMAIL_SUBJECT);
                 String obj[] = { userDN };
-                String emailMsg =
-                MessageFormat.format(rb.getString(EMAIL_MESSAGE), obj);
+                String emailMsg = MessageFormat.format(
+                    rb.getString(EMAIL_MESSAGE), (Object[])obj);
                 if ( debug.messageEnabled()) {
                     debug.message("sendLockOutNotice:lockoutNotification="
                     + lockoutNotification + " toAddress=" +toAddress);

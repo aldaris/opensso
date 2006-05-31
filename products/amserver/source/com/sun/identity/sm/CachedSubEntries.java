@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.2 2006-03-06 21:29:57 arviranga Exp $
+ * $Id: CachedSubEntries.java,v 1.3 2006-05-31 21:50:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,8 @@ class CachedSubEntries {
             this.dn = cEntry.dn;
             update();
             Class c = this.getClass();
-            notificationID = SMSEventListenerManager.notifyChangesToSubNodes(t,
-                    dn, c.getDeclaredMethod("update", null), this, null);
+            notificationID = SMSEventListenerManager.notifyChangesToSubNodes(
+                t, dn, c.getDeclaredMethod("update", (Class[])null), this,null);
         } catch (NoSuchMethodException e) {
             // this should not happen
             debug.error("CachedSubEntries: unable to register "

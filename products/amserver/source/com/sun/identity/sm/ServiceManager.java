@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.4 2006-03-06 21:29:57 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.5 2006-05-31 21:50:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -530,7 +530,8 @@ public class ServiceManager {
         SMSEntry.validateToken(token);
         String[] objs = { serviceName };
         Iterator results = SMSEntry.search(
-                MessageFormat.format(SMSEntry.FILTER_PATTERN, objs)).iterator();
+            MessageFormat.format(SMSEntry.FILTER_PATTERN, (Object[])objs))
+            .iterator();
         while (results.hasNext()) {
             String dn = (String) results.next();
             String configdn = SMSEntry.PLACEHOLDER_RDN + SMSEntry.EQUALS

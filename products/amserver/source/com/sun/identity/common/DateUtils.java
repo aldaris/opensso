@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateUtils.java,v 1.1 2005-11-01 00:30:57 arvindp Exp $
+ * $Id: DateUtils.java,v 1.2 2006-05-31 21:50:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,7 +76,7 @@ public class DateUtils {
         params[4] = formatInteger(cal.get(Calendar.MINUTE), 2);
         params[5] = formatInteger(cal.get(Calendar.SECOND), 2);
 
-        return MessageFormat.format(format, params);
+        return MessageFormat.format(format, (Object[])params);
     }
 
     private static String formatInteger(int value, int length) {

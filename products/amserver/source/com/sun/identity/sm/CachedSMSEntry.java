@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.1 2005-11-01 00:31:20 arvindp Exp $
+ * $Id: CachedSMSEntry.java,v 1.2 2006-05-31 21:50:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class CachedSMSEntry {
         try {
             Class c = this.getClass();
             notificationID = SMSEventListenerManager.notifyChangesToNode(token,
-                    smsEntry.getDN(), c.getDeclaredMethod("update", null),
+                smsEntry.getDN(), c.getDeclaredMethod("update", (Class[])null),
                     this, null);
         } catch (Exception ce) {
             SMSEntry.debug.error("CachedSMSEntry: unable to add listener for "
@@ -199,8 +199,9 @@ public class CachedSMSEntry {
         while (objs.hasNext()) {
             Object obj = objs.next();
             try {
-                Method m = obj.getClass().getDeclaredMethod(method, null);
-                m.invoke(obj, null);
+                Method m = obj.getClass().getDeclaredMethod(method,
+                    (Class[])null);
+                m.invoke(obj, (Object[])null);
             } catch (Exception e) {
                 SMSEntry.debug.error("CachedSMSEntry::unable to "
                         + "deliver notification(" + dn + ")", e);
@@ -220,8 +221,8 @@ public class CachedSMSEntry {
                     return;
                 }
                 notificationID = SMSEventListenerManager.notifyChangesToNode(
-                        token, smsEntry.getDN(), c.getDeclaredMethod("update",
-                                null), this, null);
+                    token, smsEntry.getDN(),
+                    c.getDeclaredMethod("update", (Class[])null), this, null);
             } catch (Exception ce) {
                 // this should not happen
                 SMSEntry.debug.error("CachedSMSEntry::unable to register "

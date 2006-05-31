@@ -1,0 +1,263 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: UpdateService.java,v 1.1 2006-05-31 21:50:08 veiming Exp $
+ *
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.cli.schema;
+
+
+import com.iplanet.am.util.XMLUtils;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.cli.AuthenticatedCommand;
+import com.sun.identity.cli.CLIConstants;
+import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.Debugger;
+import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.IArgument;
+import com.sun.identity.cli.IOutput;
+import com.sun.identity.cli.LogWriter;
+import com.sun.identity.cli.RequestContext;
+import com.sun.identity.policy.PolicyUtils;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSSchema;
+import com.sun.identity.sm.SMSUtils;
+import com.sun.identity.sm.SchemaException;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+/**
+ * Update service schema.
+ */
+public class UpdateService extends AuthenticatedCommand {
+    /**
+     * Updates service schema. Delete the service schema if it exists and
+     * load the schema.
+     *
+     * @param rc Request Context.
+     * @throws CLIException if request cannot be processed.
+     */
+    public void handleRequest(RequestContext rc) 
+        throws CLIException {
+        super.handleRequest(rc);
+        ldapLogin();
+        SSOToken adminSSOToken = getAdminSSOToken();
+
+        boolean continueFlag = isOptionSet(IArgument.CONTINUE);
+        IOutput outputWriter = getOutputWriter();        
+        List xmlFiles = (List)rc.getOption(IArgument.XML_FILE);
+        ServiceManager ssm = null;
+        
+        try {
+            ssm = new ServiceManager(adminSSOToken);
+        } catch (SMSException e) {
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SSOException e) {
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+       
+        for (Iterator i = xmlFiles.iterator(); i.hasNext(); ) {
+            String file = (String)i.next();
+            FileInputStream fis = null;
+
+            try {
+                fis = new FileInputStream(file);
+                List<String> serviceNames = getServiceNames(fis);
+                deleteServices(rc, ssm, serviceNames, adminSSOToken,
+                    continueFlag, outputWriter);
+                loadSchema(ssm, file);
+                outputWriter.printlnMessage(
+                    getResourceString("service-updated"));
+            } catch (CLIException e) {
+                if (continueFlag) {
+                    outputWriter.printlnError(
+                        getResourceString("service-updated-failed") +
+                        e.getMessage());
+                    if (isVerbose()) {
+                        outputWriter.printlnError(Debugger.getStackTrace(e));
+                    }
+                } else {
+                    throw e;
+                }
+            } catch (FileNotFoundException e) {
+                if (continueFlag) {
+                    outputWriter.printlnError(
+                        getResourceString("service-updated-failed") +
+                        e.getMessage());
+                    if (isVerbose()) {
+                        outputWriter.printlnError(Debugger.getStackTrace(e));
+                    }
+                } else {
+                    throw new CLIException(
+                        e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException ie) {
+                        //igore if file input stream cannot be closed.
+                    }
+                }
+            }
+        }
+    }
+
+    private void loadSchema(ServiceManager ssm, String fileName)
+        throws CLIException {
+        String[] param = {fileName};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_LOAD_SCHEMA", param);
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream(fileName);
+            ssm.registerServices(fis);
+        } catch (IOException e) {
+            String[] args = {fileName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "FAILED_LOAD_SCHEMA",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SSOException e) {
+            String[] args = {fileName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "FAILED_LOAD_SCHEMA",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {fileName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "FAILED_LOAD_SCHEMA",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ie) {
+                    //igore if file input stream cannot be closed.
+                }
+            }
+        }
+    }
+
+    private List<String> getServiceNames(FileInputStream fis)
+        throws CLIException
+    {
+        List<String> serviceNames = new ArrayList<String>();
+        try {
+            Document doc = SMSSchema.getXMLDocument(fis);
+            NodeList nodes = doc.getElementsByTagName("Service");
+
+            if (nodes != null) {
+                int len = nodes.getLength();
+
+                for (int i = 0; i < len; i++) {
+                    Node serviceNode = nodes.item(i);
+                    String name = XMLUtils.getNodeAttributeValue(
+                        serviceNode, "name");
+                    if ((name != null) && (name.length() > 0)) {
+                        serviceNames.add(name);
+                    }
+                }
+            }
+        } catch (SMSException e) {
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        return serviceNames;
+    }
+
+    private void deleteServices(
+        RequestContext rc,
+        ServiceManager ssm,
+        List<String> serviceNames, 
+        SSOToken adminSSOToken,
+        boolean continueFlag,
+        IOutput outputWriter
+    ) throws CLIException {
+        for (String name : serviceNames) {
+            try {
+                String[] param = {name};
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "ATTEMPT_DELETE_SERVICE", param);
+                deleteService(rc, ssm, name, adminSSOToken);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEED_DELETE_SERVICE", param);
+            } catch (CLIException e) {
+                if (continueFlag) {
+                    if (isVerbose()) {
+                        outputWriter.printlnError(Debugger.getStackTrace(e));
+                    }
+                } else {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    private void deleteService(
+        RequestContext rc,
+        ServiceManager ssm,
+        String serviceName, 
+        SSOToken adminSSOToken
+    ) throws CLIException {
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(
+                serviceName, adminSSOToken);
+
+            if (scm.getGlobalConfig(null) != null) {
+                scm.removeGlobalConfiguration(null);
+            }
+
+            if (serviceName.equalsIgnoreCase(CLIConstants.AUTH_CORE_SERVICE)) {
+                ssm.deleteService(serviceName);
+            } else {
+                Set versions = ssm.getServiceVersions(serviceName);
+                for (Iterator iter = versions.iterator(); iter.hasNext(); ) {
+                    ssm.removeService(serviceName, (String)iter.next());
+                }
+            }
+        } catch (SSOException e) {
+            String[] args = {serviceName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_DELETE_SERVICE", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {serviceName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_DELETE_SERVICE", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+}

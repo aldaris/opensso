@@ -1,0 +1,136 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: IArgument.java,v 1.1 2006-05-31 21:49:44 veiming Exp $
+ *
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.cli;
+
+
+/**
+ * Arguments constants.
+ */
+public interface IArgument {
+    /**
+     * Resource bundle argument.
+     */
+    String RESOURCE_BUNDLE_NAME = "bundlename";
+
+    /**
+     * Resource bundle locale argument.
+     */
+    String RESOURCE_BUNDLE_LOCALE = "bundlelocale";
+
+    /**
+     * Service name argument.
+     */
+    String SERVICE_NAME = "servicename";
+
+    /**
+     * Sub Configuration name argument.
+     */
+    String SUB_CONFIGURATION_NAME = "subconfigname";
+
+    /**
+     * Sub Schema Name.
+     */
+    String SUBSCHEMA_NAME = "subschemaname";
+
+    /**
+     * Schema Type.
+     */
+    String SCHEMA_TYPE = "schematype";
+
+    /**
+     * Choice values.
+     */
+    String CHOICE_VALUES = "choicevalues";
+
+    /**
+     * Attribute names.
+     */
+    String ATTRIBUTE_NAMES = "attributenames";
+
+    /**
+     * Attribute schema name.
+     */
+    String ATTRIBUTE_SCHEMA = "attributeschema";
+
+    /**
+     * Attribute name.
+     */
+    String ATTRIBUTE_NAME = "attributename";
+
+    /**
+     * Default values.
+     */
+    String DEFAULT_VALUES = "defaultvalues";
+
+    /**
+     * Type of sub configuration.
+     */
+    String SUB_CONFIGURATION_ID = "subconfigid";
+
+    /**
+     * Realm name argument.
+     */
+    String REALM_NAME = "realm";
+
+    /**
+     * Data file argument.
+     */
+    String DATA_FILE = "datafile";
+
+    /**
+     * Mandatory argument.
+     */
+    String MANDATORY = "mandatory";
+
+    /**
+     * Recursive argument.
+     */
+    String RECURSIVE = "recursive";
+
+    /**
+     * Filter pattern argument.
+     */
+    String PATTERN = "pattern";
+
+    /**
+     * Continue argument.
+     */
+    String CONTINUE = "continue";
+
+    /**
+     * XML file argument.
+     */
+    String XML_FILE = "xmlfile";
+
+    /**
+     * Privileges argument.
+     */
+    String PRIVILEGES = "privileges";
+
+    /**
+     * Attribute value pair argument.
+     */
+    String ATTRIBUTE_VALUES = "attributevalues";
+}

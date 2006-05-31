@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.2 2005-12-08 01:16:50 veiming Exp $
+ * $Id: AttributeSchema.java,v 1.3 2006-05-31 21:50:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -763,11 +763,12 @@ public class AttributeSchema {
             String i18nKey = (String) choiceValues.get(value);
             if (i18nKey == null) {
                 vals[0] = value;
-                sb.append(MessageFormat.format(CHOICE_VALUE, vals));
+                sb.append(MessageFormat.format(CHOICE_VALUE, (Object[])vals));
             } else {
                 vals[0] = i18nKey;
                 vals[1] = value;
-                sb.append(MessageFormat.format(CHOICE_VALUE_KEY, vals));
+                sb.append(MessageFormat.format(
+                    CHOICE_VALUE_KEY, (Object[])vals));
             }
         }
         sb.append(CHOICE_VALUES_END);

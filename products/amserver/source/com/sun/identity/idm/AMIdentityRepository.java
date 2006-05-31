@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.5 2006-05-25 19:26:20 goodearth Exp $
+ * $Id: AMIdentityRepository.java,v 1.6 2006-05-31 21:50:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -324,8 +324,25 @@ public final class AMIdentityRepository {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
+     * @deprecated As of release AM 7.1, replaced by
+     * {@link #deleteIdentities(Set identities)}
      */
     public void deleteIdentities(IdType type, Set identities)
+            throws IdRepoException, SSOException {
+        deleteIdentities(identities);
+    }
+
+    /**
+     * Deletes identities. The Set passed is a Set of identity names.
+     * 
+     * @param identities
+     *            Set of AMIDentity objects to be deleted
+     * @throws IdRepoException
+     *             if there are repository related error conditions.
+     * @throws SSOException
+     *             if user's single sign on token is invalid.
+     */
+    public void deleteIdentities(Set identities)
             throws IdRepoException, SSOException {
         if (identities == null || identities.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
