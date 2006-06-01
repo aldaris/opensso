@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.9 2006-04-05 19:48:36 kenwho Exp $
+   $Id: idRepoService.xml,v 1.10 2006-06-01 02:31:02 kenwho Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -498,9 +498,6 @@
                         type="single"
                         syntax="string"
                         i18nKey="a2023">
-                        <DefaultValues>
-                            <Value>memberOf</Value>
-                        </DefaultValues>
                     </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-uniquemember"
@@ -1786,9 +1783,6 @@
                         type="single"
                         syntax="string"
                         i18nKey="a2023">
-                        <DefaultValues>
-                            <Value>memberOf</Value>
-                        </DefaultValues>
                     </AttributeSchema>
 
                     <AttributeSchema name="sun-idrepo-ldapv3-config-uniquemember"

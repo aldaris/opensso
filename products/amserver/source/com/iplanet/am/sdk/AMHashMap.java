@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMHashMap.java,v 1.1 2005-11-01 00:29:08 arvindp Exp $
+ * $Id: AMHashMap.java,v 1.2 2006-06-01 02:32:42 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 
 /**
  * This class will lower the case of the key that is used to access the HashMap.
@@ -47,7 +49,7 @@ import java.util.Set;
  * Note: For byte values there is no negative caching done.
  * 
  */
-public class AMHashMap extends HashMap {
+public class AMHashMap extends CaseInsensitiveHashMap {
 
     private boolean byteValues = false;
 
@@ -91,22 +93,6 @@ public class AMHashMap extends HashMap {
         }
     }
 
-    public boolean containsKey(Object key) {
-        return (super.containsKey(((String) key).toLowerCase()));
-    }
-
-    public Object get(Object key) {
-        return (super.get(((String) key).toLowerCase()));
-    }
-
-    public Object put(Object key, Object value) {
-        return (super.put(((String) key).toLowerCase(), value));
-    }
-
-    public Object remove(Object key) {
-        return (super.remove(((String) key).toLowerCase()));
-    }
-
     /*
      * Override the default isEmpty(). This map is not empty, if the type is
      * byteValues and if either the map is not empty or the negative set is not
@@ -132,14 +118,14 @@ public class AMHashMap extends HashMap {
 
     private void addNegativeByteAttr(String name) {
         if (byteNegativeAttrs == Collections.EMPTY_SET) {
-            byteNegativeAttrs = new HashSet();
+            byteNegativeAttrs = new CaseInsensitiveHashSet();
         }
-        byteNegativeAttrs.add(name.toLowerCase());
+        byteNegativeAttrs.add(name);
     }
 
     private void removeNegativeByteAttr(String name) {
         if (byteNegativeAttrs != Collections.EMPTY_SET) {
-            byteNegativeAttrs.remove(name.toLowerCase());
+            byteNegativeAttrs.remove(name);
         }
     }
 
@@ -152,7 +138,7 @@ public class AMHashMap extends HashMap {
     private boolean isNegativeByteAttr(String name) {
         // Collections.EMPTY_SET implements contains and returns false. So, we
         // are okay here.
-        return byteNegativeAttrs.contains(name.toLowerCase());
+        return byteNegativeAttrs.contains(name);
     }
 
     /*

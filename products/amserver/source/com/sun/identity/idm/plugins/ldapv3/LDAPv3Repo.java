@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.9 2006-04-17 19:57:35 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.10 2006-06-01 02:31:53 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1966,8 +1966,12 @@ public class LDAPv3Repo extends IdRepo {
         return results;
     }
 
-    private Set getGroupMemberShips(SSOToken token, IdType type, String name,
-            IdType membershipType) throws IdRepoException, SSOException {
+    private Set getGroupMemberFromUser(
+        SSOToken token,
+        IdType type,
+        String name,
+        IdType membershipType)
+        throws IdRepoException, SSOException {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
@@ -1980,9 +1984,14 @@ public class LDAPv3Repo extends IdRepo {
         String getAttrs[] = { memberOfAttr };
         Set groupDNs = new HashSet();
         String dn = getDN(type, name);
+
+        if (debug.messageEnabled()) {
+            debug.message("  getGroupMemberFromUser: dn=" + dn +
+                    ";  memberOfAttr=" + memberOfAttr);
+        }
         try {
             LDAPEntry foundEntry = ld.read(dn, getAttrs);
-            LDAPAttribute ldapAttr = foundEntry.getAttribute(memberOfAttr);
+            LDAPAttribute ldapAttr = foundEntry.getAttribute( memberOfAttr);
             if (ldapAttr != null) {
                 Enumeration enumVals = ldapAttr.getStringValues();
                 while ((enumVals != null) && enumVals.hasMoreElements()) {
@@ -2002,7 +2011,93 @@ public class LDAPv3Repo extends IdRepo {
         } finally {
             connPool.close(ld);
         }
-        return groupDNs;
+        return  groupDNs;
+    }
+
+    private Set getGroupMemberSearch(
+        SSOToken token,
+        IdType type,
+        String name,
+        IdType membershipType)
+        throws IdRepoException, SSOException {
+
+        checkConnPool();
+        LDAPConnection ld = connPool.getConnection();
+        if (cacheEnabled) {
+            ld.setCache(ldapCache);
+        }
+        LDAPSearchConstraints constraints = ld.getSearchConstraints();
+        constraints.setMaxResults(defaultMaxResults);
+        constraints.setServerTimeLimit(timeLimit);
+        Set groupDNs = new HashSet();
+        String dn = getDN(type, name);
+        String baseDN = getBaseDN(IdType.GROUP);
+        String attrs[] = { "dn" };
+        int searchGroupScope = searchScope;
+        String grpMembershipFilter = "(&" + groupSearchFilter +
+                "(" + uniqueMemberAttr + "=" + dn + "))";
+
+        try {
+            if (debug.messageEnabled()) {
+                  debug.message("getGroupMemberSearch: dn=" + dn +
+                      "; basedn=" + baseDN +
+                      "; scope=" + searchGroupScope +
+                      "\n  grpMembershipFilter=" + grpMembershipFilter);
+            }
+            LDAPSearchResults results = ld.search(baseDN, searchGroupScope,
+                    grpMembershipFilter, attrs, false);
+            LDAPEntry entry = null;
+            while (results.hasMoreElements()) {
+                try {
+                    entry = results.next();
+                    String groupdn = entry.getDN();
+                    groupDNs.add(groupdn);
+                    if (debug.messageEnabled()) {
+                        debug.message("getGroupMemberSearch: groupdn=" +
+                            groupdn + "; entry=" + entry);
+                    }
+                } catch (LDAPReferralException refe) {
+                    debug.message("LDAPReferral Detected.");
+                    continue;
+                }
+            }
+        } catch (LDAPException e) {
+            int ldapResultCode = e.getLDAPResultCode();
+            if (debug.messageEnabled()) {
+                debug.message("  Search for User error: ", e);
+                debug.message("resultCode: " + ldapResultCode);
+            }
+            String ldapError = Integer.toString(ldapResultCode);
+            Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
+            IdRepoException ide = new IdRepoException(
+                    IdRepoBundle.BUNDLE_NAME, "311", args);
+            ide.setLDAPErrorCode(ldapError);
+            throw ide;
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
+        }
+
+        return  groupDNs;
+    }
+
+    private Set getGroupMemberShips(
+        SSOToken token,
+        IdType type,
+        String name,
+        IdType membershipType)
+        throws IdRepoException, SSOException {
+
+        if (debug.messageEnabled()) {
+            debug.message("LDAPv3Repo. getGroupMemberShips: type=" +
+                type + ";  name=" + name +
+                ";  membershipType=" + membershipType);
+        }
+        Set groupDNs = (memberOfAttr == null) ?
+                getGroupMemberSearch(token, type, name, membershipType) :
+                getGroupMemberFromUser(token, type, name, membershipType);
+        return  groupDNs;
     }
 
     private Set getManagedRoleMemberShips(SSOToken token, IdType type,
@@ -2164,7 +2259,6 @@ public class LDAPv3Repo extends IdRepo {
     private void modifyGroupMembership(SSOToken token, IdType type,
             String name, Set usersSet, IdType membersType, int operation)
             throws IdRepoException, SSOException {
-
         checkConnPool();
         String groupDN = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
@@ -2175,22 +2269,35 @@ public class LDAPv3Repo extends IdRepo {
         while (it.hasNext()) {
             String userDN = (String) it.next();
             LDAPAttribute mbr1 = new LDAPAttribute(uniqueMemberAttr, userDN);
-            LDAPAttribute mbrOf = new LDAPAttribute(memberOfAttr, groupDN);
+            LDAPAttribute mbrOf = null;
+            if (memberOfAttr != null) {
+                mbrOf = new LDAPAttribute(memberOfAttr, groupDN);
+            }
+
             LDAPModification mod = null;
             LDAPModification modMemberOf = null;
             switch (operation) {
             case ADDMEMBER:
-                mod = new LDAPModification(LDAPModification.ADD, mbr1);
-                modMemberOf = new LDAPModification(LDAPModification.ADD, mbrOf);
+                mod = new LDAPModification(
+                    LDAPModification.ADD, mbr1);
+                if (mbrOf != null) {
+                    modMemberOf = new LDAPModification(
+                        LDAPModification.ADD, mbrOf);
+                }
                 break;
             case REMOVEMEMBER:
-                mod = new LDAPModification(LDAPModification.DELETE, mbr1);
-                modMemberOf = new LDAPModification(LDAPModification.DELETE,
-                        mbrOf);
+                mod = new LDAPModification(
+                    LDAPModification.DELETE, mbr1);
+                if (mbrOf != null) {
+                    modMemberOf = new LDAPModification(
+                        LDAPModification.DELETE, mbrOf);
+                }
             }
             try {
-                ld.modify(groupDN, mod);
-                ld.modify(userDN, modMemberOf);
+                ld.modify(groupDN,  mod);
+                if (mbrOf != null) {
+                    ld.modify(userDN, modMemberOf);
+                }
             } catch (LDAPException lde) {
                 int resultCode = lde.getLDAPResultCode();
                 debug.error("LDAPv3Repo: modifyGroupMembership ld.modify: "
@@ -3610,52 +3717,54 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         if (changeType == LDAPPersistSearchControl.ADD) {
-            DN fqdn = new DN(dn);
-            DN parentDN = fqdn.getParent();
-
-            do {  
-                flushStatus = ldapCache.flushEntries(parentDN.toString(),
-                    LDAPv2.SCOPE_ONE);
-                if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.ADD: " +
-                        "parent  scope_one flushStatus= " +flushStatus);
-                }
-            } while (flushStatus);
-
-            /*
-             * did not work by itself. still in cache while open subject after
-             * add user.
-             */
-            do {
-                flushStatus = ldapCache.flushEntries(
-                    parentDN.toString(), LDAPv2.SCOPE_BASE);
-                if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.ADD: " +
-                        "parent  scope_base flushStatus= " +flushStatus);
-                }
-            } while (flushStatus);
+            flushStatus = ldapCache.flushEntries(null, LDAPv2.SCOPE_SUB);
         } else if (changeType == LDAPPersistSearchControl.MODIFY) {
             DN fqdn = new DN(dn);
             DN parentDN = fqdn.getParent();
             String parent = parentDN.toString();
+            DN grandParentDN = parentDN.getParent();
+            String grandParent = grandParentDN.toString();
 
             do {
-                flushStatus = ldapCache.flushEntries(dn, LDAPv2.SCOPE_BASE);
+                flushStatus = ldapCache.flushEntries(
+                    parent, LDAPv2.SCOPE_ONE);
                 if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.MODIFY " +
+                    debug.message("objectChanged " +
+                        "LDAPPersistSearchControl.MODIFY " +
+                        "dn scope_base flushStatus= " +flushStatus);
+                }
+            } while (flushStatus);
+            do {
+                flushStatus = ldapCache.flushEntries(
+                    parent, LDAPv2.SCOPE_SUB);
+                if (debug.messageEnabled()) {
+                    debug.message("objectChanged" +
+                        " LDAPPersistSearchControl.MODIFY " +
                         "dn scope_base flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
 
+            // we need to do grandparent because of role membership.
+            // the base of role membershp is 2 levels above user.
             do {
-                flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_SUB);
+                flushStatus = ldapCache.flushEntries(grandParent,
+                    LDAPv2.SCOPE_ONE);
                 if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.MODIFY " +
-                        "dn scope_base flushStatus= " +flushStatus);
+                    debug.message("objectChanged " +
+                        "LDAPPersistSearchControl.MODIFY " +
+                        "grandParent dn scope_base flushStatus= " +
+                        flushStatus);
+                }
+            } while (flushStatus);
+
+            do {
+                flushStatus = ldapCache.flushEntries(
+                    grandParent, LDAPv2.SCOPE_SUB);
+                if (debug.messageEnabled()) {
+                    debug.message("objectChanged " +
+                        "LDAPPersistSearchControl.MODIFY " +
+                        "grandParent dn scope_base flushStatus= " +
+                        flushStatus);
                 }
             } while (flushStatus);
         } else if (changeType == LDAPPersistSearchControl.MODDN) {
@@ -3663,43 +3772,31 @@ public class LDAPv3Repo extends IdRepo {
             DN parentDN = fqdn.getParent();
             String parent = parentDN.toString();
             do {
-                flushStatus = ldapCache.flushEntries(
-                    parent, LDAPv2.SCOPE_ONE); // this includes self.
+                // this includes self.
+                flushStatus = ldapCache.flushEntries(parent, 
+                    LDAPv2.SCOPE_ONE);
                 if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.MODDN " +
-                        "parent scope_one: flushStatus= " +flushStatus);
+                    debug.message("objectChanged " 
+                        + "LDAPPersistSearchControl.MODDN parent"
+                        + " scope_one: flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
 
             do {
-                flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_BASE);
+                flushStatus = ldapCache.flushEntries(parent, 
+                    LDAPv2.SCOPE_BASE);
                 if (debug.messageEnabled()) {
-                    debug.message(
-                        "objectChanged LDAPPersistSearchControl.MODDN " +
-                        "parent scope_base: flushStatus= " +flushStatus);
+                    debug.message("objectChanged " 
+                        + "LDAPPersistSearchControl.MODDN parent"
+                        + " scope_base: flushStatus= " +flushStatus);
                 }
             } while (flushStatus);
-        } else { // assume LDAPPersistSearchControl.DELETE is the only one left.
-            DN fqdn = new DN(dn);
-            DN parentDN = fqdn.getParent();
-            String parent = parentDN.toString();
-            do {
-                flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_SUB);
-                if (debug.messageEnabled()) {
-                    debug.message("objectChanged. other; parent, scope_sub " +
-                        "parent scope_sub flushStatus= " +flushStatus);
-                }
-            } while (flushStatus);
-
-            do {
-                flushStatus = ldapCache.flushEntries(parent, LDAPv2.SCOPE_BASE);
-                if (debug.messageEnabled()) {
-                    debug.message("objectChanged. other2; parent, scope_base " +
-                        "parent scope_base flushStatus= " +flushStatus);
-                }
-            } while (flushStatus);
+        } else { 
+            // assume LDAPPersistSearchControl.DELETE 
+            // is the only one left.
+            flushStatus = ldapCache.flushEntries(null, LDAPv2.SCOPE_SUB);
         }
+
     }
 
 
