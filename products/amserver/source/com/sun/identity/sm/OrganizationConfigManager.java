@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.5 2006-03-21 18:57:26 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.6 2006-06-01 12:08:10 rajesh_mohapatra Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -268,9 +268,8 @@ public class OrganizationConfigManager {
         Object args[] = { subOrgName };
         if (orgExists) {
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                    SMSEntry.bundle
-                            .getString("sms-organization_already_exists1"),
-                    args));
+            "sms-organization_already_exists1",
+            args));
         }
 
         if (coexistMode) {
@@ -1252,7 +1251,7 @@ public class OrganizationConfigManager {
                     "OrganizationConfigManager.getServiceAttributes() Unable " +
                     "to get service attributes. ");
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                    SMSEntry.bundle.getString("sms-no-organization-schema"),
+                    "sms-no-organization-schema",
                     args));
 
         }
