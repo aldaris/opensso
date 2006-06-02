@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.1 2006-04-26 05:14:03 dillidorai Exp $
+ * $Id: PolicyManager.java,v 1.2 2006-06-02 23:25:57 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1410,11 +1410,11 @@ public final class PolicyManager {
 
     public Set getManagedResourceNames(String serviceName) 
             throws PolicyException {
-        Set managedResourceNames 
-                = rm.getManagedResourceNames(serviceName);
-                if (managedResourceNames == Collections.EMPTY_SET) {
-                managedResourceNames = new HashSet();
-                }
+        Set managedResourceNames = new HashSet();
+        Set delegatedResourceNames = rm.getManagedResourceNames(serviceName);
+        if (delegatedResourceNames != null) {
+            managedResourceNames.addAll(delegatedResourceNames);
+        }
         if (WEB_AGENT_SERVICE.equalsIgnoreCase(serviceName) 
                 && PolicyConfig.orgAliasMappedResourcesEnabled() ) {
             managedResourceNames.addAll(getOrgAliasMappedResourceNames());
