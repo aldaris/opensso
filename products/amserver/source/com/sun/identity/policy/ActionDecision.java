@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ActionDecision.java,v 1.1 2006-04-26 05:14:00 dillidorai Exp $
+ * $Id: ActionDecision.java,v 1.2 2006-06-02 05:53:08 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,8 @@ public class ActionDecision {
 
     /**
      * No argument constructor
-     * @supported.api
+     * @deprecated No replacement API provided. 
+     * There should be no need to invoke this constructor.
      */
     public ActionDecision() {
     }
