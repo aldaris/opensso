@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Gateway.java,v 1.1 2006-04-26 05:15:33 dillidorai Exp $
+ * $Id: Gateway.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,7 @@ public class Gateway extends HttpServlet {
             actionNames.add(GET);
             actionNames.add(POST);
             pe = ProxyPolicyEvaluatorFactory.getInstance()
-			.getProxyPolicyEvaluator(defToken, WEB_AGENT_SERVICE_NAME);
+                .getProxyPolicyEvaluator(defToken, WEB_AGENT_SERVICE_NAME);
         } catch(Exception e) {
             debug.error("GatewayServlet: Unable to create PolicyEvaluator", e);
             throw new ServletException(e.getMessage());
@@ -184,7 +184,8 @@ public class Gateway extends HttpServlet {
  
             info = getGWServletUtilsFromMap(advices);           
             if (debug.messageEnabled()) {
-                debug.message("GatewayServlet: advice from getPolicyAdvice() : " + advice);
+                debug.message("GatewayServlet: advice from getPolicyAdvice(): "
+                    + advice);
             }
                 
             if (advice != null && advice.length() > 0) {
@@ -283,7 +284,8 @@ public class Gateway extends HttpServlet {
 
     private GatewayServletUtils initGWServletUtilsMap(String orgName) {
         GatewayServletUtils utils = null;;
-        OrganizationConfigManager orgConfigMgr = authD.getOrgConfigManager(orgName);
+        OrganizationConfigManager orgConfigMgr = 
+            authD.getOrgConfigManager(orgName);
                 
         try {
             Set registeredServices = orgConfigMgr.getAssignedServices();
@@ -294,7 +296,8 @@ public class Gateway extends HttpServlet {
                      int idx = service.lastIndexOf("Service");
                      String module = null;
                      if (idx > "iPlanetAMAuth".length()) {
-                         module = service.substring("iPlanetAMAuth".length(), idx);
+                         module = service.substring("iPlanetAMAuth".length(), 
+                            idx);
                      } else {
                          continue;
                      }
@@ -358,9 +361,11 @@ public class Gateway extends HttpServlet {
             PolicyDecision pd = null;
             try {
                 HashMap envParameters = new HashMap();
-				pd = pe.getPolicyDecisionIgnoreSubjects(url, actionNames, envParameters);
+                pd = pe.getPolicyDecisionIgnoreSubjects(url, actionNames, 
+                    envParameters);
             } catch (Exception e) {
-                debug.error("GatewayServlet: Error in getting policy decision.", e);
+                debug.error("GatewayServlet: Error in getting policy decision.",
+                    e);
                 return (null);
             }
             Map actionDecisions = pd.getActionDecisions();
@@ -378,8 +383,8 @@ public class Gateway extends HttpServlet {
         String orgName = null;
                 
         if (advices != null) {
-            Set advice = (Set)advices.get(PolicyEvaluator.ADVICING_ORGANIZATION); 
-
+            Set advice = 
+                (Set)advices.get(PolicyEvaluator.ADVICING_ORGANIZATION); 
             if (advice != null) {
                 Iterator items = advice.iterator();
                 if (items.hasNext()) {
@@ -439,7 +444,7 @@ public class Gateway extends HttpServlet {
             debug.message("Auth Scheme : "+scheme);
         }       
 
-        util = (GatewayServletUtils) gwServletUtilsMap.get(authService);                
+        util = (GatewayServletUtils) gwServletUtilsMap.get(authService); 
         if (util != null) {
             info = util.getAuthConfigInfo(orgName);
         }
@@ -458,7 +463,7 @@ public class Gateway extends HttpServlet {
             debug.message("OrgName : "+orgName);
             debug.message("Auth Level : "+level);
             debug.message("No of entries in  GWServletUtilsMap : "
-                                        +gwServletUtilsMap.size());                       
+                +gwServletUtilsMap.size());                       
         }       
                 
         while (keys.hasNext()) {
@@ -495,7 +500,8 @@ public class Gateway extends HttpServlet {
     private static final String GOTO_URL = "goto";
     private static final String LOGIN_URL = "/UI/Login";
     private static final String AUTH_LEVEL_ADVICE = "AuthLevelConditionAdvice";
-    private static final String AUTH_SCHEME_ADVICE = "AuthSchemeConditionAdvice";
+    private static final String AUTH_SCHEME_ADVICE = 
+        "AuthSchemeConditionAdvice";
     private static final String ORG_NAME = "org";
     private static final String AUTH_SCHEME = "module";
     private static final String AUTH_LEVEL = "authlevel";
@@ -504,7 +510,8 @@ public class Gateway extends HttpServlet {
     private static final String ALLOW = "allow";
     private static final String CERT_PROTOCOL = "https://";
     private static final String CERT_SCHEME = "Cert";
-    private static final String WEB_AGENT_SERVICE_NAME = "iPlanetAMWebAgentService";
+    private static final String WEB_AGENT_SERVICE_NAME = 
+        "iPlanetAMWebAgentService";
     private static final String CERT_SERVICE_NAME = "iPlanetAMAuthCertService";
 
     private static Debug debug = Debug.getInstance("amGateway");

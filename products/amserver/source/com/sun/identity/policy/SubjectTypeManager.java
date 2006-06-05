@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectTypeManager.java,v 1.1 2006-04-26 05:14:07 dillidorai Exp $
+ * $Id: SubjectTypeManager.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,8 +66,8 @@ public class SubjectTypeManager {
      * Constructs a <code>SubjectTypeManager</code> object
      */
     protected SubjectTypeManager() throws SSOException {
-	token = ServiceTypeManager.getSSOToken();
-	String lstr = token.getProperty("Locale");
+        token = ServiceTypeManager.getSSOToken();
+        String lstr = token.getProperty("Locale");
         java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(lstr);
         rb = amCache.getResBundle(ResBundleUtils.rbName, loc);
     }
@@ -78,20 +78,20 @@ public class SubjectTypeManager {
      * <code>SubjectTypeManager</code> with
      */
     protected SubjectTypeManager(PolicyManager pm)  {
-	this.pm = pm;
+        this.pm = pm;
         pmRealmName = new DN(pm.getOrganizationDN()).toRFCString()
                 .toLowerCase();
-	token = pm.token;
-	java.util.Locale loc;
-	try {
-	    String lstr = token.getProperty("Locale");
-	    loc = com.iplanet.am.util.Locale.getLocale(lstr);
-	} catch (SSOException ex) {
-	    debug.error(
+        token = pm.token;
+        java.util.Locale loc;
+        try {
+            String lstr = token.getProperty("Locale");
+            loc = com.iplanet.am.util.Locale.getLocale(lstr);
+        } catch (SSOException ex) {
+            debug.error(
                 "SubjectTypeManager:Unable to retreive locale from SSOToken",
                 ex);
-	    loc = Locale.getDefaultLocale();
-	}
+            loc = Locale.getDefaultLocale();
+        }
 
          if (debug.messageEnabled()) {
             debug.message("SubjectManager locale="+loc+"\tI18nFileName = "+
@@ -113,7 +113,7 @@ public class SubjectTypeManager {
      */
     public Set getSubjectTypeNames() throws SSOException,
             PolicyException {
-	return (PolicyManager.getPluginSchemaNames(SUBJECT));
+        return (PolicyManager.getPluginSchemaNames(SUBJECT));
     }
 
     /**
@@ -153,7 +153,7 @@ public class SubjectTypeManager {
      *         not present.
      */
     public String getSubjectTypeName(Subject subject) {
-	return (subjectTypeName(subject));
+        return (subjectTypeName(subject));
     }
 
     /**
@@ -166,8 +166,8 @@ public class SubjectTypeManager {
      * @return i18n properties file name
      */
     protected String getI18NPropertiesFileName(String subjectType) {
-	// %%% Need to get the file name from plugin schema
-	return (null);
+        // %%% Need to get the file name from plugin schema
+        return (null);
     }
 
     /**
@@ -179,11 +179,11 @@ public class SubjectTypeManager {
      * @return i18n key to obtain the display name
      */
     public String getI18NKey(String subjectType) {
-	PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, subjectType);
-	if (ps != null) {
-	    return (ps.getI18NKey());
-	}
-	return (null);
+        PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, subjectType);
+        if (ps != null) {
+            return (ps.getI18NKey());
+        }
+        return (null);
     }
 
     /**
@@ -192,14 +192,14 @@ public class SubjectTypeManager {
      * @return display name for the subject type
      */
     public String getDisplayName(String subjectType) {
-	String displayName = null;
-	String i18nKey = getI18NKey(subjectType);
-	if (i18nKey == null || i18nKey.length() == 0) {
-	    displayName = subjectType;
-	} else {
-	    displayName = Locale.getString(rb,i18nKey,debug);
-	}
-	return displayName;
+        String displayName = null;
+        String i18nKey = getI18NKey(subjectType);
+        if (i18nKey == null || i18nKey.length() == 0) {
+            displayName = subjectType;
+        } else {
+            displayName = Locale.getString(rb,i18nKey,debug);
+        }
+        return displayName;
     }
 
     /**
@@ -214,26 +214,26 @@ public class SubjectTypeManager {
      * @throws PolicyException for any other abnormal condition
      */
     public Subject getSubject(String subjectType)
-	throws NameNotFoundException, PolicyException {
-	PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, subjectType);
-	if (ps == null) {
-	    throw (new NameNotFoundException(ResBundleUtils.rbName,
-		"invalid_subject", null,
-		subjectType, PolicyException.USER_COLLECTION));
-	}
+        throws NameNotFoundException, PolicyException {
+        PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, subjectType);
+        if (ps == null) {
+            throw (new NameNotFoundException(ResBundleUtils.rbName,
+                "invalid_subject", null,
+                subjectType, PolicyException.USER_COLLECTION));
+        }
 
-	// Construct the object
-	Subject answer = null;
-	try {
-	    String className = ps.getClassName();
-	    answer = (Subject) Class.forName(className).newInstance();
-	} catch (Exception e) {
-	    throw (new PolicyException(e));
-	}
+        // Construct the object
+        Subject answer = null;
+        try {
+            String className = ps.getClassName();
+            answer = (Subject) Class.forName(className).newInstance();
+        } catch (Exception e) {
+            throw (new PolicyException(e));
+        }
 
         //initialize with policy config
         answer.initialize(pm.getPolicyConfig());
-	return (answer);
+        return (answer);
     }
 
     /**
@@ -352,12 +352,12 @@ public class SubjectTypeManager {
         } else {
             Policy p = pm.getPolicyUsingRealmSubject(subjectName);
             if ( p != null) {
-                //ObjectInUseException(String rbName, String errCode, 	
+                //ObjectInUseException(String rbName, String errCode,         
                 //Object[] args, String name, Object user) 
                 throw new ObjectInUseException(null, null, null, null, null);
             }
         }
-	Subject subject = realmSubjects.removeSubject(subjectName);
+        Subject subject = realmSubjects.removeSubject(subjectName);
         saveSubjects();
         if (debug.messageEnabled()) {
             debug.message("Removed realm subject : " + subjectName
@@ -418,7 +418,7 @@ public class SubjectTypeManager {
         if (realmSubjects == null) {
             initRealmSubjects();
         }
-	realmSubjects.replaceSubject(subjectName, subject, exclusive);
+        realmSubjects.replaceSubject(subjectName, subject, exclusive);
         saveSubjects();
         if (debug.messageEnabled()) {
             debug.message("Replaced realm subject : " + subjectName
@@ -444,7 +444,7 @@ public class SubjectTypeManager {
             debug.message("Returning subject names from realm: " 
                     +  pmRealmName + ",subjectNames=" + subjectNames);
         }
-	return subjectNames;
+        return subjectNames;
     }
 
     /**
@@ -532,21 +532,22 @@ public class SubjectTypeManager {
      * @return subject type name for the given <code>subject</code>
      */
     static String subjectTypeName(Subject subject) {
-	if (subject == null) {
-	    return (null);
-	}
-	String answer = null;
-	String className = subject.getClass().getName();
-	Iterator items = PolicyManager.getPluginSchemaNames(SUBJECT).iterator();
-	while (items.hasNext()) {
-	    String pluginName = (String) items.next();
-	    PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, pluginName);
-	    if (className.equals(ps.getClassName())) {
-		answer = pluginName;
-		break;
-	    }
-	}
-	return (answer);
+        if (subject == null) {
+            return (null);
+        }
+        String answer = null;
+        String className = subject.getClass().getName();
+        Iterator items = PolicyManager.getPluginSchemaNames(SUBJECT).iterator();
+        while (items.hasNext()) {
+            String pluginName = (String) items.next();
+            PluginSchema ps = PolicyManager.getPluginSchema(SUBJECT, 
+                pluginName);
+            if (className.equals(ps.getClassName())) {
+                answer = pluginName;
+                break;
+            }
+        }
+        return (answer);
     }
 
     /**
@@ -558,7 +559,8 @@ public class SubjectTypeManager {
      *         service <code>PluginSchema</code>.
      */
     public String getViewBeanURL(Subject subject) {
-	return PolicyManager.getViewBeanURL(SUBJECT, subject.getClass().getName());
+        return PolicyManager.getViewBeanURL(SUBJECT, 
+            subject.getClass().getName());
     }
 
     /**

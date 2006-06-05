@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdvicesHandleableByAMRequest.java,v 1.1 2006-04-26 05:15:09 dillidorai Exp $
+ * $Id: AdvicesHandleableByAMRequest.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,8 @@ import org.w3c.dom.Node;
 
 /**
  * This <code>AdvicesHandleableByAMRequest</code> class represents a 
- * AdvicesHandleableByAMRequest XML element. The AdvicesHandleableByAMRequest DTD is 
- * defined as the following:
+ * <code>AdvicesHandleableByAMRequest</code> XML element. The 
+ * AdvicesHandleableByAMRequest DTD is defined as the following:
  * <p>
  * <pre>
  *    <!-- AdvicesHandleableByAMRequest element requests the server to return

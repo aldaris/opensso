@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyService.java,v 1.1 2006-04-26 05:15:10 dillidorai Exp $
+ * $Id: PolicyService.java,v 1.2 2006-06-05 20:27:44 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,7 +208,8 @@ public class PolicyService {
     /**
      * Sets the <code>PolicyNotification</code> of the Policy Service.
      *
-     * @param noti The <code>PolicyNotification</code> of this Policy Service.       */
+     * @param noti The <code>PolicyNotification</code> of this Policy Service.
+     */
     public void setPolicyNotification(PolicyNotification noti)
     {
         policyNotification = noti;

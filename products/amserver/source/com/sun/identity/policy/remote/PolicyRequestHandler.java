@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.1 2006-04-26 05:15:10 dillidorai Exp $
+ * $Id: PolicyRequestHandler.java,v 1.2 2006-06-05 20:27:44 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -490,7 +490,8 @@ public class PolicyRequestHandler implements RequestHandler {
                 (new PolicyNotificationHandler()));
         } catch (Exception e) {
             if (debug.messageEnabled()) {
-                debug.message("PolicyRequestHandler: notification handler has already been registered");
+                debug.message("PolicyRequestHandler: notification handler "
+                    +"has already been registered");
             }
         }
          */
@@ -714,7 +715,8 @@ public class PolicyRequestHandler implements RequestHandler {
                 throw new PolicyEvaluationException(ResBundleUtils.rbName,
                     "unable_to_get_policy_serivce_revision", null, null);
             } catch (SSOException e) {
-                debug.error("PolicyRequestHandler.getPolicyServiceRevision():"                          + "Unable to get policy service revision", e);
+                debug.error("PolicyRequestHandler.getPolicyServiceRevision():"  
+                    + "Unable to get policy service revision", e);
                 throw new PolicyEvaluationException(ResBundleUtils.rbName,
                     "unable_to_get_policy_serivce_revision", null, null);
             }

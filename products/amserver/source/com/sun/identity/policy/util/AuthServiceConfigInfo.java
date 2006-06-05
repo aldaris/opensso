@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthServiceConfigInfo.java,v 1.1 2006-04-26 05:15:33 dillidorai Exp $
+ * $Id: AuthServiceConfigInfo.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,9 @@ public class AuthServiceConfigInfo {
         String authLevel = null;
         String moduleName = null;
 
-        AuthServiceConfigInfo(String org, String module, String port, String level) {
+        AuthServiceConfigInfo(String org, String module, String port, 
+            String level) 
+        {
                 orgName = org;
                 moduleName = module;
                 portNumber = port;

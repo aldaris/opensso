@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceType.java,v 1.1 2006-04-26 05:14:07 dillidorai Exp $
+ * $Id: ServiceType.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class ServiceType {
 
 
     private static final String resourceClass = 
-				"com.sun.identity.policy.plugins.PrefixResourceName";
+        "com.sun.identity.policy.plugins.PrefixResourceName";
     private static final String resourceWildcard = "*";
     private static final String resourceOneLevelWildcard = "-*-";
     private static final String resourceDelimiter = "/";
@@ -68,7 +68,7 @@ public class ServiceType {
      * Constructs an instance of <code>ServiceType</code>
      */
     private ServiceType() {
-	// cannot be instantiated
+        // cannot be instantiated
     }
 
     /**
@@ -80,11 +80,11 @@ public class ServiceType {
      * the <code>ServiceType</code> with
      */
     protected ServiceType(String serviceName, ServiceSchemaManager ssm,
-	ServiceSchema pschema) {
-	serviceTypeName = serviceName;
-	schemaManager = ssm;
-	policySchema = pschema;
-	policySchemaNode = policySchema.getSchemaNode();
+        ServiceSchema pschema) {
+        serviceTypeName = serviceName;
+        schemaManager = ssm;
+        policySchema = pschema;
+        policySchemaNode = policySchema.getSchemaNode();
         actionNames = Collections.unmodifiableSet(getActionNamesInternal());
         actionSchemas = new HashMap();
         Iterator iter = actionNames.iterator();
@@ -93,55 +93,55 @@ public class ServiceType {
             actionSchemas.put(action, getActionSchemaInternal(action));
         }
         actionSchemas = Collections.unmodifiableMap(actionSchemas);
-	String className = resourceClass;
-	Map resourceMap = null;
-	try {
-	    // get resource comparator configuration information
-	    resourceMap = 
-		PolicyConfig.getResourceCompareConfig(serviceTypeName);
-	    if (resourceMap != null) {
-	        className = (String)
-		resourceMap.get(PolicyConfig.RESOURCE_COMPARATOR_CLASS);
-	    } else {
-		// we did not get resource comparator configuration.
-		// use default configuration.
-		resourceMap = new HashMap();
-		resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_DELIMITER, 
-				resourceDelimiter);
-		resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_WILDCARD, 
-				resourceWildcard);
-		resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_CASE_SENSITIVE,
-				resourceCase);
-		resourceMap.put(PolicyConfig.
-		    RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD, 
-		    resourceOneLevelWildcard);
-	    }
-	    if (className != null) {
-	        Class resourceClass = Class.forName(className);
-	        resourceNameUtil = (ResourceName) resourceClass.newInstance();
-		// we pass all the resource compare parameters to Resourcename
-		// implementation. Alterntively we could also pass these 
-		// information to the compare method directly if number of
-		// parameters are small. The advantage of the later approach is
-		// that individual ResourceName implementations don't need 
-		// to remember these parameters
-	        resourceNameUtil.initialize(resourceMap);
-	    }
-	} catch (PolicyException e) {
-	    PolicyManager.debug.error("Failed to get resource " + 
-				"comparator For service: " + serviceName, e);
-	} catch (ClassNotFoundException e) {
-	    PolicyManager.debug.error("ServiceType: Illegal exception ", e);
-	} catch (IllegalAccessException e) {
-	    PolicyManager.debug.error("ServiceType: Illegal exception ", e);
-	} catch (InstantiationException e) {
-	    PolicyManager.debug.error("ServiceType: InstantiationException " + 
-						" exception ", e);
-	}
-	if (PolicyManager.debug.messageEnabled()) {
-	    PolicyManager.debug.message("class name is : " + className +
-					" service name is: " + serviceName);
-	}
+        String className = resourceClass;
+        Map resourceMap = null;
+        try {
+            // get resource comparator configuration information
+            resourceMap = 
+                PolicyConfig.getResourceCompareConfig(serviceTypeName);
+            if (resourceMap != null) {
+                className = (String)
+                resourceMap.get(PolicyConfig.RESOURCE_COMPARATOR_CLASS);
+            } else {
+                // we did not get resource comparator configuration.
+                // use default configuration.
+                resourceMap = new HashMap();
+                resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_DELIMITER, 
+                                resourceDelimiter);
+                resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_WILDCARD, 
+                                resourceWildcard);
+                resourceMap.put(PolicyConfig.RESOURCE_COMPARATOR_CASE_SENSITIVE,
+                                resourceCase);
+                resourceMap.put(PolicyConfig.
+                    RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD, 
+                    resourceOneLevelWildcard);
+            }
+            if (className != null) {
+                Class resourceClass = Class.forName(className);
+                resourceNameUtil = (ResourceName) resourceClass.newInstance();
+                // we pass all the resource compare parameters to Resourcename
+                // implementation. Alterntively we could also pass these 
+                // information to the compare method directly if number of
+                // parameters are small. The advantage of the later approach is
+                // that individual ResourceName implementations don't need 
+                // to remember these parameters
+                resourceNameUtil.initialize(resourceMap);
+            }
+        } catch (PolicyException e) {
+            PolicyManager.debug.error("Failed to get resource " + 
+                                "comparator For service: " + serviceName, e);
+        } catch (ClassNotFoundException e) {
+            PolicyManager.debug.error("ServiceType: Illegal exception ", e);
+        } catch (IllegalAccessException e) {
+            PolicyManager.debug.error("ServiceType: Illegal exception ", e);
+        } catch (InstantiationException e) {
+            PolicyManager.debug.error("ServiceType: InstantiationException " + 
+                                                " exception ", e);
+        }
+        if (PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("class name is : " + className +
+                                        " service name is: " + serviceName);
+        }
     }
 
     /**
@@ -149,14 +149,14 @@ public class ServiceType {
      * @return <code>ResourceName</code> used by this object
      */
     public ResourceName getResourceNameComparator() {
-	return resourceNameUtil;
+        return resourceNameUtil;
     }
     /**
      * Returns the name of this object
      * @return the name of this object
      */
     public String getName() {
-	return (serviceTypeName);
+        return (serviceTypeName);
     }
 
     /**
@@ -168,7 +168,7 @@ public class ServiceType {
      * @return name of the service type
      */
     public String getI18NPropertiesFileName() {
-	return (schemaManager.getI18NFileName());
+        return (schemaManager.getI18NFileName());
     }
 
     /**
@@ -181,12 +181,12 @@ public class ServiceType {
      * @return name of the service type
      */
     public String getI18NKey() {
-	try {
-	    return (schemaManager.getGlobalSchema().getI18NKey());
-	} catch (Exception e) {
-	    // Ignore the exception and return null
-	    return (null);
-	}
+        try {
+            return (schemaManager.getGlobalSchema().getI18NKey());
+        } catch (Exception e) {
+            // Ignore the exception and return null
+            return (null);
+        }
     }
 
     /**
@@ -208,21 +208,21 @@ public class ServiceType {
      * @return sorted set of all action names
      */
     private Set getActionNamesInternal() {
-	if (policySchemaNode != null) {
-	    TreeSet answer = new TreeSet(StringComparator.getInstance());
-	    NodeList children = policySchemaNode.getChildNodes();
-	    for (int i = 0; i < children.getLength(); i++) {
-		Node node = children.item(i);
-		if (node.getNodeName().equalsIgnoreCase(
-		    ActionSchema.ACTION_SCHEMA)) {
-		    answer.add(XMLUtils.getNodeAttributeValue(node,
-			PolicyManager.NAME_ATTRIBUTE));
-		}
-	    }
-	    return (answer);
-	} else {
-	    return (Collections.EMPTY_SET);
-	}
+        if (policySchemaNode != null) {
+            TreeSet answer = new TreeSet(StringComparator.getInstance());
+            NodeList children = policySchemaNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node node = children.item(i);
+                if (node.getNodeName().equalsIgnoreCase(
+                    ActionSchema.ACTION_SCHEMA)) {
+                    answer.add(XMLUtils.getNodeAttributeValue(node,
+                        PolicyManager.NAME_ATTRIBUTE));
+                }
+            }
+            return (answer);
+        } else {
+            return (Collections.EMPTY_SET);
+        }
     }
 
     /**
@@ -245,7 +245,7 @@ public class ServiceType {
             throws InvalidNameException {
         ActionSchema actionSchema 
                 = (ActionSchema) actionSchemas.get(actionName);
-	if (actionSchema == null) {
+        if (actionSchema == null) {
             if (PolicyManager.debug.warningEnabled()) {
                 PolicyManager.debug.warning("Action name: " + actionName +
                     " not valid for service: " + serviceTypeName);
@@ -254,7 +254,7 @@ public class ServiceType {
             throw (new InvalidNameException(ResBundleUtils.rbName,
                     "invalid_action_name", objs, actionName,
                     PolicyException.SERVICE));
-	}
+        }
         return actionSchema;
     }
 
@@ -274,7 +274,7 @@ public class ServiceType {
      */
     private ActionSchema getActionSchemaInternal(String actionName) {
         ActionSchema actionSchema = null;
-	Node actionSchemaNode = XMLUtils.getNamedChildNode(policySchemaNode,
+        Node actionSchemaNode = XMLUtils.getNamedChildNode(policySchemaNode,
                 ActionSchema.ACTION_SCHEMA, PolicyManager.NAME_ATTRIBUTE, 
                 actionName);
         if (actionSchemaNode != null) {
@@ -291,7 +291,7 @@ public class ServiceType {
      * @return schemas for all the actions suppored by the service
      */
     public Map getActionSchemas() {
-	return actionSchemas;
+        return actionSchemas;
     }
 
     /**
@@ -310,42 +310,42 @@ public class ServiceType {
      * values do not match the schema defined by the service
      */
     public boolean validateActionValues(Map actionValues)
-	throws InvalidNameException {
-	if ((actionValues == null) || (actionValues.size() == 0)) {
-	    // nothing really to validate
-	    return (true);
-	}
+        throws InvalidNameException {
+        if ((actionValues == null) || (actionValues.size() == 0)) {
+            // nothing really to validate
+            return (true);
+        }
 
-	// For each action name in the map, check if it is valid
-	Iterator actionNames = actionValues.keySet().iterator();
-	while (actionNames.hasNext()) {
-	    try {
-		String actionName = (String) actionNames.next();
-		ActionSchema as = getActionSchema(actionName);
+        // For each action name in the map, check if it is valid
+        Iterator actionNames = actionValues.keySet().iterator();
+        while (actionNames.hasNext()) {
+            try {
+                String actionName = (String) actionNames.next();
+                ActionSchema as = getActionSchema(actionName);
 
-		// Make sure the values is a String or a Set
-		Set values = null;
-		Object o = actionValues.get(actionName);
-		if (o instanceof java.lang.String) {
-		    // It is a string, add it to the set
-		    values = new HashSet();
-		    values.add(o);
-		} else {
-		    values = (Set) o;
-		}
-		// Validate the values against the action schema
-		ActionSchema.validate(as, values);
-	    } catch (ClassCastException cce) {
-		// Invalid class in the Map
-		PolicyManager.debug.error(
-		    "In validate action name and values invalid class name: " +
-		    cce.getMessage());
-		throw (new InvalidNameException(ResBundleUtils.rbName,
-		    "invalid_class_name", null, serviceTypeName,
-		    PolicyException.POLICY));
-	    }
-	}
-	return (true);
+                // Make sure the values is a String or a Set
+                Set values = null;
+                Object o = actionValues.get(actionName);
+                if (o instanceof java.lang.String) {
+                    // It is a string, add it to the set
+                    values = new HashSet();
+                    values.add(o);
+                } else {
+                    values = (Set) o;
+                }
+                // Validate the values against the action schema
+                ActionSchema.validate(as, values);
+            } catch (ClassCastException cce) {
+                // Invalid class in the Map
+                PolicyManager.debug.error(
+                    "In validate action name and values invalid class name: " +
+                    cce.getMessage());
+                throw (new InvalidNameException(ResBundleUtils.rbName,
+                    "invalid_class_name", null, serviceTypeName,
+                    PolicyException.POLICY));
+            }
+        }
+        return (true);
     }
 
     /**
@@ -355,7 +355,7 @@ public class ServiceType {
      * <code>false</code> otherwise
      */
     public boolean containsActionName(String actionName) {
-	return (getActionNames().contains(actionName));
+        return (getActionNames().contains(actionName));
     }
 
     /**
@@ -377,10 +377,10 @@ public class ServiceType {
      * is super resource of resource1.
      */
     protected ResourceMatch compare(String resource1, String resource2) {
-	if (resourceNameUtil == null) {
-	    return (ResourceMatch.NO_MATCH); // no resource comparator
-	}
-	return (resourceNameUtil.compare(resource1, resource2, true ));
+        if (resourceNameUtil == null) {
+            return (ResourceMatch.NO_MATCH); // no resource comparator
+        }
+        return (resourceNameUtil.compare(resource1, resource2, true ));
     }
 
     /**
@@ -406,10 +406,10 @@ public class ServiceType {
      */
     protected ResourceMatch compare(String resource1, String resource2,
             boolean interpretWildCard ) {
-	if (resourceNameUtil == null) {
-	    return (ResourceMatch.NO_MATCH); // no resource comparator
-	}
-	return (resourceNameUtil.compare(resource1, resource2, 
+        if (resourceNameUtil == null) {
+            return (ResourceMatch.NO_MATCH); // no resource comparator
+        }
+        return (resourceNameUtil.compare(resource1, resource2, 
                 interpretWildCard));
     }
 
@@ -422,10 +422,10 @@ public class ServiceType {
      * @return returns a combined resource string
      */
     public String append(String superRes, String subRes) {
-	if (resourceNameUtil == null) {
-	    PolicyManager.debug.error("Append: Don't have resource comparator");
-	    return(superRes);
-	}
+        if (resourceNameUtil == null) {
+            PolicyManager.debug.error("Append: Don't have resource comparator");
+            return(superRes);
+        }
         return (resourceNameUtil.append(superRes, subRes));
     }
 
@@ -444,10 +444,11 @@ public class ServiceType {
      * the first parameter, then the return value is null.
      */
     public String getSubResource(String res, String superRes) {
-	if (resourceNameUtil == null) {
-	    PolicyManager.debug.error("getSubRes: Don't have resource comparator");
-	    return(res);
-	}
+        if (resourceNameUtil == null) {
+            PolicyManager.debug.error("getSubRes: Don't have resource "
+                +"comparator");
+            return(res);
+        }
         return (resourceNameUtil.getSubResource(res, superRes));
     }
 
@@ -462,12 +463,12 @@ public class ServiceType {
      * the last one being what it ends with
      */
     public String[] split(String res){
-	if (resourceNameUtil == null) {
-	    PolicyManager.debug.error("split: Don't have resource comparator");
-	    String[] list = new String[1];
-	    list[0] = res;
-	    return(list);
-	}
+        if (resourceNameUtil == null) {
+            PolicyManager.debug.error("split: Don't have resource comparator");
+            String[] list = new String[1];
+            list[0] = res;
+            return(list);
+        }
         return (resourceNameUtil.split(res));
     }
     
@@ -477,7 +478,7 @@ public class ServiceType {
      * @return policy names that have the resource name
      */
     protected Set getPoliciesForExactResourceMatch(String resoruceName) {
-	return (null);
+        return (null);
     }
 
     /**
@@ -485,7 +486,7 @@ public class ServiceType {
      * and its superior resources.
      */
     protected Set getPolicyForResource(String resourceName) {
-	return (null);
+        return (null);
     }
 
     /**
@@ -495,7 +496,7 @@ public class ServiceType {
      * <code>false</code> otherwise
      */
     public boolean hasResourceNames() {
-	boolean hasResources = false;
+        boolean hasResources = false;
         Collection actionSchemas = getActionSchemas().values();
         Iterator iter = actionSchemas.iterator();
         while ( iter.hasNext()) {
@@ -505,7 +506,7 @@ public class ServiceType {
                 break;
             }
         }
-	return hasResources;
+        return hasResources;
     }
 
     /**
@@ -514,10 +515,10 @@ public class ServiceType {
      * @return canonicalized resource name
      */
     String canonicalize(String resourceName) throws PolicyException {
-	if (resourceNameUtil == null) {
-	    return (resourceName); // no resource comparator
-	}
-	return (resourceNameUtil.canonicalize(resourceName));
+        if (resourceNameUtil == null) {
+            return (resourceName); // no resource comparator
+        }
+        return (resourceNameUtil.canonicalize(resourceName));
     }
 
 }

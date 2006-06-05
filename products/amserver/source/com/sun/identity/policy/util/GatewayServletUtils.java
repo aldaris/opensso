@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GatewayServletUtils.java,v 1.1 2006-04-26 05:15:33 dillidorai Exp $
+ * $Id: GatewayServletUtils.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,10 +136,12 @@ public class GatewayServletUtils implements ServiceListener {
        }
        // Get the port number for Cert module
        try {
-          ServiceConfig config = sConfigMgr.getOrganizationConfig(orgName, null);
-	  Map configAttrs = config.getAttributes();
+          ServiceConfig config = 
+              sConfigMgr.getOrganizationConfig(orgName, null);
+          Map configAttrs = config.getAttributes();
           if (debug.messageEnabled()) {
-              debug.message("GatewayServlet:configAttrs :  " + configAttrs.toString());
+              debug.message("GatewayServlet:configAttrs :  " 
+                  + configAttrs.toString());
           }
 
           // Get the cert port number
@@ -155,7 +157,7 @@ public class GatewayServletUtils implements ServiceListener {
 
           // Get cert auth level
           attrs = (Set) configAttrs.get(
-	      AMAuthConfigUtils.getAuthLevelAttribute(configAttrs, moduleName));
+              AMAuthConfigUtils.getAuthLevelAttribute(configAttrs, moduleName));
           if (attrs == null) {
               return;
           } 

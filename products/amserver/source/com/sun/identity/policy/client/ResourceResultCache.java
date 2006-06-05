@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.1 2006-04-26 05:15:22 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.2 2006-06-05 20:27:45 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,14 +84,15 @@ class ResourceResultCache implements SSOTokenListener {
     private PolicyProperties policyProperties;
     private Set remotePolicyListeners 
             = Collections.synchronizedSet(new HashSet(10));
-    private Map	resultCache 
+    private Map        resultCache 
             = new HashMap(10); //serviceName > ...
             //= Collections.synchronizedMap(new HashMap(4));
 
     private PolicyNotificationHandler notificationHandler;
-    private Set	tokenRegistry = Collections.synchronizedSet(new HashSet(10000));
-    private int	cacheTtl;
-    private Set	advicesHandleableByAM; 
+    private Set tokenRegistry = 
+        Collections.synchronizedSet(new HashSet(10000));
+    private int        cacheTtl;
+    private Set        advicesHandleableByAM; 
 
     private static Debug debug = PolicyEvaluator.debug;
 
@@ -115,19 +116,19 @@ class ResourceResultCache implements SSOTokenListener {
      */
     private ResourceResultCache(PolicyProperties policyProperties) 
             throws PolicyException {
-	this.policyProperties = policyProperties;
+        this.policyProperties = policyProperties;
         notificationHandler = new PolicyNotificationHandler(this);
         cacheTtl = policyProperties.getCacheTtl();
         cacheMode = policyProperties.getCacheMode();
 
-	if(policyProperties.notificationEnabled()){
+        if(policyProperties.notificationEnabled()){
             //register notification handler with PLLClient
             registerHandlerWithPLLClient(notificationHandler);
-	    if (debug.messageEnabled()) {
+            if (debug.messageEnabled()) {
                 debug.message( "RsourceResultCache():"
                         + "added policyNotificationHandler "
                         + "with PLLClient");
-	    }
+            }
         }
 
         if (debug.messageEnabled()) {
@@ -150,10 +151,10 @@ class ResourceResultCache implements SSOTokenListener {
      */
     synchronized static ResourceResultCache getInstance(
             PolicyProperties policyProperties) throws PolicyException {
-	if (resourceResultCache == null) {
+        if (resourceResultCache == null) {
             resourceResultCache = new ResourceResultCache(policyProperties);
-	} 
-	return resourceResultCache;
+        } 
+        return resourceResultCache;
     } 
 
     /**
@@ -164,13 +165,13 @@ class ResourceResultCache implements SSOTokenListener {
      *         <code>ResourceResultCache</code>
      */
     private synchronized static ResourceResultCache getInstance() {
-	if ( (resourceResultCache == null) 
+        if ( (resourceResultCache == null) 
                 && debug.warningEnabled()) {
             debug.warning("ResourceResultCache.getInstance():"
                     + "ResourceResultCache has not been created:"
                     + "returning null");
            
-	}
+        }
         return resourceResultCache;
     } 
     
@@ -214,7 +215,7 @@ class ResourceResultCache implements SSOTokenListener {
                         + "Getting decision again, repeat attempt=" 
                         + count);
             }
-	    pd = getPolicyDecision(appToken, serviceName, 
+            pd = getPolicyDecision(appToken, serviceName, 
                     token, resourceName, actionNames, 
                     env, false);  //do not use cache
             if (pd.getTimeToLive() > System.currentTimeMillis()) {
@@ -228,8 +229,8 @@ class ResourceResultCache implements SSOTokenListener {
                         + "Received expired decision from server");
             }
             Object[] args = {resourceName};
-	    throw new PolicyEvaluationException(ResBundleUtils.rbName,
-		"received_expired_decision", args, null);
+            throw new PolicyEvaluationException(ResBundleUtils.rbName,
+                "received_expired_decision", args, null);
         }
 
         if (actionNames != null) {
@@ -625,12 +626,12 @@ class ResourceResultCache implements SSOTokenListener {
             }
 
             if (ps != null) {
-		PolicyResponse pr = ps.getPolicyResponse();
-		String exceptionMessage = pr.getExceptionMsg();
-		if (exceptionMessage != null) {
-		    if(exceptionMessage.indexOf(ResBundleUtils.getString(
+                PolicyResponse pr = ps.getPolicyResponse();
+                String exceptionMessage = pr.getExceptionMsg();
+                if (exceptionMessage != null) {
+                    if(exceptionMessage.indexOf(ResBundleUtils.getString(
                             "app_sso_token_invalid")) >= 0) {
-			if (debug.warningEnabled()) {
+                        if (debug.warningEnabled()) {
                             debug.warning("ResourceResultCache."
                                 + "getResultsFromServer():"
                                 + " response exception " + exceptionMessage);
@@ -639,14 +640,14 @@ class ResourceResultCache implements SSOTokenListener {
                                 + " appSSOToken is invalid");
                             debug.warning("ResourceResultCache."
                                 + "throwing InvalidAppSSOTokenException");
-			}
+                        }
 
                         String[] args = {exceptionMessage};
                         throw new InvalidAppSSOTokenException(
                                 ResBundleUtils.rbName,
                                 "server_reported_invalid_app_sso_token", 
                                 args, null);
-		    } else {
+                    } else {
                         debug.warning("ResourceResultCache."
                                 + "getResultsFromServer():"
                                 + "response exception message=" 
@@ -656,12 +657,12 @@ class ResourceResultCache implements SSOTokenListener {
                                 ResBundleUtils.rbName,
                                 "server_reported_exception", 
                                 args, null);
-		    }
-		} else {
-		    resourceResults = pr.getResourceResults();
-		}
-	    }
-	} catch (SendRequestException sre) {
+                    }
+                } else {
+                    resourceResults = pr.getResourceResults();
+                }
+            }
+        } catch (SendRequestException sre) {
             String[] args = {sre.getMessage()};
             throw new PolicyEvaluationException(
                     ResBundleUtils.rbName,
@@ -867,7 +868,7 @@ class ResourceResultCache implements SSOTokenListener {
     boolean addRemotePolicyListener(SSOToken appToken, 
             String serviceName, String notificationURL, 
             boolean reRegister) {
-	boolean  status = false;
+        boolean  status = false;
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.addRemotePolicyListener():"
                     + "serviceName=" + serviceName
@@ -896,38 +897,38 @@ class ResourceResultCache implements SSOTokenListener {
             }
         }
 
-	if ((appToken != null) && (policyServiceURL != null)) {
-	    PolicyListenerRequest listenerReq = new PolicyListenerRequest();
-	    listenerReq.setServiceName(serviceName);
-	    listenerReq.setNotificationURL(notificationURL);
+        if ((appToken != null) && (policyServiceURL != null)) {
+            PolicyListenerRequest listenerReq = new PolicyListenerRequest();
+            listenerReq.setServiceName(serviceName);
+            listenerReq.setNotificationURL(notificationURL);
 
-	    PolicyRequest policyReq = new PolicyRequest();
-	    policyReq.setAppSSOToken(appToken.getTokenID().toString());
-	    policyReq.setMethodID(
+            PolicyRequest policyReq = new PolicyRequest();
+            policyReq.setAppSSOToken(appToken.getTokenID().toString());
+            policyReq.setMethodID(
                     PolicyRequest.POLICY_REQUEST_ADD_POLICY_LISTENER);
-	    policyReq.setPolicyListenerRequest(listenerReq);
+            policyReq.setPolicyListenerRequest(listenerReq);
 
-	    PolicyService psReq = new PolicyService();
-	    psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-	    psReq.setPolicyRequest(policyReq);
+            PolicyService psReq = new PolicyService();
+            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
+            psReq.setPolicyRequest(policyReq);
 
-	    String xmlStr = psReq.toXMLString();
+            String xmlStr = psReq.toXMLString();
 
-	    try {
-		Request req = new Request(xmlStr);
-		RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-		set.addRequest(req);
-		Vector responses = PLLClient.send(policyServiceURL, 
-							 set);
-		Response res = (Response) responses.elementAt(0);
-		PolicyService ps = PolicyService.parseXML(res.getContent());
+            try {
+                Request req = new Request(xmlStr);
+                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
+                set.addRequest(req);
+                Vector responses = PLLClient.send(policyServiceURL, 
+                                                         set);
+                Response res = (Response) responses.elementAt(0);
+                PolicyService ps = PolicyService.parseXML(res.getContent());
 
-		if (ps != null) {
-		    if (debug.messageEnabled()) {
-			debug.message("ResourceResultCache."
+                if (ps != null) {
+                    if (debug.messageEnabled()) {
+                        debug.message("ResourceResultCache."
                                 + "addRemotePolicyListener():"
                                 + "result=" + ps.toXMLString());
-		    } 
+                    } 
                     PolicyResponse psres = ps.getPolicyResponse();
                     if (psres.getMethodID() 
                             == PolicyResponse.POLICY_ADD_LISTENER_RESPONSE) {
@@ -942,14 +943,14 @@ class ResourceResultCache implements SSOTokenListener {
                                     + ":add succeeded");
                         } 
                     } 
-		} else {
-		    debug.error("ResourceResultCache.addRemotePolicyListener():"
+                } else {
+                    debug.error("ResourceResultCache.addRemotePolicyListener():"
                             + " no result");
-		} 
-	    } catch (Exception e) {
-		debug.error("ResourceResultCache.addRemotePolicyListener():",e);
-	    } 
-	} 
+                } 
+            } catch (Exception e) {
+                debug.error("ResourceResultCache.addRemotePolicyListener():",e);
+            } 
+        } 
         return status;
     } 
 
@@ -963,7 +964,7 @@ class ResourceResultCache implements SSOTokenListener {
      */
      private boolean removeRemotePolicyListener(SSOToken appToken, 
             String serviceName, String notificationURL) {
-	boolean status = false;
+        boolean status = false;
         URL policyServiceURL = null;
         if (appToken != null) {
             try {
@@ -974,54 +975,54 @@ class ResourceResultCache implements SSOTokenListener {
             }
         }
 
-	if ((appToken != null) && (policyServiceURL != null)) {
-	    RemoveListenerRequest rmReq = new RemoveListenerRequest();
+        if ((appToken != null) && (policyServiceURL != null)) {
+            RemoveListenerRequest rmReq = new RemoveListenerRequest();
 
-	    rmReq.setServiceName(serviceName);
-	    rmReq.setNotificationURL(notificationURL);
+            rmReq.setServiceName(serviceName);
+            rmReq.setNotificationURL(notificationURL);
 
-	    PolicyRequest policyReq = new PolicyRequest();
-	    policyReq.setAppSSOToken(appToken.getTokenID().toString());
-	    policyReq.setMethodID(
+            PolicyRequest policyReq = new PolicyRequest();
+            policyReq.setAppSSOToken(appToken.getTokenID().toString());
+            policyReq.setMethodID(
                     PolicyRequest.POLICY_REQUEST_REMOVE_POLICY_LISTENER);
-	    policyReq.setRemoveListenerRequest(rmReq);
+            policyReq.setRemoveListenerRequest(rmReq);
 
-	    PolicyService psReq = new PolicyService();
-	    psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-	    psReq.setPolicyRequest(policyReq);
+            PolicyService psReq = new PolicyService();
+            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
+            psReq.setPolicyRequest(policyReq);
 
-	    String xmlStr = psReq.toXMLString();
+            String xmlStr = psReq.toXMLString();
 
-	    try {
-		Request req = new Request(xmlStr);
-		RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-		set.addRequest(req);
-		Vector responses = PLLClient.send(policyServiceURL, 
-							 set);
-		Response res = (Response) responses.elementAt(0);
-		PolicyService ps = PolicyService.parseXML(res.getContent());
-		if (ps != null) {
-		    if (debug.messageEnabled()) {
-			debug.message("ResourceResultCache."
+            try {
+                Request req = new Request(xmlStr);
+                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
+                set.addRequest(req);
+                Vector responses = PLLClient.send(policyServiceURL, 
+                                                         set);
+                Response res = (Response) responses.elementAt(0);
+                PolicyService ps = PolicyService.parseXML(res.getContent());
+                if (ps != null) {
+                    if (debug.messageEnabled()) {
+                        debug.message("ResourceResultCache."
                                 + "removeRemotePolicyListener():"
                                 + "result=" + ps.toXMLString());
-		    } 
+                    } 
                     PolicyResponse psres = ps.getPolicyResponse();
                     if (psres.getMethodID() 
                             == PolicyResponse.POLICY_REMOVE_LISTENER_RESPONSE) {
                         status = true;
                     } 
-		} else {
-		    debug.message("ResourceResultCache."
+                } else {
+                    debug.message("ResourceResultCache."
                             + "removeRemotePolicyListener():"
                             + "no result");
-		} 
-	    } catch (Exception e) {
-		debug.error("ResourceResultCache.removeRemotePolicyListener():", 
-                        e);
-	    } 
-	} 
-	return status;
+                } 
+            } catch (Exception e) {
+                debug.error("ResourceResultCache.removeRemotePolicyListener():",
+                    e);
+            } 
+        } 
+        return status;
     }
 
     /**
@@ -1321,14 +1322,14 @@ class ResourceResultCache implements SSOTokenListener {
         ResourceName resourceComparator 
                 = policyProperties.getResourceComparator(serviceName);
         String rootResource = "";
-	if ((resource != null) && (resource.length() != 0)) {
-	    String[] resources = resourceComparator.split(resource);
-	    rootResource = resources[0];
+        if ((resource != null) && (resource.length() != 0)) {
+            String[] resources = resourceComparator.split(resource);
+            rootResource = resources[0];
             int index = resource.indexOf(rootResource);
             if ( index > 0 ) {
                 rootResource = resource.substring(0, index) + rootResource;
             }
-	} 
+        } 
         return rootResource;
     }
 
@@ -1379,35 +1380,35 @@ class ResourceResultCache implements SSOTokenListener {
             }
         }
 
-	if ((appToken != null) && (policyServiceURL != null)) {
-	    PolicyRequest policyReq = new PolicyRequest();
-	    policyReq.setAppSSOToken(appToken.getTokenID().toString());
+        if ((appToken != null) && (policyServiceURL != null)) {
+            PolicyRequest policyReq = new PolicyRequest();
+            policyReq.setAppSSOToken(appToken.getTokenID().toString());
             policyReq.setAdvicesHandleableByAMRequest(new
                     AdvicesHandleableByAMRequest());
-	    policyReq.setMethodID(
+            policyReq.setMethodID(
                 PolicyRequest.POLICY_REQUEST_ADVICES_HANDLEABLE_BY_AM_REQUEST);
 
-	    PolicyService psReq = new PolicyService();
-	    psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-	    psReq.setPolicyRequest(policyReq);
+            PolicyService psReq = new PolicyService();
+            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
+            psReq.setPolicyRequest(policyReq);
 
-	    String xmlStr = psReq.toXMLString();
+            String xmlStr = psReq.toXMLString();
 
-	    try {
-		Request req = new Request(xmlStr);
-		RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-		set.addRequest(req);
-		Vector responses = PLLClient.send(policyServiceURL, 
-							 set);
-		Response res = (Response) responses.elementAt(0);
-		PolicyService ps = PolicyService.parseXML(res.getContent());
+            try {
+                Request req = new Request(xmlStr);
+                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
+                set.addRequest(req);
+                Vector responses = PLLClient.send(policyServiceURL, 
+                                                         set);
+                Response res = (Response) responses.elementAt(0);
+                PolicyService ps = PolicyService.parseXML(res.getContent());
 
-		if (ps != null) {
-		    if (debug.messageEnabled()) {
-			debug.message("ResourceResultCache."
+                if (ps != null) {
+                    if (debug.messageEnabled()) {
+                        debug.message("ResourceResultCache."
                                 + "getAdvicesHandleableByAM():"
                                 + "result=" + ps.toXMLString());
-		    } 
+                    } 
                     PolicyResponse psres = ps.getPolicyResponse();
 
                     String exceptionMessage = psres.getExceptionMsg();
@@ -1446,8 +1447,9 @@ class ResourceResultCache implements SSOTokenListener {
                         }
                     }
 
-                    if (psres.getMethodID() 
-                            == PolicyResponse.POLICY_ADVICES_HANDLEABLE_BY_AM_RESPONSE) {
+                    if (psres.getMethodID() == PolicyResponse.
+                        POLICY_ADVICES_HANDLEABLE_BY_AM_RESPONSE) 
+                    {
                         AdvicesHandleableByAMResponse  
                             advicesHandleableByAMResponse 
                                 = psres.getAdvicesHandleableByAMResponse();
@@ -1457,20 +1459,21 @@ class ResourceResultCache implements SSOTokenListener {
                                     + advicesHandleableByAMResponse);
                         } 
                         if (advicesHandleableByAMResponse != null) {
-                            advicesHandleableByAM 
-                                = advicesHandleableByAMResponse.getAdvicesHandleableByAM();
+                            advicesHandleableByAM = 
+                                advicesHandleableByAMResponse.
+                                getAdvicesHandleableByAM();
                         }
                     } 
-		} else {
-		    debug.error("ResourceResultCache.getAdvicesHandleableByAM():"
-                            + " no result");
-		} 
-	    } catch (SendRequestException e) {
-		debug.error("ResourceResultCache.getAdvicesHandleableByAM():",
+                } else {
+                    debug.error("ResourceResultCache.getAdvicesHandleableByAM()"
+                            +":no result");
+                } 
+            } catch (SendRequestException e) {
+                debug.error("ResourceResultCache.getAdvicesHandleableByAM():",
                         e);
                 throw new PolicyException(e);
-	    } 
-	} 
+            } 
+        } 
         if (advicesHandleableByAM == null) {
             advicesHandleableByAM = Collections.EMPTY_SET;
         }

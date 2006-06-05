@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceComparatorValidator.java,v 1.1 2006-04-26 05:14:05 dillidorai Exp $
+ * $Id: ResourceComparatorValidator.java,v 1.2 2006-06-05 20:26:49 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,103 +56,109 @@ public class ResourceComparatorValidator implements ServiceAttributeValidator {
      * otherwise
      */    
     public boolean validate(Set values) {
-	if (values != null && !values.isEmpty()) {
-	    // values is a set. each element in the set is of the form
+        if (values != null && !values.isEmpty()) {
+            // values is a set. each element in the set is of the form
             // serviceType=1|class=com.sun.identity.policy.Class|wildcard=*|
             // caseSensitive=true|one_level_wildcard=-*-
-	    Iterator valIterator = values.iterator();
-	    while (valIterator.hasNext()) {
-	        String elemVal = (String) valIterator.next();
-	        if (elemVal != null) {
-		    StringTokenizer st = new StringTokenizer(elemVal, "|");
-		    String[] tokens = new String[6];
-		    int count = 0;
-		    while (st.hasMoreTokens()) {
-		        tokens[count++] = st.nextToken();
-		        if (count > 5) { // accept only first six tokens
-			    break;
-			}
-		    }
-		    String wildcardPattern = null;
-		    String oneLevelPattern = null;
-		    for (int i = 0; i < count; i++) {
-		        int equal = tokens[i].indexOf("=");
-		        String name = tokens[i].substring(0, equal);	
-			String value = tokens[i].substring(equal + 1);	
-			if (name == null) {
-			    debug.error("ResourceComparatorValidator."
-			   	+"validate(): name is null");
-			    continue;
-			}
-			if (value == null) {
-			    debug.error("ResourceComparatorValidator."
-			        +"validate(): value is null");
-			    continue;
-			}
-		        if (debug.messageEnabled()) {
-			    debug.message("ResourceComparatorValidator."+
-				"validate():Attr Name = " + name +
-			        " Attr Value = " + value);
-		        }
-			if (name.equalsIgnoreCase(
-			    PolicyConfig.RESOURCE_COMPARATOR_WILDCARD)) {
-			    wildcardPattern = value;
-			} else if (name.equalsIgnoreCase(PolicyConfig.
-			    RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD)) {
-			    oneLevelPattern = value;
-			}
-		    }
-		    if ((wildcardPattern != null) && (oneLevelPattern != null)) {
+            Iterator valIterator = values.iterator();
+            while (valIterator.hasNext()) {
+                String elemVal = (String) valIterator.next();
+                if (elemVal != null) {
+                    StringTokenizer st = new StringTokenizer(elemVal, "|");
+                    String[] tokens = new String[6];
+                    int count = 0;
+                    while (st.hasMoreTokens()) {
+                        tokens[count++] = st.nextToken();
+                        if (count > 5) { // accept only first six tokens
+                            break;
+                        }
+                    }
+                    String wildcardPattern = null;
+                    String oneLevelPattern = null;
+                    for (int i = 0; i < count; i++) {
+                        int equal = tokens[i].indexOf("=");
+                        String name = tokens[i].substring(0, equal);        
+                        String value = tokens[i].substring(equal + 1);        
+                        if (name == null) {
+                            debug.error("ResourceComparatorValidator."
+                                   +"validate(): name is null");
+                            continue;
+                        }
+                        if (value == null) {
+                            debug.error("ResourceComparatorValidator."
+                                +"validate(): value is null");
+                            continue;
+                        }
+                        if (debug.messageEnabled()) {
+                            debug.message("ResourceComparatorValidator."+
+                                "validate():Attr Name = " + name +
+                                " Attr Value = " + value);
+                        }
+                        if (name.equalsIgnoreCase(
+                            PolicyConfig.RESOURCE_COMPARATOR_WILDCARD)) {
+                            wildcardPattern = value;
+                        } else if (name.equalsIgnoreCase(PolicyConfig.
+                            RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD)) {
+                            oneLevelPattern = value;
+                        }
+                    }
+                    if ((wildcardPattern != null) && 
+                        (oneLevelPattern != null)) 
+                    {
                         if (wildcardPattern.equals(oneLevelPattern)) {
                             debug.error("ResourceComparatorValidator.validate()"
-			        +"Wildcard and one level wildcard pattern cannot "
-			        +"be same");
-			    return false;
+                                +"Wildcard and one level wildcard pattern "
+                                + "cannot be same");
+                            return false;
                         }
-		        if (wildcardPattern.indexOf(oneLevelPattern) == -1 &&
-			    oneLevelPattern.indexOf(wildcardPattern) == -1) {
-			    boolean overlap = false;
-		            if (debug.messageEnabled()) {
-		                debug.message("ResourceComparatorValidator."
-				    +"validate():about to do overlap check");
-		            }
-		            // find if the wildcard and one level wildcard patterns 
-			    // overlap
-        	            int oneLevelWildLength = oneLevelPattern.length();
-        	            int wildcardLength = wildcardPattern.length();
-        	            char[] wildcard = wildcardPattern.toCharArray();
-        	            char[] oneWildcard = oneLevelPattern.toCharArray();
-		            for (int i = 0; i < wildcardPattern.length(); i++) {
-		                for (int j = 0; j < oneLevelPattern.length(); j++) {
-				    if (wildcard[i] == oneWildcard[j]) {
-				        String remString1 = String.valueOf(
-					    wildcard, i,wildcardLength -i);
-				        String remString2 = String.valueOf(
-					    oneWildcard, j,oneLevelWildLength -j);
-				        if (oneLevelPattern.startsWith(remString1) 
-					    || wildcardPattern.startsWith(
-					    remString2))
-				        {
-				            overlap = true;
-				            break;
-				        }
-			            }
-			        }
-			        if (overlap) {
-			            break;
-			        }
-			    }
-			    if (overlap) {
+                        if (wildcardPattern.indexOf(oneLevelPattern) == -1 &&
+                            oneLevelPattern.indexOf(wildcardPattern) == -1) {
+                            boolean overlap = false;
+                            if (debug.messageEnabled()) {
+                                debug.message("ResourceComparatorValidator."
+                                    +"validate():about to do overlap check");
+                            }
+                            // find if the wildcard and one level wildcard 
+                            // patterns overlap
+                            int oneLevelWildLength = oneLevelPattern.length();
+                            int wildcardLength = wildcardPattern.length();
+                            char[] wildcard = wildcardPattern.toCharArray();
+                            char[] oneWildcard = oneLevelPattern.toCharArray();
+                            for (int i = 0; i < wildcardPattern.length(); i++) {
+                                for (int j = 0; j < oneLevelPattern.length(); 
+                                    j++) 
+                                {
+                                    if (wildcard[i] == oneWildcard[j]) {
+                                        String remString1 = String.valueOf(
+                                            wildcard, i,wildcardLength -i);
+                                        String remString2 = String.valueOf(
+                                            oneWildcard, j,
+                                                oneLevelWildLength -j);
+                                        if (oneLevelPattern.startsWith(
+                                            remString1) || 
+                                            wildcardPattern.startsWith(
+                                            remString2))
+                                        {
+                                            overlap = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (overlap) {
+                                    break;
+                                }
+                            }
+                            if (overlap) {
                                 debug.error("ResourceComparatorValidator."
-				    +"validate():Wildcard and one level wildcard "
-				    +"pattern cannot be overlapping");
-			        return false;
-			    }
-		        } // if either of the  patterns not nested
-		    } // end if both patterns are not null
-		} // if elemVal != null
-	    } // while
-	} // if values not empty
-	return true;
+                                    +"validate():Wildcard and one level "
+                                    +"wildcard pattern cannot be overlapping");
+                                return false;
+                            }
+                        } // if either of the  patterns not nested
+                    } // end if both patterns are not null
+                } // if elemVal != null
+            } // while
+        } // if values not empty
+        return true;
     }
 }

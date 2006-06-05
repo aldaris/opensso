@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.2 2006-05-22 19:52:51 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.3 2006-06-05 20:26:49 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,15 +124,15 @@ public class PolicyUtils {
      *         for each key found in the addToMap to the toMap
      */         
     static Map addMapToMap(Map mapToAdd, Map toMap) {
-	if ( (mapToAdd != null) && (toMap !=null) ) {
-	    Set keySet = mapToAdd.keySet();
-	    Iterator keyIter = keySet.iterator();
-	    while ( keyIter.hasNext() ) {
-		String key = (String) keyIter.next();
-		Set values = (Set) mapToAdd.get(key);
-		addElementToMap(key, values, toMap);
-	    }
-	}
+        if ( (mapToAdd != null) && (toMap !=null) ) {
+            Set keySet = mapToAdd.keySet();
+            Iterator keyIter = keySet.iterator();
+            while ( keyIter.hasNext() ) {
+                String key = (String) keyIter.next();
+                Set values = (Set) mapToAdd.get(key);
+                addElementToMap(key, values, toMap);
+            }
+        }
         return toMap;
     }
 
@@ -153,15 +153,15 @@ public class PolicyUtils {
      *         toMap
      */         
     public static Map appendMapToMap(Map mapToAdd, Map toMap) {
-	if ( (mapToAdd != null) && (toMap !=null) ) {
-	    Set keySet = mapToAdd.keySet();
-	    Iterator keyIter = keySet.iterator();
-	    while ( keyIter.hasNext() ) {
-		String key = (String) keyIter.next();
-		Set values = (Set) mapToAdd.get(key);
-		appendElementToMap(key, values, toMap);
-	    }
-	}
+        if ( (mapToAdd != null) && (toMap !=null) ) {
+            Set keySet = mapToAdd.keySet();
+            Iterator keyIter = keySet.iterator();
+            while ( keyIter.hasNext() ) {
+                String key = (String) keyIter.next();
+                Set values = (Set) mapToAdd.get(key);
+                appendElementToMap(key, values, toMap);
+            }
+        }
         return toMap;
     }
 
@@ -178,7 +178,7 @@ public class PolicyUtils {
      */         
     static Map addElementToMap(String key, Set values, Map toMap) {
        if ( (key !=null) && (toMap != null) ) {
-	   toMap.put(key, values);
+           toMap.put(key, values);
        }
        return toMap;
     }
@@ -200,13 +200,13 @@ public class PolicyUtils {
      */         
     public static Map appendElementToMap(String key, Set values, Map toMap) {
        if ( (key !=null) && (values !=null) && (!values.isEmpty())
-		&& (toMap != null) ) {
-	   Set previousValues = (Set) toMap.get(key);
-	   if ( (previousValues != null) && (!previousValues.isEmpty()) ) {
-	       previousValues.addAll(values);
-	   } else {
-	       toMap.put(key, values);
-	   }
+                && (toMap != null) ) {
+           Set previousValues = (Set) toMap.get(key);
+           if ( (previousValues != null) && (!previousValues.isEmpty()) ) {
+               previousValues.addAll(values);
+           } else {
+               toMap.put(key, values);
+           }
        }
        return toMap;
     }
@@ -222,9 +222,9 @@ public class PolicyUtils {
      *          value of the naming attribute of the entry
      */
     public static String getDisplayName(String dn) {
-	String[] componentValues = LDAPDN.explodeDN(dn, true);
-	return (componentValues.length > 0 ) ?
-		componentValues[0] : "";
+        String[] componentValues = LDAPDN.explodeDN(dn, true);
+        return (componentValues.length > 0 ) ?
+                componentValues[0] : "";
     }
     
     /**
@@ -236,16 +236,16 @@ public class PolicyUtils {
      * @throws PolicyException if the decision can not be merged
      */
     static PolicyDecision appendPolicyDecisionToPolicyDecision(
-	    PolicyDecision pd1, PolicyDecision pd2) throws PolicyException {
-	Map actionDecisions = pd1.getActionDecisions();
-	Iterator actionNames = actionDecisions.keySet().iterator();
-	while ( actionNames.hasNext()) {
-	    String actionName = (String) actionNames.next();
-	    ActionDecision actionDecision = (ActionDecision)
-	    actionDecisions.get(actionName);
-	    pd2.addActionDecision(actionDecision);
-	}
-	return pd2;
+            PolicyDecision pd1, PolicyDecision pd2) throws PolicyException {
+        Map actionDecisions = pd1.getActionDecisions();
+        Iterator actionNames = actionDecisions.keySet().iterator();
+        while ( actionNames.hasNext()) {
+            String actionName = (String) actionNames.next();
+            ActionDecision actionDecision = (ActionDecision)
+            actionDecisions.get(actionName);
+            pd2.addActionDecision(actionDecision);
+        }
+        return pd2;
     }
 
 
@@ -268,7 +268,7 @@ public class PolicyUtils {
                     + ATTRIBUTE_VALUE_PAIR);
             String objs[] = { ATTRIBUTE_VALUE_PAIR };
             throw new PolicyException(ResBundleUtils.rbName, 
-		"missing_element", objs, null);
+                "missing_element", objs, null);
         }
 
         HashMap envParams = new HashMap();
@@ -282,7 +282,7 @@ public class PolicyUtils {
                         + " missing attribute name");
                 String objs[] = { ATTRIBUTE_NAME };
                 throw new PolicyException(ResBundleUtils.rbName, 
-		    "missing_attribute", objs, null);
+                    "missing_attribute", objs, null);
             }
             Set values = getAttributeValues(node);
             if (values == null) {
@@ -290,7 +290,7 @@ public class PolicyUtils {
                         + " missing attribute value");
                 String objs[] = { VALUE };
                 throw new PolicyException(ResBundleUtils.rbName,
-		    "missing_attribute", objs, null);
+                    "missing_attribute", objs, null);
             }
             envParams.put(attributeName, values);
         }
@@ -317,7 +317,7 @@ public class PolicyUtils {
                     + " missing element " + ATTRIBUTE);
             String objs[] = { ATTRIBUTE };
             throw new PolicyException(ResBundleUtils.rbName,
-		"missing_element", objs, null);
+                "missing_element", objs, null);
         }
 
         HashSet attrs = new HashSet();
@@ -332,7 +332,7 @@ public class PolicyUtils {
                         + " missing attribute " + ATTRIBUTE_NAME);
                 String objs[] = { ATTRIBUTE_NAME };
                 throw new PolicyException(ResBundleUtils.rbName,
-		    "missing_attribute", objs, null);
+                    "missing_attribute", objs, null);
             }
             attrs.add(attrName);
         }
@@ -354,7 +354,7 @@ public class PolicyUtils {
         Set nodeSet = XMLUtils.getChildNodes(pNode, ATTRIBUTE_VALUE_PAIR);
         if (nodeSet == null) {
             PolicyManager.debug.error("parseAttribiteValuePairs: "
-	    	+"missing element " + ATTRIBUTE_VALUE_PAIR);
+                    +"missing element " + ATTRIBUTE_VALUE_PAIR);
             return null;
         }
 
@@ -366,13 +366,13 @@ public class PolicyUtils {
             String attributeName = getAttributeName(node);
             if (attributeName == null) {
                 PolicyManager.debug.error("PolicyUtils.parseAttribiteValuePairs"
-			+"():missing attribute name");
+                        +"():missing attribute name");
                 return null;
             }
             Set values = getAttributeValues(node);
             if (values == null) {
                 PolicyManager.debug.error("PolicyUtils.parseAttribiteValuePairs"
-			+"():missing attribute value");
+                        +"():missing attribute value");
                 return null;
             }
             attrValuePairs.put(attributeName, values);
@@ -393,15 +393,15 @@ public class PolicyUtils {
         Node node = XMLUtils.getChildNode(pNode, ATTRIBUTE);
         if (node == null) {
             PolicyManager.debug.error("PolicyUtils.getAttributeName(): "
-		+"missing element " + ATTRIBUTE);
+                +"missing element " + ATTRIBUTE);
             return null;
         }
 
         String attrName = XMLUtils.getNodeAttributeValue(node, ATTRIBUTE_NAME);
         if (attrName == null) {
             PolicyManager.debug.error("PolicyUtils.getAttributeName(): "
-		+"missing attribute " + ATTRIBUTE_NAME + " for element " 
-		+ ATTRIBUTE);
+                +"missing attribute " + ATTRIBUTE_NAME + " for element " 
+                + ATTRIBUTE);
             return null;
         }
 
@@ -421,7 +421,7 @@ public class PolicyUtils {
         Set nodeSet = XMLUtils.getChildNodes(pNode, VALUE);
         if (nodeSet == null) {
             PolicyManager.debug.error("PolicyUtils.getAttributeValues() : "
-		+"missing element " + VALUE);
+                +"missing element " + VALUE);
             return null;
         }
 
@@ -531,15 +531,15 @@ public class PolicyUtils {
                          + XMLUtils.escapeSpecialCharacters(name) 
                          + "\"/>" + CRLF);
         
-	if ( values != null ) {
-	    Iterator itr = values.iterator();
-	    while (itr.hasNext()) {
-		String value = (String)itr.next();
-		xmlSB.append("<" + VALUE + ">" );
-		xmlSB.append(XMLUtils.escapeSpecialCharacters(value));
-		xmlSB.append("</" + VALUE + ">" + CRLF);
-	    }
-	}
+        if ( values != null ) {
+            Iterator itr = values.iterator();
+            while (itr.hasNext()) {
+                String value = (String)itr.next();
+                xmlSB.append("<" + VALUE + ">" );
+                xmlSB.append(XMLUtils.escapeSpecialCharacters(value));
+                xmlSB.append("</" + VALUE + ">" + CRLF);
+            }
+        }
 
         xmlSB.append("</" + ATTRIBUTE_VALUE_PAIR + ">" + CRLF);
 
@@ -554,10 +554,10 @@ public class PolicyUtils {
      * @return quoted string
      */
     public static String quote(String s) {
-	if ( s == null ) {
-	    s= "";
-	}
-	return "\"" + s + "\"";
+        if ( s == null ) {
+            s= "";
+        }
+        return "\"" + s + "\"";
     }
 
     /**
@@ -568,7 +568,7 @@ public class PolicyUtils {
      * @return quoted string
      */
     public static String quote(int i) {
-	return quote(Integer.toString(i));
+        return quote(Integer.toString(i));
     }
 
     /**
@@ -580,7 +580,7 @@ public class PolicyUtils {
      * @return quoted string
      */
     public static String quote(long l) {
-	return quote(Long.toString(l));
+        return quote(Long.toString(l));
     }
 
     /**
@@ -775,7 +775,9 @@ public class PolicyUtils {
                                     rule = p.getRule(ruleName);
                                     if ((rule.getServiceTypeName()) 
                                             .equalsIgnoreCase(serviceName)){
-                                        if (PolicyManager.debug.messageEnabled()) {
+                                        if (PolicyManager.
+                                            debug.messageEnabled()) 
+                                        {
                                             PolicyManager.debug.message(
                                             "PolicyUtils.removePolicyRules():"+
                                             "policy: " + policyName +",rule: "
@@ -789,10 +791,10 @@ public class PolicyUtils {
                               }
             
                           } else {
-		              //store the policies corresponding to DNs 
+                              //store the policies corresponding to DNs 
                               if(policyDNs.containsKey(dn)) {
                                  ((Vector)policyDNs.get(dn)).add(policyName); 
-	                      } else {
+                              } else {
                                  Vector policies = new Vector();
                                  policies.add(policyName);
                                  policyDNs.put(dn,policies);
@@ -824,7 +826,7 @@ public class PolicyUtils {
                          for (int j = 0;j < vPolicies.size(); j++) {
                               policyName = (String) vPolicies.get(j);
                               p = pmRefOrg.getPolicy(policyName);
-	                      ruleItr = p.getRuleNames().iterator();
+                              ruleItr = p.getRuleNames().iterator();
                               while (ruleItr.hasNext()) {
                                      ruleName = (String) ruleItr.next();
                                      rule = p.getRule(ruleName);
@@ -862,12 +864,12 @@ public class PolicyUtils {
      * @return the parsed set
      */
     public static Set delimStringToSet(String str, String delimiter) {
-	Set valSet = new HashSet();;
-	StringTokenizer st = new StringTokenizer(str, delimiter);
-	while (st.hasMoreTokens()) {
-	    valSet.add(st.nextToken().trim());
-	}
-	return valSet;
+        Set valSet = new HashSet();;
+        StringTokenizer st = new StringTokenizer(str, delimiter);
+        while (st.hasMoreTokens()) {
+            valSet.add(st.nextToken().trim());
+        }
+        return valSet;
     }
 
     /**
@@ -877,31 +879,31 @@ public class PolicyUtils {
      * @return display string for the LDAP distinguished name.
      */
     public static String getDNDisplayString(String strDN) {
-	String displayString = null;
-	/*
+        String displayString = null;
+        /*
          * Given a value of cn=Accounting Managers,ou=groups,dc=iplanet,dc=com,
          * this method returns com > iplanet > groups > Accounting Managers
          */
-	if (!DN.isDN(strDN)) {
-	    displayString = strDN;
-	} else {
-	    StringBuffer buff = new StringBuffer(1024);
-	    DN dn = new DN(strDN);
-	    Vector rdns = dn.getRDNs();
-	    int sz = rdns.size();
+        if (!DN.isDN(strDN)) {
+            displayString = strDN;
+        } else {
+            StringBuffer buff = new StringBuffer(1024);
+            DN dn = new DN(strDN);
+            Vector rdns = dn.getRDNs();
+            int sz = rdns.size();
 
-	    for (int i = sz-1; i >= 0; --i) {
-		RDN rdn = (RDN)rdns.get(i);
-		buff.append(rdn.getValues()[0]);
+            for (int i = sz-1; i >= 0; --i) {
+                RDN rdn = (RDN)rdns.get(i);
+                buff.append(rdn.getValues()[0]);
 
-		if (i > 0) {
-		    buff.append(" > ");
-		}
-	    }
+                if (i > 0) {
+                    buff.append(" > ");
+                }
+            }
 
-	    displayString = buff.toString();
-	}
-	return displayString;
+            displayString = buff.toString();
+        }
+        return displayString;
     }
    
     /** 
