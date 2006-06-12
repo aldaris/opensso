@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SelectRealm.jsp,v 1.1 2006-05-04 06:56:53 veiming Exp $
+   $Id: SelectRealm.jsp,v 1.2 2006-06-12 22:00:00 jonthegreat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,8 +39,6 @@
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2004" fireDisplayEvents="true">
 
 <script language="javascript">
-    var emptyRealmLabel = '<cc:text name="emptyRealm" bundleID="amConsole" />';
-
     function realmChanged(frm) {
 	frm.action += '?SelectRealm.btnRealm=';
 	frm.submit();
@@ -54,11 +52,17 @@
         var label = '';
 
         if (realm == '') {
-            label = emptyRealmLabel + ':' + scheme;
-            value = ':' + scheme;
+            label = scheme;
+            value = scheme;
         } else {
-            label = realm + ':' + scheme;
-            value = label;
+            var realms = frm.elements[frm.name + '.RealmNames'];
+            for (x=0; x < realms.length; x++) {
+                if (realms.options[x].selected == true) {
+                    var realmLabel = realms.options[x].text;
+                }
+            }    
+            label = realmLabel + ':' + scheme;
+            value = realm + ':' + scheme;
         }
 
 	var parentFrm = opener.document.forms[0];
@@ -67,7 +71,6 @@
 	top.window.close();
     }
 </script>
-
 
 <cc:form name="SelectRealm" method="post" defaultCommandChild="/button1">
 <cc:secondarymasthead name="secMhCommon" />
@@ -84,6 +87,7 @@
 <cc:pagetitle name="pgtitleTwoBtns" bundleID="amConsole" pageTitleText="policy.condition.title.selectrealm" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true"/>
+
 
 </cc:form>
 
