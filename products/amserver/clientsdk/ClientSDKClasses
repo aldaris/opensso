@@ -106,6 +106,7 @@ com/sun/identity/common/L10NMessageImpl.class
 com/sun/identity/common/L10NMessage.class
 com/sun/identity/common/RequestUtils.class
 com/sun/identity/common/ResourceLookup.class
+com/sun/identity/common/DNUtils.class
 com/sun/identity/common/FQDNUtils.class
 com/sun/identity/common/Constants.class
 com/sun/identity/common/ISLocaleContext.class

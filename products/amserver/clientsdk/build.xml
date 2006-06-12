@@ -18,14 +18,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-04-20 03:37:26 goodearth Exp $
+   $Id: build.xml,v 1.2 2006-06-12 22:07:11 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project name="opensso-clientsdk" default="package-clientsdk">
                 
-    <description>Open Web Single Sign-On ClientSDK</description>
+    <description>Open Web Single Sign-On Client SDK</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** clientsdk may be built from top level only ***">
@@ -36,18 +36,11 @@
         </condition>
     </fail>
 
-    <!-- clientsdk environment variables -->
-    <property name="clientsdk.lib.dir" location="${clientsdkbase.dir}/lib"/>
-    <property name="clientsdk.xml.dir" location="${clientsdkbase.dir}/xml"/>
-    <property name="clientsdk.res.dir" location="${clientsdkbase.dir}/resources"/>
-
     <!-- properties for clientsdk -->
     <property name="clientsdk.name" value="am_client_sdk"/>
-    <property name="clientsdk.version" value="8.0"/>
-    <property name="clientsdk.built.dir" 
-        value="${clientsdkbase.dir}/${clientsdk.name}_${clientsdk.version}"/>
+    <property name="clientsdk.version" value="${version}"/>
     <tstamp>
-        <format property="pstamp" pattern="yyyy-MMMM-d"/>
+        <format property="pstamp" pattern="yyyy-MMMM-d hh:mm"/>
     </tstamp>
     <property name="clientsdk.stamp" 
         value="${clientsdk.version}_${DSTAMP}${TSTAMP}"/>
@@ -60,7 +53,7 @@
     <target name="package-clientsdk" depends="preparebuild">
         <echo message="Building clientSDK"/>
 
-        <jar destfile="${clientsdk.lib.dir}/amclientsdk.jar">
+        <jar destfile="${clientsdk.built.dir}/amclientsdk.jar">
             <fileset dir="${classes.dir}">
                 <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
@@ -68,11 +61,12 @@
                 <includesfile name="${clientsdkbase.dir}/ClientSDKProperties"/>
             </fileset>
             <manifest>
+               <attribute name="Created-On" value="${pstamp}" />
                 <section name="com.sun.identity">
                     <attribute name="Specification-Title"
-                        value="AM Client SDK"/>
+                        value="OpenSSO Client SDK"/>
                     <attribute name="Specification-Version"
-                        value="8.0"/>
+                        value="${clientsdk.version}"/>
                     <attribute name="Specification-Vendor"
                         value="Sun Microsystems, Inc."/>
                     <attribute name="Implementation-Title"
@@ -85,24 +79,23 @@
             </manifest>
         </jar>
 
-        <jar destfile="${clientsdk.lib.dir}/amclientsdkcopy.jar"
+        <jar destfile="${clientsdk.built.dir}/amclientsdkcopy.jar"
              filesetmanifest="merge">
                 <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
-                <zipfileset src="${clientsdk.lib.dir}/amclientsdk.jar"/>
+                <zipfileset src="${clientsdk.built.dir}/amclientsdk.jar"/>
         </jar>
 
-        <copy file="${clientsdk.lib.dir}/amclientsdkcopy.jar" 
-            tofile="${clientsdk.lib.dir}/amclientsdk.jar"/>
-         <delete file="${clientsdk.lib.dir}/amclientsdkcopy.jar"/>
-
+        <copy file="${clientsdk.built.dir}/amclientsdkcopy.jar" 
+            tofile="${clientsdk.built.dir}/amclientsdk.jar"/>
+         <delete file="${clientsdk.built.dir}/amclientsdkcopy.jar"/>
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${clientsdk.lib.dir}"/>
+        <mkdir dir="${clientsdk.built.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${clientsdk.lib.dir}"/>
+        <delete dir="${clientsdk.built.dir}"/>
     </target>
    
 </project>
