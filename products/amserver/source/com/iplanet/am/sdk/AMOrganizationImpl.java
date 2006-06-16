@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.4 2006-04-17 20:20:02 kenwho Exp $
+ * $Id: AMOrganizationImpl.java,v 1.5 2006-06-16 19:36:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.util.StringTokenizer;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
@@ -64,7 +65,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createSubOrganizations(Set subOrganizations) throws AMException,
             SSOException {
@@ -97,7 +98,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createSubOrganizations(Map subOrganizationsMap)
             throws AMException, SSOException {
@@ -124,20 +125,26 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Create sub-organization and initialize their attributes. Initializes
-     * service objectclasses and attributes as provided in the
-     * <code>serviceNameAndAttrs</code> map.
+     * service objectclasses and attributes as provided in the <Code>
+     * serviceNameAndAttrs </Code> map.
      * 
-     * @param orgName name of organization to be created under this
-     *        organization.
-     * @param domainname name of the domain (ex: sun.com, iplanet.com).
-     * @param attrMap Map of attribute-value pairs to be set on the entry.
-     * @param serviceNamesAndAttrs Map of service names and attribute-values for
-     *        that service to be set in the org entry. It maps service name to
-     *       a set of attribute values.
+     * @param orgName
+     *            name of organization to be created under this organization.
+     * @param domainname,
+     *            name of the domain (ex: sun.com, iplanet.com).
+     * @param attrMap
+     *            Map of attribute-value pairs to be set on the entry.
+     * @param serviceNamesAndAttrs
+     *            Map of service names and attribute-values for that service to
+     *            be set in the org entry. <Code> serviceNameAndAttrs </Code>
+     *            has service names keys and map of attribute-values (values are
+     *            in a Set).
      * @return DN of organization created.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public String createOrganization(String orgName, String domainName,
             Map attrMap, Map serviceNamesAndAttrs) throws AMException,
@@ -175,7 +182,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public void deleteSubOrganizations(Set subOrganizationDNs)
             throws AMException, SSOException {
@@ -227,15 +234,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for sub organizations in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard search pattern.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of Sub Organizations matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of Sub Organizations matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchSubOrganizations(String wildcard, int level)
             throws AMException, SSOException {
@@ -244,14 +256,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for sub organizations in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of Sub Organizations matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of Sub Organizations
+     *         matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchSubOrganizations(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -260,19 +278,25 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for sub organizations in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of sub organizations
-     * with matching attribute-value pairs will be returned.
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of sub organizations with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard search pattern.
-     * @param avPairs attribute-value pairs to match when searching sub
-     *        organizations.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of sub organizations matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching users
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of sub organizations matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchSubOrganizations(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -283,24 +307,28 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for sub organizations in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of sub organizations
-     * with matching attribute-value pairs will be returned.
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of sub organizations with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching sub 
-     *        organizations.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of sub organizations matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching users
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of sub organizations
+     *         matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchSubOrganizations(
-            String wildcard,
-            Map avPairs,
-            AMSearchControl searchControl
-    ) throws AMException, SSOException {
+    public AMSearchResults searchSubOrganizations(String wildcard, Map avPairs,
+            AMSearchControl searchControl) throws AMException, SSOException {
         return searchObjects(AMNamingAttrManager.getNamingAttr(ORGANIZATION),
                 getSearchFilter(AMObject.ORGANIZATION), wildcard, avPairs,
                 searchControl);
@@ -309,11 +337,14 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates organizational units.
      * 
-     * @param organizationalUnits The set of organizational units names to be
-     *        created.
-     * @return Set of sub organizational unit objects created.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param organizationalUnits
+     *            The set of organizational units names to be created.
+     * @return Set set of sub OrganizationalUnit objects created.
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set createOrganizationalUnits(Set organizationalUnits)
             throws AMException, SSOException {
@@ -345,7 +376,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createOrganizationalUnits(Map organizationalUnitsMap)
             throws AMException, SSOException {
@@ -378,7 +409,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public void deleteOrganizationalUnits(Set organizationalUnitDNs)
             throws AMException, SSOException {
@@ -431,15 +462,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for organizational units in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard search pattern.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of organizational units matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of organizational units matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchOrganizationalUnits(String wildcard, int level)
             throws AMException, SSOException {
@@ -448,14 +484,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for organizational units in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of organizational units matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of organizational
+     *         units matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchOrganizationalUnits(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -464,25 +506,29 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for organizational units in this organization using wildcards
-     * and attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of organizational units
-     * with matching attribute-value pairs will be returned.
+     * and attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of organizational units with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching
-     *        organizational units.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *        or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of organizational units matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching organizational
+     *            units
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of organizational units matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set searchOrganizationalUnits(
-            String wildcard,
-            Map avPairs,
-            int level
-    ) throws AMException, SSOException {
+    public Set searchOrganizationalUnits(String wildcard, Map avPairs, 
+            int level) throws AMException, SSOException {
         return searchObjects(AMNamingAttrManager
                 .getNamingAttr(ORGANIZATIONAL_UNIT),
                 getSearchFilter(AMObject.ORGANIZATIONAL_UNIT), wildcard,
@@ -491,24 +537,30 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for organizational units in this organization using wildcards
-     * and attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of organizational units
-     * with matching attribute-value pairs will be returned.
+     * and attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of organizational units with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching
-     *        organizational units.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of organizational units matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching organizational
+     *            units
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults Set of DNs of organizational units matching the
+     *         search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchOrganizationalUnits(
-            String wildcard,
-            Map avPairs,
-            AMSearchControl searchControl
-    ) throws AMException, SSOException {
+    public AMSearchResults searchOrganizationalUnits(String wildcard,
+            Map avPairs, AMSearchControl searchControl) throws AMException,
+            SSOException {
         return searchObjects(AMNamingAttrManager
                 .getNamingAttr(ORGANIZATIONAL_UNIT),
                 getSearchFilter(AMObject.ORGANIZATIONAL_UNIT), wildcard,
@@ -518,10 +570,13 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates roles.
      * 
-     * @param roles The set of Roles' names to be created.
-     * @return Set of Role objects created.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            The set of Roles' names to be created.
+     * @return Set set of Role objects created.
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set createRoles(Set roleNames) throws AMException, SSOException {
         Iterator iter = roleNames.iterator();
@@ -544,11 +599,14 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates roles.
      * 
-     * @param roles Map of role name to a map of attribute name to a set of
-     * attribute values.
-     * @return Set of Role objects created.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            Map where the key is the name of the role, and the value is a
+     *            Map to represent Attribute-Value Pairs
+     * @return Set set of Role objects created.
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set createRoles(Map roles) throws AMException, SSOException {
         Iterator iter = roles.keySet().iterator();
@@ -593,9 +651,12 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Deletes roles.
      * 
-     * @param roles The set of roles' DNs to be deleted.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            The set of roles' DNs to be deleted.
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public void deleteRoles(Set roleDNs) throws AMException, SSOException {
         Iterator iter = roleDNs.iterator();
@@ -608,24 +669,22 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Returns the roles within the specified level.
+     * Gets the roles within the specified level.
      * 
-     * @param level Search level from the organization.
-     * @return Set of role DN's within the specified level.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param level
+     *            The search level starting from the organization.
+     * @return The Set of role DN's within the specified level.
      */
     public Set getRoles(int level) throws AMException, SSOException {
         return search(level, getSearchFilter(AMObject.ROLE));
     }
 
     /**
-     * Returns number of roles within the specified level.
+     * Gets number of roles within the specified level.
      * 
-     * @param level Search level from the organization.
+     * @param level
+     *            The search level starting from the organization.
      * @return Number of roles within the specified level.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
      */
     public long getNumberOfRoles(int level) throws AMException, SSOException {
         return getRoles(level).size();
@@ -633,29 +692,42 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for roles in this organization using wildcards. Wildcards can be
-     * specified such as <code>a*</code>, <code>*</code>, <code>*a</code>.
+     * specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of roles matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of roles matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set searchRoles(String wildcard, int level)
-            throws AMException, SSOException {
+    public Set searchRoles(String wildcard, int level) throws AMException,
+            SSOException {
         return searchRoles(wildcard, null, level);
     }
 
     /**
      * Searches for roles in this organization using wildcards. Wildcards can be
-     * specified such as <code>a*</code>, <code>*</code>, <code>*a</code>.
+     * specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of roles matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of roles matching the
+     *         search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchRoles(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -664,18 +736,24 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for roles in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of roles with
-     * matching attribute-value pairs will be returned.
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
+     * the search, attribute-value pairs can be specifed so that DNs of roles
+     * with matching attribute-value pairs will be returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching roles.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of roles matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching users
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of roles matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchRoles(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -685,17 +763,24 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for roles in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of roles withs
-     * matching attribute-value pairs will be returned.
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
+     * the search, attribute-value pairs can be specifed so that DNs of roles
+     * with matching attribute-value pairs will be returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching roles.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of roles matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching users
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of roles matching the
+     *         search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchRoles(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -707,14 +792,17 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates filtered roles.
      * 
-     * @param roles The set of filtered roles' names to be created.
-     * @return Set of FilteredRole objects created.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            The set of filtered roles' names to be created.
+     * @return Set set of FilteredRole objects created.
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set createFilteredRoles(Set roleNames)
-            throws AMException, SSOException {
+    public Set createFilteredRoles(Set roleNames) throws AMException,
+            SSOException {
         Iterator iter = roleNames.iterator();
         Set roles = new HashSet();
 
@@ -733,15 +821,17 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates filtered roles.
      * 
-     * @param roles Map where the key is the name of the filtered role, and the
-     *        value is a Map to represent Attribute-Value Pairs
-     * @return Set of Filtered Role objects created.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            Map where the key is the name of the filtered role, and the
+     *            value is a Map to represent Attribute-Value Pairs
+     * @return Set set of FilteredRole objects created.
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set createFilteredRoles(Map roles)
-            throws AMException, SSOException {
+    public Set createFilteredRoles(Map roles) throws AMException, SSOException {
         Iterator iter = roles.keySet().iterator();
         Set result = new HashSet();
 
@@ -784,13 +874,16 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Deletes filtered roles.
      * 
-     * @param roles The set of filtered roles' DNs to be deleted.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param roles
+     *            The set of filtered roles' DNs to be deleted.
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public void deleteFilteredRoles(Set roleDNs)
-            throws AMException, SSOException {
+    public void deleteFilteredRoles(Set roleDNs) throws AMException,
+            SSOException {
         Iterator iter = roleDNs.iterator();
 
         while (iter.hasNext()) {
@@ -801,38 +894,45 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Returns the filtered roles within the specified level.
+     * Gets the filtered roles within the specified level.
      * 
-     * @param level Search level from the organization.
-     * @return Set of filtered roles' DNs within the specified level.
+     * @param level
+     *            The search level starting from the organization.
+     * @return The Set of filtered roles' DNs within the specified level.
      */
     public Set getFilteredRoles(int level) throws AMException, SSOException {
         return search(level, getSearchFilter(AMObject.FILTERED_ROLE));
     }
 
     /**
-     * Returns number of filtered roles within the specified level.
+     * Gets number of filtered roles within the specified level.
      * 
-     * @param level Search level from the organization.
+     * @param level
+     *            The search level starting from the organization.
      * @return Number of filtered roles within the specified level.
      */
-    public long getNumberOfFilteredRoles(int level)
-            throws AMException, SSOException {
+    public long getNumberOfFilteredRoles(int level) throws AMException,
+            SSOException {
         return getFilteredRoles(level).size();
     }
 
     /**
      * Searches for filtered roles in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstants.SCOPE_SUB</code>)
-     * @return Set of DNs of filtered roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstants.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of filtered roles matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchFilteredRoles(String wildcard, int level)
             throws AMException, SSOException {
@@ -841,39 +941,49 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for filtered roles in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of filtered roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of filtered roles
+     *         matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchFilteredRoles(
-            String wildcard,
-            AMSearchControl searchControl
-    ) throws AMException, SSOException {
+    public AMSearchResults searchFilteredRoles(String wildcard,
+            AMSearchControl searchControl) throws AMException, SSOException {
         return searchFilteredRoles(wildcard, null, searchControl);
     }
 
     /**
      * Searches for filtered roles in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of filtered roles with
-     * matching attribute-value pairs will be returned.
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of filtered roles with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching
-     *        filtered roles
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *        or <code>AMConstants.SCOPE_SUB</code>)
-     * @return Set of DNs of filtered roles matching the search
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching filtered roles
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstants.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of filtered roles matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchFilteredRoles(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -884,19 +994,26 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for filtered roles in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of filtered roles with
-     * matching attribute-value pairs will be returned.
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
+     * DNs of filtered roles with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching filtered
-     *        roles.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of filtered roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching filtered roles
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of filtered roles
+     *         matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchFilteredRoles(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -907,56 +1024,71 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for all roles in this organization using wildcards. Wildcards
-     * can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstants.SCOPE_SUB</code>)
-     * @return Set of DNs of all roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstants.SCOPE_SUB)
+     * 
+     * @return Set of DNs of all roles matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set searchAllRoles(String wildcard, int level)
-            throws AMException, SSOException {
+    public Set searchAllRoles(String wildcard, int level) throws AMException,
+            SSOException {
         return searchAllRoles(wildcard, null, level);
     }
 
     /**
      * Searches for all roles in this organization using wildcards. Wildcards
-     * can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of all roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of all roles matching
+     *         the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchAllRoles(
-            String wildcard,
-            AMSearchControl searchControl
-    ) throws AMException, SSOException {
+    public AMSearchResults searchAllRoles(String wildcard,
+            AMSearchControl searchControl) throws AMException, SSOException {
         return searchAllRoles(wildcard, null, searchControl);
     }
 
     /**
      * Searches for all roles in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of all roles with
-     * matching attribute-value pairs will be returned.
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
+     * the search, attribute-value pairs can be specifed so that DNs of all
+     * roles with matching attribute-value pairs will be returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching all roles.
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstants.SCOPE_SUB</code>)
-     * @return Set of DNs of all roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching all roles
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstants.SCOPE_SUB)
+     * 
+     * @return Set of DNs of all roles matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchAllRoles(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -967,18 +1099,25 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for all roles in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of all roles with
-     * matching attribute-value pairs will be returned.
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
+     * the search, attribute-value pairs can be specifed so that DNs of all
+     * roles with matching attribute-value pairs will be returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching all roles.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of all roles matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching all roles
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of all roles matching
+     *         the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchAllRoles(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -990,11 +1129,13 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates assignable dynamic groups.
      * 
-     * @param assignableDynamicGroupNames The set of assignable dynamic groups's
-     *         names to be created.
-     * @return Set of assignable dynamic group objects created.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param assignableDynamicGroupNames
+     *            The set of assignable dynamic groups's names to be created.
+     * @return Set set of AssignableDynamicGroup objects created.
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set createAssignableDynamicGroups(Set assignableDynamicGroupNames)
             throws AMException, SSOException {
@@ -1006,8 +1147,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                     .getNamingAttr(GROUP)
                     + "=" + ((String) iter.next()) + "," + super.entryDN;
             AMAssignableDynamicGroupImpl assignableDynamicGroupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, assignableDynamicGroupDN);
+                new AMAssignableDynamicGroupImpl(super.token, 
+                        assignableDynamicGroupDN);
             assignableDynamicGroupImpl.create();
             assignableDynamicGroups.add(assignableDynamicGroupImpl);
         }
@@ -1016,16 +1157,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Creates assignable dynamic group.
+     * Creates assignable dynamic group. Takes serviceNameAndAttr map so that
+     * services can be assigned to the group which is just created.
      * 
-     * @param name Name of group to be created.
-     * @param attributes Map of service name to a map of attribute name to a set
-     *        of attribute values. Serivces in this map will be assigned to the
-     *        group after creation; and the attribute values will be set
-     *        accordingly.
-     * @return Created group.
-     * @throws AMException if there is an error when accessing the data store.
-     * @throws SSOException if the SSOtoken is no longer valid.
+     * @param Name
+     *            of group to be created
+     * @param ServiceName
+     *            and attrsMap where the map is like this: 
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
+     * @return AMGroup object of newly created group.
+     * @throws AMException
+     *             if there is an error when accessing the data store
+     * @throws SSOException
+     *             if the SSOtoken is no longer valid
      */
     public AMGroup createAssignableDynamicGroup(String name, Map attributes,
             Map serviceNameAndAttrs) throws AMException, SSOException {
@@ -1037,10 +1182,13 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Deletes assignable dynamic groups.
      * 
-     * @param assignableDynamicGroupDNs Set of assignable dynamic groups's DNs
-     *        to be deleted.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param assignableDynamicGroupDNs
+     *            The set of assignable dynamic groups's DNs to be deleted.
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public void deleteAssignableDynamicGroups(Set assignableDynamicGroupDNs)
             throws AMException, SSOException {
@@ -1049,29 +1197,31 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         while (iter.hasNext()) {
             String assignableDynamicGroupDN = (String) iter.next();
             AMAssignableDynamicGroup assignableDynamicGroup = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, assignableDynamicGroupDN);
+                new AMAssignableDynamicGroupImpl(super.token, 
+                        assignableDynamicGroupDN);
             assignableDynamicGroup.delete();
         }
     }
 
     /**
-     * Returns a set assignable dynamic groups.
+     * Gets the assignable dynamic groups within the specified level.
      * 
-     * @param level The search level from this organization.
-     * @return The Set of DNs of assignable dynamic groups within the specified
+     * @param level
+     *            The search level starting from the organization.
+     * @return The Set of DNs of AssignableDynamicGroups within the specified
      *         level.
      */
-    public Set getAssignableDynamicGroups(int level)
-            throws AMException, SSOException {
+    public Set getAssignableDynamicGroups(int level) throws AMException,
+            SSOException {
         return search(level, getSearchFilter(
                 AMObject.ASSIGNABLE_DYNAMIC_GROUP));
     }
 
     /**
-     * Returns the name of assignable dynamic groups.
+     * Gets number of assignable dynamic groups within the specified level.
      * 
-     * @param level The search level from this organization.
+     * @param level
+     *            The search level starting from the organization.
      * @return Number of assignable dynamic groups within the specified level.
      */
     public long getNumberOfAssignableDynamicGroups(int level)
@@ -1081,15 +1231,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for assignable dynamic groups in this organization using
-     * wildcards. Wildcards can be specified such as a*</code></code>,
-     * <code>*</code>, <code>*a</code>.
+     * wildcards. Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard search pattern.
-     * @param level the search level (<code>AMConstants.SCOPE_ONE</code>
-     *        or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of assignable dynamic groups matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of assignable dynamic groups matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public Set searchAssignableDynamicGroups(String wildcard, int level)
             throws AMException, SSOException {
@@ -1098,25 +1253,28 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for assignable dynamic groups in this organization using
-     * wildcards. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. Uses the
-     * <code>groupSearchTemplate</code>, if provided. Otherwise the default
-     * search template is used.
+     * wildcards. Wildcards can be specified such as a*, *, *a. Uses the
+     * groupSearchTemplate, if provided. Otherwise the default search template
+     * is used.
      * 
-     * @param wildcard Search pattern.
-     * @param level the search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstants.SCOPE_SUB</code>)
-     * @return Set of DNs of assignable dynamic groups matching the search.
-     * @throws AMException if an error is encountered when trying to
-     *         access/retrieve data from the data store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstants.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of assignable dynamic groups matching the search
+     * 
+     * @throws AMException
+     *             if an error is encountered when trying to access/retrieve
+     *             data from the data store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set searchAssignableDynamicGroups(
-            String wildcard,
-            int level,
-            String groupSearchTemplate,
-            Map avPairs
-    ) throws AMException, SSOException {
+
+    public Set searchAssignableDynamicGroups(String wildcard, int level,
+            String groupSearchTemplate, Map avPairs) throws AMException,
+            SSOException {
         if (AMCompliance.isComplianceUserDeletionEnabled()
                 && AMCompliance.isAncestorOrgDeleted(super.token,
                         super.entryDN, AMObject.ORGANIZATION)) {
@@ -1135,43 +1293,51 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for assignable dynamic groups in this organization using
-     * wildcards. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * wildcards. Wildcards can be specified such as a*, *, *a.
      * 
-     * @param wildcard Search pattern.
-     * @param searchControl Search scope. VLV ranges etc.,
-     * @return Set of DNs of assignable dynamic groups matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of assignable dynamic
+     *         groups matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchAssignableDynamicGroups(
-            String wildcard,
-            AMSearchControl searchControl
-    ) throws AMException, SSOException {
+    public AMSearchResults searchAssignableDynamicGroups(String wildcard,
+            AMSearchControl searchControl) throws AMException, SSOException {
         return searchAssignableDynamicGroups(wildcard, null, searchControl);
     }
 
     /**
      * Searches for assignable dynamic groups in this organization using
-     * wildcards and attribute values. Wildcards can be specified such as
-     * <code>a*</code>, <code>*</code>, <code>*a</code>. To further refine the
-     * search, attribute-value pairs can be specifed so that DNs of dynamic
-     * groups with matching attribute-value pairs will be returned.
+     * wildcards and attribute values. Wildcards can be specified such as a*, *,
+     * *a. To further refine the search, attribute-value pairs can be specifed
+     * so that DNs of dynamic groups with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching assignable
-     *        dynamic groups
-     * @param level Search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
-     * @return Set of DNs of assignable dynamic groups matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching assignable
+     *            dynamic groups
+     * @param level
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
+     * 
+     * @return Set Set of DNs of assignable dynamic groups matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set searchAssignableDynamicGroups(
-            String wildcard,
-            Map avPairs,
-            int level
-    ) throws AMException, SSOException {
+    public Set searchAssignableDynamicGroups(String wildcard, Map avPairs,
+            int level) throws AMException, SSOException {
         return searchObjects(AMNamingAttrManager.getNamingAttr(GROUP),
                 getSearchFilter(AMObject.ASSIGNABLE_DYNAMIC_GROUP), wildcard,
                 avPairs, level);
@@ -1179,18 +1345,26 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for assignable dynamic groups in this organization using
-     * wildcards and attribute values. Wildcards can be specified such as
-     * <code>a*</code>, <code>*</code>, <code>*a</code>. To further refine the
-     * search, attribute-value pairs can be specifed so that DNs of dynamic
-     * groups with matching attribute-value pairs will be returned.
+     * wildcards and attribute values. Wildcards can be specified such as a*, *,
+     * *a. To further refine the search, attribute-value pairs can be specifed
+     * so that DNs of dynamic groups with matching attribute-value pairs will be
+     * returned.
      * 
-     * @param wildcard Search pattern.
-     * @param avPairs attribute-value pairs to match when searching assignable
-     *        dynamic groups.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @return Set of DNs of assignable dynamic groups matching the search.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param avPairs
+     *            attribute-value pairs to match when searching assignable
+     *            dynamic groups
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * 
+     * @return AMSearchResults which contains a Set of DNs of assignable dynamic
+     *         groups matching the search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchAssignableDynamicGroups(String wildcard,
             Map avPairs, AMSearchControl searchControl) throws AMException,
@@ -1203,14 +1377,18 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     /**
      * Creates dynamic groups and initializes their attributes.
      * 
-     * @param dynamicGroups Map of name of the dynamic group to a map of
-     *        attribute name to a set of attribute values.
-     * @return Set of <code>AMDynamicGroup</code> objects created.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param dynamicGroups
+     *            Map where the key is the name of the dynamic group, and the
+     *            value is a Map to represent Attribute-Value Pairs
+     * 
+     * @return Set of AMDynamicGroup objects created
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public Set createDynamicGroups(Map dynamicGroups)
-            throws AMException, SSOException {
+    public Set createDynamicGroups(Map dynamicGroups) throws AMException,
+            SSOException {
         Iterator iter = dynamicGroups.keySet().iterator();
         Set groups = new HashSet();
 
@@ -1234,11 +1412,12 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * Creates dynamic group. Takes serviceNameAndAttr map so that services can
      * be assigned to the group which is just created.
      * 
-     * @param name Name of group to be created
+     * @param Name
+     *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            &lt;serviceName>&lt;AttrMap>
-     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -1259,7 +1438,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public void deleteDynamicGroups(Set dynamicGroupDNs) throws AMException,
             SSOException {
@@ -1298,8 +1477,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for dynamic groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1312,7 +1490,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchDynamicGroups(String wildcard, int level)
             throws AMException, SSOException {
@@ -1321,9 +1499,9 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for dynamic groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>. Uses the <code>groupSearchTemplate</code>, if provided.
-     * Otherwise uses the the default <code>GroupSearch</code> template.
+     * Wildcards can be specified such as a*, *, *a. Uses the
+     * groupSearchTemplate, if provided. Otherwise uses the the default
+     * GroupSearch template.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1337,7 +1515,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *             if an error is encountered when trying to access/retrieve
      *             data from the data store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchDynamicGroups(String wildcard, int level,
             String groupSearchTemplate, Map avPairs) throws AMException,
@@ -1360,8 +1538,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for dynamic groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1374,7 +1551,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchDynamicGroups(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1383,9 +1560,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for dynamic groups in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
+     * further refine the search, attribute-value pairs can be specifed so that
      * DNs of dynamic groups with matching attribute-value pairs will be
      * returned.
      * 
@@ -1402,7 +1578,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchDynamicGroups(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -1414,8 +1590,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for dynamic groups in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of dynamic groups with matching attribute-value pairs will be
      * returned.
@@ -1433,7 +1608,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchDynamicGroups(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1452,7 +1627,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createStaticGroups(Set groupNames) throws AMException,
             SSOException {
@@ -1481,8 +1656,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            &lt;serviceName>&lt;AttrMap>
-     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -1536,8 +1711,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for static groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1550,7 +1724,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchStaticGroups(String wildcard, int level)
             throws AMException, SSOException {
@@ -1559,8 +1733,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for static groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>. Uses the
+     * Wildcards can be specified such as a*, *, *a. Uses the
      * groupSearchTemplate, if provided. If it is null, default search templates
      * are used.
      * 
@@ -1576,7 +1749,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *             if an error is encountered when trying to access/retrieve
      *             data from the data store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchStaticGroups(String wildcard, int level,
             String groupSearchTemplate, Map avPairs) throws AMException,
@@ -1599,8 +1772,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for static groups in this organization using wildcards.
-     * Wildcards can be specified such as <code>a*</code>, <code>*</code>,
-     * <code>*a</code>.
+     * Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1613,7 +1785,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchStaticGroups(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1622,8 +1794,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for static groups in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of static groups with matching attribute-value pairs will be
      * returned.
@@ -1641,7 +1812,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchStaticGroups(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -1652,8 +1823,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for static groups in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of static groups with matching attribute-value pairs will be
      * returned.
@@ -1671,7 +1841,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchStaticGroups(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1683,8 +1853,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for groups in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1699,7 +1868,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchGroups(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -1713,8 +1882,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for groups in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1729,7 +1897,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchGroups(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1750,7 +1918,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createPeopleContainers(Set peopleContainerNames)
             throws AMException, SSOException {
@@ -1764,8 +1932,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                     .append("=").append((String) iter.next()).append(",")
                     .append(super.entryDN);
             AMPeopleContainerImpl peopleContainerImpl = 
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDNSB.toString());
+                new AMPeopleContainerImpl(super.token, 
+                        peopleContainerDNSB.toString());
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
         }
@@ -1783,7 +1951,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createPeopleContainers(Map peopleContainersMap)
             throws AMException, SSOException {
@@ -1799,8 +1967,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                     .append(super.entryDN);
             Map attributes = (Map) peopleContainersMap.get(peopleContainerName);
             AMPeopleContainerImpl peopleContainerImpl = 
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDNSB.toString());
+                new AMPeopleContainerImpl(super.token, 
+                        peopleContainerDNSB.toString());
             peopleContainerImpl.setAttributes(attributes);
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
@@ -1818,7 +1986,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public void deletePeopleContainers(Set peopleContainerDNs)
             throws AMException, SSOException {
@@ -1839,8 +2007,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *            The search level starting from the organization.
      * @return The Set of PeopleContainer's within the specified level.
      */
-    public Set getPeopleContainers(int level) throws AMException, SSOException 
-    {
+    public Set getPeopleContainers(int level) throws AMException, SSOException {
         return search(level, getSearchFilter(AMObject.PEOPLE_CONTAINER));
     }
 
@@ -1858,8 +2025,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for people containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * attribute values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1872,7 +2038,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchPeopleContainers(String wildcard, int level)
             throws AMException, SSOException {
@@ -1881,8 +2047,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for people containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * attribute values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1895,7 +2060,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchPeopleContainers(String wildcard,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1904,8 +2069,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for people containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of people containers with matching attribute-value pairs will be
      * returned.
@@ -1923,7 +2087,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchPeopleContainers(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -1936,8 +2100,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for people containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of people containers with matching attribute-value pairs will be
      * returned.
@@ -1955,7 +2118,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchPeopleContainers(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -1975,7 +2138,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createGroupContainers(Set groupContainerNames)
             throws AMException, SSOException {
@@ -2005,7 +2168,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createGroupContainers(Map groupContainersMap)
             throws AMException, SSOException {
@@ -2037,7 +2200,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public void deleteGroupContainers(Set groupContainerDNs)
             throws AMException, SSOException {
@@ -2076,8 +2239,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for group containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of group containers with matching attribute-value pairs will be
      * returned.
@@ -2095,7 +2257,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchGroupContainers(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -2108,8 +2270,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for group containers in this organization using wildcards and
-     * attribute values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To
+     * attribute values. Wildcards can be specified such as a*, *, *a. To
      * further refine the search, attribute-value pairs can be specifed so that
      * DNs of group containers with matching attribute-value pairs will be
      * returned.
@@ -2127,7 +2288,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchGroupContainers(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -2152,7 +2313,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createUsers(Set userNames) throws AMException, SSOException {
         Set usersSet = new HashSet();
@@ -2194,7 +2355,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set createUsers(Map usersMap) throws AMException, SSOException {
 
@@ -2251,7 +2412,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *             if an error is encountered when trying to access/retrieve
      *             data from the data store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
 
     public AMUser createUser(String uid, Map attrMap, Map serviceNameAndAttrs)
@@ -2263,14 +2424,14 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         }
 
         Set assignServiceNames = serviceNameAndAttrs.keySet();
-        Set registered = dsManager.getRegisteredServiceNames(null, entryDN);
+        Set registered = dsServices.getRegisteredServiceNames(null, entryDN);
         Iterator it = assignServiceNames.iterator();
         while (it.hasNext()) {
             String tmpS = (String) it.next();
             if (!registered.contains(tmpS)) {
                 Object[] args = { tmpS };
-                throw new AMException(AMSDKBundle.getString(
-                    "459", args, super.locale), "459", args);
+                throw new AMException(AMSDKBundle.getString("459", args,
+                        super.locale), "459", args);
             }
         }
 
@@ -2309,8 +2470,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 debug.error("AMOrganizationImpl: Data validation failed-> "
                         + thisService, se);
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString(
-                    "976", args, super.locale), "976", args);
+                throw new AMException(AMSDKBundle.getString("976", args,
+                        super.locale), "976", args);
             }
         }
         if (objectClasses != null && !objectClasses.isEmpty()) {
@@ -2343,7 +2504,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set getUserDNs() throws AMException, SSOException {
         return search(SCOPE_ONE, getSearchFilter(AMObject.USER));
@@ -2382,8 +2543,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 null);
         if (users.size() > 1) {
             Object args[] = { uid };
-            throw new AMException(AMSDKBundle.getString(
-                "969", args, super.locale), "969", args);
+            throw new AMException(AMSDKBundle.getString("969", args,
+                    super.locale), "969", args);
         } else {
             Iterator it = users.iterator();
             if (it.hasNext())
@@ -2405,21 +2566,20 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
      * @param level
-     *            the search level (<code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
+     *            the search level that needs to be used (AMConstants.SCOPE_ONE
+     *            or AMConstansts.SCOPE_SUB)
      * 
      * @return Set DNs of Users matching the search
      * 
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchUsers(String wildcard, int level) throws AMException,
             SSOException {
@@ -2428,8 +2588,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>.
+     * values. Wildcards can be specified such as a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -2442,13 +2601,12 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. SDK users the
+     * values. Wildcards can be specified such as a*, *, *a. SDK users the
      * userSearchTemplate, if provided. Otherwise, it uses the
      * BasicUserSearchTemplate. Any %U in the search template are replaced with
      * the wildcard.
@@ -2465,7 +2623,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      *             if an error is encountered when trying to access/retrieve
      *             data from the data store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchUsers(String wildcard, int level,
             String userSearchTemplate, Map avPairs) throws AMException,
@@ -2493,8 +2651,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
      * the search, attribute-value pairs can be specifed so that DNs of users
      * with matching attribute-value pairs will be returned.
      * 
@@ -2511,7 +2668,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public Set searchUsers(String wildcard, Map avPairs, int level)
             throws AMException, SSOException {
@@ -2521,8 +2678,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
      * the search, attribute-value pairs can be specifed so that DNs of users
      * with matching attribute-value pairs will be returned.
      * 
@@ -2539,7 +2695,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @throws AMException
      *             if there is an internal error in the AM Store
      * @throws SSOException
-     *             if the single sign on token is no longer valid
+     *             if the sign on is no longer valid
      */
     public AMSearchResults searchUsers(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
@@ -2550,24 +2706,29 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Searches for users in this organization using wildcards and attribute
-     * values. Wildcards can be specified such as <code>a*</code>,
-     * <code>*</code>, <code>*a</code>. To further refine the search,
-     * attribute-value pairs can be specifed so that DNs of users with matching
-     * attribute-value pairs will be returned.
+     * values. Wildcards can be specified such as a*, *, *a. To further refine
+     * the search, attribute-value pairs can be specifed so that DNs of users
+     * with matching attribute-value pairs will be returned.
      * 
-     * @param wildcard search pattern.
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @param avfilter this attribute-value pairs filter will be & with user
-     *        search filter
-     * @return Set DNs of Users matching the search.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @param wildcard
+     *            wildcard pattern to be used in the search
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * @param avfilter
+     *            this attribute-value pairs filter will be & with user search
+     *            filter
+     * 
+     * @return AMSearchResults which contains a Set DNs of Users matching the
+     *         search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchUsers(
-            String wildcard,
-            AMSearchControl searchControl,
-            String avfilter
-    ) throws AMException, SSOException {
+    public AMSearchResults searchUsers(String wildcard,
+            AMSearchControl searchControl, String avfilter) throws AMException,
+            SSOException {
         return searchObjects(AMNamingAttrManager.getNamingAttr(USER),
                 getSearchFilter(AMObject.USER), wildcard, searchControl,
                 avfilter);
@@ -2578,53 +2739,57 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * as can be specified for the attribute values. The DNs of users with
      * matching attribute-value pairs will be returned.
      * 
-     * @param searchControl Search scope to be used, VLV ranges etc.,
-     * @param avfilter this attribute-value pairs filter will be & with user
-     *        search filter.
+     * @param searchControl
+     *            specifies the search scope to be used, VLV ranges etc.,
+     * @param avfilter
+     *            this attribute-value pairs filter will be & with user search
+     *            filter
+     * 
      * @return AMSearchResults which contains a Set DNs of Users matching the
-     *         search.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     *         search
+     * 
+     * @throws AMException
+     *             if there is an internal error in the AM Store
+     * @throws SSOException
+     *             if the sign on is no longer valid
      */
-    public AMSearchResults searchUsers(
-            AMSearchControl searchControl,
-            String avfilter
-    ) throws AMException, SSOException {
+    public AMSearchResults searchUsers(AMSearchControl searchControl,
+            String avfilter) throws AMException, SSOException {
         return searchObjects(getSearchFilter(AMObject.USER), searchControl,
                 avfilter);
     }
 
     /**
-     * Returns the number of services.
+     * Gets the number of services.
      * 
-     * @return Number of services.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @return int number of services.
      */
     public long getNumberOfServices() throws AMException, SSOException {
         return getRegisteredServiceNames().size();
     }
 
     /**
-     * Returns the names of registered services.
+     * Gets the names of registered services.
      * 
-     * @return Set of the names of registered services.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @return The Set of the names of registered services.
      */
     public Set getRegisteredServiceNames() throws AMException, SSOException {
-        return dsManager.getRegisteredServiceNames(null, super.entryDN);
+        return dsServices.getRegisteredServiceNames(null, super.entryDN);
     }
 
     /**
-     * Registers a service for this organization.
+     * Register a service for this organization.
      * 
-     * @param serviceName Name of service to be registered
-     * @param createTemplate <code>true</code> if to create default template.
-     * @param activate <code>true</code> if to activate the service.
-     * @throws AMException if the service does not exist or could not be
-     *         registered.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @param serviceName
+     *            The name of service to be registered
+     * @param createTemplate
+     *            true if to create default template
+     * @param activate
+     *            true if to activate the service
+     * @throws AMException
+     *             if the service does not exist or could not be registered.
+     * @throws SSOException
+     *             if the sign on is no longer valid.
      */
     public synchronized void registerService(String serviceName,
             boolean createTemplate, boolean activate) throws AMException,
@@ -2635,7 +2800,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         }
 
         try {
-            dsManager.registerService(super.token, super.entryDN, serviceName);
+            dsServices.registerService(super.token, super.entryDN, serviceName);
         } catch (AMException le) {
             if (!le.getErrorCode().equalsIgnoreCase("464")) {
                 throw le;
@@ -2666,8 +2831,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                         }
                     } else {
                         Object args[] = { serviceName };
-                        throw new AMException(AMSDKBundle
-                            .getString("464", args, super.locale), "464", args);
+                        throw new AMException(AMSDKBundle.getString("464",
+                                args, super.locale), "464", args);
                     }
                 }
             }
@@ -2718,19 +2883,21 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                             null);
                 }
             } catch (SMSException smsex) {
-                throw new AMException(AMSDKBundle.getString(
-                    "451", super.locale), "451");
+                throw new AMException(AMSDKBundle
+                        .getString("451", super.locale), "451");
             }
         }
     }
 
     /**
-     * Deregisters a service for this organization.
+     * Unregister a service for this organization.
      * 
-     * @param serviceName Service Name to be unregistered.
-     * @throws AMException if the service does not exist or could not be
-     *         deregistered.
-     * @throws SSOException if the single sign token on is no longer valid.
+     * @param String
+     *            serviceName to be unregistered
+     * @throws AMException
+     *             if the service does not exist or could not be unregistered.
+     * @throws SSOException
+     *             if the sign on is no longer valid.
      */
     public synchronized void unregisterService(String serviceName)
             throws AMException, SSOException {
@@ -2744,8 +2911,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         // error message
         if (isRegisteredForSubOrgs(serviceName)) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString(
-                "445", args, super.locale), "445", args);
+            throw new AMException(AMSDKBundle.getString("445", args,
+                    super.locale), "445", args);
         }
 
         try {
@@ -2753,15 +2920,15 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                     SchemaType.DYNAMIC)) {
 
                 try {
-                    dsManager.unRegisterService(super.token, super.entryDN,
+                    dsServices.unRegisterService(super.token, super.entryDN,
                             super.profileType, serviceName,
                             AMTemplate.DYNAMIC_TEMPLATE);
                 } catch (AMException le) {
                     if (debug.messageEnabled()) {
-                        debug.message("AMOrganizationImpl.unregister " +
-                                "exception in dsManager.unRegisterService"
-                                        + "DYNAMIC_TEMPLATE serviceName="
-                                        + serviceName);
+                        debug.message("AMOrganizationImpl.unregister "
+                                + "exception in dsManager.unRegisterService"
+                                + "DYNAMIC_TEMPLATE serviceName="
+                                + serviceName);
                     }
                 }
             }
@@ -2770,9 +2937,12 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 if (orgTemplateExists(serviceName)) {
                     AMTemplate template = getTemplate(serviceName,
                             AMTemplate.ORGANIZATION_TEMPLATE);
-                    dsManager.unRegisterService(super.token, super.entryDN,
-                            super.profileType, serviceName, template,
+                    dsServices.unRegisterService(super.token, super.entryDN,
+                            super.profileType, serviceName,
                             AMTemplate.ORGANIZATION_TEMPLATE);
+                    // Delete the template
+                    template.delete();
+
                 }
             }
 
@@ -2789,8 +2959,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             }
         } catch (SMSException smsex) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.getString(
-                "913", args, super.locale), "913", args);
+            throw new AMException(AMSDKBundle.getString("913", args,
+                    super.locale), "913", args);
         }
     }
 
@@ -2799,12 +2969,17 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Unassigns policies from this organization and its roles.
+     * Unassigns the given policies from this organization and its roles.
      * 
-     * @param serviceName Service Name.
-     * @param policyDNs Set of policy DN.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @param serviceName
+     *            serviceName
+     * @param policyDNs
+     *            Set of policy DN string
+     * 
+     * @throws AMException
+     *             if there is an internal problem with AM Store.
+     * @throws SSOException
+     *             if the sign-on is no longer valid.
      */
     public void unassignAllPolicies(String serviceName, Set policyDNs)
             throws AMException, SSOException {
@@ -2813,12 +2988,17 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Modifies all the templates under this organization that contain any
-     * policy DN in given policy DNs.
+     * policyDN in given policyDNs.
      * 
-     * @param serviceName Service Name.
-     * @param policyDNs Set of policy DN.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @param serviceName
+     *            serviceName
+     * @param policyDNs
+     *            Set of policy DN string
+     * 
+     * @throws AMException
+     *             if there is an internal problem with AM Store.
+     * @throws SSOException
+     *             if the sign-on is no longer valid.
      */
     public void modifyAllPolicyTemplates(String serviceName, Set policyDNs)
             throws AMException, SSOException {
@@ -2827,12 +3007,15 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     /**
      * Deletes all the named policy templates for this Organization
-     * corresponding to the given policy. This includes organization based and
-     * role based policy templates.
+     * corresponding to the given policy. This includes Org based and role based
+     * policy templates. This is a convienence method.
      * 
-     * @param policyDN Policy DN.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @param policyDN
+     *            a policy DN string
+     * @throws AMException
+     *             if there is an internal problem with AM Store.
+     * @throws SSOException
+     *             if the sign-on is no longer valid.
      */
     public boolean deleteAllNamedPolicyTemplates(String policyDN)
             throws AMException, SSOException {
@@ -2840,27 +3023,28 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Returns all the assigned policies created for this Organization
+     * Gets all the assigned policies created for this Organization
      * 
      * @return Set a set of assigned policy DNs
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @throws AMException
+     *             if there is an internal problem with AM Store.
+     * @throws SSOException
      *             if the sign-on is no longer valid.
      */
-    public Set getAssignedPolicyDNs()
-            throws AMException, SSOException {
+    public Set getAssignedPolicyDNs() throws AMException, SSOException {
+
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns <code>ture</code> if a policy DN is assigned to an organization
-     * or a role.
+     * Checks if a policyDN is assigned to an org or a role.
      * 
-     * @param policyDN Policy DN.
-     * @param serviceName Service name.
-     * @return <code>true</code> if policy is assigned to an org or role.
-     * @throws AMException if there is an internal problem with AM Store.
-     * @throws SSOException if the single sign-on token is no longer valid.
+     * @param policyDN
+     *            a policy DN string
+     * @param serviceName
+     *            service name string
+     * @return boolean true if policy is assigned to an org or role. false
+     *         otherwise
      */
     public boolean isPolicyAssigned(String policyDN, String serviceName)
             throws AMException, SSOException {
@@ -2868,13 +3052,14 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     /**
-     * Checks if an organization template exists for the service.
+     * Checks if an org template exists for the service.
      * 
-     * @param serviceName Service name.
-     * @return <code>true</code> if the organization template exists.
+     * @param serviceName
+     *            service name
+     * @return boolean true if the org template exists. false otherwise
      */
-    public boolean orgTemplateExists(String serviceName)
-            throws AMException, SSOException {
+    public boolean orgTemplateExists(String serviceName) throws AMException,
+            SSOException {
         ServiceConfig sc = AMServiceUtils.getOrgConfig(token, entryDN,
                 serviceName);
         return (sc != null);
@@ -2954,8 +3139,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     }
 
     protected AMGroup createGroup(String name, Map attributes,
-            Map serviceNameAndAttrs, int type) throws AMException, SSOException
-    {
+            Map serviceNameAndAttrs, int type) 
+        throws AMException, SSOException {
         String groupDN = AMNamingAttrManager.getNamingAttr(GROUP) + "=" + name
                 + "," + super.entryDN;
         AMObjectImpl groupImpl;
@@ -2975,15 +3160,16 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
         if (serviceNameAndAttrs != null && !serviceNameAndAttrs.isEmpty()) {
             Set serviceNames = serviceNameAndAttrs.keySet();
-            Set registered = dsManager.getRegisteredServiceNames(null, entryDN);
+            Set registered = dsServices
+                    .getRegisteredServiceNames(null, entryDN);
             Iterator it = serviceNames.iterator();
 
             while (it.hasNext()) {
                 String tmpS = (String) it.next();
                 if (!registered.contains(tmpS)) {
                     Object[] args = { tmpS };
-                    throw new AMException(AMSDKBundle.getString(
-                        "459", args, super.locale), "459", args);
+                    throw new AMException(AMSDKBundle.getString("459", args,
+                            super.locale), "459", args);
                 }
             }
 
@@ -3012,8 +3198,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                             + "Data validation failed.. ", se);
                 }
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString(
-                    "976", args, super.locale), "976", args);
+                throw new AMException(AMSDKBundle.getString("976", args,
+                        super.locale), "976", args);
             }
             if (objectClasses != null && !objectClasses.isEmpty()) {
                 groupImpl.setAttribute("objectclass", objectClasses);
@@ -3025,13 +3211,6 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchAssignableDynamicGroups(
-     *      java.lang.String,
-     *      java.util.Map, java.lang.String, com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchAssignableDynamicGroups(String wildcard,
             Map avPairs, String groupSearchTemplate,
             AMSearchControl searchControl) throws AMException, SSOException { 
@@ -3040,44 +3219,22 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                         groupSearchTemplate), wildcard, avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchDynamicGroups(
-     *      java.lang.String, java.util.Map, java.lang.String, 
-     *      com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchDynamicGroups(String wildcard, Map avPairs,
             String groupSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
-        // TODO Auto-generated method stub
         return searchObjects(AMNamingAttrManager.getNamingAttr(GROUP),
                 getSearchFilter(AMObject.DYNAMIC_GROUP, groupSearchTemplate),
                 wildcard, avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchStaticGroups(
-     *      java.lang.String, java.util.Map, java.lang.String, 
-     *      com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchStaticGroups(String wildcard, Map avPairs,
             String groupSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
-        // TODO Auto-generated method stub
         return searchObjects(AMNamingAttrManager.getNamingAttr(GROUP),
                 getSearchFilter(AMObject.STATIC_GROUP, groupSearchTemplate),
                 wildcard, avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchUsers(java.lang.String,
-     *      java.util.Map, java.lang.String, com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchUsers(String wildcard, Map avPairs,
             String userSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
@@ -3086,16 +3243,11 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#createEntities(int, java.util.Map)
-     */
     public Set createEntities(int type, Map entityNamesAndAttrs)
             throws AMException, SSOException {
-        AMEntityType entityType = 
-            (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
-                .get(Integer.toString(type));
+        AMEntityType entityType = (AMEntityType) 
+            AMCommonUtils.supportedEntitiesBasedOnType.get(
+                    Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
         String entityTypeName = amsc.getAMObjectName(type);
         String containerDN = entityType.getContainerRDN();
@@ -3151,9 +3303,9 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      */
     public Set createEntities(int type, Set entityNames) throws AMException,
             SSOException {
-        AMEntityType entityType = 
-            (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
-                .get(Integer.toString(type));
+        AMEntityType entityType = (AMEntityType) 
+            AMCommonUtils.supportedEntitiesBasedOnType.get(
+                    Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
         String entityTypeName = amsc.getAMObjectName(type);
         String containerDN = entityType.getContainerRDN();
@@ -3201,11 +3353,6 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#deleteEntities(int, java.util.Set)
-     */
     public void deleteEntities(int type, Set entityDNs) throws AMException,
             SSOException {
         Iterator iter = entityDNs.iterator();
@@ -3217,18 +3364,13 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchEntities(int,
-     *      java.lang.String, int, java.util.Map)
-     */
     public Set searchEntities(int type, String wildcard, int scope, Map avPairs)
             throws AMException, SSOException {
-        AMEntityType entityType = 
-            (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
-                .get(Integer.toString(type));
+        AMEntityType entityType = (AMEntityType)
+            AMCommonUtils.supportedEntitiesBasedOnType.get(
+                    Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
+
         String containerDN = entityType.getContainerRDN();
         int containerType = entityType.getContainerType();
         String searchTemplate = entityType.getSearchTemplate();
@@ -3265,19 +3407,14 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchEntities(int,
-     *      java.lang.String, java.util.Map, com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchEntities(int type, String wildcard,
             Map avPairs, AMSearchControl ctrls) throws AMException,
             SSOException {
-        AMEntityType entityType = 
-            (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
-                .get(Integer.toString(type));
+        AMEntityType entityType = (AMEntityType) 
+            AMCommonUtils.supportedEntitiesBasedOnType.get(
+                    Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
+
         String containerDN = entityType.getContainerRDN();
         int containerType = entityType.getContainerType();
         String searchTemplate = entityType.getSearchTemplate();
@@ -3331,10 +3468,11 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
     public AMSearchResults searchEntities(int type, String wildcard,
             String avfilter, AMSearchControl ctrl) throws AMException,
             SSOException {
-        AMEntityType entityType = 
-            (AMEntityType) AMCommonUtils.supportedEntitiesBasedOnType
-                .get(Integer.toString(type));
+        AMEntityType entityType = (AMEntityType) 
+            AMCommonUtils.supportedEntitiesBasedOnType.get(
+                    Integer.toString(type));
         AMStoreConnection amsc = new AMStoreConnection(token);
+
         String containerDN = entityType.getContainerRDN();
         int containerType = entityType.getContainerType();
         String searchTemplate = entityType.getSearchTemplate();
@@ -3351,8 +3489,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
                 return ou.searchEntities(wildcard, ctrl, avfilter,
                         searchTemplate);
             } else {
-                throw new AMException(AMSDKBundle.getString(
-                    "461", super.locale), "461");
+                throw new AMException(AMSDKBundle
+                        .getString("461", super.locale), "461");
             }
 
         case PEOPLE_CONTAINER:
@@ -3360,8 +3498,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             if (pc.isExists()) {
                 pc.searchEntities(wildcard, ctrl, avfilter, searchTemplate);
             } else {
-                throw new AMException(AMSDKBundle.getString(
-                    "461", super.locale), "461");
+                throw new AMException(AMSDKBundle
+                        .getString("461", super.locale), "461");
             }
 
         case ORGANIZATION:
@@ -3376,8 +3514,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         String stype = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         if (stype == null) {
-            throw new AMException(AMSDKBundle.getString(
-                "117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
         if (type == AMObject.USER) {
             // create users.
@@ -3392,6 +3530,7 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
             return resultSet;
         }
         Set entitySet = new HashSet();
+
         Iterator iter = entityNamesAndAttrs.keySet().iterator();
         while (iter.hasNext()) {
             String userName = (String) iter.next();
@@ -3412,8 +3551,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
         String stype = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         if (stype == null) {
-            throw new AMException(AMSDKBundle.getString(
-                "117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
         if (type == AMObject.USER) {
             // create users.
@@ -3444,8 +3583,10 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * Returns true if the organization is activated.
      * 
      * @return true if the organization is activated.
-     * @throws AMException if there is an internal error in the AM Store.
-     * @throws SSOException if the single sign on token is no longer valid.
+     * @throws AMException
+     *             if there is an internal error in the AM Store.
+     * @throws SSOException
+     *             if the single sign on token is no longer valid.
      */
     public boolean isActivated() throws AMException, SSOException {
         return getStringAttribute(statusAN).equalsIgnoreCase("active");

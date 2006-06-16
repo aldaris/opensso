@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.4 2006-05-22 20:54:24 goodearth Exp $
+ * $Id: AMObjectImpl.java,v 1.5 2006-06-16 19:36:08 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,18 +38,22 @@ import netscape.ldap.LDAPUrl;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.SearchControl;
+
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.admin.DisplayOptionsUtils;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.am.util.Debug;
 
 /**
  * This class implements the AMObject interface.
@@ -105,27 +109,21 @@ class AMObjectImpl implements AMObject {
      */
     protected static Hashtable profileNameTable = new Hashtable();
 
-    /**
-     * Hold the AMEventManager instance.
-     */
-    public static AMEventManager amEventMgr = null;
-
     protected static Debug debug = AMCommonUtils.debug;
 
     // ~ Instance fields
     // --------------------------------------------------------
-
-    protected AMDirectoryManager dsManager;
-
-    protected AMDirectoryManager amDirectoryManager;
+    protected IDirectoryServices dsServices;
 
     protected SSOToken token;
 
     protected String entryDN;
 
-    protected int profileType;
+    protected String rfcDN = null;
 
     protected String locale = "en_US";
+
+    protected int profileType;
 
     // Don't initialize until needed
     private AMHashMap byteValueModMap;
@@ -152,13 +150,13 @@ class AMObjectImpl implements AMObject {
 
     AMObjectImpl(SSOToken ssoToken, String dn, int type) {
         entryDN = dn;
+        rfcDN = DNUtils.normalizeDN(entryDN);
         token = ssoToken;
-        locale = AMCommonUtils.getUserLocale(token);
         profileType = type;
-        dsManager = AMDirectoryWrapper.getInstance();
-        amDirectoryManager = AMDirectoryManager.getInstance();
+        dsServices = AMDirectoryAccessFactory.getDirectoryServices();
         stringValueModMap = new AMHashMap(false);
         byteValueModMap = new AMHashMap(true);
+        locale = AMCommonUtils.getUserLocale(token);
     }
 
     // ~ Methods
@@ -212,10 +210,9 @@ class AMObjectImpl implements AMObject {
 
                     // Do we have to check if all the service object classes are
                     // present? Why can't we do the opposite? exit if 1 present
-                    if (!AMCommonUtils.isObjectClassPresent(
-                            objectClasses, oc)) {
+                    if (!AMCommonUtils.isObjectClassPresent(objectClasses, oc)) 
+                    {
                         serviceAssigned = false;
-
                         break;
                     }
                 }
@@ -242,7 +239,7 @@ class AMObjectImpl implements AMObject {
         Set attrName = new HashSet(1);
         attrName.add(attributeName);
 
-        Map attributes = dsManager.getAttributes(token, entryDN, attrName,
+        Map attributes = dsServices.getAttributes(token, entryDN, attrName,
                 profileType);
         Set values = (Set) attributes.get(attributeName);
 
@@ -262,7 +259,7 @@ class AMObjectImpl implements AMObject {
         Set attrName = new HashSet(1);
         attrName.add(attributeName);
 
-        Map attributes = dsManager.getAttributesByteValues(token, entryDN,
+        Map attributes = dsServices.getAttributesByteValues(token, entryDN,
                 attrName, profileType);
         byte[][] values = (byte[][]) attributes.get(attributeName);
 
@@ -281,7 +278,7 @@ class AMObjectImpl implements AMObject {
             SSOException {
         SSOTokenManager.getInstance().validateToken(token);
 
-        Map attributes = dsManager.getAttributes(token, entryDN,
+        Map attributes = dsServices.getAttributes(token, entryDN,
                 attributeNames, profileType);
 
         /* preserve the attribute map's key with the attribute name passed in */
@@ -297,7 +294,7 @@ class AMObjectImpl implements AMObject {
             throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(token);
 
-        Map attributes = amDirectoryManager.getAttributes(token, entryDN,
+        Map attributes = dsServices.getAttributesFromDS(token, entryDN,
                 attributeNames, profileType);
 
         /* preserve the attribute map's key with the attribute name passed in */
@@ -319,7 +316,7 @@ class AMObjectImpl implements AMObject {
             SSOException {
         SSOTokenManager.getInstance().validateToken(token);
 
-        Map attributes = dsManager.getAttributesByteValues(token, entryDN,
+        Map attributes = dsServices.getAttributesByteValues(token, entryDN,
                 attributeNames, profileType);
 
         /* preserve the attribute map's key with the attribute name passed in */
@@ -384,7 +381,7 @@ class AMObjectImpl implements AMObject {
      */
     public boolean isExists() throws SSOException {
         // First check if DN syntax is valid. Avoid making iDS call
-        if (!netscape.ldap.util.DN.isDN(entryDN)) { // May be a exception thrown
+        if (rfcDN == null) { // May be a exception thrown
 
             return false; // would be better here.
         }
@@ -395,7 +392,7 @@ class AMObjectImpl implements AMObject {
             debug.message("AMObjectImpl.isExists(): DN=" + entryDN);
         }
 
-        return dsManager.doesEntryExists(token, entryDN);
+        return dsServices.doesEntryExists(token, entryDN);
     }
 
     public void setIntegerAttribute(String attributeName, int value)
@@ -413,14 +410,13 @@ class AMObjectImpl implements AMObject {
 
                 return Integer.parseInt(str);
             } catch (NumberFormatException nfex) {
-                throw new AMException(AMSDKBundle.getString(
-                    "152", locale), "152");
+                throw new AMException(AMSDKBundle.getString("152", locale),
+                        "152");
             }
         }
 
         if (attributeValue.size() == 0) {
-            throw new AMException(AMSDKBundle.getString(
-                "153", locale), "153");
+            throw new AMException(AMSDKBundle.getString("153", locale), "153");
         }
 
         throw new AMException(AMSDKBundle.getString("152", locale), "152");
@@ -445,7 +441,7 @@ class AMObjectImpl implements AMObject {
             if (profileType == USER) {
                 startDN = getParentDN();
             }
-            organizationDN = dsManager.getOrganizationDN(token, startDN);
+            organizationDN = dsServices.getOrganizationDN(token, startDN);
         }
 
         return organizationDN;
@@ -551,8 +547,7 @@ class AMObjectImpl implements AMObject {
         Set assignedServices = getAssignedServices();
 
         if (!assignedServices.contains(sname)) {
-            throw new AMException(AMSDKBundle.getString(
-                "126", locale), "126");
+            throw new AMException(AMSDKBundle.getString("126", locale), "126");
         }
 
         try {
@@ -673,7 +668,7 @@ class AMObjectImpl implements AMObject {
         Set attrName = new HashSet(1);
         attrName.add(attributeName);
 
-        Map attributes = dsManager.getAttributes(token, entryDN, attrName,
+        Map attributes = dsServices.getAttributes(token, entryDN, attrName,
                 profileType);
         Set values = (Set) attributes.get(attributeName);
 
@@ -705,17 +700,17 @@ class AMObjectImpl implements AMObject {
                 throw new UnsupportedOperationException();
             }
 
-            ServiceConfig sc = AMServiceUtils.getOrgConfig(token, (new DN(
-                    entryDN)).toRFCString(), serviceName);
+            ServiceConfig sc = AMServiceUtils.getOrgConfig(token, rfcDN,
+                    serviceName);
 
             if (sc == null) {
                 Object[] args = { serviceName };
-                throw new AMException(AMSDKBundle.
-                    getString("480", args, locale), "480", args);
+                throw new AMException(AMSDKBundle
+                        .getString("480", args, locale), "480", args);
             }
 
             return new AMOrgTemplateImpl(token, sc.getDN(), serviceName, sc,
-                    (new DN(entryDN)).toRFCString());
+                    rfcDN);
         }
 
         if (debug.messageEnabled()) {
@@ -723,8 +718,8 @@ class AMObjectImpl implements AMObject {
                     + templateType + "): DN=" + entryDN);
         }
 
-        String templateDN = dsManager.getAMTemplateDN(token, (new DN(entryDN))
-                .toRFCString(), profileType, serviceName, templateType);
+        String templateDN = dsServices.getAMTemplateDN(token, rfcDN,
+                profileType, serviceName, templateType);
 
         return new AMTemplateImpl(token, templateDN, serviceName, templateType);
     }
@@ -897,17 +892,18 @@ class AMObjectImpl implements AMObject {
             Set registered = null;
 
             if (profileType == ORGANIZATION) {
-                registered = dsManager.getRegisteredServiceNames(null, entryDN);
+                registered = dsServices
+                        .getRegisteredServiceNames(null, entryDN);
             } else {
-                registered = dsManager.getRegisteredServiceNames(null,
+                registered = dsServices.getRegisteredServiceNames(null,
                         getOrganizationDN());
             }
 
             it = canAssign.iterator();
             while (it.hasNext()) {
-                if (!registered.contains(it.next())) {
-                    throw new AMException(AMSDKBundle.getString(
-                       "126", locale), "126");
+                if (!registered.contains((String) it.next())) {
+                    throw new AMException(AMSDKBundle.getString("126", locale),
+                            "126");
                 }
             }
         } else {
@@ -961,8 +957,8 @@ class AMObjectImpl implements AMObject {
 
                 if (ss == null) {
                     debug.warning(AMSDKBundle.getString("1001"));
-                    throw new AMException(AMSDKBundle.getString(
-                        "1001", args, locale), "1001", args);
+                    throw new AMException(AMSDKBundle.getString("1001", args,
+                            locale), "1001", args);
                 }
 
                 if (ss.getServiceType() != SchemaType.DYNAMIC) {
@@ -983,7 +979,8 @@ class AMObjectImpl implements AMObject {
                 debug.error("AMObjectImpl:assignService-> "
                         + "unable to validate attributes for " + thisService,
                         smse);
-                throw new AMException(AMSDKBundle.getString("908", locale), "908");
+                throw new AMException(AMSDKBundle.getString("908", locale),
+                        "908");
             }
 
             // TODO validate the attributes here...
@@ -1002,9 +999,9 @@ class AMObjectImpl implements AMObject {
             debug.message("AMObjectImpl.create(): DN=" + entryDN);
         }
 
-        if (!DN.isDN(entryDN)) {
+        if (rfcDN == null) {
             throw new AMInvalidDNException(
-                AMSDKBundle.getString("157", locale), "157");
+                    AMSDKBundle.getString("157", locale), "157");
         }
 
         DN dn = new DN(entryDN);
@@ -1023,7 +1020,7 @@ class AMObjectImpl implements AMObject {
             stringValueModMap = integrateLocale();
         }
 
-        dsManager.createEntry(token, name, profileType, parentDN,
+        dsServices.createEntry(token, name, profileType, parentDN,
                 stringValueModMap);
 
         if ((profileType == ORGANIZATION)
@@ -1085,8 +1082,8 @@ class AMObjectImpl implements AMObject {
                     adminRole.store();
                 } catch (Exception ex) {
                     if (debug.warningEnabled()) {
-                        debug.warning("AMObject.create: Unable to set " +
-                                "managed dn for org admin role.",ex);
+                        debug.warning("AMObject.create: Unable to set " 
+                                + "managed dn for org admin role.", ex);
                     }
                 }
             }
@@ -1114,8 +1111,8 @@ class AMObjectImpl implements AMObject {
                     helpRole.store();
                 } catch (Exception ex) {
                     if (debug.warningEnabled()) {
-                        debug.warning("AMObject.create: Unable to set " +
-                                "managed dn for org help role.",ex);
+                        debug.warning("AMObject.create: Unable to set " 
+                                + "managed dn for org help role.", ex);
                     }
                 }
             }
@@ -1131,8 +1128,8 @@ class AMObjectImpl implements AMObject {
                     setAciForRole(policyAdminRole);
                 } catch (Exception ex) {
                     if (debug.messageEnabled()) {
-                        debug.message("AMObject.create: Unable to set aci " +
-                                "or org policy admin role. ",ex);
+                        debug.message("AMObject.create: Unable to set aci " 
+                                + "or org policy admin role. ", ex);
                     }
                 }
 
@@ -1142,8 +1139,8 @@ class AMObjectImpl implements AMObject {
                     policyAdminRole.store();
                 } catch (Exception ex) {
                     if (debug.warningEnabled()) {
-                        debug.warning("AMObject.create: Unable to set " +
-                                "managed dn for org policy admin role.",ex);
+                        debug.warning("AMObject.create: Unable to set " 
+                                + "managed dn for org policy admin role.",  ex);
                     }
                 }
             }
@@ -1156,10 +1153,8 @@ class AMObjectImpl implements AMObject {
                 }
             } catch (Exception ex) {
                 if (debug.messageEnabled()) {
-                    debug
-                            .message("AMObject.create: "
-                                    + "Unable to create admin role for "
-                                    + entryDN + ex);
+                    debug.message("AMObject.create: Unable to create admin" +
+                            " role for " + entryDN + ex);
                 }
             }
         } else if ((profileType == ROLE) || (profileType == FILTERED_ROLE)) {
@@ -1261,7 +1256,8 @@ class AMObjectImpl implements AMObject {
                             smsex);
                 }
 
-                throw new AMException(AMSDKBundle.getString("451", locale), "451");
+                throw new AMException(AMSDKBundle.getString("451", locale),
+                        "451");
             }
         }
 
@@ -1289,8 +1285,8 @@ class AMObjectImpl implements AMObject {
         // Fix for comms integration (locale integration)
         attributes = integrateLocaleForTemplateCreation(attributes);
         // Only Dynamic template needs to be created
-        String templateDN = dsManager.createAMTemplate(token, (new DN(entryDN))
-                .toRFCString(), profileType, serviceName, attributes, priority);
+        String templateDN = dsServices.createAMTemplate(token, rfcDN,
+                profileType, serviceName, attributes, priority);
 
         return new AMTemplateImpl(token, templateDN, serviceName, templateType);
     }
@@ -1321,9 +1317,7 @@ class AMObjectImpl implements AMObject {
             case GROUP:
             case RESOURCE:
                 // %%% TODO Notification
-                AMCompliance.verifyAndDeleteObject(token, (new DN(entryDN))
-                        .toRFCString());
-
+                AMCompliance.verifyAndDeleteObject(token, rfcDN);
                 return;
 
             case ROLE:
@@ -1348,14 +1342,15 @@ class AMObjectImpl implements AMObject {
                 } catch (AMException ame) {
                     String ldapErr = ame.getLDAPErrorCode();
                     int ldapError = Integer.parseInt(ldapErr);
-                    if (ldapErr != null && (ldapError == 4 || ldapError == 11)){
+                    if (ldapErr != null && (ldapError == 4 || ldapError == 11)) 
+                    {
+                        String locale = AMCommonUtils.getUserLocale(token);
                         throw new AMException(AMSDKBundle.getString("977",
                                 locale), "977");
                     } else {
                         if (debug.messageEnabled()) {
-                            debug.message(
-                                    "AMObjectImpl.delete people container"
-                                            + ame);
+                            debug.message("AMObjectImpl.delete people "
+                                    + "container " + ame);
                         }
                         throw ame;
                     }
@@ -1380,13 +1375,14 @@ class AMObjectImpl implements AMObject {
                 } catch (AMException ame) {
                     String ldapErr = ame.getLDAPErrorCode();
                     int ldapError = Integer.parseInt(ldapErr);
-                    if (ldapErr != null && (ldapError == 4 || ldapError == 11)){
+                    if (ldapErr != null && (ldapError == 4 || ldapError == 11)) 
+                    {
                         throw new AMException(AMSDKBundle.getString("977",
                                 locale), "977");
                     } else {
                         if (debug.messageEnabled()) {
                             debug.message("AMObjectImpl.delete group container "
-                                            + ame);
+                                    + ame);
                         }
                         throw ame;
                     }
@@ -1467,9 +1463,8 @@ class AMObjectImpl implements AMObject {
             debug.error("AMObjectImpl:modifyService-> "
                     + "unable to validate attributes for " + sname, smse);
             Object args[] = { sname };
-            throw new AMException(
-                AMSDKBundle.getString("976", args, locale), "976",
-                    args);
+            throw new AMException(AMSDKBundle.getString("976", args, locale),
+                    "976", args);
         }
 
         // TODO validate the attributes here...
@@ -1522,7 +1517,7 @@ class AMObjectImpl implements AMObject {
 
             try {
                 // remove the group admin role
-                dsManager.removeAdminRole(token, entryDN, recursive);
+                dsServices.removeAdminRole(token, entryDN, recursive);
             } catch (Exception e) {
                 // probably because admin role does not exist, ignore
                 if (debug.messageEnabled()) {
@@ -1535,16 +1530,16 @@ class AMObjectImpl implements AMObject {
         Set templateDNs = null;
 
         if ((profileType == ROLE) || (profileType == FILTERED_ROLE)) {
-            aciList = findRemovableAciList(
-                                getAttribute("iplanet-am-role-aci-list"));
+            aciList = findRemovableAciList(getAttribute(
+                    "iplanet-am-role-aci-list"));
 
             String filter = "(&(objectclass=costemplate)(cn=\"" + entryDN
                     + "\"))";
-            templateDNs = dsManager.search(token, getOrganizationDN(), filter,
+            templateDNs = dsServices.search(token, getOrganizationDN(), filter,
                     AMConstants.SCOPE_SUB);
         }
 
-        dsManager.removeEntry(token, entryDN, profileType, recursive, false);
+        dsServices.removeEntry(token, entryDN, profileType, recursive, false);
 
         if (aciList != null) {
             removeAci(aciList);
@@ -1555,7 +1550,7 @@ class AMObjectImpl implements AMObject {
 
             while (iter.hasNext()) {
                 String templateDN = (String) iter.next();
-                dsManager.removeEntry(token, templateDN, AMObject.TEMPLATE,
+                dsServices.removeEntry(token, templateDN, AMObject.TEMPLATE,
                         recursive, false);
             }
         }
@@ -1594,14 +1589,14 @@ class AMObjectImpl implements AMObject {
 
         // Removing attributes we don't care if they are string valued or byte
         // valued
-        dsManager.setAttributes(token, entryDN, profileType, attributes, null,
+        dsServices.setAttributes(token, entryDN, profileType, attributes, null,
                 false);
         // Fix for comms backward compatibility. If this operation causes
         // exceptions (due to the attribute not being there etc.) we ignore
         // them.
         if (!altAttributes.isEmpty()) {
             try {
-                dsManager.setAttributes(token, entryDN, profileType,
+                dsServices.setAttributes(token, entryDN, profileType,
                         altAttributes, null, false);
             } catch (Exception e) {
                 // ignore exceptions
@@ -1672,7 +1667,7 @@ class AMObjectImpl implements AMObject {
                     + "): DN=" + entryDN);
         }
 
-        return dsManager.search(token, entryDN, filter, level);
+        return dsServices.search(token, entryDN, filter, level);
     }
 
     public Set searchObjects(String namingAttr, String objectClassFilter,
@@ -1725,6 +1720,7 @@ class AMObjectImpl implements AMObject {
                             + AMCommonUtils.mapSetToString(stringValueModMap));
                 }
             }
+
             // If name space is enabled, verify that the attributes
             // being set are allowed by name space constrictions.
             // validateAttributeUniqueness(false);
@@ -1763,8 +1759,8 @@ class AMObjectImpl implements AMObject {
 
             if (stringValueModMap.containsKey("iplanet-am-role-aci-list")) {
                 try {
-                    oldAciList = findRemovableAciList(
-                                      getAttribute("iplanet-am-role-aci-list"));
+                    oldAciList = findRemovableAciList(getAttribute(
+                            "iplanet-am-role-aci-list"));
                 } catch (Exception ex) {
                     if (debug.messageEnabled()) {
                         debug.message("AMObjectImpl.store: Failed "
@@ -1787,7 +1783,7 @@ class AMObjectImpl implements AMObject {
                 }
             }
 
-            dsManager.setAttributes(token, entryDN, profileType,
+            dsServices.setAttributes(token, entryDN, profileType,
                     stringValueModMap, byteValueModMap, isAdd);
 
             if (stringValueModMap.containsKey("iplanet-am-role-aci-list")) {
@@ -1813,11 +1809,12 @@ class AMObjectImpl implements AMObject {
             if ((profileType == GROUP)
                     && stringValueModMap.containsKey(UNIQUE_MEMBER_ATTRIBUTE)) {
                 if (oldUM != null) {
-                    dsManager.updateUserAttribute(token, oldUM, entryDN, false);
+                    dsServices
+                            .updateUserAttribute(token, oldUM, entryDN, false);
                 }
 
                 Set set = (Set) stringValueModMap.get(UNIQUE_MEMBER_ATTRIBUTE);
-                dsManager.updateUserAttribute(token, set, entryDN, true);
+                dsServices.updateUserAttribute(token, set, entryDN, true);
             }
         } finally {
             stringValueModMap.clear();
@@ -1881,9 +1878,9 @@ class AMObjectImpl implements AMObject {
             String serviceName = (String) iter.next();
 
             if (!assignedServices.contains(serviceName)) {
-                debug.error(AMSDKBundle.getString("126"));
-                throw new AMException(
-                    AMSDKBundle.getString("126", locale), "126");
+                debug.error(AMSDKBundle.getString("126", locale));
+                throw new AMException(AMSDKBundle.getString("126", locale),
+                        "126");
             }
         }
 
@@ -1905,7 +1902,7 @@ class AMObjectImpl implements AMObject {
 
             // TODO: Modify SchemaManager.getAttributes() to return
             // lowercase attribute names.
-            Set attrs = dsManager.getAttributesForSchema(oc);
+            Set attrs = dsServices.getAttributesForSchema(oc);
             Iterator iter2 = attrs.iterator();
 
             while (iter2.hasNext()) {
@@ -2092,7 +2089,7 @@ class AMObjectImpl implements AMObject {
                 break;
 
             default:
-            // This should not occur. Ignore if they occur
+                ; // This should not occur. Ignore if they occur
             }
         }
         // End synchronized
@@ -2169,10 +2166,32 @@ class AMObjectImpl implements AMObject {
                 break;
 
             default:
-            // This should not occur.
+                ; // This should not occur.
             }
         }
         // End synchronized
+    }
+
+    protected static void sendExpiryEvent(String sourceDN, int sourceType) {
+        if (debug.messageEnabled()) {
+            debug.message("AMObjectImpl.sendExpiryEvent(..) - for:" + sourceDN);
+        }
+
+        Set objectImplSet = (Set) objImplListeners.get(sourceDN);
+        if (objectImplSet != null) {
+            synchronized (objectImplSet) { // Lock, so that no more objects
+                // get added/removed here
+                Iterator itr = objectImplSet.iterator();
+                // Note: This is a hack, we can't create a DSEvent object, so we
+                // just pass the sourceDN here.
+                AMEvent amEvent = new AMEvent(sourceDN, AMEvent.OBJECT_EXPIRED,
+                        sourceDN, sourceType);
+                while (itr.hasNext()) {
+                    AMObjectImpl amObjectImpl = (AMObjectImpl) itr.next();
+                    amObjectImpl.sendEvents(amEvent);
+                }
+            }
+        }
     }
 
     /**
@@ -2389,7 +2408,7 @@ class AMObjectImpl implements AMObject {
         SearchControl sc = searchControl.getSearchControl();
         String[] returnAttrs = searchControl.getReturnAttributes();
 
-        return dsManager.search(token, entryDN, filterSB.toString(), sc,
+        return dsServices.search(token, entryDN, filterSB.toString(), sc,
                 returnAttrs);
     }
 
@@ -2422,7 +2441,7 @@ class AMObjectImpl implements AMObject {
         SearchControl sc = searchControl.getSearchControl();
         String[] returnAttrs = searchControl.getReturnAttributes();
 
-        return dsManager.search(token, entryDN, filterSB.toString(), sc,
+        return dsServices.search(token, entryDN, filterSB.toString(), sc,
                 returnAttrs);
     }
 
@@ -2451,7 +2470,7 @@ class AMObjectImpl implements AMObject {
         SearchControl sc = searchControl.getSearchControl();
         String[] returnAttrs = searchControl.getReturnAttributes();
 
-        return dsManager.search(token, entryDN, filterSB.toString(), sc,
+        return dsServices.search(token, entryDN, filterSB.toString(), sc,
                 returnAttrs);
     }
 
@@ -2519,7 +2538,7 @@ class AMObjectImpl implements AMObject {
         SearchControl sc = searchControl.getSearchControl();
         String[] returnAttrs = searchControl.getReturnAttributes();
 
-        return dsManager.search(token, entryDN, filterSB.toString(), sc,
+        return dsServices.search(token, entryDN, filterSB.toString(), sc,
                 returnAttrs);
     }
 
@@ -2570,9 +2589,8 @@ class AMObjectImpl implements AMObject {
             }
 
             if (pcSet.isEmpty()) {
-                String defaultPc = 
-                    template.getStringAttribute(
-                                  "iplanet-am-admin-console-group-default-pc");
+                String defaultPc = template.getStringAttribute(
+                        "iplanet-am-admin-console-group-default-pc");
 
                 if (defaultPc != null) {
                     if (defaultPc.length() > 0) {
@@ -2874,7 +2892,7 @@ class AMObjectImpl implements AMObject {
         }
 
         DN ldapDN = new DN(entryDN);
-        String orgDN = dsManager.getOrganizationDN(token, ldapDN.getParent()
+        String orgDN = dsServices.getOrganizationDN(token, ldapDN.getParent()
                 .toString());
 
         String permission;
@@ -2960,7 +2978,7 @@ class AMObjectImpl implements AMObject {
 
         while (iter.hasNext()) {
             String aci = (String) iter.next();
-            Set objs = dsManager.search(token, AMStoreConnection.rootSuffix,
+            Set objs = dsServices.search(token, AMStoreConnection.rootSuffix,
                     "(&"
                             + AMSearchFilterManager
                                     .getGlobalSearchFilter(AMObject.GROUP)
@@ -3093,7 +3111,7 @@ class AMObjectImpl implements AMObject {
      * @throws SSOException
      *             if the sign-on is no longer valid.
      */
-    void removeAdminRoleAci(boolean recursive) throws AMException, SSOException
+    void removeAdminRoleAci(boolean recursive) throws AMException, SSOException 
     {
         String orgDN = getOrganizationDN();
         AMOrganizationImpl org = new AMOrganizationImpl(token, orgDN);
@@ -3421,18 +3439,16 @@ class AMObjectImpl implements AMObject {
                 try {
                     switch (dpEvent.getEventType()) {
                     case AMEvent.OBJECT_CHANGED:
+                    case AMEvent.OBJECT_EXPIRED:
                         listener.objectChanged(dpEvent);
-
                         break;
 
                     case AMEvent.OBJECT_REMOVED:
                         listener.objectRemoved(dpEvent);
-
                         break;
 
                     case AMEvent.OBJECT_RENAMED:
                         listener.objectRenamed(dpEvent);
-
                         break;
 
                     default:
@@ -3451,8 +3467,8 @@ class AMObjectImpl implements AMObject {
         // preferredLocale is being set (and accordingly set
         // preferredLanguage too. Fix for comms backward compatibility!
         if (AMCommonUtils.integrateLocale
-                && (profileType == USER 
-                        || profileType == AMTemplate.DYNAMIC_TEMPLATE)
+                && (profileType == USER || profileType == 
+                    AMTemplate.DYNAMIC_TEMPLATE)
                 && stringValueModMap.containsKey("preferredLocale")) {
             Set prefLoc = (Set) stringValueModMap.get("preferredLocale");
             // Set prefLang = new HashSet();
@@ -3479,8 +3495,8 @@ class AMObjectImpl implements AMObject {
         }
         // vice-versa of above Fix for comms backward compatibility
         if (AMCommonUtils.integrateLocale
-                && (profileType == USER 
-                        || profileType == AMTemplate.DYNAMIC_TEMPLATE)
+                && (profileType == USER || profileType == 
+                    AMTemplate.DYNAMIC_TEMPLATE)
                 && stringValueModMap.containsKey("preferredLanguage")) {
             Set prefLang = (Set) stringValueModMap.get("preferredLanguage");
             // Set prefLoc = new HashSet();

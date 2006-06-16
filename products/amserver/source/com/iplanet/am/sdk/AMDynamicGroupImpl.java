@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDynamicGroupImpl.java,v 1.1 2005-11-01 00:29:02 arvindp Exp $
+ * $Id: AMDynamicGroupImpl.java,v 1.2 2006-06-16 19:36:03 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 
 /**
- * The <code>AMDynamicGroupImpl</code> implements interface
+ * The <code>AMDynamicGroupImpl</code> implements interface 
  * <code>AMDynamicGroup</code> dynamic group.
  */
 class AMDynamicGroupImpl extends AMGroupImpl implements AMDynamicGroup {
@@ -46,39 +46,34 @@ class AMDynamicGroupImpl extends AMGroupImpl implements AMDynamicGroup {
 
     /**
      * Returns the filter for the dynamic group.
-     * 
+     *
      * @return the filter for the dynamic group.
-     * @throws AMException
-     *             if an error is encountered when trying to access/retrieve
-     *             data from the data store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     * @throws AMException if an error is encountered when trying to 
+     *         access/retrieve data from the data store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public String getFilter() throws AMException, SSOException {
-        String[] array = dsManager.getGroupFilterAndScope(token, entryDN,
+        String[] array = dsServices.getGroupFilterAndScope(token, entryDN,
                 profileType);
         return (array[2]);
     }
 
     /**
      * Sets the the filter for the dynamic group.
-     * 
-     * @param filter
-     *            the dynamic group filter.
-     * @throws AMException
-     *             if an error is encountered when trying to access/retrieve
-     *             data from the data store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     *
+     * @param filter the dynamic group filter.
+     * @throws AMException if an error is encountered when trying to 
+     *         access/retrieve data from the data store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public void setFilter(String filter) throws AMException, SSOException {
-        dsManager.setGroupFilter(token, entryDN, filter);
+        dsServices.setGroupFilter(token, entryDN, filter);
         setACI();
     }
 
     /**
      * Sets the aci and the role aci value for the dynamic group.
-     * 
+     *
      */
     private void setACI() {
         try {

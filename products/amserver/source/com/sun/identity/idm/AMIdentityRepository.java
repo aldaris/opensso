@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.6 2006-05-31 21:50:09 veiming Exp $
+ * $Id: AMIdentityRepository.java,v 1.7 2006-06-16 19:36:41 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.sun.identity.idm;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,13 +34,17 @@ import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 
-import com.iplanet.am.sdk.AMDirectoryManager;
-import com.iplanet.am.sdk.AMDirectoryWrapper;
+import netscape.ldap.util.DN;
+
+import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.OrderedSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.ServiceManager;
 
 /**
  * The class <code> AMIdentityRepository </code> represents an object to access
@@ -50,53 +56,49 @@ import com.sun.identity.sm.DNMapper;
  * 
  * <PRE>
  * 
- * AMIdentityRepository = new AMIdentityRepository(ssoToken, orgName);
+ * AMIdentityRepository = new AMIdentityRepository(ssoToken, realmName);
  * 
  * </PRE>
  * 
- * @supported.all.api
  */
 public final class AMIdentityRepository {
-
     private SSOToken token;
 
     private String org;
 
-    public static Debug debug = Debug.getInstance("amIdm");
+    private IdRepo pluginClass;
 
-    protected static boolean logStatus = false;
+    public static Debug debug = Debug.getInstance("amIdm");
 
     public static Map listeners = new CaseInsensitiveHashMap();
 
-    /*
-     * static { String status = SystemProperties.get(Constants.AM_LOGSTATUS); if
-     * (status == null) { status = "INACTIVE"; } if
-     * (status.equalsIgnoreCase("ACTIVE")) { logStatus = true; } }
-     */
-
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Constructor for the <code>AMIdentityRepository</code> object. If a null
-     * is passed for the organization identifier <code>orgName</code>, then
-     * the "root" organization is assumed.
+     * is passed for the organization identifier <code>realmName</code>, then
+     * the "root" realm is assumed.
      * 
      * @param ssotoken
      *            Single sign on token of the user
-     * @param orgName
-     *            Name of the organization (can be a Fully qualified DN)
+     * @param realmName
+     *            Name of the realm (can be a Fully qualified DN)
      * @throws IdRepoException
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
      */
-    public AMIdentityRepository(SSOToken ssotoken, String orgName)
+    public AMIdentityRepository(SSOToken ssotoken, String realmName)
             throws IdRepoException, SSOException {
         token = ssotoken;
-        org = DNMapper.orgNameToDN(orgName);
+        org = DNMapper.orgNameToDN(realmName);
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Returns the set of supported object types <code>IdType</code> for this
-     * deployment. This is not organization specific.
+     * deployment. This is not realm specific.
      * 
      * @return Set of supported <code> IdType </code> objects.
      * @throws IdRepoException
@@ -105,13 +107,15 @@ public final class AMIdentityRepository {
      *             if user's single sign on token is invalid.
      */
     public Set getSupportedIdTypes() throws IdRepoException, SSOException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        Set res = amdm.getSupportedTypes(token, org);
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        Set res = idServices.getSupportedTypes(token, org);
         res.remove(IdType.REALM);
         return res;
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Returns the set of Operations for a given <code>IdType</code>,
      * <code>IdOperations</code> that can be performed on an Identity. This
      * varies for each organization (and each plugin?).
@@ -126,12 +130,14 @@ public final class AMIdentityRepository {
      */
     public Set getAllowedIdOperations(IdType type) throws IdRepoException,
             SSOException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.getSupportedOperations(token, type, org);
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        return idServices.getSupportedOperations(token, type, org);
 
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Return the special identities for this realm for a given type. These
      * identities cannot be deleted and hence have to be shown in the admin
      * console as non-deletable.
@@ -146,8 +152,8 @@ public final class AMIdentityRepository {
      */
     public IdSearchResults getSpecialIdentities(IdType type)
             throws IdRepoException, SSOException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        IdSearchResults results = amdm.getSpecialIdentities(token, type, org);
+
+        IdSearchResults results = getSpecialIdentities(token, type, org);
 
         if (type.equals(IdType.USER)) {
             // Iterating through to get out the names and remove only amadmin
@@ -156,11 +162,13 @@ public final class AMIdentityRepository {
             IdSearchResults newResults = new IdSearchResults(type, org);
             Set identities = results.getSearchResults();
             if ((identities != null) && !identities.isEmpty()) {
-                for (Iterator i = identities.iterator(); i.hasNext(); ) {
-                    AMIdentity amid = ((AMIdentity)i.next());
+                for (Iterator i = identities.iterator(); i.hasNext();) {
+                    AMIdentity amid = ((AMIdentity) i.next());
                     String remUser = amid.getName().toLowerCase();
-                    if (!remUser.equalsIgnoreCase(IdConstants.AMADMIN_USER) &&
-                        !remUser.equalsIgnoreCase(IdConstants.ANONYMOUS_USER)) {
+                    if (!remUser.equalsIgnoreCase(IdConstants.AMADMIN_USER)
+                            && !remUser.equalsIgnoreCase(
+                                    IdConstants.ANONYMOUS_USER)) 
+                    {
                         newResults.addResult(amid, amid.getAttributes());
                     }
                 }
@@ -175,8 +183,8 @@ public final class AMIdentityRepository {
      * AMIdentity objects for use by the application.
      * 
      * @deprecated This method is deprecated. Use
-     *             {@link #searchIdentities(
-     *             IdType type,String pattern,IdSearchControl ctrl)}
+     *             {@link #searchIdentities(IdType type,String pattern,
+     *             IdSearchControl ctrl)}
      * @param type
      *            Type of identity being searched for.
      * @param pattern
@@ -208,12 +216,14 @@ public final class AMIdentityRepository {
             Set returnAttributes, boolean returnAllAttributes)
             throws IdRepoException, SSOException {
         // DelegationEvaluator de = new DelegationEvaluator();
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.search(token, type, pattern, avPairs, recursive,
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        return idServices.search(token, type, pattern, avPairs, recursive,
                 maxResults, maxTime, returnAttributes, org);
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Searches for identities of certain types from each plugin and returns a
      * combined result
      * 
@@ -234,11 +244,13 @@ public final class AMIdentityRepository {
      */
     public IdSearchResults searchIdentities(IdType type, String pattern,
             IdSearchControl ctrl) throws IdRepoException, SSOException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.search(token, type, pattern, ctrl, org);
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        return idServices.search(token, type, pattern, ctrl, org);
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Returns a handle of the Identity object representing this realm for
      * services related operations only. This <code> AMIdentity
      * </code> object
@@ -257,8 +269,12 @@ public final class AMIdentityRepository {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Creates a single object of a type. The object is created in all the
      * plugins that support creation of this type of object.
+     * 
+     * This method is only valid for IdType Agent, Realm, and User.
      * 
      * @param type
      *            Type of object to be created.
@@ -274,13 +290,17 @@ public final class AMIdentityRepository {
      */
     public AMIdentity createIdentity(IdType type, String idName, Map attrMap)
             throws IdRepoException, SSOException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return amdm.create(token, type, idName, attrMap, org);
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        return idServices.create(token, type, idName, attrMap, org);
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Creates multiple objects of the same type. The objects are created in all
      * the <code>IdRepo</code> plugins that support creation of these objects.
+     * 
+     * This method is only valid for IdType Agent, Realm, and User.
      * 
      * @param type
      *            Type of object to be created
@@ -300,13 +320,13 @@ public final class AMIdentityRepository {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
         Iterator it = identityNamesAndAttrs.keySet().iterator();
 
         while (it.hasNext()) {
             String name = (String) it.next();
             Map attrMap = (Map) identityNamesAndAttrs.get(name);
-            AMIdentity id = amdm.create(token, type, name, attrMap, org);
+            AMIdentity id = idServices.create(token, type, name, attrMap, org);
             results.add(id);
         }
 
@@ -314,18 +334,22 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * Deletes identities. The Set passed is a Set of identity names.
+     * iPlanet-PUBLIC-METHOD
+     * 
+     * Deletes identities. The Set passed is a set of AMIdentity objects.
+     * 
+     * This method is only valid for IdType Agent, Realm, and User.
      * 
      * @param type
      *            Type of Identity to be deleted.
      * @param identities
-     *            Set of AMIDentity objects to be deleted
+     *            Set of AMIdentity objects to be deleted
      * @throws IdRepoException
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
      * @deprecated As of release AM 7.1, replaced by
-     * {@link #deleteIdentities(Set identities)}
+     *             {@link #deleteIdentities(Set identities)}
      */
     public void deleteIdentities(IdType type, Set identities)
             throws IdRepoException, SSOException {
@@ -333,7 +357,11 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * Deletes identities. The Set passed is a Set of identity names.
+     * iPlanet-PUBLIC-METHOD
+     * 
+     * Deletes identities. The Set passed is a set of AMIdentity objects.
+     * 
+     * This method is only valid for IdType Agent, Realm, and User.
      * 
      * @param identities
      *            Set of AMIDentity objects to be deleted
@@ -342,25 +370,26 @@ public final class AMIdentityRepository {
      * @throws SSOException
      *             if user's single sign on token is invalid.
      */
-    public void deleteIdentities(Set identities)
-            throws IdRepoException, SSOException {
+    public void deleteIdentities(Set identities) throws IdRepoException,
+            SSOException {
         if (identities == null || identities.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
         Iterator it = identities.iterator();
         while (it.hasNext()) {
             AMIdentity id = (AMIdentity) it.next();
-            amdm.delete(token, id.getType(), id.getName(), org, id.getDN());
+            idServices.delete(token, id.getType(), id.getName(), org, id
+                    .getDN());
         }
     }
 
     /**
-     * Returns <code>true</code> if the data store has successfully
-     * authenticated the identity with the provided credentials. In case the
-     * data store requires additional credentials, the list would be returned
-     * via the <code>IdRepoException</code> exception.
+     * Non-javadoc, non-public methods Returns <code>true</code> if the data
+     * store has successfully authenticated the identity with the provided
+     * credentials. In case the data store requires additional credentials, the
+     * list would be returned via the <code>IdRepoException</code> exception.
      * 
      * @param credentials
      *            Array of callback objects containing information such as
@@ -371,13 +400,17 @@ public final class AMIdentityRepository {
      */
     public boolean authenticate(Callback[] credentials) throws IdRepoException,
             com.sun.identity.authentication.spi.AuthLoginException {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        return (amdm.authenticate(org, credentials));
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        return (idServices.authenticate(org, credentials));
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Adds a listener, which should receive notifications for all changes that
-     * occured in this organization.
+     * occurred in this organization.
+     * 
+     * This method is only valid for IdType User and Agent.
      * 
      * @param listener
      *            The callback which implements <code>AMEventListener</code>.
@@ -396,6 +429,8 @@ public final class AMIdentityRepository {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD
+     * 
      * Removes listener as the application is no longer interested in receiving
      * notifications.
      * 
@@ -409,5 +444,228 @@ public final class AMIdentityRepository {
                 listOfListeners.remove(identifier);
             }
         }
+    }
+
+    /**
+     * iPlanet-PUBLIC-METHOD
+     * 
+     * Clears the cache.
+     */
+    public static void clearCache() {
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        idServices.reinitialize();
+        IdUtils.initialize();
+    }
+
+
+    public IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
+            String orgName) throws IdRepoException, SSOException {
+        Set pluginClasses = new OrderedSet();
+        IdRepo thisPlugin = null;
+        if (ServiceManager.isConfigMigratedTo70()
+                && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
+            // add the "SpecialUser plugin
+            String p = IdConstants.SPECIAL_PLUGIN;
+            if (pluginClass == null) {
+                try {
+
+                    Class thisClass = Class.forName(p);
+                    thisPlugin = (IdRepo) thisClass.newInstance();
+                    thisPlugin.initialize(new HashMap());
+                    Map listenerConfig = new HashMap();
+                    listenerConfig.put("realm", orgName);
+                    IdRepoListener lter = new IdRepoListener();
+                    lter.setConfigMap(listenerConfig);
+                    thisPlugin.addListener(token, lter);
+                    pluginClass = thisPlugin;
+                    Set opSet = thisPlugin.getSupportedOperations(type);
+                    if (opSet != null && opSet.contains(IdOperation.READ)) {
+                        pluginClasses.add(thisPlugin);
+                    }
+                } catch (Exception e) {
+                    // Throw an Exception !!
+                    debug.error("Unable to instantiate plugin: " + p, e);
+                }
+            } else {
+                Set opSet = pluginClass.getSupportedOperations(type);
+                if (opSet != null && opSet.contains(IdOperation.READ)) {
+                    pluginClasses.add(pluginClass);
+                }
+            }
+        }
+        if (pluginClasses.isEmpty()) {
+            return new IdSearchResults(type, orgName);
+        } else {
+            IdRepo specialRepo = (IdRepo) pluginClasses.iterator().next();
+            RepoSearchResults res = specialRepo.search(token, type, "*", 0, 0,
+                    Collections.EMPTY_SET, false, 0, Collections.EMPTY_MAP,
+                    false);
+            Object obj[][] = new Object[1][2];
+            obj[0][0] = res;
+            obj[0][1] = Collections.EMPTY_MAP;
+            return combineSearchResults(token, obj, 1, type, orgName, false,
+                    null);
+        }
+    }
+
+    // TODO:
+    // FIXME: Move these utilities to a util class
+    private Map reverseMapAttributeNames(Map attrMap, Map configMap) {
+        if (attrMap == null || attrMap.isEmpty()) {
+            return attrMap;
+        }
+        Map resultMap;
+        Map[] mapArray = getAttributeNameMap(configMap);
+        if (mapArray == null) {
+            resultMap = attrMap;
+        } else {
+            resultMap = new CaseInsensitiveHashMap();
+            Map reverseMap = mapArray[1];
+            Iterator it = attrMap.keySet().iterator();
+            while (it.hasNext()) {
+                String curr = (String) it.next();
+                if (reverseMap.containsKey(curr)) {
+                    resultMap.put((String) reverseMap.get(curr), (Set) attrMap
+                            .get(curr));
+                } else {
+                    resultMap.put(curr, (Set) attrMap.get(curr));
+                }
+            }
+        }
+        return resultMap;
+    }
+
+    private IdSearchResults combineSearchResults(SSOToken token,
+            Object[][] arrayOfResult, int sizeOfArray, IdType type,
+            String orgName, boolean amsdkIncluded, Object[][] amsdkResults) {
+        Map amsdkDNs = new CaseInsensitiveHashMap();
+        Map resultsMap = new CaseInsensitiveHashMap();
+        int errorCode = IdSearchResults.SUCCESS;
+        if (amsdkIncluded) {
+            RepoSearchResults amsdkRepoRes = (RepoSearchResults) 
+                amsdkResults[0][0];
+            Set results = amsdkRepoRes.getSearchResults();
+            Map attrResults = amsdkRepoRes.getResultAttributes();
+            Iterator it = results.iterator();
+            while (it.hasNext()) {
+                String dn = (String) it.next();
+                String name = (new DN(dn)).explodeDN(true)[0];
+                amsdkDNs.put(name, dn);
+                Set attrMaps = new HashSet();
+                attrMaps.add((Map) attrResults.get(dn));
+                resultsMap.put(name, attrMaps);
+            }
+            errorCode = amsdkRepoRes.getErrorCode();
+        }
+        for (int i = 0; i < sizeOfArray; i++) {
+            RepoSearchResults current = (RepoSearchResults) arrayOfResult[i][0];
+            Map configMap = (Map) arrayOfResult[i][1];
+            Iterator it = current.getSearchResults().iterator();
+            Map allAttrMaps = current.getResultAttributes();
+            while (it.hasNext()) {
+                String m = (String) it.next();
+                String mname = DNUtils.DNtoName(m);
+                Map attrMap = (Map) allAttrMaps.get(m);
+                attrMap = reverseMapAttributeNames(attrMap, configMap);
+                Set attrMaps = (Set) resultsMap.get(mname);
+                if (attrMaps == null) {
+                    attrMaps = new HashSet();
+                }
+                attrMaps.add(attrMap);
+                resultsMap.put(mname, attrMaps);
+            }
+        }
+        IdSearchResults results = new IdSearchResults(type, orgName);
+        Iterator it = resultsMap.keySet().iterator();
+        while (it.hasNext()) {
+            String mname = (String) it.next();
+            Map combinedMap = combineAttrMaps((Set) resultsMap.get(mname), 
+                    true);
+            AMIdentity id = new AMIdentity(token, mname, type, orgName,
+                    (String) amsdkDNs.get(mname));
+            results.addResult(id, combinedMap);
+        }
+        results.setErrorCode(errorCode);
+        return results;
+    }
+
+    private Map[] getAttributeNameMap(Map configMap) {
+        Set attributeMap = (Set) configMap.get(IdConstants.ATTR_MAP);
+
+        if (attributeMap == null || attributeMap.isEmpty()) {
+            return null;
+        } else {
+            Map returnArray[] = new Map[2];
+            int size = attributeMap.size();
+            returnArray[0] = new CaseInsensitiveHashMap(size);
+            returnArray[1] = new CaseInsensitiveHashMap(size);
+            Iterator it = attributeMap.iterator();
+            while (it.hasNext()) {
+                String mapString = (String) it.next();
+                int eqIndex = mapString.indexOf('=');
+                if (eqIndex > -1) {
+                    String first = mapString.substring(0, eqIndex);
+                    String second = mapString.substring(eqIndex + 1);
+                    returnArray[0].put(first, second);
+                    returnArray[1].put(second, first);
+                } else {
+                    returnArray[0].put(mapString, mapString);
+                    returnArray[1].put(mapString, mapString);
+                }
+            }
+            return returnArray;
+        }
+    }
+
+    private Map combineAttrMaps(Set setOfMaps, boolean isString) {
+        // Map resultMap = new CaseInsensitiveHashMap();
+        Map resultMap = new AMHashMap();
+        Iterator it = setOfMaps.iterator();
+        while (it.hasNext()) {
+            Map currMap = (Map) it.next();
+            if (currMap != null) {
+                Iterator keyset = currMap.keySet().iterator();
+                while (keyset.hasNext()) {
+                    String thisAttr = (String) keyset.next();
+                    if (isString) {
+                        Set resultSet = (Set) resultMap.get(thisAttr);
+                        Set thisSet = (Set) currMap.get(thisAttr);
+                        if (resultSet != null) {
+                            resultSet.addAll(thisSet);
+                        } else {
+                            /*
+                             * create a new Set so that we do not alter the set
+                             * that is referenced in setOfMaps
+                             */
+                            resultSet = new HashSet((Set) 
+                                    currMap.get(thisAttr));
+                            resultMap.put(thisAttr, resultSet);
+                        }
+                    } else { // binary attributes
+
+                        byte[][] resultSet = (byte[][]) resultMap.get(thisAttr);
+                        byte[][] thisSet = (byte[][]) currMap.get(thisAttr);
+                        int combinedSize = thisSet.length;
+                        if (resultSet != null) {
+                            combinedSize = resultSet.length + thisSet.length;
+                            byte[][] tmpSet = new byte[combinedSize][];
+                            for (int i = 0; i < resultSet.length; i++) {
+                                tmpSet[i] = (byte[]) resultSet[i];
+                            }
+                            for (int i = 0; i < thisSet.length; i++) {
+                                tmpSet[i] = (byte[]) thisSet[i];
+                            }
+                            resultSet = tmpSet;
+                        } else {
+                            resultSet = (byte[][]) thisSet.clone();
+                        }
+                        resultMap.put(thisAttr, resultSet);
+
+                    }
+
+                }
+            }
+        }
+        return resultMap;
     }
 }

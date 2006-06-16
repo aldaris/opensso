@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationalUnitImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
+ * $Id: AMOrganizationalUnitImpl.java,v 1.3 2006-06-16 19:36:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.util.StringTokenizer;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
@@ -298,8 +299,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                     + "=" + ((String) iter.next()) + "," + super.entryDN;
 
             AMOrganizationalUnitImpl subOrgUnitImpl = 
-                new AMOrganizationalUnitImpl(
-                    super.token, subOrgUnitDN);
+                new AMOrganizationalUnitImpl(super.token, subOrgUnitDN);
 
             subOrgUnitImpl.create();
             subOrgUnits.add(subOrgUnitImpl);
@@ -334,8 +334,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
             Map attributes = (Map) subOrganizationalUnitsMap
                     .get(subOrgUnitName);
             AMOrganizationalUnitImpl subOrgUnitImpl = 
-                new AMOrganizationalUnitImpl(
-                    super.token, subOrgUnitDN);
+                new AMOrganizationalUnitImpl(super.token, subOrgUnitDN);
             subOrgUnitImpl.setAttributes(attributes);
             subOrgUnitImpl.create();
             subOrgUnits.add(subOrgUnitImpl);
@@ -1089,8 +1088,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                     .getNamingAttr(GROUP)
                     + "=" + ((String) iter.next()) + "," + super.entryDN;
             AMAssignableDynamicGroupImpl assignableDynamicGroupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, assignableDynamicGroupDN);
+                new AMAssignableDynamicGroupImpl(super.token, 
+                        assignableDynamicGroupDN);
             assignableDynamicGroupImpl.create();
             assignableDynamicGroups.add(assignableDynamicGroupImpl);
         }
@@ -1116,8 +1115,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         while (iter.hasNext()) {
             String assignableDynamicGroupDN = (String) iter.next();
             AMAssignableDynamicGroup assignableDynamicGroup = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, assignableDynamicGroupDN);
+                new AMAssignableDynamicGroupImpl(super.token, 
+                        assignableDynamicGroupDN);
             assignableDynamicGroup.delete();
         }
     }
@@ -1683,8 +1682,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                     .getNamingAttr(PEOPLE_CONTAINER)
                     + "=" + ((String) iter.next()) + "," + super.entryDN;
             AMPeopleContainerImpl peopleContainerImpl = 
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDN);
+                new AMPeopleContainerImpl(super.token, peopleContainerDN);
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
         }
@@ -1716,8 +1714,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                     + "=" + peopleContainerName + "," + super.entryDN;
             Map attributes = (Map) peopleContainersMap.get(peopleContainerName);
             AMPeopleContainerImpl peopleContainerImpl = 
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDN);
+                new AMPeopleContainerImpl(super.token, peopleContainerDN);
             peopleContainerImpl.setAttributes(attributes);
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
@@ -1774,8 +1771,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
 
     /**
      * Searches for people containers in this organizational unit using
-     * wildcards and * attribute values. Wildcards can be specified such 
-     * as a*, *, *a.
+     * wildcards and * attribute values. Wildcards can be specified such as 
+     * a*, *, *a.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1821,9 +1818,9 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
     /**
      * Searches for people containers in this organizational unit using
      * wildcards and * attribute values. Wildcards can be specified such as a*,
-     * *,*a. To further refine the search, attribute-value pairs can be specifed
-     * so that DNs of people containers with matching attribute-value pairs will
-     * be returned.
+     * *, *a. To further refine the search, attribute-value pairs can be 
+     * specifed so that DNs of people containers with matching attribute-value 
+     * pairs will be returned.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -1851,9 +1848,9 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
     /**
      * Searches for people containers in this organizational unit using
      * wildcards and * attribute values. Wildcards can be specified such as a*,
-     * *,*a. To further refine the search, attribute-value pairs can be specifed
-     * so that DNs of people containers with matching attribute-value pairs will
-     * be returned.
+     * *, *a. To further refine the search, attribute-value pairs can be 
+     * specifed so that DNs of people containers with matching attribute-value
+     * pairs will be returned.
      * 
      * @param wildcard
      *            wildcard pattern to be used in the search
@@ -2351,7 +2348,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
      */
     public Set getRegisteredServiceNames() throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        return dsManager.getRegisteredServiceNames(super.token, super.entryDN);
+        return dsServices.getRegisteredServiceNames(super.token, super.entryDN);
     }
 
     /**
@@ -2376,7 +2373,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                     + ")");
         }
 
-        dsManager.registerService(super.token, super.entryDN, serviceName);
+        dsServices.registerService(super.token, super.entryDN, serviceName);
 
         Set serviceStatus = getAttribute(SERVICE_STATUS_ATTRIBUTE);
         if (!serviceStatus.equals(Collections.EMPTY_SET)) {
@@ -2385,8 +2382,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 String status = (String) iter.next();
                 if (status.equalsIgnoreCase(serviceName)) {
                     Object args[] = { serviceName };
-                    throw new AMException(AMSDKBundle.
-                        getString("464", args, super.locale), "464", args);
+                    throw new AMException(AMSDKBundle.getString("464", args,
+                            super.locale), "464", args);
                 }
             }
         } else {
@@ -2436,8 +2433,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                             null);
                 }
             } catch (SMSException smsex) {
-                throw new AMException(AMSDKBundle.
-                    getString("451", super.locale), "451");
+                throw new AMException(AMSDKBundle
+                        .getString("451", super.locale), "451");
             }
         }
     }
@@ -2465,16 +2462,15 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         // error message
         if (isRegisteredForSubOrgs(serviceName)) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.
-                getString("445", args, super.locale), "445",
-                    args);
+            throw new AMException(AMSDKBundle.getString("445", args,
+                    super.locale), "445", args);
         }
 
         try {
             if (AMServiceUtils.serviceHasSubSchema(super.token, serviceName,
                     SchemaType.DYNAMIC)) {
 
-                dsManager.unRegisterService(super.token, super.entryDN,
+                dsServices.unRegisterService(super.token, super.entryDN,
                         super.profileType, serviceName,
                         AMTemplate.DYNAMIC_TEMPLATE);
             }
@@ -2501,13 +2497,13 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
             }
 
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.
-                getString("463", args, super.locale), "463", args);
+            throw new AMException(AMSDKBundle.getString("463", args,
+                    super.locale), "463", args);
 
         } catch (SMSException smsex) {
             Object args[] = { serviceName };
-            throw new AMException(AMSDKBundle.
-                getString("913", args, super.locale), "913", args);
+            throw new AMException(AMSDKBundle.getString("913", args,
+                    super.locale), "913", args);
         }
     }
 
@@ -2687,12 +2683,7 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#createEntities(
-     *      java.lang.String,java.util.Set)
-     */
+
     public Set createEntities(String stype, Set entities) throws AMException,
             SSOException {
         if (stype.equalsIgnoreCase("user")) {
@@ -2710,8 +2701,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.
-                getString("117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
         Set resultSet = new HashSet();
         int createType = Integer.parseInt(type);
@@ -2727,11 +2718,6 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         return resultSet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#deleteEntities(java.util.Set)
-     */
     public void deleteEntities(Set resources) throws AMException, SSOException {
         Iterator iter = resources.iterator();
         while (iter.hasNext()) {
@@ -2741,12 +2727,6 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#searchEntities(
-     *      java.lang.String, int, java.lang.String, java.util.Map)
-     */
     public Set searchEntities(String wildcard, int level,
             String eSearchTemplate, Map avPairs) throws AMException,
             SSOException {
@@ -2759,13 +2739,6 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#searchEntities(
-     *      java.lang.String, java.util.Map, java.lang.String,
-     *      com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchEntities(String wildcard, Map avPairs,
             String eSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
@@ -2777,12 +2750,6 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#createEntities(
-     *      java.lang.String, java.util.Map)
-     */
     public Set createEntities(String stype, Map entities) throws AMException,
             SSOException {
         if (stype.equalsIgnoreCase("user")) {
@@ -2801,8 +2768,8 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 .toLowerCase());
         if (type == null) {
 
-            throw new AMException(AMSDKBundle.
-                getString("117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
         int createType = Integer.parseInt(type);
         Set entitySet = new HashSet();
@@ -2820,13 +2787,6 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
         return entitySet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#searchEntities(
-     *      java.lang.String, com.iplanet.am.sdk.AMSearchControl, 
-     *      java.lang.String, java.lang.String)
-     */
     public AMSearchResults searchEntities(String wildcard,
             AMSearchControl searchControl, String avfilter,
             String eSearchTemplate) throws AMException, SSOException {
@@ -2838,21 +2798,10 @@ class AMOrganizationalUnitImpl extends AMObjectImpl implements
                 searchControl, avfilter);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#getSupportedTypes()
-     */
     public Set getSupportedTypes() throws AMException, SSOException {
         return getAttribute(AMConstants.CONTAINER_SUPPORTED_TYPES_ATTRIBUTE);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganizationalUnit#setSupportedTypes(
-     *      java.util.Set)
-     */
     public void setSupportedTypes(Set sTypes) throws AMException, SSOException {
         setAttribute(AMConstants.CONTAINER_SUPPORTED_TYPES_ATTRIBUTE, sTypes);
         store();

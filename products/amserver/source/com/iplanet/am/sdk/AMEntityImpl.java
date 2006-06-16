@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntityImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
+ * $Id: AMEntityImpl.java,v 1.3 2006-06-16 19:36:03 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.iplanet.am.sdk;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -40,122 +41,67 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
         super(ssotoken, dn, type);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#delete(boolean)
-     */
     public void delete(boolean recursive) throws AMException, SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         profileType = type;
         super.delete(recursive);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#getAttributes()
-     */
     public Map getAttributes() throws AMException, SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         profileType = type;
         return super.getAttributes();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#getDN()
-     */
     public String getDN() {
         return super.getDN();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#getOrganizationDN()
-     */
     public String getOrganizationDN() throws AMException, SSOException {
         return super.getOrganizationDN();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#getParentDN()
-     */
     public String getParentDN() {
         return super.getParentDN();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#isExists()
-     */
     public boolean isExists() throws SSOException {
         return super.isExists();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#purge(boolean, int)
-     */
     public void purge(boolean recursive, int graceperiod) throws AMException,
             SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         profileType = type;
         super.purge(recursive, graceperiod);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#removeAttributes(java.util.Set)
-     */
     public void removeAttributes(Set attributes) throws AMException,
             SSOException {
         super.removeAttributes(attributes);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#setAttributes(java.util.Map)
-     */
     public void setAttributes(Map attributes) throws AMException, SSOException {
         super.setAttributes(attributes);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#delete()
-     */
     public void delete() throws AMException, SSOException {
         delete(false);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#store()
-     */
     public void store() throws AMException, SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         profileType = type;
         super.store();
     }
 
-    /*
-     * (non-javadoc) This method is used to create the entity (so far only in
-     * memory) in the LDAP data store. A string identifying the type of entry
-     * being created, has to be passed. The types supported are the ones defined
+    /* 
+     * This method is used to create the entity (so far only in memory)
+     * in the LDAP data store. A string identifying the type of entry being
+     * created, has to be passed. The types supported are the ones defined
      * in the configuration of DAI service. Some examples are: "user", "agent".
      */
     public void create(String stype) throws AMException, SSOException {
@@ -165,17 +111,14 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
             profileType = Integer.parseInt(type);
             super.create();
         } else {
-            throw new AMException(AMSDKBundle.getString("156", super.locale), "156");
+            throw new AMException(AMSDKBundle.getString("156", super.locale),
+                    "156");
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#activate()
-     */
+
     public void activate() throws AMException, SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         String stype = Integer.toString(type);
         String stAttrName = (String) AMCommonUtils.statusAttributeMap
                 .get(stype);
@@ -186,14 +129,9 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#deactivate()
-     */
     public void deactivate() throws AMException, SSOException {
 
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         String stype = Integer.toString(type);
         String stAttrName = (String) AMCommonUtils.statusAttributeMap
                 .get(stype);
@@ -205,13 +143,8 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMEntity#isActivated()
-     */
     public boolean isActivated() throws AMException, SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         String stype = Integer.toString(type);
         String stAttrName = (String) AMCommonUtils.statusAttributeMap
                 .get(stype);
@@ -228,16 +161,19 @@ public class AMEntityImpl extends AMObjectImpl implements AMEntity {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMObject#getAttributes(java.util.Set)
-     */
     public Map getAttributes(Set attributeNames) throws AMException,
             SSOException {
-        int type = dsManager.getObjectType(token, entryDN);
+        int type = dsServices.getObjectType(token, entryDN);
         profileType = type;
         return super.getAttributes(attributeNames);
+    }
+
+    protected Set getRoleDNs() throws AMException, SSOException {
+        Set nsroleDNSet = new HashSet();
+        nsroleDNSet.add("nsroledn");
+        Map nsrolesMap = super.getAttributesFromDataStore(nsroleDNSet);
+        Set answer = (Set) nsrolesMap.get("nsroledn");
+        return ((answer == null) ? java.util.Collections.EMPTY_SET : answer);
     }
 
 }

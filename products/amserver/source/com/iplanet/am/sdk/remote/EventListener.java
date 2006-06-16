@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.2 2005-11-04 18:53:37 veiming Exp $
+ * $Id: EventListener.java,v 1.3 2006-06-16 19:36:38 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.iplanet.am.sdk.remote;
 
 // Java packages
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,9 +36,12 @@ import java.util.Vector;
 
 import netscape.ldap.util.DN;
 
+import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMEventManagerException;
 import com.iplanet.am.sdk.AMObjectListener;
-import com.iplanet.am.sdk.IdRepoListener;
+import com.iplanet.am.sdk.common.ICachedDirectoryServices;
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.am.sdk.common.MiscUtils;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.NotificationHandler;
@@ -47,6 +51,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.jaxrpc.SOAPClient;
 import com.sun.identity.sm.CreateServiceConfig;
 import com.sun.identity.sm.SMSSchema;
@@ -59,17 +64,21 @@ import com.sun.identity.sm.SMSSchema;
  */
 class EventListener {
 
-    private static Debug debug = DirectoryManager.debug;
+    private static Debug debug = RemoteServicesImpl.getDebug();
 
-    private static boolean initialized;
+    private static boolean initialized = false;
 
     private static Set listeners = new HashSet();
 
     private static SOAPClient client;
 
+    private static String notificationID;
+
+    private static String idRepoNotificationID;
+
     /**
-     * Constructor for <code>EventListener</code>. Should be instantiated
-     * once by <code>DirectoryManager</code>
+     * Constructor for <class>EventListener</class>. Should be instantiated
+     * once by <code>RemoteServicesImpl</code>
      * 
      * @param set
      *            of listeners interested in obtaining change events
@@ -79,26 +88,28 @@ class EventListener {
             synchronized (debug) {
                 if (!initialized) {
                     // Construct the SOAP Client
-                    client = new SOAPClient(DirectoryManager.SDK_SERVICE);
+                    client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
 
                     // Check if notification URL is provided
                     try {
                         URL url = WebtopNaming.getNotificationURL();
 
                         // Register for notification with AM Server
-                        client.send("registerNotificationURL", url.toString(),
-                                null);
+                        notificationID = (String) client
+                                .send("registerNotificationURL",
+                                        url.toString(), null);
                         // Register with PLLClient for notificaiton
                         PLLClient.addNotificationHandler(
-                                DirectoryManager.SDK_SERVICE,
+                                RemoteServicesImpl.SDK_SERVICE,
                                 new EventNotificationHandler());
 
                         // Register for IdRepo Service
-                        client.send("registerNotificationURL_idrepo", url
-                                .toString(), null);
+                        idRepoNotificationID = (String) client.send(
+                                "registerNotificationURL_idrepo", url
+                                        .toString(), null);
                         // Register with PLLClient for notificaiton
                         PLLClient.addNotificationHandler(
-                                DirectoryManager.IDREPO_SERVICE,
+                                RemoteServicesImpl.IDREPO_SERVICE,
                                 new IdRepoEventNotificationHandler());
 
                         if (debug.messageEnabled()) {
@@ -146,30 +157,27 @@ class EventListener {
      * <p>
      * 
      * <pre>
-     *      &lt;!-- EventNotification element 
-     *      specifes the change notification
-     *      which contains AttributeValuePairs. 
-     *      The attributes defined
-     *      are &quot;method&quot;, &quot;entityName&quot;, 
-     *      &quot;eventType&quot; and &quot;attrNames&quot;. --&gt;
-     *      &lt;!ELEMENT EventNotification ( AttributeValuePairs )* &gt;
-     * 
-     *      &lt;!-- AttributeValuePair element 
-     *      contains attribute name and values --&gt;
-     *      &lt;!ELEMENT AttributeValuPair ( Attribute, Value*) &gt;
-     * 
-     *      &lt;!-- Attribute contains the attribute names, 
-     *      and the allowed names are &quot;method&quot;, 
-     *      &quot;entityName&quot;, &quot;eventType&quot; and 
-     *      &quot;attrNames&quot; --&gt;
-     *      &lt;!ELEMENT Attribute EMPTY&gt;
-     *      &lt;!ATTRLIST Attribute
-     *      name ( method | entityName | eventType | attrNames ) 
-     *          &quot;method&quot;
-     *      &gt;
-     * 
-     *      &lt;!-- Value element specifies the values for the attributes --&gt;
-     *      &lt;!ELEMENT Value (#PCDATA) &gt;
+     *       &lt;!-- EventNotification element specifes the change notification
+     *       which contains AttributeValuePairs. The attributes defined
+     *       are &quot;method&quot;, &quot;entityName&quot;, &quot;
+     *       eventType&quot; and &quot;attrNames&quot;. --&gt;
+     *       &lt;!ELEMENT EventNotification ( AttributeValuePairs )* &gt;
+     *  
+     *       &lt;!-- AttributeValuePair element contains attribute name and 
+     *       values --&gt;
+     *       &lt;!ELEMENT AttributeValuPair ( Attribute, Value*) &gt;
+     *  
+     *       &lt;!-- Attribute contains the attribute names, and the allowed 
+     *       names are &quot;method&quot;, &quot;entityName&quot;, 
+     *       &quot;eventType&quot; and &quot;attrNames&quot; --&gt;
+     *       &lt;!ELEMENT Attribute EMPTY&gt;
+     *       &lt;!ATTRLIST Attribute
+     *       name ( method | entityName | eventType | attrNames ) 
+     *       &quot;method&quot;
+     *       &gt;
+     *  
+     *       &lt;!-- Value element specifies the values for the attributes 
+     *       --&gt; &lt;!ELEMENT Value (#PCDATA) &gt;
      * </pre>
      * 
      * @param nItem
@@ -202,13 +210,21 @@ class EventListener {
             if (entityName == null) {
                 handleError("invalid entity Name: " + attrs.get(ENTITY_NAME));
             }
+            String entryDN = MiscUtils.formatToRFC(entityName);
+            IDirectoryServices dsServices = RemoteServicesFactory.getInstance();
             // Switch based on method
             if (method.equalsIgnoreCase(OBJECT_CHANGED)) {
                 int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
                 // Call objectChanged method on the listeners
+                // Update the Remote Cache
+
+                if (RemoteServicesFactory.isCachingEnabled()) {
+                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
+                            eventType, false, false, Collections.EMPTY_SET);
+                }
                 synchronized (listeners) {
                     for (Iterator items = listeners.iterator(); 
-                                                items.hasNext();) 
+                        items.hasNext();) 
                     {
                         AMObjectListener listener = (AMObjectListener) items
                                 .next();
@@ -218,10 +234,15 @@ class EventListener {
             } else if (method.equalsIgnoreCase(OBJECTS_CHANGED)) {
                 int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
                 Set attributes = (Set) attrs.get(attrs.get(ATTR_NAMES));
+                if (RemoteServicesFactory.isCachingEnabled()) {
+                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
+                            eventType, true, false, attributes);
+                }
                 // Call objectsChanged method on the listeners
                 synchronized (listeners) {
-                    for (Iterator items = listeners.iterator();
-                                                        items.hasNext();) {
+                    for (Iterator items = listeners.iterator(); 
+                        items.hasNext();) 
+                    {
                         AMObjectListener listener = (AMObjectListener) items
                                 .next();
                         listener.objectsChanged(entityName, eventType,
@@ -229,20 +250,30 @@ class EventListener {
                     }
                 }
             } else if (method.equalsIgnoreCase(PERMISSIONS_CHANGED)) {
+                if (RemoteServicesFactory.isCachingEnabled()) {
+                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
+                            AMEvent.OBJECT_CHANGED, false, true,
+                            Collections.EMPTY_SET);
+                }
                 // Call permissionChanged method on the listeners
                 synchronized (listeners) {
                     for (Iterator items = listeners.iterator(); 
-                                                        items.hasNext();) {
+                        items.hasNext();) 
+                    {
                         AMObjectListener listener = (AMObjectListener) items
                                 .next();
                         listener.permissionsChanged(entityName, null);
                     }
                 }
             } else if (method.equalsIgnoreCase(ALL_OBJECTS_CHANGED)) {
+                if (RemoteServicesFactory.isCachingEnabled()) {
+                    ((ICachedDirectoryServices) dsServices).clearCache();
+                }
                 // Call allObjectsChanged method on listeners
                 synchronized (listeners) {
                     for (Iterator items = listeners.iterator(); 
-                                                        items.hasNext();) {
+                        items.hasNext();) 
+                    {
                         AMObjectListener listener = (AMObjectListener) items
                                 .next();
                         listener.allObjectsChanged();
@@ -253,13 +284,13 @@ class EventListener {
                 handleError("invalid method name: " + method);
             }
             if (debug.messageEnabled()) {
-                debug.warning("EventListener::sendNotification: "
-                        + "Sent notification: " + nItem);
+                debug.message("EventListener::sendNotification: Sent "
+                        + "notification: " + nItem);
             }
         } catch (Exception e) {
             if (debug.warningEnabled()) {
-                debug.warning("EventListener::sendNotification: "
-                        + "Unable to send notification: " + nItem, e);
+                debug.warning("EventListener::sendNotification: Unable to send"
+                        + " notification: " + nItem, e);
             }
         }
     }
@@ -324,6 +355,8 @@ class EventListener {
                 int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
                 cb.objectChanged(entityName, eventType, null);
             } else if (method.equalsIgnoreCase(OBJECTS_CHANGED)) {
+                int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
+                Set attributes = (Set) attrs.get(attrs.get(ATTR_NAMES));
                 // cb.objectsChanged(entityName, eventType, attributes, null);
             } else if (method.equalsIgnoreCase(PERMISSIONS_CHANGED)) {
                 // cb.permissionsChanged(entityName, null);
@@ -368,7 +401,7 @@ class EventListener {
 
     static class NotificationThread extends Thread {
         static final String CACHE_TIME_PROPERTY = 
-                "com.iplanet.am.sdk.remote.pollingTime";
+            "com.iplanet.am.sdk.remote.pollingTime";
 
         static int pollingTime = 1;
 
@@ -478,9 +511,9 @@ class EventListener {
                         .elementAt(i);
                 String content = notification.getContent();
                 if (debug.messageEnabled()) {
-                    debug.message(
-                            "EventListener:IdRepoEventNotificationHandler: "
-                                    + " received notification: " + content);
+                    debug.message("EventListener:" 
+                            + "IdRepoEventNotificationHandler: "
+                            + " received notification: " + content);
                 }
                 // Send notification
                 sendIdRepoNotification(content);

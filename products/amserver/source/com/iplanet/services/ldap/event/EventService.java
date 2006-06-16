@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.3 2006-01-19 00:30:54 rarcot Exp $
+ * $Id: EventService.java,v 1.4 2006-06-16 19:36:40 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,8 +131,8 @@ public class EventService implements Runnable {
     protected static long _idleTimeOutMills;
 
     protected static final String[] listeners = {
-            "com.iplanet.am.sdk.ldap.AMACIEventListener",
-            "com.iplanet.am.sdk.ldap.AMEntryEventListener",
+            "com.iplanet.am.sdk.ldap.ACIEventListener",
+            "com.iplanet.am.sdk.ldap.EntryEventListener",
             "com.sun.identity.sm.ldap.LDAPEventManager" };
 
     protected static Hashtable _ideListenersMap = new Hashtable();

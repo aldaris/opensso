@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMRoleImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMRoleImpl.java,v 1.3 2006-06-16 19:36:10 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.iplanet.ums.SearchControl;
  */
 
 class AMRoleImpl extends AMObjectImpl implements AMRole {
+    
     static String roleTypeAN = "iplanet-am-role-type";
 
     static String roleDNsAN = "nsroledn";
@@ -88,7 +89,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
      */
     public void addUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN, ROLE,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN, ROLE,
                 ADD_MEMBER);
     }
 
@@ -100,7 +101,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
      */
     public void removeUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN, ROLE,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN, ROLE,
                 REMOVE_MEMBER);
     }
 
@@ -120,7 +121,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
      */
     public Set getUserDNs() throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        return dsManager.getMembers(super.token, super.entryDN, profileType);
+        return dsServices.getMembers(super.token, super.entryDN, profileType);
     }
 
     /**
@@ -194,12 +195,12 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
             throws AMException, SSOException {
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
 
         if ((wildcard == null) || (wildcard.length() == 0))
-            throw new AMException(AMSDKBundle.
-                getString("122", super.locale), "122");
+            throw new AMException(AMSDKBundle.getString("122", super.locale),
+                    "122");
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
                 + "=" + wildcard + ")" + getSearchFilter(AMObject.USER) + "("
@@ -232,8 +233,8 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
             }
         }
 
-        return dsManager
-                .search(super.token, getOrganizationDN(), filter, level);
+        return dsServices.search(super.token, getOrganizationDN(), filter,
+                level);
     }
 
     /**
@@ -262,12 +263,12 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         int level = searchControl.getSearchScope();
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
 
         if ((wildcard == null) || (wildcard.length() == 0))
-            throw new AMException(AMSDKBundle.
-                getString("122", super.locale), "122");
+            throw new AMException(AMSDKBundle.getString("122", super.locale),
+                    "122");
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
                 + "=" + wildcard + ")" + getSearchFilter(AMObject.USER) + "("
@@ -302,7 +303,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
 
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, getOrganizationDN(), filter, sc,
+        return dsServices.search(super.token, getOrganizationDN(), filter, sc,
                 returnAttrs);
     }
 
@@ -332,8 +333,8 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         int level = searchControl.getSearchScope();
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB))
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
 
         String filter = "(&" + getSearchFilter(AMObject.USER) + "(" + roleDNsAN
                 + "=" + super.entryDN + ")" + avFilter + ")";
@@ -344,7 +345,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         searchControl.setSearchScope(AMConstants.SCOPE_SUB);
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, getOrganizationDN(), filter, sc,
+        return dsServices.search(super.token, getOrganizationDN(), filter, sc,
                 returnAttrs);
     }
 
@@ -390,7 +391,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
 
         // issue search to find out all templates for this role
         // base for search is role's parent which is an Org
-        Set set = dsManager.search(super.token, getParentDN(),
+        Set set = dsServices.search(super.token, getParentDN(),
                 "(&(objectclass=costemplate)(cn=\"" + super.entryDN + "\"))",
                 AMConstants.SCOPE_SUB);
         // return empty set if there is no templates found at all
@@ -471,7 +472,7 @@ class AMRoleImpl extends AMObjectImpl implements AMRole {
         Map map = new HashMap();
         Iterator it = serviceNames.iterator();
         while (it.hasNext()) {
-            map.put(it.next(), POLICY_TEMPLATE_INTEGER);
+            map.put((String) it.next(), POLICY_TEMPLATE_INTEGER);
         }
         return getTemplates(map, false);
     }

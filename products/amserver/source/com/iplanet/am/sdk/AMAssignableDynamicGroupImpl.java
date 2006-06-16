@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAssignableDynamicGroupImpl.java,v 1.1 2005-11-01 00:28:57 arvindp Exp $
+ * $Id: AMAssignableDynamicGroupImpl.java,v 1.2 2006-06-16 19:35:59 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,46 +42,41 @@ class AMAssignableDynamicGroupImpl extends AMGroupImpl implements
 
     /**
      * Adds users to the assignable dynamic group.
-     * 
-     * @param users
-     *            the set of user distinguished names to be added to the
-     *            assignable dynamic group.
-     * @throws AMException
-     *             if there is an internal error in the Access Management Store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     *
+     * @param users the set of user distinguished names to be added to the
+     *        assignable dynamic group.
+     * @throws AMException if there is an internal error in the Access
+     *         Management Store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public void addUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN,
                 ASSIGNABLE_DYNAMIC_GROUP, ADD_MEMBER);
     }
 
     /**
      * Removes users from the assignable dynamic group.
-     * 
-     * @param users
-     *            The set of user distinguished names to be removed from the
-     *            assignable dynamic group.
-     * @throws AMException
-     *             if there is an internal error in the Access Management Store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     *
+     * @param users The set of user distinguished names to be removed from the
+     *        assignable dynamic group.
+     * @throws AMException if there is an internal error in the Access
+     *         Management Store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public void removeUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN,
                 ASSIGNABLE_DYNAMIC_GROUP, REMOVE_MEMBER);
     }
 
     /**
      * Returns true if the group is subscribable.
-     * 
+     *
      * @return true if the group is subscribable.
-     * @throws AMException
-     *             if there is an internal error in the Access Management Store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     * @throws AMException if there is an internal error in the Access
+     *         Management Store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public boolean isSubscribable() throws AMException, SSOException {
         return getBooleanAttribute(SUBSCRIBABLE_ATTRIBUTE);
@@ -89,13 +84,11 @@ class AMAssignableDynamicGroupImpl extends AMGroupImpl implements
 
     /**
      * Sets subscribe-ability of the group.
-     * 
-     * @param subscribable
-     *            true if the group is subscribable.
-     * @throws AMException
-     *             if there is an internal error in the Access Management Store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     *
+     * @param subscribable true if the group is subscribable.
+     * @throws AMException if there is an internal error in the Access
+     *         Management Store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public void setSubscribable(boolean subscribable) throws AMException,
             SSOException {

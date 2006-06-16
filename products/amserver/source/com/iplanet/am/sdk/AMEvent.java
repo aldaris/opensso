@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEvent.java,v 1.3 2005-12-08 01:16:01 veiming Exp $
+ * $Id: AMEvent.java,v 1.4 2006-06-16 19:36:04 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,20 +30,19 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 
 import com.iplanet.services.ldap.event.DSEvent;
 
-/**
- * <p>
- * Represents an event fired by Sun Java System Access Manager SDK.
- * </p>
- * 
- * <p>
- * <code>AMEvent</code>'s state consists of the following:
+/* iPlanet-PUBLIC-CLASS */
+
+/** <p>Represents an event fired by Sun Java System Access Manager SDK.</p>
+ *
+ * <p><code>AMEvent</code>'s state consists of the following:
  * <ul>
  * <li>The event source: The underlying object that caused the event.
- * <li>The event source DN: DN of the underlying object that caused the event.
+ * <li>The event source DN: DN of the underlying object that caused the 
+ *     event.
  * <li>The event type
- * <li>The source object type: Type of the underlying object that caused event.
+ * <li>The source object type: Type of the underlying object that caused
+ *     event.
  * </ul>
- * @supported.all.api
  */
 public class AMEvent extends EventObject {
 
@@ -64,45 +63,62 @@ public class AMEvent extends EventObject {
      */
     public static final int OBJECT_REMOVED = LDAPPersistSearchControl.DELETE;
 
+    /** Represents an object expiration event type. Occurs when the TTL for the
+     *  object data is over. */
+    public static final int OBJECT_EXPIRED = 9;
+
     /**
      * Represents an object renaming event type.
      */
     public static final int OBJECT_RENAMED = LDAPPersistSearchControl.MODDN;
 
-    /*
-     * The above constants OBJECT_ADDED, OBJECT_CHANGED, OBJECT_REMOVED,
-     * OBJECT_RENAMED should be kept in synch with the corresponding constants
-     * defined in com.iplanet.services.ldap.event.IDSEventListener
-     * 
-     * OBJECT_ADDED=IDSEventListener.CHANGE_ADD
-     * OBJECT_CHANGED=IDSEventListener.CHANGE_MODIFY
-     * OBJECT_REMOVED=IDSEventListener.CHANGE_DELETE
-     * OBJECT_RENAMED=IDSEventListener.CHANGE_MOD_LOCATION
+    /* The above constants OBJECT_ADDED, OBJECT_CHANGED, OBJECT_REMOVED, 
+     OBJECT_RENAMED should be kept in synch with the corresponding
+     constants defined in com.iplanet.services.ldap.event.IDSEventListener
+
+     OBJECT_ADDED=IDSEventListener.CHANGE_ADD
+     OBJECT_CHANGED=IDSEventListener.CHANGE_MODIFY
+     OBJECT_REMOVED=IDSEventListener.CHANGE_DELETE
+     OBJECT_RENAMED=IDSEventListener.CHANGE_MOD_LOCATION
      */
 
     private int eventType;
 
-    private DSEvent dsEvent = null;
+    private String sourceDN;
 
-    private String sourceDN = null;
+    private int sourceType;
 
     /**
-     * Constructs an event object. This constructor accepts the event source
-     * object and passes it onto the base class constructor.
-     * 
-     * @param source
-     *            The source object that caused the event. The source object
-     *            could be User, Role, Group, Organization, etc., from this SDK.
-     *            The source could also be a String representing the DN
-     *            (distinguished name) of the source object.
-     * @param eventType
-     *            type of event.
+     * Constructs an event object.
+     * This constructor accepts the event source object and passes it onto the
+     * base class constructor.
+     *
+     * @param source The source object that caused the event. The source object
+     *        could be User, Role, Group, Organization, etc., from this
+     *        SDK. The source could also be a String 
+     *        representing the DN (distinguished name) of the source 
+     *        object.
+     * @param eventType type of event.
      */
     public AMEvent(Object source, int eventType) {
         super(source);
-        this.dsEvent = (DSEvent) source;
+        if (source instanceof DSEvent) {
+            DSEvent dsEvent = (DSEvent) source;
+            this.sourceDN = dsEvent.getID();
+            this.sourceType = determineSourceType(dsEvent);
+        } else {
+            this.sourceDN = null;
+            this.sourceType = AMObject.UNKNOWN_OBJECT_TYPE;
+        }
         this.eventType = eventType;
-        this.sourceDN = dsEvent.getID();
+    }
+
+    protected AMEvent(Object source, int eventType, String sourceDN,
+            int sourceType) {
+        super(source);
+        this.eventType = eventType;
+        this.sourceDN = sourceDN;
+        this.sourceType = sourceType;
     }
 
     /**
@@ -118,7 +134,7 @@ public class AMEvent extends EventObject {
      * Returns the distinguished name of the source object in a String format.
      * Use this method if no searching or parsing operations need to be
      * performed on the distinguished name.
-     * 
+     *
      * @return distinguished name of the source object.
      */
     public String getSourceDN() {
@@ -127,14 +143,15 @@ public class AMEvent extends EventObject {
 
     /**
      * Returns the type of the event.
-     * 
-     * @return Returns one of the following possible values:
-     *         <ul>
-     *         <li><code>AMEvent.OBJECT_ADDED</code>
-     *         <li><code>AMEvent.OBJECT_CHANGED</code>
-     *         <li><code>AMEvent.OBJECT_REMOVED</code>
-     *         <li><code>AMEvent.OBJECT_RENAMED</code>
-     *         </ul>
+     *
+     * @return Returns one of the
+     * following possible values:
+     * <ul>
+     * <li><code>AMEvent.OBJECT_ADDED</code>
+     * <li><code>AMEvent.OBJECT_CHANGED</code>
+     * <li><code>AMEvent.OBJECT_REMOVED</code>
+     * <li><code>AMEvent.OBJECT_RENAMED</code>
+     * <li><code>AMEvent.OBJECT_EXPIRED</code> </ul>
      */
     public int getEventType() {
         return eventType;
@@ -143,31 +160,33 @@ public class AMEvent extends EventObject {
     /**
      * Returns the type of the source object that caused the event.
      * <p>
-     * 
      * @return Returns one of the following possible values:
-     *         <ul>
-     *         <li> <code>AMObject.USER</code>
-     *         <li> <code>AMObject.ROLE</code>
-     *         <li> <code>AMObject.FILTERED_ROLE</code>
-     *         <li> <code>AMObject.GROUP</code>
-     *         <li> <code>AMObject.DYNAMIC_GROUP</code>
-     *         <li> <code>AMObject.ASSIGNABLE_DYNAMIC_GROUP</code>
-     *         <li> <code>AMObject.ORGANIZATION</code>
-     *         <li> <code>AMObject.PEOPLE_CONTAINER</code>
-     *         <li> <code>AMObject.GROUP_CONTAINER</code>
-     *         <li> <code>AMObject.ORGINATIONAL_UNIT</code>
-     *         <li> <code>AMObject.UNKNOWN_OBJECT_TYPE</code> if source
-     *         unknown
-     *         </ul>
+     * <ul>
+     * <li> <code>AMObject.USER</code>
+     * <li> <code>AMObject.ROLE</code>
+     * <li> <code>AMObject.FILTERED_ROLE</code>
+     * <li> <code>AMObject.GROUP</code>
+     * <li> <code>AMObject.DYNAMIC_GROUP</code>
+     * <li> <code>AMObject.ASSIGNABLE_DYNAMIC_GROUP</code>
+     * <li> <code>AMObject.ORGANIZATION</code>
+     * <li> <code>AMObject.PEOPLE_CONTAINER</code>
+     * <li> <code>AMObject.GROUP_CONTAINER</code>
+     * <li> <code>AMObject.ORGINATIONAL_UNIT</code>
+     * <li> <code>AMObject.UNKNOWN_OBJECT_TYPE</code> if source unknown
+     * </ul>
      */
     public int getSourceType() {
+        return sourceType;
+    }
 
+    private int determineSourceType(DSEvent source) {
         // getClassName() returns all the object classes as a comma separated
         // String
-        if (dsEvent == null) {
+        if (source == null) {
             return AMObject.UNKNOWN_OBJECT_TYPE;
         }
-        String objectClasses = dsEvent.getClassName().toLowerCase();
+
+        String objectClasses = source.getClassName().toLowerCase();
         if (objectClasses.indexOf(AMObjectClassManager
                 .getObjectClass(AMObject.USER)) != -1) {
             return AMObject.USER;

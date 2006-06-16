@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.1 2005-11-01 00:31:08 arvindp Exp $
+ * $Id: IdRepo.java,v 1.2 2006-06-16 19:36:42 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,12 @@ import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 
-import com.iplanet.am.sdk.IdRepoListener;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.sm.SchemaType;
 
 /**
+ * 
  * This interface defines the methods which need to be implemented by plugins.
  * Two plugins are supported, <code> ldap </code> and <code> remote </code>.
  */
@@ -459,9 +459,8 @@ public abstract class IdRepo {
      * 
      * @return fully qualified name for the identity within the data store
      */
-    public String getFullyQualifiedName(SSOToken token, IdType type,
-            String name) throws IdRepoException, SSOException 
-    {
+    public String getFullyQualifiedName(SSOToken token, IdType type, 
+            String name) throws IdRepoException, SSOException {
         return ("default://" + type.toString() + "/" + name);
     }
 
@@ -493,5 +492,4 @@ public abstract class IdRepo {
             com.sun.identity.authentication.spi.AuthLoginException {
         return (false);
     }
-
 }

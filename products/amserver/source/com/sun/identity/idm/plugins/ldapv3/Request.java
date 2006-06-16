@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.1 2005-11-01 00:31:14 arvindp Exp $
+ * $Id: Request.java,v 1.2 2006-06-16 19:36:48 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,43 +28,42 @@ import java.util.Map;
 
 import netscape.ldap.LDAPConnection;
 
-import com.iplanet.am.sdk.IdRepoListener;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdRepoListener;
 
 class Request {
 
     // plugin config info
-    private Map _pluginConfig;
+    private Map                     _pluginConfig;
 
     // ldap message id
-    private int _id;
+    private int                     _id;
 
     // ID returned to user.
     private String _reqID;
 
     // The authenticated id of the requester.
-    private SSOToken _requester;
+    private SSOToken                _requester;
 
     // Search Root
-    private String _baseDn;
+    private String                  _baseDn;
 
     // Search scope
-    private int _scope;
+    private int                     _scope;
 
     // Search filter
-    private String _filter;
+    private String                  _filter;
 
     // Search attributes
-    private String[] _attrs;
+    private String[]                _attrs;
 
     // Search constraints
-    private int _operations;
+    private int   _operations;
 
     // The event listener
-    private IdRepoListener _listener;
+    private IdRepoListener        _listener;
 
     private LDAPConnection _connection;
-
     private long _lastUpdatedTime;
 
     // the plugin owner of this request.
@@ -75,15 +74,15 @@ class Request {
 
     // ldap server names
     private String _serverNames;
-
     /**
      * Request object constructor (package private)
      */
-    Request(int id, String reqID, SSOToken requester, String baseDn, int scope,
-            String filter, String[] attrs, int operations,
-            IdRepoListener listener, LDAPConnection connection,
-            long lastResponseTime, Map pluginConfig, LDAPv3Repo owner,
-            String serverNames) {
+    Request (int id, String reqID, SSOToken requester, String baseDn, int scope,
+                 String filter, String[] attrs, int operations,
+                 IdRepoListener listener, LDAPConnection connection,
+                 long lastResponseTime, Map pluginConfig, LDAPv3Repo owner,
+                 String serverNames)
+    {
         _id = id;
         _reqID = reqID;
         _requester = requester;
@@ -101,68 +100,86 @@ class Request {
         _serverNames = serverNames;
     }
 
-    /**
-     * 
-     */
-    int getId() {
-        return _id;
-    }
 
     /**
-     * 
+     *
+     */
+    int getId() 
+    {
+        return _id;
+    }
+    
+
+    /**
+     *
      */
     String getRequestID() {
         return _reqID;
     }
 
     /**
-     * 
+     *
      */
-    SSOToken getRequester() {
+    SSOToken getRequester() 
+    {
         return _requester;
     }
-
+    
+    
     /**
-     * 
+     *
      */
-    String getBaseDn() {
+    String getBaseDn() 
+    {
         return _baseDn;
     }
-
+    
+    
     /**
-     * 
+     *
      */
-    int getScope() {
+    int getScope() 
+    {
         return _scope;
     }
-
+    
+    
     /**
-     * 
+     *
      */
-    String getFilter() {
+    String getFilter() 
+    {
         return _filter;
     }
-
+    
+    
     /**
-     * 
+     *
      */
-    String[] getattrs() {
+    String[] getattrs() 
+    {
         return _attrs;
     }
-
+    
+    
     /**
-     * 
+     *
      */
-    int getOperations() {
+    int getOperations() 
+    {
         return _operations;
     }
+
+
 
     /**
      * Add Listsner
      */
-    synchronized IdRepoListener getListener() {
+    synchronized IdRepoListener getListener() 
+    {
         return _listener;
     }
+         
 
     protected LDAPConnection getLDAPConnection() {
         return _connection;
@@ -209,13 +226,13 @@ class Request {
     }
 
     /*
-     * 
+     *
      */
     public String toString() {
-        String str = "[EventEntry] base=" + _baseDn + " scope=" + _scope
-                + " filter=" + _filter + " attrs={";
-        for (int i = 0; i < _attrs.length; i++) {
-            if (i > 0) {
+        String str = "[EventEntry] base=" + _baseDn + " scope=" + _scope +
+            " filter=" + _filter + " attrs={";
+        for (int i=0; i < _attrs.length; i++) {
+            if (i>0) {
                 str += " ";
             }
             str += _attrs[i];

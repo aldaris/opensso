@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPeopleContainerImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMPeopleContainerImpl.java,v 1.3 2006-06-16 19:36:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
@@ -206,7 +207,7 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         }
         Set assignServiceNames = serviceNameAndAttrs.keySet();
         Set registered = null;
-        registered = dsManager.getRegisteredServiceNames(null,
+        registered = dsServices.getRegisteredServiceNames(null,
                 getOrganizationDN());
         Iterator it = assignServiceNames.iterator();
 
@@ -214,8 +215,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
             String tmpS = (String) it.next();
             if (!registered.contains(tmpS)) {
                 Object[] args = { tmpS };
-                throw new AMException(AMSDKBundle.getString(
-                    "459", args, super.locale), "459", args);
+                throw new AMException(AMSDKBundle.getString("459", args,
+                        super.locale), "459", args);
             }
         }
 
@@ -254,8 +255,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                 debug.error("AMPeopleContainerImpl: data validation failed-> "
                         + thisService, se);
                 Object args[] = { thisService };
-                throw new AMException(AMSDKBundle.getString(
-                    "976", args, super.locale), "976", args);
+                throw new AMException(AMSDKBundle.getString("976", args,
+                        super.locale), "976", args);
             }
         }
         if (objectClasses != null && !objectClasses.isEmpty()) {
@@ -326,9 +327,9 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                     AMNamingAttrManager.getNamingAttr(PEOPLE_CONTAINER))
                     .append("=").append((String) iter.next()).append(",")
                     .append(super.entryDN);
-            AMPeopleContainerImpl peopleContainerImpl =
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDNSB.toString());
+            AMPeopleContainerImpl peopleContainerImpl = 
+                new AMPeopleContainerImpl(super.token, 
+                        peopleContainerDNSB.toString());
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
         }
@@ -364,8 +365,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                     .append(super.entryDN);
             Map attributes = (Map) peopleContainersMap.get(peopleContainerName);
             AMPeopleContainerImpl peopleContainerImpl = 
-                new AMPeopleContainerImpl(
-                    super.token, peopleContainerDNSB.toString());
+                new AMPeopleContainerImpl(super.token, 
+                        peopleContainerDNSB.toString());
             peopleContainerImpl.setAttributes(attributes);
             peopleContainerImpl.create();
             peopleContainers.add(peopleContainerImpl);
@@ -629,8 +630,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
 
     }
 
-    public void deleteResources(Set resources) 
-    throws AMException, SSOException {
+    public void deleteResources(Set resources) throws AMException, SSOException 
+    {
         Iterator iter = resources.iterator();
         while (iter.hasNext()) {
             String rDN = (String) iter.next();
@@ -685,9 +686,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
      * @throws SSOException
      *             if the sign on is no longer valid
      */
-    public Set searchSubPeopleContainers(String wildcard, 
-            Map avPairs, int level) throws AMException, SSOException 
-    {
+    public Set searchSubPeopleContainers(String wildcard, Map avPairs, 
+            int level) throws AMException, SSOException {
         return searchObjects(AMNamingAttrManager
                 .getNamingAttr(PEOPLE_CONTAINER),
                 getSearchFilter(AMObject.PEOPLE_CONTAINER), wildcard, avPairs,
@@ -734,13 +734,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         return resSet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#searchResources(
-     *      java.lang.String, java.util.Map, java.lang.String, 
-     *      com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchResources(String wildcard, Map avPairs,
             String rSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
@@ -749,12 +742,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                 avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#createEntities(
-     *      java.lang.String, java.util.Set)
-     */
     public Set createEntities(String stype, Set entities) throws AMException,
             SSOException {
         Set resultSet = new HashSet();
@@ -772,13 +759,14 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.getString(
-                "117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
 
         int createType = Integer.parseInt(type);
         Iterator it = entities.iterator();
         while (it.hasNext()) {
+            ;
             String rDN = ((String) it.next());
             String userDN = AMNamingAttrManager.getNamingAttr(createType) + "="
                     + rDN + "," + super.entryDN;
@@ -789,11 +777,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         return resultSet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#deleteEntities(java.util.Set)
-     */
     public void deleteEntities(Set resources) throws AMException, SSOException {
         Iterator iter = resources.iterator();
         while (iter.hasNext()) {
@@ -803,12 +786,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#searchEntities(
-     *      java.lang.String, int, java.lang.String, java.util.Map)
-     */
     public Set searchEntities(String wildcard, int level,
             String eSearchTemplate, Map avPairs) throws AMException,
             SSOException {
@@ -821,13 +798,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#searchEntities(
-     *      java.lang.String, java.util.Map, java.lang.String,
-     *      com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchEntities(String wildcard, Map avPairs,
             String eSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
@@ -839,12 +809,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
                 avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#createEntities(
-     *      java.lang.String, java.util.Map)
-     */
     public Set createEntities(String stype, Map entities) throws AMException,
             SSOException {
         if (stype.equalsIgnoreCase("user")) {
@@ -862,8 +826,8 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         String type = (String) AMCommonUtils.supportedTypes.get(stype
                 .toLowerCase());
         if (type == null) {
-            throw new AMException(AMSDKBundle.getString(
-                "117", super.locale), "117");
+            throw new AMException(AMSDKBundle.getString("117", super.locale),
+                    "117");
         }
         int createType = Integer.parseInt(type);
         Set entitySet = new HashSet();
@@ -881,13 +845,6 @@ class AMPeopleContainerImpl extends AMObjectImpl implements AMPeopleContainer {
         return entitySet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMPeopleContainer#searchEntities(
-     *      java.lang.String, com.iplanet.am.sdk.AMSearchControl, 
-     *      java.lang.String, java.lang.String)
-     */
     public AMSearchResults searchEntities(String wildcard,
             AMSearchControl searchControl, String avfilter,
             String eSearchTemplate) throws AMException, SSOException {

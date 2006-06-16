@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchFilterManager.java,v 1.1 2005-11-01 00:29:18 arvindp Exp $
+ * $Id: AMSearchFilterManager.java,v 1.2 2006-06-16 19:36:10 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.Debug;
+
+import com.iplanet.am.sdk.common.IDirectoryServices;
 
 /**
  * A Class which manages the search filters correponding to each of the AMObject
@@ -112,9 +114,10 @@ public class AMSearchFilterManager {
         String cacheKey = (new Integer(objectType)).toString() + ":"
                 + searchTemplateName + ":" + organizationDN;
         if ((filter = (String) searchfilterMap.get(cacheKey)) == null) {
-            filter = AMDirectoryWrapper.getInstance().dMgr
-                    .getSearchFilterFromTemplate(objectType, orgDN,
-                            searchTemplateName);
+            IDirectoryServices dsServices = AMDirectoryAccessFactory
+                    .getDirectoryServices();
+            filter = dsServices.getSearchFilterFromTemplate(objectType, orgDN,
+                    searchTemplateName);
             searchfilterMap.put(cacheKey, filter);
         }
 
@@ -167,9 +170,9 @@ public class AMSearchFilterManager {
             }
         } catch (AMException ae) {
             if (debug.warningEnabled()) {
-                debug.warning("AMSearchFilterManager.addAdminGroupFilters() " +
-                        "Unable to determine if \"Admin Groups\" option is " +
-                        "enabled or disabled. Exception : ", ae);
+                debug.warning("AMSearchFilterManager.addAdminGroupFilters() "
+                        + "Unable to determine if \"Admin Groups\" " 
+                        + "option is enabled or disabled. Exception : ", ae);
             }
         }
         return originalFilter;

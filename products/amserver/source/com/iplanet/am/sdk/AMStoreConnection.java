@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.4 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMStoreConnection.java,v 1.5 2006-06-16 19:36:12 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 
 import netscape.ldap.util.DN;
 
+import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
@@ -51,6 +52,8 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchemaManager;
+
+/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The <code>AMStoreConnection</code> class represents a connection to the Sun
@@ -125,7 +128,6 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * <code>sun.com</code>. More examples of how to use this method are provided
  * in the Javadocs of the method below.
  * 
- * @supported.all.api
  */
 public final class AMStoreConnection implements AMConstants {
     // ~ Static fields/initializers
@@ -159,7 +161,7 @@ public final class AMStoreConnection implements AMConstants {
     // ~ Instance fields
     // --------------------------------------------------------
 
-    private AMDirectoryManager dsManager;
+    private IDirectoryServices dsServices;
 
     private SSOToken token;
 
@@ -182,8 +184,8 @@ public final class AMStoreConnection implements AMConstants {
         // initialize whatever you want to here.
         SSOTokenManager.getInstance().validateToken(ssoToken);
         this.token = ssoToken;
-        this.locale =  AMCommonUtils.getUserLocale(ssoToken);
-        dsManager = AMDirectoryWrapper.getInstance();
+        this.locale = AMCommonUtils.getUserLocale(ssoToken);
+        dsServices = AMDirectoryAccessFactory.getDirectoryServices();
     }
 
     // ~ Methods
@@ -294,7 +296,7 @@ public final class AMStoreConnection implements AMConstants {
      * 
      * @return role naming attribute
      * @deprecated This method is deprecated. Use
-     *             {@link #getNamingAttribute(int) 
+     *             {@link #getNamingAttribute(int)
      *             getNamingAttribute(int objectType)}
      */
     public static String getRoleNamingAttribute() {
@@ -326,7 +328,7 @@ public final class AMStoreConnection implements AMConstants {
      *             if single sign on token is invalid or expired.
      */
     public int getAMObjectType(String dn) throws AMException, SSOException {
-        return AMDirectoryWrapper.getInstance().getObjectType(token, dn);
+        return dsServices.getObjectType(token, dn);
     }
 
     /**
@@ -342,9 +344,8 @@ public final class AMStoreConnection implements AMConstants {
      * @return identifier for the above type. Returns null if type is unknown.
      */
     public String getAMObjectName(int type) {
-        String ret = (String) AMCommonUtils.supportedNames.get(Integer
-                .toString(type));
-        return ret;
+        return ((String) AMCommonUtils.supportedNames.get(Integer
+                .toString(type)));
     }
 
     /**
@@ -360,9 +361,8 @@ public final class AMStoreConnection implements AMConstants {
      * @return identifier for the above type. Returns null if type is unknown.
      */
     public static String getObjectName(int type) {
-        String ret = (String) AMCommonUtils.supportedNames.get(Integer
-                .toString(type));
-        return ret;
+        return ((String) AMCommonUtils.supportedNames.get(Integer
+                .toString(type)));
     }
 
     /**
@@ -389,8 +389,8 @@ public final class AMStoreConnection implements AMConstants {
     public AMAssignableDynamicGroup getAssignableDynamicGroup(
             String assignableDynamicGroupDN) throws SSOException {
         AMAssignableDynamicGroup assignableDynamicGroup = 
-            new AMAssignableDynamicGroupImpl(
-                this.token, assignableDynamicGroupDN);
+            new AMAssignableDynamicGroupImpl(this.token, 
+                    assignableDynamicGroupDN);
 
         return assignableDynamicGroup;
     }
@@ -418,15 +418,13 @@ public final class AMStoreConnection implements AMConstants {
 
             return ssm.getServiceAttributeNames(st);
         } catch (SSOException se) {
-            debug.message("AMStoreConnection.getAttributeNames(String, " +
-                    "AMSchema.Type)", se);
-            throw new AMException(
-                AMSDKBundle.getString("902", locale), "902");
+            debug.message("AMStoreConnection.getAttributeNames(String, " 
+                    + "AMSchema.Type)", se);
+            throw new AMException(AMSDKBundle.getString("902", locale), "902");
         } catch (SMSException se) {
             debug.message("AMStoreConnection.getAttributeNames(String, " +
                     "AMSchema.Type)", se);
-            throw new AMException(
-                AMSDKBundle.getString("911", locale), "911");
+            throw new AMException(AMSDKBundle.getString("911", locale), "911");
         }
     }
 
@@ -614,8 +612,8 @@ public final class AMStoreConnection implements AMConstants {
             return domainname;
         }
 
-        if (!domainname.startsWith("http://") 
-                && (domainname.indexOf("/") > -1)) {
+        if (!domainname.startsWith("http://") && (domainname.indexOf("/") > -1))
+        {
             String orgdn = orgNameToDN(domainname);
 
             if (isValidEntry(orgdn)
@@ -623,6 +621,7 @@ public final class AMStoreConnection implements AMConstants {
                 return (orgdn);
             } else {
                 Object[] args = { orgdn };
+                String locale = AMCommonUtils.getUserLocale(token);
                 throw new AMException(AMSDKBundle
                         .getString("467", args, locale), "467", args);
             }
@@ -683,12 +682,13 @@ public final class AMStoreConnection implements AMConstants {
                         + searchFilter);
             }
 
-            Set orgSet = dsManager.search(token, rootSuffix, searchFilter,
+            Set orgSet = dsServices.search(token, rootSuffix, searchFilter,
                     SCOPE_SUB);
 
             if ((orgSet == null) || (orgSet.size() > 1) || orgSet.isEmpty()) {
                 // throw an exception
                 Object[] args = { domainname };
+                String locale = AMCommonUtils.getUserLocale(token);
                 throw new AMException(AMSDKBundle
                         .getString("971", args, locale), "971", args);
             } else {
@@ -884,7 +884,8 @@ public final class AMStoreConnection implements AMConstants {
      *             <code>AMSchema</code>.
      * 
      * @deprecated This method has been deprecated. Please use
-     *        <code>com.sun.identity.sm.ServiceSchemaManager.getSchema()</code>.
+     *             <code>com.sun.identity.sm.ServiceSchemaManager.getSchema()
+     *             </code>.
      */
     public AMSchema getSchema(String serviceName, AMSchema.Type schemaType)
             throws AMException {
@@ -903,7 +904,9 @@ public final class AMStoreConnection implements AMConstants {
      *             <code>schemaTypes</code>.
      * 
      * @deprecated This method has been deprecated. Please use
-     *   <code>com.sun.identity.sm.ServiceSchemaManager.getSchemaTypes()</code>.
+     *             <code>
+     *             com.sun.identity.sm.ServiceSchemaManager.getSchemaTypes()
+     *             </code>.
      */
     public Set getSchemaTypes(String serviceName) throws AMException {
         throw new UnsupportedOperationException();
@@ -1009,7 +1012,7 @@ public final class AMStoreConnection implements AMConstants {
      */
     public Set getTopLevelContainers() throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(this.token);
-        return dsManager.getTopLevelContainers(token);
+        return dsServices.getTopLevelContainers(token);
     }
 
     /**
@@ -1026,7 +1029,7 @@ public final class AMStoreConnection implements AMConstants {
     public Set getTopLevelOrganizations() throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(this.token);
 
-        return dsManager.search(this.token, rootSuffix, AMSearchFilterManager
+        return dsServices.search(this.token, rootSuffix, AMSearchFilterManager
                 .getGlobalSearchFilter(AMObject.ORGANIZATION), SCOPE_ONE);
     }
 
@@ -1121,7 +1124,7 @@ public final class AMStoreConnection implements AMConstants {
             debug.message("AMStoreConnection.isValidEntry(): DN=" + dn);
         }
 
-        return dsManager.doesEntryExists(token, dn);
+        return dsServices.doesEntryExists(token, dn);
     }
 
     /**
@@ -1195,7 +1198,7 @@ public final class AMStoreConnection implements AMConstants {
                         + "Using org filter= " + filter);
             }
 
-            orgSet = dsManager.search(token, rootSuffix, filter, SCOPE_SUB);
+            orgSet = dsServices.search(token, rootSuffix, filter, SCOPE_SUB);
 
             if ((orgSet == null) || orgSet.isEmpty()) {
                 orgSet = getOrganizations(domainName, null);
@@ -1232,16 +1235,15 @@ public final class AMStoreConnection implements AMConstants {
                             + "Searching deleted objects. Filter: " + filter);
                 }
 
-                Set deletedObjs = dsManager.search(token, orgDN, filter,
+                Set deletedObjs = dsServices.search(token, orgDN, filter,
                         SCOPE_SUB);
 
                 if (deletedObjs == null) {
                     // No objecxts to delete
                     if (debug.messageEnabled()) {
-                        debug
-                                .message("AMStoreConnection.purge: "
-                                        + "No objects to be deleted found for "
-                                        + orgDN);
+                        debug.message("AMStoreConnection.purge: "
+                                + "No objects to be deleted found for "
+                                + orgDN);
                     }
                 }
 
@@ -1280,8 +1282,8 @@ public final class AMStoreConnection implements AMConstants {
                             AMObject thisObj;
 
                             if (debug.messageEnabled()) {
-                                debug.message("AMStoreConnection:purgeOrg: " +
-                                        "deleting child " + thisDN);
+                                debug.message("AMStoreConnection:purgeOrg: " 
+                                        + "deleting child " + thisDN);
                             }
                             try { // catch PreCallBackException
                                 switch (objType) {
@@ -1318,8 +1320,8 @@ public final class AMStoreConnection implements AMConstants {
                                 case AMObject.ORGANIZATION:
                                     thisObj = getOrganization(thisDN);
 
-                                    if (!(new DN(thisDN)).equals(
-                                            new DN(orgDN))) {
+                                    if (!(new DN(thisDN)).equals(new DN(orgDN)))
+                                    {
                                         thisObj.purge(true, graceperiod);
                                     }
 
@@ -1336,9 +1338,11 @@ public final class AMStoreConnection implements AMConstants {
                                     break;
                                 } // switch
                             } catch (AMPreCallBackException amp) {
-                                debug.error("AMStoreConnection.purge: " +
-                                        "Aborting delete of: " + thisDN + 
-                                        " due to pre-callback exception", amp);
+                                debug.error("AMStoreConnection.purge: "
+                                        + "Aborting delete of: "
+                                        + thisDN
+                                        + " due to pre-callback exception",
+                                        amp);
                             }
                         } // if
                     } // for
@@ -1386,13 +1390,13 @@ public final class AMStoreConnection implements AMConstants {
                     + "Using deleted user filter= " + filter);
         }
 
-        Set uSet = dsManager.search(token, orgDN, filter, SCOPE_SUB);
+        Set uSet = dsServices.search(token, orgDN, filter, SCOPE_SUB);
 
         if ((uSet == null) || (uSet.size() > 1) || uSet.isEmpty()) {
             // throw an exception
             Object args[] = { uid };
-            throw new AMException(AMSDKBundle.
-                getString("971", args, locale), "971", args);
+            throw new AMException(AMSDKBundle.getString("971", args, locale),
+                    "971", args);
         }
 
         String uDN = (String) uSet.iterator().next();
@@ -1438,13 +1442,13 @@ public final class AMStoreConnection implements AMConstants {
                     + "Using deleted user filter= " + filter);
         }
 
-        Set uSet = dsManager.search(token, orgDN, filter, SCOPE_SUB);
+        Set uSet = dsServices.search(token, orgDN, filter, SCOPE_SUB);
 
         if ((uSet == null) || (uSet.size() > 1) || uSet.isEmpty()) {
             // throw an exception
             Object args[] = { rid };
-            throw new AMException(AMSDKBundle.
-                getString("971", args, locale), "971", args);
+            throw new AMException(AMSDKBundle.getString("971", args, locale),
+                    "971", args);
         }
 
         String uDN = (String) uSet.iterator().next();
@@ -1491,13 +1495,13 @@ public final class AMStoreConnection implements AMConstants {
                     + "Using deleted group filter= " + filter);
         }
 
-        Set gSet = dsManager.search(token, orgDN, filter, SCOPE_SUB);
+        Set gSet = dsServices.search(token, orgDN, filter, SCOPE_SUB);
 
         if ((gSet == null) || (gSet.size() > 1) || gSet.isEmpty()) {
             // throw an exception
             Object args[] = { gid };
-            throw new AMException(AMSDKBundle.
-                getString("971", args, locale), "971", args);
+            throw new AMException(AMSDKBundle.getString("971", args, locale),
+                    "971", args);
         }
 
         String uDN = (String) gSet.iterator().next();
@@ -1587,8 +1591,8 @@ public final class AMStoreConnection implements AMConstants {
         attrNames.add("associateddomain");
         attrNames.add("sunorganizationalias");
 
-        Map attributes = AMDirectoryWrapper.getInstance().getAttributes(stoken,
-                dn, attrNames, AMObject.ORGANIZATION);
+        Map attributes = AMDirectoryAccessFactory.getDirectoryServices()
+                .getAttributes(stoken, dn, attrNames, AMObject.ORGANIZATION);
 
         // Add to cache
         DN odn = new DN(dn);
@@ -1646,8 +1650,9 @@ public final class AMStoreConnection implements AMConstants {
         // attrNames.add("objectclass");
         attrNames.add("modifytimestamp");
 
-        Map attributes = AMDirectoryWrapper.getInstance().getAttributes(stoken,
-                entryDN, attrNames, AMObject.UNDETERMINED_OBJECT_TYPE);
+        Map attributes = AMDirectoryAccessFactory.getDirectoryServices()
+                .getAttributes(stoken, entryDN, attrNames,
+                        AMObject.UNDETERMINED_OBJECT_TYPE);
         Set values = (Set) attributes.get("modifytimestamp");
 
         if ((values == null) || values.isEmpty()) {
@@ -1656,7 +1661,7 @@ public final class AMStoreConnection implements AMConstants {
 
         String value = (String) values.iterator().next();
 
-        if ((value == null) || value.equals("")) {
+        if ((value == null) || value.length() == 0) {
             return -1;
         }
 
@@ -1772,7 +1777,7 @@ public final class AMStoreConnection implements AMConstants {
                     + searchFilter);
         }
 
-        Set orgSet = dsManager.search(token, rootSuffix, searchFilter,
+        Set orgSet = dsServices.search(token, rootSuffix, searchFilter,
                 SCOPE_SUB);
         return orgSet;
     }

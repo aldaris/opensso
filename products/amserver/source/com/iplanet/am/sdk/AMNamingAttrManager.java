@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMNamingAttrManager.java,v 1.1 2005-11-01 00:29:09 arvindp Exp $
+ * $Id: AMNamingAttrManager.java,v 1.2 2006-06-16 19:36:07 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.util.Map;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Debug;
+import com.iplanet.am.sdk.common.IDirectoryServices;
 
 /**
  * A class to manage the naming attribute related information. This class stores
@@ -56,8 +57,10 @@ public class AMNamingAttrManager {
         if (namingAttrMap.containsKey(cacheKey)) {
             return ((String) namingAttrMap.get(cacheKey));
         } else {
-            String nAttr = AMDirectoryWrapper.getInstance().dMgr.getNamingAttr(
-                    objectType, orgDN);
+            IDirectoryServices dsServices = AMDirectoryAccessFactory
+                    .getDirectoryServices();
+
+            String nAttr = dsServices.getNamingAttribute(objectType, orgDN);
             if (nAttr != null) {
                 namingAttrMap.put(cacheKey, nAttr);
             }

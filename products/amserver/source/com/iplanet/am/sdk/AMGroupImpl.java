@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
+ * $Id: AMGroupImpl.java,v 1.3 2006-06-16 19:36:06 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,14 +63,14 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
      */
     public Set getUserDNs() throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        Set members = dsManager.getMembers(super.token, super.entryDN,
+        Set members = dsServices.getMembers(super.token, super.entryDN,
                 super.profileType);
         Set users = new HashSet();
         Iterator it = members.iterator();
         while (it.hasNext()) {
             String curr = (String) it.next();
             try {
-                if (dsManager.getObjectType(token, curr) == AMObject.USER) {
+                if (dsServices.getObjectType(token, curr) == AMObject.USER) {
                     users.add(curr);
                 }
             } catch (AMException ame) {
@@ -100,8 +100,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
      */
     public Set searchUsers(String wildcard) throws AMException, SSOException {
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.
-                getString("122", super.locale), "122");
+            throw new AMException(AMSDKBundle.getString("122", super.locale),
+                    "122");
         }
 
         Set resultSet;
@@ -111,8 +111,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             if (wildcard.equals("*")) {
                 resultSet = usersSet;
             } else {
-                throw new AMException(AMSDKBundle.
-                    getString("122", super.locale), "122");
+                throw new AMException(AMSDKBundle
+                        .getString("122", super.locale), "122");
             }
         } else {
             resultSet = new HashSet();
@@ -120,8 +120,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             if (wildcard.startsWith("*")) {
                 String pattern = wildcard.substring(1);
                 if (pattern.indexOf('*') != -1) {
-                    throw new AMException(AMSDKBundle.
-                        getString("122", super.locale), "122");
+                    throw new AMException(AMSDKBundle.getString("122",
+                            super.locale), "122");
                 }
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
@@ -135,8 +135,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             } else if (wildcard.endsWith("*")) {
                 String pattern = wildcard.substring(0, wildcard.length() - 1);
                 if (pattern.indexOf('*') != -1) {
-                    throw new AMException(AMSDKBundle.
-                        getString("122", super.locale), "122");
+                    throw new AMException(AMSDKBundle.getString("122",
+                            super.locale), "122");
                 }
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
@@ -148,8 +148,8 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                     }
                 }
             } else {
-                throw new AMException(AMSDKBundle.
-                    getString("122", super.locale), "122");
+                throw new AMException(AMSDKBundle
+                        .getString("122", super.locale), "122");
             }
         }
 
@@ -183,7 +183,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
 
         if (profileType == DYNAMIC_GROUP
                 || profileType == ASSIGNABLE_DYNAMIC_GROUP) {
-            String[] array = dsManager.getGroupFilterAndScope(token, entryDN,
+            String[] array = dsServices.getGroupFilterAndScope(token, entryDN,
                     profileType);
             scope = Integer.parseInt(array[0]);
             base = array[1];
@@ -228,7 +228,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
         searchControl.setSearchScope(scope);
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, base, filter, sc, returnAttrs);
+        return dsServices.search(super.token, base, filter, sc, returnAttrs);
     }
 
     /**
@@ -258,7 +258,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
 
         if (profileType == DYNAMIC_GROUP
                 || profileType == ASSIGNABLE_DYNAMIC_GROUP) {
-            String[] array = dsManager.getGroupFilterAndScope(token, entryDN,
+            String[] array = dsServices.getGroupFilterAndScope(token, entryDN,
                     profileType);
             scope = Integer.parseInt(array[0]);
             base = array[1];
@@ -278,7 +278,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
         searchControl.setSearchScope(scope);
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, base, filter, sc, returnAttrs);
+        return dsServices.search(super.token, base, filter, sc, returnAttrs);
     }
 
     /**
@@ -426,8 +426,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
             String groupDN = AMNamingAttrManager.getNamingAttr(GROUP) + "="
                     + ((String) iter.next()) + "," + super.entryDN;
             AMAssignableDynamicGroupImpl groupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, groupDN);
+                new AMAssignableDynamicGroupImpl(super.token, groupDN);
             groupImpl.create();
             groups.add(groupImpl);
         }
@@ -460,8 +459,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
 
             Map attributes = (Map) groupsMap.get(groupName);
             AMAssignableDynamicGroupImpl groupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    super.token, groupDN);
+                new AMAssignableDynamicGroupImpl(super.token, groupDN);
             groupImpl.setAttributes(attributes);
             groupImpl.create();
             groups.add(groupImpl);
@@ -647,40 +645,30 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                 wildcard, avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMGroup#addNestedGroups(java.util.Set)
-     */
     public void addNestedGroups(Set groups) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
         Map attrMap = new AMHashMap();
         attrMap.put(UNIQUE_MEMBER_ATTRIBUTE, groups);
         try {
-            dsManager.setAttributes(token, entryDN, super.profileType, attrMap,
-                    null, true);
+            dsServices.setAttributes(token, entryDN, super.profileType,
+                    attrMap, null, true);
         } catch (AMException am) {
             if (am.getErrorCode().equals("452")) {
                 // Generic "unable to set attributes" exception
-                debug.error("AMGroupImpl.addNestedGroups: Unable to add " +
-                        "groups: -> ", am);
-                throw new AMException(AMSDKBundle.
-                    getString("771", super.locale), "771");
+                debug.error("AMGroupImpl.addNestedGroups: Unable to " 
+                        + "add groups: -> ", am);
+                throw new AMException(AMSDKBundle
+                        .getString("771", super.locale), "771");
             } else {
                 throw am;
             }
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMGroup#getNestedGroupDNs()
-     */
     public Set getNestedGroupDNs() throws AMException, SSOException {
         Set attrNames = new HashSet();
         attrNames.add(UNIQUE_MEMBER_ATTRIBUTE);
-        Map attrMap = dsManager.getAttributes(token, entryDN, attrNames,
+        Map attrMap = dsServices.getAttributes(token, entryDN, attrNames,
                 profileType);
         Set members = (Set) attrMap.get(UNIQUE_MEMBER_ATTRIBUTE);
         Set groups = new HashSet();
@@ -688,7 +676,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
         while (it.hasNext()) {
             String curr = (String) it.next();
             try {
-                if (dsManager.getObjectType(token, curr) != AMObject.USER) {
+                if (dsServices.getObjectType(token, curr) != AMObject.USER) {
                     groups.add(curr);
                 }
             } catch (AMException ame) {
@@ -700,46 +688,36 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
         return groups;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMGroup#removeNestedGroups(java.util.Set)
-     */
-    public void removeNestedGroups(Set groups) 
-    throws AMException, SSOException {
+    public void removeNestedGroups(Set groups) throws AMException, SSOException 
+    {
         SSOTokenManager.getInstance().validateToken(super.token);
         Set attrNames = new HashSet();
         attrNames.add(UNIQUE_MEMBER_ATTRIBUTE);
-        Map attrMap = dsManager.getAttributes(token, entryDN, attrNames, false,
-                false, super.profileType);
+        Map attrMap = dsServices.getAttributes(token, entryDN, attrNames,
+                false, false, super.profileType);
         Set attrVals = (Set) attrMap.get(UNIQUE_MEMBER_ATTRIBUTE);
         attrVals.removeAll(groups);
         if (debug.messageEnabled()) {
-            debug.message("AMGroupImpl.removeNestedGroups: Setting nested " +
-                    "groups to: " + attrVals.toString());
+            debug.message("AMGroupImpl.removeNestedGroups: Setting nested " 
+                    + "groups to: " + attrVals.toString());
         }
         attrMap.put(UNIQUE_MEMBER_ATTRIBUTE, attrVals);
         try {
-            dsManager.setAttributes(token, entryDN, super.profileType, attrMap,
-                    null, false);
+            dsServices.setAttributes(token, entryDN, super.profileType,
+                    attrMap, null, false);
         } catch (AMException am) {
             if (am.getErrorCode().equals("452")) {
                 // Genere "unable to set attributes" exception
-                debug.error("AMGroupImpl.removeNestedGroups: Unable to " +
-                        "remove groups: -> ",am);
-                throw new AMException(AMSDKBundle.
-                    getString("772", super.locale), "772");
+                debug.error("AMGroupImpl.removeNestedGroups: Unable to " + 
+                        "remove groups: -> ", am);
+                throw new AMException(AMSDKBundle
+                        .getString("772", super.locale), "772");
             } else {
                 throw am;
             }
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMGroup#getUserAndGroupDNs()
-     */
     public Set getUserAndGroupDNs() throws AMException, SSOException {
         // return users of group as defined (based on either filter
         // or uniquemember attribute

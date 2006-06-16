@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdType.java,v 1.2 2005-12-08 01:16:43 veiming Exp $
+ * $Id: IdType.java,v 1.3 2006-06-16 19:36:44 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,16 +27,13 @@ package com.sun.identity.idm;
 import java.util.Collections;
 import java.util.Set;
 
+/* iPlanet-PUBLIC-CLASS */
 /**
  * The class <code>IdType</code> defines the types of supported identities,
  * and provides static constants for these identities. Currently defined
- * identities are <code>IdType.USER</code>, <code>
- * IdType.ROLE</code>,
- * <code>IdType.GROUP</code> and <code> IdType.AGENT
- * </code>. The usage of
+ * identities are <code>IdType.USER</code>, <code>IdType.ROLE</code>,
+ * <code>IdType.GROUP</code> and <code>IdType.AGENT</code>. The usage of
  * the respective types are defined along with their declaration.
- *
- * @supported.all.api
  */
 public class IdType {
     private String idType;

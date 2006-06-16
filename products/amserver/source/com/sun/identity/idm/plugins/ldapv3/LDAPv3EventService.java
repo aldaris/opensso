@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.6 2006-04-17 19:57:37 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.7 2006-06-16 19:36:47 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,8 +53,7 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.factory.JSSESocketFactory;
 
-import com.iplanet.am.sdk.AMObjectListener;
-import com.iplanet.am.sdk.IdRepoListener;
+import com.sun.identity.idm.IdRepoListener;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdRepoBundle;
@@ -741,10 +740,11 @@ public class LDAPv3EventService implements Runnable {
 
     private void dispatchException(Exception e, Request request) {
         if (debugger.messageEnabled()) {
-            debugger.message("LDAPv3EventService.dispatchException() - dispatching "
-                + "exception to the listener: " + request.getRequestID()
-                + " Listener: " + request.getListener() + " randomID="
-                + randomID + " serverNames=" + request.getServerNames(), e);
+            debugger.message("LDAPv3EventService.dispatchException() - " 
+                    + "dispatching exception to the listener: " 
+                    + request.getRequestID()
+                    + " Listener: " + request.getListener() + " randomID="
+                    + randomID + " serverNames=" + request.getServerNames(), e);
         }
         // el.eventError(e.toString());
     }
@@ -1039,7 +1039,7 @@ public class LDAPv3EventService implements Runnable {
                 }
                 retry++;
                 try {
-                    Thread.currentThread().sleep(connRetryInterval);
+                    Thread.sleep(connRetryInterval);
                 }
                 catch (InterruptedException ex) {
                 }

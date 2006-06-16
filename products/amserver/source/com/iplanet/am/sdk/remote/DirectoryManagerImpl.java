@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.1 2005-11-01 00:29:32 arvindp Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.2 2006-06-16 19:36:38 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,14 +38,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.iplanet.am.sdk.AMDirectoryManager;
-import com.iplanet.am.sdk.AMDirectoryWrapper;
+import com.iplanet.am.sdk.AMDirectoryAccessFactory;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObjectListener;
 import com.iplanet.am.sdk.AMSearchResults;
-import com.iplanet.am.sdk.IdRepoListener;
-import com.iplanet.am.sdk.ldap.Compliance;
-import com.iplanet.am.sdk.ldap.DCTree;
+import com.sun.identity.idm.IdRepoListener;
+import com.iplanet.am.sdk.common.IComplianceServices;
+import com.iplanet.am.sdk.common.IDCTreeServices;
+import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.server.PLLServer;
@@ -59,8 +59,10 @@ import com.iplanet.ums.SearchControl;
 import com.iplanet.ums.SortKey;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdServicesFactory;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
+import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
@@ -74,18 +76,21 @@ import com.sun.identity.sm.SchemaType;
 public class DirectoryManagerImpl implements DirectoryManagerIF,
         AMObjectListener {
 
-    // protected static DirectoryManager dMgr = DirectoryManager.getInstance();
-    protected static AMDirectoryManager dMgr = AMDirectoryWrapper.getInstance();
-
-    protected static DCTree dcTree = new DCTree();
-
-    protected static Compliance compl = new Compliance();
-
     protected static Debug debug = Debug.getInstance("amProfile_Server");
 
     protected static SSOTokenManager tm;
 
     protected static boolean initialized;
+
+    // Handle to all the new DirectoryServices implementations.
+    protected static IDirectoryServices dsServices;
+
+    protected static IDCTreeServices dcTreeServices;
+
+    protected static IComplianceServices complianceServices;
+
+    // IdRepo Services Handlers
+    protected static IdServices idServices;
 
     // Cache of modifications for last 30 minutes & notification URLs
     static int cacheSize = 30;
@@ -102,7 +107,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     static String serverURL;
 
-    // public static AMObjectListener idrepoListener = null;
+    static {
+
+        dsServices = AMDirectoryAccessFactory.getDirectoryServices();
+        dcTreeServices = AMDirectoryAccessFactory.getDCTreeServices();
+        complianceServices = AMDirectoryAccessFactory.getComplianceServices();
+
+        // Get the IdRepo providers
+        idServices = IdServicesFactory.getDataStoreServices();
+    }
 
     public DirectoryManagerImpl() {
         if (initialized) {
@@ -117,10 +130,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         // Get TokenManager and register this class for events
         try {
             tm = SSOTokenManager.getInstance();
-            dMgr.addListener((SSOToken) AccessController
-                    .doPrivileged(AdminTokenAction.getInstance()), this);
+            dsServices.addListener((SSOToken) AccessController
+                    .doPrivileged(AdminTokenAction.getInstance()), this, null);
             IdRepoListener.addRemoteListener(new IdRepoEventListener());
-            // idrepoListener = new IdEventListener();
+
             initialized = true;
             if (debug.messageEnabled()) {
                 debug.message("DirectoryManagerImpl::init success: "
@@ -132,19 +145,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#createAMTemplate(
-     *      java.lang.String, java.lang.String, int, java.lang.String,
-     *      java.util.Map, int)
-     */
     public String createAMTemplate(String token, String entryDN,
             int objectType, String serviceName, Map attributes, int priority)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.createAMTemplate(ssoToken, entryDN, objectType,
+            return dsServices.createAMTemplate(ssoToken, entryDN, objectType,
                     serviceName, attributes, priority);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -153,20 +159,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#createEntry(
-     *      java.lang.String, java.lang.String, int, java.lang.String,
-     *      java.util.Map)
-     */
     public void createEntry(String token, String entryName, int objectType,
             String parentDN, Map attributes) throws AMRemoteException,
             SSOException, RemoteException {
 
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.createEntry(ssoToken, entryName, objectType, parentDN,
+            dsServices.createEntry(ssoToken, entryName, objectType, parentDN,
                     attributes);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -175,30 +174,18 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#doesEntryExists(
-     *      java.lang.String, java.lang.String)
-     */
     public boolean doesEntryExists(String token, String entryDN)
             throws AMRemoteException, SSOException, RemoteException {
         SSOToken ssoToken = tm.createSSOToken(token);
-        return dMgr.doesEntryExists(ssoToken, entryDN);
+        return dsServices.doesEntryExists(ssoToken, entryDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAMTemplateDN(
-     *      java.lang.String, java.lang.String, int, java.lang.String, int)
-     */
     public String getAMTemplateDN(String token, String entryDN, int objectType,
             String serviceName, int type) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAMTemplateDN(ssoToken, entryDN, objectType,
+            return dsServices.getAMTemplateDN(ssoToken, entryDN, objectType,
                     serviceName, type);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -207,36 +194,24 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAttributes(
-     *      java.lang.String, java.lang.String, boolean, boolean, int)
-     */
     public Map getAttributes3(String token, String entryDN,
             boolean ignoreCompliance, boolean byteValues, int profileType)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAttributes(ssoToken, entryDN, ignoreCompliance,
-                    byteValues, profileType);
+            return dsServices.getAttributes(ssoToken, entryDN,
+                    ignoreCompliance, byteValues, profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAttributes(
-     *      java.lang.String, java.lang.String, int)
-     */
     public Map getAttributes1(String token, String entryDN, int profileType)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAttributes(ssoToken, entryDN, profileType);
+            return dsServices.getAttributes(ssoToken, entryDN, profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -244,58 +219,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAttributes(
-     *      java.lang.String, java.lang.String, java.util.Set, int)
-     */
     public Map getAttributes2(String token, String entryDN, Set attrNames,
             int profileType) throws AMRemoteException, SSOException,
             RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr
-                    .getAttributes(ssoToken, entryDN, attrNames, profileType);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
-        }
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAttributesByteValues
-     *      (java.lang.String, java.lang.String, int)
-     */
-    public Map getAttributesByteValues1(String token, String entryDN,
-            int profileType) throws AMRemoteException, SSOException,
-            RemoteException {
-        try {
-            SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAttributesByteValues(ssoToken, entryDN, profileType);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
-        }
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getAttributesByteValues(java.lang.String, java.lang.String,
-     *      java.util.Set, int)
-     */
-    public Map getAttributesByteValues2(String token, String entryDN,
-            Set attrNames, int profileType) throws AMRemoteException,
-            SSOException, RemoteException {
-        try {
-            SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAttributesByteValues(ssoToken, entryDN, attrNames,
+            return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                     profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -304,43 +233,52 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getAttributesForSchema(java.lang.String)
-     */
+    public Map getAttributesByteValues1(String token, String entryDN,
+            int profileType) throws AMRemoteException, SSOException,
+            RemoteException {
+        try {
+            SSOToken ssoToken = tm.createSSOToken(token);
+            return dsServices.getAttributesByteValues(ssoToken, entryDN,
+                    profileType);
+        } catch (AMException amex) {
+            debug.error("Caught Exception:  " + amex);
+            throw convertException(amex);
+        }
+
+    }
+
+    public Map getAttributesByteValues2(String token, String entryDN,
+            Set attrNames, int profileType) throws AMRemoteException,
+            SSOException, RemoteException {
+        try {
+            SSOToken ssoToken = tm.createSSOToken(token);
+            return dsServices.getAttributesByteValues(ssoToken, entryDN,
+                    attrNames, profileType);
+        } catch (AMException amex) {
+            debug.error("Caught Exception:  " + amex);
+            throw convertException(amex);
+        }
+
+    }
+
+
     public Set getAttributesForSchema(String objectclass)
             throws RemoteException {
-        return dMgr.getAttributesForSchema(objectclass);
+        return dsServices.getAttributesForSchema(objectclass);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getCreationTemplateName(int)
-     */
+
     public String getCreationTemplateName(int objectType)
             throws RemoteException {
-        com.iplanet.am.sdk.ldap.DirectoryManager dm = 
-            com.iplanet.am.sdk.ldap.DirectoryManager.getInstance();
-        return dm.getCreationTemplateName(objectType);
+        return dsServices.getCreationTemplateName(objectType);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getDCTreeAttributes(java.lang.String, java.lang.String,
-     *      java.util.Set, boolean, int)
-     */
     public Map getDCTreeAttributes(String token, String entryDN, Set attrNames,
             boolean byteValues, int objectType) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getDCTreeAttributes(ssoToken, entryDN, attrNames,
+            return dsServices.getDCTreeAttributes(ssoToken, entryDN, attrNames,
                     byteValues, objectType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -349,16 +287,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getDeletedObjectFilter(int)
-     */
     public String getDeletedObjectFilter(int objecttype)
             throws AMRemoteException, SSOException, RemoteException {
         try {
-            return compl.getDeletedObjectFilter(objecttype);
+            return complianceServices.getDeletedObjectFilter(objecttype);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -366,20 +298,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getExternalAttributes(java.lang.String, java.lang.String,
-     *      java.util.Set, int)
-     */
     public Map getExternalAttributes(String token, String entryDN,
             Set attrNames, int profileType) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getExternalAttributes(ssoToken, entryDN, attrNames,
-                    profileType);
+            return dsServices.getExternalAttributes(ssoToken, entryDN,
+                    attrNames, profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -387,19 +312,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getGroupFilterAndScope(java.lang.String, java.lang.String, int)
-     */
     public LinkedList getGroupFilterAndScope(String token, String entryDN,
             int profileType) throws AMRemoteException, SSOException,
             RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            String[] array = dMgr.getGroupFilterAndScope(ssoToken, entryDN,
-                    profileType);
+            String[] array = dsServices.getGroupFilterAndScope(ssoToken,
+                    entryDN, profileType);
             LinkedList list = new LinkedList();
             for (int i = 0; i < array.length; i++) {
                 list.add(array[i]);
@@ -411,17 +330,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getMembers(java.lang.String, java.lang.String, int)
-     */
     public Set getMembers(String token, String entryDN, int objectType)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getMembers(ssoToken, entryDN, objectType);
+            return dsServices.getMembers(ssoToken, entryDN, objectType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -429,43 +342,20 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF# getNamingAttr(int,
-     *      java.lang.String)
-     */
     public String getNamingAttr(int objectType, String orgDN)
             throws RemoteException {
-
-        com.iplanet.am.sdk.ldap.DirectoryManager dm = 
-            com.iplanet.am.sdk.ldap.DirectoryManager.getInstance();
-        return dm.getNamingAttr(objectType, orgDN);
+        return dsServices.getNamingAttribute(objectType, orgDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getObjectClassFromDS(int)
-     */
     public String getObjectClassFromDS(int objectType) throws RemoteException {
-        com.iplanet.am.sdk.ldap.DirectoryManager dm = 
-            com.iplanet.am.sdk.ldap.DirectoryManager.getInstance();
-        return dm.getObjectClassFromDS(objectType);
+        return dsServices.getObjectClass(objectType);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getObjectType(java.lang.String, java.lang.String)
-     */
     public int getObjectType(String token, String dn) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getObjectType(ssoToken, dn);
+            return dsServices.getObjectType(ssoToken, dn);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -473,17 +363,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getOrganizationDN(java.lang.String, java.lang.String)
-     */
     public String getOrganizationDN(String token, String entryDN)
             throws AMRemoteException, RemoteException, SSOException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getOrganizationDN(ssoToken, entryDN);
+            return dsServices.getOrganizationDN(ssoToken, entryDN);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -491,20 +375,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      verifyAndGetOrganizationDN(java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public String verifyAndGetOrgDN(String token, String entryDN, 
             String childDN) throws AMRemoteException, RemoteException, 
-            SSOException 
-    {
+            SSOException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.verifyAndGetOrgDN(ssoToken, entryDN, childDN);
+            return dsServices.verifyAndGetOrgDN(ssoToken, entryDN, childDN);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -512,17 +388,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getOrgDNFromDomain(java.lang.String, java.lang.String)
-     */
     public String getOrgDNFromDomain(String token, String domain)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dcTree.getOrganizationDN(ssoToken, domain);
+            return dcTreeServices.getOrganizationDN(ssoToken, domain);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -530,27 +400,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getOrgSearchFilter(java.lang.String)
-     */
     public String getOrgSearchFilter(String entryDN) throws RemoteException {
-        return dMgr.getOrgSearchFilter(entryDN);
+        return dsServices.getOrgSearchFilter(entryDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getRegisteredServiceNames(java.lang.String, java.lang.String)
-     */
     public Set getRegisteredServiceNames(String token, String entryDN)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             // SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getRegisteredServiceNames(null, entryDN);
+            return dsServices.getRegisteredServiceNames(null, entryDN);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -558,31 +416,17 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getSearchFilterFromTemplate(int, java.lang.String, java.lang.String)
-     */
     public String getSearchFilterFromTemplate(int objectType, String orgDN,
             String searchTemplateName) throws RemoteException {
-        com.iplanet.am.sdk.ldap.DirectoryManager dm =
-            com.iplanet.am.sdk.ldap.DirectoryManager.getInstance();
-        return dm.getSearchFilterFromTemplate(objectType, orgDN,
+        return dsServices.getSearchFilterFromTemplate(objectType, orgDN,
                 searchTemplateName);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getTopLevelContainers(java.lang.String)
-     */
     public Set getTopLevelContainers(String token) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getTopLevelContainers(ssoToken);
+            return dsServices.getTopLevelContainers(ssoToken);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -590,18 +434,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      isAncestorOrgDeleted(java.lang.String, java.lang.String, int)
-     */
     public boolean isAncestorOrgDeleted(String token, String dn, 
             int profileType) throws AMRemoteException, SSOException, 
-                RemoteException {
+            RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return compl.isAncestorOrgDeleted(ssoToken, dn, profileType);
+            return complianceServices.isAncestorOrgDeleted(ssoToken, dn,
+                    profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -609,19 +448,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      modifyMemberShip(java.lang.String, java.util.Set, java.lang.String,
-     *      int, int)
-     */
     public void modifyMemberShip(String token, Set members, String target,
             int type, int operation) throws AMRemoteException, SSOException,
             RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.modifyMemberShip(ssoToken, members, target, type, operation);
+            dsServices.modifyMemberShip(ssoToken, members, target, type,
+                    operation);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -629,18 +462,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      registerService(java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public void registerService(String token, String orgDN, String serviceName)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.registerService(ssoToken, orgDN, serviceName);
+            dsServices.registerService(ssoToken, orgDN, serviceName);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -648,17 +474,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      removeAdminRole(java.lang.String, java.lang.String, boolean)
-     */
     public void removeAdminRole(String token, String dn, boolean recursive)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.removeAdminRole(ssoToken, dn, recursive);
+            dsServices.removeAdminRole(ssoToken, dn, recursive);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -666,19 +486,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      removeEntry(java.lang.String, java.lang.String, int, boolean,
-     *      boolean)
-     */
     public void removeEntry(String token, String entryDN, int objectType,
             boolean recursive, boolean softDelete) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.removeEntry(ssoToken, entryDN, objectType, recursive,
+            dsServices.removeEntry(ssoToken, entryDN, objectType, recursive,
                     softDelete);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -687,20 +500,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      renameEntry(java.lang.String, int, java.lang.String,
-     *      java.lang.String, boolean)
-     */
     public String renameEntry(String token, int objectType, String entryDN,
             String newName, boolean deleteOldName) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.renameEntry(ssoToken, objectType, entryDN, newName,
-                    deleteOldName);
+            return dsServices.renameEntry(ssoToken, objectType, entryDN,
+                    newName, deleteOldName);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -708,18 +514,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      search(java.lang.String, java.lang.String, java.lang.String, int)
-     */
     public Set search1(String token, String entryDN, String searchFilter,
             int searchScope) throws AMRemoteException, SSOException,
             RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.search(ssoToken, entryDN, searchFilter, searchScope);
+            return dsServices.search(ssoToken, entryDN, searchFilter,
+                    searchScope);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -727,9 +528,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     */
     public Map search2(String token, String entryDN, String searchFilter,
             List sortKeys, int startIndex, int beforeCount, int afterCount,
             String jumpTo, int timeOut, int maxResults, int scope,
@@ -768,18 +566,20 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
         // Perform the search
         try {
-            AMSearchResults results = dMgr.search(tm.createSSOToken(token),
-                    entryDN, searchFilter, sc, attrNames);
+            AMSearchResults results = dsServices.search(tm
+                    .createSSOToken(token), entryDN, searchFilter, sc,
+                    attrNames);
             // Convert results to Map
             Map answer = results.getResultAttributes();
             if (answer == null) {
                 answer = new HashMap();
             }
-            answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_COUNT,
+            answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_COUNT,
                     Integer.toString(results.getTotalResultCount()));
-            answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_RESULTS,
+            answer.put(
+                    com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_RESULTS,
                     results.getSearchResults());
-            answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_CODE,
+            answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_CODE,
                     Integer.toString(results.getErrorCode()));
             return (answer);
         } catch (AMException amex) {
@@ -788,37 +588,87 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      setAttributes(java.lang.String, java.lang.String, int,
-     *      java.util.Map, java.util.Map, boolean)
-     */
+    public Map search3(String token, String entryDN, String searchFilter,
+            List sortKeys, int startIndex, int beforeCount, int afterCount,
+            String jumpTo, int timeOut, int maxResults, int scope,
+            boolean allAttributes, Set attrNamesSet) throws AMRemoteException,
+            SSOException, RemoteException {
+        // Construct the SortKeys
+        SortKey[] keys = null;
+        int keysLength = 0;
+        if (sortKeys != null && (keysLength = sortKeys.size()) != 0) {
+            keys = new SortKey[keysLength];
+            for (int i = 0; i < keysLength; i++) {
+                String data = (String) sortKeys.get(i);
+                keys[i] = new SortKey();
+                if (data.startsWith("true:")) {
+                    keys[i].reverse = true;
+                } else {
+                    keys[i].reverse = false;
+                }
+                keys[i].attributeName = data.substring(5);
+            }
+        }
+        // Construct SearchControl
+        SearchControl sc = new SearchControl();
+        if (keys != null) {
+            sc.setSortKeys(keys);
+        }
+        if (jumpTo == null) {
+            sc.setVLVRange(startIndex, beforeCount, afterCount);
+        } else {
+            sc.setVLVRange(jumpTo, beforeCount, afterCount);
+        }
+        sc.setTimeOut(timeOut);
+        sc.setMaxResults(maxResults);
+        sc.setSearchScope(scope);
+        sc.setAllReturnAttributes(allAttributes);
+
+        String[] attrNames = new String[attrNamesSet.size()];
+        attrNames = (String[]) attrNamesSet.toArray(attrNames);
+
+        // Perform the search
+        try {
+            AMSearchResults results = dsServices.search(tm
+                    .createSSOToken(token), entryDN, searchFilter, sc,
+                    attrNames);
+            // Convert results to Map
+            Map answer = results.getResultAttributes();
+            if (answer == null) {
+                answer = new HashMap();
+            }
+            answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_COUNT,
+                    Integer.toString(results.getTotalResultCount()));
+            answer.put(
+                    com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_RESULTS,
+                    results.getSearchResults());
+            answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_CODE,
+                    Integer.toString(results.getErrorCode()));
+            return (answer);
+        } catch (AMException amex) {
+            debug.error("DMI::search(with SearchControl):  " + amex);
+            throw convertException(amex);
+        }
+    }    
+
     public void setAttributes(String token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.setAttributes(ssoToken, entryDN, objectType, stringAttributes,
-                    byteAttributes, isAdd);
+            dsServices.setAttributes(ssoToken, entryDN, objectType,
+                    stringAttributes, byteAttributes, isAdd);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      setGroupFilter(java.lang.String, java.lang.String, java.lang.String)
-     */
     public void setGroupFilter(String token, String entryDN, String filter)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.setGroupFilter(ssoToken, entryDN, filter);
+            dsServices.setGroupFilter(ssoToken, entryDN, filter);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -826,21 +676,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      unRegisterService(java.lang.String, java.lang.String, int,
-     *      java.lang.String, int)
-     */
     public void unRegisterService(String token, String entryDN, int objectType,
             String serviceName, int type) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
             // TODO FIX LATER
-            dMgr.unRegisterService(ssoToken, entryDN, objectType, serviceName,
-                    null, type);
+            dsServices.unRegisterService(ssoToken, entryDN, objectType,
+                    serviceName, type);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -848,19 +691,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      updateUserAttribute(java.lang.String, java.util.Set,
-     *      java.lang.String, boolean)
-     */
     public void updateUserAttribute(String token, Set members,
             String staticGroupDN, boolean toAdd) throws AMRemoteException,
             SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            dMgr.updateUserAttribute(ssoToken, members, staticGroupDN, toAdd);
+            dsServices.updateUserAttribute(ssoToken, members, staticGroupDN,
+                    toAdd);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -868,17 +705,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      verifyAndDeleteObject(java.lang.String, java.lang.String)
-     */
     public void verifyAndDeleteObject(String token, String dn)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            compl.verifyAndDeleteObject(ssoToken, dn);
+            complianceServices.verifyAndDeleteObject(ssoToken, dn);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
             throw convertException(amex);
@@ -889,28 +720,35 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     private AMRemoteException convertException(AMException amex) {
         String ldapErrCodeString = null;
         if ((ldapErrCodeString = amex.getLDAPErrorCode()) == null) {
+
             return new AMRemoteException(amex.getMessage(),
-                    amex.getErrorCode(), 0, (String[]) amex.getMessageArgs());
+                    amex.getErrorCode(), 0, copyObjectArrayToStringArray(amex
+                            .getMessageArgs()));
         } else {
             return new AMRemoteException(amex.getMessage(),
                     amex.getErrorCode(), Integer.parseInt(ldapErrCodeString),
-                    (String[]) amex.getMessageArgs());
+                    copyObjectArrayToStringArray(amex.getMessageArgs()));
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getAttributes(java.lang.String, java.lang.String, java.util.Set,
-     *      boolean, boolean, int)
-     */
+    private String[] copyObjectArrayToStringArray(Object[] objArray) {
+        if ((objArray != null) && (objArray.length != 0)) {
+            int count = objArray.length;
+            String[] strArray = new String[count];
+            for (int i = 0; i < count; i++) {
+                strArray[i] = (String) objArray[i];
+            }
+            return strArray;
+        }
+        return null;
+    }
+
     public Map getAttributes4(String token, String entryDN, Set attrNames,
             boolean ignoreCompliance, boolean byteValues, int profileType)
             throws AMRemoteException, SSOException, RemoteException {
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
-            return dMgr.getAttributes(ssoToken, entryDN, attrNames,
+            return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                     ignoreCompliance, byteValues, profileType);
         } catch (AMException amex) {
             debug.error("Caught Exception:  " + amex);
@@ -972,15 +810,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         notificationURLs.remove(notificationID);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#assignService_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      com.sun.identity.sm.SchemaType, java.util.Map, java.lang.String,
-     *      java.lang.String)
-     */
     public void assignService_idrepo(String token, String type, String name,
             String serviceName, String stype, Map attrMap, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
@@ -988,76 +817,45 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         SSOToken ssoToken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         SchemaType schemaType = new SchemaType(stype);
-        dMgr.assignService(ssoToken, idtype, name, serviceName, schemaType,
-                attrMap, amOrgName, amsdkDN);
+        idServices.assignService(ssoToken, idtype, name, serviceName,
+                schemaType, attrMap, amOrgName, amsdkDN);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#create_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Map, java.lang.String)
-     */
     public String create_idrepo(String token, String type, String name,
             Map attrMap, String amOrgName) throws RemoteException,
             IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return IdUtils.getUniversalId(dMgr.create(stoken, idtype, name,
+        return IdUtils.getUniversalId(idServices.create(stoken, idtype, name,
                 attrMap, amOrgName));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#delete_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public void delete_idrepo(String token, String type, String name,
             String orgName, String amsdkDN) throws RemoteException,
             IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        dMgr.delete(stoken, idtype, name, orgName, amsdkDN);
+        idServices.delete(stoken, idtype, name, orgName, amsdkDN);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getAssignedServices_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Map, java.lang.String,
-     *      java.lang.String)
-     */
     public Set getAssignedServices_idrepo(String token, String type,
             String name, Map mapOfServiceNamesAndOCs, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
             SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return dMgr.getAssignedServices(stoken, idtype, name,
+        return idServices.getAssignedServices(stoken, idtype, name,
                 mapOfServiceNamesAndOCs, amOrgName, amsdkDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getAttributes1_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Set, java.lang.String,
-     *      java.lang.String)
-     */
     public Map getAttributes1_idrepo(String token, String type, String name,
             Set attrNames, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        Map res = dMgr.getAttributes(stoken, idtype, name, attrNames,
+        Map res = idServices.getAttributes(stoken, idtype, name, attrNames,
                 amOrgName, amsdkDN, true);
         if (res != null && res instanceof CaseInsensitiveHashMap) {
             Map res2 = new HashMap();
@@ -1071,22 +869,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return res;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getAttributes2_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public Map getAttributes2_idrepo(String token, String type, String name,
             String amOrgName, String amsdkDN) throws RemoteException,
             IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        Map res = dMgr.getAttributes(stoken, idtype, name, amOrgName, amsdkDN);
-        DirectoryManager.debug.error("Obtained map from server: "
-                + res.getClass().getName());
+        Map res = idServices.getAttributes(stoken, idtype, name, amOrgName,
+                amsdkDN);
+
         if (res != null && res instanceof CaseInsensitiveHashMap) {
             Map res2 = new HashMap();
             Iterator it = res.keySet().iterator();
@@ -1099,14 +889,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return res;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getMembers_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public Set getMembers_idrepo(String token, String type, String name,
             String amOrgName, String membersType, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
@@ -1114,8 +896,8 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membersType);
-        Set idSet = dMgr.getMembers(stoken, idtype, name, amOrgName, mtype,
-                amsdkDN);
+        Set idSet = idServices.getMembers(stoken, idtype, name, amOrgName,
+                mtype, amsdkDN);
         if (idSet != null) {
             Iterator it = idSet.iterator();
             while (it.hasNext()) {
@@ -1126,14 +908,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return results;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#getMemberships_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public Set getMemberships_idrepo(String token, String type, String name,
             String membershipType, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
@@ -1141,8 +915,8 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membershipType);
-        Set idSet = dMgr.getMemberships(stoken, idtype, name, mtype, amOrgName,
-                amsdkDN);
+        Set idSet = idServices.getMemberships(stoken, idtype, name, mtype,
+                amOrgName, amsdkDN);
         if (idSet != null) {
             Iterator it = idSet.iterator();
             while (it.hasNext()) {
@@ -1153,37 +927,23 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return results;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getServiceAttributes_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String, java.util.Set,
-     *      java.lang.String, java.lang.String)
-     */
     public Map getServiceAttributes_idrepo(String token, String type,
             String name, String serviceName, Set attrNames, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
             SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return dMgr.getServiceAttributes(stoken, idtype, name, serviceName,
-                attrNames, amOrgName, amsdkDN);
+        return idServices.getServiceAttributes(stoken, idtype, name,
+                serviceName, attrNames, amOrgName, amsdkDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getSupportedOperations_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String)
-     */
     public Set getSupportedOperations_idrepo(String token, String type,
             String amOrgName) throws RemoteException, IdRepoException,
             SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        Set opSet = dMgr.getSupportedOperations(stoken, idtype, amOrgName);
+        Set opSet = idServices
+                .getSupportedOperations(stoken, idtype, amOrgName);
         Set resSet = new HashSet();
         if (opSet != null) {
             Iterator it = opSet.iterator();
@@ -1196,17 +956,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return resSet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      getSupportedTypes_idrepo(java.lang.String,
-     *      java.lang.String)
-     */
     public Set getSupportedTypes_idrepo(String token, String amOrgName)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
-        Set typeSet = dMgr.getSupportedTypes(stoken, amOrgName);
+        Set typeSet = idServices.getSupportedTypes(stoken, amOrgName);
         Set resTypes = new HashSet();
         if (typeSet != null) {
             Iterator it = typeSet.iterator();
@@ -1219,66 +972,34 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return resTypes;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      isExists_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String)
-     */
     public boolean isExists_idrepo(String token, String type, String name,
             String amOrgName) throws RemoteException, SSOException,
             IdRepoException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return dMgr.isExists(stoken, idtype, name, amOrgName);
+        return idServices.isExists(stoken, idtype, name, amOrgName);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      isActive_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      java.lang.String)
-     */
     public boolean isActive_idrepo(String token, String type, String name,
             String amOrgName, String amsdkDN) throws RemoteException,
             IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return dMgr.isActive(stoken, idtype, name, amOrgName, amsdkDN);
+        return idServices.isActive(stoken, idtype, name, amOrgName, amsdkDN);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      modifyMemberShip_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Set, java.lang.String,
-     *      int, java.lang.String)
-     */
     public void modifyMemberShip_idrepo(String token, String type, String name,
             Set members, String membersType, int operation, String amOrgName)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membersType);
-        dMgr.modifyMemberShip(stoken, idtype, name, members, mtype, operation,
-                amOrgName);
+        idServices.modifyMemberShip(stoken, idtype, name, members, mtype,
+                operation, amOrgName);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      modifyService_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String,
-     *      com.sun.identity.sm.SchemaType, java.util.Map, java.lang.String,
-     *      java.lang.String)
-     */
     public void modifyService_idrepo(String token, String type, String name,
             String serviceName, String stype, Map attrMap, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
@@ -1286,54 +1007,31 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         SchemaType schematype = new SchemaType(stype);
-        dMgr.modifyService(stoken, idtype, name, serviceName, schematype,
+        idServices.modifyService(stoken, idtype, name, serviceName, schematype,
                 attrMap, amOrgName, amsdkDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      removeAttributes_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Set, java.lang.String,
-     *      java.lang.String)
-     */
     public void removeAttributes_idrepo(String token, String type, String name,
             Set attrNames, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        dMgr.removeAttributes(stoken, idtype, name, attrNames, amOrgName,
+        idServices.removeAttributes(stoken, idtype, name, attrNames, amOrgName,
                 amsdkDN);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      search1_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Map, boolean, int,
-     *      int, java.util.Set, java.lang.String)
-     */
     public Map search1_idrepo(String token, String type, String pattern,
             Map avPairs, boolean recursive, int maxResults, int maxTime,
             Set returnAttrs, String amOrgName) throws RemoteException,
             IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        IdSearchResults idres = dMgr.search(stoken, idtype, pattern, avPairs,
-                recursive, maxResults, maxTime, returnAttrs, amOrgName);
+        IdSearchResults idres = idServices
+                .search(stoken, idtype, pattern, avPairs, recursive,
+                        maxResults, maxTime, returnAttrs, amOrgName);
         return IdSearchResultsToMap(idres);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      search2_idrepo(java.lang.String,
-     *      java.lang.String, java.lang.String, int, int, java.util.Set,
-     *      boolean, int, java.util.Map, boolean, java.lang.String)
-     */
     public Map search2_idrepo(String token, String type, String pattern,
             int maxTime, int maxResults, Set returnAttrs,
             boolean returnAllAttrs, int filterOp, Map avPairs,
@@ -1348,46 +1046,38 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         ctrl.setReturnAttributes(returnAttrs);
         ctrl.setTimeOut(maxTime);
         IdSearchOpModifier modifier = (filterOp == IdRepo.OR_MOD) ? 
-                IdSearchOpModifier.OR
-                : IdSearchOpModifier.AND;
+                IdSearchOpModifier.OR : IdSearchOpModifier.AND;
         ctrl.setSearchModifiers(modifier, avPairs);
-        IdSearchResults idres = dMgr.search(stoken, idtype, pattern, ctrl,
-                amOrgName);
+        IdSearchResults idres = idServices.search(stoken, idtype, pattern,
+                ctrl, amOrgName);
         return IdSearchResultsToMap(idres);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#setAttributes_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.util.Map, boolean,
-     *      java.lang.String, java.lang.String)
-     */
     public void setAttributes_idrepo(String token, String type, String name,
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        dMgr.setAttributes(stoken, idtype, name, attributes, isAdd, amOrgName,
-                amsdkDN, true);
-
+        idServices.setAttributes(stoken, idtype, name, attributes, isAdd,
+                amOrgName, amsdkDN, true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#unassignService_idrepo(
-     *      java.lang.String,
-     *      java.lang.String, java.lang.String, java.lang.String, java.util.Map,
-     *      java.lang.String, java.lang.String)
-     */
+    public void setAttributes2_idrepo(String token, String type, String name,
+            Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
+            boolean isString) throws RemoteException, IdRepoException,
+            SSOException {
+        SSOToken stoken = tm.createSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        idServices.setAttributes(stoken, idtype, name, attributes, isAdd,
+                amOrgName, amsdkDN, isString);
+    }
+
     public void unassignService_idrepo(String token, String type, String name,
             String serviceName, Map attrMap, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException {
         SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        dMgr.unassignService(stoken, idtype, name, serviceName, attrMap,
+        idServices.unassignService(stoken, idtype, name, serviceName, attrMap,
                 amOrgName, amsdkDN);
 
     }
@@ -1414,24 +1104,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                 true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      deRegisterNotificationURL_idrepo(java.lang.String)
-     */
     public void deRegisterNotificationURL_idrepo(String notificationID)
             throws RemoteException {
         notificationURLs.remove(notificationID);
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      objectsChanged_idrepo(int)
-     */
     public Set objectsChanged_idrepo(int time) throws RemoteException {
         Set answer = new HashSet();
         // Get the cache index for times upto time+2
@@ -1453,12 +1131,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return (answer);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.remote.DirectoryManagerIF#
-     *      registerNotificationURL_idrepo(java.lang.String)
-     */
     public String registerNotificationURL_idrepo(String url)
             throws RemoteException {
         // TODO Auto-generated method stub
@@ -1540,6 +1212,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
 
         // If notification URLs are present, send notifications
+        Map notifications = new HashMap(notificationURLs); // Make a copy
         NotificationSet ns = null;
         for (Iterator entries = notificationURLs.entrySet().iterator(); entries
                 .hasNext();) {
@@ -1551,10 +1224,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             if (ns == null) {
                 Notification notification = new Notification(sb.toString());
                 ns = amsdk ? new NotificationSet(
-                        com.iplanet.am.sdk.remote.DirectoryManager.SDK_SERVICE)
+                        com.iplanet.am.sdk.remote.RemoteServicesImpl
+                        .SDK_SERVICE)
                         : new NotificationSet(
-                                    com.iplanet.am.sdk.remote.DirectoryManager.
-                                    IDREPO_SERVICE);
+                                com.iplanet.am.sdk.remote.RemoteServicesImpl
+                                .IDREPO_SERVICE);
                 ns.addNotification(notification);
             }
             try {
@@ -1610,32 +1284,21 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                 }
             }
         }
-        answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_RESULTS,
+        answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_RESULTS,
                 idStrings);
-        answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_CODE,
+        answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_CODE,
                 new Integer(res.getErrorCode()));
-        answer.put(com.iplanet.am.sdk.remote.DirectoryManager.AMSR_ATTRS,
+        answer.put(com.iplanet.am.sdk.remote.RemoteServicesImpl.AMSR_ATTRS,
                 attrMaps);
         return (answer);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMObjectListener#getConfigMap()
-     */
     public Map getConfigMap() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMObjectListener#setConfigMap(java.util.Map)
-     */
     public void setConfigMap(Map cmap) {
-        // TODO Auto-generated method stub
-
+        
     }
 }

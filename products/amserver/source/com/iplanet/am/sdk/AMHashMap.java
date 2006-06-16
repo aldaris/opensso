@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMHashMap.java,v 1.2 2006-06-01 02:32:42 kenwho Exp $
+ * $Id: AMHashMap.java,v 1.3 2006-06-16 19:36:06 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,8 @@ import com.sun.identity.common.CaseInsensitiveHashSet;
  * 
  */
 public class AMHashMap extends CaseInsensitiveHashMap {
+
+    private static final long serialVersionUID = 6468554078141700418L;
 
     private boolean byteValues = false;
 
@@ -148,7 +150,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
         byteNegativeAttrs = n;
     }
 
-    protected Set getNegativeByteAttrClone() {
+    public Set getNegativeByteAttrClone() {
         if (byteNegativeAttrs == Collections.EMPTY_SET) {
             return Collections.EMPTY_SET;
         }
@@ -171,7 +173,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
      *            map.
      * @return a set of keys which are missing
      */
-    protected Set getMissingKeys(Set keys) {
+    public Set getMissingKeys(Set keys) {
         Set missAttrNames = new HashSet();
         Iterator itr = keys.iterator();
         while (itr.hasNext()) {
@@ -204,7 +206,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
      * @return a set of keys which are missing and keys whose values are empty
      *         Sets.
      */
-    protected Set getMissingAndEmptyKeys(Set keys) {
+    public Set getMissingAndEmptyKeys(Set keys) {
         Set missAttrNames = new HashSet();
         Iterator itr = keys.iterator();
         if (!byteValues) { // String values
@@ -233,7 +235,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
         return missAttrNames;
     }
 
-    protected void removeKeys(Set keys) {
+    public void removeKeys(Set keys) {
         if ((keys != null) && (!keys.isEmpty())) {
             Iterator itr = keys.iterator();
             while (itr.hasNext()) {
@@ -340,7 +342,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
                 if (values != null) {
                     values.addAll((Set) map.get(name));
                 } else {
-                    this.put(name, map.get(name));
+                    this.put(name, (Set) map.get(name));
                 }
             }
         } else { // For byte values replace ??

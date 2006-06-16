@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCompliance.java,v 1.1 2005-11-01 00:28:58 arvindp Exp $
+ * $Id: AMCompliance.java,v 1.2 2006-06-16 19:36:00 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,11 +31,12 @@ import java.util.Set;
 
 import netscape.ldap.util.DN;
 
+import com.iplanet.am.sdk.common.IComplianceServices;
 import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -43,21 +44,20 @@ import com.sun.identity.sm.ServiceSchemaManager;
 /**
  * This class <code>AMCompliance</code> contains the functionality to support
  * iPlanet Compliant DIT. The methods of this class will be used by other
- * classes in <code>com.iplanet.am.sdk package</code>.
- * <p>
+ * classes in <code>com.iplanet.am.sdk package</code>.<p>
  * 
  * In order to determine if iPlanet Compliance mode is required or not, the
  * parameter <code>com.iplanet.am.compliance</code> will be verified. A value
- * of <code>true</code> for this parameter, means iPlanet Compliance mode.
- * <p>
- * 
+ * of <code>true</code> for this parameter, means iPlanet Compliance mode.<p>
+ *
  * NOTE: An explicit check must be performed using AMCompliance.
- * isIplanetCompliant() method before calling any other methods in this class.
+ * isIplanetCompliant() method before calling any other methods in this
+ * class. 
  */
 class AMCompliance implements AMConstants {
     // Map to keep role->group name mapping
-    private static ComplianceInterface compl = 
-        AMDirectoryManager.getInstance().compliance;
+    private static IComplianceServices complianceServices = 
+        AMDirectoryAccessFactory.getComplianceServices();
 
     static private Map deletedOrg = new HashMap();
 
@@ -73,18 +73,16 @@ class AMCompliance implements AMConstants {
 
     static Debug debug = AMCommonUtils.debug;
 
-    static AMDirectoryManager dsManager;
-
     static {
         init();
-        dsManager = AMDirectoryWrapper.getInstance();
     }
 
     /**
      * Method to intialize all the AMCompliance class static variables
      */
     protected static void init() {
-        rootSuffix = SystemProperties.get("com.iplanet.am.rootsuffix");
+        rootSuffix = (new DN(SMSEntry.getRootSuffix()).toRFCString()
+                .toLowerCase());
         if (rootSuffix == null || rootSuffix == "") {
             debug.error("com.iplanet.am.rootsuffix property value "
                     + "should not be null");
@@ -93,28 +91,24 @@ class AMCompliance implements AMConstants {
     }
 
     /**
-     * Method which checks all the parent organizations of this entry till the
-     * base DN, and returns true if any one of them is deleted.
-     * 
-     * @param token
-     *            SSO token of user
-     * @param DN
-     *            string representing dn of the object.
-     * @param profileType
-     *            the profile type of the object whose ancestor is is being
-     *            checked.
-     */
+     * Method which checks all the parent organizations of this entry
+     * till the base DN, and  returns true if any one of them is
+     * deleted.
+     *
+     * @param token SSO token of user
+     * @param DN string representing dn of the object.
+     * @param profileType the profile type of the object whose ancestor is
+     *        is being checked.
+     **/
     protected static boolean isAncestorOrgDeleted(SSOToken token, String dn,
             int profileType) throws AMException {
-        return compl.isAncestorOrgDeleted(token, dn, profileType);
+        return complianceServices.isAncestorOrgDeleted(token, dn, profileType);
     }
 
     /**
      * Method to clean up the deletedOrg cache, when an event notification
      * occurs from the directory
-     * 
-     * @param orgDN
-     *            DN of organization that has been modified
+     * @param orgDN DN of organization that has been modified
      */
     protected static void cleanDeletedOrgCache(String orgDN) {
         String tdn = orgDN;
@@ -134,12 +128,9 @@ class AMCompliance implements AMConstants {
     /**
      * Method which checks if Admin Groups need to be created for an
      * organization.
-     * 
-     * @param orgDN
-     *            organization dn
+     * @param orgDN organization dn
      * @return true if Admin Groups need to be created
-     * @exception AMException
-     *                if an error is encountered
+     * @exception AMException if an error is encountered
      */
     protected static boolean isAdminGroupsEnabled(String orgDN)
             throws AMException {
@@ -176,19 +167,17 @@ class AMCompliance implements AMConstants {
             throw new AMException(AMSDKBundle.getString("357"), "357");
         }
 
-        // return compl.isAdminGroupsEnabled(orgDN);
+        //return compl.isAdminGroupsEnabled(orgDN);
     }
 
     /**
      * Method which checks if the object is directly under root suffix
-     * 
-     * @param objDN
-     *            object dn
+     * @param objDN object dn
      * @return true if the object is directly under root suffix
      */
     protected static boolean isUnderRootSuffix(String objDN) {
-        if (objDN == null || objDN.equals("")) {
-            // Will be null only in special cases during search filter
+        if ((objDN == null) || (objDN.length() == 0)) {
+            // Will be null only in special cases during search filter 
             // construction (AMSearchFilterMaanager.getSearchFilter())
             return true;
         }
@@ -203,10 +192,8 @@ class AMCompliance implements AMConstants {
 
     /**
      * Method which checks if Compliance User Deletion is enabled
-     * 
      * @return true if Compliance User Deletion is enabled
-     * @exception AMException
-     *                if an error is encountered
+     * @exception AMException if an error is encountered
      */
     protected static boolean isComplianceUserDeletionEnabled()
             throws AMException {
@@ -244,16 +231,16 @@ class AMCompliance implements AMConstants {
 
     protected static void verifyAndDeleteObject(SSOToken token, 
             String profileDN) throws AMException {
-        compl.verifyAndDeleteObject(token, profileDN);
+        complianceServices.verifyAndDeleteObject(token, profileDN);
     }
 
     /**
-     * Protected method to get the search filter to be used for searching for
-     * deleted objects.
-     * 
-     */
+     * Protected method to get the search filter to be used for
+     * searching for deleted objects.
+     *
+     **/
     protected static String getDeletedObjectFilter(int objectType)
             throws AMException, SSOException {
-        return compl.getDeletedObjectFilter(objectType);
+        return complianceServices.getDeletedObjectFilter(objectType);
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStaticGroupImpl.java,v 1.1 2005-11-01 00:29:19 arvindp Exp $
+ * $Id: AMStaticGroupImpl.java,v 1.2 2006-06-16 19:36:11 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,7 @@ class AMStaticGroupImpl extends AMGroupImpl implements AMStaticGroup {
      */
     public void addUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN, GROUP,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN, GROUP,
                 ADD_MEMBER);
     }
 
@@ -60,7 +60,7 @@ class AMStaticGroupImpl extends AMGroupImpl implements AMStaticGroup {
      */
     public void removeUsers(Set users) throws AMException, SSOException {
         SSOTokenManager.getInstance().validateToken(super.token);
-        dsManager.modifyMemberShip(super.token, users, super.entryDN, GROUP,
+        dsServices.modifyMemberShip(super.token, users, super.entryDN, GROUP,
                 REMOVE_MEMBER);
     }
 

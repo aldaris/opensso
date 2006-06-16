@@ -17,15 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoServiceListener.java,v 1.1 2005-11-01 00:31:10 arvindp Exp $
+ * $Id: IdRepoServiceListener.java,v 1.2 2006-06-16 19:36:42 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
-import com.iplanet.am.sdk.AMDirectoryManager;
-import com.iplanet.am.sdk.AMDirectoryWrapper;
 import com.iplanet.am.util.Debug;
 import com.sun.identity.sm.ServiceListener;
 
@@ -42,12 +40,13 @@ public class IdRepoServiceListener implements ServiceListener {
      */
     public void globalConfigChanged(String serviceName, String version,
             String groupName, String serviceComponent, int type) {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
         if (debug.messageEnabled()) {
-            debug.message("IdRepoServiceListener: Global Config " +
-                    "changed called");
+            debug.message("IdRepoServiceListener: Global Config changed"
+                    + " called");
         }
-        amdm.cleanupIdRepoPlugins();
+        // FIXME: Clients don't have to call this !!
+        idServices.clearIdRepoPlugins();
 
         // Clear IdUtils.getOrganization(...) cache
         IdUtils.clearOrganizationNamesCache();
@@ -59,11 +58,11 @@ public class IdRepoServiceListener implements ServiceListener {
     public void organizationConfigChanged(String serviceName, String version,
             String orgName, String groupName, String serviceComponent, int type)
     {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
         if (debug.messageEnabled()) {
             debug.message("IdRepoServiceListener: Org Config changed called");
         }
-        amdm.cleanupIdRepoPlugins();
+        idServices.clearIdRepoPlugins();
 
         // Clear IdUtils.getOrganization(...) cache
         IdUtils.clearOrganizationNamesCache();
@@ -73,13 +72,13 @@ public class IdRepoServiceListener implements ServiceListener {
      * Notification for schema changes to IdRepoService
      */
     public void schemaChanged(String serviceName, String version) {
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
         if (debug.messageEnabled()) {
             debug.message("IdRepoServiceListener: Schema changed called");
         }
-        amdm.cleanupIdRepoPlugins();
+        idServices.clearIdRepoPlugins();
 
         // Clean up cached schema plugin names
-        AMDirectoryManager.idRepoServiceSchemaChanged();
+        idServices.reloadIdRepoServiceSchema();
     }
 }

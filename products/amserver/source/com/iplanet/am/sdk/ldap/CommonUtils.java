@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonUtils.java,v 1.4 2006-05-22 20:54:04 goodearth Exp $
+ * $Id: CommonUtils.java,v 1.5 2006-06-16 19:36:28 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,21 +34,20 @@ import java.util.Set;
 
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.sdk.AMObjectClassManager;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.Guid;
-import com.sun.identity.authentication.internal.AuthPrincipal;
+
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+
+import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.SystemProperties;
 
 /**
  * This class contains all the miscellaneous utility methods used in the
@@ -113,10 +112,14 @@ class CommonUtils {
      */
     protected static SSOToken getInternalToken() {
         if (internalToken == null) {
-            internalToken = (SSOToken) 
-                AccessController.doPrivileged(AdminTokenAction.getInstance());
+            internalToken = (SSOToken) AccessController
+                    .doPrivileged(AdminTokenAction.getInstance());
         }
         return internalToken;
+    }
+
+    protected static Debug getDebugInstance() {
+        return debug;
     }
 
     /**
@@ -131,9 +134,8 @@ class CommonUtils {
             String locale = token.getProperty(LOCALE_PROPERTY);
 
             if (debug.messageEnabled()) {
-                debug
-                        .message("CommonUtils.getUserLocale(): locale = "
-                                + locale);
+                debug.message("CommonUtils.getUserLocale(): locale = "
+                        + locale);
             }
             return locale;
         } catch (SSOException ssoe) {
@@ -155,7 +157,6 @@ class CommonUtils {
      */
     protected static AttrSet combineAttrSets(AttrSet attrSet1, AttrSet attrSet2)
     {
-
         AttrSet retAttrSet = new AttrSet();
         if (attrSet1 != null) {
             int count = attrSet1.size();
@@ -206,7 +207,7 @@ class CommonUtils {
             if (values != null) {
                 values.addAll((Set) smallMap.get(attrName));
             } else {
-                bigMap.put(attrName, smallMap.get(attrName));
+                bigMap.put(attrName, (Set) smallMap.get(attrName));
             }
         }
         return bigMap;
@@ -288,7 +289,7 @@ class CommonUtils {
      * @return a Map containing attribute names as key's and a Set of attribute
      *         values or byte Values
      */
-    protected static Map attrSetToMap(AttrSet attrSet, boolean fetchByteValues)
+    protected static Map attrSetToMap(AttrSet attrSet, boolean fetchByteValues) 
     {
         Map attributesMap = new AMHashMap(fetchByteValues);
         if (attrSet == null) {
@@ -529,7 +530,7 @@ class CommonUtils {
     protected static boolean populateManagedObjects() {
         try {
             ServiceConfigManager scm = new ServiceConfigManager("DAI",
-                getInternalToken());
+                    getInternalToken());
             ServiceConfig gc = scm.getGlobalConfig(null);
             Set managedObjects = gc.getSubConfigNames("*", "ManagedObjects");
             if (managedObjects == null || managedObjects.isEmpty()) {
@@ -561,8 +562,8 @@ class CommonUtils {
                     supportedTypes.put(mo, typeS);
                     supportedNames.put(typeS, mo);
                     if (oc != null) {
-                        AMObjectClassManager.objectClassMap.put(typeS, oc);
-                        AMObjectClassManager.objectTypeMap.put(oc, typeS);
+                        ObjectClassManager.objectClassMap.put(typeS, oc);
+                        ObjectClassManager.objectTypeMap.put(oc, typeS);
                     }
                     if (st != null)
                         searchtemplateMap.put(typeS, st);
@@ -573,15 +574,14 @@ class CommonUtils {
                 }
             }
             if (debug.messageEnabled()) {
-
                 debug.message("CreationTemplate MAP = "
                         + creationtemplateMap.toString());
                 debug.message("SearchTemplate Map = "
                         + searchtemplateMap.toString());
                 debug.message("ObjectClass-Type Map = "
-                        + AMObjectClassManager.objectClassMap.toString());
+                        + ObjectClassManager.objectClassMap.toString());
                 debug.message("Type-ObjectClass MAP = "
-                        + AMObjectClassManager.objectTypeMap.toString());
+                        + ObjectClassManager.objectTypeMap.toString());
                 debug.message("Supported names-type = "
                         + supportedTypes.toString());
                 debug.message("Status Attributes= "
@@ -604,7 +604,7 @@ class CommonUtils {
         if (ocSet == null || ocSet.isEmpty()) {
             return null;
         }
-        return ((String) ocSet.iterator().next());
+        return ((String) ocSet.iterator().next()).toLowerCase();
     }
 
     private static String getCreationTemplateName(Set ocSet, String objectName) 

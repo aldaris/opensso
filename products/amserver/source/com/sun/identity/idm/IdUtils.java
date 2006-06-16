@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.7 2006-04-14 09:06:38 veiming Exp $
+ * $Id: IdUtils.java,v 1.8 2006-06-16 19:36:44 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,12 @@ import java.util.StringTokenizer;
 
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.sdk.AMDirectoryManager;
-import com.iplanet.am.sdk.AMDirectoryWrapper;
+import com.iplanet.am.sdk.AMDirectoryAccessFactory;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -51,13 +51,10 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
  * The class defines some static utilities used by other components like policy
  * and auth
- *
- * @supported.api
  */
 public final class IdUtils {
     private static Debug debug = AMIdentityRepository.debug;
@@ -78,9 +75,9 @@ public final class IdUtils {
     private static Map orgIdentifierToOrgName = new CaseInsensitiveHashMap();
 
     // ServiceConfigManager for sunidentityrepository service
-    private static ServiceConfigManager serviceConfigManager;
-
     private static String notificationId;
+
+    private static ServiceConfigManager serviceConfigManager;
 
     static {
         initialize();
@@ -117,35 +114,36 @@ public final class IdUtils {
                                 .get(IdConstants.ATTR_HAVE_MEMBERS);
                         Set canAddMembers = (Set) attributes
                                 .get(IdConstants.ATTR_ADD_MEMBERS);
-                        if (serviceNameSet != null && !serviceNameSet.isEmpty())
-                        {
+                        if (serviceNameSet != null && 
+                                !serviceNameSet.isEmpty()) {
                             mapTypesToServiceNames.put(typeSchema,
-                                    serviceNameSet.iterator().next());
+                                    (String) serviceNameSet.iterator().next());
                         }
-                        if (canBeMembersOf != null && !canBeMembersOf.isEmpty())
-                        {
+                        if (canBeMembersOf != null && 
+                                !canBeMembersOf.isEmpty()) {
                             Set memberOfSet = getMemberSet(canBeMembersOf);
                             typesCanBeMemberOf.put(typeSchema, memberOfSet);
                         }
-                        if (canHaveMembers != null && !canHaveMembers.isEmpty())
-                        {
+                        if (canHaveMembers != null && 
+                                !canHaveMembers.isEmpty()) {
                             Set memberSet = getMemberSet(canHaveMembers);
                             typesCanHaveMembers.put(typeSchema, memberSet);
                         }
-                        if (canAddMembers != null && !canAddMembers.isEmpty()) {
+                        if (canAddMembers != null && 
+                                !canAddMembers.isEmpty()) 
+                        {
                             Set memberSet = getMemberSet(canAddMembers);
                             typesCanAddMembers.put(typeSchema, memberSet);
                         }
                     }
                 }
             } catch (SMSException e) {
-                debug.error("IdUtils: Loading default types. " +
-                        "Caught exception..", e);
+                debug.error("IdUtils: Loading default types. Caught "
+                        + "exception..", e);
                 loadDefaultTypes();
             } catch (SSOException ssoe) {
-                debug.error(
-                        "IdUtils: Loading default types. Caught exception..",
-                        ssoe);
+                debug.error("IdUtils: Loading default types. Caught "
+                        + "exception..", ssoe);
                 loadDefaultTypes();
             }
         } else {
@@ -156,8 +154,8 @@ public final class IdUtils {
         if (notificationId == null) {
             try {
                 SSOToken adminToken = (SSOToken) AccessController
-                    .doPrivileged(AdminTokenAction.getInstance());
-                OrganizationConfigManager rootOrg =
+                        .doPrivileged(AdminTokenAction.getInstance());
+                OrganizationConfigManager rootOrg = 
                     new OrganizationConfigManager(adminToken, "/");
                 notificationId = rootOrg.addListener(new IdUtilsListener());
             } catch (SMSException e) {
@@ -167,19 +165,14 @@ public final class IdUtils {
     }
 
     /**
-     * Returns a handle of the Identity object based on
+     * iPlanet-PUBLIC-METHOD Returns a handle of the Identity object based on
      * the SSO Token passed in (<code>AMIdentity</code> object of the user
      * who is authenticated).
      * 
-     * @param token
-     *            Single sign on token of user.
+     * @param token    Single sign on token of user.
      * @return Identity object.
-     * @throws IdRepoException
-     *             if there are repository related error conditions.
-     * @throws SSOException
-     *             if user's single sign on token is invalid.
-     *
-     * @supported.api
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
      */
     public static AMIdentity getIdentity(SSOToken token)
             throws IdRepoException, SSOException {
@@ -202,22 +195,24 @@ public final class IdUtils {
     }
 
     /**
+     * iPlanet-PUBLIC-METHOD 
+     * 
      * Returns a string which uniquely represents this identity object.
      * 
      * @param id
      *            <code>AMIdentity</code> object whose string represenation is
      *            needed.
      * @return universal identifier of <code>id</code>.
-     *
-     * @supported.api
      */
     public static String getUniversalId(AMIdentity id) {
         return id.getUniversalId();
     }
 
     /**
-     * Returns an <code>AMIdentity</code> object, if
-     * provided with a string identifier for the object.
+     * iPlanet-PUBLIC-METHOD 
+     * 
+     * Returns an <code>AMIdentity</code> object, if provided with a string 
+     * identifier for the object.
      * 
      * @param token
      *            Single sign on token of the user.
@@ -226,8 +221,6 @@ public final class IdUtils {
      * @return Identity object
      * @throws IdRepoException
      *             if the identifier provided is wrong.
-     *
-     * @supported.api
      */
     public static AMIdentity getIdentity(SSOToken token, String univId)
             throws IdRepoException {
@@ -237,8 +230,8 @@ public final class IdUtils {
             String amsdkDN = null;
             if (!DN.isDN(univId)) {
                 Object[] args = { univId };
-                throw new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "215", args);
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "215", 
+                        args);
             }
             int dnIndex = univId.indexOf(",amsdkdn=");
             if (dnIndex > 0) {
@@ -250,8 +243,8 @@ public final class IdUtils {
             String name = array[0];
             if (!supportedType(array[1])) {
                 Object[] args = { univId };
-                throw new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "215", args);
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "215", 
+                        args);
             }
             IdType type = new IdType(array[1]);
             String orgName = dnObject.getParent().getParent().toRFCString();
@@ -263,20 +256,17 @@ public final class IdUtils {
     }
 
     /**
-     * Returns an <code>AMIdentity</code> object, given the DN of an
-     * authenticated identity, realm name and identity type. This interface is
-     * mainly for authentication component to get back the identity of the user.
+     * Returns an <code>AMIdentity</code> object, given the
+     * DN of an authenticated identity, realm name and identity type.
+     * This interface is mainly for authentication component to get
+     * back the identity of the user.
      * 
-     * @param token
-     *            SSOToken of the administrator
-     * @param amsdkdn
-     *            DN of the authenticated user
-     * @param realm
-     *            realm name where the user was authenticated
-     * @return Identity object or <code>null</code>
-     * @throws IdRepoException
-     *             if the underly components throws exception while obtaining
-     *             the identity object
+     * @param token SSOToken of the administrator
+     * @param amsdkdn DN of the authenticated user
+     * @param realm  realm name where the user was authenticated
+     * @return Identity object or <code>null</code> 
+     * @throws IdRepoException if the underly components throws
+     * exception while obtaining the identity object
      */
     public static AMIdentity getIdentity(SSOToken token, String amsdkdn,
             String realm) throws IdRepoException {
@@ -310,7 +300,7 @@ public final class IdUtils {
             // Debug the message and return null
             if (debug.messageEnabled()) {
                 debug.message("IdUtils.getIdentity: Unable to resolve "
-                        + "AMSDK DN", ame);
+                        + "AMSDK DN: " + amsdkdn, ame);
             }
         } catch (SSOException ssoe) {
             // Debug the message and return null
@@ -338,8 +328,7 @@ public final class IdUtils {
      * Returns the name of service which defines the profile information for
      * this type. Returns null, if nothing is defined.
      * 
-     * @param type
-     *            IdType whose service name is needed.
+     * @param type IdType whose service name is needed.
      * @return Name of the service.
      */
     public static String getServiceName(IdType type) {
@@ -349,12 +338,17 @@ public final class IdUtils {
     /**
      * Returns corresponding <code>IdType</code> object given a type.
      * 
-     * @param typeType
-     *            of object to return.
-     * @throws IdRepoException
-     *             if there are no corresponding types.
+     * @param typeType of object to return.
+     * @throws IdRepoException if there are no corresponding types.
      */
     public static IdType getType(String type) throws IdRepoException {
+        if (type.equalsIgnoreCase("managedrole")) {
+            type = "role";
+        } else if (type.equalsIgnoreCase("organization")
+                || type.equalsIgnoreCase("organizationalunit")) {
+            type = "realm";
+        }
+
         IdType returnType = (IdType) mapSupportedTypes.get(type);
         if (returnType == null) {
             Object args[] = { type };
@@ -367,8 +361,7 @@ public final class IdUtils {
      * Returns the matching DN from the AM SDK for this entry. This utility is
      * required by auth.
      * 
-     * @param id
-     *            <code>AMIdentity</code> object.
+     * @param id  <code>AMIdentity</code> object.
      * @return <code>DN</code> of the object, as represented in the datastore.
      */
     public static String getDN(AMIdentity id) {
@@ -381,18 +374,16 @@ public final class IdUtils {
 
     /**
      * Returns an organization which maps to the identifier used by application
-     * in order to.
+     * in order to iPlanet-PUBLIC-METHOD
      * 
-     * @param orgIdentifier
-     *            Organization identifier
+     * @param orgIdentifier  Organization identifier
      * @return Organization mapping to that identifier.
-     *
-     * @supported.api
      */
     public static String getOrganization(SSOToken token, String orgIdentifier)
             throws IdRepoException, SSOException {
         // Check in cache first
         String id = null;
+        ;
         if ((id = (String) orgIdentifierToOrgName.get(orgIdentifier)) != null) {
             return (id);
         }
@@ -429,8 +420,8 @@ public final class IdUtils {
         } else {
             // Get the realm name from SMS
             if (debug.messageEnabled()) {
-                debug.message(
-                        "IdUtils.getOrganization: getting from SMS realms");
+                debug.message("IdUtils.getOrganization: getting from "
+                        + "SMS realms");
             }
             try {
                 ServiceManager sm = new ServiceManager(token);
@@ -471,8 +462,9 @@ public final class IdUtils {
                             IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
                     if (orgAliases == null || orgAliases.isEmpty()) {
                         if (debug.messageEnabled()) {
-                            debug.message("IdUtils.getOrganization Unable to " +
-                                    "find Org name for: " + orgIdentifier);
+                            debug.message("IdUtils.getOrganization Unable"
+                                    + " to find Org name for: "
+                                    + orgIdentifier);
                         }
                         Object[] args = { orgIdentifier };
                         throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
@@ -488,8 +480,8 @@ public final class IdUtils {
                             + "getting org name from SMS", smse);
                 }
                 Object[] args = { orgIdentifier };
-                throw new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "401", args);
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
+                        args);
             }
         }
 
@@ -552,8 +544,8 @@ public final class IdUtils {
                 }
             } catch (SMSException smse) {
                 Object args[] = { org };
-                throw new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "401", args);
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
+                        args);
             }
         } else {
             // Return the org DN as determined by AMStoreConnection.
@@ -569,10 +561,9 @@ public final class IdUtils {
     }
 
     /**
-     * Private method to return AMIdentity object for an AM SDK DN. Throws all
-     * exceptions since the method calling this one takes care of catching them
-     * and behaving appropriately
-     * 
+     * Private method to return AMIdentity object for an AM SDK DN.
+     * Throws all exceptions since the method calling this one takes
+     * care of catching them and behaving appropriately
      * @param token
      * @param amsdkdn
      * @param realm
@@ -584,18 +575,25 @@ public final class IdUtils {
     private static AMIdentity getIdentityFromAMSDKDN(SSOToken token,
             String amsdkdn, String realm) throws AMException, SSOException,
             IdRepoException {
+
+        // TODO: 
+        // FIXME: Avoid using AM SDK implementation to determine these if 
+        // possible.
+
         // Since we would using AMSDK, get AMDirectoryManager preload
         // all the attributes and check if it exists
-        AMDirectoryManager amdm = AMDirectoryWrapper.getInstance();
-        amdm.getAttributes(token, amsdkdn, AMObject.USER);
+        IDirectoryServices dsServices = AMDirectoryAccessFactory
+                .getDirectoryServices();
+        // Just Preload all the attributes!
+        dsServices.getAttributes(token, amsdkdn, AMObject.USER);
         // Getting object type would use the cached attributes
-        int sdkType = amdm.getObjectType(token, amsdkdn);
+        int sdkType = dsServices.getObjectType(token, amsdkdn);
         // Convert the sdkType to IdRepo type
         IdType type = getType(AMStoreConnection.getObjectName(sdkType));
         String name = (new DN(amsdkdn)).explodeDN(true)[0];
         if (ServiceManager.isCoexistenceMode()) {
             // Get the organization from the object dn
-            realm = amdm.getOrganizationDN(token, amsdkdn);
+            realm = dsServices.getOrganizationDN(token, amsdkdn);
         }
         return (new AMIdentity(token, name, type, realm, amsdkdn));
     }
@@ -665,7 +663,8 @@ public final class IdUtils {
     }
 
     // SMS service listener to reinitialize if IdRepo service changes
-    static class IdUtilsListener implements com.sun.identity.sm.ServiceListener{
+    static class IdUtilsListener implements com.sun.identity.sm.ServiceListener 
+    {
 
         public void schemaChanged(String serviceName, String version) {
             if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {
@@ -673,28 +672,21 @@ public final class IdUtils {
             }
         }
 
-        public void globalConfigChanged(
-            String serviceName,
-            String version,
-            String groupName,
-            String serviceComponent,
-            int type) {
+        public void globalConfigChanged(String serviceName, String version,
+                String groupName, String serviceComponent, int type) {
             if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {
                 initialize();
             }
         }
 
-        public void organizationConfigChanged(
-            String serviceName,
-            String version,
-            String orgName,
-            String groupName,
-            String serviceComponent,
-            int type) {
-            if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE) &&
-                orgName.equalsIgnoreCase(ServiceManager.getBaseDN())) {
+        public void organizationConfigChanged(String serviceName,
+                String version, String orgName, String groupName,
+                String serviceComponent, int type) {
+            if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)
+                    && orgName.equalsIgnoreCase(ServiceManager.getBaseDN())) {
                 initialize();
             }
         }
     }
+
 }

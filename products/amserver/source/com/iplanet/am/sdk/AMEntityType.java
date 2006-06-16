@@ -17,18 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntityType.java,v 1.2 2005-12-08 01:16:01 veiming Exp $
+ * $Id: AMEntityType.java,v 1.3 2006-06-16 19:36:04 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+
+import com.iplanet.am.util.Debug;
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
+
+/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class defines a supported managed object type by <code> AM SDK </code>
@@ -38,16 +42,15 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * 
  * <PRE>
  * 
- * AMStoreConnection amsc = new AMStoreConnection(ssotoken); 
- * Set supportedTypes = amsc.getSupportedTypes(); 
- * Iterator it = supportedTypes.iterator(); 
- * while (it.hasNext()) { 
- *     AMEntityType thisType = (AMEntityType) it.next(); 
- *     // Dostuff with AMEntityType 
- * }
+ *        AMStoreConnection amsc = new AMStoreConnection(ssotoken); 
+ *        Set supportedTypes = amsc.getSupportedTypes(); 
+ *        Iterator it = supportedTypes.iterator(); 
+ *        while (it.hasNext()) { 
+ *            AMEntityType thisType = (AMEntityType) it.next(); 
+ *            // Do stuff with AMEntityType 
+ *        }
  * 
  * </PRE>
- * @supported.all.api
  */
 public final class AMEntityType {
 

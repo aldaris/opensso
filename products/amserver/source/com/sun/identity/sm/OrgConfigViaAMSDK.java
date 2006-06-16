@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.2 2006-03-16 18:30:25 goodearth Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.3 2006-06-16 19:36:52 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,10 @@ import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.security.AdminTokenAction;
 
 // This class provides support for OrganizationConfigManager
 // in coexistence mode. This class interfaces with AMSDK
@@ -58,7 +63,12 @@ public class OrgConfigViaAMSDK {
 
     private AMOrganization parentOrg;
 
+    private AMOrganization parentOrgWithAdminToken;
+
     private ServiceConfig serviceConfig;
+
+    // permissions for the user token
+    boolean hasReadPermissionOnly;
 
     // Cache of organization names to ServiceConfig that
     // contains the attribute mappings
@@ -71,6 +81,10 @@ public class OrgConfigViaAMSDK {
     static final String IDREPO_SERVICE = "sunidentityrepositoryservice";
 
     static final String MAPPING_ATTR_NAME = "sunCoexistenceAttributeMapping";
+
+    // Admin token to perform operations if the user has
+    // realm permissions
+    private static SSOToken adminToken;
 
     // Debug & Locale
     Debug debug = SMSEntry.debug;
@@ -113,16 +127,39 @@ public class OrgConfigViaAMSDK {
         this.token = token;
         parentOrgName = orgName;
         this.smsOrgName = smsOrgName;
+        // Get admin SSOToken for operations to bypass ACIs and delegation
+        if (adminToken == null) {
+            adminToken = (SSOToken) AccessController
+                    .doPrivileged(AdminTokenAction.getInstance());
+        }
         try {
+
+            // Check if the user has realm privileges, if yes use
+            // admin SSOToken to bypass directory ACIs
+            if (checkRealmPermission(token, smsOrgName,
+                    SMSEntry.modifyActionSet)) {
+                token = adminToken;
+            } else if (checkRealmPermission(token, smsOrgName,
+                    SMSEntry.readActionSet)) {
+                hasReadPermissionOnly = true;
+            }
             AMStoreConnection amcom = new AMStoreConnection(token);
             parentOrg = amcom.getOrganization(orgName);
+
+            if (hasReadPermissionOnly) {
+                // Construct parent org with admin token for reads
+                amcom = new AMStoreConnection(adminToken);
+                parentOrgWithAdminToken = amcom.getOrganization(orgName);
+            }
+
             // Get the Realm <---> LDAP Org attribute mappings
             if (ServiceManager.isConfigMigratedTo70()
-                    && (serviceConfig = 
-                        (ServiceConfig) attributeMappingServiceConfigs
-                            .get(orgName)) == null) {
+                    && (serviceConfig = (ServiceConfig) 
+                            attributeMappingServiceConfigs.get(orgName)) 
+                            == null) 
+            {
                 ServiceConfigManager scm = new ServiceConfigManager(
-                        IDREPO_SERVICE, token);
+                        IDREPO_SERVICE, adminToken);
                 // Do we need to use internal token?
                 serviceConfig = scm.getOrganizationConfig(orgName, null);
                 if (debug.messageEnabled()) {
@@ -185,7 +222,11 @@ public class OrgConfigViaAMSDK {
      */
     Set getAssignedServices() throws SMSException {
         try {
-            return (parentOrg.getRegisteredServiceNames());
+            if (hasReadPermissionOnly) {
+                return (parentOrgWithAdminToken.getRegisteredServiceNames());
+            } else {
+                return (parentOrg.getRegisteredServiceNames());
+            }
         } catch (AMException ame) {
             if (debug.messageEnabled()) {
                 debug.message("OrgConfigViaAMSDK::getAssignedServices"
@@ -251,8 +292,16 @@ public class OrgConfigViaAMSDK {
             throws SMSException {
         try {
             // Search for sub-organization names
-            Set subOrgDNs = parentOrg.searchSubOrganizations(pattern,
-                    recursive ? AMConstants.SCOPE_SUB : AMConstants.SCOPE_ONE);
+            Set subOrgDNs;
+            if (hasReadPermissionOnly) {
+                subOrgDNs = parentOrgWithAdminToken.searchSubOrganizations(
+                        pattern, recursive ? AMConstants.SCOPE_SUB
+                                : AMConstants.SCOPE_ONE);
+            } else {
+                subOrgDNs = parentOrg.searchSubOrganizations(pattern,
+                        recursive ? AMConstants.SCOPE_SUB
+                                : AMConstants.SCOPE_ONE);
+            }
             // Convert DNs to "/" seperated relam names
             if (subOrgDNs != null && !subOrgDNs.isEmpty()) {
                 Set subOrgs = new HashSet();
@@ -338,7 +387,13 @@ public class OrgConfigViaAMSDK {
             Set attrNames = attrMapping.keySet();
             if (!attrNames.isEmpty()) {
                 // Perform AMSDK search
-                Map attributes = parentOrg.getAttributes(attrNames);
+                Map attributes;
+                if (hasReadPermissionOnly) {
+                    attributes = parentOrgWithAdminToken
+                            .getAttributes(attrNames);
+                } else {
+                    attributes = parentOrg.getAttributes(attrNames);
+                }
                 if (attributes != null && !attributes.isEmpty()) {
                     // Do reverse name mapping, and copy to answer
                     for (Iterator items = attributes.keySet().iterator(); items
@@ -496,7 +551,7 @@ public class OrgConfigViaAMSDK {
      * Removes the specified attribute values from AMSDK organization. The
      * organziation attribute names are defined in the IdRepo service.
      */
-    void removeAttributeValues(String attrName, Set values) throws SMSException
+    void removeAttributeValues(String attrName, Set values) throws SMSException 
     {
         if (attrName != null) {
             // First get the attribute values, remove the
@@ -568,7 +623,7 @@ public class OrgConfigViaAMSDK {
 
         // Get the attribute mapping and reverse it
         Map attrMaps = getAttributeMapping();
-        for (Iterator items = attrMaps.entrySet().iterator(); items.hasNext();)
+        for (Iterator items = attrMaps.entrySet().iterator(); items.hasNext();) 
         {
             Map.Entry entry = (Map.Entry) items.next();
             if (answer == null) {
@@ -580,6 +635,30 @@ public class OrgConfigViaAMSDK {
             answer = Collections.EMPTY_MAP;
         }
         reverseAttributeMappings.put(parentOrgName, answer);
+        return (answer);
+    }
+
+    // Check to see if the user has realm permissions
+    private boolean checkRealmPermission(SSOToken token, String realm,
+            Set action) {
+        boolean answer = false;
+        if (token != null) {
+            try {
+                DelegationEvaluator de = new DelegationEvaluator();
+                DelegationPermission dp = new DelegationPermission(realm,
+                        com.sun.identity.sm.SMSEntry.REALM_SERVICE, "1.0", "*",
+                        "*", action, Collections.EMPTY_MAP);
+                answer = de.isAllowed(token, dp, null);
+            } catch (DelegationException dex) {
+                debug.error("OrgConfigViaAMSDK.checkRealmPermission: "
+                        + "Got Delegation Exception: ", dex);
+            } catch (SSOException ssoe) {
+                if (debug.messageEnabled()) {
+                    debug.message("OrgConfigViaAMSDK.checkRealmPermission: "
+                            + "Invalid SSOToken: ", ssoe);
+                }
+            }
+        }
         return (answer);
     }
 

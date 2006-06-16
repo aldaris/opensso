@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFilteredRoleImpl.java,v 1.2 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMFilteredRoleImpl.java,v 1.3 2006-06-16 19:36:05 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,13 +37,11 @@ import com.iplanet.ums.SearchControl;
  */
 
 class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
+    
     public AMFilteredRoleImpl(SSOToken ssoToken, String DN) {
         super(ssoToken, DN, FILTERED_ROLE);
     }
 
-    /*
-     * unsupported
-     */
     public void addUsers(Set users) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
@@ -75,9 +73,9 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
      * @param avPairs
      *            attribute-value pairs to match when searching users.
      * @param level
-     *            the search level that needs to be used. (
-     *            <code>AMConstants.SCOPE_ONE</code>
-     *            or <code>AMConstansts.SCOPE_SUB</code>)
+     *            the search level that needs to be used. 
+     *            (<code>AMConstants.SCOPE_ONE</code> or 
+     *             <code>AMConstansts.SCOPE_SUB</code>)
      * @return Set distinguished name of users matching the search.
      * @throws AMException
      *             if there is an internal error in the access management store.
@@ -88,13 +86,13 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
             throws AMException, SSOException {
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
         }
 
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.
-                getString("122", super.locale), "122");
+            throw new AMException(AMSDKBundle.getString("122", super.locale),
+                    "122");
         }
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
@@ -128,7 +126,7 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
             }
         }
 
-        return dsManager.search(token, getOrganizationDN(), filter, level);
+        return dsServices.search(token, getOrganizationDN(), filter, level);
     }
 
     /**
@@ -156,13 +154,13 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
         }
 
         if ((wildcard == null) || (wildcard.length() == 0)) {
-            throw new AMException(AMSDKBundle.
-                getString("122", super.locale), "122");
+            throw new AMException(AMSDKBundle.getString("122", super.locale),
+                    "122");
         }
 
         String userFilter = "(&(" + AMNamingAttrManager.getNamingAttr(USER)
@@ -198,7 +196,7 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, getOrganizationDN(), filter, sc,
+        return dsServices.search(super.token, getOrganizationDN(), filter, sc,
                 returnAttrs);
     }
 
@@ -227,8 +225,8 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
         if ((level != AMConstants.SCOPE_ONE)
                 && (level != AMConstants.SCOPE_SUB)) {
-            throw new AMException(AMSDKBundle.
-                getString("123", super.locale), "123");
+            throw new AMException(AMSDKBundle.getString("123", super.locale),
+                    "123");
         }
 
         String filter = "(&" + getFilter() + avFilter + ")";
@@ -240,7 +238,7 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
         searchControl.setSearchScope(AMConstants.SCOPE_SUB);
         SearchControl sc = searchControl.getSearchControl();
         String returnAttrs[] = searchControl.getReturnAttributes();
-        return dsManager.search(super.token, getOrganizationDN(), filter, sc,
+        return dsServices.search(super.token, getOrganizationDN(), filter, sc,
                 returnAttrs);
     }
 
@@ -260,14 +258,11 @@ class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
 
     /**
      * Returns the filter for the filtered role.
-     * 
-     * @param filter
-     *            filter for the filtered role.
-     * @throws AMException
-     *             if an error is encountered when trying to access/retrieve
-     *             data from the data store.
-     * @throws SSOException
-     *             if the single sign on token is no longer valid.
+     *
+     * @param filter filter for the filtered role.
+     * @throws AMException if an error is encountered when trying to 
+     *         access/retrieve data from the data store.
+     * @throws SSOException if the single sign on token is no longer valid.
      */
     public void setFilter(String filter) throws AMException, SSOException {
         setStringAttribute(FILTER_ATTR_NAME, filter);

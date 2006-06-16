@@ -17,18 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserImpl.java,v 1.2 2006-04-17 20:20:02 kenwho Exp $
+ * $Id: AMUserImpl.java,v 1.3 2006-06-16 19:36:12 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
-import java.security.AccessController;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
+import java.security.AccessController;
 
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
@@ -36,11 +36,12 @@ import netscape.ldap.util.RDN;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.security.AdminTokenAction;
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.security.AdminTokenAction;
 
 /**
  * The <code>AMUserImpl</code> implementation of interface AMUser
@@ -87,7 +88,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
      */
     public String rename(String newName, boolean deleteOldName)
             throws AMException, SSOException {
-        entryDN = dsManager.renameEntry(token, profileType, entryDN, newName,
+        entryDN = dsServices.renameEntry(token, profileType, entryDN, newName,
                 deleteOldName);
         return entryDN;
     }
@@ -127,10 +128,8 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         getAMStoreConnection();
         while (iter.hasNext()) {
             String nsrole = (String) iter.next();
-            if (!normdns.contains(
-                    (new DN(nsrole)).toRFCString().toLowerCase())) 
+            if (!normdns.contains((new DN(nsrole)).toRFCString().toLowerCase()))
             {
-
                 DN nsroleDN = new DN(nsrole);
                 RDN rdn = (RDN) nsroleDN.getRDNs().firstElement();
                 if (!rdn.equals(ContainerDefaultTemplateRoleRDN)
@@ -148,11 +147,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
      * @return The Set of static role DN's the user is in.
      */
     public Set getRoleDNs() throws AMException, SSOException {
-        Set nsroleANSet = new HashSet(5);
-        nsroleANSet.add(roleDNsAN);
-        Map nsrolesMap = getAttributesFromDataStore(nsroleANSet);
-        Set answer = (Set) nsrolesMap.get(roleDNsAN);
-        return ((answer == null) ? java.util.Collections.EMPTY_SET : answer);
+        return getAttribute(roleDNsAN);
     }
 
     private static void getAMStoreConnection() throws SSOException {
@@ -197,7 +192,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
 
             if (!rdn.equals(ContainerDefaultTemplateRoleRDN)
                     && isAMManagedRole(nsrole)) {
-                result.add(nsrole);
+                result.add(nsroleDN.toString());
             }
         } // while
 
@@ -225,7 +220,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs, roleDN, ROLE,
+        dsServices.modifyMemberShip(super.token, userDNs, roleDN, ROLE,
                 ADD_MEMBER);
     }
 
@@ -250,7 +245,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs, roleDN, ROLE,
+        dsServices.modifyMemberShip(super.token, userDNs, roleDN, ROLE,
                 REMOVE_MEMBER);
 
     }
@@ -287,7 +282,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs, groupDN, GROUP,
+        dsServices.modifyMemberShip(super.token, userDNs, groupDN, GROUP,
                 ADD_MEMBER);
 
     }
@@ -315,7 +310,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs, groupDN, GROUP,
+        dsServices.modifyMemberShip(super.token, userDNs, groupDN, GROUP,
                 REMOVE_MEMBER);
 
     }
@@ -368,7 +363,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs,
+        dsServices.modifyMemberShip(super.token, userDNs,
                 assignableDynamicGroupDN, ASSIGNABLE_DYNAMIC_GROUP, ADD_MEMBER);
     }
 
@@ -406,7 +401,7 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         Set userDNs = new HashSet();
         userDNs.add(super.entryDN);
 
-        dsManager.modifyMemberShip(super.token, userDNs,
+        dsServices.modifyMemberShip(super.token, userDNs,
                 assignableDynamicGroupDN, ASSIGNABLE_DYNAMIC_GROUP,
                 REMOVE_MEMBER);
     }
@@ -465,9 +460,9 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         while (iter.hasNext()) {
             String serviceName = (String) iter.next();
             if (assignedSerivces.contains(serviceName)) {
-                debug.error(AMSDKBundle.getString("125", super.locale));
-                throw new AMException(AMSDKBundle.getString(
-                    "125", super.locale), "125");
+                debug.error(AMSDKBundle.getString("125"));
+                throw new AMException(AMSDKBundle
+                        .getString("125", super.locale), "125");
             }
             canAssign.add(serviceName);
             Set serviceOCs = AMServiceUtils.getServiceObjectClasses(token,
@@ -501,9 +496,9 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
                     ss = ssm.getSchema(SchemaType.DYNAMIC);
                 }
                 if (ss == null) {
-                    debug.error(AMSDKBundle.getString("1001", super.locale));
-                    throw new AMException(AMSDKBundle.getString(
-                        "1001", args, super.locale), "1001", args);
+                    debug.error(AMSDKBundle.getString("1001"));
+                    throw new AMException(AMSDKBundle.getString("1001", args,
+                            super.locale), "1001", args);
                 }
             } catch (SMSException se) {
                 debug.error("AMUserImpl: schema type validation failed-> "

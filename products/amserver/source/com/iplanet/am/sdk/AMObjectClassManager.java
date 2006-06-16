@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectClassManager.java,v 1.1 2005-11-01 00:29:10 arvindp Exp $
+ * $Id: AMObjectClassManager.java,v 1.2 2006-06-16 19:36:07 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.iplanet.am.util.Debug;
+
+import com.iplanet.am.sdk.common.IDirectoryServices;
 
 /**
  * A Class to manage the object class information.
@@ -58,8 +60,9 @@ public class AMObjectClassManager {
     }
 
     private static String getObjectClassFromDS(int objectType) {
-        return AMDirectoryWrapper.getInstance().dMgr
-                .getObjectClassFromDS(objectType);
+        IDirectoryServices dsServices = AMDirectoryAccessFactory
+                .getDirectoryServices();
+        return dsServices.getObjectClass(objectType);
     }
 
     public static int getObjectType(String objectClass) {

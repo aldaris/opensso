@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupContainerImpl.java,v 1.3 2006-04-17 20:19:29 kenwho Exp $
+ * $Id: AMGroupContainerImpl.java,v 1.4 2006-06-16 19:36:05 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  */
 
 class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
+    
     public AMGroupContainerImpl(SSOToken ssoToken, String DN) {
         super(ssoToken, DN, GROUP_CONTAINER);
     }
@@ -300,8 +301,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            &lt;serviceName>&lt;AttrMap>
-     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -335,7 +336,7 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
 
         if (serviceNameAndAttrs != null && !serviceNameAndAttrs.isEmpty()) {
             Set serviceNames = serviceNameAndAttrs.keySet();
-            Set registered = dsManager.getRegisteredServiceNames(null,
+            Set registered = dsServices.getRegisteredServiceNames(null,
                     getOrganizationDN());
             Iterator it = serviceNames.iterator();
 
@@ -343,8 +344,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                 String tmpS = (String) it.next();
                 if (!registered.contains(tmpS)) {
                     Object[] args = { tmpS };
-                    throw new AMException(AMSDKBundle.
-                        getString("459", args, super.locale), "459", args);
+                    throw new AMException(AMSDKBundle.getString("459", args,
+                            super.locale), "459", args);
                 }
             }
 
@@ -372,9 +373,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                     debug.error("AMGroupContainerImpl.createStaticGroup: "
                             + "Data validation failed.. ", se);
                     Object args[] = { thisService };
-                    throw new AMException(AMSDKBundle.
-                        getString("976", args, super.locale),
-                            "976", args);
+                    throw new AMException(AMSDKBundle.getString("976", args,
+                            super.locale), "976", args);
                 }
             }
             if (objectClasses != null && !objectClasses.isEmpty()) {
@@ -458,8 +458,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            &lt;serviceName>&lt;AttrMap>
-     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      * @throws SSOException
@@ -492,8 +492,7 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
             String groupDN = AMNamingAttrManager.getNamingAttr(GROUP) + "="
                     + ((String) iter.next()) + "," + entryDN;
             AMAssignableDynamicGroupImpl groupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    token, groupDN);
+                new AMAssignableDynamicGroupImpl(token, groupDN);
             groupImpl.create();
             groups.add(groupImpl);
         }
@@ -526,8 +525,7 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
 
             Map attributes = (Map) groupsMap.get(groupName);
             AMAssignableDynamicGroupImpl groupImpl = 
-                new AMAssignableDynamicGroupImpl(
-                    token, groupDN);
+                new AMAssignableDynamicGroupImpl(token, groupDN);
             groupImpl.setAttributes(attributes);
             groupImpl.create();
             groups.add(groupImpl);
@@ -544,8 +542,8 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
      *            of group to be created
      * @param ServiceName
      *            and attrsMap where the map is like this: 
-     *            &lt;serviceName>&lt;AttrMap>
-     *            (attrMap=&lt;attrName>&lt;Set of attrvalues>)
+     *            <serviceName><AttrMap>
+     *            (attrMap=<attrName><Set of attrvalues>)
      * @return AMGroup object of newly created group.
      * @throws AMException
      *             if there is an error when accessing the data store
@@ -755,13 +753,6 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                 wildcard, avPairs, level);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMOrganization#searchAssignableDynamicGroups(
-     *      java.lang.String,
-     *      java.util.Map, java.lang.String, com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchGroups(String wildcard, Map avPairs,
             String groupSearchTemplate, AMSearchControl searchControl)
             throws AMException, SSOException {
@@ -777,12 +768,6 @@ class AMGroupContainerImpl extends AMObjectImpl implements AMGroupContainer {
                 wildcard, avPairs, searchControl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMGroupContainer#searchStaticGroups(
-     *      java.lang.String, java.util.Map, com.iplanet.am.sdk.AMSearchControl)
-     */
     public AMSearchResults searchStaticGroups(String wildcard, Map avPairs,
             AMSearchControl searchControl) throws AMException, SSOException {
         String filter = getSearchFilter(AMObject.GROUP);

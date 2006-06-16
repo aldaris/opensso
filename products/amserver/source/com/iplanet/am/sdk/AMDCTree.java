@@ -17,10 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDCTree.java,v 1.1 2005-11-01 00:28:59 arvindp Exp $
+ * $Id: AMDCTree.java,v 1.2 2006-06-16 19:36:00 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
+
 
 package com.iplanet.am.sdk;
 
@@ -31,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.iplanet.am.sdk.common.IDCTreeServices;
 import com.iplanet.am.util.Debug;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
@@ -56,6 +58,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
  * before calling any other methods in this class.
  */
 class AMDCTree implements AMConstants {
+
     protected static ServiceSchema gsc = null;
 
     public static final String IPLANET_DOMAIN_NAME_ATTR = "sunPreferredDomain";
@@ -71,8 +74,9 @@ class AMDCTree implements AMConstants {
 
     private static Debug debug = AMCommonUtils.debug;
 
-    private static DCTreeInterface dcTree = 
-        AMDirectoryManager.getInstance().dcTree;
+    private static IDCTreeServices dcTreeServices = 
+        AMDirectoryAccessFactory.getDCTreeServices();
+
     static {
         domainMap = new HashMap();
         canonicalDomainMap = new HashMap();
@@ -113,7 +117,7 @@ class AMDCTree implements AMConstants {
 
     protected static String getOrganizationDN(SSOToken token, String domainName)
             throws AMException {
-        return dcTree.getOrganizationDN(token, domainName);
+        return dcTreeServices.getOrganizationDN(token, domainName);
     }
 
     protected static AttrSet[] splitAttrSet(String orgDN, AttrSet attrSet)

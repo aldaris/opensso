@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.5 2006-03-18 08:50:52 veiming Exp $
+ * $Id: SMSEntry.java,v 1.6 2006-06-16 19:36:52 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,6 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.common.DNUtils;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
@@ -92,7 +91,9 @@ public class SMSEntry implements Cloneable {
     private static Cache cache = new Cache(500);
 
     // Variable to check if the SMS entries can be cached
-    static String CACHE_PROPERTY = "com.iplanet.am.sdk.caching.enabled";
+    static String GLOBAL_CACHE_PROPERTY = "com.iplanet.am.sdk.caching.enabled";
+
+    static String SM_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
 
     static boolean cacheSMSEntries;
 
@@ -176,12 +177,12 @@ public class SMSEntry implements Cloneable {
         // Cache internal users
         String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
         if (adminUser != null && adminUser.length() != 0) {
-            specialUserSet.add(DNUtils.normalizeDN(adminUser));
+            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
         }
         // Add adminDN to the specialUserSet
         adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
         if (adminUser != null && adminUser.length() != 0) {
-            specialUserSet.add(DNUtils.normalizeDN(adminUser));
+            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
         }
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: Special User Set: " + specialUserSet);
@@ -200,11 +201,20 @@ public class SMSEntry implements Cloneable {
         mCaseSensitiveAttributes.add(SMSEntry.ATTR_KEYVAL);
 
         // Check if SMSEntries can be cached
-        String cacheEnabled = System.getProperty(CACHE_PROPERTY,
-                SystemProperties.get(CACHE_PROPERTY, "true"));
+        String cacheEnabled = System.getProperty(GLOBAL_CACHE_PROPERTY,
+                SystemProperties.get(GLOBAL_CACHE_PROPERTY, "true"));
         if (cacheEnabled.equalsIgnoreCase("true")) {
             cacheSMSEntries = true;
+        } else { // Global Property - set to false. Check component property
+            cacheEnabled = SystemProperties.get(SM_CACHE_PROPERTY);
+            if (cacheEnabled != null && cacheEnabled.length() > 0) {
+                cacheSMSEntries = (cacheEnabled.equalsIgnoreCase("true")) ? true
+                        : false;
+            } else {
+                cacheSMSEntries = false;
+            }
         }
+
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
         }
@@ -227,10 +237,14 @@ public class SMSEntry implements Cloneable {
         // Get an instance of SMSObject
         String smsClassName = SystemProperties.get(SMS_OBJECT_PROPERTY,
                 DEFAULT_SMS_CLASS_NAME);
+        Object[] args = { smsClassName };
         try {
             tm = SSOTokenManager.getInstance();
             Class smsEntryClass = Class.forName(smsClassName);
             smsObject = (SMSObject) smsEntryClass.newInstance();
+            if (smsClassName.equals(JAXRPC_SMS_CLASS_NAME)) {
+                SMSJAXRPCObjectFlg = true;
+            }
             if (debug.messageEnabled()) {
                 debug.message("Using SMS object class " + smsClassName);
             }
@@ -253,20 +267,20 @@ public class SMSEntry implements Cloneable {
         if (smsObject == null) {
             try {
                 if (smsClassName.equals(DEFAULT_SMS_CLASS_NAME)) {
-                    debug.message("SMSEntry: Using default JAXRPC " +
-                            "implementation");
+                    debug.message("SMSEntry: Using default JAXRPC "
+                            + "implementation");
                     smsObject = (SMSObject) Class
                             .forName(JAXRPC_SMS_CLASS_NAME).newInstance();
                     SMSJAXRPCObjectFlg = true;
                 } else if (smsClassName.equals(JAXRPC_SMS_CLASS_NAME)) {
-                    debug.message("SMSEntry: Using default JAXRPC " +
-                            "implementation");
+                    debug.message("SMSEntry: Using default JAXRPC "
+                            + "implementation");
                     smsObject = (SMSObject) Class
                             .forName(JAXRPC_SMS_CLASS_NAME).newInstance();
                     SMSJAXRPCObjectFlg = true;
                 } else {
-                    debug.message("SMSEntry: Using default LDAP " +
-                            "implementation");
+                    debug.message("SMSEntry: Using default LDAP "
+                            + "implementation");
                     smsObject = (SMSObject) Class.forName(
                             DEFAULT_SMS_CLASS_NAME).newInstance();
                 }
@@ -281,7 +295,7 @@ public class SMSEntry implements Cloneable {
         // Get the baseDN
         String temp = smsObject.getRootSuffix();
         if (temp != null) {
-            baseDN = DNUtils.normalizeDN(temp);
+            baseDN = (new DN(temp)).toRFCString().toLowerCase();
         } else {
             baseDN = "o=unknown-suffix";
         }
@@ -303,7 +317,7 @@ public class SMSEntry implements Cloneable {
             throw (initializationException);
         ssoToken = token;
         this.dn = dn;
-        normalizedDN = DNUtils.normalizeDN(dn);
+        normalizedDN = (new DN(dn)).toRFCString().toLowerCase();
         read();
     }
 
@@ -482,10 +496,9 @@ public class SMSEntry implements Cloneable {
         if (backendProxyEnabled) {
             if (isAllowed(token, normalizedDN, readActionSet)) {
                 if (adminSSOToken == null) {
-                    adminSSOToken = 
-                        (SSOToken) AccessController.doPrivileged(
-                                com.sun.identity.security.AdminTokenAction.
-                                        getInstance());
+                    adminSSOToken = (SSOToken) AccessController.doPrivileged(
+                            com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
                 }
                 token = adminSSOToken;
             }
@@ -581,7 +594,7 @@ public class SMSEntry implements Cloneable {
                 if (isAllowed(token, normalizedDN, modifyActionSet)) {
                     if (adminSSOToken == null) {
                         adminSSOToken = (SSOToken) 
-                                AccessController.doPrivileged(
+                            AccessController.doPrivileged(
                                     com.sun.identity.security.AdminTokenAction
                                         .getInstance());
                     }
@@ -657,9 +670,10 @@ public class SMSEntry implements Cloneable {
         if (backendProxyEnabled) {
             if (isAllowed(token, normalizedDN, readActionSet)) {
                 if (adminSSOToken == null) {
-                    adminSSOToken = (SSOToken) AccessController
-                        .doPrivileged(com.sun.identity.security
-                        .AdminTokenAction.getInstance());
+                    adminSSOToken = (SSOToken) 
+                        AccessController.doPrivileged(
+                                com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
                 }
                 token = adminSSOToken;
             }
@@ -689,9 +703,10 @@ public class SMSEntry implements Cloneable {
         if (backendProxyEnabled) {
             if (isAllowed(token, normalizedDN, readActionSet)) {
                 if (adminSSOToken == null) {
-                    adminSSOToken = (SSOToken) AccessController
-                        .doPrivileged(com.sun.identity.security
-                        .AdminTokenAction.getInstance());
+                    adminSSOToken = (SSOToken) 
+                    AccessController.doPrivileged(
+                            com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
                 }
                 token = adminSSOToken;
             }
@@ -783,10 +798,8 @@ public class SMSEntry implements Cloneable {
         try {
             return (smsObject.entryExists(token, dn));
         } catch (Exception e) {
-            debug
-                    .error(
-                            "SMSEntry: Error in checking if entry exists: "
-                                    + dn, e);
+            debug.error("SMSEntry: Error in checking if entry exists: "
+                    + dn, e);
         }
         return (false);
     }
@@ -822,11 +835,10 @@ public class SMSEntry implements Cloneable {
 
     public static void objectChanged(String name, int type, boolean isLocal) {
         if (eventDebug.messageEnabled()) {
-            eventDebug
-                    .message("SMSEntry:objectChanged: " + name + " type: "
-                            + type + " IsLocal: " + isLocal
-                            + "\nNumber of callback objects: "
-                            + changeListeners.size());
+            eventDebug.message("SMSEntry:objectChanged: " + name + " type: "
+                    + type + " IsLocal: " + isLocal
+                    + "\nNumber of callback objects: "
+                    + changeListeners.size());
         }
         if (!isLocal) {
             // Check if notification has been sent locally
@@ -1002,7 +1014,7 @@ public class SMSEntry implements Cloneable {
             while (Iter.hasNext()) {
                 DN sdn = new DN((String) Iter.next());
                 String rfcDN = sdn.toRFCString();
-                String rfcDNlc = rfcDN.toLowerCase();
+                String rfcDNlc = sdn.toRFCString().toLowerCase();
                 if (!rfcDNlc.equals(baseDN)
                         && !rfcDNlc.startsWith(SUN_INTERNAL_REALM_PREFIX)) {
 
@@ -1025,12 +1037,12 @@ public class SMSEntry implements Cloneable {
                      * we return "/Coke/engg"
                      */
                     String orgAttr = ServiceManager.isRealmEnabled() ? 
-                            ORG_PLACEHOLDER_RDN
-                            : OrgConfigViaAMSDK.getNamingAttrForOrg() + EQUALS;
+                            ORG_PLACEHOLDER_RDN : 
+                                OrgConfigViaAMSDK.getNamingAttrForOrg() 
+                                + EQUALS;
                     if (debug.messageEnabled()) {
-                        debug
-                                .message("SMSEntry:parseResult:orgAttr "
-                                        + orgAttr);
+                        debug.message("SMSEntry:parseResult:orgAttr "
+                                + orgAttr);
                     }
                     int i = rfcDNlc.indexOf(orgAttr.toLowerCase());
                     if (i > 0) {
@@ -1052,30 +1064,32 @@ public class SMSEntry implements Cloneable {
                         // legacy install.
                         // eg., o=coke,ou=ContainerOne,dc=planet,dc=com
                         ArrayList rdns = new ArrayList();
-                        StringTokenizer strtok =
-                            new StringTokenizer(origStr, COMMA);
-                        while(strtok.hasMoreElements()) {
+                        StringTokenizer strtok = new StringTokenizer(origStr,
+                                COMMA);
+                        while (strtok.hasMoreElements()) {
                             String token = (String) strtok.nextToken().trim();
                             if (debug.messageEnabled()) {
-                                debug.message("SMSEntry:parseResult().token "+
-                                    token);
+                                debug.message("SMSEntry:parseResult().token  "
+                                        + token);
                             }
-                            rdns.add(token);
+                            if (token != null && token.length() != 0) {
+                                rdns.add(token);
+                            }
                         }
                         int size = rdns.size();
                         Set dnKeyset = new HashSet();
                         for (int is = 0; is < size; is++) {
-                            String[] strArr =
-                                DNMapper.splitString((String)rdns.get(is));
+                            String[] strArr = DNMapper
+                                    .splitString((String) rdns.get(is));
                             dnKeyset.add(strArr[0]);
                         }
-                        String orgUnitAttr =
-                            OrgConfigViaAMSDK.getNamingAttrForOrgUnit();
+                        String orgUnitAttr = OrgConfigViaAMSDK
+                                .getNamingAttrForOrgUnit();
 
                         if (dnKeyset.contains(orgUnitAttr)) {
                             if (debug.messageEnabled()) {
-                                debug.message("SMSEntry.parseResult(): "+
-                                    "Container node: "+origStr);
+                                debug.message("SMSEntry.parseResult(): "
+                                        + "Container node: " + origStr);
                             }
                             continue;
                         }
@@ -1158,7 +1172,8 @@ public class SMSEntry implements Cloneable {
          * ou=iPlanetAMPolicyService,ou=services, dc=iplanet, dc=com the orgDN
          * would be: dc=iplanet,dc=com
          */
-        String rfcDN = DNUtils.normalizeDN(dnName);
+        DN sdn = new DN(dnName);
+        String rfcDN = sdn.toRFCString().toLowerCase();
         String restOfDN = null;
 
         // Get the index to the first occurance of ",ou=services,"
@@ -1306,13 +1321,14 @@ public class SMSEntry implements Cloneable {
             // eg., if root_suffix is dn=iplanet, dn=com then the normalized
             // dn is dc=iplanet,dc=com.
             String tokenName = token.getPrincipal().getName();
-            String normTok = DNUtils.normalizeDN(tokenName);
-            if (normTok != null) {
+            if (DN.isDN(tokenName)) {
+                String normTok = (new DN(tokenName)).toRFCString()
+                        .toLowerCase();
                 if (specialUserSet.contains(normTok)) {
                     if (debug.messageEnabled()) {
-                        debug.message("SMSEntry.getDelegationPermission : No " +
-                                "delegation check needed for special users."
-                                        + normTok);
+                        debug.message("SMSEntry.getDelegationPermission: No "
+                                + "delegation check needed for special users."
+                                + normTok);
                     }
                     return delPermFlag;
                 }
@@ -1379,9 +1395,8 @@ public class SMSEntry implements Cloneable {
                         .toLowerCase();
                 if (specialUserSet.contains(normTok)) {
                     if (debug.messageEnabled()) {
-                        debug.message("SMSEntry.isAllowed :No delegation " +
-                                "check needed for special users."
-                                        + normTok);
+                        debug.message("SMSEntry.isAllowed : No delegation "
+                                + "check needed for special users." + normTok);
                     }
                     return (true);
                 }
@@ -1610,7 +1625,7 @@ public class SMSEntry implements Cloneable {
 
             // Send local notification only if datastore notification is
             // not enabled
-            if (ServiceManager.isRealmEnabled() && !enableDataStoreNotification)
+            if (ServiceManager.isRealmEnabled() && !enableDataStoreNotification) 
             {
                 if (eventDebug.messageEnabled()) {
                     eventDebug.message("SMSEntry::NotificationThread:run "
@@ -1645,9 +1660,9 @@ public class SMSEntry implements Cloneable {
                             params[0] = name;
                             params[1] = new Integer(type);
                             if (eventDebug.messageEnabled()) {
-                                eventDebug.message(
-                                        "SMSEntry:NotificationThread:run "
-                                                + "Sending to URL: " + surl);
+                                eventDebug.message("SMSEntry:"
+                                        + "NotificationThread:run "
+                                        + "Sending to URL: " + surl);
                             }
                             client.send("notifyObjectChanged", params, null);
                         } catch (Throwable t) {

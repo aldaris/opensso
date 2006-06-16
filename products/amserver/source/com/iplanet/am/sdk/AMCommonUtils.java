@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonUtils.java,v 1.2 2005-11-04 18:53:36 veiming Exp $
+ * $Id: AMCommonUtils.java,v 1.3 2006-06-16 19:36:00 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,7 +140,6 @@ public class AMCommonUtils implements AMConstants {
      */
     protected static AttrSet combineAttrSets(AttrSet attrSet1, AttrSet attrSet2)
     {
-
         AttrSet retAttrSet = new AttrSet();
         if (attrSet1 != null) {
             int count = attrSet1.size();
@@ -165,8 +164,10 @@ public class AMCommonUtils implements AMConstants {
      * smaller map are merged with the larger map and the larger map is
      * returned.
      * 
-     * @param mapA the first map.
-     * @param mapB the second map.
+     * @param mapA
+     *            the first map
+     * @param mapB
+     *            the second map
      * @return a result map which the biggest of the two maps with values merged
      *         from the smaller one.
      */
@@ -189,7 +190,7 @@ public class AMCommonUtils implements AMConstants {
             if (values != null) {
                 values.addAll((Set) smallMap.get(attrName));
             } else {
-                bigMap.put(attrName, smallMap.get(attrName));
+                bigMap.put(attrName, (Set) smallMap.get(attrName));
             }
         }
         return bigMap;
@@ -271,7 +272,7 @@ public class AMCommonUtils implements AMConstants {
      * @return a Map containing attribute names as key's and a Set of attribute
      *         values or byte Values
      */
-    protected static Map attrSetToMap(AttrSet attrSet, boolean fetchByteValues)
+    protected static Map attrSetToMap(AttrSet attrSet, boolean fetchByteValues) 
     {
         Map attributesMap = new AMHashMap(fetchByteValues);
         if (attrSet == null) {
@@ -669,5 +670,5 @@ public class AMCommonUtils implements AMConstants {
         }
         return ((String) ocSet.iterator().next());
     }
-
 }
+

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.1 2005-11-01 00:29:32 arvindp Exp $
+ * $Id: DirectoryManagerIF.java,v 1.2 2006-06-16 19:36:38 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,9 +79,9 @@ public interface DirectoryManagerIF extends Remote {
     public String getOrganizationDN(String token, String entryDN)
             throws AMRemoteException, RemoteException, SSOException;
 
-    public String verifyAndGetOrgDN(String token, String entryDN,
+    public String verifyAndGetOrgDN(String token, String entryDN, 
             String childDN) throws AMRemoteException, RemoteException, 
-                SSOException;
+            SSOException;
 
     public Map getExternalAttributes(String token, String entryDN,
             Set attrNames, int profileType) throws AMRemoteException,
@@ -180,9 +180,9 @@ public interface DirectoryManagerIF extends Remote {
             throws AMRemoteException, SSOException, RemoteException;
 
     // AMCompliance related operations
-    public boolean isAncestorOrgDeleted(String token, String dn,
+    public boolean isAncestorOrgDeleted(String token, String dn, 
             int profileType) throws AMRemoteException, SSOException, 
-                    RemoteException;
+            RemoteException;
 
     public void verifyAndDeleteObject(String token, String dn)
             throws AMRemoteException, SSOException, RemoteException;
