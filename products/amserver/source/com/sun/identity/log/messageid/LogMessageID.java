@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageID.java,v 1.3 2006-04-27 07:53:33 veiming Exp $
+ * $Id: LogMessageID.java,v 1.4 2006-06-16 23:38:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,8 +184,13 @@ public class LogMessageID {
 
         if (target != null) {
             NodeList items = target.getChildNodes();
-            if (items != null) {
-                count = items.getLength();
+            int sz = items.getLength();
+
+            for (int i = 0; i < sz; i++) {
+                Node item = items.item(i);
+                if (item.getNodeName().equals("item")) {
+                    count++;
+                }
             }
         }
 
