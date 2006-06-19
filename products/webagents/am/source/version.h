@@ -22,8 +22,7 @@
  * Abstract:
  *
  * Version object
- *
- */ 
+ */
 
 #ifndef _VERSION_H_
 #define _VERSION_H_
@@ -57,9 +56,9 @@ BEGIN_PRIVATE_NAMESPACE
  *                   Ex: ESCALATION_ID "1-5705455,1-5705458"
  *                       ESCALATION_ID "" if not a hotfix
  *
- * - Wed May  3 10:35:51 PDT 2006:     date and time when the build is done in the format
+ * - Mon Jun 19 16:17:10 PDT 2006:     date and time when the build is done in the format
  *                   given in the example
- *                   Ex:Wed May  3 10:35:51 PDT 2006 "Fri Jan  7 14:33:30 PST 2005"
+ *                   Ex:Mon Jun 19 16:17:10 PDT 2006 "Fri Jan  7 14:33:30 PST 2005"
  */
 #define MICRO_VERSION NULL
 #define PATCH_NUMBER NULL
@@ -74,7 +73,7 @@ public:
     static const char* getMicroVersion() {return MICRO_VERSION;}
     static const char* getPatchNumber() {return PATCH_NUMBER;}
     static const char* getEscalationId() {return ESCALATION_ID;}
-    static const char* getBuildDate() {return "Wed May  3 10:35:51 PDT 2006";}
+    static const char* getBuildDate() {return "Mon Jun 19 16:17:10 PDT 2006";}
 };
 
 END_PRIVATE_NAMESPACE

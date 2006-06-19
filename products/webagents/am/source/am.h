@@ -29,7 +29,6 @@
  */
 
 #ifndef AM_H
-#ifndef AM_H
 #define AM_H
 
 #include <am_types.h>
