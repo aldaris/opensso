@@ -54,8 +54,9 @@ int main(int argc, char **argv)
 	std::string namingURL = propPtr->get(AM_COMMON_NAMING_URL_PROPERTY,
 					     "http://piras.red.iplanet.com:8080/amserver/namingservice");
 
+        Http::CookieList cookieList;
 	status = namingSvc.getProfile(namingURL, arg_ptr->ssotoken,
-				      Http::CookieList(), namingInfo);
+				      cookieList, namingInfo);
 	if (AM_SUCCESS == status) {
 	    message("successfully retrieved profile, validating session");
 

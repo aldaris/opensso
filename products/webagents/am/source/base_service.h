@@ -180,6 +180,7 @@ private:
     IdType serviceRequestId;
     std::string certDBPasswd;
     std::string certNickName;
+    std::string poll_primary_server;
     bool alwaysTrustServerCert;
 };
 

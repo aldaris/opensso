@@ -208,7 +208,6 @@ public:
 			   bool terse = true) const;
 
     void create_old_to_new_attributes_map();
-    void create_new_to_old_attributes_map();
 
     //
     // Returns:
@@ -293,7 +292,6 @@ private:
     Log::ModuleId logID;
     bool icase;
     KeyValueMap *newAttributesMap;
-    KeyValueMap *oldAttributesMap;
 };
 
 

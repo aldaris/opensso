@@ -399,11 +399,12 @@ Service::initialize() {
 	string msg("Naming query failed during service creation.");
 	throw InternalException(func, msg, status);
     }
-
+    
     // Do session query
     if((status = mSSOTokenSvc.getSessionInfo(
 			    mPolicyEntry->namingInfo.getSessionSvcInfo(),
 			    mPolicyEntry->getSSOToken().getString(),
+                            mPolicyEntry->cookies,
 			    false,
 			    mAppSessionInfo, false, false)) != AM_SUCCESS) {
 	string msg("Session query failed during service creation.");
@@ -424,16 +425,16 @@ Service::initialize() {
 		    alwaysTrustServerCert);
 
 	policySvc->sendNotificationMsg(false,
-				       mPolicyEntry->namingInfo.getPolicySvcInfo(),
-				       serviceName, mPolicyEntry->cookies,
-				       notificationURL);
+			mPolicyEntry->namingInfo.getPolicySvcInfo(),
+			serviceName, mPolicyEntry->cookies,
+			notificationURL);
 
     if(notificationURL.size() > 0) {
 	policySvc->sendNotificationMsg(true,
-				       mPolicyEntry->namingInfo.getPolicySvcInfo(),
-				       serviceName,
-				       mPolicyEntry->cookies,
-				       notificationURL);
+				  mPolicyEntry->namingInfo.getPolicySvcInfo(),
+				  serviceName,
+				  mPolicyEntry->cookies,
+				  notificationURL);
     }
 
     if(policySvc->isRevision(PolicyService::Revision::THIRTY)) {
@@ -956,20 +957,6 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
     }
 }
 
-void 
-Service::validate_session(const std::string &ssoToken,
-			  SessionInfo &sessionInfo) const {
-    ServiceInfo svcInfo;
-    am_status_t sts = mSSOTokenSvc.getSessionInfo(svcInfo, ssoToken, false,
-						  sessionInfo, false, false);
-    if(sts != AM_SUCCESS) {
-	throw InternalException("Service::validate_session()",
-				"Error while validating sso token.",
-				sts);
-    }
-    return;
-}
-
 /*
  * Throws:
  *	std::invalid_argument if any argument is invalid
@@ -1008,11 +995,10 @@ Service::getPolicyResult(const char *userSSOToken,
 			    !cookieEncoded?userSSOToken:Http::encode(userSSOToken));
 
     SessionInfo uSessionInfo;
-    validate_session(ssoToken.getString(), uSessionInfo);
 
     // First try getting it from the sso Table.
     PolicyEntryRefCntPtr uPolicyEntry = policyTable.find(ssoToken.getString());
-
+    
     rsrcTraits.canonicalize(rName, &c_res);
     if(c_res == NULL) {
 	Log::log(logID, Log::LOG_ERROR,
@@ -1024,12 +1010,12 @@ Service::getPolicyResult(const char *userSSOToken,
 	rsrcTraits.str_free(c_res);
 	c_res = NULL;
     }
-    // If policyEntry not there, then call update_policy.
-    if(!(uPolicyEntry)) {
-	// Log:INFO Calling update_policy to get policy info.
-	update_policy(ssoToken, resName, actionName, env,
-	              mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF);
-    }
+    
+    
+    // Log:INFO Calling update_policy to get policy info.
+    update_policy(ssoToken, resName, actionName, env, uSessionInfo,
+	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF);
+    
 
     policy_res->remote_user = NULL;
     policy_res->remote_user_passwd = NULL;
@@ -1090,7 +1076,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	  std::string rootRes;
 	  if(resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    if (uPolicyEntry->getTree(rootRes,false) == NULL) {
-	      update_policy(ssoToken, resName, actionName, env,
+	      update_policy(ssoToken, resName, actionName, env, uSessionInfo,
 	              mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF);
 	      Log::log(logID, Log::LOG_WARNING,
 	              "%s:Result size is %d,tree not present for %s", func,
@@ -1222,6 +1208,7 @@ void
 Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
+                       SessionInfo &sessionInfo,
 		       policy_fetch_scope_t scope)
 {
     string func("Service::update_policy");
@@ -1246,7 +1233,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 
     // Do naming query, if notification is not enabled or
     // valid naming information is not present in the policyEntry.
-    if(!notificationEnabled || !policyEntry->namingInfo.isValid()) {
+    if(!policyEntry->namingInfo.isValid()) {
 	if(AM_SUCCESS != (status = namingSvc.getProfile(namingSvcInfo,
 					   ssoTok.getString(),
 					   policyEntry->cookies,
@@ -1254,17 +1241,22 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	    throw InternalException(func, "Naming query failed.",
 				    status);
 	}
-    }
-
-    SessionInfo sessionInfo;
-    if((status =
-	    mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(),
-					ssoTok.getString(), false,
-					sessionInfo, false, false)) !=
-	   AM_SUCCESS) {
+   }
+    
+    status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), ssoTok.getString(), 
+                                          policyEntry->cookies, false, sessionInfo, false, false);
+    
+    if (status != AM_SUCCESS) {
+        // if agent could not contact session service to validate
+	// user, and get any NSPR error, it is considered equivalent
+	// to the session being invalid.
+        if (AM_NSPR_ERROR == status) {
+            status = AM_INVALID_SESSION;
+        }
 	throw InternalException(func, "Session query failed.", status);
     }
 
+   
    if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
        Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and response attributes fetch mode is set to NONE");
    } else {
@@ -1283,8 +1275,13 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	if (do_sso_only && fetchProfileAttrs && !fetchResponseAttrs) {
 		policy_scope = SCOPE_RESPONSE_ATTRIBUTE_ONLY;
 	}
+    // Need to retrieve the lbcookie for app sso token and add it to
+    // policyEntry->cookies
+     
     // do policy
     string xmlData;
+    PolicyEntryRefCntPtr tmpPolicyEntry = policyTable.find(ssoTok.getString());
+   if (!tmpPolicyEntry) {
     if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
 					       policyEntry->getSSOToken(),
 					       policyEntry->cookies,
@@ -1330,7 +1327,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		Log::log(logID, Log::LOG_WARNING,
 			 "Thread wokeup after successful initialization.");
 	        update_policy(ssoTok, resName, actionName,
-			      env, scope);
+			      env, sessionInfo, scope);
 		/* by setting this to true, the policyTable.insert
 		 * will not get executed.
 		 */
@@ -1341,6 +1338,9 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	    }
 	} else {
 	    // Log:ERROR
+            if (AM_NSPR_ERROR == status) {
+                status = AM_INVALID_SESSION;
+            }
 	    throw InternalException(func, "Policy query failed.",
 				    status);
 	}
@@ -1348,8 +1348,8 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	// Log:INFO
 	process_policy_response(policyEntry, env, xmlData);
     }
+   }
   }
-
 
     if(!wasInTable)
 	policyTable.insert(policyEntry->getSSOToken().getString(), policyEntry);
@@ -1376,9 +1376,10 @@ Service::update_policy_list(const SSOToken &ssoTok,
     if(mFetchFromRootResource == true) {
     	scope = (mOrdNum > 0)?SCOPE_STRICT_SUBTREE:SCOPE_SUBTREE;
     }
-
+    
+    SessionInfo sessionInfo;
     for(iter = resList.begin(); iter != resList.end(); iter++) {
-	update_policy(ssoTok, *iter, actionName, env, scope);
+	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope);
     }
     return;
 }

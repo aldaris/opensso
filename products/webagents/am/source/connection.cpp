@@ -86,6 +86,8 @@ namespace {
 
 bool Connection::initialized;
 PRIntervalTime receive_timeout;
+PRIntervalTime connect_timeout;
+bool tcp_nodelay_is_enabled = false;
 
 am_status_t Connection::initialize(const Properties& properties)
 {
@@ -105,6 +107,15 @@ am_status_t Connection::initialize(const Properties& properties)
     } else {
 	    receive_timeout = PR_INTERVAL_NO_TIMEOUT;
 	}
+
+	unsigned long socket_timeout = properties.getUnsigned(AM_COMMON_CONNECT_TIMEOUT_PROPERTY, 0);
+	if (socket_timeout > 0) {
+	    connect_timeout = PR_MillisecondsToInterval(static_cast<PRInt32>(socket_timeout));
+	} else {
+	    connect_timeout = PR_INTERVAL_NO_TIMEOUT;
+	}
+
+	tcp_nodelay_is_enabled = properties.getBool(AM_COMMON_TCP_NODELAY_ENABLE_PROPERTY, false);
 		
 	//
 	// Initialize the NSS libraries and enable use of all of the
@@ -123,6 +134,10 @@ am_status_t Connection::initialize(const Properties& properties)
 		 "prefix = \"%s\"", certDir.c_str(), dbPrefix.c_str());
 	Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "Connection::initialize() "
 		 "Connection timeout wen receiving data = %i milliseconds",timeout);
+	if (tcp_nodelay_is_enabled) {
+		Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "Connection::initialize() "
+		   "Socket option TCP_NODELAY is enabled");
+	}
 
 	secStatus = NSS_Initialize(certDir.c_str(), dbPrefix.c_str(),
 				   dbPrefix.c_str(), "secmod.db",
@@ -174,6 +189,18 @@ PRFileDesc *Connection::createSocket(const PRNetAddr& address, bool useSSL,
 				     bool alwaysTrustServerCert) 
 {
     PRFileDesc *rawSocket = PR_NewTCPSocket();
+    
+    if (tcp_nodelay_is_enabled) {
+	   // set the TCP_NODELAY option to disable Nagle algorithm
+	   PRSocketOptionData socket_opt;
+	   socket_opt.option = PR_SockOpt_NoDelay;
+	   socket_opt.value.no_delay = PR_TRUE;
+	   PRStatus prStatus = PR_SetSocketOption(rawSocket, &socket_opt);
+	   if (PR_SUCCESS != prStatus) {
+	       throw NSPRException("Connection::Connection", "PR_SetSocketOption");
+	   }
+    }
+    
     PRFileDesc *sslSocket;
     certdbpasswd = strdup(certDBPasswd.c_str());
 
@@ -292,7 +319,7 @@ Connection::Connection(const ServerInfo& server,
 	}
     }
 
-    prStatus = PR_Connect(socket, &address, PR_INTERVAL_NO_TIMEOUT);
+    prStatus = PR_Connect(socket, &address, connect_timeout);
 
     if (prStatus != PR_SUCCESS) {
 	PRErrorCode error = PR_GetError();
@@ -487,8 +514,15 @@ am_status_t Connection::read(char *buffer, std::size_t& bufferLen)
     if (bytesRead < 0) {
 	status = AM_NSPR_ERROR;
 	PRErrorCode error = PR_GetError();
-	if (error == PR_IO_TIMEOUT_ERROR) {
-	    throw NSPRException("Connection::read", "PR_Recv");
+	Log::log(Log::ALL_MODULES, Log::LOG_ERROR,
+		 "Connection::read(): NSPR Error while reading data:%d", 
+		 PR_GetError());
+	if (error == PR_IO_TIMEOUT_ERROR || error == PR_CONNECT_RESET_ERROR ||
+	    error == PR_CONNECT_REFUSED_ERROR ||
+            error == PR_NETWORK_DOWN_ERROR ||
+            error == PR_NETWORK_UNREACHABLE_ERROR || 
+            error == PR_HOST_UNREACHABLE_ERROR) {
+                throw NSPRException("Connection::read()", "PR_Recv");
 	}
     } else {
 	bufferLen = static_cast<std::size_t>(bytesRead);

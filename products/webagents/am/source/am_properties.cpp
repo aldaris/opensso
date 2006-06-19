@@ -97,8 +97,6 @@ am_properties_load(am_properties_t properties, const char *file_name)
 
     if (propPtr && file_name && *file_name) {
 	try {
-	    // First create the backward compatibility property map
-	    propPtr->create_old_to_new_attributes_map();
 	    status = propPtr->load(file_name);
 	} catch (const std::bad_alloc&) {
 	    status = AM_NO_MEMORY;

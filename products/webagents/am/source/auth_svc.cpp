@@ -891,6 +891,9 @@ AuthService::setAuthSvcInfo(AuthContext &auth_ctx)
     }
 
     auth_ctx.authSvcInfo.setFromString(authURL);
+    Log::log(logID, Log::LOG_MAX_DEBUG,
+	     "Number of servers in service:%d, '%s'.",
+	     auth_ctx.authSvcInfo.getNumberOfServers(), authURL.c_str());
 
     return;
 } // setAuthSvcInfo

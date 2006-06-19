@@ -46,7 +46,7 @@ public:
     /* Throws XMLTree::ParseException */
     am_status_t getProfile(const ServiceInfo& service,
 			      const std::string& ssoToken,
-			      const Http::CookieList& cookieList,
+			      Http::CookieList& cookieList,
 			      NamingInfo& namingInfo);
 
 private:
@@ -60,8 +60,10 @@ private:
     am_status_t parseNamingResponse(const std::string& data,
 				       const std::string& ssoToken,
 				       NamingInfo& namingInfo) const;
-	am_status_t NamingService::check_server_alive(std::string hostname, unsigned short portnumber);
-
+    am_status_t check_server_alive(std::string hostname, unsigned short portnumber);
+    
+    void addLoadBalancerCookie(NamingInfo& namingInfo, Http::CookieList& cookieList);
+    
     static const BodyChunk prefixChunk;
     static const BodyChunk namingPrefixChunk;
     static const BodyChunk sessidPrefixChunk;
@@ -71,6 +73,7 @@ private:
     static const std::string policyAttribute;
     static const std::string profileAttribute;
     static const std::string sessionAttribute;
+    static const std::string loadbalancerCookieAttribute;
     static const std::string invalidSessionMsgPrefix;
     static const std::string invalidSessionMsgSuffix;
 };

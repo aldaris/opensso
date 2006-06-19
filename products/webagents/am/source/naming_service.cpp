@@ -85,6 +85,7 @@ const std::string NamingService::profileAttribute("iplanet-am-naming-profile-"
 						  "url");
 const std::string NamingService::sessionAttribute("iplanet-am-naming-session-"
 						  "url");
+const std::string NamingService::loadbalancerCookieAttribute("am_load_balancer_cookie");
 const std::string NamingService::invalidSessionMsgPrefix("SessionID ---");
 const std::string NamingService::invalidSessionMsgSuffix("---is Invalid");
 
@@ -115,6 +116,8 @@ void NamingService::processAttribute(const std::string& name,
 	namingInfo.profileSvcInfo.setFromString(value);
     } else if (name == sessionAttribute) {
 	namingInfo.sessionSvcInfo.setFromString(value);
+    } else if (name == loadbalancerCookieAttribute) {
+        namingInfo.lbCookieStr = value;
     } else {
 	namingInfo.extraProperties.set(name, value);
     }
@@ -213,7 +216,7 @@ am_status_t NamingService::parseNamingResponse(const std::string& data,
 /* throws XMLTree::ParseException */
 am_status_t NamingService::getProfile(const ServiceInfo& service,
 					 const std::string& ssoToken,
-					 const Http::CookieList& cookieList,
+					 Http::CookieList& cookieList,
 					 NamingInfo& namingInfo)
 {
     am_status_t status = AM_FAILURE;
@@ -260,7 +263,10 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 	    "preferredNamingURL", url_length);
 	}
 
-	bodyChunkList.push_back(BodyChunk(preferredNamingURL));
+	if (preferredNamingURL != NULL) {
+	    bodyChunkList.push_back(BodyChunk(preferredNamingURL));
+	    free(preferredNamingURL);
+        }
 	bodyChunkList.push_back(suffixChunk);
 
 	status = doHttpPost(service, std::string(), cookieList,
@@ -275,7 +281,13 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 		if (1 == namingResponses.size()) {
 		    status = parseNamingResponse(namingResponses[0], ssoToken,
 						 namingInfo);
-		    if (status == AM_SUCCESS && ignoreNamingService) {
+                    if (status == AM_SUCCESS) {
+                       const std::string lbCookieStr = namingInfo.getlbCookieStr();
+                       if (!lbCookieStr.empty()) {
+                           addLoadBalancerCookie(namingInfo, cookieList);
+                        }
+                    }
+                    if (status == AM_SUCCESS && ignoreNamingService) {
 			// if load balancer is enabled replace the results with 
 			// the host/port of the naming server because 
 			// naming returns the host/port behind the loadbalancer 
@@ -294,7 +306,7 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 				     "scheme:%s host:%s, port:%u", 
 				      scheme.c_str(), host.c_str(), port);
 			}
-			namingInfo.setHostPort(*serverInfo);
+                        namingInfo.setHostPort(*serverInfo);
 		    }
 		} else {
 		    Log::log(logModule, Log::LOG_ERROR,
@@ -323,6 +335,38 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
     return status;
 }
 
+void NamingService::addLoadBalancerCookie(NamingInfo& namingInfo, 
+					  Http::CookieList& cookieList)
+{
+    char tmplbCookie[25] = {'\0'};
+    int i = 0;
+    char *pch = NULL; char *cookieName = NULL;
+    char *cookieValue = NULL;
+    const std::string lbCookieStr = namingInfo.getlbCookieStr();
+    if (!lbCookieStr.empty()) {
+        strcpy(tmplbCookie, lbCookieStr.c_str());
+        pch = strtok(tmplbCookie,"=");
+        while (pch != NULL) {
+            if (i == 0) cookieName = pch;
+            else cookieValue = pch;
+            pch = strtok(NULL, " ");
+            i++;
+        }
+        std::string tmpCookieName(cookieName);
+        std::string tmpCookieValue(cookieValue);
+    
+        if (!tmpCookieName.empty() && !tmpCookieValue.empty()) {
+            namingInfo.lbCookieName = tmpCookieName;
+            namingInfo.lbCookieValue = tmpCookieValue;
+    
+            Http::Cookie lbCookie(namingInfo.lbCookieName, 
+                                  namingInfo.lbCookieValue);
+            cookieList.push_back(lbCookie);
+        }
+    }
+     
+    return;
+}
 am_status_t NamingService::check_server_alive(std::string hostname, unsigned short portnumber)
 {
     am_status_t status = AM_FAILURE;

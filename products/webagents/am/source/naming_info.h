@@ -51,7 +51,10 @@ public:
     const ServiceInfo& getSessionSvcInfo() const { return sessionSvcInfo; }
 
     const Properties& getExtraProperties() const { return extraProperties; }
-
+    const std::string getlbCookieStr() const { return lbCookieStr; }
+    const std::string getlbCookieName() const { return lbCookieName; }
+    const std::string getlbCookieValue() const { return lbCookieValue; }
+        
     bool isValid() {
 	return infoValid;
     }
@@ -62,7 +65,7 @@ public:
 	profileSvcInfo.setHostPort(serverInfo);
 	sessionSvcInfo.setHostPort(serverInfo);
     }
-
+    
 private:
     bool infoValid;
     friend class NamingService;
@@ -72,6 +75,9 @@ private:
     ServiceInfo profileSvcInfo;
     ServiceInfo sessionSvcInfo;
     Properties extraProperties;
+    std::string lbCookieStr; 
+    std::string lbCookieName;
+    std::string lbCookieValue;
 };
 
 END_PRIVATE_NAMESPACE

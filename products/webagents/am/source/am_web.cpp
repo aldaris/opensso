@@ -3461,7 +3461,9 @@ am_web_is_access_allowed(const char *sso_token,
 			     "%s action by user %s to resource %s.",
 			     thisfunc, am_status_to_string(log_status), 
 			     action_name, rmtUsr, url);
-	    if (agent_info.denyOnLogFailure) {
+            if (log_status == AM_NSPR_ERROR) {
+		status = AM_INVALID_SESSION;
+	    } else if (agent_info.denyOnLogFailure) {
 		status = AM_ACCESS_DENIED;
 	    }
 	}

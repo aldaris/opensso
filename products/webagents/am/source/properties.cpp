@@ -208,7 +208,6 @@ Properties::Properties(bool ignore_case)
 	       Utils::CmpFunc>(Utils::CmpFunc(ignore_case)),
     logID(Log::ALL_MODULES), icase(ignore_case) {
     logID = Log::ALL_MODULES;
-    create_new_to_old_attributes_map();
 }
 
 Properties::Properties(const Properties &props, Log::ModuleId moduleID)
@@ -216,14 +215,12 @@ Properties::Properties(const Properties &props, Log::ModuleId moduleID)
     logID(props.logID), icase(props.icase)
 {
     logID = moduleID;
-    create_new_to_old_attributes_map();
 }
 
 Properties::Properties(const Properties &props)
     : std::map<std::string, std::string, Utils::CmpFunc>(props),
     logID(props.logID), icase(props.icase)
 {
-    create_new_to_old_attributes_map();
 }
 
 Properties::~Properties()
@@ -240,6 +237,7 @@ am_status_t Properties::parseBuffer(char *buffer)
     am_status_t status = AM_SUCCESS;
     char *nextLine;
     int len;
+    char ver[10] = {'\0'};
 
     try {
 	for (buffer = skipWhitespaceAndComments(buffer);
@@ -268,15 +266,26 @@ am_status_t Properties::parseBuffer(char *buffer)
 		buffer[len--] = '\0';
 	    }
 
-		// First resolve backward compatibility issue
-	    const char *new_property_name = get_new_property_name(key);
-	    if (new_property_name != NULL) {
-		    std::string newkey(new_property_name);
+            if (key == AM_WEB_AGENTS_VERSION_OLD) {
+                strcpy(ver, buffer);
+                if (!strncmp(ver, "2.1", 3)) {
+                    create_old_to_new_attributes_map();
+                }
+            }
+            
+            if (!strncmp(ver, "2.1", 3)) {
+                // First resolve backward compatibility issue
+                const char *new_property_name = get_new_property_name(key);
+                if (new_property_name != NULL) {
+                    std::string newkey(new_property_name);
 		    set(newkey, buffer);
-		} else {
-		    // XXX - Should handle backslash escapes in the value
-		    set(key, buffer);
-		}
+                } else {
+                    set(key,buffer);
+                }
+	    } else {
+		// XXX - Should handle backslash escapes in the value
+		set(key, buffer);
+	    }
 	}
 
 	if (*buffer) {
@@ -295,7 +304,6 @@ am_status_t Properties::load(const std::string& fileName)
     PRFileDesc *propFile;
 
     PRErrorCode pr_errorCode;
-
 
     propFile = PR_Open(fileName.c_str(), PR_RDONLY, 0);
     if (NULL != propFile) {
@@ -473,76 +481,31 @@ void Properties::create_old_to_new_attributes_map()
 }
 
 // Create a hash map of new-to-old properties
-void Properties::create_new_to_old_attributes_map() 
+const char* Properties::get_old_property_name(const std::string& key) const
 {
-	oldAttributesMap = reinterpret_cast<KeyValueMap *>(new KeyValueMap());
-	if (oldAttributesMap != NULL) {
-	    oldAttributesMap->insert(AM_COMMON_COOKIE_NAME_PROPERTY,AM_COMMON_COOKIE_NAME_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_NAMING_URL_PROPERTY,AM_COMMON_NAMING_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_COOKIE_NAME_PROPERTY,AM_COMMON_COOKIE_NAME_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_NAMING_URL_PROPERTY,AM_COMMON_NAMING_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_LOG_LEVELS_PROPERTY,AM_COMMON_LOG_LEVELS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_SSL_CERT_DIR_PROPERTY,AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_CERT_DB_PREFIX_PROPERTY,AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY,AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_NOTIFICATION_ENABLE_PROPERTY,AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_NOTIFICATION_URL_PROPERTY,AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_LOADBALANCE_PROPERTY,AM_COMMON_LOADBALANCE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_LOGIN_URL_PROPERTY,AM_POLICY_LOGIN_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_LOG_FILE_PROPERTY,AM_COMMON_LOG_FILE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY,AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY,AM_POLICY_HASH_TIMEOUT_MINS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_USER_ID_PARAM_PROPERTY,AM_POLICY_USER_ID_PARAM_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY,AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_SLBCOOKIE_PROPERTY,AM_POLICY_SLBCOOKIE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_SERVER_LOG_FILE_PROPERTY,AM_COMMON_SERVER_LOG_FILE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_MODE,AM_POLICY_PROFILE_ATTRS_MODE_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_MAP,AM_POLICY_PROFILE_ATTRS_MAP_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_COOKIE_PFX,AM_POLICY_PROFILE_ATTRS_COOKIE_PFX_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE,AM_POLICY_PROFILE_ATTRS_COOKIE_MAX_AGE_OLD,false);
-	    oldAttributesMap->insert(AM_LOG_ACCESS_TYPE_PROPERTY,AM_LOG_ACCESS_TYPE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_URI_PREFIX,AM_WEB_URI_PREFIX_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_INSTANCE_NAME_PROPERTY,AM_WEB_INSTANCE_NAME_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_DO_SSO_ONLY,AM_WEB_DO_SSO_ONLY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_ACCESS_DENIED_URL_PROPERTY,AM_WEB_ACCESS_DENIED_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_URL_REDIRECT_PARAM,AM_WEB_URL_REDIRECT_PARAM_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_FQDN_DEFAULT,AM_WEB_FQDN_DEFAULT_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_FQDN_MAP,AM_WEB_FQDN_MAP_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_COOKIE_RESET_ENABLED,AM_WEB_COOKIE_RESET_ENABLED_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_COOKIE_RESET_LIST,AM_WEB_COOKIE_RESET_LIST_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_COOKIE_DOMAIN_LIST,AM_WEB_COOKIE_DOMAIN_LIST_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_ANONYMOUS_USER,AM_WEB_ANONYMOUS_USER_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_ANON_REMOTE_USER_ENABLE,AM_WEB_ANON_REMOTE_USER_ENABLE_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_NOT_ENFORCED_LIST_PROPERTY,AM_WEB_NOT_ENFORCED_LIST_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_REVERSE_NOT_ENFORCED_LIST,AM_WEB_REVERSE_NOT_ENFORCED_LIST_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_NOT_ENFORCED_IPADDRESS,AM_WEB_NOT_ENFORCED_IPADDRESS_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_POST_CACHE_DATA_PRESERVE,AM_WEB_POST_CACHE_DATA_PRESERVE_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_POST_CACHE_ENTRY_LIFETIME,AM_WEB_POST_CACHE_ENTRY_LIFETIME_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_POST_CACHE_CLEANPUP_INTERVAL,AM_WEB_POST_CACHE_CLEANPUP_INTERVAL_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_CDSSO_ENABLED_PROPERTY,AM_WEB_CDSSO_ENABLED_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_CDC_SERVLET_URL_PROPERTY,AM_WEB_CDC_SERVLET_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_CHECK_CLIENT_IP_PROPERTY,AM_WEB_CHECK_CLIENT_IP_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_LOGOUT_URL_PROPERTY,AM_WEB_LOGOUT_URL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY,AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_GET_CLIENT_HOSTNAME,AM_WEB_GET_CLIENT_HOSTNAME_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_CONVERT_MBYTE_ENABLE,AM_WEB_CONVERT_MBYTE_ENABLE_OLD,false);
-	    oldAttributesMap->insert(AM_COMMON_IGNORE_PATH_INFO,AM_COMMON_IGNORE_PATH_INFO_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_OVERRIDE_HOST,AM_WEB_OVERRIDE_HOST_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_OVERRIDE_PORT,AM_WEB_OVERRIDE_PORT_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_OVERRIDE_NOTIFICATION_URL,AM_WEB_OVERRIDE_NOTIFICATION_URL_OLD,false);
-	    oldAttributesMap->insert(AM_AUTH_ORGANIZATION_NAME_PROPERTY,AM_AUTH_ORGANIZATION_NAME_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_AUTH_CERT_ALIAS_PROPERTY,AM_AUTH_CERT_ALIAS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_AUTH_SERVICE_URLS_PROPERTY,AM_AUTH_SERVICE_URLS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_HASH_BUCKET_SIZE_PROPERTY,AM_POLICY_HASH_BUCKET_SIZE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_POLICY_FETCH_FROM_ROOT_RSRC_PROPERTY,AM_POLICY_FETCH_FROM_ROOT_RSRC_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_SSO_HASH_BUCKET_SIZE_PROPERTY,AM_SSO_HASH_BUCKET_SIZE_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_SSO_HASH_TIMEOUT_MINS_PROPERTY,AM_SSO_HASH_TIMEOUT_MINS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_SSO_MAX_THREADS_PROPERTY,AM_SSO_MAX_THREADS_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY,AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY_OLD,false);
-	    oldAttributesMap->insert(AM_SSO_DEFAULT_SESSION_URL,AM_SSO_DEFAULT_SESSION_URL_OLD,false);
-	    oldAttributesMap->insert(AM_WEB_DENY_ON_LOG_FAILURE,AM_WEB_DENY_ON_LOG_FAILURE_OLD,false);
-	    oldAttributesMap->insert(AM_DOMINO_CHECK_NAME_DB_PROPERTY,AM_DOMINO_CHECK_NAME_DB_PROPERTY_OLD,false);
-	}
+	std::string newname;
+        if (key == AM_COMMON_NAMING_URL_PROPERTY)
+	   newname = AM_COMMON_NAMING_URL_PROPERTY_OLD;
+        if (key == AM_COMMON_NOTIFICATION_ENABLE_PROPERTY)
+	   newname = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD;
+        if (key == AM_COMMON_NOTIFICATION_URL_PROPERTY)
+	   newname = AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD;
+        if (key == AM_COMMON_TRUST_SERVER_CERTS_PROPERTY)
+	   newname = AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD;
+        if (key == AM_COMMON_CERT_DB_PREFIX_PROPERTY)
+	   newname = AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
+        if (key == AM_AUTH_CERT_ALIAS_PROPERTY)
+	   newname = AM_AUTH_CERT_ALIAS_PROPERTY_OLD;
+        if (key == AM_COMMON_LOG_LEVELS_PROPERTY)
+	   newname = AM_COMMON_LOG_LEVELS_PROPERTY_OLD;
+        if (key == AM_COMMON_LOG_FILE_PROPERTY)
+	   newname = AM_COMMON_LOG_FILE_PROPERTY_OLD;
+        if (key == AM_COMMON_SSL_CERT_DIR_PROPERTY)
+	   newname = AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD;
+        if (key == AM_COMMON_CERT_DB_PREFIX_PROPERTY)
+	   newname = AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
+        
+        return newname.c_str();
 }
 
 const char* Properties::get_new_property_name(const std::string& key) const
@@ -550,18 +513,6 @@ const char* Properties::get_new_property_name(const std::string& key) const
     if (newAttributesMap != NULL && newAttributesMap->size() > 0) {
        KeyValueMap::const_iterator iter = newAttributesMap->find(key);
        if (iter != newAttributesMap->end() && 
-           iter->second.size() > 0) {
-            return iter->second[0].c_str();
-       }
-    }
-    return NULL;
-}
-
-const char* Properties::get_old_property_name(const std::string& key) const
-{
-    if (oldAttributesMap != NULL && oldAttributesMap->size() > 0) {
-       KeyValueMap::const_iterator iter = oldAttributesMap->find(key);
-       if (iter != oldAttributesMap->end() && 
            iter->second.size() > 0) {
             return iter->second[0].c_str();
        }

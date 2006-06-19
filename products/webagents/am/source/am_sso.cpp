@@ -137,9 +137,11 @@ am_sso_create_sso_token_handle(am_sso_token_handle_t *sso_token_handle,
 	SessionInfo *session = NULL;
 	try {
             session = new SessionInfo();
+	    Http::CookieList cookieList;
 	    retVal = SSOTokenSvc->getSessionInfo(
 			     ServiceInfo(),
 			     sso_token_id,
+			     cookieList,
 			     reset_idle_timer==B_TRUE?true:false,
 			     *session);
             if (retVal != AM_SUCCESS) {
@@ -623,9 +625,11 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
 	try {
 	    SessionInfo *sessionInfo=
 			    reinterpret_cast<SessionInfo *>(sso_token_handle);
+	    Http::CookieList cookieList;
 	    string ssoTokenId = sessionInfo->getSSOToken().getString(); 
 	    sts = SSOTokenSvc->getSessionInfo(ServiceInfo(),
 					      ssoTokenId,
+					      cookieList,
 					      false,
 					      *sessionInfo, 
 					      true);
@@ -688,9 +692,11 @@ am_sso_refresh_token(const am_sso_token_handle_t sso_token_handle)
 	try {
 	    SessionInfo *sessionInfo=
 		reinterpret_cast<SessionInfo *>(sso_token_handle);
+	    Http::CookieList cookieList;
 	    string ssoTokenId = sessionInfo->getSSOToken().getString(); 
 	    sts = SSOTokenSvc->getSessionInfo(ServiceInfo(),
 					      ssoTokenId,
+					      cookieList,
 					      true,
 					      *sessionInfo, 
 					      true);

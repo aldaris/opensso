@@ -83,6 +83,7 @@ AM_BEGIN_EXTERN_C
 
 #define AM_WEB_PROPERTY_PREFIX		"com.sun.am.policy.agents.config."
 #define AM_WEB_PROPERTY_PREFIX_OLD	"com.sun.am.policy.agents."
+#define AM_WEB_AGENTS_VERSION_OLD AM_WEB_PROPERTY_PREFIX_OLD "version"
 #define AM_WEB_CHECK_CLIENT_IP_PROPERTY		AM_WEB_PROPERTY_PREFIX "client_ip_validation.enable"
 #define AM_WEB_CHECK_CLIENT_IP_PROPERTY_OLD		AM_WEB_PROPERTY_PREFIX_OLD "client_ip_validation_enable"
 #define AM_WEB_ACCESS_DENIED_URL_PROPERTY AM_WEB_PROPERTY_PREFIX "accessdenied.url"

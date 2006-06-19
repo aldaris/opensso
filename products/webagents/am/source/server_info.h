@@ -29,7 +29,8 @@
 #define SERVER_INFO_H
 
 #include <string>
-
+#include <prtime.h>
+#include <prprf.h>
 #include "internal_macros.h"
 
 BEGIN_PRIVATE_NAMESPACE
@@ -40,11 +41,11 @@ public:
     /* The constructors and methods throw std::invalid_argument 
      * if any url in a URL list argument is invalid.
      */
-    ServerInfo(): host(), port(0), use_ssl(false), uri() {}
+    ServerInfo(): host(), port(0), use_ssl(false), uri(), healthy(true), excludeTime(0),url() {}
     ServerInfo(const char *url, std::size_t len = 0);
     ServerInfo(const std::string& url);
     ServerInfo(const ServerInfo &svrInfo):host(svrInfo.host), 
-	port(svrInfo.port), use_ssl(svrInfo.use_ssl), uri(svrInfo.uri) {}
+	port(svrInfo.port), use_ssl(svrInfo.use_ssl), uri(svrInfo.uri), healthy(svrInfo.healthy), excludeTime(svrInfo.excludeTime), url(svrInfo.url) {}
 
     void setFromString(const char *url, std::size_t len = 0);
     void setFromString(const std::string& url);
@@ -59,8 +60,27 @@ public:
     unsigned short getPort() const { return port; }
     bool useSSL() const { return use_ssl; }
     const std::string& getURI() const { return uri; }
+    const std::string& getURL() const { return url; }
 
     std::string toString() const;
+    bool isHealthy(std::string poll_primary_server) const {
+        if(!healthy) {
+            if(excludeTime < PR_Now()) {
+                int pollTime=0;
+                PR_sscanf(poll_primary_server.c_str(), "%d", &pollTime);
+                excludeTime = PR_Now() + (pollTime * 60 * 1000000);
+                healthy = true;
+            }
+        }
+        return healthy;
+    }
+
+    void markServerDown(std::string poll_primary_server) const {
+        int pollTime=0;
+        healthy = false;
+        PR_sscanf(poll_primary_server.c_str(), "%d", &pollTime);
+        excludeTime = PR_Now() + (pollTime * 60 * 1000000);
+    } 
 
 private:
     void parseURL(const char *url, std::size_t len);
@@ -72,6 +92,9 @@ private:
     unsigned short port;
     bool use_ssl;
     std::string uri;
+    mutable bool healthy;
+    mutable PRTime excludeTime;
+    std::string url;
 };
 
 END_PRIVATE_NAMESPACE

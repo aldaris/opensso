@@ -25,7 +25,6 @@
  * particular service.
  *
  */ 
-
 #ifndef __SERVICE_H__
 #define __SERVICE_H__
 
@@ -127,6 +126,7 @@ class Service {
     void update_policy(const SSOToken &, const std::string &,
 		       const std::string &,
 		       const KeyValueMap &,
+                       SessionInfo &,
 		       policy_fetch_scope_t scope);
 
     void update_policy_list(const SSOToken &,
@@ -138,9 +138,6 @@ class Service {
 				 const std::string &);
 
     const am_status_t destroyAppSSOToken();
-
-    void validate_session(const std::string &ssoToken,
-			      SessionInfo &sessionInfo) const;
 
     class PolicyHandler:public ThreadFunction {
     private:

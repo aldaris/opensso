@@ -20,28 +20,6 @@
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
  */ 
-/* The contents of this file are subject to the terms
- * of the Common Development and Distribution License
- * (the License). You may not use this file except in
- * compliance with the License.
- *
- * You can obtain a copy of the License at
- * https://opensso.dev.java.net/public/CDDLv1.0.html or
- * opensso/legal/CDDLv1.0.txt
- * See the License for the specific language governing
- * permission and limitations under the License.
- *
- * When distributing Covered Code, include this CDDL
- * Header Notice in each file and include the License file
- * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
- * with the fields enclosed by brackets [] replaced by
- * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
- *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
- *
- */ 
 #include <stdio.h>
 #include <stdexcept>
 #if	defined(WINNT)
@@ -166,6 +144,7 @@ BaseService::BaseService(const std::string& name,
     : logModule(Log::addModule(name)), objLock(), serviceRequestId(0),
       certDBPasswd((cert_passwd.size()>0)?cert_passwd:props.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,"")),
       certNickName((cert_nick_name.size()>0)?cert_nick_name:props.get(AM_AUTH_CERT_ALIAS_PROPERTY,"")),
+      poll_primary_server(props.get(AM_COMMON_POLL_PRIMARY_SERVER,"5")),
       alwaysTrustServerCert(trustServerCert)
 {
 }
@@ -320,6 +299,18 @@ BaseService::doRequest(const ServiceInfo& service,
 	ServiceInfo::const_iterator iter;
 
 	for (iter = service.begin(); iter != service.end(); ++iter) {
+            const ServerInfo &svrInfo = (*iter);
+	    if (!svrInfo.isHealthy(poll_primary_server)) {
+		Log::log(logModule, Log::LOG_WARNING,
+			"BaseService::doRequest(): "
+			"Server is unavailable: %s.",
+			svrInfo.getURL().c_str());
+		continue;
+	    } else {
+		Log::log(logModule, Log::LOG_DEBUG,
+			"BaseService::doRequest(): Using server: %s.",
+			iter->getURL().c_str());
+            }
 	    try {
 		Connection conn(*iter, certDBPasswd,
 				(cert_nick_name.size()>0)?cert_nick_name:certNickName,
@@ -369,20 +360,24 @@ BaseService::doRequest(const ServiceInfo& service,
 			     "%s %s, error = %s", operation,
 			     (*iter).toString().c_str(), 
 			     PR_ErrorToName(nspr_code));
-		    continue;
 		}
 		
-		if (AM_SUCCESS == status && serverInfo != NULL) {
-		    *serverInfo = &(*iter);
+		if (AM_SUCCESS == status) {
+		    if(serverInfo != NULL) *serverInfo = &(*iter);
+		    break;
+		} else {
+		    svrInfo.markServerDown(poll_primary_server);
 		}
-
-		break;
 	    } catch (const NSPRException& exc) {
 		Log::log(logModule, Log::LOG_DEBUG,
 			 "BaseService::doRequest() caught %s: %s called by %s "
 			 "returned %s", exc.what(), exc.getNsprMethod(),
 			 exc.getThrowingMethod(), 
 			 PR_ErrorToName(exc.getErrorCode()));
+                Log::log(logModule, Log::LOG_DEBUG, 
+                   "BaseService::doRequest() Invoking markSeverDown");
+		svrInfo.markServerDown(poll_primary_server);
+		status = AM_NSPR_ERROR;
 		continue;
 	    }
 	}

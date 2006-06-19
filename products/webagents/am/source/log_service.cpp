@@ -26,6 +26,7 @@
 #include "xml_tree.h"
 #include "utils.h"
 #include "scope_lock.h"
+#include "http.h"
 
 USING_PRIVATE_NAMESPACE
 
@@ -509,8 +510,8 @@ am_status_t LogService::flushBuffer()
 
     remoteBodyChunkList.push_back(requestSetSuffixChunk);
     Http::Response response;
-
-    status = doHttpPost(serviceInfo, std::string(), Http::CookieList(),
+    
+    status = doHttpPost(serviceInfo, std::string(), cookieList,
         remoteBodyChunkList, response);
 
     if (status == AM_SUCCESS) {

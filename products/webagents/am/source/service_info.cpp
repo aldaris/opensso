@@ -20,7 +20,6 @@
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
  */ 
-
 #include <cstring>
 #include <stdexcept>
 
@@ -74,12 +73,14 @@ void ServiceInfo::parseServerList(const char *server_string)
     Utils::trim(serverStr);
     const char *serverString = serverStr.c_str();
     
-    while (' ' == *serverString) {
-	serverString += 1;
-    }
-
     while (*serverString) {
-	const char *endOfServer = std::strchr(serverString, ' ');
+	const char *endOfServer = serverString;
+	while(*endOfServer && isspace(*endOfServer)) endOfServer++;
+
+	serverString = endOfServer;
+
+	while(*endOfServer && !isspace(*endOfServer)) endOfServer++;
+
 	std::size_t len;
 
 	if (endOfServer) {
@@ -92,10 +93,7 @@ void ServiceInfo::parseServerList(const char *server_string)
 	    newServerList.push_back(ServerInfo(serverString, len));
 	}
 
-	serverString += len;
-	while (' ' == *serverString) {
-	    serverString += 1;
-	}
+	serverString = endOfServer;
     }
 
     // Now that we have successfully parsed the provided string,

@@ -61,46 +61,46 @@ const std::string ServerInfo::http("http");
 const std::string ServerInfo::https("https");
 
 /* Throws std::invalid_argument if url is invalid */
-ServerInfo::ServerInfo(const char *url, std::size_t len)
-    : host(), port(0), use_ssl(false), uri()
+ServerInfo::ServerInfo(const char *theURL, std::size_t len)
+    : host(), port(0), use_ssl(false), uri(), healthy(true), excludeTime(0), url()
 {
-    if (NULL == url) {
+    if (NULL == theURL) {
 	throw std::invalid_argument("ServerInfo() url is NULL");
     }
 
     if (0 == len) {
-	len = std::strlen(url);
+	len = std::strlen(theURL);
     }
 
-    parseURL(url, len);
+    parseURL(theURL, len);
 }
 
-ServerInfo::ServerInfo(const std::string& url)
-    : host(), port(0), use_ssl(false), uri()
+ServerInfo::ServerInfo(const std::string& theURL)
+    : host(), port(0), use_ssl(false), uri(), healthy(true), excludeTime(0), url()
 {
-    parseURL(url.c_str(), url.size());
+    parseURL(theURL.c_str(), theURL.size());
 }
 
 /* Throws std::invalid_argument if url is invalid */
-void ServerInfo::setFromString(const char *url, std::size_t len)
+void ServerInfo::setFromString(const char *theURL, std::size_t len)
 {
-    if (NULL == url) {
+    if (NULL == theURL) {
 	throw std::invalid_argument("ServerInfo.setFromString() url is NULL");
     }
 
     if (0 == len) {
-	len = std::strlen(url);
+	len = std::strlen(theURL);
     }
 
-    parseURL(url, len);
+    parseURL(theURL, len);
 }
 
-void ServerInfo::setFromString(const std::string& url)
+void ServerInfo::setFromString(const std::string& theURL)
 {
-    parseURL(url.c_str(), url.size());
+    parseURL(theURL.c_str(), theURL.size());
 }
 
-void ServerInfo::parseURL(const char *url, std::size_t len)
+void ServerInfo::parseURL(const char *theURL, std::size_t len)
 {
     std::size_t offset = 0;
     bool urlUsesSSL;
@@ -111,14 +111,14 @@ void ServerInfo::parseURL(const char *url, std::size_t len)
     // about running off the end of the buffer.  The comparison string
     // is only significant for being a minimally valid URL.
     if (len - offset < MIN_URL_LEN) {
-	invalidURL("URL too short", url, len);
+	invalidURL("URL too short", theURL, len);
     }
 
-    if ((url[offset] == 'h' || url[offset] == 'H') &&
-	(url[++offset] == 't' || url[offset] == 'T') &&
-	(url[++offset] == 't' || url[offset] == 'T') &&
-	(url[++offset] == 'p' || url[offset] == 'P')) {
-	if (url[offset + 1] == 's' || url[offset + 1] == 'S') {
+    if ((theURL[offset] == 'h' || theURL[offset] == 'H') &&
+	(theURL[++offset] == 't' || theURL[offset] == 'T') &&
+	(theURL[++offset] == 't' || theURL[offset] == 'T') &&
+	(theURL[++offset] == 'p' || theURL[offset] == 'P')) {
+	if (theURL[offset + 1] == 's' || theURL[offset + 1] == 'S') {
 	    urlUsesSSL = true;
 	    offset += 2;
 	} else {
@@ -126,28 +126,28 @@ void ServerInfo::parseURL(const char *url, std::size_t len)
 	    offset += 1;
 	}
 
-	if (url[offset] == ':' && url[offset + 1] == '/' &&
-	    url[offset + 2] == '/') {
+	if (theURL[offset] == ':' && theURL[offset + 1] == '/' &&
+	    theURL[offset + 2] == '/') {
 	    offset += 3;
 
 	    std::size_t startOfHost = offset;
-	    while (offset < len && ':' != url[offset] && '/' != url[offset]) {
+	    while (offset < len && ':' != theURL[offset] && '/' != theURL[offset]) {
 		offset += 1;
 	    }
 
 	    std::size_t hostLen = offset - startOfHost;
 	    if (hostLen > 0) {
-		std::string newHost(&url[startOfHost], hostLen);
+		std::string newHost(&theURL[startOfHost], hostLen);
 		unsigned short newPort = urlUsesSSL ? HTTPS_PORT : HTTP_PORT;
 		std::string newURI("/");
 
 		if (offset < len) {
-		    if (':' == url[offset]) {
+		    if (':' == theURL[offset]) {
 			offset += 1;
 
 			std::size_t startOfPort = offset;
-			while (offset < len && '0' <= url[offset] &&
-			    '9' >= url[offset]) {
+			while (offset < len && '0' <= theURL[offset] &&
+			    '9' >= theURL[offset]) {
 			    offset += 1;
 			}
 
@@ -158,22 +158,22 @@ void ServerInfo::parseURL(const char *url, std::size_t len)
 			    unsigned int value = 0;
 
 			    for (std::size_t i = startOfPort; i < offset; ++i){
-				value = (value * 10) + (url[i] - '0');
+				value = (value * 10) + (theURL[i] - '0');
 			    }
 			    if (value <= USHRT_MAX) {
 				newPort = static_cast<unsigned short>(value);
 			    } else {
-				invalidURL("invalid port number", url, len);
+				invalidURL("invalid port number", theURL, len);
 			    }
 			}
 		    }
 
 		    if (offset < len) {
-			if ('/' == url[offset++]) {
-			    newURI.append(&url[offset], len - offset);
+			if ('/' == theURL[offset++]) {
+			    newURI.append(&theURL[offset], len - offset);
 			} else {
 			    invalidURL("invalid character in port number",
-				       url, len);
+				       theURL, len);
 			}
 		    }
 		}
@@ -185,14 +185,15 @@ void ServerInfo::parseURL(const char *url, std::size_t len)
 		port = newPort;
 		use_ssl = urlUsesSSL;
 		uri.swap(newURI);
+		this->url.append(theURL, len);
 	    } else {
-		invalidURL("missing host name", url, len);
+		invalidURL("missing host name", theURL, len);
 	    }
 	} else {
-	    invalidURL("unable to parse protocol terminator", url, len);
+	    invalidURL("unable to parse protocol terminator", theURL, len);
 	}
     } else {
-	invalidURL("unable to parse protocol", url, len);
+	invalidURL("unable to parse protocol", theURL, len);
     }
 }
 

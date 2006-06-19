@@ -99,7 +99,7 @@ SSOTokenService::SSOTokenService(const char *serviceName,
     mSSOTokenTable(mServiceParams.getUnsigned(
                       AM_SSO_HASH_BUCKET_SIZE_PROPERTY, DEFAULT_HASH_SIZE),
 		   mServiceParams.getPositiveNumber(
-                      AM_SSO_HASH_TIMEOUT_MINS_PROPERTY, DEFAULT_TIMEOUT)),
+                      AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY, DEFAULT_TIMEOUT)),
     mHTCleaner(NULL),
     mThreadPool(NULL),
     mInitialized(false),
@@ -301,21 +301,21 @@ SSOTokenService::getServiceInfo(const std::string& ssoTokenID,
     else if (entry) {
         const ServiceInfo& info = entry->getSessionServiceInfo();
 	Log::log(mLogID, Log::LOG_DEBUG, 
-                 "%s: Using service info from entry %s:%d",
-		 thisfunc, (*info.begin()).getHost().c_str(), 
-                 (*info.begin()).getPort());
+                 "%s: Using service info from entry %s.",
+		 thisfunc, (*info.begin()).getURL().c_str());
 	// if entry was in cache, use server info from the entry.
         return info;
-    } 
+    }
     // get from naming url. if no naming url configured, or if 
     // error returned from naming url, use default session configured
     // from naming server.
     else if (!mNamingServiceURL.empty()) {
 	// get session URL from naming service if any.
 	am_status_t naming_sts;
+	Http::CookieList cookieList;
 	naming_sts = mNamingService.getProfile(mNamingServiceInfo, 
 					       ssoTokenID,
-					       Http::CookieList(),
+					       cookieList,
 					       namingInfo);
 	if (naming_sts == AM_SUCCESS) {
             const ServiceInfo& info = namingInfo.getSessionSvcInfo();
@@ -391,10 +391,12 @@ SSOTokenService::buildCookieList(const std::string& ssoTokenID,
     return;
 }
 
+
 am_status_t
 SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
 			        const std::string& ssoTokID,
-			        bool resetIdleTimer,
+			        Http::CookieList& cookieList,
+                                bool resetIdleTimer,
 			        SessionInfo& sessionInfo,
                                 bool forceRefresh,
 				bool xformToken)
@@ -449,12 +451,6 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
         sts = AM_SUCCESS;
     }
     else {
-	// go to server
-	// pass dpro cookie in cookie list 
-	Http::CookieList httpCookieList;
-	if (mLoadBalancerEnabled && entry) 
-	    buildCookieList(ssoTokenID, httpCookieList, entry);
-	
 	NamingInfo namingInfo;
 	try {
 	    const ServiceInfo& svcInfo = getServiceInfo(ssoTokenID,
@@ -463,11 +459,27 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
                                                         namingInfo);
 	    Log::log(mLogID, Log::LOG_DEBUG,
                      "SSOTokenService::getSessionInfo(): "
-		     "going to server %s.", 
-		     (*svcInfo.begin()).getHost().c_str());
+		     "going to server %s.",
+		     (*svcInfo.begin()).getURL().c_str());
+            
+            if (cookieList.empty()) {
+               const std::string lbCookieName = namingInfo.getlbCookieName();
+               const std::string lbCookieValue = namingInfo.getlbCookieValue();
+            
+               if (!lbCookieName.empty() && !lbCookieValue.empty()) {
+                  Http::Cookie lbCookie(lbCookieName, lbCookieValue);
+                  cookieList.push_back(lbCookie);
+               }
+            }
+            
+            // go to server
+	    // pass dpro cookie in cookie list 
+            if (mLoadBalancerEnabled && entry) 
+                buildCookieList(ssoTokenID, cookieList, entry);
+            
 	    sts = SessionService::getSessionInfo(svcInfo,
 						 ssoTokenID,
-						 httpCookieList,
+						 cookieList,
 						 resetIdleTimer,
 						 mNotifEnabled,
 						 mNotifURL,
@@ -481,7 +493,7 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
 		SSOTokenEntryRefCntPtr ssotokenEntry;
 		SSOTokenEntryRefCntPtr oldEntry;
 		ssotokenEntry = new SSOTokenEntry(sessionInfo, 
-						  httpCookieList,
+						  cookieList,
 						  svcInfo);
 		oldEntry = mSSOTokenTable.insert(ssoTokenID, ssotokenEntry);
 		Log::log(mLogID, Log::LOG_MAX_DEBUG,
@@ -567,7 +579,7 @@ SSOTokenService::destroySession(const ServiceInfo& serviceInfo,
 	Log::log(mLogID, Log::LOG_DEBUG,
                  "SSOTokenService::destroySession(): "
                  "going to server %s.", 
-                 (*svcInfo.begin()).getHost().c_str());
+                 (*svcInfo.begin()).getURL().c_str());
         sts = SessionService::destroySession(
                           svcInfo,
 			  ssoTokenID,
@@ -655,7 +667,7 @@ SSOTokenService::setProperty(const ServiceInfo& serviceInfo,
 	Log::log(mLogID, Log::LOG_DEBUG,
                  "SSOTokenService::setProperty(): "
                  "going to server %s.", 
-                 (*svcInfo.begin()).getHost().c_str());
+                 (*svcInfo.begin()).getURL().c_str());
         sts = SessionService::setProperty(svcInfo,
 			                  sessionInfo,
                                           name, 
@@ -766,9 +778,12 @@ SSOTokenService::addSSOTokenListener(
                      "SSOTokenService::addSSOTokenListener(): "
 		     "SSO Token %s NOT found in cache.",
 		     ssoTokenID.c_str());
+           
+            Http::CookieList cookieList;
             // bring token into cache.
            sts = getSessionInfo(ServiceInfo(),
                                 sessionInfoPtr->getSSOToken().getString(),
+                                cookieList,
                                 false,
                                 *sessionInfoPtr); 
         }
@@ -808,6 +823,7 @@ SSOTokenService::addSSOTokenListener(
 			     "sending notif URL %s for sso token %s.",
 			     (*svcInfo.begin()).getHost().c_str(),
 			     ssoTokenID.c_str());
+
 		    sts = SessionService::addListener(svcInfo,
 						      ssoTokenID,
 						      httpCookieList,

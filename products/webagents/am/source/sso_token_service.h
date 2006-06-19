@@ -132,7 +132,7 @@ private:
     void buildCookieList(const std::string& ssoTokenID,
                          Http::CookieList& cookieList, 
                          const SSOTokenEntryRefCntPtr& entry);
-
+                         
     am_status_t callSSOTokenListeners(
 			const std::string& sessionID, 
 			const XMLElement& sessionElem, 
@@ -185,7 +185,8 @@ public:
 
     am_status_t getSessionInfo(const ServiceInfo& serviceInfo,
 			       const std::string& ssoTokenID,
-			       bool resetIdleTimer,
+			       Http::CookieList& cookieList,
+                               bool resetIdleTimer,
 			       SessionInfo& sessionInfo,
                                bool forceRefresh=false,
 			       bool xformToken=true);
