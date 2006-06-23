@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchResults.java,v 1.2 2005-12-08 01:16:42 veiming Exp $
+ * $Id: IdSearchResults.java,v 1.3 2006-06-23 00:48:06 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,14 +54,13 @@ public class IdSearchResults {
      */
     public static final int TIME_LIMIT_EXCEEDED = 2;
 
-    protected Set searchResults = new HashSet(); // Ordered set contain the
-
-    // result identities
-    protected Map resultsMap = new HashMap(); // Contains result of identities
-                                                // and
-
-    // the attributes requested as part
+    // Ordered set contain the result identities
+    protected Set searchResults = new HashSet(); 
+    
+    // Contains result of identities and the attributes requested as part
     // of the search
+    protected Map resultsMap = new HashMap(); 
+                                                
     protected int errorCode = SUCCESS;
 
     private IdType searchType;
@@ -146,5 +145,18 @@ public class IdSearchResults {
     protected String getOrgName() {
         return org;
     }
-
+    
+    /**
+     * Returns String representation of the <code>IdSearchResults</code> object.
+     * It returns identity names and attributes
+     *
+     * @return String representation of the <code>ServiceConfig</code> object.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(200);
+        sb.append("IdSearchResults:");
+        sb.append("\n\tIdentities: ").append(searchResults);
+        sb.append("\n\tAttributes: ").append(resultsMap);
+        return (sb.toString());
+    }
 }

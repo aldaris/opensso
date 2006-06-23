@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchControl.java,v 1.3 2006-03-16 21:36:12 goodearth Exp $
+ * $Id: IdSearchControl.java,v 1.4 2006-06-23 00:48:06 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.idm;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -74,8 +75,8 @@ public final class IdSearchControl {
      * NOTE: If the return attribute values are specified as part of
      * <code>AMSearchControl</code>, there could be a significant performance
      * overhead compared to when none are specified. When the return attributes
-     * are set, the return attributes can be obtained as a map with DN as
-     * map-key and set of attribute values as map-value from
+     * are set, the return attributes can be obtained as a map with identity
+     * name as map-key and set of attribute values as map-value from
      * <code>AMSearchResults</code> object.
      * 
      * @param attributeNames
@@ -85,8 +86,7 @@ public final class IdSearchControl {
      */
     public void setReturnAttributes(Set attributeNames) {
         if (attributeNames != null && !attributeNames.isEmpty()) {
-            returnAttributes = new CaseInsensitiveHashSet();
-            returnAttributes.addAll(attributeNames);
+            returnAttributes = new HashSet(attributeNames);
         }
     }
 
@@ -185,12 +185,11 @@ public final class IdSearchControl {
     public void setSearchModifiers(IdSearchOpModifier mod, Map avMap) {
         modifier = mod;
         if (avMap != null && !avMap.isEmpty()) {
-            this.avPairs = new CaseInsensitiveHashMap();
+            this.avPairs = new HashMap();
             Iterator it = avMap.keySet().iterator();
             while (it.hasNext()) {
                 String attr = (String) it.next();
-                Set values = new HashSet();
-                values.addAll((Set) avMap.get(attr));
+                Set values = new HashSet((Set) avMap.get(attr));
                 this.avPairs.put(attr, values);
             }
         }
@@ -218,9 +217,11 @@ public final class IdSearchControl {
     /**
      * Sets the recursive flag to be true or false. It is false by default so
      * plugin searches are not recursive.
-     * 
-     * @param rec
-     *            boolean true or false
+     *
+     * @ deprecated This method is deprecated. The setting for recursive
+     * search should be configured via the data store.
+     *
+     * @param rec boolean true or false
      */
     public void setRecursive(boolean rec) {
         recursive = rec;
@@ -228,10 +229,32 @@ public final class IdSearchControl {
 
     /**
      * Returns true if recursive is enabled, false otherwise
+     *
+     * @ deprecated This method is deprecated. The setting for recursive
+     * search should be configured via the data store.
      * 
      * @return true or false
      */
     public boolean isRecursive() {
         return recursive;
+    }
+    
+    /**
+     * Return String representation of the <code>IdeSearchControl</code>
+     * object. It returns the search controls
+     *
+     * @return String representation of the <code>IdSearchControl</code>
+     * object.
+     */
+    public String toString() {
+       StringBuffer sb = new StringBuffer(100);
+       sb.append("IdSearchControl:");
+       sb.append("\n\tReturnAllAttributes: ").append(getAllAttributesEnabled);
+       sb.append("\n\tReturn Attributes: ").append(returnAttributes);
+       sb.append("\n\tTimeout=").append(timeOut);
+       sb.append("\n\tMaxResults=").append(maxResults);
+       sb.append("\n\tOperator: ").append(modifier);
+       sb.append("\n\tSearchAttrs: ").append(avPairs);
+       return (sb.toString());
     }
 }

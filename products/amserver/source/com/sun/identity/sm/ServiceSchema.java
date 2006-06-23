@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.2 2005-12-08 01:16:54 veiming Exp $
+ * $Id: ServiceSchema.java,v 1.3 2006-06-23 00:48:44 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -397,9 +397,7 @@ public class ServiceSchema {
             if (anyValue != null && (anyValue.indexOf("required") > -1)) {
                 // Inherit default values of this attribute, if
                 // required
-                if (inherit) {
-                    attrMap = av.inheritDefaults(attrMap);
-                }
+                attrMap = av.inheritDefaults(attrMap);
                 Set attrVals = (Set) attrMap.get(attr);
                 if (attrVals == null || attrVals.isEmpty()) {
                     // A required attribute is being deleted
@@ -411,6 +409,8 @@ public class ServiceSchema {
                     throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                             "sms-required-attribute-delete", args);
                 }
+            } else if (inherit) {
+                attrMap = av.inheritDefaults(attrMap);
             }
             // validate the attribute against Schema
             Set valSet = (Set) attrMap.get(attr);

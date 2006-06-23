@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.4 2006-06-16 19:36:46 rarcot Exp $
+ * $Id: FilesRepo.java,v 1.5 2006-06-23 00:48:07 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1431,7 +1431,7 @@ public class FilesRepo extends IdRepo {
                     p = p.substring(0, idx) + ".*" + p.substring(idx + 1);
                     idx = p.indexOf('*', idx + 2);
                 }
-                pattern = Pattern.compile(p);
+                pattern = Pattern.compile(p.toLowerCase());
             }
         }
 
@@ -1439,7 +1439,7 @@ public class FilesRepo extends IdRepo {
             if (pattern == null) {
                 return (true);
             } else {
-                return (pattern.matcher(name).matches());
+                return (pattern.matcher(name.toLowerCase()).matches());
             }
         }
     }

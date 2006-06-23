@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CaseInsensitiveHashSet.java,v 1.1 2005-11-01 00:30:55 arvindp Exp $
+ * $Id: CaseInsensitiveHashSet.java,v 1.2 2006-06-23 00:47:44 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.common;
 
 import java.util.HashSet;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -63,6 +64,10 @@ public class CaseInsensitiveHashSet extends HashSet {
 
     public CaseInsensitiveHashSet() {
         super();
+    }
+    
+    public CaseInsensitiveHashSet(Collection c) {
+        super(c);
     }
 
     public CaseInsensitiveHashSet(int initialCapacity) {

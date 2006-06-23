@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObject.java,v 1.4 2006-03-06 21:29:57 arviranga Exp $
+ * $Id: SMSFlatFileObject.java,v 1.5 2006-06-23 00:48:44 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class SMSFlatFileObject extends SMSObject {
                         filter.substring(idx + 1);
                     idx = filter.indexOf('*', idx + 2);
                 }
-                pattern = Pattern.compile(filter);
+                pattern = Pattern.compile(filter.toLowerCase());
             }
         }
 
@@ -147,7 +147,7 @@ public class SMSFlatFileObject extends SMSObject {
                 // Check for all files
                 return (true);
             }
-            return (pattern.matcher(filename).matches());
+            return (pattern.matcher(filename.toLowerCase()).matches());
         }
     }
 

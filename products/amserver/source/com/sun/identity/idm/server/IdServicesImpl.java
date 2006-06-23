@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.1 2006-06-16 19:36:51 rarcot Exp $
+ * $Id: IdServicesImpl.java,v 1.2 2006-06-23 00:48:08 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1003,93 +1003,6 @@ public class IdServicesImpl implements IdServices {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     */
-    public IdSearchResults search(SSOToken token, IdType type, String pattern,
-            Map avPairs, boolean recursive, int maxResults, int maxTime,
-            Set returnAttrs, String amOrgName) throws IdRepoException,
-            SSOException {
-        IdRepoException origEx = null;
-
-        // First get the list of plugins that support the create operation.
-        // Check permission first. If allowed then proceed, else the
-        // checkPermission method throws an "402" exception.
-        checkPermission(token, amOrgName, null, null, IdOperation.READ, type);
-        Set plugIns = getIdRepoPlugins(token, amOrgName);
-        Set configuredPluginClasses = new HashSet();
-        configuredPluginClasses = getConfiguredPlugins(token, amOrgName,
-                plugIns, IdOperation.READ, type);
-        if (configuredPluginClasses == null
-                || configuredPluginClasses.isEmpty()) {
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
-        }
-
-        Iterator it = configuredPluginClasses.iterator();
-        int noOfSuccess = configuredPluginClasses.size();
-        IdRepo idRepo;
-        Object[][] amsdkResults = new Object[1][2];
-        boolean amsdkIncluded = false;
-        Object[][] arrayOfResult = new Object[noOfSuccess][2];
-        // Set resultsSet = new HashSet();
-        int iterNo = 0;
-        while (it.hasNext()) {
-            idRepo = (IdRepo) it.next();
-            try {
-                Map cMap = idRepo.getConfiguration();
-                RepoSearchResults results = idRepo.search(token, type, pattern,
-                        avPairs, recursive, maxResults, maxTime, returnAttrs);
-                // resultsSet.add(results);
-
-                if (idRepo.getClass().getName()
-                        .equals(IdConstants.AMSDK_PLUGIN)) {
-                    amsdkResults[0][0] = results;
-                    amsdkResults[0][1] = cMap;
-                    amsdkIncluded = true;
-                } else {
-                    arrayOfResult[iterNo][0] = results;
-                    arrayOfResult[iterNo][1] = cMap;
-                    iterNo++;
-                }
-            } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                            "Unable to search in the following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
-                }
-                noOfSuccess--;
-                origEx = ide;
-            } catch (IdRepoFatalException idf) {
-                // fatal ..throw it all the way up
-                getDebug().error("Search: Fatal Exception ", idf);
-                throw idf;
-            } catch (IdRepoException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                            "Unable to search identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
-                }
-                noOfSuccess--;
-                origEx = ide;
-            }
-        }
-        if (noOfSuccess == 0) {
-            getDebug()
-                    .error(
-                            "Unable to search for identity " + type.getName()
-                                    + "::" + pattern
-                                    + " in any configured data store", origEx);
-            throw origEx;
-        } else {
-            IdSearchResults res = combineSearchResults(token, arrayOfResult,
-                    iterNo, type, amOrgName, amsdkIncluded, amsdkResults);
-            return res;
-        }
-    }
-
     public IdSearchResults search(SSOToken token, IdType type, String pattern,
             IdSearchControl ctrl, String amOrgName) throws IdRepoException,
             SSOException {
@@ -1129,7 +1042,6 @@ public class IdServicesImpl implements IdServices {
         }
         Map avPairs = ctrl.getSearchModifierMap();
         boolean recursive = ctrl.isRecursive();
-        // if (modifier.)
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
             try {

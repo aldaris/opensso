@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.7 2006-06-16 19:36:41 rarcot Exp $
+ * $Id: AMIdentityRepository.java,v 1.8 2006-06-23 00:48:05 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,8 +217,16 @@ public final class AMIdentityRepository {
             throws IdRepoException, SSOException {
         // DelegationEvaluator de = new DelegationEvaluator();
         IdServices idServices = IdServicesFactory.getDataStoreServices();
-        return idServices.search(token, type, pattern, avPairs, recursive,
-                maxResults, maxTime, returnAttributes, org);
+        IdSearchControl crtl = new IdSearchControl();
+        crtl.setSearchModifiers(IdSearchOpModifier.OR, avPairs);
+        crtl.setRecursive(recursive);
+        crtl.setMaxResults(maxResults);
+        crtl.setTimeOut(maxTime);
+        crtl.setReturnAttributes(returnAttributes);
+        crtl.setAllReturnAttributes(returnAllAttributes);
+        
+        // Call search method that takes IdSearchControl
+        return searchIdentities(type, pattern, crtl);
     }
 
     /**
@@ -506,6 +514,20 @@ public final class AMIdentityRepository {
             return combineSearchResults(token, obj, 1, type, orgName, false,
                     null);
         }
+    }
+    
+    /**
+     * Return String representation of the <code>AMIdentityRepository
+     * </code> object. It returns realm name.
+     *
+     * @return String representation of <code>AMIdentityRepository</code>
+     * object.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(100);
+        sb.append("AMIdentityRepository object: ")
+            .append(org);
+        return (sb.toString());
     }
 
     // TODO:

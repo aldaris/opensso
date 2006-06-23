@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.2 2006-06-16 19:36:42 rarcot Exp $
+ * $Id: IdRepo.java,v 1.3 2006-06-23 00:48:05 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -240,25 +240,6 @@ public abstract class IdRepo {
      */
     public abstract void removeAttributes(SSOToken token, IdType type,
             String name, Set attrNames) throws IdRepoException, SSOException;
-
-    /**
-     * Search for specific type of identities.
-     * 
-     * @param token
-     * @param type
-     * @param pattern
-     * @param avPairs
-     * @param recursive
-     * @param maxResults
-     * @param maxTime
-     * @param returnAttrs
-     * @return RepoSearchResults Results of the search from the plugin
-     * @throws IdRepoException
-     * @throws SSOException
-     */
-    public abstract RepoSearchResults search(SSOToken token, IdType type,
-            String pattern, Map avPairs, boolean recursive, int maxResults,
-            int maxTime, Set returnAttrs) throws IdRepoException, SSOException;
 
     /**
      * Search for specific type of identities.

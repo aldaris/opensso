@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.4 2006-05-31 22:29:29 veiming Exp $
+ * $Id: SessionService.java,v 1.5 2006-06-23 00:49:05 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,6 +98,7 @@ import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
@@ -245,10 +246,8 @@ public class SessionService {
     protected static Set notificationProperties;
 
     /*
-     * This token is used to satisfy the requirement of Logger interface
+     * This token is used to satisfy the admin interfaces
      */
-    private static SSOToken sessionServiceToken = null;
-
     private static SSOToken adminToken = null;
 
     static {
@@ -1540,16 +1539,8 @@ public class SessionService {
     }
 
     SSOToken getSessionServiceToken() throws Exception {
-        if (sessionServiceToken == null) {
-            InternalSession serviceSession = getServiceSession(
-                    "SessionService-" + sessionServer, null);
-            setProperty(serviceSession.getID(), "Principal", serviceSession
-                    .getClientID());
-
-            sessionServiceToken = getSSOTokenManager().createSSOToken(
-                    serviceSession.getID().toString());
-        }
-        return sessionServiceToken;
+        return ((SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()));
     }
 
     private SSOToken getAdminToken() throws SSOException {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.1 2006-06-16 19:36:49 rarcot Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.2 2006-06-23 00:48:07 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -269,31 +269,6 @@ public class IdRemoteServicesImpl implements IdServices {
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         }
 
-    }
-
-    public IdSearchResults search(SSOToken token, IdType type, String pattern,
-            Map avPairs, boolean recursive, int maxResults, int maxTime,
-            Set returnAttrs, String amOrgName) throws IdRepoException,
-            SSOException {
-        try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
-                    pattern, avPairs, new Boolean(recursive),
-                    new Integer(maxResults), new Integer(maxTime), returnAttrs,
-                    amOrgName };
-            Map idresults = ((Map) client.send(client.encodeMessage(
-                    "search1_idrepo", objs), null));
-            return mapToIdSearchResults(token, type, amOrgName, idresults);
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.search1_idrepo: caught exception=",
-                    rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.search1_idrepo: caught exception=",
-                    ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        }
     }
 
     public void setAttributes(SSOToken token, IdType type, String name,

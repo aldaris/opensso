@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.10 2006-06-16 19:36:41 rarcot Exp $
+ * $Id: AMIdentity.java,v 1.11 2006-06-23 00:48:05 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,7 @@ public final class AMIdentity {
             univIdWithoutDN = univId.substring(0, index);
             univDN = univId.substring(index + 9);
         }
-        DN dnObject = new DN(univId);
+        DN dnObject = new DN(universalId);
         String[] array = dnObject.explodeDN(true);
         name = array[0];
         type = new IdType(array[1]);
@@ -163,7 +163,8 @@ public final class AMIdentity {
         this.token = token;
         this.univDN = DNUtils.normalizeDN(amsdkdn);
         StringBuffer sb = new StringBuffer(100);
-        if ((name != null) && DN.isDN(name)) {
+        if ((name != null) && (name.indexOf(',') != -1) &&
+            DN.isDN(name)) {
             sb.append("id=").append(((new DN(name))).explodeDN(true)[0])
                     .append(",ou=").append(type.getName()).append(",").append(
                             this.orgName);
@@ -1063,6 +1064,21 @@ public final class AMIdentity {
      */
     public String getUniversalId() {
         return univId;
+    }
+    
+    /**
+     * Returns String representation of the <code>AMIdentity</code>
+     * object. It returns universal identifier, orgname, type, etc.
+     *
+     * @return String representation of the <code>AMIdentity</code> object
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(100);
+        sb.append("AMIdentity object: ").append(univId);
+        if (univDN != null) {
+            sb.append("AMSDKDN=").append(univDN);
+        }
+        return (sb.toString());
     }
 
     private Set getServiceOCs(SSOToken token, String serviceName)
