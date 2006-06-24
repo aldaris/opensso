@@ -41,15 +41,15 @@ installation tool to perform the following steps.
 %% 1.1 Creating the Apache Agent Installation Directory
 
 1.1.1 Create the following Apache Agent install directory (c:\apache-agent)
-1.1.2 copy <apache-agent-src-dir>\products\dsame\webagents\agents\source\apache\libamapc2.dll c:\apache-agent
-1.1.3 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\libxml2\lib\libxml2.dll c:\apache-agent
-1.1.4 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\nspr\lib\libnspr4.dll c:\apache-agent
-1.1.5 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\nspr\lib\libplc4.dll c:\apache-agent
-1.1.6 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\nss\lib\nss3.dll c:\apache-agent
-1.1.7 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\nss\lib\ssl3.dll c:\apache-agent
-1.1.8 copy <apache-agent-src-dir>\products\dsame\webagents\conf\AMAgent.properties c:\apache-agent
-1.1.9 copy <apache-agent-src-dir>\products\dsame\webagents\extlib\WINNT\libxml2\lib\libxml2.dll c:\apache-agent
-1.1.10 copy <apache-agent-src-dir>\products\dsame\webagents\agents\source\apache\dsame.conf c:\apache-agent
+1.1.2 copy <apache-agent-src-dir>\products\webagents\agents\source\apache\libamapc2.dll c:\apache-agent
+1.1.3 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\libxml2\lib\libxml2.dll c:\apache-agent
+1.1.4 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\nspr\lib\libnspr4.dll c:\apache-agent
+1.1.5 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\nspr\lib\libplc4.dll c:\apache-agent
+1.1.6 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\nss\lib\nss3.dll c:\apache-agent
+1.1.7 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\nss\lib\ssl3.dll c:\apache-agent
+1.1.8 copy <apache-agent-src-dir>\products\webagents\conf\AMAgent.properties c:\apache-agent
+1.1.9 copy <apache-agent-src-dir>\products\webagents\extlib\WINNT\libxml2\lib\libxml2.dll c:\apache-agent
+1.1.10 copy <apache-agent-src-dir>\products\webagents\agents\source\apache\dsame.conf c:\apache-agent
 1.1.11 Open c:\apache-agent\dsame.conf
 1.1.12 Replace MODULE with c:/apache-agent
 1.1.14 Replace libamapcEAPI.so with libamapc2.dll
@@ -80,7 +80,7 @@ AGENT_PORT = <Enter the port number where agent protected apache server is
 running>
 USER_NAME = UrlAccessAgent
 To populate the value for SHARED_SECRET, please perform the below steps:
-  a) <apache-agent-src-dir>\products\dsame\webagents\am\source\cryptit.exe <amldapuser password>
+  a) <apache-agent-src-dir>\products\webagents\am\source\cryptit.exe <amldapuser password>
   b) Get the encrypted value and assign it to SHARED_SECRET
 SERVER_DIR = If you are running SSL, this will be the location where the 
 certificates are kept else leave it blank (remove the tag).
