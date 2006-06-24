@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.2 2006-05-31 21:50:10 veiming Exp $
+ * $Id: CachedSMSEntry.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,12 +300,23 @@ public class CachedSMSEntry {
         String cacheEntry = (new DN(dn)).toRFCString().toLowerCase();
         CachedSMSEntry answer = null;
         synchronized (cachedSMSEntriesMutex) {
-            if ((answer = (CachedSMSEntry) smsEntries.get(cacheEntry)) == null){
-                // Construct the SMS entry
-                answer = new CachedSMSEntry(new SMSEntry(t, dn));
-                smsEntries.put(cacheEntry, answer);
+            answer = (CachedSMSEntry) smsEntries.get(cacheEntry);
+        }
+        if (answer == null) {
+            // Construct the SMS entry
+            answer = new CachedSMSEntry(new SMSEntry(t, dn));
+            // Check and add it to cache
+            CachedSMSEntry tmp;
+            synchronized (cachedSMSEntriesMutex) {
+                if ((tmp = (CachedSMSEntry) smsEntries.get(
+                    cacheEntry)) == null) {
+                    smsEntries.put(cacheEntry, answer);
+                } else {
+                    answer = tmp;
+                }
             }
         }
+        
         // Check if user has permissions
         if (!answer.checkPrincipal(t)) {
             // Read the SMS entry as that user, and ignore the results

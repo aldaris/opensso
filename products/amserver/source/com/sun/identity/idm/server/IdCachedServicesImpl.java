@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.2 2006-06-23 00:48:08 arviranga Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -497,19 +497,28 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         if ((pattern.indexOf('*') == -1) &&
             (ctrl.getSearchModifierMap() == null)) {
             // Search is for a specific user, look in the cache
-            Map attributes;
-            if (ctrl.isGetAllReturnAttributesEnabled()) {
-                attributes = getAttributes(token, type, pattern,
-                    orgName, null);
-            } else {
-                Set attrNames = ctrl.getReturnAttributes();
-                attributes = getAttributes(token, type, pattern,
-                    attrNames, orgName, null, true);
-            }
-            // Construct IdSearchResults
-            AMIdentity id = new AMIdentity(token, pattern, type, orgName, null);
             answer = new IdSearchResults(type, orgName);
-            answer.addResult(id, attributes);
+            Map attributes;
+            try {
+                if (ctrl.isGetAllReturnAttributesEnabled ()) {
+                    attributes = getAttributes (token, type, pattern,
+                        orgName, null);
+                } else {
+                    Set attrNames = ctrl.getReturnAttributes ();
+                    attributes = getAttributes (token, type, pattern,
+                        attrNames, orgName, null, true);
+                }
+                // Construct IdSearchResults
+                AMIdentity id = new AMIdentity (token, pattern,
+                    type, orgName, null);
+                answer.addResult (id, attributes);
+            }  catch (IdRepoException ide) {
+                // Check if the exception is name not found
+                if (!ide.getErrorCode ().equals ("220")) {
+                    // Throw the exception
+                    throw (ide);
+                }
+            }
         } else {
             answer = super.search(token, type, pattern, ctrl, orgName);
         }

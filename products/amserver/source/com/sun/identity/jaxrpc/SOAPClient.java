@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.1 2005-11-01 00:31:15 arvindp Exp $
+ * $Id: SOAPClient.java,v 1.2 2006-06-24 00:09:08 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +63,7 @@ import com.iplanet.services.util.Base64;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entity.EntityException;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.sm.SMSSchema;
 
 /**
@@ -81,32 +83,32 @@ import com.sun.identity.sm.SMSSchema;
  */
 
 public class SOAPClient {
-
+    
     // Debug file
     static final Debug debug = Debug.getInstance("amJAXRPC");
-
+    
     // Instance variables
     String serviceName;
-
+    
     String url;
-
+    
     // Variables for direct URLs
     String urls[];
-
+    
     // Variables for managing exceptions
     String exceptionClassName, exceptionMessage, exceptionCode,
-            smsExceptionCode;
-
+        smsExceptionCode;
+    
     int ldapErrorCode;
-
+    
     String resourceBundleName, errorString;
-
+    
     Set messageArgs;
-
+    
     Exception exception;
-
+    
     boolean isException;
-
+    
     /**
      * Constructor for applications that would like to dynamically set the SOAP
      * endponts using <code>
@@ -117,7 +119,7 @@ public class SOAPClient {
     public SOAPClient() throws IOException {
         // do nothing
     }
-
+    
     /**
      * Constructor for services that use JAXRPC as their communication protocol.
      * The URL end points for these services will be obtained from Naming
@@ -127,7 +129,7 @@ public class SOAPClient {
     public SOAPClient(String serviceName) {
         this.serviceName = serviceName;
     }
-
+    
     /**
      * Constructor for applications that have the list of end point URLs. The
      * <code>SOAPClient</code> will iterate through the URLs in case of server
@@ -136,7 +138,7 @@ public class SOAPClient {
     public SOAPClient(String urls[]) {
         this.urls = urls;
     }
-
+    
     /**
      * Performs a raw SOAP call with "message" as the SOAP data and response is
      * returned as <code>StringBuffer</code>
@@ -170,19 +172,19 @@ public class SOAPClient {
                     url = JAXRPCUtil.getValidURL(serviceName);
                 }
             }
-
+            
             URL endpoint = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) endpoint
-                    .openConnection();
+                .openConnection();
             connection.setDoOutput(true);
             // connection.setUseCaches(false);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
-                    "text/xml; charset=\"utf-8\"");
+                "text/xml; charset=\"utf-8\"");
             if (cookies == null) {
                 if (SystemProperties.iasGXId != null) {
                     connection.setRequestProperty("Cookie", "GX_jst="
-                            + SystemProperties.iasGXId);
+                        + SystemProperties.iasGXId);
                 }
             } else {
                 if (SystemProperties.iasGXId != null) {
@@ -193,14 +195,14 @@ public class SOAPClient {
             String userInfo = endpoint.getUserInfo();
             if (userInfo != null) {
                 connection.setRequestProperty("Authorization", "Basic "
-                        + Base64.encode(userInfo.getBytes("UTF-8")));
+                    + Base64.encode(userInfo.getBytes("UTF-8")));
             }
-
+            
             // Output
             byte[] data = message.getBytes("UTF-8");
             int requestLength = data.length;
             connection.setRequestProperty("Content-Length", Integer
-                    .toString(requestLength));
+                .toString(requestLength));
             OutputStream out = null;
             try {
                 out = connection.getOutputStream();
@@ -208,7 +210,7 @@ public class SOAPClient {
                 // Debug the exception
                 if (debug.warningEnabled()) {
                     debug.warning("SOAP Client: Connection Exception: " + url,
-                            ce);
+                        ce);
                 }
                 // Server may be down, try the next server
                 JAXRPCUtil.serverFailed(url);
@@ -218,7 +220,7 @@ public class SOAPClient {
             // Write out the message
             out.write(data);
             out.flush();
-
+            
             // Get the response
             try {
                 in_buf = connection.getInputStream();
@@ -233,26 +235,26 @@ public class SOAPClient {
             } finally {
                 done = true;
             }
-
+            
         }
-
+        
         // Debug the input/output messages
         if (debug.messageEnabled()) {
             StringBuffer inbuf = new StringBuffer();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    in_buf, "UTF-8"));
+                in_buf, "UTF-8"));
             while ((line = reader.readLine()) != null) {
                 inbuf.append(line).append("\n");
             }
             String data = new String(inbuf);
             debug.message("SOAP Client: Input: " + message + "\nOutput: "
-                    + data);
+                + data);
             in_buf = new ByteArrayInputStream(data.getBytes("UTF-8"));
         }
         return (in_buf);
     }
-
+    
     /**
      * Performs a JAXRPC method call. The parameter <code>
      * functionName</code>
@@ -261,10 +263,10 @@ public class SOAPClient {
      * </code>.
      */
     public synchronized Object send(String functionName, Object params[],
-            String cookies) throws Exception {
+        String cookies) throws Exception {
         return (send(encodeMessage(functionName, params), cookies));
     }
-
+    
     /**
      * Performs a JAXRPC method call. The parameter <code>
      * functionName</code>
@@ -273,10 +275,10 @@ public class SOAPClient {
      * </code>.
      */
     public synchronized Object send(String functionName, Object param,
-            String cookies) throws Exception {
+        String cookies) throws Exception {
         return (send(encodeMessage(functionName, param), cookies));
     }
-
+    
     /**
      * Performs a JAXRPC method call. The parameter <code>
      * message</code>
@@ -286,7 +288,7 @@ public class SOAPClient {
      * </code>.
      */
     public synchronized Object send(String message, String cookies)
-            throws Exception {
+    throws Exception {
         // Initialize variables
         exceptionClassName = exceptionMessage = null;
         resourceBundleName = exceptionCode = null;
@@ -295,10 +297,10 @@ public class SOAPClient {
         errorString = null;
         ldapErrorCode = 0;
         isException = false;
-
+        
         // Send the SOAP request and get the response
         InputStream in_buf = call(message, cookies);
-
+        
         // Decode the output. Parse the document using SAX
         SOAPContentHandler handler = new SOAPContentHandler();
         try {
@@ -322,27 +324,27 @@ public class SOAPClient {
                 debug.warning("SOAPClient:send SAX exception", saxe);
             }
         }
-
+        
         // Check for exceptions
         if (isException) {
             throw (exception);
         }
-
+        
         return (handler.getObject());
     }
-
+    
     public void setURL(String url) {
         this.url = url;
     }
-
+    
     void setURLs(String[] urls) {
         this.urls = urls;
     }
-
+    
     String encodeString(String str) {
         return (encodeString("String_1", str));
     }
-
+    
     String encodeInt(String name, Integer i) {
         StringBuffer sb = new StringBuffer(100);
         sb.append("<").append(name);
@@ -350,11 +352,11 @@ public class SOAPClient {
         sb.append(i).append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     String encodeInt(Integer i) {
         return (encodeInt("int_1", i));
     }
-
+    
     String encodeBoolean(String name, Boolean b) {
         StringBuffer sb = new StringBuffer(100);
         sb.append("<").append(name);
@@ -362,11 +364,11 @@ public class SOAPClient {
         sb.append(b).append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     String encodeBoolean(Boolean b) {
         return (encodeBoolean("boolean_1", b));
     }
-
+    
     String encodeString(String name, String str) {
         StringBuffer sb = new StringBuffer(100);
         sb.append("<").append(name);
@@ -376,11 +378,11 @@ public class SOAPClient {
         sb.append(data).append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     String encodeSet(Set set) {
         return (encodeSet("Set_1", set));
     }
-
+    
     String encodeSet(String name, Set set) {
         StringBuffer sb = new StringBuffer(200);
         sb.append("<").append(name);
@@ -393,11 +395,11 @@ public class SOAPClient {
         sb.append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     String encodeList(List list) {
         return (encodeList("List_1", list));
     }
-
+    
     String encodeList(String name, List list) {
         StringBuffer sb = new StringBuffer(200);
         sb.append("<").append(name);
@@ -410,15 +412,15 @@ public class SOAPClient {
         sb.append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     public String encodeMap(Map map) {
         return (encodeMap("Map_1", map));
     }
-
+    
     String encodeByteArrayArray(String name, byte[][] data) {
         return (null);
     }
-
+    
     public String encodeMap(String name, Map map) {
         StringBuffer sb = new StringBuffer(200);
         sb.append("<").append(name);
@@ -445,7 +447,7 @@ public class SOAPClient {
         sb.append("</").append(name).append(">");
         return (sb.toString());
     }
-
+    
     public Map decodeMap(String xmlMap) {
         if (xmlMap == null || xmlMap.length() == 0) {
             return (Collections.EMPTY_MAP);
@@ -464,7 +466,7 @@ public class SOAPClient {
             parser.setContentHandler(handler);
             parser.setErrorHandler(new SOAPErrorHandler());
             parser.parse(new InputSource(new ByteArrayInputStream(sb.toString()
-                    .getBytes("UTF-8"))));
+            .getBytes("UTF-8"))));
         } catch (Exception e) {
             if (debug.warningEnabled()) {
                 debug.warning("SOAPClient::decodeMap Exception", e);
@@ -473,7 +475,7 @@ public class SOAPClient {
         }
         return ((Map) handler.getObject());
     }
-
+    
     /**
      * Returns a SOAP request compliant with JAXRPC for the provide function
      * name <code>function</code> that takes the parameter <code>param</code>
@@ -487,7 +489,7 @@ public class SOAPClient {
         }
         return (encodeMessage(function, params));
     }
-
+    
     /**
      * Returns a SOAP request compliant with JAXRPC for the provide function
      * name <code>function</code> that takes the parameters
@@ -498,12 +500,12 @@ public class SOAPClient {
         StringBuffer sb = new StringBuffer(1000);
         sb.append(ENVELOPE).append(HEADSTART).append(HEADEND).append(ENV_BODY);
         sb.append("<ans1:").append(function).append(
-                " xmlns:ans1=\"http://isp.com/wsdl\">");
+            " xmlns:ans1=\"http://isp.com/wsdl\">");
         for (int i = 0; (params != null) && (i < params.length); i++) {
             if (params[i] instanceof java.lang.String) {
                 sb
-                        .append(encodeString("String_" + index++,
-                                (String) params[i]));
+                    .append(encodeString("String_" + index++,
+                    (String) params[i]));
             } else if (params[i] instanceof java.util.Set) {
                 sb.append(encodeSet("Set_" + index++, (Set) params[i]));
             } else if (params[i] instanceof java.util.Map) {
@@ -514,49 +516,49 @@ public class SOAPClient {
                 sb.append(encodeInt("int_" + index++, (Integer) params[i]));
             } else if (params[i] instanceof Boolean) {
                 sb.append(encodeBoolean("boolean_" + index++,
-                        (Boolean) params[i]));
+                    (Boolean) params[i]));
             } else if (params[i] == null) {
                 index++;
             } else {
                 debug.error("SOAPClient: Unknown class: "
-                        + params.getClass().getName());
+                    + params.getClass().getName());
             }
         }
         sb.append("</ans1:").append(function).append(">").append(SUFFIX);
         return (sb.toString());
     }
-
+    
     class SOAPContentHandler implements org.xml.sax.ContentHandler {
         Locator locator;
-
+        
         boolean started;
-
+        
         List types, maps, keys;
-
+        
         Object answer;
-
+        
         String currentType, type;
-
+        
         StringBuffer currentString;
-
+        
         Set set, currentSet;
-
+        
         Map map;
-
+        
         List list, currentList;
-
+        
         protected SOAPContentHandler() {
             types = new LinkedList();
             maps = new LinkedList();
             keys = new LinkedList();
         }
-
+        
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
         }
-
+        
         public void startElement(String namespaceURI, String localName,
-                String rawName, Attributes attrs) throws SAXException {
+            String rawName, Attributes attrs) throws SAXException {
             if (!started && localName.equalsIgnoreCase(BODY)) {
                 started = true;
                 return;
@@ -567,6 +569,8 @@ public class SOAPClient {
                     type = currentType = attrs.getValue(attrs.getIndex(TYPE));
                     if (type.equalsIgnoreCase(SET)) {
                         set = currentSet = new OrderedSet();
+                    } else if (type.equalsIgnoreCase(TREESET)) {
+                        set = currentSet = new TreeSet();
                     } else if (type.equalsIgnoreCase(MAP)) {
                         map = new HashMap();
                         maps.add(0, map);
@@ -594,15 +598,15 @@ public class SOAPClient {
                     messageArgs = new HashSet();
                 }
             }
-
+            
             // Initialize currentString
             if (currentString == null) {
                 currentString = new StringBuffer();
             }
         }
-
+        
         public void endElement(String namespaceURI, String localName,
-                String rawName) throws SAXException {
+            String rawName) throws SAXException {
             // Determine the current type and copy elements to answer
             if (!started) {
                 return;
@@ -620,7 +624,8 @@ public class SOAPClient {
                     }
                     currentType = (String) types.remove(0);
                 } else if (localName.equalsIgnoreCase(VALUE)) {
-                    if (currentType.equalsIgnoreCase(SET)) {
+                    if (currentType.equalsIgnoreCase(SET) ||
+                        currentType.equalsIgnoreCase(TREESET)) {
                         Map map1 = (Map) maps.get(0);
                         map1.put(keys.remove(0), currentSet);
                     } else if (currentType.equalsIgnoreCase(MAP)) {
@@ -631,8 +636,8 @@ public class SOAPClient {
                         Map map1 = (Map) maps.get(0);
                         map1.put(keys.remove(0), currentList);
                     } else if (currentType.equalsIgnoreCase(STRING)
-                            && ((String) types.get(0))
-                                    .equalsIgnoreCase(MAPENTRY)) {
+                    && ((String) types.get(0))
+                    .equalsIgnoreCase(MAPENTRY)) {
                         map.put(keys.remove(0), currentString.toString());
                     }
                     currentType = (String) types.remove(0);
@@ -641,7 +646,8 @@ public class SOAPClient {
                     keys.add(0, currentString.toString());
                 } else if (localName.equalsIgnoreCase(RESULT)) {
                     // End of results
-                    if (type.equalsIgnoreCase(SET)) {
+                    if (type.equalsIgnoreCase(SET) ||
+                        type.equalsIgnoreCase(TREESET)) {
                         answer = set;
                     } else if (type.equalsIgnoreCase(MAP)) {
                         answer = map;
@@ -684,27 +690,27 @@ public class SOAPClient {
             // Set currentString to null
             currentString = null;
         }
-
+        
         public void characters(char[] ch, int start, int length)
-                throws SAXException {
+        throws SAXException {
             currentString.append(ch, start, length);
         }
-
+        
         Object getObject() {
             return (answer);
         }
-
+        
         public void startDocument() throws SAXException {
             // Ignore
         }
-
+        
         public void endDocument() throws SAXException {
             // If exception is thrown, construct the exception
             if (isException) {
                 if (exceptionClassName.equals(SSOEXCEPTION)) {
                     if (resourceBundleName != null) {
                         exception = new SSOException(resourceBundleName,
-                                exceptionCode, messageArgs.toArray());
+                            exceptionCode, messageArgs.toArray());
                     } else if (exceptionMessage != null) {
                         exception = new SSOException(exceptionMessage);
                     } else {
@@ -713,13 +719,13 @@ public class SOAPClient {
                 } else if (exceptionClassName.equals(SMSEXCEPTION)) {
                     if (resourceBundleName != null) {
                         exception = new SMSException(resourceBundleName,
-                                exceptionCode, (messageArgs == null) ? null
-                                        : messageArgs.toArray());
+                            exceptionCode, (messageArgs == null) ? null
+                            : messageArgs.toArray());
                     } else if (exceptionMessage != null
-                            && exceptionCode != null) {
+                        && exceptionCode != null) {
                         try {
                             exception = new SMSException(Integer
-                                    .parseInt(exceptionCode), exceptionMessage);
+                                .parseInt(exceptionCode), exceptionMessage);
                         } catch (NumberFormatException nfe) {
                             // Ignore
                             exception = new SMSException(exceptionMessage);
@@ -727,7 +733,7 @@ public class SOAPClient {
                     } else if (smsExceptionCode != null) {
                         try {
                             exception = new SMSException(Integer
-                                    .parseInt(smsExceptionCode), null);
+                                .parseInt(smsExceptionCode), null);
                         } catch (NumberFormatException nfe) {
                             // Ignore
                             exception = new SMSException(exceptionCode);
@@ -738,29 +744,42 @@ public class SOAPClient {
                         // Throw generic SMSException
                         exception = new SMSException();
                     }
+                } else if (exceptionClassName.equals(IDREPOEXCEPTION)) {
+                    if (resourceBundleName != null) {
+                        exception = new IdRepoException(
+                            resourceBundleName, exceptionCode,
+                            (messageArgs == null) ? null :
+                                messageArgs.toArray());
+                    } else if (exceptionCode != null) {
+                        exception = new IdRepoException(exceptionMessage,
+                            exceptionCode);
+                    } else if (exceptionMessage != null) {
+                        exception = new IdRepoException(exceptionMessage);
+                    } else {
+                        // Throw generic SMSException
+                        exception = new SMSException();
+                    }
                 } else if (exceptionClassName.equals(AMREMOTEEXCEPTION)) {
                     exception = new AMRemoteException(exceptionMessage,
-                            exceptionCode, ldapErrorCode,
-                            (messageArgs != null) ? (String[]) messageArgs
-                                    .toArray() : null);
+                        exceptionCode, ldapErrorCode,
+                        (messageArgs != null) ? (String[]) messageArgs
+                        .toArray() : null);
                 } else if (exceptionClassName.equals(ENTITYEXCEPTION)) {
                     if (messageArgs != null) {
                         exception = new EntityException(exceptionMessage,
-                                exceptionCode, messageArgs.toArray());
+                            exceptionCode, messageArgs.toArray());
                     } else {
                         exception = new EntityException(exceptionMessage,
-                                exceptionCode);
+                            exceptionCode);
                     }
                 } else if (exceptionClassName.equals(SAMLEXCEPTION)) {
                     if (exceptionMessage != null) {
                         exception = new SOAPClientException(exceptionClassName,
-                                exceptionMessage);
+                            exceptionMessage);
                     } else {
                         exception = new SOAPClientException(exceptionClassName);
                     }
-                }
-                else if (exceptionClassName.indexOf(RMIREMOTEEXCEPTION) != -1)
-                {
+                } else if (exceptionClassName.indexOf(RMIREMOTEEXCEPTION) != -1) {
                     exception = new RemoteException(exceptionClassName);
                 } else {
                     // Catch all for remaing exception
@@ -772,145 +791,146 @@ public class SOAPClient {
                 }
             }
         }
-
+        
         public void processingInstruction(String target, String data)
-                throws SAXException {
+        throws SAXException {
             // Ignore
         }
-
+        
         public void startPrefixMapping(String prefix, String url) {
             // Ignore
         }
-
+        
         public void endPrefixMapping(String prefix) {
             // Ignore
         }
-
+        
         public void ignorableWhitespace(char[] ch, int start, int length)
-                throws SAXException {
+        throws SAXException {
             // Ignore white spaces
         }
-
+        
         public void skippedEntity(String name) throws SAXException {
             // Ignore skipped entry
         }
     }
-
+    
     class SOAPErrorHandler implements ErrorHandler {
-
-        private Debug debug = Debug.getInstance("amJAXRPC-XML");
-
+        
         SOAPErrorHandler() {
             // do nothing
         }
-
+        
         public void fatalError(SAXParseException spe) throws SAXParseException {
             debug.error("SOAPClient:PARSER.fatalError", spe);
         }
-
+        
         public void error(SAXParseException spe) throws SAXParseException {
-            if (debug.warningEnabled()) {
-                debug.warning("SOAPClient:PARSER:error", spe);
-            }
+            // do nothing, error can be ignored
         }
-
+        
         public void warning(SAXParseException spe) throws SAXParseException {
             // Parser warning can be ignored
         }
     }
-
+    
     // Static variables
-    static final String ENVELOPE = 
-       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-       "<env:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
+    static final String ENVELOPE =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<env:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
         + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
         + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
         + "xmlns:enc=\"http://schemas.xmlsoap.org/soap/encoding/\" "
         + "xmlns:ns0=\"http://isp.com/types\" "
         + "xmlns:ns1=\"http://java.sun.com/jax-rpc-ri/internal\" "
         + "env:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">";
-
+    
     static final String HEADSTART = "<env:Header>";
-
+    
     static final String HEADEND = "</env:Header>";
-
+    
     static final String ENV_BODY = "<env:Body>";
-
+    
     static final String SUFFIX = "</env:Body></env:Envelope>\n";
-
+    
     static final String BODY = "body";
-
+    
     static final String RESULT = "result";
-
+    
     static final String TYPE = "xsi:type";
-
+    
     static final String STRING = "xsd:string";
-
+    
     static final String INTEGER = "xsd:int";
-
+    
     static final String BOOLEAN = "xsd:boolean";
-
+    
     static final String SET = "ns1:hashSet";
-
+    
+    static final String TREESET = "ns1:treeSet";
+    
     static final String MAP = "ns1:hashMap";
-
+    
     static final String LIST = "ns1:linkedList";
-
+    
     static final String MAPENTRY = "ns1:mapEntry";
-
+    
     static final String ITEM = "item";
-
+    
     static final String KEY = "key";
-
+    
     static final String VALUE = "value";
-
+    
     static final String FAULT_STRING = "faultstring";
-
+    
     static final String MESSAGE = "message";
-
+    
     static final String ERROR_CODE = "errorCode";
-
+    
     static final String EXCEPTION_CODE = "exceptionCode";
-
+    
     static final String LDAP_ERROR_CODE = "LDAPErrorCode";
-
+    
     static final String ERROR_STRING = "errorString";
-
+    
     static final String RMIREMOTEEXCEPTION = "java.rmi.RemoteException";
-
+    
     static final String SSOEXCEPTION = "com.iplanet.sso.SSOException";
-
+    
     static final String AMREMOTEEXCEPTION =
         "com.iplanet.am.sdk.remote.AMRemoteException";
-
+    
     static final String SMSEXCEPTION = "com.sun.identity.sm.SMSException";
-
-    static final String ENTITYEXCEPTION = 
+    
+    static final String IDREPOEXCEPTION =
+        "com.sun.identity.sm.IdRepoException";
+    
+    static final String ENTITYEXCEPTION =
         "com.sun.identity.entity.EntityException";
-
+    
     static final String SAMLEXCEPTION = "com.sun.identity.common.SAMLException";
-
+    
     static final String RESOURCE_BUNDLE_NAME = "resourceBundleName";
-
+    
     static final String MESSAGE_ARGS = "messageArgs";
-
+    
     static final String HREF = "href";
-
+    
     static final String ARRAY_OF_ANY_TYPE = "ArrayOfanyType";
-
+    
     static final String ID = "id";
-
-    static final String DECODE_HEADER = 
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-      + "<env:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
-          + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-          + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-          + "xmlns:enc=\"http://schemas.xmlsoap.org/soap/encoding/\" "
-          + "xmlns:ns0=\"http://isp.com/types\" "
-          + "xmlns:ns1=\"http://java.sun.com/jax-rpc-ri/internal\" "
-          + "env:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
-          + "<env:Body><ans1:readResponse xmlns:ans1=\"http://isp.com/wsdl\">";
-
+    
+    static final String DECODE_HEADER =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<env:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" "
+        + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        + "xmlns:enc=\"http://schemas.xmlsoap.org/soap/encoding/\" "
+        + "xmlns:ns0=\"http://isp.com/types\" "
+        + "xmlns:ns1=\"http://java.sun.com/jax-rpc-ri/internal\" "
+        + "env:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+        + "<env:Body><ans1:readResponse xmlns:ans1=\"http://isp.com/wsdl\">";
+    
     static final String DECODE_FOOTER =
         "</ans1:readResponse></env:Body></env:Envelope>";
 }

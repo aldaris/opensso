@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.2 2006-06-23 00:48:07 arviranga Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -461,6 +461,70 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         } else {
             dirtyCache(dn);
         }
+    }
+
+    public void delete (SSOToken token, IdType type, String name,
+        String orgName, String amsdkDN) throws IdRepoException,
+        SSOException {
+        // Call parent to delete the entry
+        super.delete (token, type, name, orgName, amsdkDN);
+        
+        // Clear the cache, get identity DN
+        AMIdentity id = new AMIdentity (token, name, type, orgName, amsdkDN);
+        String dn = id.getUniversalId ();
+        idRepoCache.remove (dn);
+    }
+    
+    public void removeAttributes (SSOToken token, IdType type, String name,
+        Set attrNames, String orgName, String amsdkDN)
+        throws IdRepoException, SSOException {
+        // Call parent to remove the attributes
+        super.removeAttributes (token, type, name, attrNames, orgName, amsdkDN);
+        
+        // Update the cache
+        AMIdentity id = new AMIdentity (token, name, type, orgName, amsdkDN);
+        String dn = id.getUniversalId ();
+        IdCacheBlock cb = (IdCacheBlock) idRepoCache.get (dn);
+        if ((cb != null) && !cb.hasExpiredAndUpdated () && cb.isExists ()) {
+            // Remove the attributes
+            cb.removeAttributes (attrNames);
+        }
+    }
+    
+    public IdSearchResults search (SSOToken token, IdType type, String pattern,
+        IdSearchControl ctrl, String orgName)
+        throws IdRepoException, SSOException {
+        IdSearchResults answer;
+        // Check if search is for a specific identity
+        if ((pattern.indexOf ('*') == -1) &&
+            (ctrl.getSearchModifierMap () == null)) {
+            // Search is for a specific user, look in the cache
+            answer = new IdSearchResults(type, orgName);
+            try {
+                Map attributes;
+                if (ctrl.isGetAllReturnAttributesEnabled ()) {
+                    attributes = getAttributes (token, type, pattern,
+                        orgName, null);
+                } else {
+                    Set attrNames = ctrl.getReturnAttributes ();
+                    attributes = getAttributes (token, type, pattern,
+                        attrNames, orgName, null, true);
+                }
+                // Construct IdSearchResults
+                AMIdentity id = new AMIdentity (token, pattern,
+                    type, orgName, null);
+                answer.addResult (id, attributes);
+            } catch (IdRepoException ide) {
+                // Check if the exception is name not found
+                if (!ide.getErrorCode ().equals ("220")) {
+                    // Throw the exception
+                    throw (ide);
+                }
+            }
+        } else {
+            answer = super.search (token, type, pattern, ctrl, orgName);
+        }
+        return (answer);
     }
 
     private IdCacheBlock getFromCache(String dn) {

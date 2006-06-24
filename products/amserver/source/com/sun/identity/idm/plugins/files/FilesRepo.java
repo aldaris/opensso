@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.5 2006-06-23 00:48:07 arviranga Exp $
+ * $Id: FilesRepo.java,v 1.6 2006-06-24 00:09:10 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1292,7 +1292,7 @@ public class FilesRepo extends IdRepo {
                                 ioe);
             }
             String[] args = { NAME, fileName };
-            throw (new IdRepoException(ioe.getMessage(), "220", args));
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));
         } finally {
             if (pw != null) {
                 pw.close();
@@ -1344,7 +1344,7 @@ public class FilesRepo extends IdRepo {
                                 ioe);
             }
             String[] args = { NAME, fileName };
-            throw (new IdRepoException(ioe.getMessage(), "220", args));
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));
         } finally {
             if (br != null) {
                 try {

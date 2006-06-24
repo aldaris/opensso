@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.2 2006-06-23 00:48:08 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1342,7 +1342,8 @@ public class IdServicesImpl implements IdServices {
 
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
-        checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
+        checkPermission(token, amOrgName, name, null,
+            IdOperation.SERVICE, type);
         // First get the list of plugins that support the create operation.
         Set plugIns = getIdRepoPlugins(token, amOrgName);
         Set configuredPluginClasses = new HashSet();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.2 2006-06-23 00:48:07 arviranga Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.3 2006-06-24 00:09:08 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.create_idrepo: caught exception=",
                     rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.create_idrepo: caught exception=",
@@ -149,6 +151,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.create_idrepo: caught exception=",
                     rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.create_idrepo: caught exception=",
@@ -179,6 +183,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.getAttributes1_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.getAttributes1_idrepo: " 
                     + "caught exception=", ex);
@@ -208,6 +214,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.getAttributes2_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.getAttributes2_idrepo: " 
                     + "caught exception=", ex);
@@ -227,6 +235,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.removeAttributes_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.removeAttributes_idrepo: caught "
@@ -262,6 +272,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.search2_idrepo: caught exception=",
                     rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.search2_idrepo: caught exception=",
@@ -285,6 +297,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.setAttributes_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.setAttributes_idrepo: " 
                     + "caught exception=", ex);
@@ -307,6 +321,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.assignService_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.assignService_idrepo: " 
                     + "caught exception=", ex);
@@ -329,6 +345,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.getAssignedServices_idrepo: caught "
                             + "exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.getAssignedServices_idrepo: caught "
@@ -351,6 +369,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.getServiceAttributes_idrepo: caught "
                             + "exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.getServiceAttributes_idrepo: caught "
@@ -372,6 +392,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.unassignService_idrepo: "
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.unassignService_idrepo: " 
                     + "caught exception=", ex);
@@ -395,6 +417,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.modifyService_idrepo: " +
                     "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.modifyService_idrepo: " +
                     "caught exception=", ex);
@@ -425,6 +449,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.getMembers_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.getMembers_idrepo: " 
                     + "caught exception=", ex);
@@ -455,6 +481,8 @@ public class IdRemoteServicesImpl implements IdServices {
             getDebug().error("IdRemoteServicesImpl.getMemberships_idrepo: " 
                     + "caught exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error("IdRemoteServicesImpl.getMemberships_idrepo: " +
                     "caught exception=", ex);
@@ -477,6 +505,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.modifyMemberShip_idrepo: caught "
                             + "exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.modifyMemberShip_idrepo: caught "
@@ -508,6 +538,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     + "getSupportedOperations_idrepo: caught "
                     + "exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.getSupportedOperations_idrepo: " +
@@ -537,6 +569,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     "IdRemoteServicesImpl.getSupportedTypes_idrepo: caught "
                             + "exception=", rex);
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
         } catch (Exception ex) {
             getDebug().error(
                     "IdRemoteServicesImpl.getSupportedTypes_idrepo: caught "
