@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.2 2005-11-04 18:53:40 veiming Exp $
+ * $Id: InternalSession.java,v 1.3 2006-06-28 01:12:18 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -520,7 +520,7 @@ public class InternalSession implements Serializable {
      * @return internal object
      */
     public Object getObject(String key) {
-        return internalObjects.get(key);
+        return getInternalObjectMap().get(key);
     }
 
     /**
@@ -530,7 +530,7 @@ public class InternalSession implements Serializable {
      *            key whose mapping is to be removed from the map
      */
     public void removeObject(String key) {
-        internalObjects.remove(key);
+        getInternalObjectMap().remove(key);
     }
 
     /**
@@ -540,7 +540,14 @@ public class InternalSession implements Serializable {
      * @param value to be associated with the specified key
      */
     public void setObject(String key, Object value) {
-        internalObjects.put(key, value);
+        getInternalObjectMap().put(key, value);
+    }
+
+    private Map getInternalObjectMap() {
+        if (internalObjects == null) {
+            internalObjects = new HashMap();
+        }
+        return internalObjects;
     }
 
     /**
@@ -727,8 +734,8 @@ public class InternalSession implements Serializable {
                     .bypassConstratintForToplevelAdmin();
 
             if (checkTopLevelAdminRole) {
-                if (SessionService.getSessionService().hasTopLevelAdminRole(
-                        clientID)) {
+                if (SessionService.getSessionService().
+                    hasTopLevelAdminRole(getUUID())) {
                     ignore = true;
                 }
             }

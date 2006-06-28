@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSFOPassword.java,v 1.1 2005-11-01 00:29:53 arvindp Exp $
+ * $Id: AMSFOPassword.java,v 1.2 2006-06-28 01:12:18 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,11 +77,21 @@ public class AMSFOPassword {
             statsFile.println(encPassword);
             statsFile.flush();
             statsFile.close();
+            setFilePermission(passwordfile, "600");
         } catch (Exception e) {
             System.err.println(bundle.getString("error-saving-passwd"));
+            System.exit(1);
         }
     }
 
+    private void setFilePermission(String filename, String perm) 
+        throws IOException {        
+        // Do "chmod" only if it is on UNIX/Linux platform
+        if (System.getProperty("path.separator").equals(":")) {        
+            Runtime.getRuntime().exec("chmod "+perm+" "+filename);
+        }
+    }
+    
     private void process(String[] args) throws Exception {
 
         // Check the initial arguments

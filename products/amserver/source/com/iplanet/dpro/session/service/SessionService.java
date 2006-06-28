@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.5 2006-06-23 00:49:05 arviranga Exp $
+ * $Id: SessionService.java,v 1.6 2006-06-28 01:12:19 alanchu Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,7 @@ import com.sun.identity.common.SearchResults;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
@@ -197,6 +198,9 @@ public class SessionService {
     private static final String DESTROY_OLD_SESSION = "DESTROY_OLD_SESSION";
 
     private static final String DENY_ACCESS = "DENY_ACCESS";
+
+    private static final String TOP_LEVEL_ADMIN_ROLE = 
+        "Top-level Admin Role";
 
     private static final String SESSION_STORE_USERNAME = 
         "iplanet-am-session-store-username";
@@ -2123,17 +2127,24 @@ public class SessionService {
     /**
      * Returns true if the user has top level admin role
      * 
-     * @param clientID the client ID of the login user
+     * @param uuid the uuid of the login user
      */
-    protected boolean hasTopLevelAdminRole(String clientID) {
+    protected boolean hasTopLevelAdminRole(String uuid) {
         boolean isTopLevelAdmin = false;
         try {
-            isTopLevelAdmin = hasTopLevelAdminRole(getAdminToken(), clientID);
-        } catch (Exception e) {
-            SessionService.sessionDebug.error(
-                "Error occurs when checking whether the login " +
-                "user has the top level admin role.", e);
-        }
+            AMIdentity topAdminRole = new AMIdentity(getAdminToken(),
+                TOP_LEVEL_ADMIN_ROLE, IdType.ROLE, "/", null);
+            AMIdentity user =
+                IdUtils.getIdentity(getAdminToken(), uuid);
+            isTopLevelAdmin = user.isMember(topAdminRole);
+        } catch (SSOException ssoe) {
+            sessionDebug.error("SessionService.hasTopLevelAdminRole:"+
+                "Cannot get the admin token for this operation.");
+        } catch (IdRepoException idme) {
+            sessionDebug.error("SessionService.hasTopLevelAdminRole:"+
+                "Cannot get the user identity or role.");
+        }        
+        sessionDebug.error("**** New:isTopLevelAdmin = "+isTopLevelAdmin);
         return isTopLevelAdmin;
     }
 
