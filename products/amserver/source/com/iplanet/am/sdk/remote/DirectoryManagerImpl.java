@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.3 2006-06-23 00:47:17 arviranga Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.4 2006-06-29 14:14:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1041,7 +1041,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         IdSearchControl ctrl = new IdSearchControl();
         ctrl.setAllReturnAttributes(returnAllAttrs);
         ctrl.setMaxResults(maxResults);
-        ctrl.setRecursive(recursive);
         ctrl.setReturnAttributes(returnAttrs);
         ctrl.setTimeOut(maxTime);
         IdSearchOpModifier modifier = (filterOp == IdRepo.OR_MOD) ?
@@ -1264,13 +1263,11 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     private Map IdSearchResultsToMap(IdSearchResults res) {
         // TODO ..check if the Map gets properly populated and sent.
         Map answer = new HashMap();
-        Map answer1 = res.getResultAttributes();
-        if (answer == null) {
-            answer = new HashMap();
-        }
         Map attrMaps = new HashMap();
-        Set ids = res.getSearchResults();
         Set idStrings = new HashSet();
+
+        Map answer1 = res.getResultAttributes();
+        Set ids = res.getSearchResults();
         if (ids != null) {
             Iterator it = ids.iterator();
             while (it.hasNext()) {
@@ -1283,7 +1280,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                     for (Iterator items = attrMap.keySet().iterator();
                         items.hasNext();) {
                         Object item = items.next();
-                        cattrMap.put(item, attrMap.get(item));
+                        cattrMap.put(item.toString(), attrMap.get(item));
                     }
                     attrMaps.put(idStr, attrMap);
                 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.3 2006-06-24 00:09:08 arviranga Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.4 2006-06-29 14:12:24 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SchemaType;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 
 /*
  * Class that implements the remote services that are needed for IdRepo.
@@ -625,7 +626,8 @@ public class IdRemoteServicesImpl implements IdServices {
             while (it.hasNext()) {
                 String idStr = (String) it.next();
                 AMIdentity id = IdUtils.getIdentity(token, idStr);
-                Map attrMap = (Map) attrMaps.get(idStr);
+                CaseInsensitiveHashMap attrMap =
+                    new CaseInsensitiveHashMap((Map) attrMaps.get(idStr));
                 results.addResult(id, attrMap);
             }
         }

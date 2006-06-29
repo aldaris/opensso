@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.5 2006-06-16 19:36:10 rarcot Exp $
+ * $Id: AMSDKRepo.java,v 1.6 2006-06-29 14:13:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,12 @@ public class AMSDKRepo extends IdRepo {
     // private Map configMap = new AMHashMap();
     private String orgDN = "";
 
+    private boolean dataStoreRecursive = false;
+
+    private String pcDN = null;
+
+    private String agentDN = null;
+
     private Debug debug;
 
     private static final String PC_ATTR = "iplanet-am-admin-console-default-pc";
@@ -103,7 +109,7 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#addListener(com.iplanet.sso.SSOToken,
+     * @see com.sun.identity.idm.IdRepo#addListener(com.iplanet.sso.SSOToken,
      *      com.iplanet.am.sdk.AMObjectListener, java.util.Map)
      */
     public int addListener(SSOToken token, IdRepoListener listnr)
@@ -127,8 +133,8 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#create(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Map)
+     * @see com.sun.identity.idm.IdRepo#create(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.util.Map)
      */
     public String create(SSOToken token, IdType type, String name, Map attrMap)
             throws IdRepoException, SSOException {
@@ -198,8 +204,8 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#delete(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String)
+     * @see com.sun.identity.idm.IdRepo#delete(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String)
      */
     public void delete(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
@@ -237,8 +243,8 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#getAttributes(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Set)
+     * @see com.sun.identity.idm.IdRepo#getAttributes(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.util.Set)
      */
     public Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
@@ -276,8 +282,8 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#getAttributes(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String)
+     * @see com.sun.identity.idm.IdRepo#getAttributes(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String)
      */
     public Map getAttributes(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
@@ -356,7 +362,7 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#getConfiguration()
+     * @see com.sun.identity.idm.IdRepo#getConfiguration()
      */
     public Map getConfiguration() {
         return super.getConfiguration();
@@ -365,9 +371,9 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#getMembers(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String,
-     *      com.iplanet.am.sdk.IdType)
+     * @see com.sun.identity.idm.IdRepo#getMembers(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String,
+     *      com.sun.identity.idm.IdType)
      */
     public Set getMembers(SSOToken token, IdType type, String name,
             IdType membersType) throws IdRepoException, SSOException {
@@ -529,7 +535,7 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#initialize(java.util.Map)
+     * @see com.sun.identity.idm.IdRepo#initialize(java.util.Map)
      */
     public void initialize(Map configParams) {
 
@@ -553,6 +559,39 @@ public class AMSDKRepo extends IdRepo {
                 // do nothing ... but log the error
                 debug.error("AMSDKRepo:Initialize..Failed to initialize "
                         + " AMStoreConnection...", ssoe);
+            }
+        }
+
+        Set consoleRecursiveFlg =
+            (Set) configMap.get("sun-idrepo-amSDK-config-recursive-enabled");
+        if ((consoleRecursiveFlg != null) &&
+            (!consoleRecursiveFlg.isEmpty())) {
+            if (consoleRecursiveFlg.contains("true")) {
+                dataStoreRecursive = true;
+            }
+        }
+        Set pcNameSet = (Set)configMap.get(
+            "sun-idrepo-amSDK-config-people-container-name");
+        if ((pcNameSet != null) && (!pcNameSet.isEmpty())) {
+            String pcName = (String) pcNameSet.iterator().next();
+            Set pcValueSet = (Set) configMap.get(
+                "sun-idrepo-amSDK-config-people-container-value");
+            if ((pcName != null) && (pcValueSet != null) &&
+                (!pcValueSet.isEmpty())) {
+                String pcValue = (String) pcValueSet.iterator().next();
+                pcDN = pcName + "=" + pcValue + "," + orgDN;
+            }
+        }
+        Set agentNameSet = (Set)configMap.get(
+            "sun-idrepo-amSDK-config-agent-container-name");
+        if ((agentNameSet != null) && (!agentNameSet.isEmpty())) {
+            String agentName = (String) agentNameSet.iterator().next();
+            Set agentValueSet = (Set) configMap.get(
+                "sun-idrepo-amSDK-config-agent-container-value");
+            if ((agentName != null) && (agentValueSet != null) &&
+                (!agentValueSet.isEmpty())) {
+                String agentValue = (String) agentValueSet.iterator().next();
+                agentDN = agentName + "=" + agentValue + "," + orgDN;
             }
         }
     }
@@ -659,8 +698,9 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#removeAttributes(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Set)
+     * @see com.sun.identity.idm.IdRepo#removeAttributes(
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.util.Set)
      */
     public void removeAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
@@ -678,9 +718,9 @@ public class AMSDKRepo extends IdRepo {
     /*
      * (non-Javadoc)
      * 
-     * @see com.iplanet.am.sdk.IdRepo#search(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Map, boolean,
-     *      int, int, java.util.Set)
+     * @see com.sun.identity.idm.IdRepo#search(com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.util.Map, 
+     *      boolean, int, int, java.util.Set)
      */
     public RepoSearchResults search(SSOToken token, IdType type,
             String pattern, Map avPairs, boolean recursive, int maxResults,
@@ -799,14 +839,9 @@ public class AMSDKRepo extends IdRepo {
         }
         String searchDN = orgDN;
         int profileType = getProfileType(type);
-        if (type.equals(IdType.USER)) {
-            searchDN = "ou=" + getDefaultPeopleContainerName() + "," + orgDN;
-        } else if (type.equals(IdType.AGENT)) {
-            searchDN = "ou=" + getDefaultAgentContainerName() + "," + orgDN;
-        } else if (type.equals(IdType.GROUP)) {
+        if (type.equals(IdType.GROUP)) {
             searchDN = "ou=" + getDefaultGroupContainerName() + "," + orgDN;
         }
-        // String avFilter = AMObjectImpl.constructFilter(avPairs);
         AMSearchControl ctrl = new AMSearchControl();
         ctrl.setMaxResults(maxResults);
         ctrl.setTimeOut(maxTime);
@@ -820,10 +855,25 @@ public class AMSDKRepo extends IdRepo {
         }
         AMSearchResults results;
         try {
-            AMStoreConnection amsc = (sc == null) ? new AMStoreConnection(token)
-                    : sc;
+            AMStoreConnection amsc = 
+                (sc == null) ? new AMStoreConnection(token) : sc;
             switch (profileType) {
             case AMObject.USER:
+                if (pcDN != null) {
+                    if (!dataStoreRecursive) {
+                        searchDN = pcDN;
+                    } else {
+                        ctrl.setSearchScope(AMConstants.SCOPE_SUB);
+                    }
+                } else {
+                    if (!dataStoreRecursive) {
+                        searchDN = "ou=" + getDefaultPeopleContainerName() +
+                            "," + orgDN;
+                    } else {
+                        ctrl.setSearchScope(AMConstants.SCOPE_SUB);
+                    }
+                }
+
                 AMPeopleContainer pc = amsc.getPeopleContainer(searchDN);
                 if (avPairs == null || avPairs.isEmpty()) {
                     results = pc.searchUsers(pattern, avPairs, ctrl);
@@ -833,39 +883,25 @@ public class AMSDKRepo extends IdRepo {
                     String avFilter = constructFilter(filterOp, avPairs);
                     results = pc.searchUsers(pattern, ctrl, avFilter);
                 }
-                if (recursive) {
-                    // It could be an Auth
-                    // search and if no matching user found then we need
-                    // to do a scope-sub search
-                    Set usersFound = results.getSearchResults();
-                    if (usersFound == null || usersFound.isEmpty()) {
-                        // SCOPE_SUB search to find exactly one user.
-                        // Throw an exception if more than one
-                        // matching is found.
-                        if (avPairs == null || avPairs.isEmpty()) {
-                            AMOrganization org = amsc.getOrganization(orgDN);
-                            ctrl.setSearchScope(AMConstants.SCOPE_SUB);
-                            results = org.searchUsers(pattern, ctrl);
-                        } else {
-                            String avFilter = constructFilter(filterOp, 
-                                    avPairs);
-                            AMOrganization org = amsc.getOrganization(orgDN);
-                            ctrl.setSearchScope(AMConstants.SCOPE_SUB);
-                            results = org.searchUsers("*", ctrl, avFilter);
-                        }
-                        /*
-                         * usersFound = results.getSearchResults(); if
-                         * (usersFound.size() > 1){ throw new
-                         * IdRepoException(IdRepoBundle. getString("216"),
-                         * "216"); }
-                         */
-                    }
-                }
                 break;
             case 100:
+                // IdType is Agent.
+                if (agentDN != null) {
+                    if (!dataStoreRecursive) {
+                        searchDN = agentDN;
+                    } else {
+                        ctrl.setSearchScope(AMConstants.SCOPE_SUB);
+                    }
+                } else {
+                    if (!dataStoreRecursive) {
+                        searchDN = "ou=" + getDefaultAgentContainerName() +
+                            "," + orgDN;
+                    } else {
+                        ctrl.setSearchScope(AMConstants.SCOPE_SUB);
+                    }
+                }
                 AMOrganizationalUnit ou = amsc.getOrganizationalUnit(searchDN);
                 results = ou.searchEntities(pattern, avPairs, null, ctrl);
-                // results = ou.searchEntities(pattern, ctrl, avFilter, null);
                 break;
             case AMObject.GROUP:
             case AMObject.STATIC_GROUP:
@@ -1022,7 +1058,14 @@ public class AMSDKRepo extends IdRepo {
             IDirectoryServices dsServices = AMDirectoryAccessFactory
                     .getDirectoryServices();
             try {
-                dsServices.registerService(token, orgDN, serviceName);
+                AMStoreConnection amsc = (sc == null) ?
+                    new AMStoreConnection(token) : sc;
+                AMOrganization amOrg = amsc.getOrganization(orgDN);
+                // Check if service is already assigned
+                Set assndSvcs = amOrg.getRegisteredServiceNames();
+                if (!assndSvcs.contains(serviceName)) {
+                    amOrg.registerService(serviceName, false, false);
+                }
             } catch (AMException ame) {
                 if (ame.getErrorCode().equals("464")) {
                     // do nothing. Definition already exists. That's OK.
@@ -1536,8 +1579,14 @@ public class AMSDKRepo extends IdRepo {
             throw new IdRepoException(AMSDKBundle.BUNDLE_NAME, "301", null);
         }
         if (type.equals(IdType.USER)) {
-            dn = AMNamingAttrManager.getNamingAttr(AMObject.USER) + "=" + name
-                    + ",ou=" + getDefaultPeopleContainerName() + "," + orgDN;
+            if (pcDN != null) {
+                dn = pcDN;
+            } else {
+                dn = AMNamingAttrManager.getNamingAttr(AMObject.USER) + "=" +
+                    name + ",ou=" + getDefaultPeopleContainerName() + "," +
+                        orgDN;
+            }
+
             try {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != AMObject.USER) {
@@ -1549,8 +1598,12 @@ public class AMSDKRepo extends IdRepo {
                 throw IdUtils.convertAMException(ame);
             }
         } else if (type.equals(IdType.AGENT)) {
-            dn = AMNamingAttrManager.getNamingAttr(100) + "=" + name + ",ou="
-                    + getDefaultAgentContainerName() + "," + orgDN;
+            if (agentDN != null) {
+                dn = agentDN;
+            } else {
+                dn = AMNamingAttrManager.getNamingAttr(100) + "=" + name +
+                    ",ou=" + getDefaultAgentContainerName() + "," + orgDN;
+            }
             try {
                 int sdkType = sc.getAMObjectType(dn);
                 if (sdkType != 100) {

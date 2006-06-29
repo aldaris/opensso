@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.10 2006-06-01 02:31:02 kenwho Exp $
+   $Id: idRepoService.xml,v 1.11 2006-06-29 14:15:48 goodearth Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -197,6 +197,59 @@
                             <DefaultValues>
                                 <Value>NORMALIZED_ORGBASE</Value>
                             </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2053">
+                        <DefaultValues>
+                            <Value>ou</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-value"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2054">
+                        <DefaultValues>
+                            <Value>people</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2055">
+                        <DefaultValues>
+                            <Value>ou</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-value"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a2056">
+                        <DefaultValues>
+                            <Value>agents</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-recursive-enabled"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a2057">
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-amSDK-config-copyconfig-enabled"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a2058">
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
 

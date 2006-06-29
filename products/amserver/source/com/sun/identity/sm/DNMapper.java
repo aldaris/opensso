@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.3 2006-03-16 18:29:55 goodearth Exp $
+ * $Id: DNMapper.java,v 1.4 2006-06-29 14:10:28 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class DNMapper {
     public static String orgNameToDN(String orgName) {
         // Check if it is null or empty
         if (orgName == null || orgName.trim().length() == 0
-                || orgName.equals("/")) {
+                || orgName.equals(SMSEntry.SLASH_STR)) {
             return (SMSEntry.baseDN);
         }
 
@@ -293,6 +293,19 @@ public class DNMapper {
         int lenToken = token.length();
         int idx = originalString.indexOf(token);
 
+        if (!originalString.startsWith(SMSEntry.SLASH_STR)) {
+            if (idx >= 0) {
+                int slashndx =
+                    originalString.substring(idx).indexOf(SMSEntry.SLASH_STR);
+                // This is to escape "/" embedded in realm names.
+                while (slashndx != -1) {
+                    originalString = originalString.substring(0, slashndx) +
+                        "&#47;" + originalString.substring(slashndx+1);
+                    slashndx =
+                        originalString.indexOf(SMSEntry.SLASH_STR, slashndx+5);
+                }
+            }
+        }
         while (idx != -1) {
             originalString = originalString.substring(0, idx) + newString
                     + originalString.substring(idx + lenToken);
@@ -353,6 +366,23 @@ public class DNMapper {
             buf.append('=').append(theOrg);
             if (i != size - 1) {
                 buf.append(',');
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("DNMapper.convertToDN():finalorgdn "+
+                buf.toString());
+        }
+        if ((buf.toString()).indexOf("&#47;") >= 0) {
+            String realmName = SMSSchema.unescapeName(buf.toString());
+            if (debug.messageEnabled()) {
+                debug.message("DNMapper.convertToDN():realmName "+realmName);
+            }
+            StringBuffer newBuf =  new StringBuffer();
+            newBuf.append(realmName);
+            buf = newBuf;
+            if (debug.messageEnabled()) {
+                debug.message("DNMapper.convertToDN():newRealmName "+
+                    buf.toString());
             }
         }
         return (buf);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.6 2006-06-01 12:08:10 rajesh_mohapatra Exp $
+ * $Id: OrganizationConfigManager.java,v 1.7 2006-06-29 14:11:03 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import netscape.ldap.util.DN;
 
@@ -39,6 +40,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.idm.IdConstants;
 
 /**
  * The class <code>OrganizationConfigManager</code> provides interfaces to
@@ -75,6 +77,18 @@ public class OrganizationConfigManager {
 
     protected static final String SERVICES_NODE = SMSEntry.SERVICES_RDN
             + SMSEntry.COMMA + SMSEntry.baseDN;
+
+    // set the special characters which are not in realm names.
+    static String specialCharsString = "*|(|)|!|/|=";
+
+    private static String SEPERATOR = "|";
+
+    private String CONF_ENABLED =
+        "sun-idrepo-amSDK-config-copyconfig-enabled";
+
+    private boolean copyOrgEnabled;
+
+    private String amSDKOrgDN;
 
     static {
         initializeFlags();
@@ -134,6 +148,15 @@ public class OrganizationConfigManager {
             if (orgNamingAttrInLegacyMode == null) {
                 orgNamingAttrInLegacyMode = getNamingAttrForOrg();
             }
+        }
+
+        try {
+            isCopyOrgEnabled();
+        } catch (SSOException ssoe) {
+            SMSEntry.debug.error("OrganizationConfigManager:Constructor",
+                ssoe);
+            throw (new SMSException(SMSEntry.bundle.getString(
+                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
         }
     }
 
@@ -268,12 +291,28 @@ public class OrganizationConfigManager {
         Object args[] = { subOrgName };
         if (orgExists) {
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-            "sms-organization_already_exists1",
-            args));
+                "sms-organization_already_exists1",
+                    args));
+        }
+        StringTokenizer st =
+            new StringTokenizer(specialCharsString, SEPERATOR);
+        while (st.hasMoreTokens()) {
+            String obj = (String) st.nextToken();
+            if (subOrgName.indexOf(obj) > -1) {
+                SMSEntry.debug.error("OrganizationConfigManager::"+
+                    "createSubOrganization() : Invalid realm name: "+
+                        subOrgName);
+                SMSEntry.debug.error("OrganizationConfigManager::"+
+                    "createSubOrganization() : Detected invalid chars: "+obj);
+                Object args1[] = {subOrgName};
+                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    SMSEntry.bundle.getString("sms-invalid-org-name"),args1));
+            }
         }
 
-        if (coexistMode) {
-            // Create the AMSDK organization first
+        // If in legacy mode or (realm mode and copy org enabled)
+        // Create the AMSDK organization first
+        if ((coexistMode) || (realmEnabled && copyOrgEnabled)) {
             amsdk.createSubOrganization(subOrgName);
         }
         if ((realmEnabled || subOrgDN.toLowerCase().startsWith(
@@ -297,9 +336,46 @@ public class OrganizationConfigManager {
         }
 
         // If in realm mode and not in legacy mode, default services needs
-        // to be added
+        // to be added.
         if (realmEnabled && !coexistMode) {
             loadDefaultServices(token, ocm);
+        }
+
+        // If in realm mode and copy org enabled, default services needs
+        // to be registered for the newly created org/suborg and the
+        // amSDKOrgName/Access Manager Organization is updated with the
+        // new suborg dn.
+        if (realmEnabled && copyOrgEnabled) {
+            registerSvcsForOrg(subOrgName, subOrgDN);
+            OrganizationConfigManager subOrg =
+                getSubOrgConfigManager(subOrgName);
+            ServiceConfig s =
+                subOrg.getServiceConfig(ServiceManager.REALM_SERVICE);
+            if (s != null) {
+                try {
+                    Iterator items = s.getSubConfigNames().iterator();
+                    while (items.hasNext()) {
+                        ServiceConfig subConfig =
+                            s.getSubConfig((String) items.next());
+                        if (subConfig.getSchemaID().equalsIgnoreCase(
+                            IdConstants.AMSDK_PLUGIN_NAME)) {
+                            Map amsdkConfig = new HashMap();
+                            Set vals = new HashSet();
+                            vals.add(orgNamingAttrInLegacyMode +
+                                SMSEntry.EQUALS +
+                                subOrgName + SMSEntry.COMMA + amSDKOrgDN);
+                            amsdkConfig.put("amSDKOrgName", vals);
+                            subConfig.setAttributes(amsdkConfig);
+                        }
+                        break;
+                    }
+                } catch (SSOException ssoe) {
+                    SMSEntry.debug.error("OrganizationConfigManager::"+
+                        "createSubOrganization:", ssoe);
+                    throw (new SMSException(SMSEntry.bundle.getString(
+                        "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
+                }
+            }
         }
 
         // Return the newly created organization config manager
@@ -453,8 +529,9 @@ public class OrganizationConfigManager {
             }
         }
 
-        // If in coexistenceMode, delete the corresponding organization
-        if (coexistMode) {
+        // If in legacy mode or (realm mode and copy org enabled)
+        // delete the corresponding organization.
+        if ((coexistMode) || (realmEnabled && copyOrgEnabled)) {
             String amsdkName = DNMapper.realmNameToAMSDKName(subOrgDN);
             amsdk.deleteSubOrganization(amsdkName);
         }
@@ -1375,7 +1452,8 @@ public class OrganizationConfigManager {
                 doAuthServiceLater = false;
             }
             if (SMSEntry.debug.messageEnabled()) {
-                SMSEntry.debug.message("ServiceName : " + serviceName);
+                SMSEntry.debug.message("OrganizationConfigManager" +
+                    "::loadDefaultServices:ServiceName " + serviceName);
             }
             try {
                 ServiceConfig sc = parentOrg.getServiceConfig(serviceName);
@@ -1431,6 +1509,59 @@ public class OrganizationConfigManager {
         }
     }
 
+
+    /**
+     * Registers default services to newly created suborganizations.
+     */
+    private void registerSvcsForOrg(String subOrgName, String subOrgDN)
+    {
+        try {
+            Set defaultServices =
+                ServiceManager.servicesAssignedByDefault();
+            if (SMSEntry.debug.messageEnabled()) {
+                SMSEntry.debug.message("OrganizationConfigManager::"+
+                    "registerSvcsForOrg. "+
+                    "defaultServices : " + defaultServices);
+            }
+
+            // Register the default services to the newly created orgs,so
+            // they will be marked with the OC sunRegisteredServiceName.
+            if (defaultServices != null) {
+                Set assignedServices = amsdk.getAssignedServices();
+                if (SMSEntry.debug.messageEnabled()) {
+                    SMSEntry.debug.message("OrganizationConfigManager::" +
+                        "registerSvcsForOrg:assignedServices: " +
+                            assignedServices);
+                }
+                Iterator items = defaultServices.iterator();
+                String serviceName = null;
+                amsdk = new OrgConfigViaAMSDK(token,
+                  orgNamingAttrInLegacyMode + SMSEntry.EQUALS +
+                        subOrgName + SMSEntry.COMMA +
+                        DNMapper.realmNameToAMSDKName(orgDN), subOrgDN);
+                while (items.hasNext()) {
+                    serviceName = (String) items.next();
+                    if (assignedServices.contains(serviceName)) {
+                        if (SMSEntry.debug.messageEnabled()) {
+                            SMSEntry.debug.message(
+                                "OrganizationConfigManager::"+
+                                "registerSvcsForOrg:ServiceName : " +
+                                serviceName);
+                        }
+                        amsdk.assignService(serviceName);
+                    }
+                }
+            }
+        } catch (SMSException smse) {
+            // Unable to load default services
+            if (SMSEntry.debug.warningEnabled()) {
+                SMSEntry.debug.warning("OrganizationConfigManager::" +
+                    "registerSvcsForOrg. " +
+                    "SMSException in registering services: ", smse);
+            }
+        }
+    }
+
     /**
      * Copies service configurations recursively from source to destination
      */
@@ -1444,6 +1575,56 @@ public class OrganizationConfigManager {
                     scf.getPriority(), scf.getAttributesWithoutDefaults());
             ServiceConfig sct = to.getSubConfig(subConfigName);
             copySubConfig(scf, sct);
+        }
+    }
+
+
+    /**
+     * Determines whether an organization ought to be created for each
+     * realm in realm only mode of installation based on the boolean flag
+     * in amSDK plugin.
+     * This requirement is for portal customers.
+     */
+    protected void isCopyOrgEnabled()
+    throws SMSException, SSOException {
+
+        if (SMSEntry.debug.messageEnabled()) {
+            SMSEntry.debug.message("OrganizationConfigManager: "+
+                "in isCopyOrgEnabled() ");
+        }
+        copyOrgEnabled = false;
+        // Check if AMSDK is configured for the realm
+        ServiceConfig s = getServiceConfig(ServiceManager.REALM_SERVICE);
+        if (s != null) {
+            Iterator items = s.getSubConfigNames().iterator();
+            while (items.hasNext()) {
+                ServiceConfig subConfig =
+                    s.getSubConfig((String) items.next());
+                if (subConfig.getSchemaID().equalsIgnoreCase(
+                    IdConstants.AMSDK_PLUGIN_NAME)) {
+                    Map configMap = subConfig.getAttributes();
+                    if ((configMap != null) && !configMap.isEmpty()) {
+                        // Get the amsdkOrgName from the amSDKRepo to build
+                        // OrgConfigViaSDK instance.
+                        Set orgs = (Set) configMap.get("amSDKOrgName");
+                        if (orgs != null && !orgs.isEmpty()) {
+                            amSDKOrgDN = (String) orgs.iterator().next();
+                            Set cfgs = (Set) configMap.get(CONF_ENABLED);
+                            if ( (cfgs != null) && (!cfgs.isEmpty()) &&
+                                (cfgs.contains("true")) &&
+                                    (amSDKOrgDN !=null) ) {
+                                amsdk = new OrgConfigViaAMSDK(token,
+                                    amSDKOrgDN, orgDN);
+                                if (orgNamingAttrInLegacyMode == null) {
+                                    orgNamingAttrInLegacyMode =
+                                    getNamingAttrForOrg();
+                                }
+                                copyOrgEnabled = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -1498,11 +1679,11 @@ public class OrganizationConfigManager {
     // Set containing service names that has OrganizationAttributeSchema
     private static Set serviceSchemaSet;
 
-    // To determine if notification object has been resgistered for schema
+    // To determine if notification object has been registered for schema
     // changes.
     private static boolean registeredForNotifications;
 
-    // To determine if notification object has been resgistered for config
+    // To determine if notification object has been registered for config
     // changes
     private static boolean registeredForConfigNotifications;
 

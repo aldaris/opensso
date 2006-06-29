@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.5 2006-06-16 19:36:09 rarcot Exp $
+ * $Id: AMOrganizationImpl.java,v 1.6 2006-06-29 14:13:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2774,7 +2774,8 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
      * @return The Set of the names of registered services.
      */
     public Set getRegisteredServiceNames() throws AMException, SSOException {
-        return dsServices.getRegisteredServiceNames(null, super.entryDN);
+        return dsServices.getRegisteredServiceNames(super.token, 
+            super.entryDN);
     }
 
     /**
