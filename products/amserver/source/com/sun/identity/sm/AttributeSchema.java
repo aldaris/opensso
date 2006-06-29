@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.3 2006-05-31 21:50:10 veiming Exp $
+ * $Id: AttributeSchema.java,v 1.4 2006-06-29 14:09:31 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -525,6 +525,31 @@ public class AttributeSchema {
     }
 
     /**
+     * Sets the boolean values of the attribute.
+     *
+     * @param trueValue string value for <code>BooleanTrueValue</code>.
+     * @param trueValueI18nKey <code>I18N</code> key for
+     *        <code>BooleanTrueValue</code>.
+     * @param falseValue string value for <code>BooleanFalseValue</code>.
+     * @param falseValueI18nKey <code>I18N</code> Key for
+     *        <code>BooleanFalseValue</code>.
+     * @param doc Document copy of the XML file.
+     * @throws SMSException if an error is encountered when trying to  set.
+     * @throws SSOException if the single sign on token is invalid or expired
+     */
+    public void setBooleanValues(
+        String trueValue,
+        String trueValueI18nKey,
+        String falseValue,
+        String falseValueI18nKey,
+        Document doc
+    ) throws SSOException, SMSException {
+      updateBooleanValues(trueValue, trueValueI18nKey,
+            falseValue, falseValueI18nKey, doc);
+    }
+
+
+    /**
      * Returns the string value for <code>BooleanTrueValue</code>.
      * 
      * @return the string value for <code>BooleanTrueValue</code>.
@@ -773,6 +798,41 @@ public class AttributeSchema {
         }
         sb.append(CHOICE_VALUES_END);
         updateXMLDocument(sb, SMSUtils.ATTRIBUTE_CHOICE_VALUES_ELEMENT, doc);
+    }
+
+    protected void updateBooleanValues(
+        String trueValue,
+        String trueValueI18nKey,
+        String falseValue,
+        String falseValueI18nKey,
+        Document doc
+    ) throws SMSException, SSOException {
+      // Construct BooleanValues
+      StringBuffer sb = new StringBuffer(100);
+      sb.append(XML_PREFIX).append(BOOLEAN_VALUES_BEGIN);
+
+      String[] trueVals = new String[2];
+        if ((trueValueI18nKey != null) && (trueValue != null)) {
+            trueVals[0] = trueValueI18nKey;
+            trueVals[1] = SMSSchema.escapeSpecialCharacters(trueValue);
+        } else {
+            trueVals[0] = getTrueValueI18NKey();
+            trueVals[1] = getTrueValue();
+        }
+        sb.append(MessageFormat.format(TRUE_BOOLEAN_KEY, (Object[])trueVals));
+
+      String[] falseVals = new String[2];
+      if ((falseValueI18nKey != null) && (falseValue != null)) {
+          falseVals[0] = falseValueI18nKey;
+          falseVals[1] = SMSSchema.escapeSpecialCharacters(falseValue);
+      } else {
+            falseVals[0] = getFalseValueI18NKey();
+            falseVals[1] = getFalseValue();
+      }
+      sb.append(MessageFormat.format(FALSE_BOOLEAN_KEY, (Object[])falseVals));
+
+      sb.append(BOOLEAN_VALUES_END);
+      updateXMLDocument(sb, SMSUtils.ATTRIBUTE_BOOLEAN_VALUES_ELEMENT, doc);
     }
 
     protected void updateXMLDocument(StringBuffer sb, String elementName,
@@ -1229,4 +1289,19 @@ public class AttributeSchema {
             + SMSUtils.ATTRIBUTE_CHOICE_VALUE_ELEMENT + ">{0}</"
             + SMSUtils.ATTRIBUTE_CHOICE_VALUE_ELEMENT + ">";
 
+    private static final String BOOLEAN_VALUES_BEGIN =
+      "<" + SMSUtils.ATTRIBUTE_BOOLEAN_VALUES_ELEMENT + ">";
+
+    private static final String BOOLEAN_VALUES_END =
+      "</" + SMSUtils.ATTRIBUTE_BOOLEAN_VALUES_ELEMENT + ">";
+
+    private static final String TRUE_BOOLEAN_KEY =
+      "<" + SMSUtils.ATTRIBUTE_TRUE_BOOLEAN_ELEMENT +
+      " " + SMSUtils.I18N_KEY + "=\"{0}\">{1}</" +
+      SMSUtils.ATTRIBUTE_TRUE_BOOLEAN_ELEMENT + ">";
+
+    private static final String FALSE_BOOLEAN_KEY =
+      "<" + SMSUtils.ATTRIBUTE_FALSE_BOOLEAN_ELEMENT +
+      " " + SMSUtils.I18N_KEY + "=\"{0}\">{1}</" +
+      SMSUtils.ATTRIBUTE_FALSE_BOOLEAN_ELEMENT + ">";
 }
