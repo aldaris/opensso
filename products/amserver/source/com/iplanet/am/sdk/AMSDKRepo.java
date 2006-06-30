@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.6 2006-06-29 14:13:36 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.7 2006-06-30 01:06:08 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1580,7 +1580,8 @@ public class AMSDKRepo extends IdRepo {
         }
         if (type.equals(IdType.USER)) {
             if (pcDN != null) {
-                dn = pcDN;
+                dn = AMNamingAttrManager.getNamingAttr(AMObject.USER) + "=" +
+                    name + "," + pcDN;
             } else {
                 dn = AMNamingAttrManager.getNamingAttr(AMObject.USER) + "=" +
                     name + ",ou=" + getDefaultPeopleContainerName() + "," +
@@ -1599,7 +1600,8 @@ public class AMSDKRepo extends IdRepo {
             }
         } else if (type.equals(IdType.AGENT)) {
             if (agentDN != null) {
-                dn = agentDN;
+                dn = AMNamingAttrManager.getNamingAttr(100) + "=" + name +
+                    "," + agentDN;
             } else {
                 dn = AMNamingAttrManager.getNamingAttr(100) + "=" + name +
                     ",ou=" + getDefaultAgentContainerName() + "," + orgDN;
