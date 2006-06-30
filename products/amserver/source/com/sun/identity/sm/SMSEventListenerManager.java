@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.2 2006-03-31 04:21:12 goodearth Exp $
+ * $Id: SMSEventListenerManager.java,v 1.3 2006-06-30 20:51:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,8 +49,7 @@ class SMSEventListenerManager implements SMSObjectListener {
 
     protected static HashMap allChanges = new HashMap();
 
-    protected static Map nodeChanges = Collections
-            .synchronizedMap(new HashMap());
+    protected static Map nodeChanges = new HashMap();
 
     protected static Map subNodeChanges = Collections
             .synchronizedMap(new HashMap());
@@ -259,30 +258,33 @@ class SMSEventListenerManager implements SMSObjectListener {
         if ((nObjects == null) || (nObjects.isEmpty())) {
             return;
         }
+        HashSet nobjs = new HashSet(2);
         synchronized (nObjects) {
-            Iterator items = nObjects.iterator();
-            while (items.hasNext()) {
-                try {
-                    NotificationObject no = (NotificationObject) items.next();
-                    if ((dn != null) && (no.object instanceof CachedSubEntries))
-                    {
-                        CachedSubEntries cse = (CachedSubEntries) no.object;
-                        // We do not cache Realm names.
-                        // We cache only service names and policy names.
-                        if (!dn.startsWith(SMSEntry.ORG_PLACEHOLDER_RDN)) {
-                            if (event == SMSObjectListener.ADD) {
-                                cse.add((new DN(dn)).explodeDN(true)[0]);
-                            } else {
-                                cse.remove((new DN(dn)).explodeDN(true)[0]);
-                            }
+            nobjs.addAll(nObjects);
+        }
+        Iterator items = nobjs.iterator();
+
+        while (items.hasNext()) {
+            try {
+                NotificationObject no = (NotificationObject) items.next();
+                if ((dn != null) && (no.object instanceof CachedSubEntries))
+                {
+                    CachedSubEntries cse = (CachedSubEntries) no.object;
+                    // We do not cache Realm names.
+                    // We cache only service names and policy names.
+                    if (!dn.startsWith(SMSEntry.ORG_PLACEHOLDER_RDN)) {
+                        if (event == SMSObjectListener.ADD) {
+                            cse.add((new DN(dn)).explodeDN(true)[0]);
+                        } else {
+                            cse.remove((new DN(dn)).explodeDN(true)[0]);
                         }
-                    } else {
-                        no.method.invoke(no.object, no.args);
                     }
-                } catch (Exception e) {
-                    debug.error("SMSEvent notification: "
-                            + "Unable to send notification: ", e);
+                } else {
+                    no.method.invoke(no.object, no.args);
                 }
+            } catch (Exception e) {
+                debug.error("SMSEvent notification: "
+                        + "Unable to send notification: ", e);
             }
         }
     }
