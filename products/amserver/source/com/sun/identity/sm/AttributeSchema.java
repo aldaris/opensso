@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.4 2006-06-29 14:09:31 goodearth Exp $
+ * $Id: AttributeSchema.java,v 1.5 2006-06-30 02:57:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -533,7 +533,6 @@ public class AttributeSchema {
      * @param falseValue string value for <code>BooleanFalseValue</code>.
      * @param falseValueI18nKey <code>I18N</code> Key for
      *        <code>BooleanFalseValue</code>.
-     * @param doc Document copy of the XML file.
      * @throws SMSException if an error is encountered when trying to  set.
      * @throws SSOException if the single sign on token is invalid or expired
      */
@@ -541,11 +540,10 @@ public class AttributeSchema {
         String trueValue,
         String trueValueI18nKey,
         String falseValue,
-        String falseValueI18nKey,
-        Document doc
+        String falseValueI18nKey
     ) throws SSOException, SMSException {
       updateBooleanValues(trueValue, trueValueI18nKey,
-            falseValue, falseValueI18nKey, doc);
+            falseValue, falseValueI18nKey, null);
     }
 
 
