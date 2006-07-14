@@ -1,0 +1,142 @@
+ <div><table cellpadding="0" cellspacing="10" border="0" align="center" valign="top">
+  <col WIDTH=100%>
+	<tr><td><img src="../images/openssographic.jpg" width="331" height="131" border="0" alt="OpenSSO"></td></tr>
+	<tr><td><h2>FAQ Getting Started</h2></td></tr>
+	<tr><td><font size="2">
+<ol>
+<li><a href="#browse">How do I browse the source code?</a></li>
+<li><a href="#download">How do I download the OpenSSO source code and binaries?</a></li>
+<li><a href="#allowed">What am I allowed to do with the OpenSSO source code and binaries?</a></li>
+<li><a href="#information">Where do I find information about setting up the environment, getting the right tools, and actually building the source?</a></li>
+<li><a href="#built">Now that I've built the code, what do I do?</a></li>
+<li><a href="#participate">How do I participate in the communities?</a></li>
+<li><a href="#bug">How do I report a bug?</a></li>
+<li><a href="#securitybug">How do I report a security bug?</a></li>
+<li><a href="#changes">How do I make changes to files in the source?</a></li>
+</ol>
+</font></td></tr>
+<tr><td><p><b>Q:<b><a name="browse"></a> How do I browse the source code?</b></b></p>
+
+
+<p>You can browse the source code without a java.net account by following the Version Control - CVS link in the navigation bar to <a href="https://opensso.dev.java.net/source/browse/opensso/">https://opensso.dev.java.net/source/browse/opensso/</a>.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="download"></a> How do I download the OpenSSO source code and binaries?</b></b></p>
+
+
+<p>You can check out the source code for testing using a CVS client. You need not be a registered user. Instructions on how to do this can be found at <a href="https://opensso.dev.java.net/servlets/ProjectSource">https://opensso.dev.java.net/servlets/ProjectSource</a>.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="allowed"></a> What am I allowed to do with the OpenSSO source code and binaries?</b></b></p>
+
+
+<p>You can freely view, modify, build, use, and redistribute the OpenSSO source code. Each of the binary downloads have their own licenses with different rights and restrictions. Please refer to the <a href="">Licensing page</a> for information about the license terms associated with the source code and binaries.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="information"></a> Where do I find information about setting up the environment, getting the right tools, and actually building the source?</b></b></p>
+
+
+<p>Using the Version Control - CVS link in the navigation bar, click into the products/amserver directory. The README in this directory contains information on requirements and dependencies as well as instructions on how to build the workspace and test the demo.
+
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="built"></a> Now that I've built the code, what do I do?</b></b></p>
+
+
+<p>You can start by joining communities of interest. This will give you a sense of what work is already being done and how you can best contribute. For example, you can:
+
+<ul>
+<li>Participate in communities and discussions.</li>
+<li>Find and report bugs.</li>
+<li>Contribute documentation or source code.</li>
+<li>Give feedback on how to make the project more successful.</li>
+</ul>
+
+To particpate in the OpenSSO project, you must register. See the Governance and the Register link in the navigation bar for more details. </p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="participate"></a> How do I participate in the communities?</b></b></p>
+
+<p>Communities are the primary way to focus information and discussions on particular features. The OpenSSO navigation bar has links to discussion forums you can read and email aliases you can join.
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="bug"></a> How do I report a bug?</b></b></p>
+
+
+<p>The first step is to search Issue Tracker to see if the problem has already been reported. Anyone can search the database, but you must be a registered user to file bugs. See the Governance or click Register on the navigation bar for more information.
+
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="securitybug"></a> How do I report a security bug?</b></b></p>
+
+
+<p>Handling a security vulnerability is different from handling any other kind of bug report. The bug report cannot be submitted through the regular channels as the objective is to analyze and fix the bug in secrecy, announcing the existence of the bug and its fix concurrently. 
+
+<p>This is the OpenSSO security bug process:
+
+<ol>
+<li>Security bugs will be submitted to a private alias outside the java.net infrastructure since it is not possible to restrict a java.net mailing list archive to a tight group of subscribers. The security bug email address is: 
+
+<p><a href="mailto:opensso-sec-bugs-ext@sun.com">opensso-sec-bugs-ext@sun.com</a></li>
+<li>Subscription to the security bug alias and its archive will be tightly restricted to a small security team. At the project's inception, the security team will comprise only Module Owners.</li>
+<p><li><i>Only security bugs should be sent to the security bugs alias.</i> 
+<p>Undoubtedly, people will send other bugs to the alias, either deliberately, trying to circumvent the regular process, or mistakenly, believing a real security bug has been found. The security team will discuss the submitted bug and its relevance privately using the security team alias (<a href="mailto:opensso-sec-bugs-ext@sun.com">opensso-sec-bugs-ext@sun.com</a>). After a consensus has been reached, a member of the security team may reply to the submitter with a pro forma response, directing them to submit the bug to Issue Tracker using the non-security bug process.</li>
+<li>Security bugs are treated as a matter of absolute urgency. The assumption is made that, if the reporter has encountered the bug, others are likely to have done the same and may already be exploiting it.</li>
+<p><li>The next task after conceding the receipt of a valid security bug is for the security team to evaluate its severity:
+<ol type="a">
+<p><li>How serious is the vulnerability?
+	<ul><li>Critical: the bug can lead to arbitrary code execution.</li>
+	<li>Severe: the bug can compromise confidentiality, integrity or availability of resources.</li>
+	<li>Moderate: anything else - for example, the bug exposes operational information such as number of active sessions.</li></ul></li>
+<li>How easy is it to exploit the vulnerability? Is a scripted attack possible? Must the attacker successfully authenticate as a regular user before initiating an attack?</li>
+<p><li>Who reported the issue? A report from a source outside the project is treated with even more urgency than one from an internal engineer.</li>
+</ol></li>
+<p><li>Should we put the bug on the Common Vulnerabilities and Exposures (CVE) list? 
+<p>CVE is a list of standardized names for vulnerabilities and other information security exposures. It aims to standardize the names for all publicly known vulnerabilities and security exposures. CVE names (also called <i>CVE numbers</i>, <i>CVE-IDs</i>, or <i>CVEs</i>) are unique, common identifiers for publicly known information security vulnerabilities. CVE names have <b>entry</b> or <b>candidate</b> status. Entry status indicates that the CVE name has been accepted to the CVE list. Candidate status (also called <i>candidates</i>, <i>candidate numbers</i>, or <i>CANs</i>) indicates that the name is under review for inclusion to the list.</li>
+<p><li>Work on the fix must proceed as quietly as possible, with discussion restricted to members of the security team. Code reviews will be performed as usual with the audience for this also restricted to the security team.</li>
+<p><li>Once a fix has been produced and tested, important users will be pre-notified. These users will be allowed to apply the patch before the bug becomes public knowledge.</li>
+<p><li>The fix must be announced and made available simultaneously (or as close to simultaneous as possible).</li>
+</ol>
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="changes"></a> How do I make changes to files in the OpenSSO source?</b></b></p>
+
+<p>A developer may resolve an issue by applying new code to files in the source tree. 
+
+<p>This is the process for making changes to files in the OpenSSO source:
+<ol>
+<li>Check out the latest copy of the source files.</li>
+<li>Make modifications to the appropriate files to incorporate your changes or additions.</li>
+<li>Write comments to explain the changes you have made.</li>
+<li>Modify the Javadoc<sup>TM</sup> comments and other appropriate documentation.</li>
+<li>Build the software and verify your fix.</li>
+<li>Run the relevant sanity/regression tests to make sure that the fix has not broken anything.</li>
+</ol>
+
+A <b>patch</b> is the set of differences between two versions of the same file. It is generated by running <pre>cvs diff</pre> 
+which reports the differences between two versions of one or more files in the source tree. Patches are used to send someone the exact changes that were made to your version of a program or a document. The receiver of the patch can then apply it to their version of the source tree to merge the changes and bring their version up-to-date with your version. <i>All patches must be reviewed before adding them back to the source tree.</i>
+
+<p>This is the process for submitting a patch file for review:
+
+<ol>
+<li>Create a patch file:
+<ol type="a">
+<li> % cd <i>checkedout_source</i></li>
+<li> % cvs diff -u > <i>patch_report_name</i></li>
+</ol> 
+
+<p><li>Enter an issue in Issue Tracker that corresponds to the patch, if none exists.</li>
+<p><i>Submit only one patch per issue. Do not submit a patch to fix more than one issue unless they are closely related.</i>
+<p><li>Submit your patch along with the issue number to <a href="mailto:codereview@opensso.dev.java.net">codereview@opensso.dev.java.net</a>.</li>
+<p><li>If approved, attach the patch file to the issue in Issue Tracker. This can be attached as a file or copied directly into the Suggested Fix field.</li>
+<p><li>Send the approved patch to <a href="mailto:committers@opensso.dev.java.net">committers@opensso.dev.java.net</a> to have it applied to the source tree.</li>
+<p><li>Once the patch is applied, the committer will update the issue in Issue Tracker as fixed.</li>
+</ol>
+
+<p>If you have found a critical security issue, please follow the <a href="#securitybug">guidelines for filing critical security issues</a>. 
+<p>If your patch is big or you intend to develop a product enhancement, you must follow the architecture review guidelines before submitting the patch. For more information, send an email to <a href="mailto:codereview@opensso.dev.java.net">codereview@opensso.dev.java.net</a>.
+
+</p></td></tr>
+
+</table>
+
+</p>
+
+<!-- content boundary -->
+</div>
