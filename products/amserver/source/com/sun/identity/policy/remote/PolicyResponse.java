@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyResponse.java,v 1.1 2006-04-26 05:15:10 dillidorai Exp $
+ * $Id: PolicyResponse.java,v 1.2 2006-07-17 18:11:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,7 +201,7 @@ public class PolicyResponse {
     /**
      * Sets the exception response.
      *
-     * @param ex the exception response.
+     * @param exMsg the exception response.
      */
     public void setExceptionMsg(String exMsg) {
         exceptionMsg = exMsg;

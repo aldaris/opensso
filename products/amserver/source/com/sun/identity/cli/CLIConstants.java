@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.1 2006-05-31 21:49:42 veiming Exp $
+ * $Id: CLIConstants.java,v 1.2 2006-07-17 18:10:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -238,4 +238,9 @@ public interface CLIConstants {
      * Core authentication service name.
      */
     String AUTH_CORE_SERVICE = "iPlanetAMAuthService";
+    
+    /**
+     * Tag for web input.
+     */
+    String WEB_INPUT = "web-input";
 }

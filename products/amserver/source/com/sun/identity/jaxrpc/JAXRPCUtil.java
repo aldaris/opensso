@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCUtil.java,v 1.2 2006-05-31 21:50:09 veiming Exp $
+ * $Id: JAXRPCUtil.java,v 1.3 2006-07-17 18:11:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,8 +205,7 @@ public class JAXRPCUtil {
             Method method = null;
             if (iurl.endsWith(SMS_SERVICE)) {
                 // Obtain the method "getSMSObjectIFPort" and invoke it
-                method = imsClass.getMethod(
-                    "getSMSObjectIFPort", (Class)null);
+                method = imsClass.getMethod("getSMSObjectIFPort",(Class[])null);
             } // %%% Add other service names here
 
             // Obtain the stub to be returned

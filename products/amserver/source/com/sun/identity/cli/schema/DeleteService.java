@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteService.java,v 1.1 2006-05-31 21:50:00 veiming Exp $
+ * $Id: DeleteService.java,v 1.2 2006-07-17 18:11:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,14 +121,7 @@ public class DeleteService extends AuthenticatedCommand {
                 scm.removeGlobalConfiguration(null);
             }
 
-            if (serviceName.equalsIgnoreCase(CLIConstants.AUTH_CORE_SERVICE)) {
-                ssm.deleteService(serviceName);
-            } else {
-                Set versions = ssm.getServiceVersions(serviceName);
-                for (Iterator iter = versions.iterator(); iter.hasNext(); ) {
-                    ssm.removeService(serviceName, (String)iter.next());
-                }
-            }
+            ssm.deleteService(serviceName);
         } catch (SSOException e) {
             String[] args = {serviceName, e.getMessage()};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,

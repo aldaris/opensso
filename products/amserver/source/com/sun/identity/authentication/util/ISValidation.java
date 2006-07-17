@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISValidation.java,v 1.1 2006-01-28 09:17:12 veiming Exp $
+ * $Id: ISValidation.java,v 1.2 2006-07-17 18:10:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,12 +46,12 @@ public class ISValidation {
      *
      * @param str Source string which should be validated.
      * @param regEx Pattern for which to search.
-     * @param debug Debug object used for logging debug info.
+     * @param tmpDebug Debug object used for logging debug info.
      * @return <code>false</code> when it detects specified pattern within
      *         source string which need to be validated OR if source
      *         string is null.
      */
-    public static  boolean validate(String str, String regEx, Debug tmpDebug) {
+    public static boolean validate(String str, String regEx, Debug tmpDebug) {
         // Assign new Debug object
         debug = tmpDebug;
         if (str == null || str.length() == 0) {

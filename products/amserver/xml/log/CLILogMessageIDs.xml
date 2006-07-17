@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.1 2006-05-31 21:51:34 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.2 2006-07-17 18:11:54 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1075,7 +1075,7 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
-
+    
     <logmessage name="ATTEMPT_REMOVE_ATTRIBUTE_SCHEMA_CHOICE_VALUE" id="2160"
         loglevel="LL_INFO"
         description="Attempt to remove choice value from attribute schema.">
@@ -3342,6 +3342,52 @@
         </datainfo>
         <triggers>
             <item>Execute remove privileges from an identity Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SET_ATTRIBUTE_SCHEMA_BOOLEAN_VALUES" id="2670"
+        loglevel="LL_INFO"
+        description="Attempt to set boolean values to attribute schema.">
+        <datainfo>
+            <item>name of service</item>
+            <item>schema type</item>
+            <item>name of sub schema</item>
+            <item>name of attribute schema</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute schema boolean values Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_ATTRIBUTE_SCHEMA_BOOLEAN_VALUES" id="2671"
+        loglevel="LL_INFO"
+        description="Boolean values are set.">
+        <datainfo>
+            <item>name of service</item>
+            <item>schema type</item>
+            <item>name of sub schema</item>
+            <item>name of attribute schema</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute schema boolean values Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_ATTRIBUTE_SCHEMA_BOOLEAN_VALUES" id="2672"
+        loglevel="LL_INFO"
+        description="Unable to set boolean values to attribute schema.">
+        <datainfo>
+            <item>name of service</item>
+            <item>schema type</item>
+            <item>name of sub schema</item>
+            <item>name of attribute schema</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute schema boolean values Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>

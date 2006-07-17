@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerInstanceAction.java,v 1.1 2005-11-01 00:31:18 arvindp Exp $
+ * $Id: ServerInstanceAction.java,v 1.2 2006-07-17 18:11:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,6 @@ public class ServerInstanceAction implements PrivilegedAction {
      * @see java.security.PrivilegedAction#run()
      */
     public Object run() {
-        String ret = sInstance.getPasswd();
-        return ret;
+        return sInstance.getPasswd();
     }
 }

@@ -1,0 +1,235 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-07-17 18:11:37 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso-war" default="all">
+                
+    <description>Open Web Single Sign-On: WAR</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** war may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="warbase.dir"/></not>
+                <not><isset property="built.war.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <!-- war environment variables -->
+    <property name="war.built.dir" location="${built.war.dir}"/>
+    <property name="war.classes.dir" location="${war.built.dir}/classes"/>
+    <property name="war.xml.dir" location="${warbase.dir}/xml"/>
+    <property name="war.www.dir" location="${warbase.dir}/www"/>
+
+    <target name="all" depends="preparebuild">
+        <war destfile="${war.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
+            <lib dir="${extlib.dir}">
+                <exclude name="j2ee.jar"/>
+            </lib>
+            <lib dir="${lockhart.dir}/lib" />
+            <lib dir="${javahelp.dir}/lib" />
+            <lib dir="${jatolib.dir}">
+                <include name="jato.jar" />
+            </lib>
+            <classes dir="${built.dir}/classes" />
+            <classes dir="${war.classes.dir}" />
+
+            <zipfileset dir="${www.dir}/authentication/UI">
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${www.dir}/authentication/UI/login_images" prefix="login_images" />
+            <zipfileset dir="${www.dir}/authentication/UI/js" prefix="js" />
+            <zipfileset dir="${www.dir}/authentication/UI/js" prefix="js" />
+            <zipfileset dir="${lockhart.dir}/js" prefix="js">
+                <include name="browserVersion.js" />
+            </zipfileset>
+            <zipfileset dir="${lockhart.dir}/css" prefix="com_sun_web_ui/css">
+                <exclude name="css_generic.css" />
+                <exclude name="styles.css" />
+            </zipfileset>
+            <zipfileset dir="${lockhart.dir}/dtd" prefix="com_sun_web_ui/dtd" />
+            <zipfileset dir="${lockhart.dir}/html" prefix="com_sun_web_ui/html" />
+            <zipfileset dir="${lockhart.dir}/images" prefix="com_sun_web_ui/images" />
+            <zipfileset dir="${lockhart.dir}/images" prefix="images">
+                <include name="PrimaryProductName.png" />
+                <include name="*.jpg" />
+                <include name="*.gif" />
+                <include name="button/primary*.gif" />
+            </zipfileset>
+            <zipfileset dir="${lockhart.dir}/js" prefix="com_sun_web_ui/js" />
+            <zipfileset dir="${lockhart.dir}/jsp" prefix="com_sun_web_ui/jsp" />
+            <zipfileset dir="${www.dir}/authentication/UI" prefix="config/auth/default">
+                <include name="*.jsp" />
+                <include name="*.html" />
+            </zipfileset>
+            <zipfileset dir="${xml.dir}" prefix="config/auth/default">
+                <include name="AD.xml" />
+                <include name="Anonymous.xml" />
+                <include name="Application.xml" />
+                <include name="Cert.xml" />
+                <include name="DataStore.xml" />
+                <include name="HTTPBasic.xml" />
+                <include name="JDBC.xml" />
+                <include name="LDAP.xml" />
+                <include name="Membership.xml" />
+                <include name="MSISDN.xml" />
+                <include name="NT.xml" />
+                <include name="WindowsDesktopSSO.xml" />
+            </zipfileset>
+            <zipfileset dir="${xml.dir}" prefix="config/auth/default_en">
+                <include name="AD.xml" />
+                <include name="Anonymous.xml" />
+                <include name="Application.xml" />
+                <include name="Cert.xml" />
+                <include name="DataStore.xml" />
+                <include name="HTTPBasic.xml" />
+                <include name="JDBC.xml" />
+                <include name="LDAP.xml" />
+                <include name="Membership.xml" />
+                <include name="MSISDN.xml" />
+                <include name="NT.xml" />
+                <include name="WindowsDesktopSSO.xml" />
+            </zipfileset>
+            <zipfileset dir="${xml.dir}/console" prefix="WEB-INF/classes">
+                <include name="amAccessControl.xml" />
+                <include name="amConsoleConfig.xml" />
+            </zipfileset>
+            <zipfileset dir="${built.war.dir}/xml" prefix="WEB-INF/classes">
+                <include name="ums.xml" />
+                <include name="amAuthConfig.xml" />
+                <include name="amAuthHTTPBasic.xml" /> 
+                <include name="amAdminConsole.xml" />
+                <include name="amAuth.xml" />
+                <include name="amAuthAD.xml" />
+                <include name="amAuthAnonymous.xml" />
+                <include name="amAuthCert.xml" />
+                <include name="amAuthDataStore.xml" />
+                <include name="amAuthJDBC.xml" />
+                <include name="amAuthLDAP.xml" />
+                <include name="amAuthMSISDN.xml" />
+                <include name="amAuthMembership.xml" />
+                <include name="amAuthNT.xml" />
+                <include name="amAuthWindowsDesktopSSO.xml" />
+                <include name="amClientData.xml" />
+                <include name="amClientDetection.xml" />
+                <include name="amDelegation.xml" />
+                <include name="amG11NSettings.xml" />
+                <include name="amLogging.xml" />
+                <include name="amNaming.xml" />
+                <include name="amPlatform.xml" />
+                <include name="amPolicy.xml" />
+                <include name="amPolicyConfig.xml" />
+                <include name="amRealmService.xml" />
+                <include name="amSession.xml" />
+                <include name="amWebAgent.xml" />
+                <include name="idRepoService.xml" />
+                <include name="identityLocaleService.xml" />
+                <include name="amEntrySpecific.xml" />
+                <include name="amUser.xml" />
+            </zipfileset>            
+            <zipfileset dir="${built.war.dir}/xml" prefix="WEB-INF/template/sms">
+                <include name="serverconfig.xml" />
+            </zipfileset>
+            <zipfileset dir="${built.res.dir}" prefix="WEB-INF/classes">
+                <include name="*.properties" />
+                <exclude name="AMConfig.properties" />
+            </zipfileset>
+            <zipfileset dir="${res.dir}/console" prefix="WEB-INF/classes">
+                <include name="*.properties" />
+            </zipfileset>
+            <zipfileset dir="${www.dir}/jsp">
+                <include name="isAlive.jsp" />
+                <include name="Debug.jsp" />
+                <include name="amadm.jsp" />
+            </zipfileset>
+            <zipfileset dir="${war.www.dir}">
+                <exclude name="server" />
+                <exclude name="client" />
+            </zipfileset>
+            <zipfileset dir="${xml.dir}" prefix="WEB-INF">
+                <include name="*.dtd" />
+                <include name="auth.tld" />
+            </zipfileset>
+            <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/template/sms">
+                <include name="SunAMClientData.xml" />
+                <include name="defaultDelegationPolicies.xml" />
+            </zipfileset>
+            <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/classes">
+                <include name="AMConfig.properties" />
+            </zipfileset>
+            <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF">
+                <include name="cc.tld" />
+            </zipfileset>
+            <zipfileset dir="${jatolib.dir}" prefix="WEB-INF">
+                <include name="jato.tld" />
+            </zipfileset>
+            <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF/com_sun_web_ui" />
+            <zipfileset dir="${www.dir}/console" prefix="console">
+                <exclude name="html" />
+                <exclude name="html/*" />
+            </zipfileset>
+            <zipfileset dir="${www.dir}/console/html/level1" prefix="console" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/authentication" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/base" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/css" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/delegation" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/dm" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/idm" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/images" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/js" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/policy" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/realm" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/service" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/session" />
+            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/user" />
+            <zipfileset dir="${lockhart.dir}/css" prefix="css">
+                <exclude name="css_generic.css" />
+            </zipfileset>
+            <zipfileset dir="${docs.dir}/console/javahelp" prefix="html/en/help">
+                <include name="app.hs" />
+                <include name="map.jhm" />
+                <include name="version.html" />
+            </zipfileset>
+            <zipfileset dir="${docs.dir}/console/javahelp/en" prefix="html/en/help" />
+            <zipfileset dir="${javahelp.dir}/css" prefix="html/en/help/css" />
+            <zipfileset dir="${javahelp.dir}/ents" prefix="html/en/help/ents" />
+            <zipfileset dir="${javahelp.dir}/graphics" prefix="html/en/help/graphics" />
+        </war>
+        <checksum file="${war.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${war.built.dir}"/>
+        <mkdir dir="${war.classes.dir}"/>
+        <mkdir dir="${war.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${war.dist.dir}"/>
+        <delete dir="${war.classes.dir}"/>
+        <delete dir="${war.built.dir}"/>
+    </target>
+
+</project>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyChangeNotification.java,v 1.1 2006-04-26 05:15:09 dillidorai Exp $
+ * $Id: PolicyChangeNotification.java,v 1.2 2006-07-17 18:11:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,7 +106,7 @@ public class PolicyChangeNotification {
     /**
      * Sets the service name to which this notification is sent.
      *
-     * @param name Service name.
+     * @param sn Service name.
      */
     public void setServiceName(String sn) {
         serviceName = sn;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.1 2006-05-31 21:49:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.2 2006-07-17 18:10:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public class AccessManager implements IDefinition {
 
                 String subcmdName = fld.getName().replace('_', '-');
                 subCommands.add(new SubCommand(
-                    rb, subcmdName, mandatoryOptions, optionalOptions,
+                    this, rb, subcmdName, mandatoryOptions, optionalOptions,
                     optionAliases, info.implClassName()));
             }
         }
@@ -175,5 +175,18 @@ public class AccessManager implements IDefinition {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns <code>true</code> if the option is an authentication related
+     * option such as user ID and password.
+     *
+     * @param opt Name of option.
+     * @returns <code>true</code> if the option is an authentication related
+     *         option such as user ID and password.
+     */
+    public boolean isAuthOption(String opt) {
+        return opt.equals(AccessManagerConstants.ARGUMENT_ADMIN_ID) ||
+            opt.equals(AccessManagerConstants.ARGUMENT_PASSWORD);
     }
 }

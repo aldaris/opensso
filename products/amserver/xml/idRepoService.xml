@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="@XML_ENCODING@"?>
+
 <!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -18,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.11 2006-06-29 14:15:48 goodearth Exp $
+   $Id: idRepoService.xml,v 1.12 2006-07-17 18:11:53 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -126,7 +128,7 @@
                      AMSDK's organization. -->
                 <SubSchema name= "amSDK"
                     inheritance = "multiple"
-                    i18nKey = "AMSDK_I18N_KEY">
+                    i18nKey = "@AMSDK_I18N_KEY@">
                     <!-- The two attributes below, if defined, allow the IdRepo SDK to
                         map attribute names and to determine entities supported and
                         operations supported by this plugin. If no mapping is provided,
@@ -195,7 +197,7 @@
                             syntax = "string"
                             i18nKey = "a106">
                             <DefaultValues>
-                                <Value>NORMALIZED_ORGBASE</Value>
+                                <Value>@NORMALIZED_ORGBASE@</Value>
                             </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sun-idrepo-amSDK-config-people-container-name"
@@ -324,7 +326,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a2000">
                         <DefaultValues>
-                            <Value>DIRECTORY_SERVER:DIRECTORY_PORT</Value>
+                            <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -347,7 +349,7 @@
                         validator="RequiredValueValidator"
                         i18nKey = "a2006">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     
@@ -424,7 +426,7 @@
                         syntax="string"
                         i18nKey="a2015">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -687,7 +689,7 @@
                         syntax="string"
                         i18nKey="a20351">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -762,7 +764,7 @@
                         syntax="string"
                         i18nKey="a20386">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -771,7 +773,7 @@
                         syntax="string"
                         i18nKey="a2043">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -940,7 +942,7 @@
                         syntax="string"
                         i18nKey="a2003">
                         <DefaultValues>
-                            <Value>cn=dsameuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                            <Value>cn=dsameuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     
@@ -957,7 +959,7 @@
                         validator="RequiredValueValidator"
                         i18nKey = "a2006">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     
@@ -1034,7 +1036,7 @@
                         syntax="string"
                         i18nKey="a2015">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1343,7 +1345,7 @@
                         syntax="string"
                         i18nKey="a20351">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1425,7 +1427,7 @@
                         syntax="string"
                         i18nKey="a20386">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1434,7 +1436,7 @@
                         syntax="string"
                         i18nKey="a2043">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1610,7 +1612,7 @@
                         syntax="string"
                         i18nKey="a2003">
                         <DefaultValues>
-                            <Value>CN=Administrator,CN=Users,NORMALIZED_ORGBASE</Value>
+                            <Value>CN=Administrator,CN=Users,@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     
@@ -1627,7 +1629,7 @@
                         validator="RequiredValueValidator"
                         i18nKey = "a2006">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     
@@ -1704,7 +1706,7 @@
                         syntax="string"
                         i18nKey="a2015">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -1972,7 +1974,7 @@
                         syntax="string"
                         i18nKey="a20351">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -2047,7 +2049,7 @@
                         syntax="string"
                         i18nKey="a20386">
                         <DefaultValues>
-                            <Value>USER_NAMING_ATTR</Value>
+                            <Value>@USER_NAMING_ATTR@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -2056,7 +2058,7 @@
                         syntax="string"
                         i18nKey="a2043">
                         <DefaultValues>
-                            <Value>NORMALIZED_ORGBASE</Value>
+                            <Value>@NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
@@ -2221,7 +2223,7 @@
                         isSearchable="yes"
                         i18nKey = "a109">
                         <DefaultValues>
-                            <Value>SERVER_HOST</Value>
+                            <Value>@SERVER_HOST@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </OrganizationAttributeSchema>
@@ -2275,7 +2277,7 @@
                         id="user">
                         <AttributeValuePair>
                             <Attribute name="userPassword" />
-                            <Value>HASHADMINPASSWD</Value>
+                            <Value>@HASHADMINPASSWD@</Value>
                         </AttributeValuePair>
                        <AttributeValuePair>
                             <Attribute name="inetUserStatus" />
@@ -2283,7 +2285,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>USER_NAMING_ATTR=amAdmin,ou=people,NORMALIZED_ORGBASE</Value>
+                            <Value>@USER_NAMING_ATTR@=amAdmin,ou=people,@NORMALIZED_ORGBASE@</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="roles" />
@@ -2294,7 +2296,7 @@
                         id="user">
                         <AttributeValuePair>
                             <Attribute name="userPassword" />
-                            <Value>HASHADMINPASSWD</Value>
+                            <Value>@HASHADMINPASSWD@</Value>
                         </AttributeValuePair>
                        <AttributeValuePair>
                             <Attribute name="inetUserStatus" />
@@ -2302,7 +2304,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=dsameuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                            <Value>cn=dsameuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="anonymous"
@@ -2313,29 +2315,29 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>USER_NAMING_ATTR=anonymous,ou=people,NORMALIZED_ORGBASE</Value>
+                            <Value>@USER_NAMING_ATTR@=anonymous,ou=people,@NORMALIZED_ORGBASE@</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="amldapuser"
                         id="user">
                         <AttributeValuePair>
                             <Attribute name="userPassword" />
-                            <Value>HASHLDAPUSERPASSWD</Value>
+                            <Value>@HASHLDAPUSERPASSWD@</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=amldapuser,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                            <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="amService-URLAccessAgent"
                         id="user">
                         <AttributeValuePair>
                             <Attribute name="userPassword" />
-                            <Value>HASHLDAPUSERPASSWD</Value>
+                            <Value>@HASHLDAPUSERPASSWD@</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=amService-URLAccessAgent,ou=DSAME Users,NORMALIZED_ORGBASE</Value>
+                            <Value>cn=amService-URLAccessAgent,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

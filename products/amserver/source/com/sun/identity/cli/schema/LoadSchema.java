@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoadSchema.java,v 1.1 2006-05-31 21:50:01 veiming Exp $
+ * $Id: LoadSchema.java,v 1.2 2006-07-17 18:11:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,9 @@ package com.sun.identity.cli.schema;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.Debugger;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.LogWriter;
@@ -37,6 +39,7 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -72,28 +75,68 @@ public class LoadSchema extends AuthenticatedCommand {
         } catch (SSOException e) {
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        
-        for (Iterator i = xmlFiles.iterator(); i.hasNext(); ) {
-            String file = (String)i.next();
-            String[] param = {file};
 
-            try {
-                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                    "ATTEMPT_LOAD_SCHEMA", param);
-                loadSchema(ssm, file);
-                outputWriter.printlnMessage(
-                    getResourceString("schema-added"));
-                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                    "SUCCEED_LOAD_SCHEMA", param);
-            } catch (CLIException e) {
-                if (continueFlag) {
-                    outputWriter.printlnError(
-                        getResourceString("schema-failed") + e.getMessage());
-                    if (isVerbose()) {
-                        outputWriter.printlnError(Debugger.getStackTrace(e));
+        CommandManager mgr = getCommandManager();
+        String url = mgr.getWebEnabledURL();
+        if ((url != null) && (url.length() > 0)) {
+            String[] param = {CLIConstants.WEB_INPUT};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_LOAD_SCHEMA",
+                param);
+            loadSchemaXML(ssm, (String)xmlFiles.iterator().next());
+            outputWriter.printlnMessage(getResourceString("schema-added"));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCESS_LOAD_SCHEMA", param);
+        } else {
+            for (Iterator i = xmlFiles.iterator(); i.hasNext(); ) {
+                String file = (String)i.next();
+                String[] param = {file};
+
+                try {
+                    writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                        "ATTEMPT_LOAD_SCHEMA", param);
+                    loadSchema(ssm, file);
+                    outputWriter.printlnMessage(
+                        getResourceString("schema-added"));
+                    writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                        "SUCCESS_LOAD_SCHEMA", param);
+                } catch (CLIException e) {
+                    if (continueFlag) {
+                        outputWriter.printlnError(
+                            getResourceString("schema-failed") +e.getMessage());
+                        if (isVerbose()) {
+                            outputWriter.printlnError(
+                                Debugger.getStackTrace(e));
+                        }
+                    } else {
+                        throw e;
                     }
-                } else {
-                    throw e;
+                }
+            }
+        }
+    }
+
+    private void loadSchemaXML(ServiceManager ssm, String xml)
+        throws CLIException {
+        ByteArrayInputStream bis = null;
+        try {
+            bis = new ByteArrayInputStream(xml.getBytes());
+            ssm.registerServices(bis);
+        } catch (SSOException e) {
+            String[] args = {CLIConstants.WEB_INPUT, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "FAILED_LOAD_SCHEMA",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {CLIConstants.WEB_INPUT, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, "FAILED_LOAD_SCHEMA",
+                args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (IOException ie) {
+                    //ignore if file input stream cannot be closed.
                 }
             }
         }
@@ -125,7 +168,7 @@ public class LoadSchema extends AuthenticatedCommand {
                 try {
                     fis.close();
                 } catch (IOException ie) {
-                    //igore if file input stream cannot be closed.
+                    //ignore if file input stream cannot be closed.
                 }
             }
         }

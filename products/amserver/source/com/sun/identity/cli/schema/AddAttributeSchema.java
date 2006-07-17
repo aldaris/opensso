@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAttributeSchema.java,v 1.1 2006-05-31 21:49:59 veiming Exp $
+ * $Id: AddAttributeSchema.java,v 1.2 2006-07-17 18:11:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,9 @@ package com.sun.identity.cli.schema;
 
 
 import com.iplanet.sso.SSOException;
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.Debugger;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -35,6 +37,7 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -66,28 +69,75 @@ public class AddAttributeSchema extends SchemaCommand {
         String schemaType = getStringOptionValue(IArgument.SCHEMA_TYPE);
         ServiceSchema ss = getServiceSchema();
         
-        for (Iterator i = fileNames.iterator(); i.hasNext(); ) {
-            String name = (String)i.next();
-            String[] param = {serviceName, schemaType, name};
+        CommandManager mgr = getCommandManager();
+        String url = mgr.getWebEnabledURL();
+        if ((url != null) && (url.length() > 0)) {
+            String[] param = {CLIConstants.WEB_INPUT};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
+                "ATTEMPT_ADD_ATTRIBUTE_SCHEMA", param);
+            addAttributeSchemaXML(ss, serviceName, schemaType,
+                (String)fileNames.iterator().next());
+            outputWriter.printlnMessage(getResourceString(
+                "attribute-schema-added"));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEED_ADD_ATTRIBUTE_SCHEMA", param);
+        } else {
+            for (Iterator i = fileNames.iterator(); i.hasNext(); ) {
+                String name = (String)i.next();
+                String[] param = {serviceName, schemaType, name};
 
-            try {
-                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                    "ATTEMPT_ADD_ATTRIBUTE_SCHEMA", param);
-                addAttributeSchema(ss, serviceName, schemaType, name);
-                outputWriter.printlnMessage(
-                    getResourceString("attribute-schema-added"));
-                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                    "SUCCEED_ADD_ATTRIBUTE_SCHEMA", param);
-            } catch (CLIException e) {
-                if (continueFlag) {
-                    outputWriter.printlnError(
-                        getResourceString("add-attribute-schema-failed") +
-                        e.getMessage());
-                    if (isVerbose()) {
-                        outputWriter.printlnError(Debugger.getStackTrace(e));
+                try {
+                    writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                        "ATTEMPT_ADD_ATTRIBUTE_SCHEMA", param);
+                    addAttributeSchema(ss, serviceName, schemaType, name);
+                    outputWriter.printlnMessage(
+                        getResourceString("attribute-schema-added"));
+                    writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                        "SUCCEED_ADD_ATTRIBUTE_SCHEMA", param);
+                } catch (CLIException e) {
+                    if (continueFlag) {
+                        outputWriter.printlnError(
+                            getResourceString("add-attribute-schema-failed") +
+                            e.getMessage());
+                        if (isVerbose()) {
+                            outputWriter.printlnError(Debugger.getStackTrace(e));
+                        }
+                    } else {
+                        throw e;
                     }
-                } else {
-                    throw e;
+                }
+            }
+        }
+    }
+
+    private void addAttributeSchemaXML(
+        ServiceSchema ss,
+        String serviceName,
+        String schemaType,
+        String xml
+    ) throws CLIException {
+        ByteArrayInputStream bis = null;
+        try {
+            bis = new ByteArrayInputStream(xml.getBytes());
+            ss.addAttributeSchema(bis);
+        } catch (SSOException e) {
+            String[] args = {CLIConstants.WEB_INPUT, schemaType, xml, 
+                e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
+                "FAILED_ADD_ATTRIBUTE_SCHEMA", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
+            String[] args = {CLIConstants.WEB_INPUT, schemaType, xml, 
+                e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
+                "FAILED_ADD_ATTRIBUTE_SCHEMA", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (IOException ie) {
+                    //ignore if file input stream cannot be closed.
                 }
             }
         }

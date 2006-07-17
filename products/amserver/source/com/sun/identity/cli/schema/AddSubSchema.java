@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubSchema.java,v 1.1 2006-05-31 21:50:00 veiming Exp $
+ * $Id: AddSubSchema.java,v 1.2 2006-07-17 18:11:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.cli.schema;
 
 
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
@@ -34,6 +35,7 @@ import com.sun.identity.cli.RequestContext;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -65,12 +67,17 @@ public class AddSubSchema extends SchemaCommand {
         String[] params = {serviceName, schemaType, subSchemaName};
 
         ServiceSchema ss = getServiceSchema();
-
+        CommandManager mgr = getCommandManager();
+        String url = mgr.getWebEnabledURL();
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_ADD_SUB_SCHEMA", params);
 
         try {
-            ss.addSubSchema(new FileInputStream(fileName));
+            if ((url != null) && (url.length() > 0)) {
+                ss.addSubSchema(new ByteArrayInputStream(fileName.getBytes()));
+            } else {
+                ss.addSubSchema(new FileInputStream(fileName));
+            }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SUB_SCHEMA", params);
             outputWriter.printlnMessage(MessageFormat.format(

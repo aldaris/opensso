@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.3 2006-06-23 00:48:44 arviranga Exp $
+ * $Id: ServiceSchema.java,v 1.4 2006-07-17 18:11:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -770,9 +770,9 @@ public class ServiceSchema {
                     SMSUtils.NAME, nodeName);
             if (node != null) {
                 schemaNode.removeChild(node);
+                ssm.replaceSchema(schemaDoc);
             }
         }
-        ssm.replaceSchema(schemaDoc);
     }
 
     // -----------------------------------------------------------

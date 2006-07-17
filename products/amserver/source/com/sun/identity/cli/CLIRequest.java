@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.1 2006-05-31 21:49:42 veiming Exp $
+ * $Id: CLIRequest.java,v 1.2 2006-07-17 18:10:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
-
+import com.iplanet.sso.SSOToken;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -37,20 +37,43 @@ import java.util.ResourceBundle;
 public class CLIRequest {
     private CLIRequest parent;
     private String[] argv;
+    private SSOToken ssoToken;
 
     /**
      * Constructs a CLI request object.
      *
-     * @param parent
-     *          Parent request object. This can be null if the request is the
-     *          root request.
-     * @param argv
-     *          Options for the request.
+     * @param parent Parent request object. This can be null if the request is
+     *        the root request.
+     * @param argv Options for the request.
+     * @param ssoToken Single Sign On token of the administrator.
+     */
+    public CLIRequest(CLIRequest parent, String[] argv, SSOToken ssoToken) {
+        this.parent = parent;
+        this.argv = argv;
+        this.ssoToken = ssoToken;
+    }
+
+    /**
+     * Constructs a CLI request object.
+     *
+     * @param parent Parent request object. This can be null if the request is the
+     *        root request.
+     * @param argv Options for the request.
      */
     public CLIRequest(CLIRequest parent, String[] argv) {
         this.parent = parent;
         this.argv = argv;
     }
+    
+    /**
+     * Returns the single sign on token.
+     *
+     * @return the single sign on token.
+     */
+    public SSOToken getSSOToken() {
+        return ssoToken;
+    }
+
 
     /**
      * Returns options for the request.
@@ -74,6 +97,24 @@ public class CLIRequest {
      * Processes the request.
      *
      * @param mgr Command Manager instance.
+     * @param ssoToken Single Sign On Token of the user.
+     * @throws CLIException if the request cannot be serviced.
+     */
+    public void process(CommandManager mgr, SSOToken ssoToken)
+        throws CLIException {
+        if (argv.length == 0) {
+            UsageFormatter.getInstance().format(mgr);
+        } else if (argv.length == 1) {
+            process(mgr, argv[0], ssoToken);
+        } else {
+            process(mgr, argv, ssoToken);
+        }
+    }
+    
+    /**
+     * Processes the request.
+     *
+     * @param mgr Command Manager instance.
      * @throws CLIException if the request cannot be serviced.
      */
     public void process(CommandManager mgr)
@@ -81,17 +122,16 @@ public class CLIRequest {
         if (argv.length == 0) {
             UsageFormatter.getInstance().format(mgr);
         } else if (argv.length == 1) {
-            process(mgr, argv[0]);
+            process(mgr, argv[0], null);
         } else {
-            process(mgr, argv);
+            process(mgr, argv, null);
         }
     }
 
-    private void process(CommandManager mgr, String arg)
+    private void process(CommandManager mgr, String arg, SSOToken ssoToken)
         throws CLIException {
         String commandName = mgr.getCommandName();
         ResourceBundle rb = mgr.getResourceBundle();
-
         if (matchOption(arg, CLIConstants.ARGUMENT_HELP,
                 CLIConstants.SHORT_ARGUMENT_HELP)
         ) {
@@ -118,7 +158,7 @@ public class CLIRequest {
         }
     }
 
-    private void process(CommandManager mgr, String[] argv)
+    private void process(CommandManager mgr, String[] argv, SSOToken ssoToken)
         throws CLIException {
         String commandName = mgr.getCommandName();
         ResourceBundle rb = mgr.getResourceBundle();

@@ -17,13 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefinitionClassInfo.java,v 1.1 2006-05-31 21:49:47 veiming Exp $
+ * $Id: DefinitionClassInfo.java,v 1.2 2006-07-17 18:11:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.annotation;
-
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

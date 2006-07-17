@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoResponseProvider.java,v 1.1 2006-04-26 05:14:47 dillidorai Exp $
+ * $Id: IDRepoResponseProvider.java,v 1.2 2006-07-17 18:11:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,8 +169,8 @@ public class IDRepoResponseProvider implements ResponseProvider {
     public Syntax getPropertySyntax(String property) {
         if (property.equals(STATIC_ATTRIBUTE)) {
             return (Syntax.ANY);
-        } 
-         if (property.equals(DYNAMIC_ATTRIBUTE)) {
+        }
+        if (property.equals(DYNAMIC_ATTRIBUTE)) {
             return (Syntax.MULTIPLE_CHOICE);
         }
         return (Syntax.ANY);

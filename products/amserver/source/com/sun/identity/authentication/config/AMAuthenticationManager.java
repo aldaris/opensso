@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationManager.java,v 1.1 2006-01-28 09:15:33 veiming Exp $
+ * $Id: AMAuthenticationManager.java,v 1.2 2006-07-17 18:10:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.am.util.XMLUtils;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -114,7 +115,11 @@ public class AMAuthenticationManager {
         } catch (SMSException e) {
             throw new AMConfigurationException(e);
         } catch (Exception ee) {
-            debug.error("Token is invalid." , ee);
+            String installTime = SystemProperties.get(
+                AdminTokenAction.AMADMIN_MODE);
+            if ((installTime != null) && installTime.equalsIgnoreCase("false")){
+                debug.error("Token is invalid." , ee);
+            }
         }
     }
 
@@ -211,8 +216,12 @@ public class AMAuthenticationManager {
                 debug.message("Global module names: " + globalModuleNames);
                 debug.message("moduleServiceNames: " + moduleServiceNames);
             }
-        } catch (Exception smse) {
-            debug.error("Failed to get module types", smse);
+       } catch (Exception smse) {
+            String installTime = SystemProperties.get(
+                AdminTokenAction.AMADMIN_MODE);
+            if ((installTime != null) && installTime.equalsIgnoreCase("false")){
+                debug.error("Failed to get module types", smse);
+            }
         }
     }
     
@@ -598,8 +607,12 @@ public class AMAuthenticationManager {
                 ISAuthConstants.AUTH_SERVICE_NAME, token);
             return scm.getOrganizationConfig(realm, null);
         } catch (Exception e) {
-            debug.error("Service config for " + realm + " is null." + 
-                e.getMessage());
+            String installTime = SystemProperties.get(
+                AdminTokenAction.AMADMIN_MODE);
+            if ((installTime != null) && installTime.equalsIgnoreCase("false")){
+                debug.error("Service config for " + realm + " is null." + 
+                    e.getMessage());
+            }
             return null;
         }
     }

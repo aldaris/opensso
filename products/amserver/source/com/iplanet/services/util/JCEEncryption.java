@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JCEEncryption.java,v 1.1 2005-11-01 00:30:26 arvindp Exp $
+ * $Id: JCEEncryption.java,v 1.2 2006-07-17 18:10:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,8 +102,6 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
 
     private static final int ITERATION_COUNT = 5;
 
-    private static Debug debug = Debug.getInstance("amSDK");
-
     static {
         CRYPTO_DESCRIPTOR = System.getProperty(CRYPTO_DESCRIPTOR_PROPERTY_NAME,
                 CRYPTO_DESCRIPTOR_DEFAULT_VALUE);
@@ -154,6 +152,7 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
             }
         }
         if (!providerRegistered) {
+            Debug debug = Debug.getInstance("amSDK");
             if (debug != null && debug.warningEnabled()) {
                 debug.warning("JCEEncryption: SunJCE provider not " +
                         "registered. Attempting to register...");
@@ -173,9 +172,12 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                             "registering provider", ex);
                 }
             }
-        } else if (debug != null && debug.messageEnabled()) {
-            debug.message("JCEEncryption: SunJCE provider is already " +
+        } else {
+            Debug debug = Debug.getInstance("amSDK");
+            if (debug != null && debug.messageEnabled()) {
+                debug.message("JCEEncryption: SunJCE provider is already " +
                     "registered.");
+            }
         }
     }
 
@@ -205,10 +207,9 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                             || ex instanceof NoSuchPaddingException) {
                         // Best effort try dynamically registring the SunJCE
                         // provider
+                        Debug debug = Debug.getInstance("amSDK");
                         if (debug != null) {
-                            debug
-                                    .error("JCEEncryption: Exception caught: ",
-                                            ex);
+                            debug.error("JCEEncryption:pbeEncrypt", ex);
                         }
                         registerSunJCEProvider();
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
@@ -225,15 +226,20 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                     byte[] iv = pbeCipher.getIV();
 
                     result = addPrefix(type, iv, result);
-                } else if (debug != null) {
-                    debug.error("JCEEncryption: Failed to obtain Cipher");
+                } else {
+                    Debug debug = Debug.getInstance("amSDK");
+                    if (debug != null) {
+                        debug.error("JCEEncryption: Failed to obtain Cipher");
+                    }
                 }
             } catch (Exception ex) {
+                Debug debug = Debug.getInstance("amSDK");
                 if (debug != null) {
                     debug.error("JCEEncryption:: failed to encrypt data", ex);
                 }
             }
         } else {
+            Debug debug = Debug.getInstance("amSDK");
             if (debug != null) {
                 debug.error("JCEEncryption:: not yet initialized");
             }
@@ -279,6 +285,7 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                 byte share[] = cipherText;
 
                 if (share[0] != VERSION) {
+                    Debug debug = Debug.getInstance("amSDK");
                     if (debug != null) {
                         debug.error("JCEEncryption:: Unsported version: "
                                 + share[0]);
@@ -298,10 +305,9 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                             || ex instanceof NoSuchPaddingException) {
                         // Best effort try dynamically registring the SunJCE
                         // provider
+                        Debug debug = Debug.getInstance("amSDK");
                         if (debug != null) {
-                            debug
-                                    .error("JCEEncryption: Exception caught: ",
-                                            ex);
+                            debug.error("JCEEncryption:pbeDecrypt", ex);
                         }
                         registerSunJCEProvider();
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
@@ -315,15 +321,20 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                             pbeParameterSpec);
 
                     result = pbeCipher.doFinal(raw);
-                } else if (debug != null) {
-                    debug.error("JCEEncryption: Failed to obtain Cipher");
+                } else {
+                    Debug debug = Debug.getInstance("amSDK");
+                    if (debug != null) {
+                        debug.error("JCEEncryption: Failed to obtain Cipher");
+                    }
                 }
             } catch (Exception ex) {
+                Debug debug = Debug.getInstance("amSDK");
                 if (debug != null) {
                     debug.error("JCEEncryption:: failed to decrypt data", ex);
                 }
             }
         } else {
+            Debug debug = Debug.getInstance("amSDK");
             if (debug != null) {
                 debug.error("JCEEncryption:: not yet initialized");
             }

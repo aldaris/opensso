@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthConfigUtils.java,v 1.1 2006-01-28 09:15:31 veiming Exp $
+ * $Id: AMAuthConfigUtils.java,v 1.2 2006-07-17 18:10:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -358,7 +358,6 @@ public class AMAuthConfigUtils {
      * @param attributeDataMap Map of authentication service attributes.
      * @param orgName Organization DN.
      * @param token Single sign on token.
-     * @return XML representation of the new configuration.
      * @throws SMSException if failed to set the configuration because
      *         of SM Exception.
      * @throws SSOException if single sign on token is not valid.

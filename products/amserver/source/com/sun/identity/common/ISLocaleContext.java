@@ -17,22 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.6 2006-03-27 10:00:49 rajesh_mohapatra Exp $
+ * $Id: ISLocaleContext.java,v 1.7 2006-07-17 18:11:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
-import java.security.AccessController;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.sdk.AMOrganization;
-import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.sdk.AMTemplate;
 import com.iplanet.am.util.AMClientDetector;
 import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
@@ -45,8 +36,13 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Sets the locale suitable for the given situation. Each response to end-user
@@ -102,8 +98,6 @@ public class ISLocaleContext {
     // USER_PREFERRED_LOCALE or URL_LOCALE is defined for any request
     private static java.util.Locale initLocale;
 
-    private static AMStoreConnection dpStore = null;
-
     private static AMClientDetector clientDt;
 
     private static Client defaultClient;
@@ -135,8 +129,6 @@ public class ISLocaleContext {
             String initLocaleStr;
             SSOToken token = (SSOToken) AccessController
                     .doPrivileged(AdminTokenAction.getInstance());
-
-            dpStore = new AMStoreConnection(token);
             String platformLocale = null;
             String authLocale = null;
             try {
@@ -340,12 +332,14 @@ public class ISLocaleContext {
         if (localeLevel > CORE_AUTH_LOCALE) {
             return;
         }
+        
         try {
-            AMOrganization org = dpStore.getOrganization(orgDN);
-
-            AMTemplate template = org.getTemplate("iPlanetAMAuthService",
-                    AMTemplate.ORGANIZATION_TEMPLATE);
-            Map attrs = template.getAttributes();
+            SSOToken token = (SSOToken) AccessController
+                .doPrivileged(AdminTokenAction.getInstance());
+            ServiceConfigManager scm = new ServiceConfigManager(
+                "iPlanetAMAuthService", token);
+            ServiceConfig sc = scm.getOrganizationConfig(orgDN, null);
+            Map attrs = sc.getAttributes();
             String locale = Misc.getMapAttr(attrs, "iplanet-am-auth-locale");
             if (locale != null && locale.length() > 0) {
                 setLocale(CORE_AUTH_LOCALE, Locale.getLocale(locale));
@@ -354,7 +348,7 @@ public class ISLocaleContext {
         } catch (SSOException ssoe) {
             // Problems in getting SSOToken which can be safely
             // ignored as we have a fallback locale
-        } catch (AMException amex) {
+        } catch (SMSException amex) {
             // Problems in getting attribute from org
             // ignored as we have fallback locale
         }

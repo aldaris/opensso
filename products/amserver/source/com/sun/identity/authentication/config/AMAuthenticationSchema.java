@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationSchema.java,v 1.1 2006-01-28 09:15:33 veiming Exp $
+ * $Id: AMAuthenticationSchema.java,v 1.2 2006-07-17 18:10:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,9 +145,9 @@ public class AMAuthenticationSchema
     /**
      * Sets the default attribute values. 
      *
-     * @param attrs A map of the names of <code>AttributeSchema</code> to
-     *              modify, and a Set of Values which should replace the default
-     *              values of the current schema.
+     * @param values A map of the names of <code>AttributeSchema</code> to
+     *        modify, and a Set of Values which should replace the default
+     *        values of the current schema.
      * @throws SchemaException
      * @throws SMSException if an error occurred while performing the operation
      * @throws SSOException if the single sign on token is invalid or expired

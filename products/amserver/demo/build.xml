@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-02-02 08:40:22 mrudul_uchil Exp $
+   $Id: build.xml,v 1.5 2006-07-17 18:10:11 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,30 +32,7 @@
         <condition>
             <or>
                 <not><isset property="demobase.dir"/></not>
-                <not><isset property="demobuilt.dir"/></not>
             </or>
-        </condition>
-    </fail>
-
-    <!-- check for client and server environment files -->
-    <property name="server.env.file" 
-              value="${demobase.dir}/server_env.properties"/>
-    <property name="client.env.file" 
-              value="${demobase.dir}/client_env.properties"/>
-
-    <fail message="*** File ${server.env.file} not found ***">
-        <condition>
-            <not>
-                <available file="${server.env.file}"/>
-            </not>
-        </condition>
-    </fail>
-
-    <fail message="*** File ${client.env.file} not found ***">
-        <condition>
-            <not>
-                <available file="${client.env.file}"/>
-            </not>
         </condition>
     </fail>
 
@@ -63,244 +40,49 @@
     <property name="demo.src.dir" location="${demobase.dir}/source"/>
     <property name="demo.www.dir" location="${demobase.dir}/www"/>
     <property name="demo.xml.dir" location="${demobase.dir}/xml"/>
-    <property name="demo.built.dir" location="${demobuilt.dir}"/>
     <property name="demo.classes.dir" location="${demo.built.dir}/classes"/>
-    <property name="demo.pkg.dir" location="${demo.built.dir}/package"/>
-    <property name="demo.dist.dir" location="${demo.built.dir}/dist"/>
+    <property name="demo.package.dir" location="${demo.built.dir}/package"/>
 
-    <!-- demo class path -->
-    <path id="demo.class.path">
-        <path refid="build.class.path"/>
-    </path>
-
-    <target name="all" depends="build, package"/>
-
-    <target name="package" depends="package-server, package-client"/>
-
-    <target name="package-client" depends="build">
-        <mkdir dir="${demo.pkg.dir}/clientweb"/>
-        <mkdir dir="${demo.pkg.dir}/clientweb/WEB-INF"/>
-        <mkdir dir="${demo.pkg.dir}/clientweb/WEB-INF/lib"/>
-        <mkdir dir="${demo.pkg.dir}/clientweb/WEB-INF/classes"/>
-        <copy todir="${demo.pkg.dir}/clientweb/WEB-INF/classes">
-            <fileset dir="${classes.dir}"/>
-            <fileset dir="${demo.classes.dir}"/>
-        </copy>
-        <copy todir="${demo.pkg.dir}/clientweb/WEB-INF/classes">
-            <fileset dir="${built.res.dir}">
-                <include name="**/*.properties"/>
-                <include name="**/*.xml"/>
-                <include name="**/*.dtd"/>
-                <exclude name="server-config.dtd"/>
-                <exclude name="serverconfig.xml"/>
-                <exclude name="serverconfig.xml"/>
-            </fileset>
-            <filterset>
-                <filtersfile file="${client.env.file}"/>
-            </filterset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/clientweb/WEB-INF/lib">
-            <fileset dir="${demobase.dir}/libclient">
-                <include name="**/*.jar"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/clientweb/WEB-INF">
-            <fileset dir="${demo.xml.dir}/client">
-                <include name="**/*.xml"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/clientweb">
-            <fileset dir="${demo.www.dir}/client/jsp">
-                <include name="**/*.jsp"/>
-            </fileset>
-        </copy>
-        <jar destfile="${demo.dist.dir}/amdemoclient.war">
-            <fileset dir="${demo.pkg.dir}/clientweb"/>
+    <target name="all" depends="build">
+        <delete dir="${demo.package.dir}" />
+        <unjar src="${war.dist.dir}/opensso.war" dest="${demo.package.dir}" />
+        <copy file="${demo.www.dir}/jsp/EvaluatePolicy.jsp" todir="${demo.package.dir}" />
+        <mkdir dir="${demo.package.dir}/WEB-INF/classes/com/sun/identity/demo/server" />
+        <copy file="${demo.classes.dir}/com/sun/identity/demo/server/EvaluatePolicyServlet.class"
+            todir="${demo.package.dir}/WEB-INF/classes/com/sun/identity/demo/server" />
+        <replace file="${demo.package.dir}/WEB-INF/web.xml"
+            value="&lt;servlet&gt;&lt;servlet-name&gt;EvaluatePolicyServlet&lt;/servlet-name&gt;&lt;servlet-class&gt;com.sun.identity.demo.server.EvaluatePolicyServlet&lt;/servlet-class&gt;&lt;/servlet&gt;&lt;!-- servlet declaration --&gt;">
+            <replacetoken>&lt;!-- servlet declaration --&gt;</replacetoken>
+        </replace>
+        <replace file="${demo.package.dir}/WEB-INF/web.xml"
+            value="&lt;servlet-mapping&gt;&lt;servlet-name&gt;EvaluatePolicyServlet&lt;/servlet-name&gt;&lt;url-pattern&gt;/evaluatePolicy&lt;/url-pattern&gt;&lt;/servlet-mapping&gt;&lt;!-- servlet mapping --&gt;">
+            <replacetoken>&lt;!-- servlet mapping --&gt;</replacetoken>
+        </replace>
+        <jar destfile="${demo.dist.dir}/openssodemo.war">
+            <fileset dir="${demo.package.dir}" />
         </jar>
+        <checksum file="${demo.dist.dir}/openssodemo.war" algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="package-server" depends="setup">
-        <mkdir dir="${demo.pkg.dir}/serverweb"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/config/auth/default"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/config/auth/default_en"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/css"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/images/button"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/js"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF/lib"/>
-        <mkdir dir="${demo.pkg.dir}/serverweb/WEB-INF/classes"/>
-
-        <copy todir="${demo.pkg.dir}/serverweb/config/auth/default">
-            <fileset dir="${www.authentication.dir}/UI">
-                <include name="**/*.jsp"/>
-            </fileset>
-            <fileset dir="${demo.pkg.dir}/server">
-                <include name="DataStore.xml"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/config/auth/default_en">
-            <fileset dir="${demo.pkg.dir}/server">
-                <include name="DataStore.xml"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/css">
-            <fileset dir="${lockhart.dir}/css">
-                <include name="**/*.css"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/images">
-            <fileset dir="${lockhart.dir}/images">
-                <include name="**/*.*"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/images/button">
-            <fileset dir="${lockhart.dir}/images/button">
-                <include name="**/*.*"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/js">
-            <fileset dir="${lockhart.dir}/js">
-                <include name="**/*.*"/>
-            </fileset>
-            <fileset dir="${www.authentication.dir}/UI/js">
-                <include name="**/*.*"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF">
-            <fileset dir="${xml.dir}">
-                <include name="**/auth.tld"/>
-            </fileset>        
-            <fileset dir="${jatolib.dir}">
-                <include name="**/*.tld"/>
-            </fileset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF/classes">
-            <fileset dir="${classes.dir}"/>
-            <fileset dir="${demo.classes.dir}"/>
-            <fileset dir="${demo.pkg.dir}/server"/>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF/lib">
-            <fileset dir="${demobase.dir}/libserver">
-                <include name="**/*.jar"/>
-            </fileset>
-            <fileset dir="${jatolib.dir}">
-                <include name="**/*.jar"/>
-            </fileset>
-        </copy>        
-        <copy todir="${demo.pkg.dir}/serverweb">
-            <fileset dir="${demo.www.dir}/server/jsp">
-                <include name="**/*.jsp"/>
-            </fileset>        
-            <fileset dir="${www.jsp.dir}">
-                <include name="**/*.jsp"/>
-            </fileset>
-            <fileset dir="${www.authentication.dir}/UI">
-                <include name="**/index.html"/>
-            </fileset>
-            <filterset>
-                <filtersfile file="${server.env.file}"/>
-            </filterset>
-        </copy>
-        <copy todir="${demo.pkg.dir}/serverweb/WEB-INF">
-            <fileset dir="${demo.xml.dir}/server">
-                <include name="**/*.xml"/>
-            </fileset>
-        </copy>
-        <jar destfile="${demo.dist.dir}/amserver.war">
-            <fileset dir="${demo.pkg.dir}/serverweb"/>
-        </jar>
-        <jar destfile="${demo.dist.dir}/amsetup.jar" update="true">
-            <fileset dir="${demo.dist.dir}">
-                <include name="amserver.war"/>
-            </fileset>
-        </jar>
-        <delete file="${demo.dist.dir}/amserver.war"/>
-    </target>
-
-    <target name="setup" depends="server-layout">
-        <jar destfile="${demo.dist.dir}/amsetup.jar">
-            <fileset dir="${classes.dir}"/>
-            <fileset dir="${demo.classes.dir}"/>
-            <fileset dir="${demo.pkg.dir}/server"/>
-            <fileset dir="${extlib.dir}">
-                <include name="ldapjdk.jar"/>
-            </fileset>
-            <manifest>
-                <attribute name="Main-Class" 
-                   value="com.sun.identity.demo.setup.SetupConfigurator"/>
-                <attribute name="Class-Path"
-                   value="ldapjdk.jar"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="server-layout" depends="build">
-        <mkdir dir="${demo.pkg.dir}/server"/>
-        <copy todir="${demo.pkg.dir}/server">
-            <fileset dir="${built.res.dir}">
-                <include name="AMConfig.properties"/>
-            </fileset>
-            <filterset>
-                <filtersfile file="${server.env.file}"/>
-            </filterset>
-        </copy>
-        <property name="enc.file" value="${demo.pkg.dir}/server/enc.file"/>
-        <delete file="${enc.file}"/>
-        <echo message="encrypting password..."/>
-        <java classname="com.sun.identity.demo.setup.PasswordEncryptor">
-            <classpath>
-                <pathelement location="${demo.classes.dir}"/>
-                <pathelement location="${built.res.dir}"/>
-                <pathelement location="${classes.dir}"/>
-                <pathelement location="${demo.pkg.dir}/server"/>
-            </classpath>
-            <arg value="${server.env.file}"/>
-            <arg value="${enc.file}"/>
-        </java>
-        <delete file="${demo.pkg.dir}/server/AMConfig.properties"/>
-        <copy todir="${demo.pkg.dir}/server">
-            <fileset dir="${built.res.dir}">
-                <include name="serverconfig.xml"/>
-                <include name="AMConfig.properties"/>
-            </fileset>
-            <filterset>
-                <filtersfile file="${enc.file}"/>
-                <filtersfile file="${server.env.file}"/>
-            </filterset>
-        </copy>
-        <delete file="${enc.file}"/>
-        <copy todir="${demo.pkg.dir}/server">
-            <fileset dir="${built.res.dir}">
-                <include name="**/*.xml"/>
-                <include name="**/*.dtd"/>
-                <include name="**/*.properties"/>
-                <exclude name="AMConfig.properties"/>
-                <exclude name="serverconfig.xml"/>
-            </fileset>
-            <filterset>
-                <filtersfile file="${server.env.file}"/>
-            </filterset>
-        </copy>
-    </target>
-   
     <target name="build" depends="preparebuild">
-        <javac destdir="${demo.classes.dir}" source="1.4" target="1.4">
+        <javac destdir="${demo.classes.dir}" source="1.5" target="1.5"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${demo.src.dir}"/>
-            <classpath refid="demo.class.path"/>
+            <classpath refid="build.class.path"/>
         </javac>
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${demo.built.dir}"/>
         <mkdir dir="${demo.classes.dir}"/>
-        <mkdir dir="${demo.pkg.dir}"/>
+        <mkdir dir="${demo.package.dir}"/>
         <mkdir dir="${demo.dist.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${demo.dist.dir}"/>
-        <delete dir="${demo.pkg.dir}"/>
         <delete dir="${demo.classes.dir}"/>
+        <delete dir="${demo.package.dir}"/>
         <delete dir="${demo.built.dir}"/>
     </target>
 

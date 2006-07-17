@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSAMECallbackHandler.java,v 1.2 2006-01-30 20:58:43 veiming Exp $
+ * $Id: DSAMECallbackHandler.java,v 1.3 2006-07-17 18:10:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class DSAMECallbackHandler implements CallbackHandler {
         long pageTimeOut = loginState.getPageTimeOut();
         long now = System.currentTimeMillis();
         if ((lastCallbackSent + ((pageTimeOut-3)*1000)) < now) {
-            debug.error(" Page Timeout ");
+            debug.message("Page Timeout");
             loginState.setTimedOut(true);
             loginState.setReceivedCallback(null,am) ;
             throw new IOException(AMAuthErrorCode.AUTH_TIMEOUT);

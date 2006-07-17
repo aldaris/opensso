@@ -17,17 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.1 2006-05-31 21:49:46 veiming Exp $
+ * $Id: RequestContext.java,v 1.2 2006-07-17 18:11:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
-
+import com.iplanet.sso.SSOToken;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -52,6 +53,7 @@ public class RequestContext {
      * @param subcmd Sub Command object.
      * @param argv Array of arguments/options.
      * @param parentArgv Array of arguments/options of parent command.
+     * @param ssoToken Single Sign On token of the user.
      * @throws CLIException if this object cannot be constructed.
      */
     public RequestContext(
@@ -78,7 +80,8 @@ public class RequestContext {
             commandMgr.getOutputWriter().printlnMessage(
                 getResourceString("verbose-validate-mandatory-options"));
         }
-        if (!subcmd.validateOptions(mapOptions)) {
+        
+        if (!subcmd.validateOptions(mapOptions, request.getSSOToken())) {
             throw createIncorrectOptionException(commandMgr.getCommandName(),
                 argv);
         }
@@ -231,8 +234,15 @@ public class RequestContext {
                 }
             } else if (values == null) {
                 throw createIncorrectOptionException(commandName, argv);
-            } else {
+            } else if (arg.trim().length() > 0) {
                 values.add(arg);
+            }
+        }
+        
+        for (Iterator i = mapOptions.keySet().iterator(); i.hasNext(); ) {
+            List v = (List)mapOptions.get(i.next());
+            if (v.isEmpty()) {
+                i.remove();
             }
         }
     }

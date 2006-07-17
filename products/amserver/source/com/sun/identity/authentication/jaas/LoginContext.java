@@ -17,11 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginContext.java,v 1.2 2006-04-22 00:51:25 pawand Exp $
+ * $Id: LoginContext.java,v 1.3 2006-07-17 18:10:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
-
 
 
 package com.sun.identity.authentication.jaas;
@@ -47,14 +46,14 @@ import com.sun.identity.authentication.service.AuthUtils;
  */
 public class LoginContext {
 
-    private static final String INIT_METHOD                = "initialize";
-    private static final String LOGIN_METHOD                = "login";
-    private static final String COMMIT_METHOD                = "commit";
-    private static final String ABORT_METHOD                = "abort";
-    private static final String LOGOUT_METHOD                = "logout";
-    private static final String OTHER                        = "other";
-    private static final String DEFAULT_HANDLER                =
-                                "auth.login.defaultCallbackHandler";
+    private static final String INIT_METHOD = "initialize";
+    private static final String LOGIN_METHOD = "login";
+    private static final String COMMIT_METHOD = "commit";
+    private static final String ABORT_METHOD = "abort";
+    private static final String LOGOUT_METHOD = "logout";
+    private static final String OTHER = "other";
+    private static final String DEFAULT_HANDLER =
+        "auth.login.defaultCallbackHandler";
     private Subject subject = null;
     private boolean subjectProvided = false;
     private boolean loginSucceeded = false;
@@ -241,7 +240,7 @@ public class LoginContext {
                         iae.getMessage());
             } catch (InvocationTargetException ite) {
                 if (ite.getTargetException() instanceof java.lang.Error) {
-                    debug.message("Target exception is java.lang.Error.");
+                    debug.message("Target exception is java.lang.Error.", ite);
                     throw (java.lang.Error)ite.getTargetException();
                 }
                 // failure cases

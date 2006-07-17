@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.3 2006-01-04 18:35:59 goodearth Exp $
+ * $Id: AdminTokenAction.java,v 1.4 2006-07-17 18:11:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -159,7 +159,7 @@ public class AdminTokenAction implements PrivilegedAction {
         // in AMConfig.properties
         String appTokenProviderName = SystemProperties
                 .get(ADMIN_TOKEN_PROVIDER);
-        if (appTokenProviderName != null) {
+        if (appTokenProviderName == null) {
             try {
                 AppSSOTokenProvider appSSOTokenProvider = 
                     (AppSSOTokenProvider) Class

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.8 2006-05-19 00:21:11 mrudul_uchil Exp $
+ * $Id: AuthD.java,v 1.9 2006-07-17 18:10:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -266,7 +266,6 @@ public class AuthD  {
             // only for backward compatibilty support
             // for retrieving user container DN and usernaming attr.
             // not use this anywhere else.
-            dpStore = new AMStoreConnection(ssoAuthSession);
             initAuthServiceGlobalSettings();
             initPlatformServiceGlobalSettings();
             initSessionServiceDynamicSettings();
@@ -798,6 +797,13 @@ public class AuthD  {
      * @return connection for AM store
      */
     public AMStoreConnection getSDK() {
+        if (dpStore == null) {
+            try {
+                dpStore = new AMStoreConnection(ssoAuthSession);
+            } catch (SSOException e) {
+                debug.warning("AuthD.getSDK", e);
+            }
+        }
         return dpStore;
     }
     

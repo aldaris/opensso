@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2006-06-12 22:07:11 veiming Exp $
+   $Id: build.xml,v 1.13 2006-07-17 18:10:10 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,17 +28,23 @@
     <description>Open Web Single Sign-On</description>
 
     <!-- global environment -->
+    <property name="version" value="8.0"/>
+
     <!-- top level directory structure -->
     <property name="src.dir" location="source"/>
     <property name="res.dir" location="resources"/>
     <property name="script.dir" location="scripts"/>
     <property name="www.dir" location="www"/>
+    <property name="docs.dir" location="docs"/>
     <property name="xml.dir" location="xml"/>
     <property name="extlib.dir" location="extlib"/>
     <property name="jatolib.dir" location="../../resources/jato"/>
     <property name="lockhart.dir" location="../../resources/lockhart"/>
-    <property name="demobase.dir" location="demo"/>
+    <property name="javahelp.dir" location="../../resources/javahelp"/>
+    <property name="warbase.dir" location="war"/>
+    <property name="nightly.dir" location="nightly"/>
     <property name="clientsdkbase.dir" location="clientsdk"/>
+    <property name="demobase.dir" location="demo"/>
 
     <!-- nested directory structure -->
     <property name="script.bin.dir" location="${script.dir}/bin"/>
@@ -49,14 +55,17 @@
    
     <!-- generated directory structure -->
     <property name="built.dir" location="built"/>
+    <property name="built.war.dir" location="${built.dir}/war"/>
+    <property name="war.dist.dir" location="${built.war.dir}/dist"/>
     <property name="built.diff.dir" location="${built.dir}/diff"/>
     <property name="classes.dir" location="${built.dir}/classes"/>   
     <property name="built.res.dir" location="${built.dir}/resources"/>
     <property name="built.docs.dir" location="${built.dir}/docs"/>   
     <property name="built.apidocs.dir" location="${built.docs.dir}/api"/> 
     <property name="built.publicapidocs.dir" location="${built.docs.dir}/public-api"/> 
-    <property name="demobuilt.dir" location="${built.dir}/demo"/> 
-    <property name="clientsdk.built.dir" location="${built.dir}/clientsdk/dist"/>
+    <property name="clientsdk.dist.dir" location="${built.dir}/clientsdk/dist"/>
+    <property name="demo.built.dir" location="${built.dir}/demo"/>
+    <property name="demo.dist.dir" location="${demo.built.dir}/dist"/>
 
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
@@ -115,6 +124,10 @@
                 <include name="authentication_util.properties"/>
             </fileset>
         </concat>
+        <copy file="${xml.dir}/smsflatfile.dtd" 
+              todir="${classes.dir}/com/sun/identity/sm/flatfile"/>
+        <copy file="${xml.dir}/policyAdmin.dtd" 
+              todir="${classes.dir}/com/sun/identity/policy"/>
         <copy file="${xml.dir}/sms.dtd" 
               todir="${classes.dir}/com/sun/identity/sm"/>
         <copy todir="${classes.dir}/com/sun/identity/log/messageid">
@@ -136,6 +149,8 @@
                 <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/delegation/**"/>
             </packageset>
+            <tag name="supported.all.api" enabled="false" />
+            <tag name="supported.api" enabled="false" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
         </javadoc>
@@ -156,6 +171,8 @@
                     path="${classes.dir}" />
             <tag name="supported.all.api" description="" />
             <tag name="supported.api" description="" />
+            <tag name="supported.all.api" enabled="false" />
+            <tag name="supported.api" enabled="false" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
         </javadoc>
@@ -197,7 +214,7 @@
         </java>
     </target>
 
-    <target name="clean">
+    <target name="clean" depends="nightly-clean,war-clean,clientsdk-clean,demo-clean">
         <delete dir="${built.publicapidocs.dir}"/>
         <delete dir="${built.apidocs.dir}"/>
         <delete dir="${built.docs.dir}"/>
@@ -206,17 +223,71 @@
         <delete dir="${built.dir}"/>
     </target>
    
-    <target name="demo" depends="build">
+    <target name="war" depends="build">
+        <copy todir="${built.war.dir}/xml">
+            <fileset dir="${xml.dir}">
+                <include name="ums.xml" />
+                <include name="amAuthConfig.xml" />
+                <include name="amAuthHTTPBasic.xml" />
+                <include name="amAdminConsole.xml" />
+                <include name="amAuth.xml" />
+                <include name="amAuthAD.xml" />
+                <include name="amAuthAnonymous.xml" />
+                <include name="amAuthCert.xml" />
+                <include name="amAuthDataStore.xml" />
+                <include name="amAuthJDBC.xml" />
+                <include name="amAuthLDAP.xml" />
+                <include name="amAuthMSISDN.xml" />
+                <include name="amAuthMembership.xml" />
+                <include name="amAuthNT.xml" />
+                <include name="amAuthWindowsDesktopSSO.xml" />
+                <include name="amClientData.xml" />
+                <include name="amClientDetection.xml" />
+                <include name="amDelegation.xml" />
+                <include name="amG11NSettings.xml" />
+                <include name="amLogging.xml" />
+                <include name="amNaming.xml" />
+                <include name="amPlatform.xml" />
+                <include name="amPolicy.xml" />
+                <include name="amPolicyConfig.xml" />
+                <include name="amRealmService.xml" />
+                <include name="amSession.xml" />
+                <include name="amWebAgent.xml" />
+                <include name="idRepoService.xml" />
+                <include name="identityLocaleService.xml" />
+                <include name="amUser.xml" />
+                <include name="amEntrySpecific.xml" />
+                <include name="serverconfig.xml" />
+            </fileset>
+        </copy>
+        <ant antfile="${warbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="demo" depends="war">
         <ant antfile="${demobase.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="demo-clean">
-        <ant antfile="${demobase.dir}/build.xml" 
+    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo">
+        <ant antfile="build-nightly.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="nightly-clean">
+         <ant antfile="build-nightly.xml" inheritRefs="true"
+            target="clean" />
+    </target>
+
+    <target name="war-clean">
+        <ant antfile="${warbase.dir}/build.xml" 
              inheritRefs="true" target="clean"/>
     </target>
 
     <target name="clientsdk" depends="build">
         <ant antfile="${clientsdkbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="demo-clean">
+        <ant antfile="${demobase.dir}/build.xml"
+             inheritRefs="true" target="clean"/>
     </target>
 
     <target name="clientsdk-clean">
@@ -246,10 +317,13 @@
         <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
         <echo message=" doc        : creates javadocs"/>
         <echo message=" clean      : deletes the generated files"/>
-        <echo message=" demo       : builds the demo application"/>
-        <echo message=" demo-clean : deletes generated demo files"/>
+        <echo message=" war        : builds the WAR"/>
+        <echo message=" war-clean  : deletes generated WAR"/>
         <echo message=" clientsdk  : builds the clientsdk jar/war"/>
         <echo message=" clientsdk-clean : deletes generated clientsdk files"/>
+        <echo message=" nightly    : does nightly build"/>
+        <echo message=" demo       : does demo build"/>
+        <echo message=" demo-clean : delete demo generated files"/>
         <echo message=" usage      : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

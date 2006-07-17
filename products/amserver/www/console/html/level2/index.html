@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.1 2006-05-04 06:56:14 veiming Exp $
+   $Id: index.html,v 1.2 2006-07-17 18:11:48 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --!>
@@ -32,7 +32,7 @@
 
 function redirectToConsole() {
     var params = getQueryParameters();
-    var url = 'DEPLOY_URI/base/AMAdminFrame';
+    var url = '../../base/AMAdminFrame';
 
     if (params != '') {
 	url += params + '&amconsoleRedirect=1&' + getDateStamp();

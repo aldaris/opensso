@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthRoleCondition.java,v 1.1 2006-04-26 05:14:46 dillidorai Exp $
+ * $Id: AuthRoleCondition.java,v 1.2 2006-07-17 18:11:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,8 @@ public class AuthRoleCondition implements Condition {
      }
 
 
-    /** Sets the properties of the condition.
+    /**
+     * Sets the properties of the condition.
      *  Evaluation of <code>ConditionDecision</code> is influenced by these
      *  properties.
      *  @param properties the properties of the condition that governs
@@ -142,7 +143,6 @@ public class AuthRoleCondition implements Condition {
      *          value for the key ROLE_NAME or the value of the key is
      *          not a Set with one String element.
      */
-
     public void setProperties(Map properties) throws PolicyException {
         this.properties = (Map)((HashMap) properties);
         if ( (properties == null) || ( properties.keySet() == null) ) {

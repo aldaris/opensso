@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddResourceBundle.java,v 1.1 2006-05-31 21:49:39 veiming Exp $
+ * $Id: AddResourceBundle.java,v 1.2 2006-07-17 18:10:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,14 @@ package com.sun.identity.cli;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.cli.CommandManager;
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.common.ISResourceBundle;
 import com.sun.identity.sm.SMSException;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,12 +68,23 @@ public class AddResourceBundle extends AuthenticatedCommand {
             ARGUMENT_RESOURCE_BUNDLE_FILE_NAME);
         String localeName = getStringOptionValue(
             IArgument.RESOURCE_BUNDLE_LOCALE);
-
-        Map mapStrings = getResourceStringsMap(fileName);
+        
         try {
             String[] params = {bundleName, fileName, localeName};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_ADD_RESOURCE_BUNDLE", params);
+
+            CommandManager mgr = getCommandManager();
+            String url = mgr.getWebEnabledURL();
+            
+            if (url != null) {
+                params[1] = CLIConstants.WEB_INPUT;
+            }
+            
+            Map mapStrings = (url != null) ? 
+                getResourceStringsMap(new StringReader(fileName)) :
+                getResourceStringsMap(new FileReader(fileName));
+            
             ISResourceBundle.storeResourceBundle(adminSSOToken,
                 bundleName, localeName, mapStrings);
 
@@ -83,6 +98,11 @@ public class AddResourceBundle extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "FAILED_ADD_RESOURCE_BUNDLE", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IOException e) {
+            String[] args = {bundleName, fileName, localeName, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_ADD_RESOURCE_BUNDLE", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             String[] args = {bundleName, fileName, localeName, e.getMessage()};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
@@ -91,16 +111,16 @@ public class AddResourceBundle extends AuthenticatedCommand {
         }
     }
 
-    private Map<String, Set<String>> getResourceStringsMap(
-        String resourceFileName
-    ) throws CLIException
+    private Map<String, Set<String>> getResourceStringsMap(Reader reader)
+        throws CLIException
     {
+        BufferedReader in = null;
         Map<String, Set<String>> resourceStrings = 
             new HashMap<String, Set<String>>();
-        BufferedReader in = null;
+    
         try {
             boolean commented = false;
-            in = new BufferedReader(new FileReader(resourceFileName));
+            in = new BufferedReader(reader);
             String line = in.readLine();
 
             /*

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetPolicy.java,v 1.1 2006-05-31 21:49:57 veiming Exp $
+ * $Id: RealmGetPolicy.java,v 1.2 2006-07-17 18:11:07 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,9 +131,9 @@ public class RealmGetPolicy extends AuthenticatedCommand {
                             " -->\n");
                         pwout.write(policy.toXML());
                     } else {
-                        System.out.println("<!-- extracted from realm, " + 
-                            realm + " -->");
-                        System.out.println(policy.toXML());
+                        outputWriter.printlnMessage(
+                            "<!-- extracted from realm, " + realm + " -->");
+                        outputWriter.printlnMessage(policy.toXML());
                     }
                     
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,

@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LEAuthLevelCondition.java,v 1.1 2006-04-26 05:14:48 dillidorai Exp $
+ * $Id: LEAuthLevelCondition.java,v 1.2 2006-07-17 18:11:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 package com.sun.identity.policy.plugins;
 
@@ -84,10 +82,10 @@ public class LEAuthLevelCondition implements Condition {
      *
      *  @see #getConditionDecision(SSOToken, Map)
      *  @see #AUTH_LEVEL
-     *  @see com.sun.identity.authentication.util.AMAuthUtils.
-     *  getAuthenticatedLevels(SSOToken)
-     *  @see com.sun.identity.authentication.util.AMAuthUtils.
-     *  getRealmQaulifiedAuthenticatedLevels(SSOToken)
+     *  @see com.sun.identity.authentication.util.AMAuthUtils
+     *       #getAuthenticatedLevels(SSOToken)
+     *  @see com.sun.identity.authentication.util.AMAuthUtils
+     *       #getRealmQualifiedAuthenticatedLevels(SSOToken)
      */
     public static final String REQUEST_AUTH_LEVEL = "requestAuthLevel";
 
@@ -237,10 +235,10 @@ public class LEAuthLevelCondition implements Condition {
      * @see #AUTH_LEVEL
      * @see #REQUEST_AUTH_LEVEL
      * @see com.sun.identity.policy.ConditionDecision
-     * @see com.sun.identity.authentication.util.AMAuthUtils.
-     * getAuthenticatedLevels(SSOToken)
-     * @see com.sun.identity.authentication.util.AMAuthUtils.
-     * getRealmQaulifiedAuthenticatedLevels(SSOToken)
+     * @see com.sun.identity.authentication.util.AMAuthUtils
+     *      #getAuthenticatedLevels(SSOToken)
+     * @see com.sun.identity.authentication.util.AMAuthUtils
+     *      #getRealmQualifiedAuthenticatedLevels(SSOToken)
      */
     public ConditionDecision getConditionDecision(SSOToken token, Map env) 
             throws PolicyException, SSOException {

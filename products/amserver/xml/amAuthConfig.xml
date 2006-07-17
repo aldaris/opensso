@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthConfig.xml,v 1.4 2006-02-11 03:57:13 mrudul_uchil Exp $
+    $Id: amAuthConfig.xml,v 1.5 2006-07-17 18:11:50 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -107,14 +107,7 @@
         <Configuration>
             <OrganizationConfiguration name="/">
                 <SubConfiguration name="Configurations">
-                    <SubConfiguration name="ldapService"
-                        id="NamedConfiguration">
-                        <AttributeValuePair>
-                            <Attribute name="iplanet-am-auth-configuration"/>
-                            <Value>&lt;AttributeValuePair&gt;&lt;Value&gt;LDAP REQUIRED &lt;&#47;Value&gt;&lt;&#47;AttributeValuePair&gt;</Value>
-                        </AttributeValuePair>
-                    </SubConfiguration>
-                    <SubConfiguration name="datastoreService"
+                    <SubConfiguration name="ldapservice"
                         id="NamedConfiguration">
                         <AttributeValuePair>
                             <Attribute name="iplanet-am-auth-configuration"/>

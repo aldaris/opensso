@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-06-12 22:07:11 veiming Exp $
+   $Id: build.xml,v 1.3 2006-07-17 18:10:11 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -53,7 +53,7 @@
     <target name="package-clientsdk" depends="preparebuild">
         <echo message="Building clientSDK"/>
 
-        <jar destfile="${clientsdk.built.dir}/amclientsdk.jar">
+        <jar destfile="${clientsdk.dist.dir}/amclientsdk.jar">
             <fileset dir="${classes.dir}">
                 <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
@@ -79,23 +79,25 @@
             </manifest>
         </jar>
 
-        <jar destfile="${clientsdk.built.dir}/amclientsdkcopy.jar"
+        <jar destfile="${clientsdk.dist.dir}/amclientsdkcopy.jar"
              filesetmanifest="merge">
                 <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
-                <zipfileset src="${clientsdk.built.dir}/amclientsdk.jar"/>
+                <zipfileset src="${clientsdk.dist.dir}/amclientsdk.jar"/>
         </jar>
 
-        <copy file="${clientsdk.built.dir}/amclientsdkcopy.jar" 
-            tofile="${clientsdk.built.dir}/amclientsdk.jar"/>
-         <delete file="${clientsdk.built.dir}/amclientsdkcopy.jar"/>
+        <copy file="${clientsdk.dist.dir}/amclientsdkcopy.jar" 
+            tofile="${clientsdk.dist.dir}/amclientsdk.jar"/>
+        <delete file="${clientsdk.dist.dir}/amclientsdkcopy.jar"/>
+        <checksum file="${clientsdk.dist.dir}/amclientsdk.jar"
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${clientsdk.built.dir}"/>
+        <mkdir dir="${clientsdk.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${clientsdk.built.dir}"/>
+        <delete dir="${clientsdk.dist.dir}"/>
     </target>
    
 </project>

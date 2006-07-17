@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.4 2006-05-10 21:07:23 pawand Exp $
+ * $Id: LDAPAuthUtils.java,v 1.5 2006-07-17 18:10:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -915,7 +915,7 @@ public class LDAPAuthUtils {
     /**
      * Sets the DN to authenticate as; null or empty for anonymous.
      *
-     * @param authDN the DN to authenticate as
+     * @param authdn the DN to authenticate as
      */
     public  void setAuthDN(String authdn) {
         authDN = authdn;
@@ -924,7 +924,7 @@ public class LDAPAuthUtils {
     /**
      * Sets the password for the DN to authenticate as.
      *
-     * @param authPassword the password to use in authentication.
+     * @param authpassword the password to use in authentication.
      */
     public  void setAuthPassword(String authpassword) {
         authPassword = authpassword;
@@ -1053,7 +1053,7 @@ public class LDAPAuthUtils {
      * Sets the value of the dynamic profile creation configured in
      * Authentication service.
      *
-     * @param isEnabled
+     * @param isEnable
      */
     public void setDynamicProfileCreationEnabled(boolean isEnable) {
         isDynamicUSerEnabled = isEnable;

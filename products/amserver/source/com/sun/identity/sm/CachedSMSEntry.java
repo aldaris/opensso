@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
+ * $Id: CachedSMSEntry.java,v 1.4 2006-07-17 18:11:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,8 +199,8 @@ public class CachedSMSEntry {
         while (objs.hasNext()) {
             Object obj = objs.next();
             try {
-                Method m = obj.getClass().getDeclaredMethod(method,
-                    (Class[])null);
+                Method m = obj.getClass().getDeclaredMethod(
+                    method, (Class[])null);
                 m.invoke(obj, (Object[])null);
             } catch (Exception e) {
                 SMSEntry.debug.error("CachedSMSEntry::unable to "
@@ -221,8 +221,8 @@ public class CachedSMSEntry {
                     return;
                 }
                 notificationID = SMSEventListenerManager.notifyChangesToNode(
-                    token, smsEntry.getDN(),
-                    c.getDeclaredMethod("update", (Class[])null), this, null);
+                    token, smsEntry.getDN(), c.getDeclaredMethod("update",
+                    (Class[])null), this, null);
             } catch (Exception ce) {
                 // this should not happen
                 SMSEntry.debug.error("CachedSMSEntry::unable to register "

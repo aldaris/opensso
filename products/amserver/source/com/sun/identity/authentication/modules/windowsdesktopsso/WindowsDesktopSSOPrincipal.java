@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSOPrincipal.java,v 1.1 2006-01-28 09:16:14 veiming Exp $
+ * $Id: WindowsDesktopSSOPrincipal.java,v 1.2 2006-07-17 18:10:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,9 @@ public class WindowsDesktopSSOPrincipal implements Principal,
      * </code> for equality.  Returns true if the given object is also a
      * <code>WindowsDesktopSSOPrincipal</code> and the two 
      * <code>WindowsDesktopSSOPrincipals</code> have the same username.
-     * @param o Object to be compared for equality with this
-     *          <code>WindowsDesktopSSOPrincipal</code>.
+     *
+     * @param obj Object to be compared for equality with this
+     *        <code>WindowsDesktopSSOPrincipal</code>.
      * @return true if the specified Object is equal equal to this
      *          <code>WindowsDesktopSSOPrincipal</code>.
      */

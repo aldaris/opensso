@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NSettings.java,v 1.1 2005-11-01 00:30:11 arvindp Exp $
+ * $Id: G11NSettings.java,v 1.2 2006-07-17 18:10:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,6 +300,8 @@ public class G11NSettings implements ServiceListener, ICDMConstants,
         if (serviceSchemaManager != null) {
             serviceSchemaManager.addListener(this);
         }
+
+        //TOFIX: Need to check if clientdata service is enabled or not.
         try {
             intCapInstance = AMClientCapData.getInternalInstance();
             intCapInstance.addListener(this); // register to internal
@@ -310,7 +312,6 @@ public class G11NSettings implements ServiceListener, ICDMConstants,
             debug.error("Unable to get an instance Of ClientData in "
                     + "G11Nsettings", ce);
         }
-
     }
 
     /**

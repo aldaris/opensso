@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.1 2006-05-31 21:49:40 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.2 2006-07-17 18:10:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,14 +51,18 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
         throws CLIException
     {
         super.handleRequest(rc);
-        adminID = getStringOptionValue(
-            AccessManagerConstants.ARGUMENT_ADMIN_ID);
-        adminUserID = getUserID();
-        adminPassword = getPassword();
+        ssoToken = rc.getCLIRequest().getSSOToken();
+        
+        if (ssoToken == null) {
+            adminUserID = getUserID();
+            adminPassword = getPassword();
+        }
     }
 
     private String getUserID() {
         String userId = null;
+        adminID = getStringOptionValue(
+            AccessManagerConstants.ARGUMENT_ADMIN_ID);
         StringTokenizer st = new StringTokenizer(adminID, ",");
         if (st.hasMoreTokens()) {
             String strUID = st.nextToken();
@@ -105,13 +109,15 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     protected void ldapLogin()
         throws CLIException
     {
-        Authenticator auth = Authenticator.getInstance();
-        String bindUser = getAdminUserID();
-        if (bindUser == null) {
-            bindUser = getAdminID();
+        if (ssoToken == null) {
+            Authenticator auth = Authenticator.getInstance();
+            String bindUser = getAdminUserID();
+            if (bindUser == null) {
+                bindUser = getAdminID();
+            }
+            ssoToken = auth.ldapLogin(getCommandManager(), bindUser,
+                getAdminPassword());
         }
-        ssoToken = auth.ldapLogin(getCommandManager(), bindUser,
-            getAdminPassword());
     }
 
     protected void writeLog(

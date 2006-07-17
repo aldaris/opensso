@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.1 2006-01-28 09:16:58 veiming Exp $
+ * $Id: AMLoginModule.java,v 1.2 2006-07-17 18:10:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,11 +62,15 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthD;
+import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.LoginStateCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.util.ISValidation;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -1773,13 +1777,11 @@ public abstract class AMLoginModule implements LoginModule {
 
         boolean isValidUser = false;
         try {
-            isValidUser = AuthD.getAuth().getSDK().isValidEntry(userDN);
-        } catch (Exception e) {
-            debug.message("Entry not found",e);
-        }
-        if (debug.messageEnabled()) {
+            isValidUser = 
+                (AuthD.getAuth().getIdentity(IdType.USER, userDN, "/") != null);
+        } catch (AuthException e) {
             debug.message("User Valid :" + isValidUser);
-        } 
+        }
         return isValidUser;
     }
     

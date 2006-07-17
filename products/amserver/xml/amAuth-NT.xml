@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth-NT.xml,v 1.4 2006-02-13 20:44:58 mrudul_uchil Exp $
+    $Id: amAuth-NT.xml,v 1.5 2006-07-17 18:11:50 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -104,7 +104,7 @@
                 <AttributeSchema name="iplanet-am-auth-admin-auth-module" 
                     type="single" 
                     syntax="string"
-                    propertiesViewBeanURL="OLDCON_DEPLOY_URI/auth/ACModuleList" 
+                    propertiesViewBeanURL="@OLDCON_DEPLOY_URI@/auth/ACModuleList" 
                     uitype="link"
                     i18nKey="a104">
                     <DefaultValues>
@@ -244,7 +244,7 @@
                 <AttributeSchema name="iplanet-am-auth-org-config"
                     type="single" 
                     syntax="string"
-                    propertiesViewBeanURL="OLDCON_DEPLOY_URI/auth/ACModuleList" 
+                    propertiesViewBeanURL="@OLDCON_DEPLOY_URI@/auth/ACModuleList" 
                     uitype="link"
                     i18nKey="a121">
                     <DefaultValues>

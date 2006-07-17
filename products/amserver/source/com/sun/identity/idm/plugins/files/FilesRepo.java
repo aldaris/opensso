@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.6 2006-06-24 00:09:10 arviranga Exp $
+ * $Id: FilesRepo.java,v 1.7 2006-07-17 18:11:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1285,14 +1285,12 @@ public class FilesRepo extends IdRepo {
             pw.println(encodedMap);
             // update the cache
             identityCache.put(fileName.toLowerCase(), values);
-        } catch (IOException ioe) {
+        } catch (IOException e) {
             if (debug.messageEnabled()) {
-                debug
-                        .message("FilesRepo: error writing file: " + fileName,
-                                ioe);
+                debug.message("FilesRepo: error writing file: " + fileName, e);
             }
             String[] args = { NAME, fileName };
-            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args);
         } finally {
             if (pw != null) {
                 pw.close();
@@ -1310,7 +1308,6 @@ public class FilesRepo extends IdRepo {
 
     static Map readFile(String fileName) throws IdRepoException {
         Map answer = null;
-        // Check in cache
         String cacheName = fileName.toLowerCase();
         if ((answer = (Map) identityCache.get(cacheName)) != null) {
             return (answer);
@@ -1337,11 +1334,9 @@ public class FilesRepo extends IdRepo {
             }
             // Add to cache
             identityCache.put(cacheName, answer);
-        } catch (IOException ioe) {
+        } catch (IOException e) {
             if (debug.messageEnabled()) {
-                debug
-                        .message("FilesRepo: error reading file: " + fileName,
-                                ioe);
+                debug.message("FilesRepo: error reading file: " + fileName, e);
             }
             String[] args = { NAME, fileName };
             throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));

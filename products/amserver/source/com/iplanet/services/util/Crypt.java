@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.1 2005-11-01 00:30:26 arvindp Exp $
+ * $Id: Crypt.java,v 1.2 2006-07-17 18:10:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,9 +70,6 @@ public class Crypt {
     private static final String DEFAULT_PWD = 
         "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
 
-    // Static variables
-    private static Debug debug = Debug.getInstance("amSDK");
-
     private static boolean checkCaller;
 
     public static SecurityManager securityManager;
@@ -97,9 +94,6 @@ public class Crypt {
         if ((cCaller != null) && (cCaller.equalsIgnoreCase("true"))) {
             checkCaller = true;
             securityManager = System.getSecurityManager();
-            if (debug.messageEnabled()) {
-                debug.message("Crypt:: Callers will be checked for access");
-            }
         }
     }
 
@@ -108,18 +102,18 @@ public class Crypt {
         // Construct the encryptor class
         String encClass = SystemProperties.get(ENCRYPTOR_CLASS_PROPERTY,
                 DEFAULT_ENCRYPTOR_CLASS);
-        if (debug.messageEnabled()) {
-            debug.message("Crypt.static{}: Encryptor class= " + encClass);
-        }
+        
         try {
             instance = (AMEncryption) Class.forName(encClass).newInstance();
         } catch (Exception e) {
+            Debug debug = Debug.getInstance("amSDK");
             debug.error("Crypt:: Unable to get class instance: " + encClass, e);
             instance = new JCEEncryption();
         }
         try {
             ((ConfigurableKey) instance).setPassword(password);
         } catch (Exception e) {
+            Debug debug = Debug.getInstance("amSDK");
             if (debug != null) {
                 debug.error("Crypt: failed to set password-based key", e);
             }
@@ -164,6 +158,7 @@ public class Crypt {
             }
             return true;
         } catch (SecurityException e) {
+            Debug debug = Debug.getInstance("amSDK");
             debug.error(
                     "Security Alert: Unauthorized access to Encoding/Decoding"
                             + " password utility: Returning NULL", e);
@@ -257,6 +252,7 @@ public class Crypt {
         try {
             encData = encr.encrypt(clearText.getBytes("utf-8"));
         } catch (UnsupportedEncodingException uee) {
+            Debug debug = Debug.getInstance("amSDK");
             debug.error("Crypt:: utf-8 encoding is not supported");
             encData = encryptor.encrypt(clearText.getBytes());
         }
@@ -276,6 +272,7 @@ public class Crypt {
                 strClean.append(strTemp);
             }
         } catch (IOException ioe) {
+            Debug debug = Debug.getInstance("amSDK");
             debug.error("Crypt:: Error while base64 encoding", ioe);
         }
         return (strClean.toString());
@@ -313,6 +310,7 @@ public class Crypt {
                     securityManager.checkPermission(isp);
                 }
             } catch (SecurityException e) {
+                Debug debug = Debug.getInstance("amSDK");
                 debug.error("Security Alert: Unauthorized access to " +
                        "Encoding/Decoding password utility: Returning NULL", e);
                 return null;
@@ -340,6 +338,7 @@ public class Crypt {
         try {
             answer = new String(rawData, "utf-8");
         } catch (UnsupportedEncodingException uue) {
+            Debug debug = Debug.getInstance("amSDK");
             debug.error("Crypt:: Unsupported encoding UTF-8", uue);
             answer = new String(rawData);
         }

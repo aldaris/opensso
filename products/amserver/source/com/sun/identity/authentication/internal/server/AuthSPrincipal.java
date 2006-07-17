@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthSPrincipal.java,v 1.1 2005-11-01 00:30:53 arvindp Exp $
+ * $Id: AuthSPrincipal.java,v 1.2 2006-07-17 18:10:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,7 @@ import com.sun.identity.authentication.internal.util.AuthI18n;
  * 
  * @see java.security.Principal
  * @see javax.security.auth.Subject
- * @see com.sun.identity.authentication.AuthPrincipal
+ * @see com.sun.identity.authentication.internal.AuthPrincipal
  */
 public class AuthSPrincipal implements Principal, java.io.Serializable {
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.2 2006-03-02 20:15:54 veiming Exp $
+ * $Id: Session.java,v 1.3 2006-07-17 18:10:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -899,7 +899,6 @@ public class Session {
      * @return Session Service URL.
      * @exception SessionException.
      */
-
     static public URL getSessionServiceURL(String serverID)
             throws SessionException {
         try {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.4 2006-03-23 19:10:09 veiming Exp $
+ * $Id: Constants.java,v 1.5 2006-07-17 18:11:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -967,4 +967,9 @@ public interface Constants {
      * Constant for file separator
      */
     String FILE_SEPARATOR = "/";
+
+    /**
+     * Install Time System property key.
+     */
+    String SYS_PROPERTY_INSTALL_TIME = "installTime";
 }

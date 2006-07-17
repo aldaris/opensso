@@ -17,13 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.5 2006-05-31 21:50:11 veiming Exp $
+ * $Id: ServiceManager.java,v 1.6 2006-07-17 18:11:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.am.util.XMLUtils;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.EncodeAction;
 import java.io.InputStream;
 import java.security.AccessController;
 import java.text.MessageFormat;
@@ -33,21 +43,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.EncodeAction;
 
 /**
  * The <code>ServiceManager</code> class provides methods to register/remove
@@ -620,15 +619,19 @@ public class ServiceManager {
                 }
                 accessManagerServers = answer;
                 if (debug.messageEnabled()) {
-                    debug.message("ServiceManager::getAMServers "
-                            + "server list: " + answer);
+                    debug.message("ServiceManager.getAMServerInstances: "
+                        + "server list: " + answer);
                 }
-            } catch (SMSException ssme) {
-                debug.error("ServiceManager::getAMServers unable to "
-                        + "get server list", ssme);
-            } catch (SSOException ssoe) {
-                debug.error("ServiceManager::getAMServers unable to "
-                        + "get server list", ssoe);
+            } catch (SMSException e) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ServiceManager.getAMServerInstances: " +
+                        "Unable to get server list", e);
+                }
+            } catch (SSOException e) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ServiceManager.getAMServerInstances: " +
+                        "Unable to get server list", e);
+                }
             }
         }
         return (accessManagerServers == null ? new HashSet() : new HashSet(
@@ -824,9 +827,11 @@ public class ServiceManager {
         return (version);
     }
 
-    protected static void checkServiceNameAndVersion(SSOToken t,
-            String serviceName, String version) throws SMSException,
-            SSOException {
+    protected static void checkServiceNameAndVersion(
+        SSOToken t,
+        String serviceName,
+        String version
+    ) throws SMSException, SSOException {
         Set versions = getVersions(t, serviceName);
         if ((versions == null) || !versions.contains(version)) {
             String[] msgs = { serviceName };

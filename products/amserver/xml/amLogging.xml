@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="XML_ENCODING"?>
+<?xml version="1.0" encoding="@XML_ENCODING@"?>
 
 <!--
     The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.2 2006-04-27 07:53:39 veiming Exp $
+    $Id: amLogging.xml,v 1.3 2006-07-17 18:11:50 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,7 +65,7 @@
 		    syntax="string"
 		    i18nKey="a104">
 		    <DefaultValues>
-			<Value>IS_INSTALL_VARDIR/IS_PRODNAME/LOG_DIR/</Value>
+			<Value>@IS_INSTALL_VARDIR@/@IS_PRODNAME@/@LOG_DIR@/</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 		<AttributeSchema name="iplanet-am-logging-type"
@@ -93,7 +93,7 @@
                     syntax="string"
                     i18nKey="">
                     <DefaultValues>
-			<Value>CONFIG_DIR/Logger.jks</Value>
+			<Value>@CONFIG_DIR@/Logger.jks</Value>
                     </DefaultValues>
                 </AttributeSchema> 		
 		<AttributeSchema name="iplanet-am-logging-db-user"

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.6 2006-06-16 19:36:52 rarcot Exp $
+ * $Id: SMSEntry.java,v 1.7 2006-07-17 18:11:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
 import com.sun.identity.jaxrpc.SOAPClient;
+import com.sun.identity.security.AdminTokenAction;
 
 /**
  * This object represents a SMS entry in datstore, similar to UMS's equivalent
@@ -1611,6 +1612,13 @@ public class SMSEntry implements Cloneable {
             // 4) ou=instances
             // 5) ou=services
             // 6) ...
+            
+            String installTime = SystemProperties.get(
+                AdminTokenAction.AMADMIN_MODE, "false");
+            if (installTime.equalsIgnoreCase("true")) {
+                return;
+            }
+
             String tmpName = name.toLowerCase();
             if (type == SMSObjectListener.ADD
                     && ((new StringTokenizer(name, ",")).countTokens() 
@@ -1660,24 +1668,24 @@ public class SMSEntry implements Cloneable {
                             params[0] = name;
                             params[1] = new Integer(type);
                             if (eventDebug.messageEnabled()) {
-                                eventDebug.message("SMSEntry:"
-                                        + "NotificationThread:run "
-                                        + "Sending to URL: " + surl);
+                                eventDebug.message(
+                                    "SMSEntry.NotificationThread.run " + 
+                                    "Sending to URL: " + surl);
                             }
                             client.send("notifyObjectChanged", params, null);
                         } catch (Throwable t) {
                             if (eventDebug.warningEnabled()) {
                                 eventDebug.warning(
-                                        "SMSEntry:NotificationThread:: Unable "
-                                                + "to send notification to: "
-                                                + surl, t);
+                                    "SMSEntry.NotificationThread.run " + 
+                                    "Unable to send notification to: " + surl, 
+                                    t);
                             }
                         }
                     }
                 } catch (Throwable t) {
                     if (eventDebug.warningEnabled()) {
-                        eventDebug.warning("SMSEntry:NotificationThread:: "
-                                + "Unable to send notifications", t);
+                        eventDebug.warning("SMSEntry.NotificationThread.run " +
+                            "Unable to send notifications", t);
                     }
                 }
             }

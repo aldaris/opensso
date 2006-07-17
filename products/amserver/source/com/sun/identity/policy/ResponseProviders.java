@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseProviders.java,v 1.1 2006-04-26 05:14:06 dillidorai Exp $
+ * $Id: ResponseProviders.java,v 1.2 2006-07-17 18:11:17 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,8 +62,8 @@ public class ResponseProviders {
      * an instance of <code>ResponseProviders</code> from the
      * XML document
      *
-     * @param responseProviderTypeManager ResponseProviderTypeManager
-     * @param responseProvidersNode node that represents the ResponseProviders
+     * @param rpm Response Provider Type Manager.
+     * @param responseProvidersNode node that represents the Response Providers.
      */
     protected ResponseProviders(ResponseProviderTypeManager rpm, 
 	Node responseProvidersNode) throws InvalidFormatException, 

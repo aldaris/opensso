@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.4 2006-07-17 18:11:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -293,10 +293,11 @@ public class IdServicesImpl implements IdServices {
         }
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkdn);
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to create identity " + type.getName() + " :: "
-                            + name + "in any of the configured data stores",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "Unable to create identity " + type.getName() + " :: " +
+                        name + "in any of the configured data stores", origEx);
+            }
             throw origEx;
         } else {
             return id;
@@ -456,16 +457,17 @@ public class IdServicesImpl implements IdServices {
                 origEx = ide;
             }
         }
+        
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to get attributes for identity " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning("idServicesImpl.getAttributes: " +
+                    "Unable to get attributes for identity " + type.getName() + 
+                    ", " + name + " in any configured data store", origEx);
+            }
             throw origEx;
-        } else {
-            Map returnMap = combineAttrMaps(attrMapsSet, isString);
-            return returnMap;
         }
+        
+        return combineAttrMaps(attrMapsSet, isString);
     }
 
     /*
@@ -534,10 +536,11 @@ public class IdServicesImpl implements IdServices {
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to get attributes for identity " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "Unable to get attributes for identity " + type.getName() +
+                    "::" + name + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             Map returnMap = combineAttrMaps(attrMapsSet, true);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLICommandBase.java,v 1.1 2006-05-31 21:49:41 veiming Exp $
+ * $Id: CLICommandBase.java,v 1.2 2006-07-17 18:10:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public abstract class CLICommandBase implements CLICommand {
     private SubCommand subCommand;
     private RequestContext requestContext;
     private ResourceBundle rb;
-    
+
     /**
      * Services a Commandline Request.
      *

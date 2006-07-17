@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.1 2005-11-01 00:30:14 arvindp Exp $
+ * $Id: PLLRequestServlet.java,v 1.2 2006-07-17 18:10:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,8 +99,8 @@ public class PLLRequestServlet extends HttpServlet {
             if (PLLServer.pllDebug.messageEnabled()) {
                 PLLServer.pllDebug.message("content length too large" + length);
             }
-            throw new ServletException(PLLBundle
-                    .getString("largeContentLength"));
+            throw new ServletException(
+                PLLBundle.getString("largeContentLength"));
         }
 
         byte[] reqData = new byte[length];

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDefinition.java,v 1.1 2006-05-31 21:49:44 veiming Exp $
+ * $Id: IDefinition.java,v 1.2 2006-07-17 18:11:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,4 +59,14 @@ public interface IDefinition {
      * @return sub command object.
      */
     SubCommand getSubCommand(String name);
+    
+    /**
+     * Returns <code>true</code> if the option is an authentication related
+     * option such as user ID and password.
+     *
+     * @param opt Name of option.
+     * @returns <code>true</code> if the option is an authentication related
+     *         option such as user ID and password.
+     */
+    boolean isAuthOption(String opt);
 }

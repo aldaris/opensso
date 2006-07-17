@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkOperations.java,v 1.1 2006-05-31 21:49:41 veiming Exp $
+ * $Id: BulkOperations.java,v 1.2 2006-07-17 18:10:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
-
+import com.iplanet.sso.SSOToken;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +38,7 @@ public class BulkOperations extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        SSOToken ssoToken = getAdminSSOToken();
 
         boolean continueFlag = isOptionSet(IArgument.CONTINUE);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
@@ -61,7 +62,7 @@ public class BulkOperations extends AuthenticatedCommand {
         for (Iterator i = entries.iterator(); i.hasNext(); ) {
             String argv = (String)i.next();
             mgr.addToRequestQueue(new CLIRequest(
-                req, makeStringArray(argv)));
+                req, makeStringArray(argv), ssoToken));
         }
     }
 

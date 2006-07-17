@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectEvaluationCache.java,v 1.1 2006-04-26 05:14:07 dillidorai Exp $
+ * $Id: SubjectEvaluationCache.java,v 1.2 2006-07-17 18:11:19 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,10 +59,10 @@ public class SubjectEvaluationCache {
     * subjectDN to an array of 2 Objects, one being the isMember status
     * 2 being the timetoLive
     * tokenID ----> subjectId1 --> [timeToLive, isMember]
-    *		     subjectId2 --> [timeToLive, isMember]
-    *		     ....
+    *               subjectId2 --> [timeToLive, isMember]
     *                ....
-    */		     
+    *                ....
+    */
 
     public static Map subjectEvaluationCache = new HashMap();
     public  static long subjectEvalCacheTTL = 0; // milliseconds
@@ -76,9 +76,9 @@ public class SubjectEvaluationCache {
      * Uses configuration specified in Policy Configuration Service.
      */
     static void initSubjectEvalTTLFromPolicyConfig() {
-   	if (subjectEvalCacheTTL == 0) {
+        if (subjectEvalCacheTTL == 0) {
             String orgName = ServiceManager.getBaseDN();
-	    try {
+            try {
                 Map pConfigValues = PolicyConfig.getPolicyConfig(orgName);
                 subjectEvalCacheTTL =
                      PolicyConfig.getSubjectsResultTtl(pConfigValues);
@@ -86,15 +86,15 @@ public class SubjectEvaluationCache {
                     subjectEvalCacheTTL = DEFAULT_SUBJECT_EVAL_CACHE_TTL;
                     if (DEBUG.warningEnabled()) {
                         DEBUG.warning("Invalid Subject TTL got from "
-	 		        + "configuration. Set TTL to default:"
-                                + subjectEvalCacheTTL);
+                            + "configuration. Set TTL to default:"
+                            + subjectEvalCacheTTL);
                     }
                 }
-	    } catch ( PolicyException pe ) {
+            } catch ( PolicyException pe ) {
                 if (DEBUG.warningEnabled()) {
                     DEBUG.warning("Could not read Policy Config data"
-	       	    +". Set TTL to default:" +subjectEvalCacheTTL, pe);
-		}
+                        + ". Set TTL to default:" + subjectEvalCacheTTL, pe);
+                }
             }
             if (DEBUG.messageEnabled()) {
                 DEBUG.message("subjectEvalCacheTTL="
@@ -109,38 +109,40 @@ public class SubjectEvaluationCache {
      * from the time of evaluation,  expressed in milliseconds
      */
     public static long getSubjectEvalTTL() {
-	initSubjectEvalTTLFromPolicyConfig();
-	return subjectEvalCacheTTL;
+        initSubjectEvalTTLFromPolicyConfig();
+        return subjectEvalCacheTTL;
     }
-	
 
     /**
-     * Adds a new entry to <code>SubjectEvaluationCache</code>
-     * @param tokenID sesstion token id of user
+     * Adds a new entry to <code>SubjectEvaluationCache</code>.
+     * @param tokenID sesstion token id of user.
      * @param ldapServer ldap server having the entry corresponding to 
-     * <code>Subject</code> name value
-     * @param valueDN subject name value
-     * @param result of membership evaluation
+     * <code>Subject</code> name value.
+     * @param valueDN subject name value.
+     * @param member result of membership evaluation.
      */
-    public static void addEntry(String tokenID, 
-	String ldapServer, String valueDN, boolean member) {
-	
-	String subjectId = ldapServer+":"+valueDN;
-	Map subjectEntries = null;
+    public static void addEntry(
+        String tokenID, 
+        String ldapServer,
+        String valueDN, 
+        boolean member
+    ) {
+        String subjectId = ldapServer+":"+valueDN;
+        Map subjectEntries = null;
         long[] elem = new long[2];
-	synchronized (subjectEvaluationCache) {
+        synchronized (subjectEvaluationCache) {
             elem[0] = System.currentTimeMillis() + getSubjectEvalTTL();
             elem[1] = (member == true) ? 1:0;
-	    if ((subjectEntries = (Map)subjectEvaluationCache.get(tokenID))
-		!= null) 
-	    {
+            if ((subjectEntries = (Map)subjectEvaluationCache.get(tokenID))
+                != null) 
+            {
                 subjectEntries.put(subjectId, elem);
-	    } else {
-		subjectEntries = Collections.synchronizedMap(new HashMap());
+            } else {
+                subjectEntries = Collections.synchronizedMap(new HashMap());
                 subjectEntries.put(subjectId, elem);
-		subjectEvaluationCache.put(tokenID,subjectEntries);
-	    }
-	}
+                subjectEvaluationCache.put(tokenID,subjectEntries);
+            }
+        }
     }
 
     /**
@@ -153,30 +155,30 @@ public class SubjectEvaluationCache {
      * @return cached result of membership evaluation
      */
     public static Boolean isMember(String tokenID, 
-	String ldapServer, String valueDN ) 
+        String ldapServer, String valueDN ) 
     {
-	Boolean member = null;
-	String subjectId = ldapServer+":"+valueDN;
-	Map subjectEntries = null;
-	if ((subjectEntries = (Map)subjectEvaluationCache.get(tokenID))
-		!= null) 
-	{
+        Boolean member = null;
+        String subjectId = ldapServer+":"+valueDN;
+        Map subjectEntries = null;
+        if ((subjectEntries = (Map)subjectEvaluationCache.get(tokenID))
+            != null) 
+        {
             long[] element = (long[])subjectEntries.get(subjectId);
             long timeToLive = 0;
             if (element != null) {
                 timeToLive = (long)element[0];
-            	long currentTime = System.currentTimeMillis();
-            	if (timeToLive > currentTime) {
+                long currentTime = System.currentTimeMillis();
+                if (timeToLive > currentTime) {
                     if (DEBUG.messageEnabled()) {
                         DEBUG.message("SubjectEvaluationCache.isMember():"
                           + " get the membership result from cache.\n");
                     }
-            	    member =  (element[1] == 1) ? Boolean.TRUE: 
-		    Boolean.FALSE;
-		}
+                    member = (element[1] == 1) ? Boolean.TRUE: 
+                        Boolean.FALSE;
+                }
             }
         }
-	return member; 
+        return member; 
     }
 
     /**

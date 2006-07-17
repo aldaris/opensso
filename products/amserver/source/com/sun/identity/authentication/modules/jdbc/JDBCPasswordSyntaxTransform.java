@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBCPasswordSyntaxTransform.java,v 1.1 2006-01-28 09:15:53 veiming Exp $
+ * $Id: JDBCPasswordSyntaxTransform.java,v 1.2 2006-07-17 18:10:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ public interface JDBCPasswordSyntaxTransform {
      * cleartext.
      * Take the string the user gave you, and hash it or whatever
      *
-     * @param String which represents the password before transform
+     * @param input Password before transform
      * @return Password after transform - in this case the same thing.
      * @throws AuthLoginException
      */

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.1 2006-05-31 21:49:48 veiming Exp $
+ * $Id: AccessManager.java,v 1.2 2006-07-17 18:11:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -360,6 +360,16 @@ public class AccessManager {
     private String set_attribute_choice_values;
 
     @SubCommandInfo(
+        implClassName="com.sun.identity.cli.schema.SetAttributeSchemaBooleanValues",
+        description="Set boolean values of attribute schema.",
+        mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@attributename|a|s|Name of attribute.@truevalue|e|s|Value for true.@truei18nkey|k|s|Internationalization key for true value.@falsevalue|z|s|Value for false.@falsei18nkey|j|s|Internationalization key for false value.",
+        optionAliases="",
+        macro="authentication",
+        optionalOptions="subschemaname|c|s|Name of sub schema.",
+        resourceStrings="attribute-schema-set-boolean-values-succeed=Boolean Values are set.")
+    private String set_attribute_boolean_values;
+    
+    @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaChoiceValues",
         description="Remove choice values from attribute schema.",
         mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@attributename|a|s|Name of attribute.@choicevalues|k|m|Choice values e.g. Inactive",
@@ -522,10 +532,10 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddSubConfiguration",
         description="Create a new sub configuration.",
-        mandatoryOptions="servicename|s|s|Name of service.@subconfigname|g|s|Name of sub configuration.@datafile|D|s|Name of file that contains attribute values data",
+        mandatoryOptions="servicename|s|s|Name of service.@subconfigname|g|s|Name of sub configuration.",
         optionAliases="",
         macro="authentication",
-        optionalOptions="realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).@subconfigid|b|s|ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).",
+        optionalOptions="attributevalues|a|m|Attribute values e.g. homeaddress=here.@datafile|D|s|Name of file that contains attribute values data.@realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).@subconfigid|b|s|ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).",
         resourceStrings="add-sub-configuration-succeed=Sub Configuration, {0} is added.\nadd-sub-configuration-to-realm-succeed=Sub Configuration, {1} is added to realm, {0}")
     private String create_sub_configuration;
 
@@ -542,10 +552,10 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifySubConfiguration",
         description="Set sub configuration.",
-        mandatoryOptions="servicename|s|s|Name of service.@subconfigname|g|s|Name of sub configuration.@operation|o|s|Operation (either add/set/modify) to be performed on the sub configuration@datafile|D|s|Name of file that contains attribute values data",
+        mandatoryOptions="servicename|s|s|Name of service.@subconfigname|g|s|Name of sub configuration.@operation|o|s|Operation (either add/set/modify) to be performed on the sub configuration.",
         optionAliases="",
         macro="authentication",
-        optionalOptions="realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).",
+        optionalOptions="attributevalues|a|m|Attribute values e.g. homeaddress=here.@datafile|D|s|Name of file that contains attribute values data.@realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).",
         resourceStrings="modify-sub-configuration-succeed=Sub Configuration, {0} is modified.\nmodify-sub-configuration-to-realm-succeed=Sub Configuration, {1} is modify in realm, {0}\nmodify-sub-configuration-invalid-operation=Invalid operation, supported operation are 'add', 'delete' and 'set'.")
     private String set_sub_configuration;
 
@@ -612,7 +622,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.DeleteIdentities",
         description="Delete identities in a realm",
-        mandatoryOptions="realm|e|s|Name of realm.@idnames|i|s|Names of identites.@idtype|t|s|Type of Identity such as User, Role and Group.",
+        mandatoryOptions="realm|e|s|Name of realm.@idnames|i|m|Names of identites.@idtype|t|s|Type of Identity such as User, Role and Group.",
         optionAliases="",
         macro="authentication",
         optionalOptions="",

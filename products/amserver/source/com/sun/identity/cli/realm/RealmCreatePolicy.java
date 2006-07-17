@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmCreatePolicy.java,v 1.1 2006-05-31 21:49:55 veiming Exp $
+ * $Id: RealmCreatePolicy.java,v 1.2 2006-07-17 18:11:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,9 @@ package com.sun.identity.cli.realm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
@@ -38,6 +40,7 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyUtils;
 import java.text.MessageFormat;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -61,14 +64,25 @@ public class RealmCreatePolicy extends AuthenticatedCommand {
         String datafile = getStringOptionValue(IArgument.XML_FILE);
         IOutput outputWriter = getOutputWriter();
 
-        try {
-            String[] params = {realm};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "ATTEMPT_CREATE_POLICY_IN_REALM", params);
+        
+        CommandManager mgr = getCommandManager();
+        String url = mgr.getWebEnabledURL();
+        String[] params = {realm};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_CREATE_POLICY_IN_REALM", params);
 
-            FileInputStream fis = new FileInputStream(datafile);
+        try {
             PolicyManager pm = new PolicyManager(adminSSOToken, realm);
-            PolicyUtils.createPolicies(pm, fis);
+
+            if ((url != null) && (url.length() > 0)) {
+                ByteArrayInputStream bis = new ByteArrayInputStream(
+                    datafile.getBytes());
+                PolicyUtils.createPolicies(pm, bis);
+            } else {
+                FileInputStream fis = new FileInputStream(datafile);
+                PolicyUtils.createPolicies(pm, fis);
+            }
+
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_CREATE_POLICY_IN_REALM", params);
             outputWriter.printlnMessage(MessageFormat.format(

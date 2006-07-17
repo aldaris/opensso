@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amPlatform.xml,v 1.4 2006-01-30 20:58:55 veiming Exp $
+   $Id: amPlatform.xml,v 1.5 2006-07-17 18:11:51 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,7 +99,7 @@
                     syntax="string"
                     i18nKey="a106">
                     <DefaultValues>
-                        @AVAILABLE_LOCALES@
+                        <Value>@AVAILABLE_LOCALES@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-platform-client-charsets"

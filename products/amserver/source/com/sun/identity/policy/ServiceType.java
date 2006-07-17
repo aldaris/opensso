@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceType.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
+ * $Id: ServiceType.java,v 1.3 2006-07-17 18:11:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -435,11 +435,10 @@ public class ServiceType {
      * append().
      *
      * @param res name of the original resource consisting of
-     * the second parameter superRes and the returned value
-     * @param subRes name of the super-resource which the first
-     * parameter begins with.
-     *
-     * @return returns the sub-resource which the first paramter
+     *        the second parameter superRes and the returned value
+     * @param superRes name of the super-resource which the first
+     *        parameter begins with.
+     * @return the sub-resource which the first parameter
      * ends with. If the first parameter doesn't begin with the
      * the first parameter, then the return value is null.
      */

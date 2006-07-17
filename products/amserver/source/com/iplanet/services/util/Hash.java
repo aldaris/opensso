@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Hash.java,v 1.1 2005-11-01 00:30:26 arvindp Exp $
+ * $Id: Hash.java,v 1.2 2006-07-17 18:10:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,6 @@ import com.iplanet.services.util.internal.TextCrypt;
  */
 public class Hash {
 
-    private static Debug debug = Debug.getInstance("amSDK");
-
     /**
      * Generates a SHA1 digest of the string and returns BASE64 encoded digest.
      * 
@@ -49,6 +47,7 @@ public class Hash {
             sha1.update(string.getBytes("UTF-8"));
             return Base64.encode(sha1.digest());
         } catch (Exception ex) {
+            Debug debug = Debug.getInstance("amSDK");
             if (debug.warningEnabled()) {
                 debug.warning("Hash.hash:", ex);
             }

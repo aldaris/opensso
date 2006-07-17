@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.2 2006-02-01 00:22:36 beomsuk Exp $
+ * $Id: LoginServlet.java,v 1.3 2006-07-17 18:10:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
      */
     protected void initializeRequestContext(RequestContext requestContext) {
         super.initializeRequestContext(requestContext);
-        
+        Debug debug = Debug.getInstance("amLoginServlet");
         // Set a view bean manager in the request context.  This must be
         // done at the module level because the view bean manager is
         // module specifc.
@@ -237,7 +237,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
     private static final String REDIRECT_JSP = "Redirect.jsp";
     
     // the debug file
-    private static Debug debug = Debug.getInstance("amLoginServlet");
+    private Debug debug;
     
     private static String serviceURI = SystemProperties.get(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) + "/UI/Login";    

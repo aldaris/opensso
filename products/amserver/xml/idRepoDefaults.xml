@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="@XML_ENCODING@"?>
 
 <!--
    The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoDefaults.xml,v 1.2 2006-01-30 20:58:55 veiming Exp $
+   $Id: idRepoDefaults.xml,v 1.3 2006-07-17 18:11:52 veiming Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
 <Requests>
 
 <!-- Register the authentication configuraion service for root org -->
-<OrganizationRequests DN="NORMALIZED_ORGBASE">
+<OrganizationRequests DN="@NORMALIZED_ORGBASE@">
     <RegisterServices>
         <Service_Name>iPlanetAMAuthConfiguration</Service_Name>
     </RegisterServices>
@@ -50,8 +50,8 @@
         </AttributeValuePair>
         <AttributeValuePair>
             <Attribute name="sunOrganizationAliases" />
-            <Value>SERVER_HOST</Value>
-            <Value>RS_RDN</Value>
+            <Value>@SERVER_HOST@</Value>
+            <Value>@RS_RDN@</Value>
         </AttributeValuePair>        
     </SetAttributes>
 </RealmRequests>

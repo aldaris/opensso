@@ -17,13 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.2 2006-02-01 00:22:35 beomsuk Exp $
+ * $Id: LoginLogoutMapping.java,v 1.3 2006-07-17 18:10:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
- 
 package com.sun.identity.authentication.UI;           
 
 import javax.servlet.*;
@@ -39,12 +37,10 @@ import com.sun.identity.authentication.service.AuthD;
  * Servlet mapping to forward
  * '/login' to '/UI/Login' and
  * '/logout' to '/UI/Logout'
- *
  */
 public class LoginLogoutMapping extends HttpServlet {
 
-    // the debug file
-    private static Debug debug = Debug.getInstance("amLoginLogoutMapping");
+    private static boolean isProductInitialize = true;
 
     ServletConfig config = null;
     
@@ -56,20 +52,42 @@ public class LoginLogoutMapping extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.config = config;
-        AuthD.getAuth().setServletContext(config.getServletContext());
-
-        // Intialized AdminTokenAction
-        if (debug.messageEnabled()) {
-            debug.message("Initializing AdminTokenAction to use AuthN");
+        if (isProductInitialize) {
+            initializeAuth(config.getServletContext());
         }
-        com.sun.identity.security.AdminTokenAction
-            .getInstance().authenticationInitialized();
     }
 
-    /** Destroys the servlet.
-    */  
-    public void destroy() {
+    /**
+     * Set product initialize flag.
+     *
+     * @param initialized <code>true</code> if product is initialized.
+     */
+    public static void setProductInitialized(boolean initialized) {
+        isProductInitialize = initialized;
+    }
 
+    /**
+     * Initializes Access Manager.
+     **
+     * @param servletCtx Servlet Context.
+     */
+    public void initializeAuth(ServletContext servletCtx) {
+        AuthD.getAuth().setServletContext(servletCtx);
+
+        // Intialize AdminTokenAction
+        if (Debug.getInstance("amLoginLogoutMapping").messageEnabled()) {
+            Debug.getInstance("amLoginLogoutMapping").message(
+                "LoginLogoutMapping.initializeAuth: " +
+                "Initializing AdminTokenAction to use AuthN");
+        }
+        com.sun.identity.security.AdminTokenAction
+                    .getInstance().authenticationInitialized();
+    }
+
+    /**
+     * Destroys the servlet.
+     */  
+    public void destroy() {
     }
 
     /**
@@ -93,9 +111,9 @@ public class LoginLogoutMapping extends HttpServlet {
             ISLocaleContext localeContext = new ISLocaleContext();
             localeContext.setLocale(request);
             java.util.Locale locale = localeContext.getLocale();
-            if (debug.messageEnabled()) {
-                debug.message("LoginLogoutMapping: " +
-                    e.getL10NMessage(locale));
+            if (Debug.getInstance("amLoginLogoutMapping").messageEnabled()) {
+                Debug.getInstance("amLoginLogoutMapping").message(
+                    "LoginLogoutMapping: " + e.getL10NMessage(locale));
             }
             throw new ServletException(e.getL10NMessage(locale));
         }

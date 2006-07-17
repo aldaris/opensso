@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.1 2006-05-31 21:49:46 veiming Exp $
+ * $Id: SubCommand.java,v 1.2 2006-07-17 18:11:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
-
+import com.iplanet.sso.SSOToken;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ import java.util.StringTokenizer;
  * This class contains definition of sub command.
  */
 public class SubCommand {
+    private IDefinition definition;
     private ResourceBundle rb;
     private String name;
     private String implClassName;
@@ -140,6 +141,7 @@ public class SubCommand {
     /**
      * Creates a sub command object.
      *
+     * @param defintion Definition class.
      * @param rb Resource Bundle.
      * @param name Name of the Sub Command.
      * @param mandatoryOptions Formated list of mandatory argument/options.
@@ -149,6 +151,7 @@ public class SubCommand {
      * @throws CLIException if this object cannot be constructed.
      */
     public SubCommand(
+        IDefinition definition,
         ResourceBundle rb,
         String name,
         String mandatoryOptions,
@@ -156,6 +159,7 @@ public class SubCommand {
         String optionAliases,
         String implClassName
     ) throws CLIException {
+        this.definition = definition;
         this.name = name;
         this.rb = rb;
         this.implClassName = implClassName;
@@ -290,9 +294,13 @@ public class SubCommand {
      * context of this sub command.
      *
      * @param options Map of argument/option full name to its values (List).
+     * @param ssoToken Single Sign On token of the user.
      * @return <code>true</code> if the given options are valid.
      */
-    public boolean validateOptions(Map<String, List<String>> options) {
+    public boolean validateOptions(
+        Map<String, List<String>> options,
+        SSOToken ssoToken
+    ) {
         boolean valid = true;
 
         for (Iterator i = optionAliases.keySet().iterator();
@@ -307,13 +315,14 @@ public class SubCommand {
             String opt = (String)i.next();
             List values = (List)options.get(opt);
             if (values == null) {
-                List aliases = (List)optionAliases.get(opt);
-                if ((aliases == null) || aliases.isEmpty()) {
-                    Set aliasGroup = getOptionAliasesGroup(opt);
-                    valid = (aliasGroup != null) ?
-                        hasOptionValue(aliasGroup, options) : false;
-                } else {
-                    valid = hasOptionValue(aliases, options);
+                if ((ssoToken == null) || !definition.isAuthOption(opt)) {
+                    List aliases = (List)optionAliases.get(opt);
+                    if ((aliases == null) || aliases.isEmpty()) {
+                        Set aliasGroup = getOptionAliasesGroup(opt);
+                        valid = hasOptionValue(aliasGroup, options, ssoToken);
+                    } else {
+                        valid = hasOptionValue(aliases, options, ssoToken);
+                    }
                 }
             }
         }
@@ -337,12 +346,21 @@ public class SubCommand {
         return valid;
     }
 
-    private static boolean hasOptionValue(Collection options, Map optionValues){
+    private boolean hasOptionValue(
+        Collection options,
+        Map optionValues,
+        SSOToken ssoToken
+    ) {
         boolean has = false;
         if ((options != null) && (optionValues != null)) {
             for (Iterator i = options.iterator(); i.hasNext() && !has; ) {
-                List values = (List)optionValues.get(i.next());
-                has = (values != null) && !values.isEmpty();
+                String opt = (String)i.next();
+                if ((ssoToken != null) && definition.isAuthOption(opt)) {
+                    has = true;
+                } else {
+                    List values = (List)optionValues.get(opt);
+                    has = (values != null) && !values.isEmpty();
+                }
             }
         }
         return has;
