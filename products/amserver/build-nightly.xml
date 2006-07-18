@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-nightly.xml,v 1.1 2006-07-17 18:10:10 veiming Exp $
+   $Id: build-nightly.xml,v 1.2 2006-07-18 07:46:30 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,6 +99,11 @@
                 <include name="opensso.war.sha" />
             </fileset>
         </copy>
+
+        <java classname="com.sun.identity.tools.nightly.PrepNight">
+            <classpath refid="build.class.path"/>
+            <arg value="${nightly.dist.dir}" />
+        </java>
     </target>
 
     <target name="preparebuild">
