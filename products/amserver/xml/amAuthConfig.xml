@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthConfig.xml,v 1.5 2006-07-17 18:11:50 veiming Exp $
+    $Id: amAuthConfig.xml,v 1.6 2006-07-19 00:32:25 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -111,7 +111,7 @@
                         id="NamedConfiguration">
                         <AttributeValuePair>
                             <Attribute name="iplanet-am-auth-configuration"/>
-                            <Value>&lt;AttributeValuePair&gt;&lt;Value&gt;DataStore REQUIRED &lt;&#47;Value&gt;&lt;&#47;AttributeValuePair&gt;</Value>
+                            <Value>&lt;AttributeValuePair&gt;&lt;Value&gt;@DEFAULT_AUTH_MODULE@ REQUIRED &lt;&#47;Value&gt;&lt;&#47;AttributeValuePair&gt;</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
