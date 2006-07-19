@@ -55,21 +55,61 @@ The OpenSSO sources depend upon several third-party libraries that are not inclu
 <li>Review the license agreement on the resulting page and choose <i>Accept</i> or <i>Decline</i>.</li>
 <li>If you chose <i>Accept</i>, you can download any one of the available distributions, dependent on your platform.</li>
 <li>Extract and install the downloaded file as necessary to make the SDK available on your system.</li>
-<li>Once the J2EE SDK is installed, get the <code>j2ee.jar</code> file from the <code>lib</code> directory.</p></td></tr>
+<li>Once the J2EE SDK is installed, get the <code>j2ee.jar</code> file from the <code>lib</code> directory.</li>
+</ol>
 
-<tr><td><p><b>Q:<b><a name="built"></a> Now that I've built the code, what do I do?</b></b></p>
+</p></td></tr>
 
+<tr><td><p><b>Q:<b><a name="mail"></a> How do I get <code>mail.jar</code>?</b></b></p>
 
-<p>You can start by joining communities of interest. This will give you a sense of what work is already being done and how you can best contribute. For example, you can:
+<p>The <code>mail.jar</code> library can be obtained from the JavaMail API version 1.2. Use the following procedure to get the JavaMail API:
 
-<ul>
-<li>Participate in communities and discussions.</li>
-<li>Find and report bugs.</li>
-<li>Contribute documentation or source code.</li>
-<li>Give feedback on how to make the project more successful.</li>
-</ul>
+<ol>
+<li>Go to <a href="http://java.sun.com/products/javamail/javamail-1_2.html">http://java.sun.com/products/javamail/javamail-1_2.html</a>.</li>
+<li>Click Download.</li>
+<li>Review the license agreement on the resulting page and choose <i>Accept</i> or <i>Decline</i>.</li>
+<li>If you chose <i>Accept</i>, download the <code>javamail-1_2.zip</code> file.</li>
+<li>Extract the contents of the file into a convenient location.</li>
+<li>Get the <code>mail.jar</code> from the <code>javamail-1_2</code> directory of the expanded image of the downloaded file.</li>
+</ol>
 
-To particpate in the OpenSSO project, you must register. See the Governance and the Register link in the navigation bar for more details. </p></td></tr>
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="jwsdp"></a> How do I get <code>jaxb-api.jar</code> and <code>jaxrpc-api.jar</code>?</b></b></p>
+
+<p>The <code>jaxb-api.jar</code> and <code>jaxrpc-api.jar</code> libraries can be obtained from the JWSDP version 1.6. Use the following procedure to get the JWSDP 1.6:
+
+<ol>
+<li>Go to <a href="http://java.sun.com/webservices/downloads/webservicespack.html">http://java.sun.com/webservices/downloads/webservicespack.html</a>.</li>
+<li>Click Download.</li>
+<li>You will have to log in to (or register with) the Sun Developer Network on the resulting page.</li>
+<li>Once you have logged in, review the license agreement and choose <i>Accept</i> or <i>Decline</i>.</li>
+<li>If you chose <i>Accept</i>, you can download any one of the available distributions, dependent on your platform.</li>
+<li>Install the downloaded file.</li>
+<li>After installation, <code>jaxb-api.jar</code> is located in <code><i>jwsdp_install_directory</i>/jaxb/lib</code> and <code>jaxrpc-api.jar</code> is in <code><i>jwsdp_install_directory</i>/jaxrpc/lib</code>.</li>
+</ol>
+
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="ldap"></a> How do I get <code>ldapjdk.jar</code>?</b></b></p>
+
+<p>The <code>ldapjdk.jar</code> library can be built using the source distribution provided by the Mozilla project. Use the following procedure to get the <code>ldapjdk.jar</code>:
+
+<ol>
+<li>Go to <a href="http://www.mozilla.org/directory/ldapsdk.html">http://www.mozilla.org/directory/ldapsdk.html</a>.</li>
+<li>Download the source distribution in either the <i>zip</i> or <i>tar-gzip</i> format.</li>
+<li>Extract the contents of the file into a convenient location.</li>
+<li>The complete build instructions are available at <a href="http://www.mozilla.org/directory/buildjsdk-4.0.txt">http://www.mozilla.org/directory/buildjsdk-4.0.txt</a>. A copy of these instructions is also under the <code>mozilla/directory</code> directory in a file called <code>buildjsdk.txt</code>. Follow these instructions based on your platform. Note that if you are using JDK 5.0 for compilation, you will have to modify the make-files to add a -source 1.3 to the compiler definition. This is to ensure that the build does not break due to the use of newly introduced keywords (such as <code>enum</code> and <code>assert</code>) in the JDK 1.4 and JDK 5.0 releases. The rest of the instructions in this section are specific to the Unix platform.</li>
+<li>Change to the <code>mozilla/directory/java-sdk</code> directory.</li>
+<li>If using JDK 5.0 for compilation, open the <code>ldap.mk</code> file and modify the JAVAC variable definition to include the -source 1.3 option as follows:<p>
+<code>JAVAC=$(JDKBIN)javac -O -classpath "$(JAVACLASSPATH)" -source 1.3 </p>
+<p>This variable must be changed in three places.</li>
+<li>Compile the sources using <code>gmake -f ldap.mk JAVA_VERSION=1.5</code>. Replace JAVA_VERSION with the value appropriate to your environment.</li>
+<li>Package the compiled sources into a JAR with the command <code>gmake -f ldap.mk JAVA_VERSION=1.5 basepackage</code>. Again, replace JAVA_VERSION with the value appropriate to your environment.</li>
+<li>After compilation, the <code>ldapjdk.jar</code> can be found in <code>mozilla/directory/java-sdk/dist/packages</code> directory.</li>
+</ol>
+
+</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="participate"></a> How do I participate in the communities?</b></b></p>
 
