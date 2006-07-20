@@ -154,7 +154,7 @@ The complete build instructions can be accessed from the <code>index.html</code>
 <p>You can also view the build targets by issuing the <code>ant</code> command from the root of the workspace. The default target executed is <code>usage</code>. The following sections describe the build targets.
 </p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="build"></a>What processing does the <code>build</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="build"></a> What processing does the <code>build</code> target involve?</b></b></p>
 
 <ul>
 <li>Creates the build output directories including:<p>
@@ -187,7 +187,7 @@ All XML files are tag-swapped to change the value of the XML_ENCODING tag to ISO
 
 </p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="doc"></a>What processing does the <code>doc</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="doc"></a> What processing does the <code>doc</code> target involve?</b></b></p>
 
 <ul>
 <li>Creates the build output directories including:<p>
@@ -213,23 +213,23 @@ The compilation debug flag is set to <code>-g:none</code> but can be changed by 
 
 </p></td></tr>
 
-<tr><tnd><p><b>Q:<b><a name="clean"></a>What processing does the <code>clean</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="clean"></a> What processing does the <code>clean</code> target involve?</b></b></p>
 
 <p>Removes all the build output directories.</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="demo"></a>What processing does the <code>demo</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="demo"></a> What processing does the <code>demo</code> target involve?</b></b></p>
 
 <p>The <code>demo</code> target first invokes the <code>build</code> target. It then delegates the further processing to the <code>build.xml</code> file located in the <code>demo</code> directory. (This target cannot be executed directly unless the  configuration tasks described in the <code>README</code> file are performed. Refer to the README in the <code>demo</code> directory for further details.)</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="democlean"></a>What processing does the <code>demo-clean</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="democlean"></a> What processing does the <code>demo-clean</code> target involve?</b></b></p>
 
 <p>Issues a clean to the <code>build.xml</code> file in the <code>demo</code> directory. This target is useful if you are interested in rebuilding the demo without rebuilding the entire OpenSSO distribution. When running <code>demo-clean</code>, only the demo-related build output area is cleaned and not the build output area for the OpenSSO distribution.</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="usage"></a>What processing does the <code>usage</code> target involve?</b></b></p>
+<tr><td><p><b>Q:<b><a name="usage"></a> What processing does the <code>usage</code> target involve?</b></b></p>
 
 <p>Displays a list of available targets with a brief description.</p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="builddemo"></a>How do you build the demo?</b></b></p>
+<tr><td><p><b>Q:<b><a name="builddemo"></a> How do you build the demo?</b></b></p>
 
 <p>Instructions to build the demo can be found in the README file in the <code>demo</code> directory. This file also provides background information and details on how it works.</p></td></tr>
 
