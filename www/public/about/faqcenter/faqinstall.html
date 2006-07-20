@@ -91,7 +91,7 @@ The OpenSSO sources depend upon several third-party libraries that are not inclu
 
 </p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="ldap"></a> How do I get <code>ldapjdk.jar</code>?</b></b></p>
+<tr><td><p><b>Q:<b><a name="ldapjdk"></a> How do I get <code>ldapjdk.jar</code>?</b></b></p>
 
 <p>The <code>ldapjdk.jar</code> library can be built using the source distribution provided by the Mozilla project. Use the following procedure to get the <code>ldapjdk.jar</code>:
 
@@ -99,21 +99,39 @@ The OpenSSO sources depend upon several third-party libraries that are not inclu
 <li>Go to <a href="http://www.mozilla.org/directory/ldapsdk.html">http://www.mozilla.org/directory/ldapsdk.html</a>.</li>
 <li>Download the source distribution in either the <i>zip</i> or <i>tar-gzip</i> format.</li>
 <li>Extract the contents of the file into a convenient location.</li>
-<li>The complete build instructions are available at <a href="http://www.mozilla.org/directory/buildjsdk-4.0.txt">http://www.mozilla.org/directory/buildjsdk-4.0.txt</a>. A copy of these instructions is also under the <code>mozilla/directory</code> directory in a file called <code>buildjsdk.txt</code>. Follow these instructions based on your platform. Note that if you are using JDK 5.0 for compilation, you will have to modify the make-files to add a -source 1.3 to the compiler definition. This is to ensure that the build does not break due to the use of newly introduced keywords (such as <code>enum</code> and <code>assert</code>) in the JDK 1.4 and JDK 5.0 releases. The rest of the instructions in this section are specific to the Unix platform.</li>
+<li>Follow the build instructions based on your platform.<p>
+The complete build instructions are available at <a href="http://www.mozilla.org/directory/buildjsdk-4.0.txt">http://www.mozilla.org/directory/buildjsdk-4.0.txt</a>. A copy of these instructions is also located in the <code>mozilla/directory</code> directory in a file called <code>buildjsdk.txt</code>. Note that if you are using JDK 5.0 for compilation, you will have to modify the make-files to add a <code>-source 1.3</code> to the compiler definition. This is to ensure that the build does not break due to the use of newly introduced keywords (such as <code>enum</code> and <code>assert</code>) in the JDK 1.4 and JDK 5.0 releases. The remaining instructions in this section are specific to the Unix platform.</p></li>
 <li>Change to the <code>mozilla/directory/java-sdk</code> directory.</li>
-<li>If using JDK 5.0 for compilation, open the <code>ldap.mk</code> file and modify the JAVAC variable definition to include the -source 1.3 option as follows:<p>
-<code>JAVAC=$(JDKBIN)javac -O -classpath "$(JAVACLASSPATH)" -source 1.3 </p>
-<p>This variable must be changed in three places.</li>
-<li>Compile the sources using <code>gmake -f ldap.mk JAVA_VERSION=1.5</code>. Replace JAVA_VERSION with the value appropriate to your environment.</li>
-<li>Package the compiled sources into a JAR with the command <code>gmake -f ldap.mk JAVA_VERSION=1.5 basepackage</code>. Again, replace JAVA_VERSION with the value appropriate to your environment.</li>
-<li>After compilation, the <code>ldapjdk.jar</code> can be found in <code>mozilla/directory/java-sdk/dist/packages</code> directory.</li>
+<li>If using JDK 5.0 for compilation, open the <code>ldap.mk</code> file and modify the JAVAC variable definition to include the <code>-source 1.3</code> option as follows:<p>
+<code>JAVAC=$(JDKBIN)javac -O -classpath "$(JAVACLASSPATH)" -source 1.3</code></p>
+<p>This variable must be changed in three places.</p></li>
+<li>Compile the sources using <code>gmake -f ldap.mk JAVA_VERSION=<i>1.5</i></code> where the value of JAVA_VERSION is replaced with one appropriate to your environment.</li>
+<li>Package the compiled sources into a JAR with the command <code>gmake -f ldap.mk JAVA_VERSION=<i>1.5</i> basepackage</code>. Again, replace JAVA_VERSION with the value appropriate to your environment.</li>
+<li>After compilation, the <code>ldapjdk.jar</code> can be found in the <code>mozilla/directory/java-sdk/dist/packages</code> directory.</li>
 </ol>
 
 </p></td></tr>
 
-<tr><td><p><b>Q:<b><a name="participate"></a> How do I participate in the communities?</b></b></p>
+<tr><td><p><b>Q:<b><a name="db"></a> How do I get <code>db.jar</code>?</b></b></p>
 
-<p>Communities are the primary way to focus information and discussions on particular features. The OpenSSO navigation bar has links to discussion forums you can read and email aliases you can join.
+<p>The <code>db.jar</code> can be built using the source distribution provided by Sleepycat Software. Use the following procedure to get the <code>db.jar</code>:
+
+<ol>
+<li>Go to <a href="http://www.sleepycat.com/download/index.shtml">http://www.sleepycat.com/download/index.shtml</a>.</li>
+<li>Click the Release History link under Berkeley DB.</li>
+<li>Scroll down to 4.2.52 and download the source distribution in either the <i>zip</i> or <i>tar-gzip</i> format.
+<li>Extract the contents of the file into a convenient location.</li>
+<li>Follow the build instructions based on your platform.<p>
+The complete build instructions can be accessed from the <code>index.html</code> page in the <code>docs</code> directory. Open the file in a browser and click the <i>Building Berkeley DB</i> link appropriate to your platform. The remaining instructions in this section are specific to the Unix platform.</li>
+<li>Change to the <code>db-4.2.52.NC/build_unix</code> directory and run the following command:<p>
+<code>../dist/configure --enable-java</code></p>
+<p>You will need a C compiler and development utilities (such as <code>gmake</code>, <code>autoconf</code>, and <code>libtool</code>) available on your system.</p></li>
+<li>Run the following command after successfully running the command in the previous step:<p>
+<code>gmake</code></p></li>
+<li>The <code>db.jar</code> is in the <code>db-4.2.52.NC/build_unix</code> directory.
+<p>The distribution does not have to be installed to get the library.</p></li>
+</ol>
+
 </p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="bug"></a> How do I report a bug?</b></b></p>
