@@ -73,7 +73,7 @@ com/iplanet/am/sdk/AMResourceImpl.class
 com/iplanet/am/sdk/AMRole.class
 com/iplanet/am/sdk/AMRoleImpl.class
 com/iplanet/am/sdk/AMSchema.class
-com/iplanet/am/sdk/AMSchema\$$Type.class
+com/iplanet/am/sdk/AMSchema$Type.class
 com/iplanet/am/sdk/AMSDKBundle.class
 com/iplanet/am/sdk/AMSDKRepo.class
 com/iplanet/am/sdk/AMSearchControl.class
@@ -91,7 +91,7 @@ com/iplanet/am/sdk/AMUser.class
 com/iplanet/am/sdk/AMUserEntryProcessed.class
 com/iplanet/am/sdk/AMUserImpl.class
 com/iplanet/am/sdk/AMUserPasswordValidation.class
-com/iplanet/am/sdk/common/CacheBlockBase\$$CacheEntry.class
+com/iplanet/am/sdk/common/CacheBlockBase$CacheEntry.class
 com/iplanet/am/sdk/common/CacheBlockBase.class
 com/iplanet/am/sdk/common/CacheBlock.class
 com/iplanet/am/sdk/common/CacheStats.class
@@ -108,9 +108,9 @@ com/iplanet/am/sdk/remote/CachedRemoteServicesImpl.class
 com/iplanet/am/sdk/remote/ComplianceServicesImpl.class
 com/iplanet/am/sdk/remote/DCTreeServicesImpl.class
 com/iplanet/am/sdk/remote/EventListener.class
-com/iplanet/am/sdk/remote/EventListener\$$EventNotificationHandler.class
-com/iplanet/am/sdk/remote/EventListener\$$IdRepoEventNotificationHandler.class
-com/iplanet/am/sdk/remote/EventListener\$$NotificationThread.class
+com/iplanet/am/sdk/remote/EventListener$EventNotificationHandler.class
+com/iplanet/am/sdk/remote/EventListener$IdRepoEventNotificationHandler.class
+com/iplanet/am/sdk/remote/EventListener$NotificationThread.class
 com/iplanet/am/sdk/remote/IdRepoEventListener.class
 com/iplanet/am/sdk/remote/RemoteServicesFactory.class
 com/iplanet/am/sdk/remote/RemoteServicesImpl.class
@@ -159,7 +159,7 @@ com/iplanet/services/comm/https/HttpsClient.class
 com/iplanet/services/comm/https/ApprovalCallback.class
 com/iplanet/services/comm/https/JSSPasswordCallback.class
 com/iplanet/services/naming/WebtopNaming.class
-com/iplanet/services/naming/WebtopNaming\$$SiteMonitor.class
+com/iplanet/services/naming/WebtopNaming$SiteMonitor.class
 com/iplanet/services/naming/share/NamingRequest.class
 com/iplanet/services/naming/share/NamingResponse.class
 com/iplanet/services/naming/share/NamingResponseParser.class
@@ -194,7 +194,7 @@ com/sun/identity/common/admin/DisplayOptionsUtils.class
 com/sun/identity/common/CaseInsensitiveKey.class
 com/sun/identity/common/CaseInsensitiveHashSet.class
 com/sun/identity/common/CaseInsensitiveHashMap.class
-com/sun/identity/common/CaseInsensitiveHashSet\$$CaseInsensitiveKeyIterator.class
+com/sun/identity/common/CaseInsensitiveHashSet$CaseInsensitiveKeyIterator.class
 com/sun/identity/common/ChainedException.class
 com/sun/identity/common/ReaderWriterLock.class
 com/sun/identity/common/MapFactory.class
@@ -247,8 +247,8 @@ com/sun/identity/authentication/modules/windowsdesktopsso/WindowsDesktopSSOPrinc
 com/sun/identity/session/util/RestrictedTokenContext.class
 com/sun/identity/session/util/RestrictedTokenAction.class
 com/sun/identity/jaxrpc/SOAPClient.class
-com/sun/identity/jaxrpc/SOAPClient\$$SOAPContentHandler.class
-com/sun/identity/jaxrpc/SOAPClient\$$SOAPErrorHandler.class
+com/sun/identity/jaxrpc/SOAPClient$SOAPContentHandler.class
+com/sun/identity/jaxrpc/SOAPClient$SOAPErrorHandler.class
 com/sun/identity/jaxrpc/JAXRPCUtil.class
 com/sun/identity/entity/EntityException.class
 com/sun/identity/entity/EntityObject.class
@@ -275,7 +275,7 @@ com/sun/identity/idm/IdServicesFactory.class
 com/sun/identity/idm/IdServicesProvider.class
 com/sun/identity/idm/IdType.class
 com/sun/identity/idm/IdUtils.class
-com/sun/identity/idm/IdUtils\$$IdUtilsListener.class
+com/sun/identity/idm/IdUtils$IdUtilsListener.class
 com/sun/identity/idm/RepoSearchResults.class
 com/sun/identity/idm/common/IdCacheBlock.class
 com/sun/identity/idm/remote/IdRemoteCachedServicesImpl.class
@@ -285,8 +285,8 @@ com/sun/identity/sm/*.class
 com/sun/identity/sm/sms.dtd
 com/sun/identity/sm/jaxrpc/SMSObjectIF.class
 com/sun/identity/sm/jaxrpc/SMSJAXRPCObject.class
-com/sun/identity/sm/jaxrpc/SMSJAXRPCObject\$$NotificationThread.class
-com/sun/identity/sm/jaxrpc/SMSJAXRPCObject\$$SMSNotificationHandler.class
+com/sun/identity/sm/jaxrpc/SMSJAXRPCObject$NotificationThread.class
+com/sun/identity/sm/jaxrpc/SMSJAXRPCObject$SMSNotificationHandler.class
 com/sun/identity/common/DateUtils.class
 com/sun/identity/policy/*.class
 com/sun/identity/policy/interfaces/*.class
