@@ -13,6 +13,13 @@
 <li><a href="#ldapjdk">How do I get <code>ldapjdk.jar</code>?</a></li>
 <li><a href="#db">How do I get <code>db.jar</code>?</a></li>
 <li><a href="#workspace">How do I build the workspace?</a></li>
+<li><a href="#build">What processing does the <code>build</code> target involve?</a></li>
+<li><a href="#doc">What processing does the <code>doc</code> target involve?</a></li>
+<li><a href="#clean">What processing does the <code>clean</code> target involve?</a></li>
+<li><a href="#demo">What processing does the <code>demo</code> target involve?</a></li>
+<li><a href="#democlean">What processing does the <code>demo-clean</code> target involve?</a></li>
+<li><a href="#usage">What processing does the <code>usage</code> target involve?</a></li>
+<li><a href="#builddemo">How do you build the demo?</a></li>
 </ol>
 </font></td></tr>
 
@@ -176,9 +183,55 @@ The exceptions are:</p>
 <li>As per its defined location, <code>sms.dtd</code> is copied over to the <code>classes</code> directory under the <code>com/sun/identity/sm</code> package for reference by other XML files.</li>
 <li><code>Services.properties</code>, <code>DSConfig.properties</code>, <code>ums.properties</code>, <code>sso.properties</code>, <code>SMS.properties</code> and <code>authentication_util.properties</code> are combined into a single properties file called <code>amSDK.properties</code>.</li></ul><p>
 
-The XML files are tag-swapped to change the value of the XML_ENCODING tag to ISO-8859-1.</p></li></ul>
+All XML files are tag-swapped to change the value of the XML_ENCODING tag to ISO-8859-1.</p></li></ul>
 
 </p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="doc"></a>What processing does the <code>doc</code> target involve?</b></b></p>
+
+<ul>
+<li>Creates the build output directories including:<p>
+<ul>
+<li><code><i>workspace_root</i>/built</code></li>
+<li><code><i>workspace_root</i>/built/classes</code></li>
+<li><code><i>workspace_root</i>/built/resources</code></li>
+<li><code><i>workspace_root</i>/built/docs</code></li>
+<li><code><i>workspace_root</i>/built/docs/api</code></li>
+</ul></li>
+
+<li>Executes the Javadoc tool with an output directory set to <code><i>workspace_root</i>/built/docs/api</code> and includes the following packages:<p>
+
+The compilation debug flag is set to <code>-g:none</code> but can be changed by defining the following properties in your user level property file, <code>$HOME/.opensso</code>:</p>
+
+<ul>
+<li><code>com/iplanet/sso/**</code></li>
+<li><code>com/iplanet/dpro/**</code></li>
+<li><code>com/sun/identity/session/**</code></li>
+</ul>
+
+<p><code>**</code> refers to all subpackages.</p></li></ul>
+
+</p></td></tr>
+
+<tr><tnd><p><b>Q:<b><a name="clean"></a>What processing does the <code>clean</code> target involve?</b></b></p>
+
+<p>Removes all the build output directories.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="demo"></a>What processing does the <code>demo</code> target involve?</b></b></p>
+
+<p>The <code>demo</code> target first invokes the <code>build</code> target. It then delegates the further processing to the <code>build.xml</code> file located in the <code>demo</code> directory. (This target cannot be executed directly unless the  configuration tasks described in the <code>README</code> file are performed. Refer to the README in the <code>demo</code> directory for further details.)</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="democlean"></a>What processing does the <code>demo-clean</code> target involve?</b></b></p>
+
+<p>Issues a clean to the <code>build.xml</code> file in the <code>demo</code> directory. This target is useful if you are interested in rebuilding the demo without rebuilding the entire OpenSSO distribution. When running <code>demo-clean</code>, only the demo-related build output area is cleaned and not the build output area for the OpenSSO distribution.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="usage"></a>What processing does the <code>usage</code> target involve?</b></b></p>
+
+<p>Displays a list of available targets with a brief description.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="builddemo"></a>How do you build the demo?</b></b></p>
+
+<p>Instructions to build the demo can be found in the README file in the <code>demo</code> directory. This file also provides background information and details on how it works.</p></td></tr>
 
 </table>
 
