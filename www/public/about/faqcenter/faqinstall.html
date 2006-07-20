@@ -133,7 +133,50 @@ The complete build instructions can be accessed from the <code>index.html</code>
 <tr><td><p><b>Q:<b><a name="workspace"></a> How do I build the workspace?</b></b></p>
 
 
-<p>The first step is to search Issue Tracker to see if the problem has already been reported. Anyone can search the database, but you must be a registered user to file bugs. See the Governance or click Register on the navigation bar for more information.
+<p>The workspace build system offers many build targets. They are:
+
+<ul>
+<li><code>build</code> : compiles the sources</li>
+<li><code>doc</code> : creates the Javadoc</li>
+<li><code>clean</code> : deletes the generated files</li>
+<li><code>demo</code> : builds the demo application</li>
+<li><code>demo-clean</code> : deletes the generated demo files</li>
+<li><code>usage</code> : displays a brief description of the other targets</li>
+</ul>
+
+<p>You can also view the build targets by issuing the <code>ant</code> command from the root of the workspace. The default target executed is <code>usage</code>. The following sections describe the build targets.
+</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="build"></a>What processing does the <code>build</code> target involve?</b></b></p>
+
+<ul>
+<li>Creates the build output directories including:<p>
+<ul>
+<li><code><i>workspace_root</i>/built</code></li>
+<li><code><i>workspace_root</i>/built/classes</code></li>
+<li><code><i>workspace_root</i>/built/resources</code></li>
+<li><code><i>workspace_root</i>/built/docs</code></li>
+<li><code><i>workspace_root</i>/built/docs/api</code></li>
+</ul></li>
+
+<li>Compiles all the classes in the source directory into the <code><i>workspace_root</i>/built/classes</code> directory.<p>
+
+The compilation debug flag is set to <code>-g:none</code> but can be changed by defining the following properties in your user level property file, <code>$HOME/.opensso</code>:</p>
+
+<ul>
+<li><code>build.debug</code>: Accepted values are <code>on</code> and <code>off</code>. Example: <code>build.debug=on</code></li>
+<li><code>build.debuglevel</code>: Accepted values are one or more of <code>lines</code>, <code>vars</code>, <code>source</code> as a comma-separated list. Example: <code>build.debuglevel=lines,source</code></li>
+</ul></li>
+
+<li>Transfers the resource, XML files from the resources and XML directories into the <code><i>workspace_root</i>/built/resources</code> directory.<p>
+
+The exceptions are:</p>
+
+<ul>
+<li>As per its defined location, <code>sms.dtd</code> is copied over to the <code>classes</code> directory under the <code>com/sun/identity/sm</code> package for reference by other XML files.</li>
+<li><code>Services.properties</code>, <code>DSConfig.properties</code>, <code>ums.properties</code>, <code>sso.properties</code>, <code>SMS.properties</code> and <code>authentication_util.properties</code> are combined into a single properties file called <code>amSDK.properties</code>.</li></ul><p>
+
+The XML files are tag-swapped to change the value of the XML_ENCODING tag to ISO-8859-1.</p></li></ul>
 
 </p></td></tr>
 
