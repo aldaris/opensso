@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrepNight.java,v 1.1 2006-07-18 07:45:07 veiming Exp $
+ * $Id: PrepNight.java,v 1.2 2006-07-26 06:30:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,12 @@ import java.util.TreeSet;
  * Nightly Preparation Implementation.
  */
 public class PrepNight {
-    private final static String TEMPLATE = "<a href=\"{0}\">{0}</a>";
+    private final static String HEADER =
+        "<html><head><title>OpenSSO - Download</title><link rel=\"stylesheet\" href=\"https://opensso.dev.java.net/opensso.css\" /></head><body><p><img src=\"https://opensso.dev.java.net/images/openssoDownload.gif\" width=\"146\" height=\"64\" /></p>";
+    private final static String FOOTER = "</body></html>";
+
+    private final static String TEMPLATE =
+        "&raquo;&nbsp;<a href=\"{0}\">{0}</a>";
     /**
      * Creates a new instance of <code>Stat</code>.
      */
@@ -48,12 +53,15 @@ public class PrepNight {
     {
         Set<String> fileNames = getFileContent(baseDir);
         StringBuffer buff = new StringBuffer();
+        buff.append(HEADER);
 
         for (String name : fileNames) {
             Object[] param = {name};
             buff.append(MessageFormat.format(TEMPLATE, param))
                 .append("<br />");
         }
+
+        buff.append(FOOTER);
         writeToFile(baseDir + "/index.html", buff.toString());
     }
 
