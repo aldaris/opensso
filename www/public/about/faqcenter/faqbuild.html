@@ -1,11 +1,12 @@
  <div><table cellpadding="0" cellspacing="10" border="0" align="center" valign="top">
   <col WIDTH=100%>
 	<tr><td><img src="../../../images/openssographic.jpg" width="165" height="65" border="0" alt="OpenSSO"></td></tr>
-	<tr><td><h2>FAQ Build and Installation</h2></td></tr>
+	<tr><td><h2>FAQ Build Requirements and Dependencies</h2></td></tr>
 	<tr><td>The information below was taken from the README located in the <code>products/amserver</code> directory of the <code>opensso</code> branch of the CVS tree. Please see the README for additional information. You can find it <a href="https://opensso.dev.java.net/source/browse/opensso">here</a>.</td></tr>
 	<tr><td><font size="2">
 <ol>
-<li><a href="#buildreq">What are the build requirements?</a></li>
+<li><a href="#tool">What tool is used to build an OpenSSO binary?</a></li>
+<li><a href="#jdk">What version of the Java Development Kit (JDK) is needed?</a></li>
 <li><a href="#libdep">What are the library dependencies?</a></li>
 <li><a href="#j2ee">How do I get <code>j2ee.jar</code>?</a></li>
 <li><a href="#mail">How do I get <code>mail.jar</code>?</a></li>
@@ -23,17 +24,22 @@
 </ol>
 </font></td></tr>
 
-<tr><td><p><b>Q:<b><a name="buildreq"></a> What are the build requirements?</b></b></p>
 
-<p> The OpenSSO workspace uses Apache Ant as the build tool. The build scripts in the workspace use features not present in release of Ant prior to 1.6. Thus, in order to build the workspace you must have Ant version 1.6 or above installed and available in your system path.</p>
+<tr><td><p><b>Q:<b><a name="tool"></a> What tool is used to build an OpenSSO binary?</b></b></p>
+
+<p> The OpenSSO workspace uses Apache Ant as the build tool. The build scripts in the workspace use features not present in releases of Ant prior to 1.6. Thus, in order to build the workspace you must have Ant version 1.6 or above installed and available in your system path.</p></td></tr>
+
+
+<tr><td><p><b>Q:<b><a name="jdk"></a> What version of the Java Development Kit (JDK) is needed?</b></b></p>
 
 <p>
 The sources in this workspace should be compiled using JDK 5.0 with the source and target levels set to <b>1.4</b>. In order to allow this, you must ensure that JDK 5.0 is available in your system path and the JAVA_HOME environment variable is setup correctly, pointing to its location.
 </p></td></tr>
 
+
 <tr><td><p><b>Q:<b><a name="libdep"></a> What are the library dependencies?</b></b></p>
 
-The OpenSSO sources depend upon several third-party libraries that are not included as a part of the workspace and must be obtained directly from the vendor or distributor. Some of these libraries are available in source distribution form and must be built locally before they can be used. The libraries needed for compiling OpenSSO sources are:
+The OpenSSO sources depend upon several libraries that are not included as a part of the workspace and must be obtained directly from the vendor or distributor. Some of these libraries are available in source distribution form and must be built locally before they can be used. The libraries needed for compiling OpenSSO sources are:
 
 <ul>
 <li>J2EE SDK version 1.3.1: <code>j2ee.jar</code></li>
@@ -45,7 +51,7 @@ The OpenSSO sources depend upon several third-party libraries that are not inclu
 
 <p>Once these libraries are available, they should be placed under the <code>extlib</code> directory of the workspace. Any library placed in this directory is automatically included in the classpath during the compilation phase of the build process.</p>
 
-<p>The following sections briefly describe how these libraries may be obtained. These instructions are provided for your convenience only and are not intended to replace or invalidate the procedures/guidelines set by the library vendor or distributor. Before following these instructions, you must agree to abide by any terms and conditions set forth by the library vendor or distributor. In case any of these instructions are in contradiction to such terms or conditions, you must disregard those instructions and instead follow the ones provided by the library vendor or distributor in accordance with their terms and conditions.
+<p><i>The following sections briefly describe how these libraries may be obtained. These instructions are provided for your convenience only and are not intended to replace or invalidate the procedures/guidelines set by the library vendor or distributor. Before following these instructions, you must agree to abide by any terms and conditions set forth by the library vendor or distributor. In case any of these instructions are in contradiction to such terms or conditions, you must disregard those instructions and instead follow the ones provided by the library vendor or distributor in accordance with their terms and conditions.</i>
 </p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="j2ee"></a> How do I get <code>j2ee.jar</code>?</b></b></p>
@@ -140,7 +146,7 @@ The complete build instructions can be accessed from the <code>index.html</code>
 <tr><td><p><b>Q:<b><a name="workspace"></a> How do I build the workspace?</b></b></p>
 
 
-<p>The workspace build system offers many build targets. They are:
+<p>The build system offers many targets including:
 
 <ul>
 <li><code>build</code> : compiles the sources</li>
@@ -151,10 +157,14 @@ The complete build instructions can be accessed from the <code>index.html</code>
 <li><code>usage</code> : displays a brief description of the other targets</li>
 </ul>
 
-<p>You can also view the build targets by issuing the <code>ant</code> command from the root of the workspace. The default target executed is <code>usage</code>. The following sections describe the build targets.
+<p>You can also view the build targets by issuing the <code>ant</code> command from the root of the workspace. The default target executed is <code>usage</code>.</p>
+
+<p><i>The following sections describe the targets.</i>
 </p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="build"></a> What processing does the <code>build</code> target involve?</b></b></p>
+
+<p>The <code>build</code> target compiles the source code. It accomplishes the following:</p>
 
 <ul>
 <li>Creates the build output directories including:<p>
@@ -189,6 +199,8 @@ All XML files are tag-swapped to change the value of the XML_ENCODING tag to ISO
 
 <tr><td><p><b>Q:<b><a name="doc"></a> What processing does the <code>doc</code> target involve?</b></b></p>
 
+<p>The <code>doc</code> target creates the Javadoc. It accomplishes the following:</p>
+
 <ul>
 <li>Creates the build output directories including:<p>
 <ul>
@@ -215,23 +227,25 @@ The compilation debug flag is set to <code>-g:none</code> but can be changed by 
 
 <tr><td><p><b>Q:<b><a name="clean"></a> What processing does the <code>clean</code> target involve?</b></b></p>
 
-<p>Removes all the build output directories.</p></td></tr>
+<p>The <code>clean</code> target deletes all generated files and removes all the build output directories.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="demo"></a> What processing does the <code>demo</code> target involve?</b></b></p>
 
-<p>The <code>demo</code> target first invokes the <code>build</code> target. It then delegates the further processing to the <code>build.xml</code> file located in the <code>demo</code> directory. (This target cannot be executed directly unless the  configuration tasks described in the README file are performed. Refer to the README in the <code>demo</code> directory for further details.)</p></td></tr>
+<p>The <code>demo</code> target first invokes the <code>build</code> target. It then delegates further processing to the <code>build.xml</code> file located in the <code>products/amserver/demo</code> directory.</p>
+
+<p><i>The <code>demo</code> target cannot be executed directly unless the configuration tasks described in the README file in the <code>products/amserver/demo</code> directory are performed. Refer to the README for further details.</i></p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="democlean"></a> What processing does the <code>demo-clean</code> target involve?</b></b></p>
 
-<p>Issues a clean to the <code>build.xml</code> file in the <code>demo</code> directory. This target is useful if you are interested in rebuilding the demo without rebuilding the entire OpenSSO distribution. When running <code>demo-clean</code>, only the demo-related build output area is cleaned and not the build output area for the OpenSSO distribution.</p></td></tr>
+<p>The <code>demo-clean</code> target issues a clean to the <code>build.xml</code> file in the <code>products/amserver/demo</code> directory. This target is useful if you are interested in rebuilding the demo without rebuilding the entire OpenSSO distribution. When running <code>demo-clean</code>, only the demo-related build output area is cleaned and not the build output area for the OpenSSO distribution.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="usage"></a> What processing does the <code>usage</code> target involve?</b></b></p>
 
-<p>Displays a list of available targets with a brief description.</p></td></tr>
+<p>The <code>usage</code> target displays a list of available targets with a brief description.</p></td></tr>
 
 <tr><td><p><b>Q:<b><a name="builddemo"></a> How do you build the demo?</b></b></p>
 
-<p>Instructions to build the demo can be found in the README file in the <code>demo</code> directory. This file also provides background information and details on how it works.</p></td></tr>
+<p>Instructions to build the demo can be found in the README file in the <code>products/amserver/demo</code> directory. This file also provides background information and details on how it works.</p></td></tr>
 
 </table>
 
