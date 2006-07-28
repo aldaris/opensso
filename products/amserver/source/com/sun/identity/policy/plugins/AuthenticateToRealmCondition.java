@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToRealmCondition.java,v 1.1 2006-04-26 05:14:46 dillidorai Exp $
+ * $Id: AuthenticateToRealmCondition.java,v 1.2 2006-07-28 23:54:24 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,7 @@ public class AuthenticateToRealmCondition implements Condition {
      * <code>AuthenticateToRealmCondition</code>
      */
     public static final String AUTHENTICATE_TO_REALM_CONDITION_ADVICE =
-            "AuthenticateToRealm"; 
+            "AuthenticateToRealmConditionAdvice"; 
 
     private Map properties;
     private String authenticateToRealm = null;

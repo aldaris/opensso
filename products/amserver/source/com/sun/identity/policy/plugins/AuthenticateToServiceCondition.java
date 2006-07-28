@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToServiceCondition.java,v 1.1 2006-04-26 05:14:47 dillidorai Exp $
+ * $Id: AuthenticateToServiceCondition.java,v 1.2 2006-07-28 23:54:24 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class AuthenticateToServiceCondition implements Condition {
      *  @see #setProperties(Map)
      */
     public static final String AUTHENTICATE_TO_SERVICE 
-            = "AuthenticateToService";
+            = "AuthenticateToService"; 
 
 
     /** Key that is used to identify the names of authenticated realms 
@@ -83,8 +83,8 @@ public class AuthenticateToServiceCondition implements Condition {
     /** Key that is used identify the advice messages from
      * <code>AuthenticateToServiceCondition</code>
      */
-    public static final String AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE =
-            "AuthenticateToService"; 
+    public static final String AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE
+            = "AuthenticateToServiceConditionAdvice";
 
     private Map properties;
     private String authenticateToService = null;

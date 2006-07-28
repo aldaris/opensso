@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResult.java,v 1.1 2006-04-26 05:14:06 dillidorai Exp $
+ * $Id: ResourceResult.java,v 1.2 2006-07-28 23:54:23 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,8 @@ public class ResourceResult {
 
     static final String RESOURCE_RESULT = "ResourceResult";
     static final String RESOURCE_NAME = "name";
-    static final Debug DEBUG = PolicyManager.debug;
+    static final String POLICY_DEBUG_NAME = "amPolicy";
+    static final Debug DEBUG = Debug.getInstance(POLICY_DEBUG_NAME);
 
     private String resourceName = null;
     private PolicyDecision policyDecision = null;

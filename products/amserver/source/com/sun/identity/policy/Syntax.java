@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Syntax.java,v 1.1 2006-04-26 05:14:08 dillidorai Exp $
+ * $Id: Syntax.java,v 1.2 2006-07-28 23:54:23 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,7 @@ package com.sun.identity.policy;
 
 /**
  * Provides an enum like support for the syntax of values
- * such as ANY, NONE, CONSTANT, SINGLE_CHOICE, MULTIPLE_CHOICE
+ * such as ANY, NONE, LIST, CONSTANT, SINGLE_CHOICE, MULTIPLE_CHOICE
  * In other words, provides access to a set of finite values and enforces 
  * new values can not be created by users
  *
@@ -40,6 +40,11 @@ public final class Syntax {
      *  text field
      */
     public static final Syntax ANY = new Syntax("ANY");
+
+    /**
+     * value is a free form multi list text field
+     */
+    public static final Syntax LIST = new Syntax("LIST");
 
     /**
      * value is a free form text, could also search from a large set of values

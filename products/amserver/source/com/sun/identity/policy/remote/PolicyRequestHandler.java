@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.2 2006-06-05 20:27:44 bhavnab Exp $
+ * $Id: PolicyRequestHandler.java,v 1.3 2006-07-28 23:54:24 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,10 +186,30 @@ public class PolicyRequestHandler implements RequestHandler {
     private PolicyService processPolicyServiceRequest(PolicyService psReq)
         throws PolicyEvaluationException {
 
+        PolicyService psRes = null;
+
+        if (psReq == null) {
+            debug.error("PolicyRequestHandler."
+                    + "processPolicyServiceRequest(): "
+                    + " null psReq");
+            throw new PolicyEvaluationException(ResBundleUtils.rbName,
+                    "invalid_policy_request_type", null, null);
+        }
+
         if (psReq.getMethodID() == PolicyService.POLICY_REQUEST_ID) {
+
             // This is a PolicyRequest request
             PolicyRequest policyReq = psReq.getPolicyRequest();
-            PolicyService psRes = new PolicyService();
+
+            if (policyReq == null) {
+                debug.error("PolicyRequestHandler."
+                        + "processPolicyServiceRequest(): "
+                        + " null policyRequest");
+                throw new PolicyEvaluationException(ResBundleUtils.rbName,
+                        "invalid_policy_request_type", null, null);
+            }
+
+            psRes = new PolicyService();
             psRes.setRevision(getPolicyServiceRevision());
 
             PolicyResponse policyRes = processPolicyRequest(policyReq);
