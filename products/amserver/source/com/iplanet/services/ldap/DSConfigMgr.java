@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.1 2005-11-01 00:30:17 arvindp Exp $
+ * $Id: DSConfigMgr.java,v 1.2 2006-07-31 20:40:35 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,6 @@ import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPv2;
 import netscape.ldap.LDAPv3;
 import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.ConnectionPool;
 
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -47,6 +46,7 @@ import com.iplanet.services.util.I18n;
 import com.iplanet.services.util.XMLException;
 import com.iplanet.services.util.XMLParser;
 import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.ServerInstanceAction;
 
 /**
@@ -274,15 +274,16 @@ public class DSConfigMgr {
      * specified in serverconfig.xml for DEFAULT server group. Used by
      * LocalLdapAuthModule.
      */
-    public ConnectionPool getAnonymousConnectionPool()
+    public LDAPConnectionPool getAnonymousConnectionPool()
             throws LDAPServiceException {
         LDAPConnection anonymousConnection = getNewFailoverConnection(DEFAULT,
                 LDAPUser.Type.AUTH_ANONYMOUS);
         try {
             ServerInstance si = getServerInstance(DEFAULT,
                     LDAPUser.Type.AUTH_ANONYMOUS);
-            return (new ConnectionPool(si.getMinConnections(), si
-                    .getMaxConnections(), anonymousConnection));
+            return (new LDAPConnectionPool("DSConfigMgr",
+                    si.getMinConnections(),
+                    si.getMaxConnections(), anonymousConnection));
         } catch (LDAPException le) {
             if (debugger.messageEnabled()) {
                 debugger.message("Failed to create anon conn pool" + le);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.11 2006-06-16 19:36:47 rarcot Exp $
+ * $Id: LDAPv3Repo.java,v 1.12 2006-07-31 20:38:17 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,6 @@ import netscape.ldap.controls.LDAPPasswordExpiredControl;
 import netscape.ldap.controls.LDAPPasswordExpiringControl;
 import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.ConnectionPool;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
@@ -80,6 +79,7 @@ import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
@@ -120,7 +120,7 @@ public class LDAPv3Repo extends IdRepo {
 
     private Debug debug;
 
-    private ConnectionPool connPool;
+    private LDAPConnectionPool connPool;
 
     private String ldapConnError = "91";
 
@@ -600,7 +600,8 @@ public class LDAPv3Repo extends IdRepo {
                 ldc.setConnectTimeout(3);
             }
             ldc.connect(ldapServerName, ldapPort, authid, authpw);
-            connPool = new ConnectionPool(minPoolSize, maxPoolSize, ldc);
+            connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize,
+                           maxPoolSize, ldc);
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
             ldapConnError = Integer.toString(resultCode);

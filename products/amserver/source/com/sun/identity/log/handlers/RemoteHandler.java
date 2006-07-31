@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.4 2006-05-13 17:37:23 bigfatrat Exp $
+ * $Id: RemoteHandler.java,v 1.5 2006-07-31 20:34:31 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.URLNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
+import com.sun.identity.common.TimerFactory;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
@@ -285,7 +286,7 @@ public class RemoteHandler extends Handler {
         }
         interval *=1000;
         if(bufferTimer == null){
-            bufferTimer = new Timer();
+            bufferTimer = TimerFactory.getTimer();
             bufferTimer.scheduleAtFixedRate(
                 new TimeBufferingTask(), interval, interval);
             if (Debug.messageEnabled()) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.3 2006-04-27 07:53:32 veiming Exp $
+ * $Id: SecureFileHandler.java,v 1.4 2006-07-31 20:34:32 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 import com.iplanet.log.NullLocationException;
+import com.sun.identity.common.TimerFactory;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.LogQuery;
@@ -927,7 +928,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
      */
     void startPeriodicLogSigner() {
         if (signTimer == null){
-            signTimer = new Timer();
+            signTimer = TimerFactory.getTimer();
             signTimer.scheduleAtFixedRate(new SignTask(), 
                                           signInterval, signInterval);
         }

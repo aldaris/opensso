@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPools.java,v 1.1 2006-04-26 05:14:48 dillidorai Exp $
+ * $Id: LDAPConnectionPools.java,v 1.2 2006-07-31 20:36:58 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import netscape.ldap.controls.*;
 import netscape.ldap.util.*;
 import com.iplanet.am.util.Debug;    
 import netscape.ldap.factory.JSSESocketFactory;
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.ResBundleUtils;
@@ -80,14 +81,14 @@ public class LDAPConnectionPools {
                 "invalid_ldap_server_host", null, null);
         }
 
-        ConnectionPool cPool = null;
+        LDAPConnectionPool cPool = null;
         try {
             synchronized(connectionPools) {
-                cPool = (ConnectionPool)connectionPools.get(host);
+                cPool = (LDAPConnectionPool)connectionPools.get(host);
     
                 if (cPool == null) {
                     if (debug.messageEnabled()) {
-                        debug.message("Create ConnectionPool: " + host);
+                        debug.message("Create LDAPConnectionPool: " + host);
                     }
                     LDAPConnection ldc;
                     if (ssl) {
@@ -115,7 +116,8 @@ public class LDAPConnectionPools {
                             "minPoolSize=" + minPoolSize +
                             ", maxPoolSize=" + maxPoolSize);
                     }
-                    cPool = new ConnectionPool(minPoolSize, maxPoolSize, ldc);
+                    cPool = new LDAPConnectionPool (host + "-Policy",
+                        minPoolSize, maxPoolSize, ldc);
                     if (debug.messageEnabled()) {
                         debug.message(
                             "LDAPConnectionPools.initConnectionPool(): host: " +
@@ -127,7 +129,7 @@ public class LDAPConnectionPools {
         }
         catch (Exception e) {
             if (debug.messageEnabled()) {
-                debug.message("Unable to create ConnectionPool", e);
+                debug.message("Unable to create LDAPConnectionPool", e);
             }
             throw new PolicyException(e.getMessage(), e);
         }
@@ -135,19 +137,19 @@ public class LDAPConnectionPools {
     
                 
     /**
-     * Get ConnectionPool for the ldap server from the pools. 
+     * Get LDAPConnectionPool for the ldap server from the pools. 
      * @param host the name of host and its port number.
      *        It can be a space-delimited list of host names.
-     * @return ConnectionPool for the ldap server
+     * @return LDAPConnectionPool for the ldap server
      */
-    static ConnectionPool getConnectionPool(String host)
+    static LDAPConnectionPool getConnectionPool(String host)
     {
         if (debug.messageEnabled()) {
             debug.message("LDAPConnectionPools.getConnectionPool(): host: " +
                 host);
         }
         synchronized(connectionPools) {
-           return (ConnectionPool)(connectionPools.get(host));
+           return (LDAPConnectionPool)(connectionPools.get(host));
         }
     }
 

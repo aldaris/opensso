@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.1 2005-11-01 00:31:36 arvindp Exp $
+ * $Id: SMDataLayer.java,v 1.2 2006-07-31 20:36:16 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ import netscape.ldap.LDAPBind;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.util.ConnectionPool;
 
 import com.iplanet.am.util.Debug;
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -36,6 +35,8 @@ import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.LDAPUser;
 import com.iplanet.services.ldap.ServerGroup;
 import com.iplanet.services.ldap.ServerInstance;
+
+import com.sun.identity.common.LDAPConnectionPool;
 
 /**
  * SMDataLayer (A PACKAGE SCOPE CLASS) to access LDAP or other database
@@ -235,7 +236,8 @@ class SMDataLayer {
             _defaultSearchConstraints = _trialConn.getSearchConstraints();
 
             // Construct the pool by cloning the successful connection
-            _ldapPool = new ConnectionPool(poolMin, poolMax, _trialConn);
+            _ldapPool =
+                new LDAPConnectionPool("SMS", poolMin, poolMax, _trialConn);
         } catch (LDAPException e) {
             debug.error("SMDataLayer:initLdapPool()-"
                     + "Exception in SMDataLayer.initLdapPool:", e);
@@ -244,7 +246,7 @@ class SMDataLayer {
         }
     }
 
-    static private ConnectionPool _ldapPool = null;
+    static private LDAPConnectionPool _ldapPool = null;
 
     static private LDAPConnection _trialConn = null;
 

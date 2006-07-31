@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.3 2006-04-27 07:53:31 veiming Exp $
+ * $Id: DBHandler.java,v 1.4 2006-07-31 20:34:31 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -45,6 +46,7 @@ import java.util.logging.Level;
 import com.iplanet.log.ConnectionException;
 import com.iplanet.log.DriverLoadException;
 import com.iplanet.log.NullLocationException;
+import com.sun.identity.common.TimerFactory;
 import com.sun.identity.log.AMLogException;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
@@ -71,10 +73,9 @@ public class DBHandler extends Handler {
     private Formatter formatter;
     private String userName;
     private String password;
-    private int recCount = 0;
     private int recCountLimit;
     private int recMaxDBMem = 2;
-    private String recordBuffer[];
+    private ArrayList recordBuffer;
     private Timer bufferTimer;
     private boolean timeBufferingEnabled = false;
     //
@@ -316,7 +317,7 @@ public class DBHandler extends Handler {
             connectionToDBLost = false;
         }
         
-        recordBuffer = new String[recMaxDBMem + 1];
+        recordBuffer = new ArrayList();
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
         }
@@ -341,17 +342,18 @@ public class DBHandler extends Handler {
      * @param logRecord the log record to be published.
      *
      */
-    public synchronized void publish(java.util.logging.LogRecord logRecord) {
+    public void publish(java.util.logging.LogRecord logRecord) {
         if (!isLoggable(logRecord)) {
             return;
         }
         String vals = getFormatter().format(logRecord);
-        recordBuffer[recCount] = vals;
-        this.recCount++;
-        if (this.recCount >= recCountLimit) {
+        synchronized(recordBuffer) {
+            recordBuffer.add(vals);
+        }
+        if (recordBuffer.size() >= recCountLimit) {
             if (Debug.messageEnabled()) {
                 Debug.message(tableName + ":DBHandler:.publish(): got " 
-                    + recCount + " records, Limit " + recCountLimit +
+                    + recordBuffer.size() + " records, Limit " + recCountLimit +
                     " writing all");
             }
             flush();
@@ -382,9 +384,9 @@ public class DBHandler extends Handler {
     /**
      * Flush any buffered messages.
      */
-    public synchronized void flush()
+    public void flush()
     {
-        if (recCount <= 0) {
+        if (recordBuffer.size() <= 0) {
             if (Debug.messageEnabled()) {
                 Debug.message(tableName + 
                     ":DBHandler:flush: no records in buffer to write");
@@ -396,7 +398,7 @@ public class DBHandler extends Handler {
         if (tableName == null) {
             Debug.error(tableName + 
                 ":DBHandler:flush:NullLocationException: table name is null");
-            this.recCount = 0;
+            recordBuffer.clear();
             return;
         }
         
@@ -422,11 +424,7 @@ public class DBHandler extends Handler {
                 //
                 //  if the max mem buffer is exceeded, dump the records
                 //
-                if (this.recCount > this.recMaxDBMem) {
-                    Debug.error(tableName +
-                        ":DBHandler:dropping " + this.recCount + " records.");
-                     this.recCount = 0;
-                }
+                clearBuffer();
                 throw new AMLogException(AMLogException.LOG_DB_DRIVER +
                     "'" + driver + "'");
             } catch (ConnectionException ce) {
@@ -436,11 +434,7 @@ public class DBHandler extends Handler {
                 //
                 //  if the max mem buffer is exceeded, dump the records
                 //
-                if (this.recCount > this.recMaxDBMem) {
-                    Debug.error(tableName +
-                        ":DBHandler:dropping " + this.recCount + " records.");
-                     this.recCount = 0;
-                }
+                clearBuffer();
                 throw new AMLogException(AMLogException.LOG_DB_CONNECT_FAILED);
             }
 
@@ -525,11 +519,7 @@ public class DBHandler extends Handler {
                 //
                 //  if the max mem buffer is exceeded, dump the records
                 //
-                if (this.recCount > this.recMaxDBMem) {
-                    Debug.error(tableName +
-                        ":DBHandler:dropping " + this.recCount + " records.");
-                     this.recCount = 0;
-                }
+                clearBuffer();
                 throw new AMLogException(AMLogException.LOG_DB_DRIVER + "'" +
                     driver + "'");
             } catch (ConnectionException ce) {
@@ -539,11 +529,7 @@ public class DBHandler extends Handler {
                 //
                 //  if the max mem buffer is exceeded, dump the records
                 //
-                if (this.recCount > this.recMaxDBMem) {
-                    Debug.error(tableName +
-                        ":DBHandler:dropping " + this.recCount + " records.");
-                     this.recCount = 0;
-                }
+                clearBuffer();
                 throw new AMLogException(AMLogException.LOG_DB_CONNECT_FAILED);
             }
             connectionToDBLost = false;
@@ -584,8 +570,10 @@ public class DBHandler extends Handler {
         }
 
         String vals = null;
-        for (int i=0; i < recCount; ++i) {
-            vals = recordBuffer[i];
+        for (int i=0; i < recordBuffer.size(); ++i) {
+            synchronized(recordBuffer) {
+                vals = (String)recordBuffer.remove(0);
+            }
             if (Debug.messageEnabled()) {
                 Debug.message("values = " + vals);
             }
@@ -688,12 +676,12 @@ public class DBHandler extends Handler {
                         }
                     }
 
-                        connectionToDBLost = true;
+                    connectionToDBLost = true;
                     try {
                         reconnectToDatabase();
                         Debug.error (tableName +
                            ":DBHandler:flush:execUpdate:reconnect successful.");
-                        } catch (DriverLoadException dle) {
+                    } catch (DriverLoadException dle) {
                         if (Debug.messageEnabled()) {
                             Debug.message(tableName +
                                 ":DBHandler:flush:execUpdate:reconnect:DLE: " +
@@ -702,15 +690,10 @@ public class DBHandler extends Handler {
                         //
                         //  if the max mem buffer is exceeded, dump the records
                         //
-                        if (this.recCount > this.recMaxDBMem) {
-                                Debug.error(tableName +
-                                ":DBHandler:dropping " + this.recCount +
-                                " records.");
-                             this.recCount = 0;
-                        }
+                        clearBuffer();
                         throw new AMLogException (
                             AMLogException.LOG_DB_RECONNECT_FAILED);
-                        } catch (ConnectionException ce) {
+                    } catch (ConnectionException ce) {
                         if (Debug.messageEnabled()) {
                             Debug.message(tableName +
                                 ":DBHandler:flush:execUpdate:reconnect:CE: " +
@@ -719,16 +702,11 @@ public class DBHandler extends Handler {
                         //
                         //  if the max mem buffer is exceeded, dump the records
                         //
-                        if (this.recCount > this.recMaxDBMem) {
-                                Debug.error(tableName +
-                                ":DBHandler:dropping " + this.recCount +
-                                " records.");
-                             this.recCount = 0;
-                        }
+                        clearBuffer();
                         throw new AMLogException (
                             AMLogException.LOG_DB_RECONNECT_FAILED);
-                        }
-                        connectionToDBLost = false;
+                    }
+                    connectionToDBLost = false;
 
                     //
                     //  bunch the createTable, createStatement, and
@@ -739,34 +717,24 @@ public class DBHandler extends Handler {
                         createTable (tableName);
                         stmt = conn.createStatement();
                         stmt.executeUpdate(insertStr);
-                        } catch (SQLException sqe) {
+                    } catch (SQLException sqe) {
                         Debug.error (tableName +
                             ":DBHandler:flush:executeUpd:reconnect:stmt:SQE: ("
                             + sqe.getErrorCode() + "): " +sqe.getMessage());
                         //
                         //  if the max mem buffer is exceeded, dump the records
                         //
-                        if (this.recCount > this.recMaxDBMem) {
-                                Debug.error(tableName +
-                                ":DBHandler:dropping " + this.recCount +
-                                " records.");
-                             this.recCount = 0;
-                        }
+                        clearBuffer();
                         throw new AMLogException (
                             AMLogException.LOG_DB_EXECUPDATE);
-                        } catch (UnsupportedEncodingException usee) {
+                    } catch (UnsupportedEncodingException usee) {
                         Debug.error (tableName +
                             ":DBHandler:flush:execUpd:reconnect:stmt:UE: " +
                             usee.getMessage());
                         //
                         //  if the max mem buffer is exceeded, dump the records
                         //
-                        if (this.recCount > this.recMaxDBMem) {
-                                Debug.error(tableName +
-                                ":DBHandler:dropping " + this.recCount +
-                                " records.");
-                             this.recCount = 0;
-                        }
+                        clearBuffer();
                         throw new AMLogException (
                             AMLogException.LOG_DB_EXECUPDATE);
                     }
@@ -787,12 +755,7 @@ public class DBHandler extends Handler {
                     //
                     //  if the max mem buffer is exceeded, dump the records
                     //
-                    if (this.recCount > this.recMaxDBMem) {
-                            Debug.error(tableName +
-                            ":DBHandler:dropping " + this.recCount +
-                            " records.");
-                        this.recCount = 0;
-                    }
+                    clearBuffer();
                     throw new AMLogException (
                         AMLogException.LOG_DB_EXECUPDATE);
                 }
@@ -806,7 +769,6 @@ public class DBHandler extends Handler {
                     se.getErrorCode() + "): ", se);
             }
         }
-        this.recCount = 0;
     }
     
     /**
@@ -833,6 +795,21 @@ public class DBHandler extends Handler {
     private String getTableName() {
         return tableName;
     }
+
+    private void clearBuffer() {
+        int reccnt = recordBuffer.size();
+        synchronized(recordBuffer) {
+            if(recordBuffer.size() > recMaxDBMem) {
+                int removeCount = recordBuffer.size() - recMaxDBMem;
+                Debug.error(tableName + ":DBHandler:dropping " +
+                            removeCount + " records.");
+                for(int i = 0; i < removeCount; ++i) {
+                    recordBuffer.remove(0);
+                }
+            }
+        }
+    }
+
     /**
      * This method first checks to see if the table already exists
      * if not it creates a table with the fields.
@@ -1104,7 +1081,7 @@ public class DBHandler extends Handler {
         }
         interval *=1000;
         if(bufferTimer == null){
-            bufferTimer = new Timer();
+            bufferTimer = TimerFactory.getTimer();
             bufferTimer.scheduleAtFixedRate(
                 new TimeBufferingTask(), interval, interval);
             if (Debug.messageEnabled()) {

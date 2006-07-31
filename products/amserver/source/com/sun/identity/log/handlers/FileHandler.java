@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.4 2006-05-13 17:37:23 bigfatrat Exp $
+ * $Id: FileHandler.java,v 1.5 2006-07-31 20:34:31 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 import com.iplanet.log.NullLocationException;
+import com.sun.identity.common.TimerFactory;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.Logger;
@@ -541,7 +542,7 @@ public class FileHandler extends java.util.logging.Handler {
         }
         interval *=1000;
         if(bufferTimer == null){
-            bufferTimer = new Timer();
+            bufferTimer = TimerFactory.getTimer();
             bufferTimer.scheduleAtFixedRate(
                 new TimeBufferingTask(), interval, interval);
             if (Debug.messageEnabled()) {

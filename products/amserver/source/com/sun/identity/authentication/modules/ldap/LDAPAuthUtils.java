@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.5 2006-07-17 18:10:50 veiming Exp $
+ * $Id: LDAPAuthUtils.java,v 1.6 2006-07-31 20:39:05 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.Misc;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -61,7 +62,6 @@ import netscape.ldap.LDAPSearchConstraints;
 import netscape.ldap.controls.LDAPPasswordExpiredControl;
 import netscape.ldap.controls.LDAPPasswordExpiringControl;
 import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.ConnectionPool;
 
 public class LDAPAuthUtils {
     private boolean returnUserDN;
@@ -116,8 +116,8 @@ public class LDAPAuthUtils {
     static HashMap connectionPools = new HashMap();
     static HashMap adminConnectionPools = new HashMap();
     static HashMap adminConnectionPoolsStatus = new HashMap();
-    private ConnectionPool cPool = null;
-    private ConnectionPool acPool = null;
+    private LDAPConnectionPool cPool = null;
+    private LDAPConnectionPool acPool = null;
     
     // password control  states
     private final static int NO_PASSWORD_CONTROLS = 0;
@@ -213,7 +213,7 @@ public class LDAPAuthUtils {
         }
     }
     
-    private static ConnectionPool createConnectionPool(
+    private static LDAPConnectionPool createConnectionPool(
         HashMap connectionPools,
         HashMap aConnectionPoolsStatus,
         String hostName,
@@ -223,15 +223,15 @@ public class LDAPAuthUtils {
         String bindingUser,
         String bindingPwd
     ) throws LDAPException {
-        ConnectionPool conPool = null;
+        LDAPConnectionPool conPool = null;
         LDAPConnection ldc = null;
         try {
             String key = hostName + ":" + portNumber + ":" + bindingUser;
-            conPool = (ConnectionPool)connectionPools.get(key);
+            conPool = (LDAPConnectionPool)connectionPools.get(key);
             
             if (conPool == null) {
                 if (debug2.messageEnabled()) {
-                    debug2.message("Create ConnectionPool: " + hostName +
+                    debug2.message("Create LDAPConnectionPool: " + hostName +
                     ":" + portNumber);
                 }
                // Since connection pool for search and authentication
@@ -286,7 +286,7 @@ public class LDAPAuthUtils {
                 }
                 
                 synchronized(connectionPools) {
-                    conPool = (ConnectionPool)connectionPools.get(key);
+                    conPool = (LDAPConnectionPool)connectionPools.get(key);
                     
                     if (conPool == null) {
                         if (isSSL) {
@@ -299,7 +299,8 @@ public class LDAPAuthUtils {
                         
                         ldc.connect(hostName, portNumber);
                         ldc.authenticate(verNum, bindingUser, bindingPwd);
-                        conPool = new ConnectionPool(min, max, ldc);
+                        conPool = new LDAPConnectionPool(key + "-AuthLDAP",
+                            min, max, ldc);
                         connectionPools.put(key, conPool);
                         if (aConnectionPoolsStatus != null) {
                             aConnectionPoolsStatus.put(key, STATUS_UP);
@@ -314,7 +315,7 @@ public class LDAPAuthUtils {
             throw e;
         } catch (Exception e) {
             if (debug2.messageEnabled()) {
-                debug2.message("Unable to create ConnectionPool", e);
+                debug2.message("Unable to create LDAPConnectionPool", e);
             }
             throw new LDAPUtilException(e);
         }
@@ -800,12 +801,18 @@ public class LDAPAuthUtils {
                     "Failed auth due to inappropriate authentication");
                 throw new LDAPUtilException("InappAuth",
                 LDAPException.INAPPROPRIATE_AUTHENTICATION, null);
+            } else if (e.getLDAPResultCode() ==
+                LDAPException.CONSTRAINT_VIOLATION)
+            {
+                debug.message("Exceed password retry limit.");
+                throw new LDAPUtilException("ExceedRetryLimit",
+                    LDAPException.CONSTRAINT_VIOLATION, null);
             } else {
                 if (debug.messageEnabled()) {
                     debug.message( "Cannot authenticate to " + serverHost+
                     ": " ,e );
-                    throw new LDAPUtilException("FAuth", (Object[])null);
                 }
+                throw new LDAPUtilException("FAuth", (Object[])null);
             }
             
         } finally {

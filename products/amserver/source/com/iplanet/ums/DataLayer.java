@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.4 2006-01-19 00:30:55 rarcot Exp $
+ * $Id: DataLayer.java,v 1.5 2006-07-31 20:39:50 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,6 @@ import netscape.ldap.LDAPSortKey;
 import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.controls.LDAPSortControl;
 import netscape.ldap.controls.LDAPVirtualListControl;
-import netscape.ldap.util.ConnectionPool;
 
 import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -61,6 +60,7 @@ import com.iplanet.services.ldap.ModSet;
 import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.services.ldap.event.EventService;
 import com.iplanet.services.util.I18n;
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.ServerInstanceAction;
 
 /**
@@ -70,7 +70,7 @@ import com.sun.identity.security.ServerInstanceAction;
  * DataLayer as DSLayer for ldap specific operations 2. Improvements needed for
  * _ldapPool: destroy(), initial bind user, tunning for MIN and MAX initial
  * settings etc 3. May choose to extend implementation of _ldapPool from
- * ConnectionPool so that there is load balance between connections. Also
+ * LDAPConnectionPool so that there is load balance between connections. Also
  * _ldapPool may be implemented with a HashTable of (host,port) for mulitple
  * pools of connections for mulitple (host,port) to DS servers instead of single
  * host and port.
@@ -1281,13 +1281,14 @@ public class DataLayer implements java.io.Serializable {
      *            ldapport to init the pool from
      */
     private synchronized void initLdapPool() {
-        // Dont' do anything if pool is already initialized
+        // Don't do anything if pool is already initialized
         if (_ldapPool != null)
             return;
 
-        // Initialize the pool with minimum and maximum connections settings
-        // retrieved
-        // from configuration
+        /*
+         * Initialize the pool with minimum and maximum connections settings
+         * retrieved from configuration
+         */
         ServerInstance svrCfg = null;
         try {
             DSConfigMgr dsCfg = DSConfigMgr.getDSConfigMgr();
@@ -1299,9 +1300,8 @@ public class DataLayer implements java.io.Serializable {
                 debug.error("Error getting server config.");
             }
         } catch (LDAPServiceException ex) {
-            debug
-                    .error("Error initializing connection pool "
-                            + ex.getMessage());
+            debug.error("Error initializing connection pool "
+                        + ex.getMessage());
             ex.printStackTrace();
         }
 
@@ -1328,19 +1328,22 @@ public class DataLayer implements java.io.Serializable {
             _trialConn.setOption(LDAPConnection.REFERRALS, new Boolean(
                     referrals));
 
-            // Default rebind method is to provide the same authentication
-            // in the rebind to the server being referred.
+            /*
+             * Default rebind method is to provide the same authentication
+             * in the rebind to the server being referred.
+             */
             LDAPBind defaultBinder = new LDAPBind() {
                 public void bind(LDAPConnection ld) throws LDAPException {
-                    // There is possibly a bug in the ldapjdk that the passed in
-                    // ld is not carrying the original authentication dn and pwd
-                    // Hence, we have to kludge here using the one connection
-                    // that we know
-                    // about: the connection that we use to initialize the
-                    // connection
-                    // pool.
-                    // TODO: need to investigate
-                    //
+                    /*
+                     * There is possibly a bug in the ldapjdk that the passed in
+                     * ld is not carrying the original authentication dn and pwd
+                     * Hence, we have to kludge here using the one connection
+                     * that we know
+                     * about: the connection that we use to initialize the
+                     * connection
+                     * pool.
+                     * TODO: need to investigate
+                     */
                     String dn = _trialConn.getAuthenticationDN();
                     String pwd = _trialConn.getAuthenticationPassword();
                     String newhost = ld.getHost();
@@ -1357,7 +1360,8 @@ public class DataLayer implements java.io.Serializable {
             _defaultSearchConstraints = _trialConn.getSearchConstraints();
 
             // Construct the pool by cloning the successful connection
-            _ldapPool = new ConnectionPool(poolMin, poolMax, _trialConn);
+            _ldapPool = new LDAPConnectionPool ("DataLayer", poolMin,
+                poolMax, _trialConn);
         } catch (LDAPException e) {
             // throw new ConnectionException( m_host + m_port, e);
             debug.error("Exception in DataLayer.initLdapPool:", e);
@@ -1409,7 +1413,7 @@ public class DataLayer implements java.io.Serializable {
         }
     }    
 
-    static private ConnectionPool _ldapPool = null;
+    static private LDAPConnectionPool _ldapPool = null;
 
     static private LDAPConnection _trialConn = null;
 
