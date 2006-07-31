@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogVerifier.java,v 1.3 2006-04-27 07:53:34 veiming Exp $
+ * $Id: LogVerifier.java,v 1.4 2006-07-31 20:35:23 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.util.TimerTask;
 import java.util.Vector;
 import java.util.logging.LogManager;
 
+import com.sun.identity.common.TimerFactory;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.LogReader;
@@ -109,7 +110,7 @@ public class LogVerifier{
         }
         interval *=1000;
         if(verifyTimer == null){
-            verifyTimer = new Timer();
+            verifyTimer = TimerFactory.getTimer();
             verifyTimer.scheduleAtFixedRate(new VerifyTask(), 
                 interval, interval);
             if (Debug.messageEnabled()) {

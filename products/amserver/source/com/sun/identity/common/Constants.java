@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.5 2006-07-17 18:11:11 veiming Exp $
+ * $Id: Constants.java,v 1.6 2006-07-31 20:31:07 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -962,6 +962,15 @@ public interface Constants {
     /** Default organization location properties name. */
     public static final String DEFAULT_ORGANIZATION =
         "com.iplanet.am.defaultOrg";
+
+    /**
+     * This value is used by LDAP connection pool to reap connections
+     * if they are idle for the number of seconds specified by the
+     * value of this property.  If the value is set at 0, the connection
+     * will not be reaped.
+     */
+    public static final String LDAP_CONN_IDLE_TIME_IN_SECS =
+        "com.sun.am.ldap.connnection.idle.seconds";
 
     /**
      * Constant for file separator
