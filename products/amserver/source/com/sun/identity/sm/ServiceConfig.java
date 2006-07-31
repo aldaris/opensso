@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.2 2005-12-08 01:16:52 veiming Exp $
+ * $Id: ServiceConfig.java,v 1.3 2006-07-31 23:41:01 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -352,6 +352,13 @@ public class ServiceConfig {
         return (sc.getAttributes());
     }
 
+        /**
+     * Returns the service configuration parameters for read only.
+     * The keys in the <code>Map</code> contains the attribute names and
+     * their corresponding values in the <code>Map</code> is a
+     * <code>Set</code> that contains the values for the attribute.
+     */
+
     /**
      * Returns the service configuration parameters without inheriting the
      * default values from service's schema. The keys in the <code>Map</code>
@@ -361,6 +368,42 @@ public class ServiceConfig {
      */
     public Map getAttributesWithoutDefaults() {
         return (sc.getAttributesWithoutDefaults());
+    }
+    
+    /**
+     * Returns the service configuration parameters for read only,
+     * modification cannot be performed on the return <code>Map</code>.
+     * The keys in the
+     * <code>Map</code> contains the attribute names and their
+     * corresponding values in the <code>Map</code> is a
+     * <code>Set</code> that contains the values for the attribute.
+     * This method picks up the default values for any attributes
+     * not defined in the <code>ServiceConfig</code>. The default values for
+     * these attributes are picked up from the Service Schema.
+     * If there is no default value defined, then this method
+     * will still return the attribute-value pair, except that
+     * the Set will be a Collections.EMPTY_SET.
+     * This is distinct from an empty Set with no entries in it.
+     * AN empty set represents an attribute whose value has
+     * been set to an empty value by the application using
+     * the <code>setAttributes()</code> method.
+     * 
+     * @return the <code>Map</code> where key is the attribute name
+     *	 and value is the <code>Set</code> of attribute values
+     */
+    public Map getAttributesForRead() {
+	return (sc.getAttributesForRead());
+    }
+
+    /**
+     * Returns the service configuration parameters for read only without
+     * inheriting the default values from service's schema. The keys
+     * in the  <code>Map</code> contains the attribute names and their
+     * corresponding values in the <code>Map</code> is a
+     * <code>Set</code> that contains the values for the attribute.
+     */
+    public Map getAttributesWithoutDefaultsForRead() {
+        return (sc.getAttributesWithoutDefaultsForRead());
     }
 
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.2 2006-07-31 23:41:01 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -435,72 +435,69 @@ class ServiceConfigManagerImpl {
     // Static Protected Methods
     // ---------------------------------------------------------
     protected static ServiceConfigManagerImpl getInstance(SSOToken token,
-            String serviceName, String version) throws SSOException,
-            SMSException {
+        String serviceName, String version) throws SSOException, SMSException {
         if (debug.messageEnabled()) {
-            debug.message("ServiceConfigMgrImpl::getInstance: called: "
-                    + serviceName + "(" + version + ")");
+            debug.message("ServiceConfigMgrImpl::getInstance: called: " +
+                serviceName + "(" + version + ")");
         }
         // Construct the cache name, and check in cache
         String cName = ServiceManager.getCacheIndex(serviceName, version);
-        ServiceConfigManagerImpl answer = getFromCache(cName, serviceName,
-                version, token);
+        ServiceConfigManagerImpl answer = null;
+        synchronized (configMgrMutex) {
+            answer = getFromCache(cName, serviceName, version, token);
+        }
         if (answer != null) {
             return (answer);
         }
-
+            
         // Not in cache, construct the entry and add to cache
-        synchronized (configMgrMutex) {
-            if ((answer = getFromCache(cName, serviceName, version, token)) 
-                    == null) 
-            {
-                checkAndUpdatePermission(cName, serviceName, version, token);
-                answer = new ServiceConfigManagerImpl(token, serviceName,
-                        version);
-                Map sudoConfigMgrImpls = new HashMap(configMgrImpls);
-                sudoConfigMgrImpls.put(cName, answer);
-                configMgrImpls = sudoConfigMgrImpls;
+        checkAndUpdatePermission(cName, serviceName, version, token);
+        answer = new ServiceConfigManagerImpl(token, serviceName, version);
+        synchronized(configMgrMutex) {
+            ServiceConfigManagerImpl tmp;
+            if ((tmp = getFromCache(cName, serviceName, version, null))
+                == null) {
+                configMgrImpls.put(cName, answer);
+            } else {
+                answer = tmp;
             }
         }
-
         if (debug.messageEnabled()) {
-            debug.message("ServiceConfigMgrImpl::getInstance: success: "
-                    + serviceName + "(" + version + ")");
+            debug.message("ServiceConfigMgrImpl::getInstance: success: " +
+                serviceName + "(" + version + ")");
         }
         return (answer);
     }
 
-    static ServiceConfigManagerImpl getFromCache(String cacheName,
-            String sName, String version, SSOToken t) throws SMSException,
-            SSOException {
-        ServiceConfigManagerImpl answer = 
-            (ServiceConfigManagerImpl) configMgrImpls.get(cacheName);
-        if (answer != null) {
+    static ServiceConfigManagerImpl getFromCache(String cacheName, String sName,
+        String version, SSOToken t) throws SMSException, SSOException {
+        ServiceConfigManagerImpl answer = (ServiceConfigManagerImpl)
+            configMgrImpls.get(cacheName);
+        if ((answer != null) && (t != null)) {
             // Check if the user has permissions
             Set principals = (Set) userPrincipals.get(cacheName);
             if (!principals.contains(t.getTokenID().toString())) {
-                // Check if Principal has permission to read entry
-                checkAndUpdatePermission(cacheName, sName, version, t);
+                // Principal check not done
+                answer = null;
             }
         }
         return (answer);
     }
 
-    static synchronized void checkAndUpdatePermission(String cacheName,
-            String sName, String version, SSOToken t) throws SMSException,
-            SSOException {
+    static void checkAndUpdatePermission(String cacheName,
+        String sName, String version, SSOToken t)
+        throws SMSException, SSOException {
         String dn = ServiceManager.getServiceNameDN(sName, version);
-        CachedSMSEntry.getInstance(t, dn, null);
-        Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
-        if (sudoPrincipals == null) {
-            sudoPrincipals = new HashSet();
-        } else {
-            sudoPrincipals = new HashSet(sudoPrincipals);
+        CachedSMSEntry answer = CachedSMSEntry.getInstance(t, dn, null);
+        // Add principal to cache
+        synchronized (configMgrMutex) {
+            Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
+            if (sudoPrincipals == null) {
+                sudoPrincipals = new HashSet(2);
+                userPrincipals.put(cacheName, sudoPrincipals);
+            }
+            sudoPrincipals.add(t.getTokenID().toString());
         }
-        sudoPrincipals.add(t.getTokenID().toString());
-        Map sudoUserPrincipals = new HashMap(userPrincipals);
-        sudoUserPrincipals.put(cacheName, sudoPrincipals);
-        userPrincipals = sudoUserPrincipals;
     }
 
     private static Map configMgrImpls = new HashMap();

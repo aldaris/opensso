@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.2 2005-11-04 18:53:48 veiming Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.3 2006-07-31 23:40:51 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,10 +113,18 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                 }
             }
             // Construct server URL
-            serverURL = SystemProperties.get("com.iplanet.am.server.protocol")
-                    + "://"
-                    + SystemProperties.get("com.iplanet.am.server.host") + ":"
-                    + SystemProperties.get("com.iplanet.am.server.port");
+            String namingURL = SystemProperties.get(
+                "com.iplanet.am.naming.url").toLowerCase();
+            if (namingURL != null) {
+                int index = namingURL.indexOf("/namingservice");
+                if (index != -1) {
+                    serverURL = namingURL.substring(0, index);
+                } else {
+                    serverURL = "";
+                }
+            } else {
+                serverURL = "";
+            }
             initialized = true;
         }
     }
@@ -376,7 +384,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
-            if (!url.startsWith(serverURL)) {
+            if (!url.toLowerCase().startsWith(serverURL)) {
                 notificationURLs.put(id, new URL(url));
                 if (debug.messageEnabled()) {
                     debug.message("SMSJAXRPCObjectImpl:register for "

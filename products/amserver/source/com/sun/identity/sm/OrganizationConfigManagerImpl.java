@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.2 2006-03-14 23:27:22 arviranga Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.3 2006-07-31 23:41:02 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,7 +326,8 @@ class OrganizationConfigManagerImpl {
     // Static Protected Methods
     // ---------------------------------------------------------
     protected static OrganizationConfigManagerImpl getInstance(SSOToken token,
-            String orgName) throws SMSException {
+        String orgName) throws SMSException {
+
         // Convert orgName to DN
         String orgDN = DNMapper.orgNameToDN(orgName);
         // If orgDN is the baseDN, append "ou=services" to it
@@ -334,102 +335,89 @@ class OrganizationConfigManagerImpl {
             orgDN = DNMapper.serviceDN;
         }
         if (debug.messageEnabled()) {
-            debug.message("OrganizationConfigMgrImpl::getInstance: called: "
-                    + "(" + orgName + ")=" + orgDN);
+            debug.message("OrganizationConfigMgrImpl::getInstance: called: " +
+                "(" + orgName + ")=" + orgDN);
         }
 
-        // Check if the realm exists
+        // check in cache for organization name
+        OrganizationConfigManagerImpl answer = null;
+        synchronized (configMgrMutex) {
+            answer = getFromCache(orgDN, token);
+        }
+        if ((answer != null) && ServiceManager.isRealmEnabled()) {
+            return (answer);
+        }
+
+        // Not in cache or in legacy mode, check if the realm exists
+        CachedSMSEntry cEntry = null;
         try {
-            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN,
-                    null);
             // If in co-exist mode, SMS will not get updates for org
             // hence have to update the cEntry
+            cEntry = checkAndUpdatePermission(orgDN, token);
             if (ServiceManager.isCoexistenceMode()) {
                 cEntry.update();
             }
             if (cEntry.isNewEntry()) {
                 if (debug.messageEnabled()) {
-                    debug.message("OrganizationConfigManagerImpl::getInstance"
-                            + " called with non-existent realm: " + orgName);
+                    debug.message("OrganizationConfigManagerImpl::getInstance" +
+                        " called with non-existent realm: " + orgName);
                 }
                 String args[] = { orgName };
                 throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                        "sms-REALM_NAME_NOT_FOUND", args));
+                    "sms-REALM_NAME_NOT_FOUND", args));
             }
-        } catch (SSOException ssoe) {
-            SMSEntry.debug.error("OrganizationConfigManager:Constructor", ssoe);
-            throw (new SMSException(SMSEntry.bundle
-                    .getString("sms-INVALID_SSO_TOKEN"),
-                    "sms-INVALID_SSO_TOKEN"));
-        }
-
-        // check in cache for organization name
-        OrganizationConfigManagerImpl answer = getFromCache(orgDN, token);
-        if (answer != null) {
-            return (answer);
+        } catch (SSOException s) {
+            SMSEntry.debug.error("OrganizationConfigManagerImpl.getInstance", s);
+            throw (new SMSException(SMSEntry.bundle.getString(
+                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
         }
 
         // Not in cache, construct the entry and add to cache
-        synchronized (configMgrMutex) {
-            if ((answer = getFromCache(orgDN, token)) == null) {
-                checkAndUpdatePermission(orgDN, token);
-                answer = new OrganizationConfigManagerImpl(orgDN, token);
-                Map sudoConfigMgrImpls = new HashMap(configMgrImpls);
-                sudoConfigMgrImpls.put(orgDN, answer);
-                configMgrImpls = sudoConfigMgrImpls;
+        answer = new OrganizationConfigManagerImpl(orgDN, token);
+        synchronized(configMgrMutex) {
+            // Check the cache again
+            OrganizationConfigManagerImpl tmp;
+            if ((tmp = getFromCache(orgDN, null)) == null) {
+                configMgrImpls.put(orgDN, answer);
+            } else {
+                answer = tmp;
             }
         }
         if (debug.messageEnabled()) {
-            debug.message("OrganizationConfigMgrImpl::getInstance: success: "
-                    + orgDN);
+            debug.message("OrganizationConfigMgrImpl::getInstance: success: " +
+                orgDN);
         }
         return (answer);
     }
 
-    static OrganizationConfigManagerImpl getFromCache(String cacheName,
-            SSOToken t) throws SMSException {
-
-        OrganizationConfigManagerImpl answer = 
-            (OrganizationConfigManagerImpl) configMgrImpls
-                .get(cacheName);
-        if (answer != null) {
+    static OrganizationConfigManagerImpl getFromCache(String cacheName, 
+        SSOToken t) throws SMSException {
+         OrganizationConfigManagerImpl answer = (OrganizationConfigManagerImpl)
+            configMgrImpls.get(cacheName);
+        if ((answer != null) && (t != null)) {
             // Check if the user has permissions
             Set principals = (Set) userPrincipals.get(cacheName);
             if (!principals.contains(t.getTokenID().toString())) {
-                // Check if Principal has permission to read entry
-                checkAndUpdatePermission(cacheName, t);
+                // Principal name not in cache, need to check perm
+                answer = null;
             }
         }
         return (answer);
     }
 
-    static synchronized void checkAndUpdatePermission(String cacheName,
-            SSOToken t) throws SMSException {
-        try {
-            CachedSMSEntry answer = CachedSMSEntry.getInstance(t, cacheName,
-                    null);
-            if (answer.isNewEntry()) {
-                throw (new SMSException(SMSEntry.bundle
-                        .getString("sms-organization_does_not_exist"),
-                        "sms-organization_does_not_exist"));
-            }
+    static CachedSMSEntry checkAndUpdatePermission(String cacheName,
+        SSOToken t) throws SSOException, SMSException {
+        CachedSMSEntry answer = null;
+        answer = CachedSMSEntry.getInstance(t, cacheName, null);
+        synchronized (configMgrMutex) {
             Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
             if (sudoPrincipals == null) {
-                sudoPrincipals = new HashSet();
-            } else {
-                sudoPrincipals = new HashSet(sudoPrincipals);
+                sudoPrincipals = new HashSet(2);
+                userPrincipals.put(cacheName, sudoPrincipals);
             }
             sudoPrincipals.add(t.getTokenID().toString());
-            Map sudoUserPrincipals = new HashMap(userPrincipals);
-            sudoUserPrincipals.put(cacheName, sudoPrincipals);
-            userPrincipals = sudoUserPrincipals;
-        } catch (SSOException ssoe) {
-            debug.error("OrganizationConfigManagerImpl: Unable to "
-                    + "get Instance", ssoe);
-            throw (new SMSException(SMSEntry.bundle
-                    .getString("sms-INVALID_SSO_TOKEN"),
-                    "sms-INVALID_SSO_TOKEN"));
         }
+        return (answer);
     }
 
     private static Map configMgrImpls = new HashMap();
