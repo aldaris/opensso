@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPGroups.java,v 1.1 2006-04-26 05:14:48 dillidorai Exp $
+ * $Id: LDAPGroups.java,v 1.2 2006-08-01 01:41:23 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.am.util.Debug;
 
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyEvaluator;
 import com.sun.identity.policy.PolicyConfig;
@@ -79,7 +80,7 @@ public class LDAPGroups implements Subject {
     private int minPoolSize;
     private int maxPoolSize;
     private String orgName;
-    private ConnectionPool connPool;
+    private LDAPConnectionPool connPool;
     private boolean localDS;
     private boolean aliasEnabled;
     private String ldapServer;

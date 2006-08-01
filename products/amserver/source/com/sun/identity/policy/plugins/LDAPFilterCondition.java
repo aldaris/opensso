@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPFilterCondition.java,v 1.1 2006-04-26 05:14:48 dillidorai Exp $
+ * $Id: LDAPFilterCondition.java,v 1.2 2006-08-01 01:41:23 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.util.ConnectionPool;
 import netscape.ldap.util.DN;
 
+import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.ConditionDecision;
 import com.sun.identity.policy.PolicyConfig;
@@ -112,7 +113,7 @@ public class LDAPFilterCondition implements Condition {
     private int minPoolSize;
     private int maxPoolSize;
     private String orgName;
-    private ConnectionPool connPool;
+    private LDAPConnectionPool connPool;
     private String ldapServer;
     private boolean aliasEnabled;
 
