@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2006-07-17 18:10:10 veiming Exp $
+   $Id: build.xml,v 1.14 2006-08-04 21:06:48 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,6 +45,7 @@
     <property name="nightly.dir" location="nightly"/>
     <property name="clientsdkbase.dir" location="clientsdk"/>
     <property name="demobase.dir" location="demo"/>
+    <property name="samples.dir" location="samples"/>
 
     <!-- nested directory structure -->
     <property name="script.bin.dir" location="${script.dir}/bin"/>
@@ -56,7 +57,9 @@
     <!-- generated directory structure -->
     <property name="built.dir" location="built"/>
     <property name="built.war.dir" location="${built.dir}/war"/>
+    <property name="built.samples.dir" location="${built.dir}/samples"/>
     <property name="war.dist.dir" location="${built.war.dir}/dist"/>
+    <property name="samples.dist.dir" location="${built.samples.dir}/dist"/>
     <property name="built.diff.dir" location="${built.dir}/diff"/>
     <property name="classes.dir" location="${built.dir}/classes"/>   
     <property name="built.res.dir" location="${built.dir}/resources"/>
@@ -95,6 +98,8 @@
             <exclude name="${src.dir}/com/sun/identity/cli/annotation/*.java"/>
             <exclude name="${src.dir}/com/sun/identity/cli/definition/*.java"/>
         </javac>
+        <antcall target="jaxrpc" />
+
         <copy todir="${built.res.dir}">
             <fileset dir="${res.dir}">
                 <include name="**/*.properties"/>
@@ -136,6 +141,22 @@
                 <include name="*.dtd" />
               </fileset>
         </copy>
+    </target>
+
+    <target name="jaxrpc">
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${classes.dir}" />
+            <arg value="${xml.dir}/config.xml" />
+        </java>
+        <move file="${classes.dir}/IdentityManagementServices.wsdl" tofile="${classes.dir}/jaxrpc/IdentityManagementServices.wsdl" />
     </target>
 
     <target name="doc" depends="preparebuild">
@@ -214,11 +235,12 @@
         </java>
     </target>
 
-    <target name="clean" depends="nightly-clean,war-clean,clientsdk-clean,demo-clean">
+    <target name="clean" depends="nightly-clean,war-clean,clientsdk-clean,demo-clean,samples-clean">
         <delete dir="${built.publicapidocs.dir}"/>
         <delete dir="${built.apidocs.dir}"/>
         <delete dir="${built.docs.dir}"/>
         <delete dir="${built.res.dir}"/>
+        <delete dir="${classes.dir}/jaxrpc"/>
         <delete dir="${classes.dir}"/>
         <delete dir="${built.dir}"/>
     </target>
@@ -267,7 +289,11 @@
         <ant antfile="${demobase.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo">
+    <target name="samples" depends="clientsdk">
+        <ant antfile="${samples.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples">
         <ant antfile="build-nightly.xml" inheritRefs="true"/>
     </target>
 
@@ -283,6 +309,11 @@
 
     <target name="clientsdk" depends="build">
         <ant antfile="${clientsdkbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="samples-clean">
+        <ant antfile="${samples.dir}/build.xml"
+             inheritRefs="true" target="clean"/>
     </target>
 
     <target name="demo-clean">
@@ -319,6 +350,8 @@
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" war        : builds the WAR"/>
         <echo message=" war-clean  : deletes generated WAR"/>
+        <echo message=" samples    : builds the client samples"/>
+        <echo message=" samples-clean : deletes generated client samples"/>
         <echo message=" clientsdk  : builds the clientsdk jar/war"/>
         <echo message=" clientsdk-clean : deletes generated clientsdk files"/>
         <echo message=" nightly    : does nightly build"/>
@@ -331,5 +364,4 @@
         <echo message=" ant &lt;target-name&gt;"/>
         <echo message=" "/>
     </target>
-
 </project>

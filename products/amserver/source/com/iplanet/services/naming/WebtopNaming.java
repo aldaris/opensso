@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.1 2005-11-01 00:30:22 arvindp Exp $
+ * $Id: WebtopNaming.java,v 1.2 2006-08-04 21:07:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,7 +160,7 @@ public class WebtopNaming {
      */
     public static URL getServiceURL(String service, String protocol,
             String host, String port) throws URLNotFoundException {
-        boolean validate = isServerMode() ? true : false;
+        boolean validate = isServerMode();
 
         return (getServiceURL(service, protocol, host, port, validate));
     }

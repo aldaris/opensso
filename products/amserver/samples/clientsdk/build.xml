@@ -1,0 +1,113 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-08-04 21:06:51 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso-sample-clientsdk" default="all">
+                
+    <description>Open Web Single Sign-On: Client SDK Samples</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** war may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="built.samples.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+    <property name="clientsdk.sample.dir" location="${samples.dir}/clientsdk" />
+    <property name="samples.clientsdk.classes.dir" location="${built.samples.dir}/clientsdk" />
+    <property name="samples.clientsdk.source.dir" location="${clientsdk.sample.dir}/source" />
+
+    <target name="all" depends="preparebuild">
+        <javac destdir="${samples.clientsdk.classes.dir}" source="1.5" target="1.5"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${samples.clientsdk.source.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
+        <copy todir="${samples.package.dir}/war">
+            <fileset dir="${clientsdk.sample.dir}/www">
+                <exclude name="*.xml" />
+            </fileset>
+        </copy>
+        <xslt in="${clientsdk.sample.dir}/xml/Readme.xml"
+            out="${samples.package.dir}/war/index.html"
+            style="${samples.dir}/xml/ReadmeHTML.xsl" />
+
+        <copy todir="${samples.package.dir}/war">
+            <fileset dir="${clientsdk.sample.dir}/www">
+                <exclude name="*.xml" />
+            </fileset>
+        </copy>
+
+        <copy todir="${samples.package.dir}/xml">
+            <fileset dir="${clientsdk.sample.dir}/xml">
+                <include name="web.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${samples.package.dir}/resources">
+            <fileset dir="${clientsdkbase.dir}/resources">
+                <include name="AMClient.properties"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${samples.package.dir}/war/WEB-INF/classes">
+            <fileset dir="${samples.clientsdk.classes.dir}" />
+        </copy>
+
+        <copy todir="${samples.package.dir}/war/WEB-INF/lib">
+            <fileset dir="${extlib.dir}">
+                <include name="ldapjdk.jar" />
+                <include name="jaxb-api.jar" />
+                <include name="mail.jar" />
+                <include name="jaxrpc-api.jar" />
+                <include name="jaxrpc-impl.jar" />
+                <include name="jaxrpc-spi.jar" />
+                <include name="saaj-api.jar" />
+                <include name="saaj-impl.jar" />
+            </fileset>
+            <fileset dir="${clientsdk.dist.dir}">
+                <include name="amclientsdk.jar" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${samples.clientsdk.classes.dir}"/>
+        <mkdir dir="${samples.package.dir}/war" />
+        <mkdir dir="${samples.package.dir}/war/WEB-INF" />
+        <mkdir dir="${samples.package.dir}/war/WEB-INF/classes" />
+        <mkdir dir="${samples.package.dir}/war/WEB-INF/lib" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${samples.package.dir}/war/WEB-INF/lib"/>
+        <delete dir="${samples.package.dir}/war/WEB-INF/classes" />
+        <delete dir="${samples.package.dir}/war/WEB-INF"/>
+        <delete dir="${samples.package.dir}/war"/>
+        <delete dir="${samples.clientsdk.classes.dir}"/>
+    </target>
+
+
+</project>

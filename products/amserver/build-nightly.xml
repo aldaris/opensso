@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-nightly.xml,v 1.4 2006-08-01 01:32:18 veiming Exp $
+   $Id: build-nightly.xml,v 1.5 2006-08-04 21:06:48 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,7 +55,7 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <zipfileset dir="${built.dir}/classes" prefix="classes" />
+            <zipfileset dir="${built.dir}/classes" />
             <zipfileset dir="${script.dir}" prefix="script" />
             <zipfileset dir="${res.dir}" prefix="resources" />
             <zipfileset dir="${www.dir}" prefix="www" />

@@ -247,6 +247,7 @@ com/sun/identity/authentication/modules/windowsdesktopsso/WindowsDesktopSSOPrinc
 com/sun/identity/session/util/RestrictedTokenContext.class
 com/sun/identity/session/util/RestrictedTokenAction.class
 com/sun/identity/jaxrpc/SOAPClient.class
+com/sun/identity/jaxrpc/SOAPClientException.class
 com/sun/identity/jaxrpc/SOAPClient$SOAPContentHandler.class
 com/sun/identity/jaxrpc/SOAPClient$SOAPErrorHandler.class
 com/sun/identity/jaxrpc/JAXRPCUtil.class

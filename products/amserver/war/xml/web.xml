@@ -152,10 +152,6 @@
                 <servlet-name>jaxrpc</servlet-name>
                 <description>jaxrpc</description>
                 <servlet-class>com.sun.xml.rpc.server.http.JAXRPCServlet</servlet-class>
-                <init-param>
-                        <param-name>configuration.file</param-name>
-                        <param-value>/WEB-INF/IdentityManagementServices_Config.properties</param-value>
-                </init-param>
         </servlet>
 	<servlet>
 		<servlet-name>SMSServlet</servlet-name>

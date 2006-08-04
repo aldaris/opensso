@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.1 2006-07-17 18:11:25 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.2 2006-08-04 21:07:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,12 +205,9 @@ public class AMSetupServlet extends HttpServlet {
 
         try {
             if (bootstrap != null) {
-                File btsFile = new File(bootstrap); 
-                if (!btsFile.exists()) {
-                    FileWriter bfout = new FileWriter(bootstrap);
-                    bfout.write(basedir+"\n");
-                    bfout.close();
-                }
+                FileWriter bfout = new FileWriter(bootstrap);
+                bfout.write(basedir+"\n");
+                bfout.close();
 
                 initializeConfigProperties();
                 reInitConfigProperties();

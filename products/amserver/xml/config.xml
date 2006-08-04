@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: config.xml,v 1.7 2006-01-30 20:58:55 veiming Exp $
+   $Id: config.xml,v 1.8 2006-08-04 21:07:05 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,6 +38,4 @@
         <interface name="com.sun.identity.entity.EntityObjectIF"
             servantName="com.sun.identity.entity.EntityObjectImpl" />
     </service>
-
-
 </configuration>

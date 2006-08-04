@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints xmlns='http://java.sun.com/xml/ns/jax-rpc/ri/runtime' version='1.0'>
+  <endpoint
+    name='SMSObjectIF'
+    interface='com.sun.identity.sm.jaxrpc.SMSObjectIF'
+    implementation='com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl'
+    tie='com.sun.identity.sm.jaxrpc.SMSObjectIF_Tie'
+    model=''
+    wsdl=''
+    service='IdentityManagementServices'
+    port='SMSObjectIFPort'
+    urlpattern='/jaxrpc/SMSObjectIF'/>
+  <endpoint
+    name='DirectoryManagerIF'
+    interface='com.iplanet.am.sdk.remote.DirectoryManagerIF'
+    implementation='com.iplanet.am.sdk.remote.DirectoryManagerImpl'
+    tie='com.iplanet.am.sdk.remote.DirectoryManagerIF_Tie'
+    model=''
+    wsdl=''
+    service='IdentityManagementServices'
+    port='DirectoryManagerIFPort'
+    urlpattern='/jaxrpc/DirectoryManagerIF'/>
+  <endpoint
+    name='EntityObjectIF'
+    interface='com.sun.identity.entity.EntityObjectIF'
+    implementation='com.sun.identity.entity.EntityObjectImpl'
+    tie='com.sun.identity.entity.EntityObjectIF_Tie'
+    model=''
+    wsdl=''
+    service='IdentityManagementServices'
+    port='EntityObjectIFPort'
+    urlpattern='/jaxrpc/EntityObjectIF'/>
+</endpoints>
