@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<project name="opensso" default="all">
+
+    <description>Check the existence of external libraries</description>
+    <available file="${extlib.dir}/activation.jar" type="file" 
+        property="activation.jar.present"/>
+    <available file="${extlib.dir}/console.jar" type="file" 
+        property="console.jar.present" />
+    <available file="${extlib.dir}/db.jar" type="file" 
+        property="db.jar.present"/>
+    <available file="${extlib.dir}/j2ee.jar" type="file" 
+        property="j2ee.jar.present"/>
+    <available file="${extlib.dir}/jaxb-api.jar" type="file"
+        property="jaxb.api.jar.present"/>
+    <available file="${extlib.dir}/jaxrpc-api.jar" type="file" 
+        property="jaxrpc.api.jar.present" />
+    <available file="${extlib.dir}/jaxrpc-impl.jar" type="file" 
+        property="jaxrpc.impl.jar.present"/>
+    <available file="${extlib.dir}/jaxrpc-spi.jar" type="file" 
+        property="jaxrpc.spi.jar.present"/>
+    <available file="${extlib.dir}/ldapjdk.jar" type="file" 
+        property="ldapjdk.jar.present"/>
+    <available file="${extlib.dir}/mail.jar" type="file" 
+        property="mail.jar.present"/>
+    <available file="${extlib.dir}/saaj-api.jar" type="file" 
+        property="saaj.api.jar.present"/>
+    <available file="${extlib.dir}/saaj-impl.jar" type="file" 
+        property="saaj.impl.jar.present"/>
+
+    <target name="all">
+
+	<condition property="extlib.jar.exists">
+	    <and>
+            <isset property="activation.jar.present" />
+            <isset property="console.jar.present" />
+            <isset property="db.jar.present" />
+            <isset property="j2ee.jar.present" />
+            <isset property="jaxb.api.jar.present" />
+            <isset property="jaxrpc.api.jar.present" />
+            <isset property="jaxrpc.impl.jar.present" />
+            <isset property="jaxrpc.spi.jar.present" />
+            <isset property="ldapjdk.jar.present" />
+            <isset property="mail.jar.present" />
+            <isset property="saaj.api.jar.present" />
+            <isset property="saaj.impl.jar.present" />
+	    </and>
+	</condition>
+    
+
+    <fail message="*** missing ${extlib.dir}/activation.jar ***">
+        <condition>
+            <not><isset property="activation.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing ${extlib.dir}/console.jar ***">
+        <condition>
+            <not><isset property="console.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/db.jar ***">
+        <condition>
+            <not><isset property="db.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/j2ee.jar ***">
+        <condition>
+            <not><isset property="j2ee.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/jaxb-api.jar ***">
+        <condition>
+            <not><isset property="jaxb.api.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/jaxrpc-api.jar ***">
+        <condition>
+            <not><isset property="jaxrpc.api.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/jaxrpc-impl.jar ***">
+        <condition>
+            <not><isset property="jaxrpc.impl.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/jaxrpc-spi.jar ***">
+        <condition>
+            <not><isset property="jaxrpc.spi.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/ldapjdk.jar ***">
+        <condition>
+            <not><isset property="ldapjdk.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/mail.jar ***">
+        <condition>
+            <not><isset property="mail.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/saaj-api.jar ***">
+        <condition>
+            <not><isset property="saaj.api.jar.present" /></not>
+        </condition>
+    </fail>
+    <fail message="*** missing  ${extlib.dir}/saaj-impl.jar ***">
+        <condition>
+            <not><isset property="saaj.impl.jar.present" /></not>
+        </condition>
+    </fail>
+    </target>
+
+</project>

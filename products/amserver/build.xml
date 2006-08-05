@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2006-08-04 21:06:48 veiming Exp $
+   $Id: build.xml,v 1.15 2006-08-05 00:17:36 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -87,6 +87,16 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+
+    <ant antfile="build-checkjars.xml" inheritRefs="true" />
+
+    <!-- library checks  -->
+    <fail message="*** missing library ***">
+        <condition>
+	    <isset property="extlib.jar.exists"/>
+        </condition>
+    </fail>
+
 
     <target name="build" depends="preparebuild">
         <javac destdir="${classes.dir}" source="1.5" target="1.5"
