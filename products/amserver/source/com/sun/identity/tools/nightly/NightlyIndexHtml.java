@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NightlyIndexHtml.java,v 1.1 2006-07-27 19:51:14 veiming Exp $
+ * $Id: NightlyIndexHtml.java,v 1.2 2006-08-05 07:12:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ public class NightlyIndexHtml {
     private final static String TEMPLATE =
         "\n&raquo;&nbsp;<a href=\"{0}\">{0}</a><br />";
     private final static String NEW_ENTRY = "<!-- new entry -->";
+    private final static String LATEST = "<a href=\"{0}\">latest</a>";
 
     /**
      * Creates a new instance of <code>NightlyIndexHtml</code>.
@@ -68,6 +69,9 @@ public class NightlyIndexHtml {
         Object[] param = {timestamp};
         content = content.replaceAll(
             NEW_ENTRY, NEW_ENTRY + MessageFormat.format(TEMPLATE, param));
+        content = content.replaceAll(
+            "<a href=.+?>latest</a>",
+            MessageFormat.format(LATEST, param));
         writeToFile(baseDir + "/index.html", content);
     }
 
