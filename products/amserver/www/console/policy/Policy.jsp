@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Policy.jsp,v 1.1 2006-05-04 06:56:44 veiming Exp $
+   $Id: Policy.jsp,v 1.2 2006-08-08 19:11:05 jonthegreat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -110,8 +110,8 @@
     selectionType="multiple"
     showAdvancedSortingIcon="false"
     showLowerActions="false"
-    showPaginationControls="false"
-    showPaginationIcon="false"
+    showPaginationControls="true"
+    showPaginationIcon="true"
     showSelectionIcons="true"
     selectionJavascript="toggleTblButtonState('Policy', 'Policy.tblSearch', 'tblButton', 'Policy.tblButtonDelete', this)"
     showSelectionSortIcon="false"
