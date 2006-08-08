@@ -18,14 +18,10 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: AD.xml,v 1.2 2006-01-30 20:58:52 veiming Exp $
+    $Id: AD.xml,v 1.3 2006-08-08 01:06:12 veiming Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
-
-
-
-
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
         "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">

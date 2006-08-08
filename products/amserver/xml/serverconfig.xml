@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="@XML_ENCODING@" standalone="yes"?>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 
 <!--
    The contents of this file are subject to the terms
@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: serverconfig.xml,v 1.5 2006-07-17 18:11:53 veiming Exp $
+   $Id: serverconfig.xml,v 1.6 2006-08-08 01:06:18 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->

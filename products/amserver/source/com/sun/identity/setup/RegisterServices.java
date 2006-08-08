@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.1 2006-07-17 18:11:26 veiming Exp $
+ * $Id: RegisterServices.java,v 1.2 2006-08-08 01:06:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Registers service during setup time.
@@ -44,40 +48,19 @@ public class RegisterServices {
     
     private static final String DEFAULT_PLATFORM_LOCALE = "en_US";
 
-    private static final String[] SERVICES = {
-        "amEntrySpecific.xml",
-        "ums.xml",
-        "amAuthConfig.xml",
-        "amAuthHTTPBasic.xml",
-        "amAdminConsole.xml",
-        "idRepoService.xml",
-        "amAuth.xml",
-        "amAuthAD.xml",
-        "amAuthAnonymous.xml",
-        "amAuthCert.xml",
-        "amAuthDataStore.xml",
-        "amAuthJDBC.xml",
-        "amAuthLDAP.xml",
-        "amAuthMSISDN.xml",
-        "amAuthMembership.xml",
-        "amAuthNT.xml",
-        "amAuthWindowsDesktopSSO.xml",
-        "amClientData.xml",
-        "amClientDetection.xml",
-        "amDelegation.xml",
-        "amG11NSettings.xml",
-        "amLogging.xml",
-        "amNaming.xml",
-        "amPlatform.xml",
-        "amPolicy.xml",
-        "amPolicyConfig.xml",
-        "amRealmService.xml",
-        "amSession.xml",
-        "amWebAgent.xml",
-        "amUser.xml",
-        "identityLocaleService.xml"
-    };
-    
+    private static final String PROPERTY_FILENAME = "serviceNames";
+    private static final String SERVICE_NAMES = "serviceNames";
+    private static final List<String> serviceNames = new ArrayList<String>();
+
+    static {
+        ResourceBundle rb = ResourceBundle.getBundle(PROPERTY_FILENAME);
+        String names = rb.getString(SERVICE_NAMES);
+        StringTokenizer st = new StringTokenizer(names);
+        while (st.hasMoreTokens()) {
+            serviceNames.add(st.nextToken());
+        }
+    }
+
     /**
      * Registers services.
      *
@@ -90,9 +73,8 @@ public class RegisterServices {
         throws IOException, SMSException, SSOException {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
         ServiceManager serviceManager = new ServiceManager(adminToken);
-        
-        for (int i = 0; i < SERVICES.length; i++) {
-            String serviceFileName = SERVICES[i];
+
+        for (String serviceFileName : serviceNames) {
             BufferedReader rawReader = null;
             InputStream serviceStream = null;
             
