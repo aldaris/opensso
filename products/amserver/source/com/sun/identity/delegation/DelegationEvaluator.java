@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.3 2006-04-17 17:29:26 bhavnab Exp $
+ * $Id: DelegationEvaluator.java,v 1.4 2006-08-09 20:21:55 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,12 @@ import java.util.Set;
 import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.Constants;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.idm.IdRepoException;
 
 /**
  * The <code>DelegationEvaluator</code> class provides interfaces to evaluate
@@ -42,14 +46,14 @@ public class DelegationEvaluator {
 
     static final Debug debug = DelegationManager.debug;
 
-    static String privilegedUserName;
+    static AMIdentity privilegedUser;
 
     private DelegationInterface pluginInstance = null;
 
     static {
         try {
-            privilegedUserName = DelegationManager.getAdminToken()
-                    .getPrincipal().getName();
+            privilegedUser = IdUtils.getIdentity(
+                DelegationManager.getAdminToken());
         } catch (Exception e) {
             debug.error("DelegationEvaluator:", e);
         }
@@ -85,10 +89,15 @@ public class DelegationEvaluator {
             Map envParameters) throws SSOException, DelegationException {
 
         boolean result = false;
-
+        
         if ((permission != null) && (token != null)) {
-            String userName = token.getPrincipal().getName();
-            if (userName.equalsIgnoreCase(privilegedUserName)) {
+            AMIdentity user = null;
+            try {
+                user = IdUtils.getIdentity(token);
+            } catch (IdRepoException ide) {
+                throw (new DelegationException(ide.getMessage()));
+            }
+            if (user.equals(privilegedUser)) {
                 result = true;
             } else {
                 if (pluginInstance == null) {
@@ -98,14 +107,14 @@ public class DelegationEvaluator {
                             "no_plugin_specified", null, null);
                     }
                 }
-                result = pluginInstance.isAllowed(token, permission,
-                        envParameters);
+                result = pluginInstance.isAllowed(
+                    token, permission, envParameters);
             }
         }
         if (debug.messageEnabled()) {
-            debug.message("isAllowed() returns " + result + " for user: "
-                    + token.getPrincipal().getName() + " for permission "
-                    + permission);
+            debug.message("isAllowed() returns " + result + " for user: " +
+                token.getProperty(Constants.UNIVERSAL_IDENTIFIER) +
+                " for permission " + permission);
         }
         return result;
     }
