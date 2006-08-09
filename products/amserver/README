@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.3 2006-08-04 21:06:48 veiming Exp $
+$Id: README,v 1.4 2006-08-09 21:14:40 veiming Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 
 The OpenSSO workspace uses Apache Ant as the build tool. The build scripts
 in this workspace use features not present in releases of Ant prior to 1.6.
-Thus, in order to build this workspace you must have Ant version 1.6 or above
+Thus, in order to build this workspace you must have Ant version 1.6.5 or above
 installed and available in your system path.
 
 The sources in this workspace should be compiled using JDK 5.0 with the source

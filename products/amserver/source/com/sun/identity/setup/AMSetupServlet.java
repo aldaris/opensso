@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.2 2006-08-04 21:07:03 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.3 2006-08-09 21:14:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.security.AccessController;
 import javax.servlet.ServletConfig;
@@ -72,6 +74,10 @@ public class AMSetupServlet extends HttpServlet {
     private final static String AMC_OVERRIDE_PROPERTY = 
         "com.sun.identity.overrideAMC";
     private final static String DEBUG_NAME = "amSetupServlet";
+    private final static String PROPERTY_CONFIGURATOR_PLUGINS =
+        "configuratorPlugins";
+    private final static String KEY_CONFIGURATOR_PLUGINS =
+        "configurator.plugins";
     private final static String AMCONFIG = "AMConfig";
     private final static String SMS_STR = "sms";
     private final static String AMCONFIG_PROPERTIES = "AMConfig.properties";
@@ -216,6 +222,9 @@ public class AMSetupServlet extends HttpServlet {
                 RegisterServices regService = new RegisterServices();
                 regService.registers(adminSSOToken);
                 processDataRequests("WEB-INF/template/sms");
+
+                handlePostPlugins();
+
                 reInitConfigProperties();
                 AMAuthenticationManager.reInitializeAuthServices();
                 
@@ -258,6 +267,33 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static void handlePostPlugins() {
+        try {
+            ResourceBundle rb = ResourceBundle.getBundle(
+                PROPERTY_CONFIGURATOR_PLUGINS);
+            String plugins = rb.getString(KEY_CONFIGURATOR_PLUGINS);
+
+            if (plugins != null) {
+                StringTokenizer st = new StringTokenizer(plugins);
+                while (st.hasMoreTokens()) {
+                    String className = st.nextToken();
+                    Class clazz = Class.forName(className);
+                    ConfiguratorPlugin plugin =
+                        (ConfiguratorPlugin)clazz.newInstance();
+                    plugin.doPostConfiguration(servletCtx);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (MissingResourceException e) {
+            //ignore if there are no configurator plugins.
+        }
     }
 
     private static void setServiceDefaultValues(HttpServletRequest request) {
