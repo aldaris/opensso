@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.11 2006-06-23 00:48:05 arviranga Exp $
+ * $Id: AMIdentity.java,v 1.12 2006-08-10 22:02:39 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.common.Constants;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -685,26 +686,35 @@ public final class AMIdentity {
         Set attrNames = Collections.EMPTY_SET;
 
         try {
-            // Get attribute names for USER type only, so plugin knows
-            // what attributes to remove.
-            attrNames = new HashSet();
-            ServiceSchemaManager ssm = new ServiceSchemaManager(serviceName,
-                    token);
+            // Get attribute names, so plugin knows what attributes to return
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                serviceName, token);
             ServiceSchema uss = ssm.getSchema(type.getName());
-            // ssm.getUserSchema();
-
             if (uss != null) {
                 attrNames = uss.getAttributeSchemaNames();
             }
-            uss = ssm.getDynamicSchema();
-            if (uss != null) {
-                attrNames.addAll(uss.getAttributeSchemaNames());
-            }
+
+            // If the identity type is not of role, filteredrole or
+            // realm, need to add dynamic attributes also
+            if (!(type.equals(IdType.ROLE) || type.equals(IdType.REALM) ||
+                type.equals(IdType.FILTEREDROLE))) {
+                uss = ssm.getDynamicSchema();
+                if (uss != null) {
+                    if (attrNames == Collections.EMPTY_SET) {
+                        attrNames = uss.getAttributeSchemaNames();
+                    } else {
+                        attrNames.addAll(uss.getAttributeSchemaNames());
+                    }
+                }
+            } else {
+                // Add COS priority attribute
+                attrNames.add(COS_PRIORITY);
+           } 
         } catch (SMSException smse) {
-            /*
-             * debug.error( "AMIdentity.getServiceAttributes: Caught SM
-             * exception", smse); do nothing
-             */
+            if (debug.messageEnabled()) {
+                debug.message("AMIdentity.getServiceAttributes: Caught " +
+                    "SM exception", smse);
+            }
         }
 
         IdServices idServices = IdServicesFactory.getDataStoreServices();
@@ -743,7 +753,17 @@ public final class AMIdentity {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "101", args);
         }
 
-        // modify service attrs
+        // Check if attrMap has cos priority attribute
+        // If present, remove it for validating the attributes
+        boolean hasCosPriority = (new CaseInsensitiveHashSet(
+            attrMap.keySet()).contains(COS_PRIORITY));
+        Object values = null;
+        if (hasCosPriority) {
+             attrMap = new CaseInsensitiveHashMap(attrMap);
+             values = attrMap.remove(COS_PRIORITY);
+        }
+
+        // Validate the attributes 
         try {
             ServiceSchemaManager ssm = new ServiceSchemaManager(serviceName,
                     token);
@@ -751,16 +771,13 @@ public final class AMIdentity {
             if (ss != null) {
                 attrMap = ss.validateAndInheritDefaults(attrMap, false);
                 stype = ss.getServiceType();
+            } else if ((ss = ssm.getSchema(SchemaType.DYNAMIC)) != null) {
+                 attrMap = ss.validateAndInheritDefaults(attrMap, false);
+                 stype = SchemaType.DYNAMIC;
             } else {
-                ss = ssm.getSchema(SchemaType.DYNAMIC);
-                if (ss == null) {
-                    Object args[] = { serviceName };
-                    throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "102",
-                            args);
-                } else {
-                    attrMap = ss.validateAndInheritDefaults(attrMap, false);
-                    stype = SchemaType.DYNAMIC;
-                }
+                 Object args[] = { serviceName };
+                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                     "102", args);
             }
         } catch (SMSException smse) {
             // debug.error
@@ -768,8 +785,18 @@ public final class AMIdentity {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "103", args);
         }
 
+        // Add COS priority if present
+        if (hasCosPriority) {
+            attrMap.put(COS_PRIORITY, values);
+        }
+
+        // modify service attrs
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.modifyService befre idService " +
+                "serviceName=" + serviceName + ";  attrMap=" + attrMap);
+        }
         idServices.modifyService(token, type, name, serviceName, stype,
-                attrMap, orgName, univDN);
+            attrMap, orgName, univDN);
     }
 
     // MEMBERSHIP RELATED APIS
@@ -1158,4 +1185,6 @@ public final class AMIdentity {
     }
 
     private static Debug debug = Debug.getInstance("amIdm");
+    
+    private static String COS_PRIORITY = "cospriority";
 }
