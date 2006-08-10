@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.7 2006-06-29 14:11:03 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.8 2006-08-10 20:35:12 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,9 +86,23 @@ public class OrganizationConfigManager {
     private String CONF_ENABLED =
         "sun-idrepo-amSDK-config-copyconfig-enabled";
 
+    private boolean copyOrgInitialized;
+
     private boolean copyOrgEnabled;
 
     private String amSDKOrgDN;
+
+    // sunOrganizationAlias in org DIT.
+    private String SUNORG_ALIAS = "sunOrganizationAliases";
+
+    // associatedDomain in org DIT.
+    private String SUNDNS_ALIAS = "sunDNSAliases";
+
+    // sunPreferredDomain in org DIT.
+    private String SUNPREF_DOMAIN = "sunPreferredDomain";
+
+    // inetDomainStatus in org DIT.
+    private String SUNORG_STATUS = "sunOrganizationStatus";
 
     static {
         initializeFlags();
@@ -148,15 +162,6 @@ public class OrganizationConfigManager {
             if (orgNamingAttrInLegacyMode == null) {
                 orgNamingAttrInLegacyMode = getNamingAttrForOrg();
             }
-        }
-
-        try {
-            isCopyOrgEnabled();
-        } catch (SSOException ssoe) {
-            SMSEntry.debug.error("OrganizationConfigManager:Constructor",
-                ssoe);
-            throw (new SMSException(SMSEntry.bundle.getString(
-                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
         }
     }
 
@@ -312,7 +317,7 @@ public class OrganizationConfigManager {
 
         // If in legacy mode or (realm mode and copy org enabled)
         // Create the AMSDK organization first
-        if ((coexistMode) || (realmEnabled && copyOrgEnabled)) {
+        if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
             amsdk.createSubOrganization(subOrgName);
         }
         if ((realmEnabled || subOrgDN.toLowerCase().startsWith(
@@ -345,7 +350,7 @@ public class OrganizationConfigManager {
         // to be registered for the newly created org/suborg and the
         // amSDKOrgName/Access Manager Organization is updated with the
         // new suborg dn.
-        if (realmEnabled && copyOrgEnabled) {
+        if (realmEnabled && isCopyOrgEnabled()) {
             registerSvcsForOrg(subOrgName, subOrgDN);
             OrganizationConfigManager subOrg =
                 getSubOrgConfigManager(subOrgName);
@@ -531,7 +536,7 @@ public class OrganizationConfigManager {
 
         // If in legacy mode or (realm mode and copy org enabled)
         // delete the corresponding organization.
-        if ((coexistMode) || (realmEnabled && copyOrgEnabled)) {
+        if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
             String amsdkName = DNMapper.realmNameToAMSDKName(subOrgDN);
             amsdk.deleteSubOrganization(amsdkName);
         }
@@ -645,7 +650,7 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN, null);
-                if (coexistMode) {
+                if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
                     // Since AMSDK org notifications will not be
                     // obtained, the entry must be read again
                     cEntry.update();
@@ -681,19 +686,47 @@ public class OrganizationConfigManager {
 
         // If in coexistMode and serviceName is idRepoService
         // get attributes from AMSDK organization
-        if (coexistMode
+        if ((coexistMode || (realmEnabled && isCopyOrgEnabled()))
                 && serviceName
-                        .equalsIgnoreCase(OrgConfigViaAMSDK.IDREPO_SERVICE)) {
+                    .equalsIgnoreCase(OrgConfigViaAMSDK.IDREPO_SERVICE)) {
             Map amsdkMap = amsdk.getAttributes();
+            Map mergesdkMap = new HashMap(2);
             if (amsdkMap != null && !amsdkMap.isEmpty()) {
-                if (attrValues == null) {
-                    attrValues = amsdkMap;
-                } else {
-                    attrValues.putAll(amsdkMap);
+                Set mergeValues = new HashSet(2);
+                Iterator itr = amsdkMap.keySet().iterator();
+                while (itr.hasNext()) {
+                    String key = (String) itr.next();
+                    if (key.equalsIgnoreCase(SUNDNS_ALIAS) || 
+                        key.equalsIgnoreCase(SUNPREF_DOMAIN) ||
+                            key.equalsIgnoreCase(SUNORG_ALIAS)) {
+                        buildSet(key, amsdkMap, mergeValues);
+                    }
                 }
+                mergesdkMap.put(SUNORG_ALIAS, mergeValues);
+                mergesdkMap.put(SUNORG_STATUS,
+                    (Set) amsdkMap.get(SUNORG_STATUS));
+            }
+            if (attrValues == null) {
+                attrValues = mergesdkMap;
+            } else {
+                attrValues.putAll(mergesdkMap);
             }
         }
         return ((attrValues == null) ? Collections.EMPTY_MAP : attrValues);
+    }
+
+    /**
+     * Builds and returns the appropriate Set for the attributes to be
+     * merged from org and realm if the system is
+     * in intrusive mode (Both org DIT and realm DIT are present).
+     * This happens when the Copy Config flag is enabled.
+     */
+    private Set buildSet(String attrName, Map attributes, Set resultSet) {
+        Set vals = (Set) attributes.get(attrName);
+        if ((vals != null) && !vals.isEmpty()) {
+            resultSet.addAll(vals);
+        }
+        return (resultSet);
     }
 
     /**
@@ -877,7 +910,7 @@ public class OrganizationConfigManager {
 
         // If in coexistMode and serviceName is idRepoService
         // set the attributes to AMSDK organization
-        if (coexistMode
+        if ((coexistMode || (realmEnabled && isCopyOrgEnabled()))
                 && serviceName
                         .equalsIgnoreCase(OrgConfigViaAMSDK.IDREPO_SERVICE)) {
             amsdk.setAttributes(attributes);
@@ -1585,47 +1618,70 @@ public class OrganizationConfigManager {
      * in amSDK plugin.
      * This requirement is for portal customers.
      */
-    protected void isCopyOrgEnabled()
-    throws SMSException, SSOException {
-
+    protected boolean isCopyOrgEnabled() {
+        if (copyOrgInitialized) {
+            return (copyOrgEnabled);
+        }
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("OrganizationConfigManager: "+
                 "in isCopyOrgEnabled() ");
         }
-        copyOrgEnabled = false;
         // Check if AMSDK is configured for the realm
-        ServiceConfig s = getServiceConfig(ServiceManager.REALM_SERVICE);
-        if (s != null) {
-            Iterator items = s.getSubConfigNames().iterator();
-            while (items.hasNext()) {
-                ServiceConfig subConfig =
-                    s.getSubConfig((String) items.next());
-                if (subConfig.getSchemaID().equalsIgnoreCase(
-                    IdConstants.AMSDK_PLUGIN_NAME)) {
-                    Map configMap = subConfig.getAttributes();
-                    if ((configMap != null) && !configMap.isEmpty()) {
-                        // Get the amsdkOrgName from the amSDKRepo to build
-                        // OrgConfigViaSDK instance.
-                        Set orgs = (Set) configMap.get("amSDKOrgName");
-                        if (orgs != null && !orgs.isEmpty()) {
-                            amSDKOrgDN = (String) orgs.iterator().next();
-                            Set cfgs = (Set) configMap.get(CONF_ENABLED);
-                            if ( (cfgs != null) && (!cfgs.isEmpty()) &&
-                                (cfgs.contains("true")) &&
-                                    (amSDKOrgDN !=null) ) {
-                                amsdk = new OrgConfigViaAMSDK(token,
-                                    amSDKOrgDN, orgDN);
-                                if (orgNamingAttrInLegacyMode == null) {
-                                    orgNamingAttrInLegacyMode =
-                                    getNamingAttrForOrg();
+        try {
+            ServiceConfig s = getServiceConfig(ServiceManager.REALM_SERVICE);
+            if (s != null) {
+                Iterator items = s.getSubConfigNames().iterator();
+                while (items.hasNext()) {
+                    ServiceConfig subConfig =
+                        s.getSubConfig((String) items.next());
+                    if (subConfig.getSchemaID().equalsIgnoreCase(
+                        IdConstants.AMSDK_PLUGIN_NAME)) {
+                        Map configMap = subConfig.getAttributes();
+                        if ((configMap != null) && !configMap.isEmpty()) {
+                            // Get the amsdkOrgName from the amSDKRepo to build
+                            // OrgConfigViaSDK instance.
+                            Set orgs = (Set) configMap.get("amSDKOrgName");
+                            if (orgs != null && !orgs.isEmpty()) {
+                                amSDKOrgDN = (String) orgs.iterator().next();
+                                Set cfgs = (Set) configMap.get(CONF_ENABLED);
+                                if ( (cfgs != null) && (!cfgs.isEmpty()) &&
+                                    (cfgs.contains("true")) &&
+                                        (amSDKOrgDN !=null) ) {
+                                    amsdk = new OrgConfigViaAMSDK(token,
+                                        amSDKOrgDN, orgDN);
+                                    if (orgNamingAttrInLegacyMode == null) {
+                                        orgNamingAttrInLegacyMode =
+                                        getNamingAttrForOrg();
+                                    }
+                                    copyOrgEnabled = true;
+                                    break;
                                 }
-                                copyOrgEnabled = true;
                             }
                         }
                     }
                 }
             }
+        } catch (SSOException sse) {
+            // Use default values i.e., false
+            if (SMSEntry.debug.messageEnabled()) {
+                SMSEntry.debug.message("OrganizationConfigManager:" +
+                    "isCopyOrgEnabled() Unable to get service: " +
+                    ServiceManager.REALM_SERVICE, sse);
+            }
+        } catch (SMSException e) {
+            // Use default values i.e., false
+            if (SMSEntry.debug.messageEnabled()) {
+                SMSEntry.debug.message("OrganizationConfigManager:" +
+                    "isCopyOrgEnabled() Unable to get service: " +
+                    ServiceManager.REALM_SERVICE, e);
+            }
         }
+        copyOrgInitialized = true;
+        if (SMSEntry.debug.messageEnabled()) {
+            SMSEntry.debug.message("OrganizationConfigManager: "+
+                "copyOrgEnabled == " + copyOrgEnabled);
+        }
+        return (copyOrgEnabled);
     }
 
     static void initializeFlags() {
