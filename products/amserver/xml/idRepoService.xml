@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.13 2006-08-08 01:06:18 veiming Exp $
+   $Id: idRepoService.xml,v 1.14 2006-08-10 20:36:08 goodearth Exp $
   
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -121,6 +121,8 @@
                     <DefaultValues>
                         <Value>sunOrganizationStatus=inetDomainStatus</Value>
                         <Value>sunOrganizationAliases=sunOrganizationAlias</Value>
+                        <Value>sunPreferredDomain=sunPreferredDomain</Value>
+                        <Value>sunDNSAliases=associatedDomain</Value>
                     </DefaultValues>
                 </AttributeSchema>
 
