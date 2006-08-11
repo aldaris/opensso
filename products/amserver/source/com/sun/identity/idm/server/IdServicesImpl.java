@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.4 2006-07-17 18:11:15 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.5 2006-08-11 00:42:25 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
@@ -2325,7 +2326,7 @@ public class IdServicesImpl implements IdServices {
             Iterator it = results.iterator();
             while (it.hasNext()) {
                 String dn = (String) it.next();
-                String name = (new DN(dn)).explodeDN(true)[0];
+                String name =  LDAPDN.explodeDN(dn, true)[0];
                 amsdkDNs.put(name, dn);
                 Set attrMaps = new HashSet();
                 attrMaps.add((Map) attrResults.get(dn));

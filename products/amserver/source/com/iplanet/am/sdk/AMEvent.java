@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEvent.java,v 1.4 2006-06-16 19:36:04 rarcot Exp $
+ * $Id: AMEvent.java,v 1.5 2006-08-11 00:42:22 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,6 +106,9 @@ public class AMEvent extends EventObject {
             DSEvent dsEvent = (DSEvent) source;
             this.sourceDN = dsEvent.getID();
             this.sourceType = determineSourceType(dsEvent);
+        } else if (source instanceof AMEvent) {
+            this.sourceDN = ((AMEvent) source).getSourceDN();
+            this.sourceType = AMObject.UNKNOWN_OBJECT_TYPE;                     
         } else {
             this.sourceDN = null;
             this.sourceType = AMObject.UNKNOWN_OBJECT_TYPE;

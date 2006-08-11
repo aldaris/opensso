@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNUtils.java,v 1.1 2005-11-01 00:30:56 arvindp Exp $
+ * $Id: DNUtils.java,v 1.2 2006-08-11 00:42:24 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.common;
 
 import netscape.ldap.util.DN;
+import netscape.ldap.LDAPDN;
 
 public class DNUtils {
     /**
@@ -59,7 +60,7 @@ public class DNUtils {
         // String dn is guaranteed type of DN
         String id = dn;
         try {
-            id = netscape.ldap.LDAPDN.explodeDN(dn, true)[0];
+            id = LDAPDN.explodeDN(dn, true)[0];
         } catch (Exception e) {
         }
         return id;

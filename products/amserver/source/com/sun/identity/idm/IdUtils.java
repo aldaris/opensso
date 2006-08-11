@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.8 2006-06-16 19:36:44 rarcot Exp $
+ * $Id: IdUtils.java,v 1.9 2006-08-11 00:42:25 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMDirectoryAccessFactory;
@@ -184,7 +185,7 @@ public final class IdUtils {
                 throw new IdRepoException(IdRepoBundle.getString("215", args),
                         "215", args);
             } else {
-                principal = "id=" + ((new DN(dn))).explodeDN(true)[0] + ",ou="
+                principal = "id=" + LDAPDN.explodeDN(dn, true)[0] + ",ou="
                         + IdType.USER.getName() + ","
                         + token.getProperty(Constants.ORGANIZATION)
                         + ",amsdkdn=" + dn;
@@ -590,7 +591,7 @@ public final class IdUtils {
         int sdkType = dsServices.getObjectType(token, amsdkdn);
         // Convert the sdkType to IdRepo type
         IdType type = getType(AMStoreConnection.getObjectName(sdkType));
-        String name = (new DN(amsdkdn)).explodeDN(true)[0];
+        String name = LDAPDN.explodeDN(amsdkdn, true)[0];
         if (ServiceManager.isCoexistenceMode()) {
             // Get the organization from the object dn
             realm = dsServices.getOrganizationDN(token, amsdkdn);
@@ -610,7 +611,7 @@ public final class IdUtils {
         IdRepoException ide = null;
         if (args == null) {
             ide = new IdRepoException("amProfile", eCode, null);
-        } else {
+        } else { 
             ide = new IdRepoException("amProfile", ame.getErrorCode(), args);
         }
         ide.setLDAPErrorCode(ame.getLDAPErrorCode());

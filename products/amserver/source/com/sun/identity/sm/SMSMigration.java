@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSMigration.java,v 1.2 2006-05-31 21:50:11 veiming Exp $
+ * $Id: SMSMigration.java,v 1.3 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -77,7 +78,7 @@ public class SMSMigration {
                     CachedSMSEntry cachedE = CachedSMSEntry.getInstance(token,
                             e.getDN(), null);
                     cachedE.refresh(e);
-                    String version = (new DN(e.getDN())).explodeDN(true)[0];
+                    String version = LDAPDN.explodeDN(e.getDN(), true)[0]; 
                     System.out.println("\tVersion: " + version);
                     // Migrate service config data
                     migrateConfigData(token, sName, version);
@@ -152,7 +153,7 @@ public class SMSMigration {
         while (subSMSEntries.hasNext()) {
             SMSEntry subSMSEntry = (SMSEntry) subSMSEntries.next();
             String subEntryName = 
-                (new DN(subSMSEntry.getDN())).explodeDN(true)[0];
+                LDAPDN.explodeDN(subSMSEntry.getDN(), true)[0];
             if (subEntryName.equalsIgnoreCase("GlobalConfig")
                     || subEntryName.equalsIgnoreCase("OrganizationConfig")
                     || subEntryName.equalsIgnoreCase("Instances")

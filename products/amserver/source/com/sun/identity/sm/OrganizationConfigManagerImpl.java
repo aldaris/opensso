@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.3 2006-07-31 23:41:02 arviranga Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.4 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.naming.event.NamingEvent;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Debug;
@@ -229,10 +230,10 @@ class OrganizationConfigManagerImpl {
 
             // Get the DN ignoring the organization name
             if (index != 0) {
-                DN ndn = new DN(dn.substring(0, index - 1));
+                String ndn = dn.substring(0, index - 1);
 
                 // Needs to check if the DN has more realm names
-                String rdns[] = ndn.explodeDN(false);
+                String rdns[] = LDAPDN.explodeDN(ndn, false);
                 int size = (rdns == null) ? 0 : rdns.length;
                 if ((size != 0) && (rdns[size - 1].startsWith("o="))) {
                     // More realm names are present, changes not meant for
@@ -248,7 +249,7 @@ class OrganizationConfigManagerImpl {
                 }
 
                 // Get the version, service, group and component name
-                rdns = ndn.explodeDN(true);
+                rdns = LDAPDN.explodeDN(ndn, true); 
                 if (size > 0) {
                     serviceName = rdns[size - 1];
                 }

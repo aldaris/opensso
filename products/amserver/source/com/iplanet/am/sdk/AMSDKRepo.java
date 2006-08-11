@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.7 2006-06-30 01:06:08 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.8 2006-08-11 00:42:23 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.common.IDirectoryServices;
@@ -1923,7 +1924,7 @@ public class AMSDKRepo extends IdRepo {
             attrs[1] = namingAttr;
             ldapAuthUtil.setUserAttrs(attrs);
             if (DN.isDN(username)) {
-                userid = (new DN(username)).explodeDN(true)[0];
+                userid = LDAPDN.explodeDN(username, true)[0]; 
             }
             ldapAuthUtil.authenticateUser(userid, password);
         } catch (LDAPUtilException ldapUtilEx) {

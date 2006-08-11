@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.2 2006-07-31 23:41:01 arviranga Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.3 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Set;
 
 import javax.naming.event.NamingEvent;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Cache;
@@ -336,8 +337,7 @@ class ServiceConfigManagerImpl {
         String groupName = "";
         String compName = "";
         if (index > 1) {
-            String rdns[] = (new DN(dn.substring(0, index - 1)))
-                    .explodeDN(true);
+            String rdns[] = LDAPDN.explodeDN(dn.substring(0, index-1), true);
             groupName = rdns[rdns.length - 1];
             for (int i = rdns.length - 2; i > -1; i--) {
                 compName = compName + "/" + rdns[i];

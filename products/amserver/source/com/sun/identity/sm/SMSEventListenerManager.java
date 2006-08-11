@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.3 2006-06-30 20:51:02 goodearth Exp $
+ * $Id: SMSEventListenerManager.java,v 1.4 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Debug;
@@ -274,9 +275,9 @@ class SMSEventListenerManager implements SMSObjectListener {
                     // We cache only service names and policy names.
                     if (!dn.startsWith(SMSEntry.ORG_PLACEHOLDER_RDN)) {
                         if (event == SMSObjectListener.ADD) {
-                            cse.add((new DN(dn)).explodeDN(true)[0]);
+                            cse.add(LDAPDN.explodeDN(dn, true)[0]);
                         } else {
-                            cse.remove((new DN(dn)).explodeDN(true)[0]);
+                            cse.remove(LDAPDN.explodeDN(dn, true)[0]);
                         }
                     }
                 } else {

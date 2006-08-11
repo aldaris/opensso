@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.5 2006-06-16 19:36:12 rarcot Exp $
+ * $Id: AMStoreConnection.java,v 1.6 2006-08-11 00:42:23 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.common.IDirectoryServices;
@@ -1595,8 +1596,7 @@ public final class AMStoreConnection implements AMConstants {
                 .getAttributes(stoken, dn, attrNames, AMObject.ORGANIZATION);
 
         // Add to cache
-        DN odn = new DN(dn);
-        String rdn = odn.explodeDN(true)[0];
+        String rdn = LDAPDN.explodeDN(dn, true)[0];
         Set prefDomain = (Set) attributes.get("sunpreferreddomain");
         Set associatedDomain = (Set) attributes.get("associateddomain");
         Set orgAlias = (Set) attributes.get("sunorganizationalias");

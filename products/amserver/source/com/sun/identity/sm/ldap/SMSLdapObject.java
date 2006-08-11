@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.4 2006-05-31 21:50:11 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.5 2006-08-11 00:42:27 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ import netscape.ldap.LDAPModification;
 import netscape.ldap.LDAPModificationSet;
 import netscape.ldap.LDAPSearchConstraints;
 import netscape.ldap.LDAPSearchResults;
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.AMResourceBundleCache;
@@ -587,7 +588,7 @@ public class SMSLdapObject extends SMSObject implements SMSObjectListener {
                 }
                 throw (new SMSException(ldape, "sms-entry-cannot-obtain"));
             }
-            answer.add((new DN(entry.getDN())).explodeDN(true)[0]);
+            answer.add(LDAPDN.explodeDN(entry.getDN(), true)[0]);
         }
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: Successfully obtained "

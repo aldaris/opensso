@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.1 2006-06-16 19:36:42 rarcot Exp $
+ * $Id: IdRepoListener.java,v 1.2 2006-08-11 00:42:25 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMEvent;
@@ -243,7 +244,7 @@ public final class IdRepoListener {
         Iterator it = IdUtils.supportedTypes.iterator();
         while (it.hasNext()) {
             IdType itype = (IdType) it.next();
-            String n = DN.isDN(name) ? (new DN(name)).explodeDN(true)[0] : name;
+            String n = DN.isDN(name) ? LDAPDN.explodeDN(name, true)[0] : name;
             String id = "id=" + n + ",ou=" + itype.getName() + "," + realm;
             if (isAmsdk) {
                 id = id + ",amsdkdn=" + name;

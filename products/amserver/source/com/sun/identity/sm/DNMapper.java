@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.4 2006-06-29 14:10:28 goodearth Exp $
+ * $Id: DNMapper.java,v 1.5 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.util.Debug;
@@ -88,7 +89,7 @@ public class DNMapper {
 
             // Check if orgdn is a hidden internal realm, if so return
             if (orgdnlc.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
-                orgdn = (new DN(orgdn)).explodeDN(false)[0] + "," + serviceDN;
+                orgdn = LDAPDN.explodeDN(orgdn, false)[0] + "," + serviceDN;
                 // Add to cache and return
                 updateCache(orgName, orgdn);
                 return (orgdn);
@@ -214,7 +215,7 @@ public class DNMapper {
         }
 
         String answer = (index == -1) ? dn : dn.substring(0, index - 1);
-        String[] rdns = (new DN(answer)).explodeDN(true);
+        String[] rdns = LDAPDN.explodeDN(answer, true);
         int size = rdns.length;
         for (int i = 0; i < size; i++) {
             buf.append(orgAttr).append(SMSEntry.EQUALS).append(rdns[i]);
@@ -325,7 +326,7 @@ public class DNMapper {
         String orgAttr = "";
         String placeHold = "";
         StringBuffer buf = new StringBuffer(orgName.length());
-        String[] rdns = (new DN(orgName)).explodeDN(false);
+        String[] rdns = LDAPDN.explodeDN(orgName, false);
         int size = rdns.length;
         if (!realmEnabled) {
             orgAttr = OrgConfigViaAMSDK.getNamingAttrForOrg();

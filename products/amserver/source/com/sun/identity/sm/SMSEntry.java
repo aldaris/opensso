@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.7 2006-07-17 18:11:27 veiming Exp $
+ * $Id: SMSEntry.java,v 1.8 2006-08-11 00:42:26 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.LDAPException;
 import netscape.ldap.util.DN;
 
@@ -1223,7 +1224,7 @@ public class SMSEntry implements Cloneable {
         // Parse restOfDN to get servicename, version, type and subconfig
         String[] rdns = null;
         if (restOfDN.length() > 0) {
-            rdns = new DN(restOfDN).explodeDN(true);
+            rdns = LDAPDN.explodeDN(restOfDN, true);
         }
         int size = (rdns == null) ? 0 : rdns.length;
 

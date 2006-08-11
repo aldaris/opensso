@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.1 2006-06-16 19:36:31 rarcot Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.2 2006-08-11 00:42:23 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import java.util.TreeSet;
 
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPUrl;
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
 
@@ -3354,8 +3355,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
                 // no namespace validation for these objects
                 return;
             }
-            DN userDN = new DN(entryDN);
-            String[] rdns = userDN.explodeDN(false);
+            String[] rdns = LDAPDN.explodeDN(entryDN, false);
             int size = rdns.length;
 
             if (size < 2) {

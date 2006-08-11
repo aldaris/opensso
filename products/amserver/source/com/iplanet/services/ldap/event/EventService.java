@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.4 2006-06-16 19:36:40 rarcot Exp $
+ * $Id: EventService.java,v 1.5 2006-08-11 00:42:23 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,6 +118,11 @@ public class EventService implements Runnable {
     // Idle timeout in minutes
     protected static final String EVENT_IDLE_TIMEOUT_INTERVAL = 
         "com.sun.am.event.connection.idle.timeout";
+    
+    protected static final String EVENT_LISTENER_DISABLE_LIST =
+        "com.sun.am.event.connection.disable.list";
+          
+    private static boolean _allDisabled = false;    
 
     private static int _numRetries = 3;
 
@@ -161,7 +166,8 @@ public class EventService implements Runnable {
         _idleTimeOut = getPropertyIntValue(EVENT_IDLE_TIMEOUT_INTERVAL,
                 _idleTimeOut);
         _idleTimeOutMills = _idleTimeOut * 60000;
-
+        
+        getListenerList();
     }
 
     private static HashSet getPropertyRetryErrorCodes(String key) {
@@ -199,6 +205,53 @@ public class EventService implements Runnable {
         }
         return value;
     }
+    
+    /**
+     * Determine the listener list based on the hidden property
+     */
+    private static void getListenerList() {
+        String list = SystemProperties.get(EVENT_LISTENER_DISABLE_LIST, "");
+        if (debugger.messageEnabled()) {
+            debugger.message("EventService.getListenerList(): " +
+                    EVENT_LISTENER_DISABLE_LIST + " = " + list);
+        }
+
+        // nothing will be disabled
+        if (list.length() == 0) {
+            return;
+        }
+
+        StringTokenizer st = new StringTokenizer(list, ",");
+        boolean disableACI = false, disableUM = false, disableSM = false;
+        String listener = "";
+        while(st.hasMoreTokens()) {
+            listener = st.nextToken().trim();
+            if (listener.equalsIgnoreCase("aci")) {
+                listeners[0] = null;
+                disableACI = true;
+            } else if (listener.equalsIgnoreCase("um")) {
+                listeners[1] = null;
+                disableUM = true;
+            } else if (listener.equalsIgnoreCase("sm")) {
+                listeners[2] = null;
+                    disableSM = true;
+            } else {
+                if (debugger.messageEnabled()) {
+                    debugger.message("EventService.getListenerList() - " +
+                            "Invalid listener name: "+listener);
+                }
+            }
+        }
+
+        // all disabled, signal to not start the thread
+        if (disableACI && disableUM && disableSM) {
+            if (debugger.messageEnabled()) {
+                debugger.message("EventService.getListenerList() - " +
+                        "all listeners are disabled, EventService won't start");
+                }
+            _allDisabled = true;
+        }
+    }
 
     /**
      * Private Constructor
@@ -215,6 +268,11 @@ public class EventService implements Runnable {
      */
     public synchronized static EventService getEventService()
             throws EventException, LDAPException {
+        
+        if (_allDisabled) {
+            return null;
+        }
+        
         // Make sure only one instance of this class is created.
         if (_instance == null) {
             if (_idleTimeOut == 0) {
@@ -351,6 +409,11 @@ public class EventService implements Runnable {
         int size = listeners.length;
         for (int i = 0; i < size; i++){
             String l1 = listeners[i];
+            
+            if (l1 == null ) {
+                continue;
+            }
+            
             try {
                 if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
                     String enableDataStoreNotification = SystemProperties.get(

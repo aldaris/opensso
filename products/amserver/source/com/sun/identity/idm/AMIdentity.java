@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.12 2006-08-10 22:02:39 arviranga Exp $
+ * $Id: AMIdentity.java,v 1.13 2006-08-11 00:42:24 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
@@ -166,7 +167,7 @@ public final class AMIdentity {
         StringBuffer sb = new StringBuffer(100);
         if ((name != null) && (name.indexOf(',') != -1) &&
             DN.isDN(name)) {
-            sb.append("id=").append(((new DN(name))).explodeDN(true)[0])
+            sb.append("id=").append(LDAPDN.explodeDN(name, true)[0])
                     .append(",ou=").append(type.getName()).append(",").append(
                             this.orgName);
         } else {
