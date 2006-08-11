@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.1 2006-07-17 18:11:25 veiming Exp $
+ * $Id: ConfigureData.java,v 1.2 2006-08-11 06:51:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,10 +36,11 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,7 +122,7 @@ public class ConfigureData {
     }
 
     private void createRealmAndPolicies()
-        throws SMSException, SSOException, PolicyException,
+        throws SMSException, SSOException, PolicyException, IOException,
             FileNotFoundException
     {
         createRealm("/sunamhiddenrealmdelegationservicepermissions");
@@ -154,10 +155,21 @@ public class ConfigureData {
     }
 
     private void createPolicies(String realmName, String xmlFile)
-        throws FileNotFoundException, PolicyException, SSOException
+        throws FileNotFoundException, PolicyException, SSOException, IOException
     {
         PolicyManager pm = new PolicyManager(ssoToken, realmName);
-        PolicyUtils.createPolicies(pm, sctx.getResourceAsStream(xmlFile));
+        InputStreamReader fin = new InputStreamReader(
+            sctx.getResourceAsStream(xmlFile));
+        StringBuffer sbuf = new StringBuffer();
+        char[] cbuf = new char[1024];
+        int len;
+        while ((len = fin.read(cbuf)) > 0) {
+            sbuf.append(cbuf, 0, len);
+        }
+        String data = ServicesDefaultValues.tagSwap(sbuf.toString());
+        ByteArrayInputStream bis = new ByteArrayInputStream(
+            data.getBytes());
+        PolicyUtils.createPolicies(pm, bis);
     }
 
     private void modifySchemaDefaultValues(
