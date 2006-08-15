@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.2 2006-08-11 06:51:23 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.3 2006-08-15 05:04:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import netscape.ldap.util.DN;
 
 /**
  * This class holds the default values of service schema.
@@ -101,12 +102,13 @@ public class ServicesDefaultValues {
                 if (trimSlash.contains(key)) {
                     orig = orig.replaceAll("@" + key + "@", value.substring(1));
                 }
+            } else if (key.equals("ROOT_SUFFIX")) {
+                String normalized = DNUtils.normalizeDN(value);
+                orig = orig.replaceAll("@ROOT_SUFFIX_HAT@",
+                    normalized.replaceAll(",", "^"));
+                String rfced = (new DN(value)).toRFCString();
+                orig = orig.replaceAll("@ROOT_SUFFIX@", rfced);
             } else {
-                if (key.equals("ROOT_SUFFIX")) {
-                    String hatValue = DNUtils.normalizeDN(value);
-                    orig = orig.replaceAll("@ROOT_SUFFIX_HAT@",
-                        hatValue.replaceAll(",", "^"));
-                }
                 orig = orig.replaceAll("@" + key + "@", value);
             }
         }
