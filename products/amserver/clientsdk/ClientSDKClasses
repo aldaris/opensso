@@ -116,6 +116,7 @@ com/iplanet/am/sdk/remote/RemoteServicesFactory.class
 com/iplanet/am/sdk/remote/RemoteServicesImpl.class
 com/iplanet/am/sdk/remote/RemoteServicesProviderImpl.class
 com/sun/identity/delegation/DelegationException.class
+com/sun/identity/log/AMLogException.class
 com/sun/identity/log/LogConstants.class
 com/sun/identity/log/Logger.class
 com/sun/identity/log/LogManager.class
