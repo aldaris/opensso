@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLICommandBase.java,v 1.2 2006-07-17 18:10:58 veiming Exp $
+ * $Id: CLICommandBase.java,v 1.3 2006-08-15 19:32:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,6 @@ public abstract class CLICommandBase implements CLICommand {
         IOutput outputWriter = getOutputWriter();
 
         outputWriter.printlnMessage("");
-        outputWriter.printlnMessage("");
         CommandManager mgr = getCommandManager();
 
         if (mgr.isVerbose()) {
@@ -64,6 +63,17 @@ public abstract class CLICommandBase implements CLICommand {
             outputWriter.printlnMessage(
                 MessageFormat.format(msg, (Object[])arg));
         }
+    }
+
+    protected String getStringOptionValue(
+        String optionName,
+        String defValue
+    ) {
+        String value = getStringOptionValue(optionName);
+        if ((value == null) || (value.trim().length() == 0)) {
+            value = defValue;
+        }
+        return value;
     }
 
     protected String getStringOptionValue(String optionName) {
