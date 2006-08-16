@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguratorPlugin.java,v 1.1 2006-08-09 21:14:43 veiming Exp $
+ * $Id: ConfiguratorPlugin.java,v 1.2 2006-08-16 18:54:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import com.iplanet.sso.SSOToken;
 import javax.servlet.ServletContext;
 
 public interface ConfiguratorPlugin {
@@ -31,6 +32,7 @@ public interface ConfiguratorPlugin {
      * Does post configuration task.
      *
      * @param servletCtx Servlet Context.
+     * @param adminSSOToken Super Administrator Single Sign On Token
      */
-    void doPostConfiguration(ServletContext servletCtx);
+    void doPostConfiguration(ServletContext servletCtx, SSOToken adminSSOToken);
 }

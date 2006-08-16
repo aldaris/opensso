@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.3 2006-08-09 21:14:42 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.4 2006-08-16 18:54:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,7 +223,7 @@ public class AMSetupServlet extends HttpServlet {
                 regService.registers(adminSSOToken);
                 processDataRequests("WEB-INF/template/sms");
 
-                handlePostPlugins();
+                handlePostPlugins(adminSSOToken);
 
                 reInitConfigProperties();
                 AMAuthenticationManager.reInitializeAuthServices();
@@ -269,7 +269,7 @@ public class AMSetupServlet extends HttpServlet {
         return false;
     }
 
-    private static void handlePostPlugins() {
+    private static void handlePostPlugins(SSOToken adminSSOToken) {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
                 PROPERTY_CONFIGURATOR_PLUGINS);
@@ -282,7 +282,7 @@ public class AMSetupServlet extends HttpServlet {
                     Class clazz = Class.forName(className);
                     ConfiguratorPlugin plugin =
                         (ConfiguratorPlugin)clazz.newInstance();
-                    plugin.doPostConfiguration(servletCtx);
+                    plugin.doPostConfiguration(servletCtx, adminSSOToken);
                 }
             }
         } catch (IllegalAccessException e) {
