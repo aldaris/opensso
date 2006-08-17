@@ -1,0 +1,212 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: AuthSampleLoginModule.xml,v 1.1 2006-08-17 17:09:42 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<sample title="OpenSSO Server - Authentication Samples"
+    relativePath="."  >
+                                                                                
+    <section title="Sample Login Module">
+    <paragraph>
+    <b>How to Write Sample Login Module using  AMLoginModule SPI (Service 
+    Provider Interface)?</b>
+    </paragraph>
+
+    <paragraph>
+    Create Module properties XML file with the same name of the class 
+    (no package name) and have the extension .xml. Based on this configuration
+    file, Authentication UI will dynamically generate page. 
+    </paragraph>
+    <paragraph>
+    Note : create XML file with above naming convention even if no states
+    required.
+    </paragraph>
+    <paragraph>
+    Page states can be defined in module properties file as shown below, 
+    each Callbacks Element corresponds to one login page state. When an 
+    authentication process is invoked, there will be <code>Callback[]</code> 
+    generated from user's Login Module for each state. All login state starts 
+    with 1, then module control the login process, and decides what's the next 
+    state to go. 
+    <pre>
+        &lt;ModuleProperties moduleName="LoginModuleSample" version="1.0" &gt;
+        &lt;Callbacks length="2" order="1" timeout="60" 
+            header="This is a sample login page" &gt;
+            &lt;NameCallback&gt;
+            &lt;Prompt&gt; User Name &lt;/Prompt&gt;
+        &lt;/NameCallback&gt;
+        &lt;NameCallback&gt;
+            &lt;Prompt&gt; Last Name &lt;/Prompt&gt;
+        &lt;/NameCallback&gt;
+        &lt;/Callbacks&gt;
+        &lt;Callbacks length="1" order="2" timeout="60" 
+            header="You made it to page 2" &gt;
+            &lt;PasswordCallback echoPassword="false" &gt;
+            &lt;Prompt&gt; Just enter any password &lt;/Prompt&gt;
+            &lt;/PasswordCallback&gt;
+        &lt;/Callbacks&gt;
+    &lt;/ModuleProperties&gt;
+    </pre>
+    </paragraph>
+    <paragraph>
+    In the sample module configuration shown above, page state one has two
+    Callbacks, first callback is for user ID and second is for Last Name. When
+    the user fills in the Callbacks, those Callback[] will be sent to the
+    module, where the module writer gets the submitted Callbacks, validates
+    them and returns. Module writer will set the next page state to 2. Page
+    state two has one Callback to request user to enter password. The
+    <code>process()</code> routine is again called after user submits the
+    Callback[]. If the module writer throws an <code>LoginException</code>, an
+    'authentication failed' page will be sent to the user. If no exception is
+    thrown, the user will be redirected to their default page.
+    </paragraph>
+    <paragraph>
+    Click <a href="xml/LoginModuleSample.xml">here</a> to view XML.
+    </paragraph>
+    </section>
+    <section title="Principal Object">
+    <paragraph>
+    This object is created by the Authentication framework if authentication 
+    succeeded. <a href="source/com/sun/identity/samples/authentication/spi/providers/SamplePrincipal.java">Source code</a>
+    </paragraph>
+    </section>
+    <section title="Login Module">
+    <paragraph>
+    Login Module writers must subclass <code>AMLoginModule</code> class and
+    implement <code>init()</code>, <code>process()</code>,
+    <code>getPrincipal()</code> methods. <code>AMLoginModule</code> is an
+    abstract class which implements JAAS <code>LoginModule</code>, it provides
+    methods to access Sun Java System Access Manager services and the module
+    XML configuration. Refer javadocs for complete list of methods. 
+    <pre>
+    public void init(Subject subject,Map sharedState, Map options);
+    </pre>
+    This method initializes the login module. If the module does not understand
+    any of the data stored in <code>sharedState</code> or options parameters,
+    they can be ignored. This method is called by a <code>AMLoginModule</code>
+    immediately after the login module is instantiated. This method may
+    additionally peruse the provided <code>sharedState</code> to determine
+    what are additional authentication state that was provided by other
+    login modules; and may also traverse through the provided options to
+    determine what configuration options were specified to affect the
+    login module's behavior. It may save option values in variables for
+    future use. 
+    <pre>
+    public int process(
+        javax.security.auth.callback.Callback[] callbacks,
+        int state
+    ) throws LoginException;
+    </pre>
+    This method is called to authenticate a subject. For example, it prompts
+    for a user name and password, and then attempt to verify the password
+    against a database. If the login module requires some form of user
+    interaction (e.g. retrieving a user name and password), it should not do
+    so directly. That is because there are various ways of communicating with
+    a user, and it is desirable for login module to remain independent of the
+    different types of user interaction. Rather, this method should invoke
+    the handle method of the the <code>CallbackHandler</code> which deals with
+    user interaction; and then send the results back to this process method. 
+    For instance, user name and password are modeled as <code>NameCallback</code>
+    and <code>PasswordCallback</code> respectively. The <code>CallbackHandler</code> 
+    then set the name and password values for these callbacks respectively; and
+    call this process method again to perform authentication.
+    </paragraph>
+    <paragraph>
+    Consider following steps while writing preocess() method.  
+    </paragraph>
+    <paragraph>
+    <orderedlist nocontext="yes">
+    <item>Perform the authentication.</item>
+    <item>If Authentication succeeded, track the principal who has
+    successfully authenticated.  </item>
+    <item>Return -1 if authentication succeeds, or throw a login exception
+    such as <code>AuthLoginException</code> if authentication fails or
+    return relevant state specified in module configuration XML file.</item>
+    <item>If multiple states are available to the user, the Callback array
+    from a previous state may be retrieved by using the
+    <code>getCallbak(int state)</code> methods. The underlying login module
+    keeps the <code>Callback[]</code> from the previous states until thes
+    login process is completed.  </item>
+    <item>If a module writer need to substitute dynamic text in next state,
+    the writer could use the <code>getCallback()</code> method to get the
+    <code>Callback[]</code> for the next state, modify the output text or
+    prompt, then call <code>replaceCallback()</code> to update the Callback
+    array. This allows a module writer to dynamically generate challenges,
+    passwords or user IDs. Note: Each authentication session will create a
+    new instance of your Login Module Java class. The reference to the
+    class will be released once the authentication session has either
+    suceeded or failed. It is important to note that any static data or
+    reference to any static data in your Login module must be thread-safe.
+    </item>
+    </orderedlist>
+    </paragraph>
+    <paragraph>
+    <pre>
+    public Principal getPrincipal();
+    </pre>
+    This method should be called once at the end of a successful
+    authentication session. A login session is deemed successful when all
+    pages in the Module properties XML file have been sent and the module
+    has not thrown an exception. The method retrieves the authenticated
+    token string that the authenticated user will be known by in the
+    Access Manager environment. 
+    </paragraph>
+    <paragraph>
+    <a href="source/com/sun/identity/samples/authentication/spi/providers/LoginModuleSample.java">Source code</a>
+    </paragraph>
+    </section>
+    <section title="Setup">
+    <paragraph>
+    The followings are steps
+    </paragraph>
+    <paragraph>
+    <orderedlist nocontext="yes">
+    <item>Login to Access Manager Console as amadmin. [<a target="console" href="UI/Login">here</a>]</item>
+    <item>Click on "Configuration" tab.</item>
+    <item>Select "Core" under the Authentication table.</item>
+    <item>Add <code>com.sun.identity.samples.authentication.spi.providers.LoginModuleSample</code> to "Pluggable Auth Modules Classes" attribute.</item>
+    <item>Click on save button to save the changes</item>
+    </orderedlist>
+    </paragraph>
+
+    <paragraph>
+    Followings are already set up for you.
+    </paragraph>
+    <paragraph>
+    <orderedlist nocontext="yes">
+    <item>Compile LoginModuleSample.java and SamplePrincipal.java</item>
+    <item>Copy the compiled classes to web application's WEB-INF/classes directory</item>
+    <item>Copy this <a target="console" href="xml/LoginModuleSample.xml">XML</a> to web application's config/auth/default directory.</item>
+    </orderedlist>
+    </paragraph>
+
+    </section>
+
+    <section title="Run the sample">
+    <paragraph>
+    Click <a target="console" href="UI/Login?module=LoginModuleSample">here</a>.
+    (If you choose to use a realm other than the root realm, add &amp;org= and 
+    the realm name to this URL).
+    </paragraph>
+    </section>
+</sample>

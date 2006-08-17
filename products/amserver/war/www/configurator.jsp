@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.1 2006-07-17 18:11:38 veiming Exp $
+   $Id: configurator.jsp,v 1.2 2006-08-17 17:09:45 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -112,7 +112,7 @@
         }
 
         function gotoLoginPage() {
-            this.location.replace("./UI/Login");
+            this.location.replace("./index.html");
         }
 
         function gotoConfigurator() {

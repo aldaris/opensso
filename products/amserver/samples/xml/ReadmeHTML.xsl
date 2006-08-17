@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: ReadmeHTML.xsl,v 1.1 2006-08-04 21:07:02 veiming Exp $
+   $Id: ReadmeHTML.xsl,v 1.2 2006-08-17 17:09:44 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,7 +49,7 @@
 <table cellspacing="8" cellpadding="4" border="0" width="100%" >
 <tr nowrap="yes">
 <td class="bannerContentLeft" width="20%" align="center"><a href="http://www.sun.com"><img border="0" src="{@relativePath}/sunLogo.gif" /></a></td>
-<td class="bannerContentCenter" width="60%" valign="bottom" nowrap="yes">Sun Java System Access Manager version 7 2005Q4<br />Sample</td>
+<td class="bannerContentCenter" width="60%" valign="bottom" nowrap="yes">Sun Java System Access Manager<br />Sample</td>
 <td class="bannerContentRight" width="20%" valign="bottom" nowrap="yes">&#160;</td>
 </tr>
 </table>

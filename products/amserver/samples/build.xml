@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-08-04 21:06:50 veiming Exp $
+   $Id: build.xml,v 1.2 2006-08-17 17:09:41 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,11 @@
     <property name="samples.xml.dir" location="${samples.dir}/xml"/>
     <property name="samplesrc.dir" location="${samples.dir}/source"/>
 
-    <target name="all" depends="preparebuild">
+    <target name="all" depends="client">
+        <ant antfile="${samples.dir}/server/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="client" depends="preparebuild">
         <javac destdir="${samples.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${samplesrc.dir}"/>
@@ -129,5 +133,4 @@
         <ant antfile="${samples.dir}/clientsdk/build.xml" inheritRefs="true"
             target="clean"/>
     </target>
-
 </project>

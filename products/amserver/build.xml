@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2006-08-09 16:45:25 veiming Exp $
+   $Id: build.xml,v 1.18 2006-08-17 17:09:40 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -297,7 +297,7 @@
         <ant antfile="${demobase.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="samples" depends="clientsdk">
+    <target name="samples" depends="clientsdk,war">
         <ant antfile="${samples.dir}/build.xml" inheritRefs="true"/>
     </target>
 
