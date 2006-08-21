@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthSchemeCondition.java,v 1.1 2006-04-26 05:14:46 dillidorai Exp $
+ * $Id: AuthSchemeCondition.java,v 1.2 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,26 +57,6 @@ public class AuthSchemeCondition implements Condition {
 
     private static final Debug DEBUG 
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
-
-
-    /** Key that is used to define the  the authentication module
-     * instance for which the policy would apply.  The value should be
-     *  a Set with only one element. The element should be a 
-     *  String, the authentication module instance name.
-     *
-     *  @see #setProperties(Map)
-     */
-    public static final String AUTH_SCHEME = "AuthScheme";
-
-
-    /** Key that is used to define the name of authentication module
-     * instance name  of the request.
-     *  Value for the key should be a set with each element being a String
-     *
-     *  @see #getConditionDecision(SSOToken, Map)
-     *  @see #AUTH_SCHEME
-     */
-    public static final String REQUEST_AUTH_SCHEMES = "requestAuthSchemes";
 
     /** Key that is used identify the advice messages from
      * <code>AuthSchemeCondition</code>

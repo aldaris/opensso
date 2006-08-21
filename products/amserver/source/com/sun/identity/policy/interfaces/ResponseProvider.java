@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseProvider.java,v 1.1 2006-04-26 05:14:24 dillidorai Exp $
+ * $Id: ResponseProvider.java,v 1.2 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,17 +40,18 @@ import java.util.Set;
  * The class <code>ResponseProvider</code> defines an interface to allow 
  * pluggable response providers into the Access manager framework. These 
  * are used to provide policy response attributes. Policy response attributes 
- * are different from <code>ActionDecision</code>s.Policy response attributes 
+ * are different from <code>ActionDecision</code>. Policy response attributes 
  * typically provide attribute values of user profile. User profile could 
- * exist in any repository managed by IDRepo service. However, reponse 
+ * exist in any data store managed by Identity repository. However, reponse 
  * attributes are not restricted to attributes from user profile. 
  * Source of the attribute values is completely at the discretion of the 
- * specific implementation of the response provider.
-
- * The response provider is intialized by calling its initialize() method.
+ * specific implementation of the <code>ResponseProvider</code>.
+ * <p>
+ * The response provider is initialized by calling its <code>initialize()
+ * </code> method.
  * Its also configured by setting its properites by a call to 
  * <code>setProperties()</code> method.
- *
+ * <p>
  * Response attribute names are not checked against schema of the service
  * registered with Access Manager. (<code>ActionDecision</code> attributes
  * are checked against the schema of the service registered with
@@ -66,13 +67,14 @@ import java.util.Set;
  * policy is applicable to a request as determined by <code>SSOToken</code>, 
  * <code>resource name</code>, <code>Subjects</code> and 
  * <code>Conditions</code>.
- *
+ * <p>
  * The only out-of-the-box <code>ResponseProvider</code> implementation 
  * provided with the Policy framework would be 
  * <code>IDRepoResponseProvider</code>.
  *
  * All <code>ResponseProvider</code> implementations should have a public no 
  * argument constructor.
+ * @supported.all.api
  *
  */
 public interface ResponseProvider extends Cloneable {
@@ -88,7 +90,7 @@ public interface ResponseProvider extends Cloneable {
 
 
     /**
-     * Returns a list of property names for the condition.
+     * Returns a list of property names for the Response provider.
      *
      * @return list of property names
      */
@@ -142,9 +144,10 @@ public interface ResponseProvider extends Cloneable {
      *  conditions defined.
      *  @param properties the properties of the <code>ResponseProvider</code>
      *         Keys of the properties have to be String.
-     *         Value corresponding to each key have to be a Set of String
-     *         elements. Each implementation of ResponseProvider could add 
-     *         further restrictions on the keys and values of this map.
+     *         Value corresponding to each key have to be a <code>Set</code> 
+     *         of String elements. Each implementation of ResponseProvider 
+     *         could add further restrictions on the keys and values of this 
+     *         map.
      *  @throws PolicyException for any abnormal condition
      */
     public void setProperties(Map properties) throws PolicyException;

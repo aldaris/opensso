@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPFilterCondition.java,v 1.2 2006-08-01 01:41:23 bigfatrat Exp $
+ * $Id: LDAPFilterCondition.java,v 1.3 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,17 +68,6 @@ import com.iplanet.sso.SSOToken;
  */
 
 public class LDAPFilterCondition implements Condition {
-
-    /** 
-     *  Key that is used to define the ldap filter that should 
-     *  be satisfied by the ldap entry of the user for the 
-     *  condition to be satisifed
-     *  The value should be a Set with only one element. 
-     *  The element should be a  String
-     *
-     *  @see #setProperties(Map)
-     */
-    public static final String LDAP_FILTER = "ldapFilter";
 
     static final String LDAP_SCOPE_BASE = "SCOPE_BASE";
     static final String LDAP_SCOPE_ONE = "SCOPE_ONE";

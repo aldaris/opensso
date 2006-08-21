@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.1 2006-04-26 05:14:47 dillidorai Exp $
+ * $Id: IPCondition.java,v 1.2 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,111 +55,29 @@ import java.util.StringTokenizer;
  *
  */
 public class IPCondition implements Condition {
-    
-    private static final Debug DEBUG 
-        = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
 
-    /** Key that is used to define the  start of IP address range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that conforms to the pattern described here. If a value is
-     * defined for START_IP,  a value should also be defined for END_IP.
-     *
-     * The patterns is :
-     *    n.n.n.n
-     * where n would take any integer value between 0 and 255 inclusive.
-     *
-     * Some sample values are
-     *     122.100.85.45
-     *     145.64.55.35
-     *     15.64.55.35
-     * @see #setProperties(Map)
-     */
-    public static final String START_IP = "StartIp";
-    
-    /** Key that is used to define the  end of IP address range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that conforms to the pattern described here. If a value is
-     * defined for END_IP,  a value should also be defined for START_IP.
-     *
-     * The patterns is :
-     *    n.n.n.n
-     * where n would take any integer value between 0 and 255 inclusive.
-     *
-     * Some sample values are
-     *     122.100.85.45
-     *     145.64.55.35
-     *     15.64.55.35
-     * @see #setProperties(Map)
-     */
-    public static final String END_IP = "EndIp";
-    
-    /** Key that is used to define the  IP address values for which
-     * a policy applies. The value corresponding to the key
-     * has to be a a Set where each element is a String
+    /** Key that is used in <code>IPCondition</code> to define the  IP address
+     * values for which a policy applies. The value corresponding to the key
+     * has to be a <code>Set</code> where each element is a <code>String</code>
      * that conforms to the pattern described
      * here.
      *
      * The pattern  has 2 parts separated by "-".
      * The patterns is :
-     *    n.n.n.n[-n.n.n.n]
+     *	  n.n.n.n[-n.n.n.n]
      * where n would take any integer value between 0 and 255 inclusive.
      *
      * Some sample values are
-     *     122.100.85.45-125.110.90.66
-     *     145.64.55.35-215.110.173.145
-     *     15.64.55.35
+     *	   122.100.85.45-125.110.90.66
+     *	   145.64.55.35-215.110.173.145
+     *	   15.64.55.35
      * @see #setProperties(Map)
      */
     public static final String IP_RANGE = "IpRange";
-    
-    /** Key that is used to define the  DNS name values for which
-     * a policy applies. The value corresponding to the key
-     * has to be a a Set where each element is a String
-     * that conforms to the patterns described here.
-     *
-     * The patterns is :
-     * <pre>
-     * ccc.ccc.ccc.ccc
-     * *.ccc.ccc.ccc</pre>
-     * where c is any valid character for DNS domain/host name.
-     * There could be any number of <code>.ccc</code> components.
-     * Some sample values are:
-     * <pre>
-     * www.sun.com
-     * finace.yahoo.com
-     * *.yahoo.com
-     * </pre>
-     *
-     * @see #setProperties(Map)
-     */
-    public static final String DNS_NAME = "DnsName";
-    
-    
-    /** Key that is used to define request IP address that is passed in
-     * the <code>env</code> parameter while invoking
-     * <code>getConditionDecision</code> method.
-     * Value for the key should be a String that is a string representation
-     * of IP of the client, in the form n.n.n.n where n is a value between 
-     * 0 and 255 inclusive.
-     *
-     * @see #getConditionDecision(SSOToken, Map)
-     * @see #REQUEST_DNS_NAME
-     */
-    public static final String REQUEST_IP = "requestIp";
-    
-    /** Key that is used to define request DNS name that is passed in
-     * the <code>env</code> parameter while invoking
-     * <code>getConditionDecision</code> method.
-     * Value for the key should be a set of strings representing the
-     * DNS names of the client, in the form <code>ccc.ccc.ccc</code>.
-     *
-     * @see #getConditionDecision(SSOToken, Map)
-     */
-    public static final String REQUEST_DNS_NAME = "requestDnsName";
-    
-    
+
+    private static final Debug DEBUG 
+        = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
+
     private Map properties;
     private ArrayList ipList = new ArrayList();
     private ArrayList dnsList = new ArrayList();

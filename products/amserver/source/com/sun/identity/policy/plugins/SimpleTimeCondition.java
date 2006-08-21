@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimpleTimeCondition.java,v 1.1 2006-04-26 05:14:50 dillidorai Exp $
+ * $Id: SimpleTimeCondition.java,v 1.2 2006-08-21 18:46:37 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,19 @@ import java.text.*;
  *
  */
 public class SimpleTimeCondition implements Condition {
+
+    /** Key that is used to define current time that is passed in the
+     *  <code>env</code> parameter while invoking <code>getConditionDecision
+     *  </code> method of the <code>SimpleTimeCondition</code>. Value for the
+     *  key should be a <code>Long</code> object whose value is time in
+     *  milliseconds since epoch. If no value is given for this, it is assumed
+     *  to be the current system time
+     *
+     *
+     *	@see #getConditionDecision(SSOToken, Map)
+     *	@see #Condition.ENFORCEMENT_TIME_ZONE
+     */
+    public static final String REQUEST_TIME = "requestTime";
     
     private static final Debug DEBUG 
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
@@ -55,167 +68,6 @@ public class SimpleTimeCondition implements Condition {
     private static final String[] DAYS_OF_WEEK = { "", "sun", "mon", "tue", 
         "wed", "thu", "fri", "sat"};
 
-    /** Key that is used to define the  beginning of time range during
-     *  which a policy applies.  The value corresponding to the key
-     * has to be a Set that has just one element which is a String
-     * that conforms to the pattern described here. If a value is
-     * defined for <code>START_TIME</code>,  a value should also be defined for
-     * <code>END_TIME</code>.
-     *
-     * The patterns is:
-     * <pre>
-     *    HH:mm
-     * </pre>
-     *
-     * Some sample values are
-     * <pre>
-     *     08:25
-     *     18:45
-     * </pre>
-     *
-     * @see #setProperties(Map)
-     * @see #END_TIME
-     */
-    public static final String START_TIME = "StartTime";
-    
-    /** Key that is used to define the  end of time range during
-     *  which a policy applies.  The value corresponding to the key
-     * has to be  a Set that has just one element which is a String
-     * that conforms to the pattern described here. If a value is
-     * defined for <code>END_TIME</code>,  a value should also be defined for
-     * <code>START_TIME</code>.
-     *
-     * The patterns is:
-     * <pre>
-     *    HH:mm
-     * </pre>
-     *
-     * Some sample values are
-     * <pre>
-     *     08:25
-     *     18:45
-     * </pre>
-     *
-     * @see #setProperties(Map)
-     * @see #START_TIME
-     */
-    public static final String END_TIME = "EndTime";
-    
-    /** Key that is used to define the  start of day of week  range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that is one of the values <code>Sun, Mon, Tue, Wed, Thu, Fri, Sat.</code>
-     * If a value is defined for <code>START_DAY</code>,  a value should also be
-     * defined for <code>END_DAY</code>.
-     *
-     * Some sample values are
-     * <pre>
-     *     Sun
-     *     Mon
-     *     15.64.55.35
-     * </pre>
-     * @see #setProperties(Map)
-     * @see #END_DAY
-     */
-    public static final String START_DAY = "StartDay";
-    
-    /** Key that is used to define the  end of day of week  range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that is one of the values <code>Sun, Mon, Tue, Wed, Thu, Fri, Sat.</code>
-     * If a value is defined for <code>END_DAY</code>,  a value should also be
-     * defined for <code>START_DAY</code>.
-     *
-     * Some sample values are
-     * <pre>
-     *     Sun
-     *     Mon
-     * </pre>
-     * @see #setProperties(Map)
-     * @see #START_DAY
-     */
-    public static final String END_DAY = "EndDay";
-    
-    /** Key that is used to define the  start of date range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that corresponds to the pattern described below.
-     * If a value is defined for <code>START_DATE</code>, a value should
-     * also be defined for <code>END_DATE</code>.
-     *
-     * The pattern is
-     * <pre>
-     *     yyyy:MM:dd
-     * Some sample values are
-     *     2001:02:26
-     *     2002:12:31
-     * </pre>
-     *
-     * @see #setProperties(Map)
-     * @see #END_DATE
-     */
-    public static final String START_DATE = "StartDate";
-    
-    /** Key that is used to define the  end of date range for
-     * which a policy applies. The value corresponding to the key
-     * has to be a a Set that has just one element which is a String
-     * that corresponds to the pattern described below.
-     * If a value is defined for <code>END_DATE</code>,  a value should
-     * also be defined for <code>START_DATE</code>.
-     *
-     * The pattern is
-     * <pre>
-     *     yyyy:MM:dd
-     * Some sample values are
-     *     2001:02:26
-     *     2002:12:31
-     * </pre>
-     *
-     * @see #setProperties(Map)
-     * @see #START_DATE
-     */
-    public static final String END_DATE = "EndDate";
-    
-    /** Key that is used to define the  time zone basis to
-     *  to evaluate the condition.
-     *  The value corresponding to the key
-     *  has to be a one element Set where the element is a String
-     *  that is one of the standard timezone IDs supported by java
-     *  or a String of the  pattern <code>GMT[+|-]hh[[:]mm]</code>
-     *  here. If the value is not a valid time zone id and does
-     *  not match the pattern <code>GMT[+|-]hh[[:]mm]</code>, it would default
-     *  to GMT
-     *
-     *  @see java.util.TimeZone
-     */
-    public static final String ENFORCEMENT_TIME_ZONE
-            = "EnforcementTimeZone";
-    
-    /** Key that is used to define current time. Value for the key should
-     *  be a Long object whose value is time in milliseconds since epoch.
-     *  If no value is given for this, it is assumed to be the current
-     *  system time
-     *  
-     *
-     *  @see #getConditionDecision(SSOToken, Map)
-     *  @see #ENFORCEMENT_TIME_ZONE
-     */
-    public static final String REQUEST_TIME = "requestTime";
-    
-    /** Key that is used to define time zone that is passed in
-     *  the <code>env</code> parameter while invoking
-     *  <code>getConditionDecision</code> method.
-     *  Value for the key should be a TimeZone object. This
-     *  would be used only if the <code>ENFORCEMENT_TIME_ZONE</code> is not
-     *  defined for the condition
-     *
-     *  @see #getConditionDecision(SSOToken, Map)
-     *  @see #REQUEST_TIME
-     *  @see #ENFORCEMENT_TIME_ZONE
-     *  @see java.util.TimeZone
-     */
-    public static final String REQUEST_TIME_ZONE = "requestTimeZone";
-    
     private Map properties;
     private int startTime = -1;
     private int startHour = -1;

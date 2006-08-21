@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Condition.java,v 1.1 2006-04-26 05:14:23 dillidorai Exp $
+ * $Id: Condition.java,v 1.2 2006-08-21 18:46:35 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 package com.sun.identity.policy.interfaces;
 
@@ -64,6 +62,7 @@ import java.util.Set;
  * <li>SessionPropertyCondition</li>
  * <li>AuthenticateToRealmCondition</li>
  * <li>AuthenticateToServiceCondition</li>
+ * <li>LDAPFilterCondition</li>
  * </ul>
  *
  * All condition implementations should have a public no argument 
@@ -74,6 +73,443 @@ import java.util.Set;
  */
 public interface Condition extends Cloneable {
 
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an AuthLevelCondition or LEAuthLevelCondition.
+     */
+
+    /** Key that is used to define the minimum authentication level 
+     *  in an <code>AuthLevelCondition</code> or the maximum authentication 
+     *  level in a  <code>LEAuthLevelCondition</code> of a  policy being 
+     *  evaluated. In case of <code>AuthLevelCondition</code> policy would 
+     *  apply if the request authentication level is at least the level 
+     *  defined in condition while in case of <code>LEAuthLevelCondition</code> 
+     *  policy would apply if the request authentication level is less than
+     *  or equal to the level defined in the condition.
+     *  The value should be a <code>Set</code> with only one 
+     *  element. The element should be a  <code>String</code>, parse-able as 
+     *  an integer or a realm qualified integer like "sun:1" where "sun" is a 
+     *  realm name.":" needs to used a delimiter between realm name and the 
+     *  level.
+     *
+     *  @see #setProperties(Map)
+     */
+    public static final String AUTH_LEVEL = "AuthLevel";
+
+    /** Key that is used to define the authentication level of the request.
+     *  Its passed down in the <code>env</code> Map to the 
+     *  <code>getConditionDecision</code> call of an <code>AuthLevelCondition
+     *  </code> or <code>LEAuthLevelCondition</code> for condition evaluation.
+     *  <p>
+     *  The value should be  an Integer or a <code>Set</code> of 
+     *  <code>String</code>s. If it is a <code>Set</code> of 
+     *  <code>String</code>s, each element of the set has to be parseable as 
+     *  integer or should be a realm qualified integer like "sun:1". If the 
+     *  <code>env</code> parameter is null or does not
+     *  define value for <code>REQUEST_AUTH_LEVEL</code>,  the value for
+     *  <code>REQUEST_AUTH_LEVEL</code> is obtained from the single sign
+     *  on token of the user 
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #AUTH_LEVEL
+     */
+    public static final String REQUEST_AUTH_LEVEL = "requestAuthLevel";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an AuthSchemeConditon.
+     */
+
+    /** Key that is used to define the authentication scheme 
+     *  in an <code>AuthSchemeCondition</code> of a policy.
+     *  Policy would apply if the authentication scheme of the request is same
+     *  as defined in the condition. The value should be
+     *  a <code>Set</code> with only one element. The element should be a 
+     *  <code>String</code>, the authentication scheme name.
+     *
+     *  @see #setProperties(Map)
+     */
+    public static final String AUTH_SCHEME = "AuthScheme";
+
+
+    /** Key that is used to define the name of authentication scheme of the 
+     *  request. Its passed down as part of the <code>env</code> Map to
+     *  <code>getConditionDecision</code> of an <code>AuthSchemeCondition</code>
+     *  for condition evaluation.
+     *  Value for the key should be a <code>Set</code> with each element being 
+     *  a <code>String</code>.
+     *  If the <code>env</code> parameter is null or does not
+     *  define value for <code>REQUEST_AUTH_SCHEMES</code>,  the value for
+     *  <code>REQUEST_AUTH_SCHEMES</code> is obtained from the single sign
+     *  on token of the user 
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #AUTH_SCHEME
+     */
+    public static final String REQUEST_AUTH_SCHEMES = "requestAuthSchemes";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an AuthenticateToRealmCondition.
+     */
+
+    /** Key used in <code>AuthenticateToRealmCondition</code> to specify the 
+     *  realm for which the user should authenticate for the policy to apply. 
+     *  The value should be  a <code>Set</code> with only one element. 
+     *  The should be a  <code>String</code>, the realm name.
+     *
+     *  @see #setProperties(Map)
+     */
+    public static final String AUTHENTICATE_TO_REALM = "AuthenticateToRealm";
+
+
+    /** Key that is used to identify the names of authenticated realms 
+     *  in the request. Its passed down as part of the <code>env</code> Map to
+     *  <code>getConditionDecision</code> of an <code>
+     *  AuthenticateToRealmCondition</code> for condition evaluation.
+     *  Value for the key should be a <code>Set</code> with each element being 
+     *  a <code>String</code>
+     *  If the <code>env</code> parameter is null or does not
+     *  define value for <code>REQUEST_AUTHENTICATED_TO_REALMS</code>,  the 
+     *  value for <code>REQUEST_AUTHENTICATED_TO_REALMS</code> is obtained 
+     *  from the single sign on token of the user 
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #AUTHENTICATE_TO_REALM
+     */
+    public static final String REQUEST_AUTHENTICATED_TO_REALMS 
+            = "requestAuthenticatedToRealms";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an AuthenticateToServiceCondition.
+     */
+
+    /** Key that is used in <code>AuthenticateToServiceCondition</code> to 
+     *  specify the authentication chain for which the user should authenticate 
+     *  for the policy to apply. 
+     *  The value should be  a <code>Set</code> with only one element. 
+     *  The should be a  <code>String</code>, the realm name.
+     *
+     *  @see #setProperties(Map)
+     */
+    public static final String AUTHENTICATE_TO_SERVICE 
+            = "AuthenticateToService";
+
+    /** Key that is used to identify the names of authentication chains
+     *  in the request. Its passed down as part of the <code>env</code> Map to
+     *  <code>getConditionDecision</code> of an <code>
+     *  AuthenticateToServiceCondition</code> for condition evaluation.
+     *  Value for the key should be a <code>Set</code> with each element being 
+     *  a <code>String</code>.
+     *  If the <code>env</code> parameter is null or does not
+     *  define value for <code>REQUEST_AUTHENTICATED_TO_SERVICES</code>,  the 
+     *  value for <code>REQUEST_AUTHENTICATED_TO_SERVICES</code> is obtained 
+     *  from the single sign on token of the user 
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #AUTHENTICATE_TO_SERVICE
+     */
+    public static final String REQUEST_AUTHENTICATED_TO_SERVICES 
+            = "requestAuthenticatedToServices";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an IPCondition.
+     */
+
+    /** Key used in <code>IPCondition</code> to define the  start of IP 
+     * address range for which a policy applies.
+     * The value corresponding to the key  has to be a <code>Set</code> that 
+     * has just one element which is a <code>String</code>
+     * that conforms to the pattern described here. If a value is
+     * defined for START_IP,  a value should also be defined for END_IP.
+     *
+     * The patterns is :
+     *    n.n.n.n
+     * where n would take any integer value between 0 and 255 inclusive.
+     *
+     * Some sample values are
+     *     122.100.85.45
+     *     145.64.55.35
+     *     15.64.55.35
+     * @see #setProperties(Map)
+     */
+    public static final String START_IP = "StartIp";
+    
+    /** Key that is used in  <code>IPCondition</code> to define the  end of 
+     *  IP address range for which a policy applies. 
+     * The value corresponding to the key has to be a <code>Set</code> that 
+     * has just one element which is a <code>String</code>
+     * that conforms to the pattern described here. If a value is
+     * defined for END_IP,  a value should also be defined for START_IP.
+     *
+     * The patterns is :
+     *    n.n.n.n
+     * where n would take any integer value between 0 and 255 inclusive.
+     *
+     * Some sample values are
+     *     122.100.85.45
+     *     145.64.55.35
+     *     15.64.55.35
+     * @see #setProperties(Map)
+     */
+    public static final String END_IP = "EndIp";
+    
+    /** Key that is used in an <code>IPCondition</code> to define the  DNS 
+     * name values for which a policy applies. The value corresponding to the 
+     * key has to be a <code>Set</code> where each element is a <code>String
+     * </code> that conforms to the patterns described here.
+     *
+     * The patterns is :
+     * <pre>
+     * ccc.ccc.ccc.ccc
+     * *.ccc.ccc.ccc</pre>
+     * where c is any valid character for DNS domain/host name.
+     * There could be any number of <code>.ccc</code> components.
+     * Some sample values are:
+     * <pre>
+     * www.sun.com
+     * finace.yahoo.com
+     * *.yahoo.com
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     */
+    public static final String DNS_NAME = "DnsName";
+    
+    
+    /** Key that is used to define request IP address that is passed in
+     * the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
+     * Value for the key should be a <code>String</code> that is a string 
+     * representation of IP of the client, in the form n.n.n.n where n is a 
+     * value between 0 and 255 inclusive.
+     *
+     * @see #getConditionDecision(SSOToken, Map)
+     * @see #REQUEST_DNS_NAME
+     */
+    public static final String REQUEST_IP = "requestIp";
+    
+    /** Key that is used to define request DNS name that is passed in
+     * the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
+     * Value for the key should be a set of strings representing the
+     * DNS names of the client, in the form <code>ccc.ccc.ccc</code>.
+     * If the <code>env</code> parameter is null or does not
+     * define value for <code>REQUEST_DNS_NAME</code>,  the 
+     * value for <code>REQUEST_DNS_NAME</code> is obtained 
+     * from the single sign on token of the user 
+     *
+     * @see #getConditionDecision(SSOToken, Map)
+     */
+    public static final String REQUEST_DNS_NAME = "requestDnsName";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of a LDAPFilterCondition.
+     */
+    /** 
+     *  Key that is used in a <code>LDAPFilterCondition</code> to define the 
+     *  ldap filter that should  be satisfied by the ldap entry of the user 
+     *  for the condition to be satisifed
+     *  The value should be a <code>Set</code> with only one element. 
+     *  The element should be a  <code>String</code>.
+     *
+     *  @see #setProperties(Map)
+     */
+    public static final String LDAP_FILTER = "ldapFilter";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of a SessionCondition.
+     */
+
+    /**
+     * Key that is used in <code>SessionCondition</code> to define the maximum 
+     * session time in minutes for which a policy applies. 
+     * The value corresponding to the key has to be a  <code>Set</code> that 
+     * has just one element which is a string and parse-able as an 
+     * <code>Integer</code>. 
+     */
+    public static final String MAX_SESSION_TIME = "MaxSessionTime";
+
+    /**
+     * Key in <code>SessionCondition</code> that is used to define the option 
+     * to terminate the session if the session exceeds the maximum session
+     * time. The value corresponding to the key has to be a <code>Set</code> 
+     * that has just one element which is a string. The option is on if
+     * the string value is equal to <code>true</code>.
+     */
+    public static final String TERMINATE_SESSION = "TerminateSession";
+
+    /**
+     * Following keys are used to define relevant key names for processing
+     * the environment Map of an SimpleTimeCondition.
+     */
+
+    /** Key that is used in <code>SimpleTimeCondition</code> to define the  
+     * beginning of time range during which a policy applies.
+     * The value corresponding to the key has to be a <code>Set</code> that 
+     * has just one element which is a <code>String</code> that conforms to 
+     * the pattern described here. If a value is defined for 
+     * <code>START_TIME</code>,  
+     * a value should also be defined for <code>END_TIME</code>.
+     *
+     * The patterns is:
+     * <pre>
+     *    HH:mm
+     * </pre>
+     *
+     * Some sample values are
+     * <pre>
+     *     08:25
+     *     18:45
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     * @see #END_TIME
+     */
+    public static final String START_TIME = "StartTime";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     * end of time range during which a policy applies.The value corresponding 
+     * to the key has to be  a <code>Set</code> that has just one element which 
+     * is a <code>String</code> that conforms to the pattern described here. 
+     * If a value is defined for <code>END_TIME</code>,  a value should also 
+     * be defined for <code>START_TIME</code>.
+     *
+     * The patterns is:
+     * <pre>
+     *    HH:mm
+     * </pre>
+     *
+     * Some sample values are
+     * <pre>
+     *     08:25
+     *     18:45
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     * @see #START_TIME
+     */
+    public static final String END_TIME = "EndTime";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     * start of day of week  range for which a policy applies. The value 
+     * corresponding to the key has to be a <code>Set</code> that has just one 
+     * element which is a <code>String</code> that is one of the values 
+     * <code>Sun, Mon, Tue, Wed, Thu, Fri, Sat.</code>
+     * If a value is defined for <code>START_DAY</code>,  a value should also be
+     * defined for <code>END_DAY</code>.
+     *
+     * Some sample values are
+     * <pre>
+     *     Sun
+     *     Mon
+     * </pre>
+     * @see #setProperties(Map)
+     * @see #END_DAY
+     */
+    public static final String START_DAY = "StartDay";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     * end of day of week  range for which a policy applies. Its defined in a 
+     * <code>SimpleTimeCondition </code> associated with the policy. The value 
+     * corresponding to the key has to be a <code>Set</code> that has just one 
+     * element which is a <code>String</code> that is one of the values 
+     * <code>Sun, Mon, Tue, Wed, Thu, Fri, Sat.</code>
+     * If a value is defined for <code>END_DAY</code>,  a value should also be
+     * defined for <code>START_DAY</code>.
+     *
+     * Some sample values are
+     * <pre>
+     *     Sun
+     *     Mon
+     * </pre>
+     * @see #setProperties(Map)
+     * @see #START_DAY
+     */
+    public static final String END_DAY = "EndDay";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     * start of date range for which a policy applies.
+     * The value corresponding to the key has to be a <code>Set</code> that has 
+     * just one element which is a <code>String</code> that corresponds to the 
+     * pattern described below. If a value is defined for 
+     * <code>START_DATE</code>, a value should also be defined for 
+     * <code>END_DATE</code>.
+     *
+     * The pattern is
+     * <pre>
+     *     yyyy:MM:dd
+     * Some sample values are
+     *     2001:02:26
+     *     2002:12:31
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     * @see #END_DATE
+     */
+    public static final String START_DATE = "StartDate";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     * end of date range for which a policy applies.The value corresponding to 
+     * the key has to be a <code>Set</code> that has just one element which is 
+     * a <code>String</code> that corresponds to the pattern described below.
+     * If a value is defined for <code>END_DATE</code>,  a value should
+     * also be defined for <code>START_DATE</code>.
+     *
+     * The pattern is
+     * <pre>
+     *     yyyy:MM:dd
+     * Some sample values are
+     *     2001:02:26
+     *     2002:12:31
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     * @see #START_DATE
+     */
+    public static final String END_DATE = "EndDate";
+    
+    /** Key that is used in a <code>SimpleTimeCondition</code> to define the  
+     *  time zone basis to evaluate the policy.
+     *  The value corresponding to the key
+     *  has to be a one element <code>Set</code> where the element is a 
+     *  <code>String</code> that is one of the standard timezone IDs supported 
+     *  by java or a <code>String</code> of the  pattern 
+     *  <code>GMT[+|-]hh[[:]mm]</code>
+     *  here. If the value is not a valid time zone id and does
+     *  not match the pattern <code>GMT[+|-]hh[[:]mm]</code>, it would default
+     *  to GMT
+     *
+     *  @see java.util.TimeZone
+     */
+    public static final String ENFORCEMENT_TIME_ZONE
+            = "EnforcementTimeZone";
+    
+    /** Key that is used to define the time zone that is passed in
+     *  the <code>env</code> parameter while invoking
+     *  <code>getConditionDecision</code> method of a 
+     *  <code>SimpleTimeCondition</code>
+     *  Value for the key should be a <code>TimeZone</code> object. This
+     *  would be used only if the <code>ENFORCEMENT_TIME_ZONE</code> is not
+     *  defined for the <code>SimpleTimeCondition</code>
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #ENFORCEMENT_TIME_ZONE
+     *  @see java.util.TimeZone
+     */
+    public static final String REQUEST_TIME_ZONE = "requestTimeZone";
+    
+    /** Key that is passed in the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of a <code>
+     * SessionPropertyCondition</code> to indicate if a case insensitive 
+     * match needs to done of the property value against same name property in 
+     * the user's single sign on token.
+     */
+    public static final String VALUE_CASE_INSENSITIVE = "valueCaseInsensitive";
     /**
      * Returns a list of property names for the condition.
      *

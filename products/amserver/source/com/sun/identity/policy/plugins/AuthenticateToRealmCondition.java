@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToRealmCondition.java,v 1.2 2006-07-28 23:54:24 dillidorai Exp $
+ * $Id: AuthenticateToRealmCondition.java,v 1.3 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,27 +60,6 @@ public class AuthenticateToRealmCondition implements Condition {
 
     private static final boolean debugMessageEnabled 
             = DEBUG.messageEnabled();
-
-    /** Key that is used to specify the realms
-     *  for which the user should authenticate for the policy to apply. 
-     * The value should be  a <code>Set</code> with only one element. 
-     * The should be a  <code>String</code>, the realm name.
-     *
-     *  @see #setProperties(Map)
-     */
-    public static final String AUTHENTICATE_TO_REALM = "AuthenticateToRealm";
-
-
-    /** Key that is used to identify the names of authenticated realms 
-     *  specified in the request
-     *  Value for the key should be a set with each element being a String
-     *
-     *
-     *  @see #getConditionDecision(SSOToken, Map)
-     *  @see #AUTHENTICATE_TO_REALM
-     */
-    public static final String REQUEST_AUTHENTICATED_TO_REALMS 
-            = "requestAuthenticatedToRealms";
 
     /** Key that is used identify the advice messages from
      * <code>AuthenticateToRealmCondition</code>

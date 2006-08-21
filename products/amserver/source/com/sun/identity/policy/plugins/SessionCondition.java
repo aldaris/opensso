@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCondition.java,v 1.1 2006-04-26 05:14:49 dillidorai Exp $
+ * $Id: SessionCondition.java,v 1.2 2006-08-21 18:46:37 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,29 +66,12 @@ public class SessionCondition implements Condition {
     /**
      * Key that is used to define the user session creation time
      * of the request. This is passed in to the <code>env</code> parameter while
-     * invoking <code>getConditionDecision</code> method. Value for the
-     * key should be a <code>Long</code> whose value is time in
-     * milliseconds since epoch.
+     * invoking <code>getConditionDecision</code> method of the
+     * <code>SessionCondition</code>. Value for the key should be a
+     * <code>Long</code> whose value is time in milliseconds since epoch.
      */
     public static final String REQUEST_SESSION_CREATION_TIME =
-        "requestSessionCreationTime";
-
-    /**
-     * Key that is used to define the maximum session time in minutes
-     * for which a policy applies. The value corresponding to the key
-     * has to be a Set that has just one element which is a string
-     * and parse-able as an <code>Integer</code>. 
-     */
-    public static final String MAX_SESSION_TIME = "MaxSessionTime";
-
-    /**
-     * Key that is used to define the option to terminate the
-     * session if the session exceeds the maximum session
-     * time. The value corresponding to the key has to be a set that
-     * has just one element which is a string. The option is on if
-     * the string value is equal to "true".
-     */
-    public static final String TERMINATE_SESSION = "TerminateSession";
+	"requestSessionCreationTime";
 
     /**
      * Key that is used to identify the advice messages from this

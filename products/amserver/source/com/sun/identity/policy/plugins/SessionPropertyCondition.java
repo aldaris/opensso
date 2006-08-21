@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionPropertyCondition.java,v 1.1 2006-04-26 05:14:49 dillidorai Exp $
+ * $Id: SessionPropertyCondition.java,v 1.2 2006-08-21 18:46:37 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,6 @@ import com.iplanet.sso.SSOToken;
 
 public class SessionPropertyCondition implements Condition {
 
-    public static final String VALUE_CASE_INSENSITIVE = "valueCaseInsensitive";
     private static final boolean IGNORE_VALUE_CASE_DEFAULT = true;
     private static final String IGNORE_VALUE_CASE_FALSE_STRING = "false";
     private static final String DELIMITER = "|";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevelCondition.java,v 1.2 2006-07-17 18:11:20 veiming Exp $
+ * $Id: AuthLevelCondition.java,v 1.3 2006-08-21 18:46:36 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,32 +62,6 @@ public class AuthLevelCondition implements Condition {
 
     private static final Debug DEBUG 
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
-
-    /** Key that is used to define the minimum the authentication level 
-     *  for which the policy would apply.  The value should be
-     *  a <code>Set</code> with only one element. The element should be a 
-     *  String, parse-able as an integer or a realm qualified integer
-     *
-     *  @see #setProperties(Map)
-     */
-    public static final String AUTH_LEVEL = "AuthLevel";
-
-
-    /** Key that is used to define the authentication level of the request.
-     *  The value should be  an Integer or a set of <code>String</code>s. 
-     *  If it is a <code>Set</code> of <code>String</code>s, each element 
-     *  of the set has to be parseable as integer or should be a realm 
-     *  qualified integer. If the <code>env</code> parameter is null or does not
-     *  define value for <code>REQUEST_AUTH_LEVEL</code>,  the value for
-     *  <code>REQUEST_AUTH_LEVEL</code> is obtained from the single sign
-     *  on token of the user 
-     *
-     *  @see #getConditionDecision(SSOToken, Map)
-     *  @see #AUTH_LEVEL
-     *  @see com.sun.identity.authentication.util.AMAuthUtils#getAuthenticatedLevels(com.iplanet.sso.SSOToken)
-     *  @see com.sun.identity.authentication.util.AMAuthUtils#getRealmQualifiedAuthenticatedLevels(com.iplanet.sso.SSOToken)
-     */
-    public static final String REQUEST_AUTH_LEVEL = "requestAuthLevel";
 
     /** Key that is used identify the advice messages from
      * <code>AuthLevelCondition</code>.
