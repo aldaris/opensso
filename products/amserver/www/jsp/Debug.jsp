@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.1 2006-07-17 18:11:49 veiming Exp $
+   $Id: Debug.jsp,v 1.2 2006-08-22 20:14:42 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -157,7 +157,7 @@ if ((category == null) || (level == null) ||
         resourceBundle.getString("label-level-error") + "</option>");
     out.println("<option value=\"2\">" +
         resourceBundle.getString("label-level-warning") + "</option>");
-    out.println("<option label=\"3\">" +
+    out.println("<option value=\"3\">" +
         resourceBundle.getString("label-level-message") + "</option>");
 %>
 </select>
