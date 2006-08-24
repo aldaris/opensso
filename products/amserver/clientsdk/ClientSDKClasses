@@ -152,6 +152,7 @@ com/iplanet/services/ldap/DSConfigMgr.class
 com/iplanet/services/comm/client/*.class
 com/iplanet/services/comm/share/*.class
 com/iplanet/services/comm/server/RequestHandler.class
+com/iplanet/services/comm/server/SendNotificationException.class
 com/iplanet/services/comm/https/Handler.class
 com/iplanet/services/comm/https/HttpsURLConnection.class
 com/iplanet/services/comm/https/JSSInit.class

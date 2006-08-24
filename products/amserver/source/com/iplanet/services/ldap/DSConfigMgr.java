@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.2 2006-07-31 20:40:35 bigfatrat Exp $
+ * $Id: DSConfigMgr.java,v 1.3 2006-08-24 06:24:31 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,9 +38,9 @@ import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPv2;
 import netscape.ldap.LDAPv3;
-import netscape.ldap.factory.JSSESocketFactory;
 
 import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.I18n;
 import com.iplanet.services.util.XMLException;
@@ -77,7 +77,7 @@ public class DSConfigMgr {
 
     static Debug debugger = null;
 
-    static {
+    static {        
         debugger = Debug.getInstance(IUMSConstants.UMS_DEBUG);
         String numRetryStr = SystemProperties.get(LDAP_CONNECTION_NUM_RETRIES);
         if (numRetryStr != null) {
@@ -342,9 +342,10 @@ public class DSConfigMgr {
 
         if (type == Server.Type.CONN_SSL) {
             try {
-                conn = new LDAPConnection(new JSSESocketFactory(null));
+                conn = new LDAPConnection(
+                        SSLSocketFactoryManager.getSSLSocketFactory());
             } catch (Exception e) {
-                debugger.error("getConnection.JSSESocketFactory", e);
+                debugger.error("getConnection.JSSSocketFactory", e);
                 throw new LDAPServiceException(
                         getString(IUMSConstants.DSCFG_JSSSFFAIL));
             }
