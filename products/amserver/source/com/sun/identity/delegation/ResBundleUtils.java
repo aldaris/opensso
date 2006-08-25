@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResBundleUtils.java,v 1.2 2006-04-17 17:29:27 bhavnab Exp $
+ * $Id: ResBundleUtils.java,v 1.3 2006-08-25 21:20:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.delegation;
 
 import java.util.ResourceBundle;
 
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.locale.Locale;
 
  /**
   * This is a utility class providing methods to obtain localized 

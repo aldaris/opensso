@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetHttpSession.java,v 1.1 2005-11-01 00:29:54 arvindp Exp $
+ * $Id: GetHttpSession.java,v 1.2 2006-08-25 21:19:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,7 @@ import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.dpro.session.TokenRestrictionFactory;
 import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.services.util.CookieUtils;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.security.DecodeAction;
 
 /**

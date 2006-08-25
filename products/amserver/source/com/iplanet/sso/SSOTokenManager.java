@@ -17,20 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenManager.java,v 1.2 2005-12-08 01:16:19 veiming Exp $
+ * $Id: SSOTokenManager.java,v 1.3 2006-08-25 21:20:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.sso;
 
-import java.security.Principal;
-import java.util.Set;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.providers.dpro.SSOProviderBundle;
 import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.shared.debug.Debug;
+import java.security.Principal;
+import java.util.Set;
 
 /**
  * SSOTokenManager is the final class that is the mediator between the SSO APIs

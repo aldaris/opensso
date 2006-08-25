@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesFactory.java,v 1.1 2006-06-16 19:36:39 rarcot Exp $
+ * $Id: RemoteServicesFactory.java,v 1.2 2006-08-25 21:19:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 package com.iplanet.am.sdk.remote;
 
 import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 
 /*
  * A factory class which determines the correct implementation of

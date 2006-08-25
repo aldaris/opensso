@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.5 2006-06-16 19:36:08 rarcot Exp $
+ * $Id: AMObjectImpl.java,v 1.6 2006-08-25 21:19:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 
 import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class implements the AMObject interface.

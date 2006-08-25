@@ -17,29 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestParser.java,v 1.1 2005-11-01 00:29:59 arvindp Exp $
+ * $Id: SessionRequestParser.java,v 1.2 2006-08-25 21:19:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.share;
 
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.services.util.Base64;
-
 /**
  * <code>SessionRequestParser</code> parses the <code>SessionRequest</code>
  * XML document and returns the <code>SessionRequest</code> object
  */
- 
 class SessionRequestParser {
-
     /**
      * <code>SessionRequest</code> object being returned after parsing the XML
      * document.

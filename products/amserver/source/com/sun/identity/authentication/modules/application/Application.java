@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.1 2006-01-28 09:15:44 veiming Exp $
+ * $Id: Application.java,v 1.2 2006-08-25 21:20:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,8 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.servlet.http.HttpServletRequest;
 
 import com.iplanet.sso.SSOToken;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
@@ -50,7 +50,7 @@ import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
@@ -356,7 +356,7 @@ public class Application extends AMLoginModule {
         
         try {
             // All LDAP module Attribute Initialization done here ...
-            serverHost = Misc.getServerMapAttr(currentConfig,
+            serverHost = CollectionHelper.getServerMapAttr(currentConfig,
                 ISAuthConstants.LDAP_SERVER);
             
             if (serverHost == null) {
@@ -364,7 +364,7 @@ public class Application extends AMLoginModule {
                 return false;
             }
             
-            String baseDN  = Misc.getServerMapAttr(currentConfig,
+            String baseDN  = CollectionHelper.getServerMapAttr(currentConfig,
                 ISAuthConstants.LDAP_BASEDN);
 
             if (baseDN == null) {
@@ -374,21 +374,21 @@ public class Application extends AMLoginModule {
                     null);
             }
             
-            String bindDN = Misc.getMapAttr(currentConfig,
+            String bindDN = CollectionHelper.getMapAttr(currentConfig,
                 ISAuthConstants.LDAP_BINDDN, "");
-            String bindPassword =
-                Misc.getMapAttr(currentConfig,ISAuthConstants.LDAP_BINDPWD,"");
-            String userNamingAttr =
-                Misc.getMapAttr(currentConfig,ISAuthConstants.LDAP_UNA,"uid");
+            String bindPassword = CollectionHelper.getMapAttr(
+                currentConfig, ISAuthConstants.LDAP_BINDPWD, "");
+            String userNamingAttr = CollectionHelper.getMapAttr(
+                currentConfig, ISAuthConstants.LDAP_UNA, "uid");
             Set userSearchAttrs =
                 (Set)currentConfig.get(ISAuthConstants.LDAP_USERSEARCH);
-            String searchFilter = Misc.getMapAttr(currentConfig,
+            String searchFilter = CollectionHelper.getMapAttr(currentConfig,
                 ISAuthConstants.LDAP_SEARCHFILTER, "");
-            boolean ssl = Boolean.valueOf(
-                Misc.getMapAttr(currentConfig, ISAuthConstants.LDAP_SSL,
-                    "false")).booleanValue();
-            
-            String tmp = Misc.getMapAttr(currentConfig,
+            boolean ssl = Boolean.valueOf(CollectionHelper.getMapAttr(
+                currentConfig, ISAuthConstants.LDAP_SSL, "false")
+                ).booleanValue();
+
+            String tmp = CollectionHelper.getMapAttr(currentConfig,
                 ISAuthConstants.LDAP_SEARCHSCOPE, "SUBTREE");
             
             int searchScope = 2;// SUBTREE is the default
@@ -398,7 +398,7 @@ public class Application extends AMLoginModule {
                 searchScope=1;
             }
 
-            String returnUserDN = Misc.getMapAttr(currentConfig,
+            String returnUserDN = CollectionHelper.getMapAttr(currentConfig,
                 ISAuthConstants.LDAP_RETURNUSERDN, "true");
             
             // set LDAP Parameters

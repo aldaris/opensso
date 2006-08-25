@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResultsCacheUtil.java,v 1.1 2006-04-26 05:15:22 dillidorai Exp $
+ * $Id: ResultsCacheUtil.java,v 1.2 2006-08-25 21:21:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 
 package com.sun.identity.policy.client;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.policy.ResBundleUtils;
 import com.sun.identity.policy.remote.PolicyEvaluationException;
 import com.sun.identity.policy.remote.PolicyNotification;

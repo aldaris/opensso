@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Conditions.java,v 1.1 2006-04-26 05:14:01 dillidorai Exp $
+ * $Id: Conditions.java,v 1.2 2006-08-25 21:21:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,8 @@ import org.w3c.dom.*;
 
 import com.sun.identity.policy.interfaces.Condition;
 import com.iplanet.sso.*;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>Conditions</code> provides methods to maintain

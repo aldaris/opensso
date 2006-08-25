@@ -17,39 +17,37 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.13 2006-08-11 00:42:24 rarcot Exp $
+ * $Id: AMIdentity.java,v 1.14 2006-08-25 21:20:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
-
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMCrypt;
 import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceNotFoundException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.util.DN;
 
 /**
  * This class represents an Identity which needs to be managed by Access

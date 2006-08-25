@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GatewayServletUtils.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
+ * $Id: GatewayServletUtils.java,v 1.3 2006-08-25 21:21:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,10 +32,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;

@@ -17,28 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
+ * $Id: ServiceConfigManager.java,v 1.3 2006-08-25 21:21:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.ums.IUMSConstants;
 
 /**
  * The class <code>ServiceConfigurationManager</code> provides interfaces to

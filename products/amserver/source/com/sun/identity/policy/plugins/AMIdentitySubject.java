@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentitySubject.java,v 1.1 2006-04-26 05:14:46 dillidorai Exp $
+ * $Id: AMIdentitySubject.java,v 1.2 2006-08-25 21:21:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.policy.plugins;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;

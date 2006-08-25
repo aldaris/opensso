@@ -17,22 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstanceImpl.java,v 1.1 2005-11-01 00:31:32 arvindp Exp $
+ * $Id: ServiceInstanceImpl.java,v 1.2 2006-08-25 21:21:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.ums.IUMSConstants;
 
 /**
  * The class <code>ServiceInstanceImpl</code> provides methods to get

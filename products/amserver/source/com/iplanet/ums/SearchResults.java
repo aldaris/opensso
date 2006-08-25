@@ -17,28 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResults.java,v 1.3 2005-12-08 01:16:27 veiming Exp $
+ * $Id: SearchResults.java,v 1.4 2006-08-25 21:20:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums;
 
+import com.iplanet.services.ldap.Attr;
+import com.iplanet.services.ldap.AttrSet;
+import com.iplanet.services.util.I18n;
+import com.sun.identity.shared.debug.Debug;
 import java.security.Principal;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
-
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.controls.LDAPVirtualListResponse;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.services.ldap.Attr;
-import com.iplanet.services.ldap.AttrSet;
-import com.iplanet.services.util.I18n;
 
 /**
  * Represents search results. Each search result is a PersistentObject

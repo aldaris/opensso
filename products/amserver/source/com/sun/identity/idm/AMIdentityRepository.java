@@ -17,13 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.9 2006-08-11 00:42:24 rarcot Exp $
+ * $Id: AMIdentityRepository.java,v 1.10 2006-08-25 21:20:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
 
+import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.ServiceManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,21 +40,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import javax.security.auth.callback.Callback;
-
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.common.DNUtils;
-import com.sun.identity.sm.DNMapper;
-import com.sun.identity.sm.ServiceManager;
 
 /**
  * The class <code> AMIdentityRepository </code> represents an object to access

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AllowedModulesChoiceValues.java,v 1.1 2006-01-28 09:16:25 veiming Exp $
+ * $Id: AllowedModulesChoiceValues.java,v 1.2 2006-08-25 21:20:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,9 +36,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ChoiceValues;
 import com.sun.identity.sm.OrganizationConfigManager;

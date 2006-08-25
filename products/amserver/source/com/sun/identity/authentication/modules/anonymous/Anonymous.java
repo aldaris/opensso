@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Anonymous.java,v 1.1 2006-01-28 09:15:42 veiming Exp $
+ * $Id: Anonymous.java,v 1.2 2006-08-25 21:20:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -50,7 +50,7 @@ import com.sun.identity.authentication.util.ISAuthConstants;
  */
 public class Anonymous extends AMLoginModule {
 
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
     private static final int DEFAULT_ANONYMOUS_AUTH_LEVEL = 0;
     private static final String amAuthAnonymous = "amAuthAnonymous";
 
@@ -79,7 +79,8 @@ public class Anonymous extends AMLoginModule {
 
     public void init(Subject subject, Map sharedState, Map options) {
         if (debug == null) {
-            debug = com.iplanet.am.util.Debug.getInstance(amAuthAnonymous);
+            debug = com.sun.identity.shared.debug.Debug.getInstance(
+                amAuthAnonymous);
         }
         this.sharedState = sharedState;
         java.util.Locale locale = getLoginLocale();
@@ -95,10 +96,10 @@ public class Anonymous extends AMLoginModule {
                 debug.error("No Anonymous Service Template Created");
                 errorMsg = "AnonValidateEx";
             }
-            defaultAnonUser = Misc.getMapAttr(options,
+            defaultAnonUser = CollectionHelper.getMapAttr(options,
                 "iplanet-am-auth-anonymous-default-user-name");
 
-            String tmp = Misc.getMapAttr(options,
+            String tmp = CollectionHelper.getMapAttr(options,
                 "iplanet-am-auth-anonymous-auth-level");
 
             if (tmp == null || tmp.length() == 0) {
@@ -113,13 +114,12 @@ public class Anonymous extends AMLoginModule {
             }
             callbackHandler = getCallbackHandler();
 
-            isCaseSensitive = Boolean.valueOf(Misc.getMapAttr(options,
-                "iplanet-am-auth-anonymous-case-sensitive",
-                "false")).booleanValue();
+            isCaseSensitive = Boolean.valueOf(CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-anonymous-case-sensitive", "false")
+                ).booleanValue();
             if (debug.messageEnabled()) {
                 debug.message("isCaseSensitive: "+isCaseSensitive);
             }
-
         } catch(Exception ex) {
             if (debug.messageEnabled()) {
                 debug.message("possible exception is ",ex);

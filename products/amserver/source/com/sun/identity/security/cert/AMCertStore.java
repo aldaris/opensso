@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertStore.java,v 1.1 2006-01-28 09:28:36 veiming Exp $
+ * $Id: AMCertStore.java,v 1.2 2006-08-25 21:21:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class AMCertStore {
     protected static CertificateFactory cf = null;
 
     static final String amSecurity = "amSecurity";
-    static com.iplanet.am.util.Debug debug = SecurityDebug.debug;
+    static com.sun.identity.shared.debug.Debug debug = SecurityDebug.debug;
 
     static {
         try {

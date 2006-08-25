@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IntegerValidator.java,v 1.2 2006-04-14 09:07:16 veiming Exp $
+ * $Id: IntegerValidator.java,v 1.3 2006-08-25 21:20:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,9 @@ import com.iplanet.am.util.Locale;
 
 /**
  * Validator for integer format.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.validation.IntegerValidator}
  */
 public class IntegerValidator
     extends ValidatorBase

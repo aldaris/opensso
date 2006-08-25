@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingBundle.java,v 1.1 2005-11-01 00:30:23 arvindp Exp $
+ * $Id: NamingBundle.java,v 1.2 2006-08-25 21:19:56 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,8 @@ public class NamingBundle {
 
     public static String getString(String str) {
         if (namingBundle == null) {
-            namingBundle = com.iplanet.am.util.Locale
-                    .getInstallResourceBundle("amNaming");
+            namingBundle = com.sun.identity.shared.locale.Locale
+                .getInstallResourceBundle("amNaming");
         }
         return namingBundle.getString(str);
     }

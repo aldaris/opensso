@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.3 2006-02-03 07:54:46 veiming Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.4 2006-08-25 21:20:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,18 +26,6 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
@@ -48,7 +36,17 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthD;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class is a default implementation of <code>ViewBean</code> 
@@ -99,8 +97,9 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
             au.getSessionIDFromRequest(request),false,false);
         } catch (Exception e) {
             if (e instanceof L10NMessage) {
-                java.util.Locale locale =
-                com.iplanet.am.util.Locale.getLocale(au.getLocale(ac));
+                java.util.Locale locale = 
+                    com.sun.identity.shared.locale.Locale.getLocale(
+                        au.getLocale(ac));
                 ResultVal = ((L10NMessage)e).getL10NMessage(locale);
             } else {
                 ResultVal = e.getMessage();
@@ -135,7 +134,7 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
         }
         // I18N get resource bundle
         java.util.Locale locale =
-        com.iplanet.am.util.Locale.getLocale(au.getLocale(ac));
+            com.sun.identity.shared.locale.Locale.getLocale(au.getLocale(ac));
         String client = au.getClientType(request);
         rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
         if (rb == null) {

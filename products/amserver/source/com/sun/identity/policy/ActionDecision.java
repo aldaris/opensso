@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ActionDecision.java,v 1.2 2006-06-02 05:53:08 dillidorai Exp $
+ * $Id: ActionDecision.java,v 1.3 2006-08-25 21:21:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,9 @@
 
 package com.sun.identity.policy;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;

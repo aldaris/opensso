@@ -17,22 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConfigListener.java,v 1.1 2005-11-01 00:29:55 arvindp Exp $
+ * $Id: SessionConfigListener.java,v 1.2 2006-08-25 21:19:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class implements the interface <code>ServiceListener</code> in order
@@ -97,11 +96,11 @@ public class SessionConfigListener implements ServiceListener {
         try {
             ServiceSchema schema = sSchemaMgr.getGlobalSchema();
             Map attrs = schema.getAttributeDefaults();
-            defSessionRetrievalTimeoutStr = Misc.getMapAttr(attrs,
+            defSessionRetrievalTimeoutStr = CollectionHelper.getMapAttr(attrs,
                     SESSION_RETRIEVAL_TIMEOUT, defSessionRetrievalTimeoutStr);
-            defMaxSessionListSizeStr = Misc.getMapAttr(attrs,
+            defMaxSessionListSizeStr = CollectionHelper.getMapAttr(attrs,
                     MAX_SESSION_LIST_SIZE, defMaxSessionListSizeStr);
-            enablePropertyNotificationStr = Misc.getMapAttr(attrs,
+            enablePropertyNotificationStr = CollectionHelper.getMapAttr(attrs,
                     Constants.PROPERTY_CHANGE_NOTIFICATION, "OFF");
 
             if (enablePropertyNotificationStr.equalsIgnoreCase("ON")) {

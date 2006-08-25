@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthLevelManager.java,v 1.1 2006-01-28 09:15:32 veiming Exp $
+ * $Id: AMAuthLevelManager.java,v 1.2 2006-08-25 21:20:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,14 +31,14 @@ import javax.security.auth.*;
 import javax.security.auth.callback.*;
 import javax.security.auth.spi.*;
 import javax.security.auth.login.*;
-import com.iplanet.am.util.Debug;
 import com.sun.identity.authentication.service.*;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.sm.*;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Manager for module authentication level, this class provides methods to 
@@ -325,7 +325,7 @@ public class AMAuthLevelManager implements ServiceListener {
                 Map attrs = instance.getAttributeValues();
                 String attrName = AMAuthConfigUtils.getAuthLevelAttribute(
                     attrs, instance.getType());
-                String authLevel = Misc.getMapAttr(attrs, attrName);
+                String authLevel = CollectionHelper.getMapAttr(attrs, attrName);
                 Integer level = null;
                 if (authLevel != null && authLevel.length() != 0) { 
                     try {
@@ -701,7 +701,7 @@ public class AMAuthLevelManager implements ServiceListener {
             if ( (module != null) && module.length() > 0 ) {
                 String attrName = 
                     AMAuthConfigUtils.getAuthLevelAttribute(attrs, module);
-                String authLevel = Misc.getMapAttr(attrs, attrName);
+                String authLevel = CollectionHelper.getMapAttr(attrs, attrName);
                 Integer level = null;
                 if ((authLevel != null) && (authLevel.length() > 0)) {
                         level = Integer.valueOf(authLevel);

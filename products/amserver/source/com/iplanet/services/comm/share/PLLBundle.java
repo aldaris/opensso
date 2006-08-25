@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLBundle.java,v 1.1 2005-11-01 00:30:15 arvindp Exp $
+ * $Id: PLLBundle.java,v 1.2 2006-08-25 21:19:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,8 @@ public class PLLBundle {
 
     public static String getString(String str) {
         if (pllBundle == null) {
-            pllBundle = com.iplanet.am.util.Locale
-                    .getInstallResourceBundle("amPll");
+            pllBundle = com.sun.identity.shared.locale.Locale
+                .getInstallResourceBundle("amPll");
         }
         return pllBundle.getString(str);
     }

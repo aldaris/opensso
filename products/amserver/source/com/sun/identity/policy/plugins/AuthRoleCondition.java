@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthRoleCondition.java,v 1.2 2006-07-17 18:11:20 veiming Exp $
+ * $Id: AuthRoleCondition.java,v 1.3 2006-08-25 21:21:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import com.sun.identity.policy.ResBundleUtils;
 import com.sun.identity.policy.Syntax;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>AuthRoleCondition</code> is a plugin 

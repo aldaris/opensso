@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityUtils.java,v 1.2 2005-12-08 01:16:40 veiming Exp $
+ * $Id: EntityUtils.java,v 1.3 2006-08-25 21:20:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.entity;
 
 import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 public class EntityUtils {
 

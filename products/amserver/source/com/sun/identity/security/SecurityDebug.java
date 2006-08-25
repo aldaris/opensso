@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityDebug.java,v 1.1 2005-11-01 00:31:17 arvindp Exp $
+ * $Id: SecurityDebug.java,v 1.2 2006-08-25 21:21:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.security;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 public class SecurityDebug {
     public static Debug debug;

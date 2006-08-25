@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateService.java,v 1.2 2006-07-17 18:11:11 veiming Exp $
+ * $Id: UpdateService.java,v 1.3 2006-08-25 21:20:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.cli.schema;
 
 
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;

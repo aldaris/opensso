@@ -17,39 +17,34 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntryEventListener.java,v 1.1 2006-06-16 19:36:32 rarcot Exp $
+ * $Id: EntryEventListener.java,v 1.2 2006-08-25 21:19:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.ldap;
 
-// Java packages
+import com.iplanet.am.sdk.AMObjectListener;
+import com.iplanet.am.sdk.common.ICachedDirectoryServices;
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.services.ldap.event.DSEvent;
+import com.iplanet.services.ldap.event.IDSEventListener;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SchemaType;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.util.DN;
-
-import com.iplanet.services.ldap.event.DSEvent;
-import com.iplanet.services.ldap.event.IDSEventListener;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SchemaType;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
-
-import com.iplanet.am.sdk.AMObjectListener;
-import com.iplanet.am.sdk.common.ICachedDirectoryServices;
-import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
 
 /**
  * The <code>AMEntryEventListener</code> handles all the events that are

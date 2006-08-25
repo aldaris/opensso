@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupResolver.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: GroupResolver.java,v 1.2 2006-08-25 21:20:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,7 @@ package com.iplanet.ums;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.LDAPUrl;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
 

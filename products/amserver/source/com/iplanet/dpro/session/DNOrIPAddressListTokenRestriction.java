@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNOrIPAddressListTokenRestriction.java,v 1.2 2005-11-04 18:53:39 veiming Exp $
+ * $Id: DNOrIPAddressListTokenRestriction.java,v 1.3 2006-08-25 21:19:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session;
 
+import com.iplanet.am.util.Misc;
+import com.iplanet.dpro.session.service.SessionService;
+import com.iplanet.sso.SSOToken;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,10 +34,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import com.iplanet.am.util.Misc;
-import com.iplanet.dpro.session.service.SessionService;
-import com.iplanet.sso.SSOToken;
 
 /**
  * <code>DNOrIPAddressListTokenRestriction</code> implements

@@ -17,13 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientCapData.java,v 1.1 2005-11-01 00:30:12 arvindp Exp $
+ * $Id: AMClientCapData.java,v 1.2 2006-08-25 21:19:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm.clientschema;
 
+import com.iplanet.am.sdk.AMEntity;
+import com.iplanet.am.sdk.AMOrganizationalUnit;
+import com.iplanet.am.sdk.AMSearchControl;
+import com.iplanet.am.sdk.AMSearchResults;
+import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.services.ldap.event.DSEvent;
+import com.iplanet.services.ldap.event.IDSEventListener;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,32 +49,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.sdk.AMEntity;
-import com.iplanet.am.sdk.AMOrganizationalUnit;
-import com.iplanet.am.sdk.AMSearchControl;
-import com.iplanet.am.sdk.AMSearchResults;
-import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.util.Debug;
-import com.iplanet.services.ldap.event.DSEvent;
-import com.iplanet.services.ldap.event.IDSEventListener;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.sm.AttributeSchema;
-import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
  * The abstraction to get/set the clients stored in the DSAME. The Client is
  * stored as a DIT in directory server with the properties as attributes.
  */
-
 public class AMClientCapData implements IDSEventListener {
     //
     // static stuff

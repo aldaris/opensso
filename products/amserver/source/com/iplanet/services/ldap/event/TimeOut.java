@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeOut.java,v 1.1 2005-11-01 00:30:21 arvindp Exp $
+ * $Id: TimeOut.java,v 1.2 2006-08-25 21:19:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap.event;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Class which incorporates the functionality to interrupt the Event Service

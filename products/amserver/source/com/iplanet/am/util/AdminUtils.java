@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminUtils.java,v 1.2 2005-12-08 01:16:11 veiming Exp $
+ * $Id: AdminUtils.java,v 1.3 2006-08-25 21:19:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
-
-import java.security.AccessController;
 
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
@@ -35,6 +33,8 @@ import com.iplanet.services.util.Crypt;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.security.ISSecurityPermission;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.debug.Debug;
+import java.security.AccessController;
 
 /**
  * This class contains methods to retrieve Top Level Administrator information.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLHandler.java,v 1.1 2005-11-01 00:29:45 arvindp Exp $
+ * $Id: XMLHandler.java,v 1.2 2006-08-25 21:19:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.iplanet.am.util;
 
 import java.io.StringReader;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -36,8 +35,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * directory that will get replaced during installation This will need to
  * specify the dtds as follows jar://com/sun/identity/sm/sms.dtd Bundle all the
  * dtds along with the jar files and
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.xml.XMLHandler}
  */
-
 public class XMLHandler extends DefaultHandler {
 
     public InputSource resolveEntity(String aPublicID, String aSystemID) {

@@ -17,36 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.4 2006-06-29 14:14:19 goodearth Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.5 2006-08-25 21:19:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.remote;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.security.AccessController;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.iplanet.am.sdk.AMDirectoryAccessFactory;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObjectListener;
 import com.iplanet.am.sdk.AMSearchResults;
-import com.sun.identity.idm.IdRepoListener;
 import com.iplanet.am.sdk.common.IComplianceServices;
 import com.iplanet.am.sdk.common.IDCTreeServices;
 import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.server.PLLServer;
 import com.iplanet.services.comm.server.SendNotificationException;
@@ -62,16 +46,31 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdServicesFactory;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
-import com.sun.identity.idm.IdServices;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.SchemaType;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.security.AccessController;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DirectoryManagerImpl implements DirectoryManagerIF,
     AMObjectListener {

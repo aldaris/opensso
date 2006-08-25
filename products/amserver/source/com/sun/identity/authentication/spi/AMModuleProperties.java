@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.1 2006-01-28 09:16:59 veiming Exp $
+ * $Id: AMModuleProperties.java,v 1.2 2006-08-25 21:20:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,8 +51,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLHandler;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLHandler;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.share.AuthXMLTags;
 

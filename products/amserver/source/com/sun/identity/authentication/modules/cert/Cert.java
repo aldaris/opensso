@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.1 2006-02-08 18:16:00 veiming Exp $
+ * $Id: Cert.java,v 1.2 2006-08-25 21:20:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 package com.sun.identity.authentication.modules.cert;
 
@@ -55,14 +53,14 @@ import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPUrl;
 
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.sun.identity.security.cert.CRLValidator;
 import com.sun.identity.security.cert.OCSPValidator;
 import com.sun.identity.security.cert.X509CRLValidatorFactory;
 import com.sun.identity.security.cert.X509OCSPValidatorFactory;
 import com.iplanet.security.x509.X500Name;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.authentication.service.X509CertificateCallback;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -130,7 +128,7 @@ public class Cert extends AMLoginModule {
 
     private static final String amAuthCert = "amAuthCert";
     
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
 
     /**
      * Default module constructor does nothing
@@ -146,7 +144,7 @@ public class Cert extends AMLoginModule {
      */
     public void init(Subject subject, Map sharedState, Map options) {
         if (debug == null) {
-            debug = com.iplanet.am.util.Debug.getInstance(amAuthCert);
+            debug = com.sun.identity.shared.debug.Debug.getInstance(amAuthCert);
         }
         java.util.Locale locale = getLoginLocale();
         bundle = amCache.getResBundle(amAuthCert, locale);
@@ -163,8 +161,8 @@ public class Cert extends AMLoginModule {
         if (options != null) {
             debug.message("Certificate: getting attributes."); 
             // init auth level
-            String authLevel = Misc.getMapAttr(options,
-                             "iplanet-am-auth-cert-auth-level");
+            String authLevel = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-auth-level");
             if (authLevel != null) {
                 try {
                     int tmp = Integer.parseInt(authLevel);
@@ -177,48 +175,46 @@ public class Cert extends AMLoginModule {
             // will need access control to ldap server; passwd and user name
             // will also need to yank out the user profile based on cn or dn
             //  out of "profile server"
-            amAuthCert_securityType = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-security-type");
-            amAuthCert_principleUser = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-principal-user");
-               amAuthCert_principlePasswd = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-principal-passwd");
-            amAuthCert_useSSL = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-use-ssl");
-            amAuthCert_userProfileMapper = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-user-profile-mapper"); 
-            amAuthCert_altUserProfileMapper = Misc.getMapAttr(options, 
-                              "iplanet-am-auth-cert-user-profile-mapper-other");
-            amAuthCert_chkCRL = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-check-crl"); 
+            amAuthCert_securityType = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-security-type");
+            amAuthCert_principleUser = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-principal-user");
+               amAuthCert_principlePasswd = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-principal-passwd");
+            amAuthCert_useSSL = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-use-ssl");
+            amAuthCert_userProfileMapper = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-user-profile-mapper"); 
+            amAuthCert_altUserProfileMapper = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-user-profile-mapper-other");
+            amAuthCert_chkCRL = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-check-crl"); 
             if (amAuthCert_chkCRL.equalsIgnoreCase("true")) {
-                amAuthCert_chkAttrCRL = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-attr-check-crl");
+                amAuthCert_chkAttrCRL = CollectionHelper.getMapAttr(
+                    options, "iplanet-am-auth-cert-attr-check-crl");
                 if (amAuthCert_chkAttrCRL == null || 
                     amAuthCert_chkAttrCRL.equals("")) {
                     throw new AuthLoginException(amAuthCert, "noCRLAttr", null);
                 }
             }
 
-            amAuthCert_uriParamsCRL = Misc.getMapAttr(options,
-                                         "iplanet-am-auth-cert-param-get-crl");
-
-            amAuthCert_chkCertInLDAP = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-check-cert-in-ldap"); 
+            amAuthCert_uriParamsCRL = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-param-get-crl");
+            amAuthCert_chkCertInLDAP = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-check-cert-in-ldap"); 
             if (amAuthCert_chkCertInLDAP.equalsIgnoreCase("true")) {
-                amAuthCert_chkAttrCertInLDAP = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-attr-check-ldap");
+                amAuthCert_chkAttrCertInLDAP = CollectionHelper.getMapAttr(
+                    options, "iplanet-am-auth-cert-attr-check-ldap");
                 if (amAuthCert_chkAttrCertInLDAP == null ||
                     amAuthCert_chkAttrCertInLDAP.equals("")) {
-                    throw new AuthLoginException(amAuthCert, 
-                                    "noLDAPAttr", null);
+                    throw new AuthLoginException(
+                        amAuthCert, "noLDAPAttr", null);
                 }
             }
-            amAuthCert_ldapProfileID = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-ldap-profile-id"); 
-
-            String ocspChk = Misc.getMapAttr(options,
-                              "iplanet-am-auth-cert-check-ocsp"); 
+            amAuthCert_ldapProfileID = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-ldap-profile-id"); 
+            String ocspChk = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-check-ocsp"); 
             ocspEnabled = (ocspChk != null && ocspChk.equalsIgnoreCase("true"));
 
              //
@@ -228,10 +224,10 @@ public class Cert extends AMLoginModule {
             //  "any" or non-empty list means enabled.  also check
             //  non-empty list for remote client's addr.
             //
-            String gwCertAuth = Misc.getMapAttr(options,
-                                "iplanet-am-auth-cert-gw-cert-auth-enabled");
-                 certParamName = 
-                 Misc.getMapAttr(options,"sunAMHttpParamName");
+            String gwCertAuth = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-gw-cert-auth-enabled");
+            certParamName = CollectionHelper.getMapAttr(
+                options,"sunAMHttpParamName");
 
             HttpServletRequest req = getHttpServletRequest();
             String client = null;
@@ -266,8 +262,8 @@ public class Cert extends AMLoginModule {
 
             amAuthCert_emailAddrTag = bundle.getString("emailAddrTag");
 
-            amAuthCert_serverHost = Misc.getServerMapAttr(options, 
-                "iplanet-am-auth-cert-ldap-provider-url");
+            amAuthCert_serverHost = CollectionHelper.getServerMapAttr(
+                options, "iplanet-am-auth-cert-ldap-provider-url");
             if (amAuthCert_serverHost == null 
                 && (amAuthCert_chkCertInLDAP.equalsIgnoreCase("true") || 
                     amAuthCert_chkCRL.equalsIgnoreCase("true"))) {
@@ -289,8 +285,8 @@ public class Cert extends AMLoginModule {
                 }
             }
 
-            amAuthCert_startSearchLoc = Misc.getServerMapAttr(options, 
-                "iplanet-am-auth-cert-start-search-loc");
+            amAuthCert_startSearchLoc = CollectionHelper.getServerMapAttr(
+                options, "iplanet-am-auth-cert-start-search-loc");
             if (amAuthCert_startSearchLoc == null 
                 && (amAuthCert_chkCertInLDAP.equalsIgnoreCase("true") || 
                     amAuthCert_chkCRL.equalsIgnoreCase("true"))) {
@@ -633,7 +629,7 @@ public class Cert extends AMLoginModule {
      *
      * @return debug 
      */
-    public com.iplanet.am.util.Debug getDebug() {
+    public com.sun.identity.shared.debug.Debug getDebug() {
        return debug;
     }
 

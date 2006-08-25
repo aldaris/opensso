@@ -17,13 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManagerImpl.java,v 1.1 2005-11-01 00:31:34 arvindp Exp $
+ * $Id: ServiceSchemaManagerImpl.java,v 1.2 2006-08-25 21:21:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -31,15 +35,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
 
 /**
  * The class <code>ServiceSchemaManagerImpl</code> provides the internal

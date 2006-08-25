@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPools.java,v 1.2 2006-07-31 20:36:58 bigfatrat Exp $
+ * $Id: LDAPConnectionPools.java,v 1.3 2006-08-25 21:21:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.policy.plugins;
 import netscape.ldap.*; 
 import netscape.ldap.controls.*; 
 import netscape.ldap.util.*;
-import com.iplanet.am.util.Debug;    
+import com.sun.identity.shared.debug.Debug;    
 import netscape.ldap.factory.JSSESocketFactory;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.PolicyManager;

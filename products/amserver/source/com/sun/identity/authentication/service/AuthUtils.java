@@ -17,15 +17,53 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.6 2006-04-22 00:50:34 pawand Exp $
+ * $Id: AuthUtils.java,v 1.7 2006-08-25 21:20:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.authentication.service;
 
+import com.iplanet.am.util.AMClientDetector;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.service.InternalSession;
+import com.iplanet.dpro.session.share.SessionEncodeURL;
+import com.iplanet.services.cdm.AuthClient;
+import com.iplanet.services.cdm.Client;
+import com.iplanet.services.cdm.ClientsManager;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.services.util.Crypt;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.config.AMAuthConfigUtils;
+import com.sun.identity.authentication.config.AMAuthLevelManager;
+import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.spi.AMLoginModule;
+import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.FQDNUtils;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.RequestUtils;
+import com.sun.identity.common.ResourceLookup;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.EncodeAction;
+import com.sun.identity.session.util.SessionUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.CookieUtils;
+import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,7 +86,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.security.auth.callback.Callback;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
@@ -57,50 +94,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.AMURLEncDec;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.service.InternalSession;
-import com.iplanet.dpro.session.share.SessionEncodeURL;
-import com.iplanet.services.cdm.AuthClient;
-import com.iplanet.services.cdm.Client;
-import com.iplanet.services.cdm.ClientsManager;
-import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.services.util.CookieUtils;
-import com.iplanet.services.util.Crypt;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.config.AMAuthConfigUtils;
-import com.sun.identity.authentication.config.AMAuthLevelManager;
-import com.sun.identity.authentication.server.AuthContextLocal;
-import com.sun.identity.authentication.spi.AMLoginModule;
-import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
-import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.FQDNUtils;
-import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.RequestUtils;
-import com.sun.identity.common.ResourceLookup;
-import com.sun.identity.idm.IdUtils;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.EncodeAction;
-import com.sun.identity.session.util.SessionUtils;
-import com.sun.identity.sm.SMSEntry;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
  * This class has utility methods for domain cookie management, URL formatting, 
@@ -1897,8 +1892,8 @@ public class AuthUtils {
             
             StringBuffer cookieString = new StringBuffer();
             
-            cookieString.append(AMURLEncDec.encode(getCookieName()))
-            .append("=").append(AMURLEncDec.encode(logoutCookie));
+            cookieString.append(URLEncDec.encode(getCookieName()))
+                .append("=").append(URLEncDec.encode(logoutCookie));
             
             StringBuffer encodedURL = new StringBuffer();
             if (url.indexOf("?") != -1) {
@@ -2439,7 +2434,7 @@ public class AuthUtils {
         String clientType) {
         Set returnModuleInstances = null;
         try {
-            String decodedAdviceXML = AMURLEncDec.decode(xmlCompositeAdvice);
+            String decodedAdviceXML = URLEncDec.decode(xmlCompositeAdvice);
             Map adviceMap = parseAdvicesXML(decodedAdviceXML);
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("processCompositeAdviceXML - decoded XML : "
@@ -3982,9 +3977,9 @@ public class AuthUtils {
         while (requestEnum.hasMoreElements()) {
             String name = (String) requestEnum.nextElement();
             String value = request.getParameter(name);
-            buffer.append(AMURLEncDec.encode(name));
+            buffer.append(URLEncDec.encode(name));
             buffer.append('=');
-            buffer.append(AMURLEncDec.encode(value));
+            buffer.append(URLEncDec.encode(value));
             if (requestEnum.hasMoreElements()) {
                 buffer.append('&');
             }

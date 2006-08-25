@@ -17,13 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.3 2006-08-24 06:24:31 rarcot Exp $
+ * $Id: DSConfigMgr.java,v 1.4 2006-08-25 21:19:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap;
 
+import com.iplanet.am.util.SSLSocketFactoryManager;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.util.I18n;
+import com.iplanet.services.util.XMLException;
+import com.iplanet.services.util.XMLParser;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.debug.Debug;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,21 +42,10 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPv2;
 import netscape.ldap.LDAPv3;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SSLSocketFactoryManager;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.util.I18n;
-import com.iplanet.services.util.XMLException;
-import com.iplanet.services.util.XMLParser;
-import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.common.LDAPConnectionPool;
-import com.sun.identity.security.ServerInstanceAction;
 
 /**
  * This object is the manager of all connection information. The server

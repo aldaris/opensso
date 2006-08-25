@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.5 2006-08-11 00:42:26 rarcot Exp $
+ * $Id: DNMapper.java,v 1.6 2006-08-25 21:21:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class is used to convert a DN to iplanet UID and vice versa.

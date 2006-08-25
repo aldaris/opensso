@@ -17,18 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.1 2006-06-16 19:36:39 rarcot Exp $
+ * $Id: RemoteServicesImpl.java,v 1.2 2006-08-25 21:19:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.remote;
-
-import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
 
 import com.iplanet.am.sdk.AMEntryExistsException;
 import com.iplanet.am.sdk.AMEventManagerException;
@@ -42,12 +36,17 @@ import com.iplanet.am.sdk.common.IComplianceServices;
 import com.iplanet.am.sdk.common.IDCTreeServices;
 import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.sdk.common.MiscUtils;
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.SearchControl;
 import com.iplanet.ums.SortKey;
-import com.sun.identity.jaxrpc.SOAPClient;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
+import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 public class RemoteServicesImpl implements IDirectoryServices {
     protected static final String AM_SDK_DEBUG_FILE = "amProfile_Client";

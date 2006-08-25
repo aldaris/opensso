@@ -17,19 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.1 2005-11-01 00:29:52 arvindp Exp $
+ * $Id: JMQSessionRepository.java,v 1.2 2006-08-25 21:19:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.jmqdb;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jms.IllegalStateException;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
@@ -38,16 +32,18 @@ import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.services.naming.WebtopNaming;
-import com.sun.identity.common.Constants;
 import com.sun.identity.session.util.SessionUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import java.util.HashMap;
+import java.util.Map;
+import javax.jms.IllegalStateException;
 
 /**
  * This class implements JMQ-based session repository which
  * is used in session failover mode to store/recover serialized
  * state of InternalSession object
- *  
  */
- 
 public class JMQSessionRepository implements AMSessionRepository, Runnable {
 
     /* Operations */

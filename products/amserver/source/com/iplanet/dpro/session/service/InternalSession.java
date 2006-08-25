@@ -17,13 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.3 2006-06-28 01:12:18 alanchu Exp $
+ * $Id: InternalSession.java,v 1.4 2006-08-25 21:19:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionEvent;
+import com.iplanet.dpro.session.SessionException;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.TokenRestriction;
+import com.iplanet.dpro.session.share.SessionBundle;
+import com.iplanet.dpro.session.share.SessionEncodeURL;
+import com.iplanet.dpro.session.share.SessionInfo;
+import com.sun.identity.session.util.SessionUtils;
+import com.sun.identity.shared.Constants;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -35,21 +46,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionEvent;
-import com.iplanet.dpro.session.SessionException;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.TokenRestriction;
-import com.iplanet.dpro.session.share.SessionBundle;
-import com.iplanet.dpro.session.share.SessionEncodeURL;
-import com.iplanet.dpro.session.share.SessionInfo;
-import com.sun.identity.common.Constants;
-import com.sun.identity.session.util.SessionUtils;
 
 /**
  * The <code>InternalSession</code> class represents a Webtop internal

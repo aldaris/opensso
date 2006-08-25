@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginContext.java,v 1.3 2006-07-17 18:10:48 veiming Exp $
+ * $Id: LoginContext.java,v 1.4 2006-08-25 21:20:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,11 @@
 
 package com.sun.identity.authentication.jaas;
 
+import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.shared.debug.Debug;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -35,8 +37,6 @@ import javax.security.auth.login.*;
 import javax.security.auth.Subject;
 import javax.security.auth.AuthPermission;
 import javax.security.auth.callback.*;
-import com.iplanet.am.util.Debug;
-import com.sun.identity.authentication.service.AuthUtils;
 
 /**
  * This class is pulled out from JDK1.4.

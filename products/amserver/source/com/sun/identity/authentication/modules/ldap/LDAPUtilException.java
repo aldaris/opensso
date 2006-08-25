@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtilException.java,v 1.1 2006-01-28 09:15:59 veiming Exp $
+ * $Id: LDAPUtilException.java,v 1.2 2006-08-25 21:20:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,9 @@
 
 package com.sun.identity.authentication.modules.ldap;
 
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Locale;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.shared.locale.Locale;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 

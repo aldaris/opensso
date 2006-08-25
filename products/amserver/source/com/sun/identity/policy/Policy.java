@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.1 2006-04-26 05:14:02 dillidorai Exp $
+ * $Id: Policy.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,9 +36,9 @@ import netscape.ldap.util.DN;
 import org.w3c.dom.*;
 
 import com.iplanet.sso.*;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.services.util.*;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;

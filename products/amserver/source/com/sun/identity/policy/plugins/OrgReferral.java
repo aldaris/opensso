@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgReferral.java,v 1.1 2006-04-26 05:14:49 dillidorai Exp $
+ * $Id: OrgReferral.java,v 1.2 2006-08-25 21:21:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import com.iplanet.ums.*;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import java.util.*;
 
 /** An abstract class to facilitate policy referrals based on 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.2 2006-03-07 00:07:30 pawand Exp $
+ * $Id: AuthXMLHandler.java,v 1.3 2006-08-25 21:20:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
@@ -66,9 +66,9 @@ import com.sun.identity.authentication.service.X509CertificateCallback;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.locale.L10NMessage;
 
 /**
  * <code>AuthXMLHandler</code> class implements the <code>RequestHandler</code>.
@@ -87,7 +87,7 @@ public class AuthXMLHandler implements RequestHandler {
     private static boolean messageEnabled = false;
     
     static {
-        debug = com.iplanet.am.util.Debug.getInstance("amXMLHandler");
+        debug = com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
         messageEnabled = debug.messageEnabled();
         au = new AuthUtils();
         serviceURI= SystemProperties.get(Constants.

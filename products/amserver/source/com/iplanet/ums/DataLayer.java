@@ -17,13 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.5 2006-07-31 20:39:50 bigfatrat Exp $
+ * $Id: DataLayer.java,v 1.6 2006-08-25 21:20:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.Attr;
+import com.iplanet.services.ldap.AttrSet;
+import com.iplanet.services.ldap.DSConfigMgr;
+import com.iplanet.services.ldap.LDAPServiceException;
+import com.iplanet.services.ldap.LDAPUser;
+import com.iplanet.services.ldap.ModSet;
+import com.iplanet.services.ldap.ServerInstance;
+import com.iplanet.services.ldap.event.EventService;
+import com.iplanet.services.util.I18n;
+import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +44,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPBind;
@@ -48,20 +60,6 @@ import netscape.ldap.LDAPSortKey;
 import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.controls.LDAPSortControl;
 import netscape.ldap.controls.LDAPVirtualListControl;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.ldap.Attr;
-import com.iplanet.services.ldap.AttrSet;
-import com.iplanet.services.ldap.DSConfigMgr;
-import com.iplanet.services.ldap.LDAPServiceException;
-import com.iplanet.services.ldap.LDAPUser;
-import com.iplanet.services.ldap.ModSet;
-import com.iplanet.services.ldap.ServerInstance;
-import com.iplanet.services.ldap.event.EventService;
-import com.iplanet.services.util.I18n;
-import com.sun.identity.common.LDAPConnectionPool;
-import com.sun.identity.security.ServerInstanceAction;
 
 /**
  * DataLayer (A PACKAGE SCOPE CLASS) to access LDAP or other database

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDMBundle.java,v 1.2 2005-12-08 01:16:13 veiming Exp $
+ * $Id: CDMBundle.java,v 1.3 2006-08-25 21:19:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ public class CDMBundle {
      */
     public static String getString(String str) {
         if (cdmBundle == null) {
-            cdmBundle = com.iplanet.am.util.Locale
+            cdmBundle = com.sun.identity.shared.locale.Locale
                     .getInstallResourceBundle("amClientDetection");
         }
         return cdmBundle.getString(str);

@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEnhancedFlatFileObject.java,v 1.1 2006-07-17 18:11:31 veiming Exp $
+ * $Id: SMSEnhancedFlatFileObject.java,v 1.2 2006-08-25 21:21:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm.flatfile;
 
-import com.iplanet.services.util.Hash;
+import com.sun.identity.shared.encode.Hash;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;

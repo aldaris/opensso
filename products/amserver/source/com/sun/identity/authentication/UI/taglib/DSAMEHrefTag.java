@@ -17,16 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSAMEHrefTag.java,v 1.1 2006-01-28 09:15:28 veiming Exp $
+ * $Id: DSAMEHrefTag.java,v 1.2 2006-08-25 21:20:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.authentication.UI.taglib;
 
-import javax.servlet.jsp.JspException;
 import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.model.Model;
 import com.iplanet.jato.taglib.DisplayFieldTagBase;
@@ -39,17 +36,17 @@ import com.iplanet.jato.view.ViewBean;
 import com.iplanet.jato.view.ViewBeanBase;
 import com.iplanet.jato.view.html.HREF;
 import com.iplanet.jato.view.html.HtmlDisplayField;
+import com.sun.identity.authentication.UI.AuthViewBeanBase;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Set;
 import java.util.Enumeration;
-import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
-import com.iplanet.am.util.Locale;
-import com.iplanet.am.util.Debug;
-
-import com.sun.identity.authentication.UI.AuthViewBeanBase;
+import javax.servlet.jsp.tagext.BodyTag;
 
 /**
  * Href tag reimplements JATO Href tag.  It adds a content encoding

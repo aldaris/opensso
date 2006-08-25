@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.1 2006-05-31 21:49:42 veiming Exp $
+ * $Id: CommandManager.java,v 1.2 2006-08-25 21:20:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,10 +25,10 @@
 package com.sun.identity.cli;
 
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.security.AdminTokenAction;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;

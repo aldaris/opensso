@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.5 2006-06-30 02:57:20 goodearth Exp $
+ * $Id: AttributeSchema.java,v 1.6 2006-08-25 21:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.security.EncodeAction;
 

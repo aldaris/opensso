@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.7 2006-06-16 19:36:47 rarcot Exp $
+ * $Id: LDAPv3EventService.java,v 1.8 2006-08-25 21:20:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.factory.JSSESocketFactory;
 
 import com.sun.identity.idm.IdRepoListener;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;

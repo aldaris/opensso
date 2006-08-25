@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceTypeManager.java,v 1.1 2006-04-26 05:14:07 dillidorai Exp $
+ * $Id: ServiceTypeManager.java,v 1.2 2006-08-25 21:21:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ import com.sun.identity.sm.SMSException;
 import com.iplanet.services.ldap.*;
 import com.sun.identity.authentication.internal.*;
 import com.sun.identity.security.AdminTokenAction;
-import com.iplanet.services.util.Base64;
+import com.sun.identity.shared.encode.Base64;
 
 /**
  * The class <code>ServiceTypeManager</code> provides methods

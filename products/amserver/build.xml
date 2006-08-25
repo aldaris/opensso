@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2006-08-17 17:09:40 veiming Exp $
+   $Id: build.xml,v 1.19 2006-08-25 21:19:15 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,6 +26,7 @@
 <project name="opensso" default="usage">
                 
     <description>Open Web Single Sign-On</description>
+    <import file="../products.xml" />
 
     <!-- global environment -->
     <property name="version" value="8.0"/>
@@ -80,6 +81,7 @@
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${classes.dir}"/>
+        <pathelement location="${sharedlib.classes.dir}"/>
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
@@ -98,7 +100,7 @@
     </fail>
 
 
-    <target name="build" depends="preparebuild">
+    <target name="build" depends="preparebuild, sharedlib">
         <javac destdir="${classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${src.dir}"/>
@@ -164,6 +166,10 @@
             <arg value="${xml.dir}/config.xml" />
         </java>
         <move file="${classes.dir}/IdentityManagementServices.wsdl" tofile="${classes.dir}/jaxrpc/IdentityManagementServices.wsdl" />
+    </target>
+
+    <target name="sharedlib">
+        <subant buildpath="${sharedlib.dir}/build.xml" target="all" />
     </target>
 
     <target name="doc" depends="preparebuild">

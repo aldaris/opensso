@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectEvaluationCache.java,v 1.2 2006-07-17 18:11:19 veiming Exp $
+ * $Id: SubjectEvaluationCache.java,v 1.3 2006-08-25 21:21:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import com.sun.identity.sm.ServiceManager;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Stats;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.stats.Stats;
 
 /* 
  * This class maintains the Subject Evaluation Cache

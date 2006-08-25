@@ -17,21 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XSDateTimeValidator.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
+ * $Id: XSDateTimeValidator.java,v 1.3 2006-08-25 21:20:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.validation;
 
-import com.iplanet.am.util.Locale;
-import com.sun.identity.common.DateUtils;
+import com.sun.identity.shared.DateUtils;
+import com.sun.identity.shared.locale.Locale;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Set;
 
 /**
  * Validator for <code>xs:dateTime</code> format.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.validation.XSDateTimeValidator}
  */
 public class XSDateTimeValidator
     extends ValidatorBase

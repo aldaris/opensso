@@ -17,24 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.3 2006-06-16 19:36:38 rarcot Exp $
+ * $Id: EventListener.java,v 1.4 2006-08-25 21:19:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.remote;
-
-// Java packages
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMEventManagerException;
@@ -42,7 +30,6 @@ import com.iplanet.am.sdk.AMObjectListener;
 import com.iplanet.am.sdk.common.ICachedDirectoryServices;
 import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.sdk.common.MiscUtils;
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.NotificationHandler;
 import com.iplanet.services.comm.client.PLLClient;
@@ -52,9 +39,19 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdRepoListener;
-import com.sun.identity.jaxrpc.SOAPClient;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.CreateServiceConfig;
 import com.sun.identity.sm.SMSSchema;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import netscape.ldap.util.DN;
 
 /**
  * The <code>EventListener</code> handles the events generated from the

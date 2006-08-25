@@ -17,25 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.4 2006-08-09 20:21:55 arviranga Exp $
+ * $Id: DelegationEvaluator.java,v 1.5 2006-08-25 21:20:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.delegation;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.Constants;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
-import com.sun.identity.sm.DNMapper;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.DNMapper;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The <code>DelegationEvaluator</code> class provides interfaces to evaluate

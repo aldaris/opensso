@@ -17,27 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigManagerUMS.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: ConfigManagerUMS.java,v 1.3 2006-08-25 21:20:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums;
 
-import java.security.AccessController;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import netscape.ldap.util.DN;
-
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -51,9 +38,20 @@ import com.iplanet.ums.util.GuidUtils;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import java.security.AccessController;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import netscape.ldap.util.DN;
 
 /**
  * Configuration Manager is responsible for getting configuration parameters for

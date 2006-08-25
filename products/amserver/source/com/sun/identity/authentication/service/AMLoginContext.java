@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.1 2006-01-28 09:16:24 veiming Exp $
+ * $Id: AMLoginContext.java,v 1.2 2006-08-25 21:20:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,23 +26,6 @@
 
 package com.sun.identity.authentication.service;
 
-import java.security.Principal;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -56,6 +39,21 @@ import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.MessageLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import java.security.Principal;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <code>AMLoginContext</code> class is the core layer in the authentication 
@@ -200,9 +198,10 @@ public class AMLoginContext {
                 AMAuthErrorCode.AUTH_ERROR, null);
         } else {
             String llc = loginState.getLocale();
-            java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(llc);
+            java.util.Locale loc = 
+                com.sun.identity.shared.locale.Locale.getLocale(llc);
             bundle = AMResourceBundleCache.getInstance().getResBundle(
-            bundleName,loc);
+                bundleName, loc);
         }
         if (debug.messageEnabled()) {
             debug.message("LoginState : " + loginState);
@@ -510,8 +509,9 @@ public class AMLoginContext {
                 debug.message("Exception " , me);
             }
             
-            java.util.Locale locale = com.iplanet.am.util.Locale.getLocale(
-            loginState.getLocale());
+            java.util.Locale locale = 
+                com.sun.identity.shared.locale.Locale.getLocale(
+                    loginState.getLocale());
             loginState.setModuleErrorMessage(me.getL10NMessage(locale));
             isFailed = true;
             authContext.setLoginException(me);
@@ -1094,8 +1094,8 @@ public class AMLoginContext {
     ) throws AuthException {
         indexType= AuthContext.IndexType.LEVEL;
         
-        java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(
-        loginState.getLocale());
+        java.util.Locale loc = com.sun.identity.shared.locale.Locale.getLocale(
+            loginState.getLocale());
         AuthLevel authLevel = new AuthLevel(indexType,indexName,orgDN,
         clientType,loc);
         int numberOfModules = authLevel.getNumberOfAuthModules();
@@ -1141,7 +1141,7 @@ public class AMLoginContext {
         String clientType
     ) throws AuthException {
         String moduleName = null;
-        java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(
+        java.util.Locale loc = com.sun.identity.shared.locale.Locale.getLocale(
             loginState.getLocale());
         CompositeAdvices compositeAdvice = new CompositeAdvices(indexName,orgDN,
             clientType,loc);

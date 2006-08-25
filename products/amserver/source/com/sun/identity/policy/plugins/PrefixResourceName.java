@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrefixResourceName.java,v 1.1 2006-04-26 05:14:49 dillidorai Exp $
+ * $Id: PrefixResourceName.java,v 1.2 2006-08-25 21:21:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.policy.plugins;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.policy.ResourceMatch;
 import com.sun.identity.policy.PolicyConfig;
 import com.sun.identity.policy.PolicyManager;

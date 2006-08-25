@@ -17,25 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.4 2006-03-02 07:16:55 veiming Exp $
+ * $Id: AMClientDetector.java,v 1.5 2006-08-25 21:19:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
-import java.security.AccessController;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.iplanet.services.cdm.ClientDetectionInterface;
 import com.iplanet.services.cdm.ClientTypesManager;
 import com.iplanet.services.cdm.DefaultClientTypesManager;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is an utility to get the client type. This utility executes Client

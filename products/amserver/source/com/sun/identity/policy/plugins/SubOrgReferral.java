@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubOrgReferral.java,v 1.1 2006-04-26 05:14:50 dillidorai Exp $
+ * $Id: SubOrgReferral.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;

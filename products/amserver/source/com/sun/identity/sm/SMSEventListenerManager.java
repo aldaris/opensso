@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.4 2006-08-11 00:42:26 rarcot Exp $
+ * $Id: SMSEventListenerManager.java,v 1.5 2006-08-25 21:21:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import java.util.Set;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
 
 /**

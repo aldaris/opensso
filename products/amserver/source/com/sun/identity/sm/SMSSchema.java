@@ -17,23 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.3 2006-02-03 07:54:52 veiming Exp $
+ * $Id: SMSSchema.java,v 1.4 2006-08-25 21:21:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.shared.xml.XMLHandler;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.FactoryConfigurationError;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -41,9 +42,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.iplanet.am.util.XMLHandler;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.ums.IUMSConstants;
 
 /**
  * This class provides methods to obtain service schema and plugin schema from

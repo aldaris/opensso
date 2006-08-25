@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.3 2005-12-08 01:16:12 veiming Exp $
+ * $Id: Stats.java,v 1.4 2006-08-25 21:19:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,6 +91,9 @@ import java.util.Vector;
  * to maximize application performance.
  * </p>
  * @supported.all.api
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.stats.Stats}
  */
 public class Stats {
     /** flags the disabled stats state. */

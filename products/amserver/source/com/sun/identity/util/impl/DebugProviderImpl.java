@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugProviderImpl.java,v 1.1 2005-11-01 00:31:38 arvindp Exp $
+ * $Id: DebugProviderImpl.java,v 1.2 2006-08-25 21:21:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,10 @@ import java.util.Map;
 import com.sun.identity.util.IDebug;
 import com.sun.identity.util.IDebugProvider;
 
+/**
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.debug.impl.DebugProviderImpl}
+ */
 public class DebugProviderImpl implements IDebugProvider {
 
     public synchronized IDebug getInstance(String debugName) {

@@ -17,13 +17,35 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.1 2005-11-01 00:30:22 arvindp Exp $
+ * $Id: NamingService.java,v 1.2 2006-08-25 21:19:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.naming.service;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.services.comm.server.RequestHandler;
+import com.iplanet.services.comm.share.Request;
+import com.iplanet.services.comm.share.Response;
+import com.iplanet.services.comm.share.ResponseSet;
+import com.iplanet.services.naming.share.NamingRequest;
+import com.iplanet.services.naming.share.NamingResponse;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.security.AdminDNAction;
+import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceListener;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.URL;
 import java.security.AccessController;
 import java.text.MessageFormat;
@@ -36,33 +58,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.services.comm.server.RequestHandler;
-import com.iplanet.services.comm.share.Request;
-import com.iplanet.services.comm.share.Response;
-import com.iplanet.services.comm.share.ResponseSet;
-import com.iplanet.services.naming.share.NamingRequest;
-import com.iplanet.services.naming.share.NamingResponse;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.authentication.internal.AuthPrincipal;
-import com.sun.identity.common.Constants;
-import com.sun.identity.security.AdminDNAction;
-import com.sun.identity.security.AdminPasswordAction;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceListener;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 public class NamingService implements RequestHandler, ServiceListener {
 
@@ -589,8 +587,8 @@ public class NamingService implements RequestHandler, ServiceListener {
             site = site.substring(0, idx);
             ServiceConfig subConfig = sessionServiceConfig.getSubConfig(site);
             Map sessionAttrs = subConfig.getAttributes();
-            String clusterServerList = Misc.getMapAttr(sessionAttrs,
-                    Constants.CLUSTER_SERVER_LIST, "");
+            String clusterServerList = CollectionHelper.getMapAttr(
+                sessionAttrs, Constants.CLUSTER_SERVER_LIST, "");
             clustertbl.put(siteid, clusterServerList);
         }
 

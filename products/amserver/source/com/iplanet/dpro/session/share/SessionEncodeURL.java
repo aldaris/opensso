@@ -17,22 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionEncodeURL.java,v 1.3 2005-11-15 04:10:27 veiming Exp $
+ * $Id: SessionEncodeURL.java,v 1.4 2006-08-25 21:19:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.share;
 
-import java.util.Hashtable;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.am.util.AMURLEncDec;
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.session.util.SessionUtils;
+import java.util.Hashtable;
+import javax.servlet.http.HttpServletRequest;
 
 /** 
  * <code>SessionEncodeURL</code> class encodes the </code>URL</code> 
@@ -211,7 +209,7 @@ public class SessionEncodeURL {
         }
         if (cookieEncoding) {
             if (sidString != null) {
-                sidString = AMURLEncDec.decode(sidString);
+                sidString = URLEncDec.decode(sidString);
             }
         }
 
@@ -402,9 +400,9 @@ public class SessionEncodeURL {
     public static String createCookieString(String cookieName, String sessionID)
     {
         StringBuffer cookieStrBuf = new StringBuffer();
-        cookieStrBuf.append(AMURLEncDec.encode(cookieName)).append(EQUAL);
+        cookieStrBuf.append(URLEncDec.encode(cookieName)).append(EQUAL);
         if (sessionID != null) {
-            cookieStrBuf.append(AMURLEncDec.encode(sessionID));
+            cookieStrBuf.append(URLEncDec.encode(sessionID));
         }
         return cookieStrBuf.toString();
     }

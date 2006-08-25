@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DCTreeServicesImpl.java,v 1.1 2006-06-16 19:36:29 rarcot Exp $
+ * $Id: DCTreeServicesImpl.java,v 1.2 2006-08-25 21:19:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMSDKBundle;
 import com.iplanet.am.sdk.common.DCTreeServicesHelper;
 import com.iplanet.am.sdk.common.IDCTreeServices;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class <code>DCTree</code> contains the functionality to support a DC

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.6 2006-06-16 19:36:46 rarcot Exp $
+ * $Id: SpecialRepo.java,v 1.7 2006-08-25 21:20:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,8 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.callback.*;
 
 import com.sun.identity.idm.IdRepoListener;
-import com.iplanet.am.util.Debug;
-import com.iplanet.services.util.Hash;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.services.ldap.ServerConfigMgr;

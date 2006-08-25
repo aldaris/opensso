@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheStats.java,v 1.1 2006-06-16 19:36:17 rarcot Exp $
+ * $Id: CacheStats.java,v 1.2 2006-08-25 21:19:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.common;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Stats;
-import com.iplanet.am.util.StatsListener;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.stats.Stats;
+import com.sun.identity.shared.stats.StatsListener;
 
 // Class used for synchronization purpose.
 public class CacheStats implements StatsListener {

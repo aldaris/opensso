@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.3 2006-04-27 07:53:33 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.4 2006-08-25 21:21:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -157,7 +157,7 @@ public class LogConfigReader implements ServiceListener{
             logAttributes = smsLogSchema.getAttributeDefaults();
             // File/jdbc
             key = LogConstants.BACKEND;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Backend string is null");
             } else {
@@ -170,7 +170,7 @@ public class LogConfigReader implements ServiceListener{
         // Database Driver
         try {
             key = LogConstants.DB_DRIVER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Driver string is null");
             } else {
@@ -183,7 +183,7 @@ public class LogConfigReader implements ServiceListener{
         // Database Password
         try {
             key = LogConstants.DB_PASSWORD;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Password string is null");
             } else {
@@ -196,7 +196,7 @@ public class LogConfigReader implements ServiceListener{
         // Database USER
         try {
             key = LogConstants.DB_USER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: DB_USER string is null");
             } else {
@@ -240,7 +240,7 @@ public class LogConfigReader implements ServiceListener{
         // Max file size
         try {
             key = LogConstants.MAX_FILE_SIZE;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Max File Size string is null");
             } else {
@@ -253,7 +253,7 @@ public class LogConfigReader implements ServiceListener{
         // number of history files
         try {
             key = LogConstants.NUM_HISTORY_FILES;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: NUM_HIST_FILES string is null");
             } else {
@@ -266,7 +266,7 @@ public class LogConfigReader implements ServiceListener{
         // archiver  class
         try {
             key = LogConstants.ARCHIVER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Archiver string is null");
             } else {
@@ -279,7 +279,7 @@ public class LogConfigReader implements ServiceListener{
         // file handler class
         try {
             key = LogConstants.FILE_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning(
                     "LogConfigReader: FileHandler class string is null");
@@ -293,7 +293,7 @@ public class LogConfigReader implements ServiceListener{
         // secure File handler class
         try {
             key = LogConstants.SECURE_FILE_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Secure FH string is null");
             } else {
@@ -307,7 +307,7 @@ public class LogConfigReader implements ServiceListener{
         // db handler class
         try {
             key = LogConstants.DB_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: DBHandler string is null");
             } else {
@@ -320,7 +320,7 @@ public class LogConfigReader implements ServiceListener{
         // remote handler class
         try {
             key = LogConstants.REMOTE_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Remote Handler string is null");
             } else {
@@ -334,7 +334,7 @@ public class LogConfigReader implements ServiceListener{
         // elf formatter class
         try {
             key = LogConstants.ELF_FORMATTER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader:ELFFormatter string is null");
             } else {
@@ -347,7 +347,7 @@ public class LogConfigReader implements ServiceListener{
         // secure elf formatter class
         try {
             key = LogConstants.SECURE_ELF_FORMATTER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Secure " +
                     "ELFFormatter string is null");
@@ -362,7 +362,7 @@ public class LogConfigReader implements ServiceListener{
         // db formatter class
         try {
             key = LogConstants.DB_FORMATTER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             sbuffer.append(key).append("=")
                    .append(value).append(LogConstants.CRLF);
         }   catch (Exception e) {
@@ -371,7 +371,7 @@ public class LogConfigReader implements ServiceListener{
         // db formatter class
         try {
             key = LogConstants.REMOTE_FORMATTER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             sbuffer.append(key).append("=")
                    .append(value).append(LogConstants.CRLF);
         }   catch (Exception e) {
@@ -380,7 +380,7 @@ public class LogConfigReader implements ServiceListener{
         // authz class
         try {
             key = LogConstants.AUTHZ;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: AUTHZ string is null");
             } else {
@@ -393,7 +393,7 @@ public class LogConfigReader implements ServiceListener{
         // log location
         try {
             key = LogConstants.LOG_LOCATION;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: LogLocation string is null");
             } else {
@@ -407,7 +407,7 @@ public class LogConfigReader implements ServiceListener{
         // security status (on or off)
         try {
             key = LogConstants.SECURITY_STATUS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning(
                     "LogConfigReader: Security status string is null");
@@ -423,7 +423,7 @@ public class LogConfigReader implements ServiceListener{
         // MD2withRSA, MD5withRSA, SHA1withDSA, SHA1withRSA
         try {
             key = LogConstants.SECURITY_SIGNING_ALGORITHM;
-            value = Misc.getMapAttr(logAttributes, key, 
+            value = CollectionHelper.getMapAttr(logAttributes, key, 
                 LogConstants.DEFAULT_SECURITY_SIGNING_ALGORITHM);
             sbuffer.append(key).append("=")
                 .append(value).append(LogConstants.CRLF);
@@ -437,7 +437,7 @@ public class LogConfigReader implements ServiceListener{
         // com.sun.identity.log.secure.impl.SecureLogHelperJCEImpl
         try {
             key = LogConstants.SECURE_LOG_HELPER;
-            value = Misc.getMapAttr(logAttributes, key, 
+            value = CollectionHelper.getMapAttr(logAttributes, key, 
                 LogConstants.SECURE_DEFAULT_LOG_HELPER);
             sbuffer.append(key).append("=")
                    .append(value).append(LogConstants.CRLF);
@@ -449,7 +449,7 @@ public class LogConfigReader implements ServiceListener{
         // secure logger certificate store
         try {
             key = LogConstants.LOGGER_CERT_STORE;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: secure logger " +
                     "certificate store is null");
@@ -464,7 +464,7 @@ public class LogConfigReader implements ServiceListener{
         // log verification period in seconds
         try {
             key = LogConstants.LOGVERIFY_PERIODINSECONDS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Verify period string is null");
             } else {
@@ -477,7 +477,7 @@ public class LogConfigReader implements ServiceListener{
         // log signing period in seconds
         try {
             key = LogConstants.LOGSIGN_PERIODINSECONDS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: sign period string is null");
             } else {
@@ -490,7 +490,7 @@ public class LogConfigReader implements ServiceListener{
         // file read handler class
         try {
             key = LogConstants.FILE_READ_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: file readhandler " +
                     "string is null");
@@ -505,7 +505,7 @@ public class LogConfigReader implements ServiceListener{
         // DB read handler class
         try {
             key = LogConstants.DB_READ_HANDLER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: DB readhandler string is null");
             } else {
@@ -519,7 +519,7 @@ public class LogConfigReader implements ServiceListener{
         // MAX_RECORDS
         try {
             key = LogConstants.MAX_RECORDS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: Max records string is null");
             } else {
@@ -532,7 +532,7 @@ public class LogConfigReader implements ServiceListener{
         // FILES_PER_KEYSTORE
         try {
             key = LogConstants.FILES_PER_KEYSTORE;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: filesper " +
                     "keystore string is null");
@@ -546,7 +546,7 @@ public class LogConfigReader implements ServiceListener{
         // Token Generating Class
         try {
             key = LogConstants.TOKEN_PROVIDER;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: token provider string is null");
             } else {
@@ -560,7 +560,7 @@ public class LogConfigReader implements ServiceListener{
         // Secure Timestamp generator class
         try {
             key = LogConstants.SECURE_TIMESTAMP_GENERATOR;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: timestamp " +
                     "generator string is null");
@@ -575,7 +575,7 @@ public class LogConfigReader implements ServiceListener{
         // Verifier Action Output Class
         try {
             key = LogConstants.VERIFIER_ACTION_CLASS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: verifier " +
                     "actionclass string is null");
@@ -590,7 +590,7 @@ public class LogConfigReader implements ServiceListener{
         // filter class name
         try {
             key = LogConstants.FILTER_CLASS_NAME;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: filter class " +
                     "name string is null");
@@ -604,7 +604,7 @@ public class LogConfigReader implements ServiceListener{
         // debug Implementation Class
         try {
             key = LogConstants.DEBUG_IMPL_CLASS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.error("LogConfigReader: debug implclass string is null");
             } else {
@@ -618,7 +618,7 @@ public class LogConfigReader implements ServiceListener{
         // Buffer size
         try {
             key = LogConstants.BUFFER_SIZE;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: buffer size string is null");
             } else {
@@ -632,7 +632,7 @@ public class LogConfigReader implements ServiceListener{
         // Max DB Mem Buffer size
         try {
             key = LogConstants.DB_MEM_MAX_RECS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() == 0)) {
                 debug.warning(
                 "LogConfigReader: Max DB mem buffer size string is null");
@@ -647,7 +647,7 @@ public class LogConfigReader implements ServiceListener{
         // Buffer Time
         try {
             key = LogConstants.BUFFER_TIME;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: buffer time string is null");
             } else {
@@ -660,7 +660,7 @@ public class LogConfigReader implements ServiceListener{
         // Time Buffering Status
         try {
             key = LogConstants.TIME_BUFFERING_STATUS;
-            value = Misc.getMapAttr(logAttributes, key);
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: time " +
                     "buffering status string is null");
@@ -691,7 +691,7 @@ public class LogConfigReader implements ServiceListener{
         try {
             platformAttributes = smsPlatformSchema.getAttributeDefaults();
             key = LogConstants.LOCALE;
-            value = Misc.getMapAttr(platformAttributes, key);
+            value = CollectionHelper.getMapAttr(platformAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: locale string is null");
             } else {
@@ -705,7 +705,7 @@ public class LogConfigReader implements ServiceListener{
         try {
             namingAttributes = smsNamingSchema.getAttributeDefaults();
             key = LogConstants.LOGGING_SERVICE_URL;
-            value = Misc.getMapAttr(namingAttributes, key);
+            value = CollectionHelper.getMapAttr(namingAttributes, key);
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: loggins " +
                     "service url string is null");

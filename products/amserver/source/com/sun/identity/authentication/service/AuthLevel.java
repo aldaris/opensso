@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevel.java,v 1.1 2006-01-28 09:16:31 veiming Exp $
+ * $Id: AuthLevel.java,v 1.2 2006-08-25 21:20:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,9 +35,9 @@ import java.util.Vector;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ChoiceCallback;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.authentication.AuthContext;
 
 /**

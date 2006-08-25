@@ -17,13 +17,66 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.6 2006-06-28 01:12:19 alanchu Exp $
+ * $Id: SessionService.java,v 1.7 2006-08-25 21:19:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.am.util.ThreadPool;
+import com.iplanet.am.util.ThreadPoolException;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionEvent;
+import com.iplanet.dpro.session.SessionException;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.SessionNotificationHandler;
+import com.iplanet.dpro.session.SessionTimedOutException;
+import com.iplanet.dpro.session.TokenRestriction;
+import com.iplanet.dpro.session.TokenRestrictionFactory;
+import com.iplanet.dpro.session.share.SessionBundle;
+import com.iplanet.dpro.session.share.SessionInfo;
+import com.iplanet.dpro.session.share.SessionNotification;
+import com.iplanet.services.comm.server.PLLServer;
+import com.iplanet.services.comm.share.Notification;
+import com.iplanet.services.comm.share.NotificationSet;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.services.util.Crypt;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.log.LogConstants;
+import com.sun.identity.log.LogRecord;
+import com.sun.identity.log.Logger;
+import com.sun.identity.log.messageid.LogMessageProvider;
+import com.sun.identity.log.messageid.MessageProviderFactory;
+import com.sun.identity.security.AdminDNAction;
+import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.DecodeAction;
+import com.sun.identity.security.EncodeAction;
+import com.sun.identity.session.util.RestrictedTokenContext;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.stats.Stats;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -52,61 +105,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.servlet.http.HttpSession;
-
-import com.iplanet.am.util.AMURLEncDec;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.Stats;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.ThreadPool;
-import com.iplanet.am.util.ThreadPoolException;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionEvent;
-import com.iplanet.dpro.session.SessionException;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.SessionNotificationHandler;
-import com.iplanet.dpro.session.SessionTimedOutException;
-import com.iplanet.dpro.session.TokenRestriction;
-import com.iplanet.dpro.session.TokenRestrictionFactory;
-import com.iplanet.dpro.session.share.SessionBundle;
-import com.iplanet.dpro.session.share.SessionInfo;
-import com.iplanet.dpro.session.share.SessionNotification;
-import com.iplanet.services.comm.server.PLLServer;
-import com.iplanet.services.comm.share.Notification;
-import com.iplanet.services.comm.share.NotificationSet;
-import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.services.util.Base64;
-import com.iplanet.services.util.Crypt;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.authentication.internal.AuthPrincipal;
-import com.sun.identity.common.Constants;
-import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.SearchResults;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdSearchResults;
-import com.sun.identity.idm.IdType;
-import com.sun.identity.idm.IdUtils;
-import com.sun.identity.delegation.DelegationEvaluator;
-import com.sun.identity.delegation.DelegationException;
-import com.sun.identity.delegation.DelegationPermission;
-import com.sun.identity.log.LogConstants;
-import com.sun.identity.log.LogRecord;
-import com.sun.identity.log.Logger;
-import com.sun.identity.log.messageid.LogMessageProvider;
-import com.sun.identity.log.messageid.MessageProviderFactory;
-import com.sun.identity.security.AdminDNAction;
-import com.sun.identity.security.AdminPasswordAction;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.DecodeAction;
-import com.sun.identity.security.EncodeAction;
-import com.sun.identity.session.util.RestrictedTokenContext;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 /**  
  * This class represents a Session Service
@@ -1851,15 +1849,15 @@ public class SessionService {
             ServiceSchema schema = ssm.getGlobalSchema();
             Map attrs = schema.getAttributeDefaults();
 
-            String notificationStr = Misc.getMapAttr(attrs,
-                    Constants.PROPERTY_CHANGE_NOTIFICATION, "OFF");
+            String notificationStr = CollectionHelper.getMapAttr(
+                attrs, Constants.PROPERTY_CHANGE_NOTIFICATION, "OFF");
             if (notificationStr.equalsIgnoreCase("ON")) {
                 isPropertyNotificationEnabled = true;
                 notificationProperties = (Set) attrs
                         .get(Constants.NOTIFICATION_PROPERTY_LIST);
             }
-            String constraintStr = Misc.getMapAttr(attrs, SESSION_CONSTRAINT,
-                    "OFF");
+            String constraintStr = CollectionHelper.getMapAttr(
+                attrs, SESSION_CONSTRAINT, "OFF");
             if (constraintStr.equalsIgnoreCase("ON")) {
                 isSessionConstraintEnabled = true;
             }
@@ -1868,8 +1866,8 @@ public class SessionService {
                         + isSessionConstraintEnabled);
             }
 
-            String bypassConstratintStr = Misc.getMapAttr(attrs,
-                    BYPASS_CONSTRAINT_ON_TOPLEVEL_ADMINS, "NO");
+            String bypassConstratintStr = CollectionHelper.getMapAttr(
+                attrs, BYPASS_CONSTRAINT_ON_TOPLEVEL_ADMINS, "NO");
             if (bypassConstratintStr.equalsIgnoreCase("YES")) {
                 bypassConstratintForToplevelAdmin = true;
             }
@@ -1879,8 +1877,8 @@ public class SessionService {
                         + bypassConstratintForToplevelAdmin);
             }
 
-            String resultingBehaviorStr = Misc.getMapAttr(attrs,
-                    CONSTARINT_RESULTING_BEHAVIOR, DESTROY_OLD_SESSION);
+            String resultingBehaviorStr = CollectionHelper.getMapAttr(
+                attrs, CONSTARINT_RESULTING_BEHAVIOR, DESTROY_OLD_SESSION);
             if (resultingBehaviorStr.equalsIgnoreCase(DESTROY_OLD_SESSION)) {
                 constraintResultingBehavior = 
                     SessionConstraint.DESTROY_OLD_SESSION;
@@ -1893,7 +1891,8 @@ public class SessionService {
                         + "quota exhausted:" + resultingBehaviorStr);
             }
 
-            maxWaitTimeForConstraint = Integer.parseInt(Misc.getMapAttr(attrs,
+            maxWaitTimeForConstraint = Integer.parseInt(
+                CollectionHelper.getMapAttr(attrs,
                     MAX_WAIT_TIME_FOR_CONSTARINT, "6000"));
 
             ServiceConfigManager scm = new ServiceConfigManager(
@@ -1906,23 +1905,25 @@ public class SessionService {
                 isSessionFailoverEnabled = true;
 
                 Map sessionAttrs = subConfig.getAttributes();
-                sessionStoreUserName = Misc.getMapAttr(sessionAttrs,
-                        SESSION_STORE_USERNAME, "amsvrusr");
-                sessionStorePassword = Misc.getMapAttr(sessionAttrs,
+                sessionStoreUserName = CollectionHelper.getMapAttr(
+                    sessionAttrs, SESSION_STORE_USERNAME, "amsvrusr");
+                sessionStorePassword = CollectionHelper.getMapAttr(sessionAttrs,
                         SESSION_STORE_PASSWORD, "password");
 
                 Set serverIDs = WebtopNaming.getSiteNodes(sessionServerID);
                 initClusterMemberMap(serverIDs);
 
-                connectionMaxWaitTime = Integer.parseInt(Misc.getMapAttr(
+                connectionMaxWaitTime = Integer.parseInt(
+                    CollectionHelper.getMapAttr(
                         sessionAttrs, CONNECT_MAX_WAIT_TIME, "5000"));
-                jdbcDriverClass = Misc.getMapAttr(sessionAttrs,
-                        JDBC_DRIVER_CLASS, "");
-                jdbcURL = Misc.getMapAttr(sessionAttrs, JDBC_URL, "");
-                minPoolSize = Integer.parseInt(Misc.getMapAttr(sessionAttrs,
-                        MIN_POOL_SIZE, "8"));
-                maxPoolSize = Integer.parseInt(Misc.getMapAttr(sessionAttrs,
-                        MAX_POOL_SIZE, "32"));
+                jdbcDriverClass = CollectionHelper.getMapAttr(
+                    sessionAttrs, JDBC_DRIVER_CLASS, "");
+                jdbcURL = CollectionHelper.getMapAttr(
+                    sessionAttrs, JDBC_URL, "");
+                minPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
+                    sessionAttrs, MIN_POOL_SIZE, "8"));
+                maxPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
+                    sessionAttrs, MAX_POOL_SIZE, "32"));
 
                 if (sessionDebug.messageEnabled()) {
                     sessionDebug.message("UserName=" + sessionStoreUserName
@@ -2198,7 +2199,7 @@ public class SessionService {
 
             if (domain != null) {
                 query += "&" + GetHttpSession.DOMAIN + "="
-                        + AMURLEncDec.encode(domain);
+                        + URLEncDec.encode(domain);
             }
 
             String routingCookie = null;

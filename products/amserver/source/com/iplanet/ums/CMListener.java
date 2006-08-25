@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CMListener.java,v 1.2 2005-11-15 04:10:28 veiming Exp $
+ * $Id: CMListener.java,v 1.3 2006-08-25 21:20:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceListener;
 
 /**

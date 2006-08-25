@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Gateway.java,v 1.2 2006-06-05 20:26:50 bhavnab Exp $
+ * $Id: Gateway.java,v 1.3 2006-08-25 21:21:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iplanet.am.sdk.AMOrganization;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -51,9 +51,9 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.share.AuthXMLTags;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.policy.ActionDecision;
 import com.sun.identity.policy.PolicyDecision;

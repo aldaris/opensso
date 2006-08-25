@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SharedSubject.java,v 1.1 2006-04-26 05:14:07 dillidorai Exp $
+ * $Id: SharedSubject.java,v 1.2 2006-08-25 21:21:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@
 
 package com.sun.identity.policy;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 

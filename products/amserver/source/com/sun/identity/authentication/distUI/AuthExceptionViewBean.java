@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.3 2006-02-03 07:54:48 veiming Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.4 2006-08-25 21:20:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,19 +26,6 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -50,7 +37,19 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 /**
  * A default implementation of <code>ViewBean</code> auth exception UI.
  */

@@ -17,21 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.1 2005-11-01 00:31:20 arvindp Exp $
+ * $Id: AttributeValidator.java,v 1.2 2006-08-25 21:21:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import java.security.AccessController;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.ums.IUMSConstants;
 import com.iplanet.ums.validation.BooleanValidator;
 import com.iplanet.ums.validation.DNValidator;
@@ -41,6 +33,13 @@ import com.iplanet.ums.validation.NumberValidator;
 import com.iplanet.ums.validation.URLValidator;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
+import com.sun.identity.shared.debug.Debug;
+import java.security.AccessController;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class <code> AttributeValidator </code> provides methods by which

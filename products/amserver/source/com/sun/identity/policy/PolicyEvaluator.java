@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.1 2006-04-26 05:14:03 dillidorai Exp $
+ * $Id: PolicyEvaluator.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,8 @@ import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Stats;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;

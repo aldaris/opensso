@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPEventManager.java,v 1.1 2005-11-01 00:31:36 arvindp Exp $
+ * $Id: LDAPEventManager.java,v 1.2 2006-08-25 21:21:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.Map;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.controls.LDAPPersistSearchControl;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPUser;
 import com.iplanet.services.ldap.ServerInstance;

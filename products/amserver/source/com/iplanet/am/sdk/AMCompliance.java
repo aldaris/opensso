@@ -17,29 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCompliance.java,v 1.2 2006-06-16 19:36:00 rarcot Exp $
+ * $Id: AMCompliance.java,v 1.3 2006-08-25 21:19:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
-import java.security.AccessController;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import netscape.ldap.util.DN;
-
 import com.iplanet.am.sdk.common.IComplianceServices;
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import netscape.ldap.util.DN;
 
 /**
  * This class <code>AMCompliance</code> contains the functionality to support

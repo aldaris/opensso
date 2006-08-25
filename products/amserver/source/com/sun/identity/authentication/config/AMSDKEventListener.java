@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKEventListener.java,v 1.2 2006-02-01 00:23:21 beomsuk Exp $
+ * $Id: AMSDKEventListener.java,v 1.3 2006-08-25 21:20:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,7 @@ package com.sun.identity.authentication.config;
 import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMEventListener;
 import com.iplanet.am.sdk.AMObject;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import javax.security.auth.login.Configuration;
 
 /**

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-nightly.xml,v 1.5 2006-08-04 21:06:48 veiming Exp $
+   $Id: build-nightly.xml,v 1.6 2006-08-25 21:19:14 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -94,6 +94,13 @@
             <fileset dir="${demo.dist.dir}">
                 <include name="openssodemo.war" />
                 <include name="openssodemo.war.sha" />
+            </fileset>
+        </copy>
+
+        <copy todir="${nightly.dist.dir}">
+            <fileset dir="${sharedlib.dist.dir}">
+                <include name="opensso-sharedlib.jar" />
+                <include name="opensso-sharedlib.jar.sha" />
             </fileset>
         </copy>
 

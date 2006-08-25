@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBC.java,v 1.1 2006-01-28 09:15:52 veiming Exp $
+ * $Id: JDBC.java,v 1.2 2006-08-25 21:20:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 
 package com.sun.identity.authentication.modules.jdbc;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
@@ -130,7 +130,8 @@ public class JDBC extends AMLoginModule {
         if(options != null) {
             try {
                 // First, figure out the type of connection
-                connectionType = Misc.getMapAttr(options, CONNECTIONTYPE);
+                connectionType = CollectionHelper.getMapAttr(
+                    options, CONNECTIONTYPE);
                 if (connectionType == null) {
                     debug.message("No CONNECTIONTYPE for configuring");
                     errorMsg ="noCONNECTIONTYPE";
@@ -148,7 +149,8 @@ public class JDBC extends AMLoginModule {
                     // If its pooled, get the JNDI name
                     if ( useJNDI ) {
                         debug.message("Using JNDI Retrieved Connection pool");
-                        jndiName = Misc.getMapAttr(options, JNDINAME);
+                        jndiName = CollectionHelper.getMapAttr(
+                            options, JNDINAME);
                         if (jndiName == null) {
                             debug.message("No JNDINAME for configuring");
                             errorMsg ="noJNDINAME";
@@ -163,7 +165,7 @@ public class JDBC extends AMLoginModule {
                         // If its a non-pooled, then get the JDBC config    
                     } else {
                         debug.message("Using non pooled JDBC");
-                        driver = Misc.getMapAttr(options, DRIVER);
+                        driver = CollectionHelper.getMapAttr(options, DRIVER);
                         if (driver == null) {
                             debug.message("No DRIVER for configuring");
                             errorMsg ="noDRIVER";
@@ -175,7 +177,7 @@ public class JDBC extends AMLoginModule {
                         }
                     }
 
-                    url = Misc.getMapAttr(options, URL);
+                    url = CollectionHelper.getMapAttr(options, URL);
                     if (url == null) {
                         debug.message("No URL for configuring");
                         errorMsg ="noURL";
@@ -185,7 +187,7 @@ public class JDBC extends AMLoginModule {
                             debug.message("Found config for URL: " + url);
                         }
                     }
-                    dbuser = Misc.getMapAttr(options, DBUSER);
+                    dbuser = CollectionHelper.getMapAttr(options, DBUSER);
                     if (dbuser == null) {
                         debug.message("No DBUSER for configuring");
                         errorMsg = "noDBUSER";
@@ -197,7 +199,8 @@ public class JDBC extends AMLoginModule {
                         }
                     }
 
-                    dbpassword = Misc.getMapAttr(options, DBPASSWORD, "");
+                    dbpassword = CollectionHelper.getMapAttr(
+                        options, DBPASSWORD, "");
                     if (dbpassword == null) {
                         debug.message("No DBPASSWORD for configuring");
                         errorMsg = "noDBPASSWORD";
@@ -210,7 +213,8 @@ public class JDBC extends AMLoginModule {
                 }
                 
                 // and get the props that apply to both connection types 
-                passwordColumn = Misc.getMapAttr(options, PASSWORDCOLUMN);
+                passwordColumn = CollectionHelper.getMapAttr(
+                    options, PASSWORDCOLUMN);
                 if (passwordColumn == null) {
                     debug.message("No PASSWORDCOLUMN for configuring");
                     errorMsg = "noPASSWORDCOLUMN";
@@ -221,12 +225,12 @@ public class JDBC extends AMLoginModule {
                                       passwordColumn);
                     }
                 }          
-                statement = Misc.getMapAttr(options, STATEMENT);
+                statement = CollectionHelper.getMapAttr(options, STATEMENT);
                 if (statement == null) {
                     debug.message("No STATEMENT for configuring");
                     errorMsg = "noSTATEMENT";
                 }                   
-                transform = Misc.getMapAttr(options, TRANSFORM);
+                transform = CollectionHelper.getMapAttr(options, TRANSFORM);
                 if (transform == null) {
                     if (debug.messageEnabled()) {
                         debug.message("No TRANSFORM for configuring."+
@@ -239,7 +243,8 @@ public class JDBC extends AMLoginModule {
                     }
                 }
                                         
-                String authLevel = Misc.getMapAttr(options, AUTHLEVEL);
+                String authLevel = CollectionHelper.getMapAttr(
+                    options, AUTHLEVEL);
                 if (authLevel != null) {
                     try {
                         setAuthLevel(Integer.parseInt(authLevel));

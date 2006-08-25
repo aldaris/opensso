@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISDebug.java,v 1.2 2006-04-27 07:53:37 veiming Exp $
+ * $Id: ISDebug.java,v 1.3 2006-08-25 21:21:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 
 package com.sun.identity.log.spi;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class serves as the DSAME implementaion of DebugInterface

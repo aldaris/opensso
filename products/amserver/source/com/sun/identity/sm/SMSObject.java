@@ -17,21 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.1 2005-11-01 00:31:29 arvindp Exp $
+ * $Id: SMSObject.java,v 1.2 2006-08-25 21:21:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.directory.ModificationItem;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.debug.Debug;
+import java.util.Map;
+import java.util.Set;
+import javax.naming.directory.ModificationItem;
 
 /**
  * Abstract class that needs to be implemented to store configuration data in a

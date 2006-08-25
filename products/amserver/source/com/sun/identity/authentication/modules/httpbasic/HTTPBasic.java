@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPBasic.java,v 1.1 2006-01-28 09:15:49 veiming Exp $
+ * $Id: HTTPBasic.java,v 1.2 2006-08-25 21:20:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,8 @@
 package com.sun.identity.authentication.modules.httpbasic;
 
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.AMLoginModule;
@@ -51,9 +51,6 @@ import java.security.AccessController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sun.misc.BASE64Decoder;
-
-
-
 
 /**
  * HTTP Basic login module.
@@ -85,8 +82,8 @@ public class HTTPBasic extends AMLoginModule {
             debug.message("HttpBasicAuth resbundle locale="+locale);
         }
         this.options = options;
-        instanceName  = Misc.getMapAttr(options, MODCONFIG);
-        String authLevel = Misc.getMapAttr(options, AUTHLEVEL);
+        instanceName  = CollectionHelper.getMapAttr(options, MODCONFIG);
+        String authLevel = CollectionHelper.getMapAttr(options, AUTHLEVEL);
         if (authLevel != null) {
             try {
                 setAuthLevel(Integer.parseInt(authLevel));

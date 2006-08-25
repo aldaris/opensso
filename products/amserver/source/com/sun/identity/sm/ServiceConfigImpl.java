@@ -17,23 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.3 2006-07-31 23:41:02 arviranga Exp $
+ * $Id: ServiceConfigImpl.java,v 1.4 2006-08-25 21:21:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
 
 /**
  * The class <code>ServiceConfigImpl</code> provides interfaces to read the

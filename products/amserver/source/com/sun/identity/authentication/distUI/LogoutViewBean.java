@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.3 2006-02-03 07:54:49 veiming Exp $
+ * $Id: LogoutViewBean.java,v 1.4 2006-08-25 21:20:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
@@ -49,7 +49,7 @@ import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.locale.L10NMessage;
 
 /**
  * This class is a default implementation of <code>LogoutViewBean</code> auth 

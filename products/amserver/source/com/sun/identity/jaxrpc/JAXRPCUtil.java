@@ -17,27 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCUtil.java,v 1.3 2006-07-17 18:11:16 veiming Exp $
+ * $Id: JAXRPCUtil.java,v 1.4 2006-08-25 21:20:56 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.jaxrpc;
 
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.jaxrpc.JAXRPCHelper;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.StringTokenizer;
-
 import javax.xml.rpc.Stub;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.naming.URLNotFoundException;
-import com.iplanet.services.naming.WebtopNaming;
 
 /**
  * The class <code>JAXRPCUtil</code> provides functions to get JAXRPC stubs to
@@ -52,54 +44,9 @@ import com.iplanet.services.naming.WebtopNaming;
  * server and will return a stub that is currently active or throws
  * <code>java.rmi.RemoteException</code> if no servers are available.
  */
+public class JAXRPCUtil extends JAXRPCHelper {
 
-public class JAXRPCUtil {
-
-    // Static constants
-    final static String JAXRPC_URL = "com.sun.identity.jaxrpc.url";
-
-    final static String JAXRPC_SERVICE = "jaxrpc";
-
-    public final static String SMS_SERVICE = "SMSObjectIF";
-
-    // Static variables
     private static HashMap remoteStubs = new HashMap();
-
-    private static String validRemoteURL;
-
-    private static boolean serverFailed = true;
-
-    private static Debug debug = SOAPClient.debug;
-
-    /**
-     * Returns a valid URL endpoint for the given servie name. If no valid
-     * servers are found, it throws <code>java.rmi.RemoteException</code>
-     */
-    public static String getValidURL(String serviceName) throws RemoteException 
-    {
-        // Validate service name
-        if (serviceName == null) {
-            // Service name should not be null
-            if (debug.warningEnabled()) {
-                debug.warning("JAXRPCUtil: Service name is null");
-            }
-            throw (new RemoteException("invalid-service-name"));
-        }
-
-        // Check if there is a valid server
-        if (serverFailed) {
-            validRemoteURL = getValidServerURL();
-        }
-        if (validRemoteURL == null) {
-            // No valid servers where found, throw a RemoteExeption
-            // Debug a warning
-            if (debug.warningEnabled()) {
-                debug.warning("JAXRPCUtil: No vaild server found");
-            }
-            throw (new RemoteException("no-server-found"));
-        }
-        return (validRemoteURL + serviceName);
-    }
 
     /**
      * Returns a valid JAXRPC end point for the given service name. If no valid
@@ -133,60 +80,6 @@ public class JAXRPCUtil {
         // Add to cache
         remoteStubs.put(serviceName, stub);
         return (stub);
-    }
-
-    // Protected static methods
-    protected static String getValidServerURL() {
-        // Check if the properties has been set
-        String servers = SystemProperties.get(JAXRPC_URL);
-        if (servers != null) {
-            StringTokenizer st = new StringTokenizer(servers, ",");
-            while (st.hasMoreTokens()) {
-                String surl = st.nextToken();
-                if (!surl.endsWith("/"))
-                    surl += "/";
-                if (isServerValid(surl)) {
-                    return (surl);
-                }
-            }
-        } else {
-            // Get the list of platform servers from naming
-            Enumeration sl = null;
-            try {
-                sl = WebtopNaming.getPlatformServerList().elements();
-            } catch (Exception e) {
-                // Unable to get platform server list
-                if (debug.warningEnabled()) {
-                    debug.warning("JAXRPCUtil:getValidServerURL: "
-                            + "Unable to get platform server", e);
-                }
-                return (null);
-            }
-
-            while (sl != null && sl.hasMoreElements()) {
-                try {
-                    URL url = new URL((String) sl.nextElement());
-                    URL weburl = WebtopNaming.getServiceURL(JAXRPC_SERVICE, url
-                            .getProtocol(), url.getHost(), Integer.toString(url
-                            .getPort()));
-                    String surl = weburl.toString();
-                    if (!surl.endsWith("/"))
-                        surl += "/";
-                    if (isServerValid(surl)) {
-                        return (surl);
-                    }
-                } catch (MalformedURLException me) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("JAXRPCUtil:getValidServerURL: ", me);
-                    }
-                } catch (URLNotFoundException me) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("JAXRPCUtil:getValidServerURL: ", me);
-                    }
-                }
-            }
-        }
-        return (null);
     }
 
     protected static Object getServiceEndPoint(String iurl) {
@@ -236,24 +129,5 @@ public class JAXRPCUtil {
             s._setProperty(javax.xml.rpc.Stub.ENDPOINT_ADDRESS_PROPERTY, iurl);
         }
         return (s);
-    }
-
-    protected static boolean isServerValid(String url) {
-        try {
-            if (!url.endsWith(SMS_SERVICE)) {
-                url += SMS_SERVICE;
-            }
-            SOAPClient client = new SOAPClient();
-            client.setURL(url);
-            client.send(client.encodeMessage("checkForLocal", null), null);
-        } catch (Exception e) {
-            // Server is not valid
-            if (debug.messageEnabled()) {
-                debug.message("JAXRPCUtil: Connection to URL: " + url
-                        + " failed", e);
-            }
-            return (false);
-        }
-        return (true);
     }
 }

@@ -17,20 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainedException.java,v 1.1 2005-11-01 00:30:56 arvindp Exp $
+ * $Id: ChainedException.java,v 1.2 2006-08-25 21:20:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.L10NMessage;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
-import com.iplanet.am.util.AMResourceBundleCache;
 
 /**
  * Base class for supporting chaining of exceptions.

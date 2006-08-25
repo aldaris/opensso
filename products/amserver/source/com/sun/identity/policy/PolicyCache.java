@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.1 2006-04-26 05:14:02 dillidorai Exp $
+ * $Id: PolicyCache.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,9 +30,9 @@ import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.SMSException;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Stats;
-import com.iplanet.am.util.StatsListener;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.stats.Stats;
+import com.sun.identity.shared.stats.StatsListener;
 import java.util.*;
 
 import netscape.ldap.util.DN;

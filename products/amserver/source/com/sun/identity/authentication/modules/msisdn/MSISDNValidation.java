@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MSISDNValidation.java,v 1.1 2006-01-28 09:16:08 veiming Exp $
+ * $Id: MSISDNValidation.java,v 1.2 2006-08-25 21:20:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,12 +30,12 @@ import java.util.ResourceBundle;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
-import com.iplanet.am.util.AMResourceBundleCache;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
 
 /**
  * A class that searches LDAP for the user having
@@ -46,7 +46,7 @@ import com.iplanet.am.util.AMResourceBundleCache;
 public class MSISDNValidation {
 
     private  ResourceBundle bundle = null;
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
     private String userTokenId;
     
     private String errorMsgKey = null;
@@ -128,16 +128,18 @@ public class MSISDNValidation {
         if (options != null) {
             debug.message("MSISDN: getting attributes.");
             
-            userSearchAttr = Misc.getMapAttr(options,USER_SEARCH_ATTR);
-            principalUser = Misc.getMapAttr(options,PRINCIPAL);
-               principalPasswd = Misc.getMapAttr(options,PRINCIPAL_PASSWD);
-            useSSL = Boolean.valueOf(Misc.getMapAttr(options,USE_SSL,
-                                ISAuthConstants.FALSE_VALUE)).booleanValue();
-            serverHost = Misc.getServerMapAttr(options, LDAP_URL);
-            userNamingAttr = Misc.getMapAttr(options,
-                                   USER_NAMING_ATTR,DEFAULT_USER_NAMING_ATTR);
-            returnUserDN = Misc.getMapAttr(options,RETURN_USER_DN,
-                                            ISAuthConstants.TRUE_VALUE);
+            userSearchAttr = CollectionHelper.getMapAttr(
+                options, USER_SEARCH_ATTR);
+            principalUser = CollectionHelper.getMapAttr(options, PRINCIPAL);
+            principalPasswd = CollectionHelper.getMapAttr(
+                options, PRINCIPAL_PASSWD);
+            useSSL = Boolean.valueOf(CollectionHelper.getMapAttr(
+                options, USE_SSL, ISAuthConstants.FALSE_VALUE)).booleanValue();
+            serverHost = CollectionHelper.getServerMapAttr(options, LDAP_URL);
+            userNamingAttr = CollectionHelper.getMapAttr(
+                options, USER_NAMING_ATTR,DEFAULT_USER_NAMING_ATTR);
+            returnUserDN = CollectionHelper.getMapAttr(
+                options, RETURN_USER_DN, ISAuthConstants.TRUE_VALUE);
 
             if (serverHost == null) {
                 debug.error("Fatal error: LDAP Server and Port misconfigured");
@@ -151,7 +153,8 @@ public class MSISDNValidation {
                     serverPort = Integer.parseInt(port);
                     serverHost = serverHost.substring(0, index); 
                 }
-                startSearchLoc = Misc.getServerMapAttr(options,START_SEARCH_DN);
+                startSearchLoc = CollectionHelper.getServerMapAttr(
+                    options, START_SEARCH_DN);
                 if (startSearchLoc == null) {
                     debug.error(
                         "Fatal error: LDAP Start Search DN misconfigured");

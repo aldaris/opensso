@@ -17,30 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchFilterManager.java,v 1.1 2006-06-16 19:36:34 rarcot Exp $
+ * $Id: SearchFilterManager.java,v 1.2 2006-08-25 21:19:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.ldap;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import netscape.ldap.util.DN;
-
-import com.iplanet.ums.Guid;
-import com.iplanet.ums.SearchTemplate;
-import com.iplanet.ums.TemplateManager;
-import com.iplanet.ums.UMSException;
-
-import com.sun.identity.sm.SMSEntry;
-
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
+import com.iplanet.ums.Guid;
+import com.iplanet.ums.SearchTemplate;
+import com.iplanet.ums.TemplateManager;
+import com.iplanet.ums.UMSException;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSEntry;
+import java.util.HashMap;
+import java.util.Map;
+import netscape.ldap.util.DN;
 
 /**
  * A Class which manages the search filters correponding to each of the AMObject

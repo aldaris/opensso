@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.4 2006-03-01 00:56:24 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.5 2006-08-25 21:20:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,23 +26,6 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.ChoiceCallback;
-import javax.security.auth.callback.ConfirmationCallback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -52,7 +35,7 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.ImageField;
 import com.iplanet.jato.view.html.StaticTextField;
-import com.iplanet.services.util.CookieUtils;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.server.AuthContextLocal;
@@ -61,10 +44,25 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.L10NMessage;
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.ChoiceCallback;
+import javax.security.auth.callback.ConfirmationCallback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class is a default implementation of <code>LoginViewBean</code> 
@@ -319,7 +317,8 @@ public class LoginViewBean extends AuthViewBeanBase {
             ac = au.getAuthContext(
                 request, response, sessionID, sessionUpgrade, isBackPost);
             java.util.Locale locale =
-                com.iplanet.am.util.Locale.getLocale(au.getLocale(ac));
+                com.sun.identity.shared.locale.Locale.getLocale(
+                    au.getLocale(ac));
             fallbackLocale = locale;
             rb =  rbCache.getResBundle(bundleName, locale);
             if (loginDebug.messageEnabled()) {
@@ -1386,7 +1385,8 @@ public class LoginViewBean extends AuthViewBeanBase {
                 
                 if ((strButton != null) && (strButton.length() != 0)) {
                     java.util.Locale locale =
-                    com.iplanet.am.util.Locale.getLocale(au.getLocale(origAC));
+                        com.sun.identity.shared.locale.Locale.getLocale(
+                            au.getLocale(origAC));
                     rb =  rbCache.getResBundle(bundleName, locale);
                     
                     if (strButton.trim().equals(rb.getString("Yes").trim())) {
@@ -1602,7 +1602,8 @@ public class LoginViewBean extends AuthViewBeanBase {
             if (authErrorCode != null) {
                 errorCode = authErrorCode;
                 ErrorMessage = l10nE.getL10NMessage(
-                com.iplanet.am.util.Locale.getLocale(au.getLocale(ac)));
+                    com.sun.identity.shared.locale.Locale.getLocale(
+                        au.getLocale(ac)));
             }
         }
         

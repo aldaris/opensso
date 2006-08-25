@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.1 2006-07-17 18:11:32 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.2 2006-08-25 21:21:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,9 +33,9 @@ import com.sun.identity.sm.ServiceNotFoundException;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.common.CaseInsensitiveProperties;
 import com.sun.identity.common.CaseInsensitiveTreeSet;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.common.ReaderWriterLock;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;

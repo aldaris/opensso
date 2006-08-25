@@ -17,22 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchFilterManager.java,v 1.2 2006-06-16 19:36:10 rarcot Exp $
+ * $Id: AMSearchFilterManager.java,v 1.3 2006-08-25 21:19:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.am.util.Cache;
+import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.Map;
-
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
-
-import com.iplanet.am.sdk.common.IDirectoryServices;
 
 /**
  * A Class which manages the search filters correponding to each of the AMObject

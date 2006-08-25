@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLdapAuthModule.java,v 1.1 2005-11-01 00:30:53 arvindp Exp $
+ * $Id: LocalLdapAuthModule.java,v 1.2 2006-08-25 21:20:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,23 +28,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.LoginException;
-
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.ConnectionPool;
-import netscape.ldap.util.DN;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.LDAPUser;
@@ -59,6 +42,21 @@ import com.sun.identity.authentication.internal.LoginContext;
 import com.sun.identity.authentication.internal.LoginModule;
 import com.sun.identity.authentication.internal.util.AuthI18n;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.shared.debug.Debug;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.LoginException;
+import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPEntry;
+import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPSearchResults;
+import netscape.ldap.LDAPv2;
+import netscape.ldap.factory.JSSESocketFactory;
+import netscape.ldap.util.ConnectionPool;
+import netscape.ldap.util.DN;
 
 public class LocalLdapAuthModule implements LoginModule {
 

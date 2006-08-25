@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthSSOToken.java,v 1.1 2005-11-01 00:30:51 arvindp Exp $
+ * $Id: AuthSSOToken.java,v 1.2 2006-08-25 21:20:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import java.util.Random;
 
 import javax.security.auth.login.LoginException;
 
-import com.iplanet.services.util.Base64;
+import com.sun.identity.shared.encode.Base64;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;

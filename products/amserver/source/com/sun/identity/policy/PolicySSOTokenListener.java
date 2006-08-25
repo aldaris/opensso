@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySSOTokenListener.java,v 1.1 2006-04-26 05:14:04 dillidorai Exp $
+ * $Id: PolicySSOTokenListener.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import java.util.Iterator;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOTokenID;
 import com.iplanet.sso.SSOTokenEvent;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.policy.plugins.LDAPRoles;
 
 /**

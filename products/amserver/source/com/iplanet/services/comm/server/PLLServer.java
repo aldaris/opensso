@@ -17,17 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLServer.java,v 1.1 2005-11-01 00:30:14 arvindp Exp $
+ * $Id: PLLServer.java,v 1.2 2006-08-25 21:19:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.server;
 
-import java.net.URL;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.comm.share.NotificationSet;
+import com.sun.identity.shared.debug.Debug;
+import java.net.URL;
 
 /**
  * The <code>PLLServer</code> class is used by high level services and

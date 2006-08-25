@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventManager.java,v 1.1 2006-06-16 19:36:32 rarcot Exp $
+ * $Id: EventManager.java,v 1.2 2006-08-25 21:19:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.iplanet.services.ldap.event.IDSEventListener;
 
 import com.iplanet.am.sdk.AMEventManagerException;
 import com.iplanet.am.sdk.AMSDKBundle;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 
 /**

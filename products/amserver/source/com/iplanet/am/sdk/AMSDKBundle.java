@@ -17,19 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKBundle.java,v 1.1 2005-11-01 00:29:17 arvindp Exp $
+ * $Id: AMSDKBundle.java,v 1.2 2006-08-25 21:19:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
+import com.sun.identity.shared.locale.Locale;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import com.iplanet.am.util.Locale;
 
 public class AMSDKBundle {
     public static final String BUNDLE_NAME = "amProfile";
@@ -68,8 +67,8 @@ public class AMSDKBundle {
         ResourceBundle rb = (ResourceBundle) strLocaleBundles.get(locale);
 
         if (rb == null) {
-            rb = com.iplanet.am.util.Locale.getResourceBundle(BUNDLE_NAME,
-                    locale);
+            rb = com.sun.identity.shared.locale.Locale.getResourceBundle(
+                BUNDLE_NAME, locale);
             if (rb == null) {
                 rb = profileBundle;
             }

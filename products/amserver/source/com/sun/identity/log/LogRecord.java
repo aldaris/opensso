@@ -17,24 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecord.java,v 1.2 2006-04-27 07:53:30 veiming Exp $
+ * $Id: LogRecord.java,v 1.3 2006-08-25 21:20:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.log;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.log.spi.Debug;
+import com.sun.identity.shared.Constants;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Level;
-
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.Constants;
-import com.sun.identity.log.spi.Debug;
 
 /**
  * Extension to the JDK1.4 <code>LogRecord</code> to include the

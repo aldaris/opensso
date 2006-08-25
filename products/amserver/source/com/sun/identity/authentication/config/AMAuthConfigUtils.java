@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthConfigUtils.java,v 1.2 2006-07-17 18:10:44 veiming Exp $
+ * $Id: AMAuthConfigUtils.java,v 1.3 2006-08-25 21:20:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,16 +31,15 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMTemplate;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

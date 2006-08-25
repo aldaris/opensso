@@ -17,30 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACIEventListener.java,v 1.1 2006-06-16 19:36:22 rarcot Exp $
+ * $Id: ACIEventListener.java,v 1.2 2006-08-25 21:19:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.ldap;
 
-// Java packages
+import com.iplanet.am.sdk.AMEvent;
+import com.iplanet.am.sdk.AMObjectListener;
+import com.iplanet.am.sdk.common.ICachedDirectoryServices;
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.services.ldap.event.DSEvent;
+import com.iplanet.services.ldap.event.IDSEventListener;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import netscape.ldap.controls.LDAPPersistSearchControl;
-
-import com.iplanet.services.ldap.event.DSEvent;
-import com.iplanet.services.ldap.event.IDSEventListener;
-
-import com.iplanet.am.sdk.AMEvent;
-import com.iplanet.am.sdk.AMObjectListener;
-import com.iplanet.am.sdk.common.ICachedDirectoryServices;
-import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
 
 /**
  * The <code>ACIEventListener</code> handles all the events that are generated

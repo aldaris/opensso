@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Subjects.java,v 1.1 2006-04-26 05:14:08 dillidorai Exp $
+ * $Id: Subjects.java,v 1.2 2006-08-25 21:21:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.iplanet.sso.*;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.am.util.Cache;
 import com.sun.identity.policy.interfaces.Subject;
 

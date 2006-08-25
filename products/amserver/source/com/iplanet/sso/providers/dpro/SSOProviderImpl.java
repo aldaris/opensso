@@ -17,21 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.3 2006-03-02 20:15:55 veiming Exp $
+ * $Id: SSOProviderImpl.java,v 1.4 2006-08-25 21:20:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.sso.providers.dpro;
 
-import java.net.InetAddress;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
@@ -41,6 +33,12 @@ import com.iplanet.sso.SSOProvider;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.shared.debug.Debug;
+import java.net.InetAddress;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This <code>final</code> class <code>SSOProviderImpl</code> implements 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NT.java,v 1.1 2006-01-28 09:16:09 veiming Exp $
+ * $Id: NT.java,v 1.2 2006-08-25 21:20:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 
 package com.sun.identity.authentication.modules.nt;
 
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -46,7 +46,7 @@ import javax.security.auth.callback.PasswordCallback;
 public class NT extends AMLoginModule {
     private static boolean hasInitialized = false;
     private static String baseDir;
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
     private static String smbPath;
     private static final String charSet = "ISO8859_1";
     private static final String amAuthNT = "amAuthNT";
@@ -82,13 +82,14 @@ public class NT extends AMLoginModule {
         this.options = options;
 
         if (options != null) {
-            host = Misc.getServerMapAttr(options,"iplanet-am-auth-nt-host");
-            domain = Misc.getServerMapAttr(options,
-                "iplanet-am-auth-nt-domain");
-            smbConfFileName = Misc.getServerMapAttr(options,
-                "iplanet-am-auth-samba-config-file-name");
-            String authLevel = Misc.getMapAttr(options,
-                "iplanet-am-auth-nt-auth-level");
+            host = CollectionHelper.getServerMapAttr(
+                options, "iplanet-am-auth-nt-host");
+            domain = CollectionHelper.getServerMapAttr(
+                options, "iplanet-am-auth-nt-domain");
+            smbConfFileName = CollectionHelper.getServerMapAttr(
+                options, "iplanet-am-auth-samba-config-file-name");
+            String authLevel = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-nt-auth-level");
             if (authLevel != null) {
                  try {
                       setAuthLevel(Integer.parseInt(authLevel));
@@ -101,7 +102,7 @@ public class NT extends AMLoginModule {
 
     static {
         if (debug == null) {
-            debug =  com.iplanet.am.util.Debug.getInstance(amAuthNT);
+            debug =  com.sun.identity.shared.debug.Debug.getInstance(amAuthNT);
             debug.message("NT constructor called");
         }
         try {

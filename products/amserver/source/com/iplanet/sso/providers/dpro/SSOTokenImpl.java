@@ -17,19 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenImpl.java,v 1.1 2005-11-01 00:30:32 arvindp Exp $
+ * $Id: SSOTokenImpl.java,v 1.2 2006-08-25 21:20:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.sso.providers.dpro;
-
-import java.net.InetAddress;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.util.HashMap;
-
-import javax.security.auth.login.LoginException;
 
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionListener;
@@ -38,7 +31,12 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
+import java.net.InetAddress;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import javax.security.auth.login.LoginException;
 
 /**
  * This class <code>SSOTokenImpl</code> implements the interface 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.3 2006-02-03 07:54:47 veiming Exp $
+ * $Id: LogoutViewBean.java,v 1.4 2006-08-25 21:20:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
@@ -50,7 +50,7 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthUtils;
-import com.sun.identity.common.L10NMessage;
+import com.sun.identity.shared.locale.L10NMessage;
 
 /**
  * This class is a default implementation of <code>LogoutViewBean</code> auth 
@@ -105,8 +105,8 @@ public class LogoutViewBean extends AuthViewBeanBase {
             ac = au.getAuthContext(request,response,sessionID,false,false,true);
             
             // I18N get resource bundle
-            locale =
-            com.iplanet.am.util.Locale.getLocale(au.getLocale(ac));
+            locale = com.sun.identity.shared.locale.Locale.getLocale(
+                au.getLocale(ac));
             fallbackLocale = locale;
             rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
             clientType = au.getClientType(request);

@@ -17,31 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSException.java,v 1.2 2005-12-08 01:16:51 veiming Exp $
+ * $Id: SMSException.java,v 1.3 2006-08-25 21:21:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import netscape.ldap.LDAPException;
-
+import com.sun.identity.authentication.internal.InvalidAuthContextException;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.shared.locale.Locale;
 import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.event.EventException;
 import com.iplanet.services.util.XMLException;
 import com.iplanet.sso.SSOException;
 import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.authentication.internal.InvalidAuthContextException;
-import com.sun.identity.common.L10NMessage;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
+import netscape.ldap.LDAPException;
 
 /**
  * The exception class whose instance is thrown if there is any error during the

@@ -17,13 +17,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.8 2006-08-11 00:42:26 rarcot Exp $
+ * $Id: SMSEntry.java,v 1.9 2006-08-25 21:21:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.Cache;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.Principal;
@@ -37,32 +54,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
-
 import netscape.ldap.LDAPDN;
 import netscape.ldap.LDAPException;
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.delegation.DelegationEvaluator;
-import com.sun.identity.delegation.DelegationException;
-import com.sun.identity.delegation.DelegationPermission;
-import com.sun.identity.jaxrpc.SOAPClient;
-import com.sun.identity.security.AdminTokenAction;
 
 /**
  * This object represents a SMS entry in datstore, similar to UMS's equivalent

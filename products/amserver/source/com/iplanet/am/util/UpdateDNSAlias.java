@@ -17,21 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateDNSAlias.java,v 1.1 2005-11-01 00:29:45 arvindp Exp $
+ * $Id: UpdateDNSAlias.java,v 1.2 2006-08-25 21:19:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
-import java.util.HashMap;
-import java.util.Set;
-
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.shared.debug.Debug;
+import java.util.HashMap;
+import java.util.Set;
+
 
 public class UpdateDNSAlias {
 

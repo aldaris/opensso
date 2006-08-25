@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteFormatter.java,v 1.3 2006-04-27 07:53:32 veiming Exp $
+ * $Id: RemoteFormatter.java,v 1.4 2006-08-25 21:20:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class RemoteFormatter extends Formatter {
         xml.append("</level><recMsg>");
 
         String msg = formatMessage(logRecord);
-        msg = com.iplanet.services.util.Base64.encode(msg.getBytes());
+        msg = com.sun.identity.shared.encode.Base64.encode(msg.getBytes());
         
         xml.append(msg);
         xml.append("</recMsg>");
@@ -109,8 +109,8 @@ public class RemoteFormatter extends Formatter {
                 xml.append("</infoKey><infoValue>");
                 String infoValue = (String)logInfo.get(key);
                 if (key.equalsIgnoreCase(LogConstants.DATA)) {
-                    infoValue = com.iplanet.services.util.Base64.encode(
-                                                        infoValue.getBytes());
+                    infoValue = com.sun.identity.shared.encode.Base64.encode(
+                        infoValue.getBytes());
                 }
                 xml.append(infoValue);
                 xml.append("</infoValue></logInfo>");

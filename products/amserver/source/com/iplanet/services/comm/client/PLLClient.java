@@ -17,13 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLClient.java,v 1.2 2006-01-19 05:27:46 pawand Exp $
+ * $Id: PLLClient.java,v 1.3 2006-08-25 21:19:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.client;
 
+import com.iplanet.services.comm.share.PLLBundle;
+import com.iplanet.services.comm.share.RequestSet;
+import com.iplanet.services.comm.share.ResponseSet;
+import com.sun.identity.shared.debug.Debug;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,13 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.servlet.http.Cookie;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.services.comm.share.PLLBundle;
-import com.iplanet.services.comm.share.RequestSet;
-import com.iplanet.services.comm.share.ResponseSet;
 
 /**
  * The <code>PLLClient</code> class is used to send RequestSet XML documents

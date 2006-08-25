@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CompositeAdvices.java,v 1.1 2006-01-28 09:16:39 veiming Exp $
+ * $Id: CompositeAdvices.java,v 1.2 2006-08-25 21:20:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,9 +36,9 @@ import java.util.Vector;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ChoiceCallback;
 
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 
 /**
  * This class allows the authentication services of Access Manager to 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Hash.java,v 1.2 2006-07-17 18:10:42 veiming Exp $
+ * $Id: Hash.java,v 1.3 2006-08-25 21:19:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,11 +26,14 @@ package com.iplanet.services.util;
 
 import java.security.MessageDigest;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.util.internal.TextCrypt;
 
 /**
  * The class <code>Hash</code> provides generic methods to hash data.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.encode.Hash}
  */
 public class Hash {
 

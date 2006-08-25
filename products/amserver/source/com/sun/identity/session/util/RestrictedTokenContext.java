@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestrictedTokenContext.java,v 1.1 2005-11-01 00:31:18 arvindp Exp $
+ * $Id: RestrictedTokenContext.java,v 1.2 2006-08-25 21:21:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.iplanet.services.util.Base64;
+import com.sun.identity.shared.encode.Base64;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 

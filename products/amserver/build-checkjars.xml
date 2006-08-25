@@ -3,6 +3,7 @@
 <project name="opensso" default="all">
 
     <description>Check the existence of external libraries</description>
+
     <available file="${extlib.dir}/activation.jar" type="file" 
         property="activation.jar.present"/>
     <available file="${extlib.dir}/console.jar" type="file" 

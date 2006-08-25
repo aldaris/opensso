@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseProviders.java,v 1.2 2006-07-17 18:11:17 veiming Exp $
+ * $Id: ResponseProviders.java,v 1.3 2006-08-25 21:21:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,8 @@ import org.w3c.dom.*;
 
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.iplanet.sso.*;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>ResponseProviders</code> provides methods to maintain

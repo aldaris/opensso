@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XSDurationValidator.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
+ * $Id: XSDurationValidator.java,v 1.3 2006-08-25 21:20:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.validation;
 
-import com.sun.identity.common.DateUtils;
+import com.sun.identity.shared.DateUtils;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Set;
@@ -40,6 +40,9 @@ import java.util.Set;
  *     The designator 'T' must be absent if and only if all of the
  *     time items are absent.
  *     The designator 'P' must always be present.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.validation.XSDurationValidator}
  */
 public class XSDurationValidator
     extends ValidatorBase

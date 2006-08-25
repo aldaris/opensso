@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.2 2006-07-17 18:10:53 veiming Exp $
+ * $Id: AMLoginModule.java,v 1.3 2006-08-25 21:20:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,9 +54,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.sdk.AMUserPasswordValidation;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -661,13 +661,13 @@ public abstract class AMLoginModule implements LoginModule {
             debug.message("Login, class = " + className +
             ", module=" + moduleName + ", file=" + fileName);
         }
-        isSharedState = Boolean.valueOf(Misc.getMapAttr(options,
-        ISAuthConstants.SHARED_STATE_ENABLED,
-        "false")).booleanValue();
+        isSharedState = Boolean.valueOf(CollectionHelper.getMapAttr(
+            options, ISAuthConstants.SHARED_STATE_ENABLED, "false")
+            ).booleanValue();
         
-        isStore = Boolean.valueOf(Misc.getMapAttr(options,
-        ISAuthConstants.STORE_SHARED_STATE_ENABLED,
-        "true")).booleanValue();
+        isStore = Boolean.valueOf(CollectionHelper.getMapAttr(
+            options, ISAuthConstants.STORE_SHARED_STATE_ENABLED, "true")
+            ).booleanValue();
         
         // call customer init method
         init(subject, sharedState, options);
@@ -1026,7 +1026,7 @@ public abstract class AMLoginModule implements LoginModule {
     protected java.util.Locale getLoginLocale()  {
         try {
             String loc = getLocale();
-            return com.iplanet.am.util.Locale.getLocale(loc);
+            return com.sun.identity.shared.locale.Locale.getLocale(loc);
         } catch (AuthLoginException ex) {
             debug.message("unable to determine loginlocale ", ex);
             return java.util.Locale.ENGLISH;
@@ -1866,8 +1866,8 @@ public abstract class AMLoginModule implements LoginModule {
     private String getPluginClassName() throws AuthLoginException {
         Map config = getServiceConfig(ISAuthConstants.ADMINISTRATION_SERVICE);
         String className =
-        Misc.getServerMapAttr(config,
-        ISAuthConstants.USERID_PASSWORD_VALIDATION_CLASS);
+        CollectionHelper.getServerMapAttr(
+            config, ISAuthConstants.USERID_PASSWORD_VALIDATION_CLASS);
         if (debug.messageEnabled()) {
             debug.message("Plugin Class:  " + className);
         }

@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlock.java,v 1.1 2006-06-16 19:36:17 rarcot Exp $
+ * $Id: CacheBlock.java,v 1.2 2006-08-25 21:19:21 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.common;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class represents the value part stored in the AMCacheManager's cache.

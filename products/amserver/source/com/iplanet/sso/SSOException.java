@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOException.java,v 1.3 2005-12-08 01:16:18 veiming Exp $
+ * $Id: SSOException.java,v 1.4 2006-08-25 21:20:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.sso;
 
-import com.iplanet.am.util.Locale;
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 
 /**
  * This <code>SSOException</code> is thrown when there are single sign on token 

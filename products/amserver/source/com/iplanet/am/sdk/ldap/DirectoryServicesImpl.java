@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.2 2006-08-11 00:42:23 rarcot Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.3 2006-08-25 21:19:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,9 +67,6 @@ import com.iplanet.am.sdk.AMUserEntryProcessed;
 import com.iplanet.am.sdk.common.IComplianceServices;
 import com.iplanet.am.sdk.common.IDCTreeServices;
 import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
@@ -106,6 +103,9 @@ import com.iplanet.ums.cos.COSTemplate;
 import com.iplanet.ums.cos.DirectCOSDefinition;
 import com.iplanet.ums.cos.ICOSDefinition;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSEntry;

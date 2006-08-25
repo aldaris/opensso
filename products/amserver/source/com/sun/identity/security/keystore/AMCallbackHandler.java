@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCallbackHandler.java,v 1.3 2006-04-14 09:05:55 veiming Exp $
+ * $Id: AMCallbackHandler.java,v 1.4 2006-08-25 21:21:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import com.iplanet.am.util.AMResourceBundleCache;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.security.SecurityDebug;
 import com.sun.identity.security.DecodeAction;
 

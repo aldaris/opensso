@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.6 2006-04-28 17:17:16 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.7 2006-08-25 21:20:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,46 @@
 
 package com.sun.identity.authentication.service;
 
+import com.iplanet.am.sdk.AMException;
+import com.iplanet.am.sdk.AMObject;
+import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.am.util.Misc;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.service.InternalSession;
+import com.sun.identity.shared.encode.CookieUtils;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.config.AMAuthConfigUtils;
+import com.sun.identity.authentication.config.AMAuthenticationManager;
+import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
+import com.sun.identity.authentication.spi.AuthenticationException;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.DateUtils;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.admin.AdminInterfaceUtils;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchOpModifier;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.log.LogConstants;
+import com.sun.identity.security.DecodeAction;
+import com.sun.identity.security.EncodeAction;
+import com.sun.identity.session.util.SessionUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.ServiceConfig;
 import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.Principal;
@@ -40,55 +80,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.sdk.AMObject;
-import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.service.InternalSession;
-import com.iplanet.services.util.CookieUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.config.AMAuthConfigUtils;
-import com.sun.identity.authentication.config.AMAuthenticationManager;
-import com.sun.identity.authentication.server.AuthContextLocal;
-import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
-import com.sun.identity.authentication.spi.AuthenticationException;
-import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
-import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.DateUtils;
-import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.admin.AdminInterfaceUtils;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchOpModifier;
-import com.sun.identity.idm.IdSearchResults;
-import com.sun.identity.idm.IdType;
-import com.sun.identity.idm.IdUtils;
-import com.sun.identity.log.LogConstants;
-import com.sun.identity.security.DecodeAction;
-import com.sun.identity.security.EncodeAction;
-import com.sun.identity.session.util.SessionUtils;
-import com.sun.identity.sm.OrganizationConfigManager;
-import com.sun.identity.sm.ServiceConfig;
 
 /**
  * This class maintains the User's login state information from the time user 
@@ -623,14 +621,14 @@ public class LoginState {
                 getContainerDN(containerDNs);
             }
             
-            userNamingAttr =
-            Misc.getMapAttr(attrs, ISAuthConstants.AUTH_NAMING_ATTR, "uid");
+            userNamingAttr = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.AUTH_NAMING_ATTR, "uid");
             // END BACKWARD COMPATIBILITY SUPPORT
             
-            defaultRoles = (Set) attrs.get(ISAuthConstants.AUTH_DEFAULT_ROLE);
+            defaultRoles = (Set)attrs.get(ISAuthConstants.AUTH_DEFAULT_ROLE);
             
-            String tmp =
-            Misc.getMapAttr(attrs, ISAuthConstants.DYNAMIC_PROFILE);
+            String tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.DYNAMIC_PROFILE);
             if (tmp.equalsIgnoreCase("true")) {
                 dynamicProfileCreation = true;
             } else if (tmp.equalsIgnoreCase("ignore")) {
@@ -639,13 +637,16 @@ public class LoginState {
                 createWithAlias = true;
                 dynamicProfileCreation=true;
             }
-            tmp = Misc.getMapAttr(attrs,ISAuthConstants.PERSISTENT_COOKIE_MODE);
+
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.PERSISTENT_COOKIE_MODE);
             if (tmp.equalsIgnoreCase("true")) {
                 persistentCookieMode = true;
             }
             
             tmp = null;
-            tmp = Misc.getMapAttr(attrs,ISAuthConstants.PERSISTENT_COOKIE_TIME);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.PERSISTENT_COOKIE_TIME);
             persistentCookieTime = tmp;
             
             AMAuthenticationManager authManager =
@@ -656,8 +657,8 @@ public class LoginState {
                 domainAuthenticators = Collections.EMPTY_SET;
             }
             
-            defaultAuthLevel = Misc.getMapAttr(attrs,
-            ISAuthConstants.DEFAULT_AUTH_LEVEL,ad.defaultAuthLevel);
+            defaultAuthLevel = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.DEFAULT_AUTH_LEVEL,ad.defaultAuthLevel);
             
             localeContext.setOrgLocale( getOrgDN() );
             
@@ -679,17 +680,18 @@ public class LoginState {
             
             clientOrgFailureLoginURL = getRedirectUrl(orgFailureLoginURLSet);
             defaultOrgFailureLoginURL = tempDefaultURL;
-            orgAuthConfig = Misc.getMapAttr(attrs, 
-            ISAuthConstants.AUTHCONFIG_ORG);
-            orgAdminAuthConfig = Misc.getMapAttr(attrs, 
-            ISAuthConstants.AUTHCONFIG_ADMIN);
+            orgAuthConfig = CollectionHelper.getMapAttr(attrs, 
+                ISAuthConstants.AUTHCONFIG_ORG);
+            orgAdminAuthConfig = CollectionHelper.getMapAttr(attrs, 
+                ISAuthConstants.AUTHCONFIG_ADMIN);
             orgPostLoginClassSet =
             (Set) attrs.get(ISAuthConstants.POST_LOGIN_PROCESS);
             if (orgPostLoginClassSet == null) {
                 orgPostLoginClassSet = Collections.EMPTY_SET;
             }
             
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.MODULE_BASED_AUTH);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.MODULE_BASED_AUTH);
             if (tmp != null) {
                 if (tmp.equalsIgnoreCase("false")) {
                     enableModuleBasedAuth = false;
@@ -698,21 +700,22 @@ public class LoginState {
 
             
             // retrieve account locking specific attributes
-            
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOGIN_FAILURE_LOCKOUT);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOGIN_FAILURE_LOCKOUT);
             if (tmp != null) {
                 if (tmp.equalsIgnoreCase("true")) {
                     loginFailureLockoutMode = true;
                 }
             }
-            tmp = Misc.getMapAttr(
+            tmp = CollectionHelper.getMapAttr(
                 attrs, ISAuthConstants.LOGIN_FAILURE_STORE_IN_DS);
             if (tmp != null) {
                 if (tmp.equalsIgnoreCase("false")) {
                     loginFailureLockoutStoreInDS = false;
                 }
             }
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOCKOUT_DURATION);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOCKOUT_DURATION);
             if (tmp != null) {
                 try {
                     loginFailureLockoutDuration = Long.parseLong(tmp);
@@ -722,7 +725,8 @@ public class LoginState {
                 loginFailureLockoutDuration *= 60*1000;
             }
             
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOGIN_FAILURE_COUNT);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOGIN_FAILURE_COUNT);
             if (tmp != null) {
                 try {
                     loginFailureLockoutCount = Integer.parseInt(tmp);
@@ -731,7 +735,8 @@ public class LoginState {
                 }
             }
             
-            tmp = Misc.getMapAttr(attrs,ISAuthConstants.LOGIN_FAILURE_DURATION);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOGIN_FAILURE_DURATION);
             if (tmp != null) {
                 try {
                     loginFailureLockoutTime = Long.parseLong(tmp);
@@ -741,7 +746,8 @@ public class LoginState {
                 loginFailureLockoutTime *= 60*1000;
             }
             
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOCKOUT_WARN_USER);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOCKOUT_WARN_USER);
             if (tmp != null) {
                 try {
                     loginLockoutUserWarning = Integer.parseInt(tmp);
@@ -750,21 +756,23 @@ public class LoginState {
                 }
             }
             
-            loginLockoutNotification = Misc.getMapAttr(attrs,
-            ISAuthConstants.LOCKOUT_EMAIL);
+            loginLockoutNotification = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOCKOUT_EMAIL);
             
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.USERNAME_GENERATOR);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.USERNAME_GENERATOR);
             if (tmp != null) {
                 userIDGeneratorEnabled = Boolean.valueOf(tmp).booleanValue();
             }
             
-            userIDGeneratorClassName = Misc.getMapAttr(attrs,
-            ISAuthConstants.USERNAME_GENERATOR_CLASS);
-            
-            tmp = Misc.getMapAttr(attrs,ISAuthConstants.LOCKOUT_ATTR_NAME);
+            userIDGeneratorClassName = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.USERNAME_GENERATOR_CLASS);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOCKOUT_ATTR_NAME);
             loginLockoutAttrName = tmp;
             
-            tmp = Misc.getMapAttr(attrs, ISAuthConstants.LOCKOUT_ATTR_VALUE);
+            tmp = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.LOCKOUT_ATTR_VALUE);
             loginLockoutAttrValue = tmp;
             
             
@@ -1752,8 +1760,8 @@ public class LoginState {
         }
         
         try {
-            userAuthConfig = Misc.getMapAttr(p, 
-            ISAuthConstants.AUTHCONFIG_USER, null);
+            userAuthConfig = CollectionHelper.getMapAttr(
+                p, ISAuthConstants.AUTHCONFIG_USER, null);
             if (!loginStatus) {
                 userFailureURLSet = (Set)p.get(
                 ISAuthConstants.USER_FAILURE_URL);
@@ -1766,16 +1774,17 @@ public class LoginState {
                 return;
             }
             
-            maxSession = Misc.getIntMapAttr(p, ISAuthConstants.MAX_SESSION_TIME,
+            maxSession = CollectionHelper.getIntMapAttr(
+                p, ISAuthConstants.MAX_SESSION_TIME,
             sessionAttrs[0], debug);
-            idleTime = Misc.getIntMapAttr(p, ISAuthConstants.SESS_MAX_IDLE_TIME,
-            sessionAttrs[1], debug);
-            cacheTime = Misc.getIntMapAttr(p,
-            ISAuthConstants.SESS_MAX_CACHING_TIME, sessionAttrs[2],
-            debug);
+            idleTime = CollectionHelper.getIntMapAttr(
+                p, ISAuthConstants.SESS_MAX_IDLE_TIME, sessionAttrs[1], debug);
+            cacheTime = CollectionHelper.getIntMapAttr(
+                p, ISAuthConstants.SESS_MAX_CACHING_TIME, sessionAttrs[2],
+                    debug);
             
             // Status determination
-            String tmp = Misc.getMapAttr(
+            String tmp = CollectionHelper.getMapAttr(
                 p, ISAuthConstants.INETUSER_STATUS, "active");
             
             // OPEN ISSUE- amIdentity.isActive return true even if
@@ -1783,10 +1792,10 @@ public class LoginState {
             if (amIdentity != null) {
                 tmp = amIdentity.isActive()? "active" : "inactive";
             }
-            String tmp1 = Misc.getMapAttr(
+            String tmp1 = CollectionHelper.getMapAttr(
                 p, ISAuthConstants.LOGIN_STATUS, "active");
-            String tmp2 = Misc.getMapAttr(p, ISAuthConstants.NSACCOUNT_LOCK,
-            ISAuthConstants.FALSE_VALUE);
+            String tmp2 = CollectionHelper.getMapAttr(
+                p, ISAuthConstants.NSACCOUNT_LOCK, ISAuthConstants.FALSE_VALUE);
             if (messageEnabled) {
                 debug.message("entity status is : " + tmp);
                 debug.message("user-login-status is : " + tmp1);
@@ -1798,8 +1807,8 @@ public class LoginState {
                 userEnabled = false;
             }
             
-            String ulocale =
-            Misc.getMapAttr(p, ISAuthConstants.PREFERRED_LOCALE, null);
+            String ulocale = CollectionHelper.getMapAttr(
+                p, ISAuthConstants.PREFERRED_LOCALE, null);
             localeContext.setUserLocale(ulocale);
             
             userAliasList = (Set)  p.get(ISAuthConstants.USER_ALIAS_ATTR);
@@ -1817,7 +1826,8 @@ public class LoginState {
                     }
                 }
             }
-            accountLife = Misc.getMapAttr(p, ISAuthConstants.ACCOUNT_LIFE);
+            accountLife = CollectionHelper.getMapAttr(
+                p, ISAuthConstants.ACCOUNT_LIFE);
             
             // retrieve the user default success url
             // at user's role level

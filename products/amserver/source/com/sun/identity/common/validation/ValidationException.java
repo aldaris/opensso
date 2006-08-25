@@ -17,17 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidationException.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
+ * $Id: ValidationException.java,v 1.3 2006-08-25 21:20:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.validation;
 
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 
 /**
  * Exception for violating data format.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.validation.ValidationException}
  */
 public class ValidationException
     extends L10NMessageImpl

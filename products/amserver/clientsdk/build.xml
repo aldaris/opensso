@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2006-07-17 18:10:11 veiming Exp $
+   $Id: build.xml,v 1.4 2006-08-25 21:19:15 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,6 +55,9 @@
 
         <jar destfile="${clientsdk.dist.dir}/amclientsdk.jar">
             <fileset dir="${classes.dir}">
+                <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
+            </fileset>
+            <fileset dir="${sharedlib.classes.dir}">
                 <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
             <fileset dir="${res.dir}">

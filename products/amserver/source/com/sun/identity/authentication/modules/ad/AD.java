@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AD.java,v 1.1 2006-01-28 09:15:41 veiming Exp $
+ * $Id: AD.java,v 1.2 2006-08-25 21:20:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,8 @@ package com.sun.identity.authentication.modules.ad;
 import com.sun.identity.authentication.modules.ldap.LDAP;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Auth module for Active Directory
@@ -61,8 +61,8 @@ public class AD extends LDAP {
 
     public boolean initializeLDAP() throws AuthLoginException{
         boolean returnValue = super.initializeLDAP();
-        String authLevel = Misc.getMapAttr(currentConfig,
-        AMAuthConfigUtils.getAuthLevelAttribute(currentConfig, "AD"));
+        String authLevel = CollectionHelper.getMapAttr(currentConfig,
+            AMAuthConfigUtils.getAuthLevelAttribute(currentConfig, "AD"));
 
         if (authLevel != null) {
             try {

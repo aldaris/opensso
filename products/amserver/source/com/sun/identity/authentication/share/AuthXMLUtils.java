@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.1 2006-01-28 09:16:53 veiming Exp $
+ * $Id: AuthXMLUtils.java,v 1.2 2006-08-25 21:20:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,9 @@
 
 package com.sun.identity.authentication.share;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.services.util.Base64;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.authentication.spi.DSAMECallbackInterface;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.security.DecodeAction;

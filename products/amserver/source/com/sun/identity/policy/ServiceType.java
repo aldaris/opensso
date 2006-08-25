@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceType.java,v 1.3 2006-07-17 18:11:18 veiming Exp $
+ * $Id: ServiceType.java,v 1.4 2006-08-25 21:21:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.sun.identity.sm.*;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.policy.interfaces.*;
 import com.sun.identity.policy.plugins.*;
 

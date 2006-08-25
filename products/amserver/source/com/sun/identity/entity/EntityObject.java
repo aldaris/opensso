@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityObject.java,v 1.2 2005-11-15 04:10:33 veiming Exp $
+ * $Id: EntityObject.java,v 1.3 2006-08-25 21:20:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import java.util.Set;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.jaxrpc.SOAPClient;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 
 public class EntityObject {
 

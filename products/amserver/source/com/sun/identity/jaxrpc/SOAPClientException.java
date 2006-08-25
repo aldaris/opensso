@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClientException.java,v 1.2 2005-12-08 01:16:45 veiming Exp $
+ * $Id: SOAPClientException.java,v 1.3 2006-08-25 21:20:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ package com.sun.identity.jaxrpc;
  * to JAXRPC and SOAP methods.
  *
  * @supported.all.api
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.jaxrpc.SOAPClientException}
  */
 public class SOAPClientException extends Exception {
 

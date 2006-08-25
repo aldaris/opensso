@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderBundle.java,v 1.1 2005-11-01 00:30:31 arvindp Exp $
+ * $Id: SSOProviderBundle.java,v 1.2 2006-08-25 21:20:01 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ public class SSOProviderBundle {
         if (ssoProviderBundle == null) {
             synchronized (SSOProviderBundle.class) {
                 if (ssoProviderBundle == null) {
-                    ssoProviderBundle = com.iplanet.am.util.Locale
+                    ssoProviderBundle = com.sun.identity.shared.locale.Locale
                             .getInstallResourceBundle(rbName);
                 }
             }

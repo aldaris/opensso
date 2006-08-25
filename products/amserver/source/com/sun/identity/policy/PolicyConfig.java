@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.1 2006-04-26 05:14:02 dillidorai Exp $
+ * $Id: PolicyConfig.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import java.util.Iterator;
 
 import com.sun.identity.sm.*;
 import com.iplanet.sso.*;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 
 import netscape.ldap.util.DN;
 
@@ -458,8 +458,8 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
                     continue;
                 }
                 if (attrName.equals(LDAP_SERVER)) {
-                    orgAttrMap.put(attrName,
-                        Misc.getServerMapAttr(orgConfigMap, LDAP_SERVER));
+                    orgAttrMap.put(attrName, CollectionHelper.getServerMapAttr(
+                        orgConfigMap, LDAP_SERVER));
                     continue;
                 } 
                 Iterator valIterator = values.iterator();

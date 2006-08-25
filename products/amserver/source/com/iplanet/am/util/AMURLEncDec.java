@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMURLEncDec.java,v 1.1 2005-11-01 00:29:35 arvindp Exp $
+ * $Id: AMURLEncDec.java,v 1.2 2006-08-25 21:19:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,10 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.BitSet;
 
+/**
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.encode.URLEncDec}
+ */
 public class AMURLEncDec {
 
     final private static String UTF_8 = "UTF-8";

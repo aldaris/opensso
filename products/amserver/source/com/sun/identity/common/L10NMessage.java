@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessage.java,v 1.2 2005-11-15 04:10:32 veiming Exp $
+ * $Id: L10NMessage.java,v 1.3 2006-08-25 21:20:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,9 @@ import java.util.Locale;
 /**
  * This interface provides access to error code and resource bundle name to
  * provide localised error message.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.locale.L10NMessage}
  */
 public interface L10NMessage {
 

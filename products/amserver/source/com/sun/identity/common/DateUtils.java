@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateUtils.java,v 1.2 2006-05-31 21:50:08 veiming Exp $
+ * $Id: DateUtils.java,v 1.3 2006-08-25 21:20:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,9 @@ import java.util.TimeZone;
 
 /**
  * This class provides utility to perform date conversion.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.DateUtils}
  */
 public class DateUtils {
 

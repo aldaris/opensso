@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileTreeNode.java,v 1.1 2006-07-17 18:11:33 veiming Exp $
+ * $Id: SMSFlatFileTreeNode.java,v 1.2 2006-08-25 21:21:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm.flatfile;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.services.util.Hash;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.SMSException;
 import java.io.File;
 import java.text.MessageFormat;

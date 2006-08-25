@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.3 2005-12-08 01:16:38 veiming Exp $
+ * $Id: AuthContext.java,v 1.4 2006-08-25 21:20:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,13 +44,13 @@ import javax.security.auth.login.LoginException;
 
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.authentication.internal.util.AuthI18n;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 
 /**
  * The AuthContext provides the implementation for authenticating users using

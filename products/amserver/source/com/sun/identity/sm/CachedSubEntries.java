@@ -17,25 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.3 2006-05-31 21:50:11 veiming Exp $
+ * $Id: CachedSubEntries.java,v 1.4 2006-08-25 21:21:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.am.util.Cache;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import netscape.ldap.util.DN;
-
-import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.CaseInsensitiveHashMap;
 
 class CachedSubEntries {
     // Cache of SMSEntries to obtain sub entries

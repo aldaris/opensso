@@ -17,20 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.3 2006-07-17 18:10:39 veiming Exp $
+ * $Id: Session.java,v 1.4 2006-08-25 21:19:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session;
 
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.dpro.session.share.SessionBundle;
@@ -43,11 +36,16 @@ import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.WebtopNaming;
-import com.sun.identity.common.Constants;
 import com.sun.identity.common.SearchResults;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Vector;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The <code>Session</code> class represents a session. It contains session

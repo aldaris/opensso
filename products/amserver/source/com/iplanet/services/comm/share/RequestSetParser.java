@@ -17,23 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSetParser.java,v 1.1 2005-11-01 00:30:16 arvindp Exp $
+ * $Id: RequestSetParser.java,v 1.2 2006-08-25 21:19:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.share;
 
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-
 class RequestSetParser {
-
     /**
      * Document
      */

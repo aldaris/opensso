@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.1 2005-11-01 00:30:27 arvindp Exp $
+ * $Id: ThreadPool.java,v 1.2 2006-08-25 21:19:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.iplanet.services.util;
 // ThreadGroups
 // Exception propagation or callbacks
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * <p>

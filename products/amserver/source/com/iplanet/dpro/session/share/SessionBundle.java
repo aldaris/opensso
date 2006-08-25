@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionBundle.java,v 1.1 2005-11-01 00:29:58 arvindp Exp $
+ * $Id: SessionBundle.java,v 1.2 2006-08-25 21:19:43 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,8 @@ public class SessionBundle {
 
     public static String getString(String str) {
         if (sessionBundle == null) {
-            sessionBundle = com.iplanet.am.util.Locale
-                    .getInstallResourceBundle(rbName);
+            sessionBundle = com.sun.identity.shared.locale.Locale
+                .getInstallResourceBundle(rbName);
         }
         return sessionBundle.getString(str);
     }

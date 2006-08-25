@@ -17,22 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMException.java,v 1.3 2005-12-08 01:16:02 veiming Exp $
+ * $Id: AMException.java,v 1.4 2006-08-25 21:19:18 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk;
 
+import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.UMSException;
+import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
 import netscape.ldap.LDAPException;
-
-import com.iplanet.sso.SSOToken;
-import com.iplanet.ums.UMSException;
-import com.sun.identity.common.L10NMessage;
 
 /**
  * The <code>AMException</code> is thrown whenever an error is is encountered
@@ -248,8 +246,8 @@ public class AMException extends Exception implements L10NMessage {
         String result = errorCode;
         if (locale != null) {
             ResourceBundle rb = AMSDKBundle.getBundleFromHash(locale);
-            String mid = com.iplanet.am.util.Locale.getString(rb, errorCode,
-                    AMCommonUtils.debug);
+            String mid = com.sun.identity.shared.locale.Locale.getString(
+                rb, errorCode, AMCommonUtils.debug);
             result = ((args == null) || (args.length == 0)) ? mid
                     : MessageFormat.format(mid, args);
         }

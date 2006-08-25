@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Bundle.java,v 1.1 2006-04-03 22:21:25 kenwho Exp $
+ * $Id: LDAPv3Bundle.java,v 1.2 2006-08-25 21:20:52 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,8 @@ public class LDAPv3Bundle {
     
     public final static String BUNDLE_NAME = "amLDAPv3Repo";
     static {
-        profileBundle = 
-            com.iplanet.am.util.Locale.getInstallResourceBundle(BUNDLE_NAME);
+        profileBundle = com.sun.identity.shared.locale.Locale.
+            getInstallResourceBundle(BUNDLE_NAME);
     }
 
     public static String getString(String key) {
@@ -67,8 +67,8 @@ public class LDAPv3Bundle {
         
         ResourceBundle rb = (ResourceBundle)bundles.get(locale);
         if (rb == null) {
-            rb = com.iplanet.am.util.Locale.getResourceBundle(BUNDLE_NAME,
-                                                              locale);
+            rb = com.sun.identity.shared.locale.Locale.getResourceBundle(
+                BUNDLE_NAME, locale);
             if (rb == null) {
                 rb = profileBundle;
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDecisionCacheListener.java,v 1.1 2006-04-26 05:14:03 dillidorai Exp $
+ * $Id: PolicyDecisionCacheListener.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.policy;
 import java.util.*;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.policy.interfaces.ResourceName;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>PolicyDecisionCacheListener</code> implements

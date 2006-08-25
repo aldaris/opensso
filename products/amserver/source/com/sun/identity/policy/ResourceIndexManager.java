@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceIndexManager.java,v 1.1 2006-04-26 05:14:05 dillidorai Exp $
+ * $Id: ResourceIndexManager.java,v 1.2 2006-08-25 21:21:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,19 +27,19 @@
 
 package  com.sun.identity.policy;
 
-import  java.util.Set;
-import  java.util.HashSet;
-import  java.util.Map;
-import  java.util.HashMap;
-import  java.util.Iterator;
-import  java.util.Collections;
-import  org.w3c.dom.*;
-import  com.iplanet.am.util.XMLUtils;
-import  com.iplanet.am.util.Debug;
-import  com.iplanet.sso.SSOToken;
-import  com.iplanet.sso.SSOException;
-import  com.sun.identity.policy.interfaces.Referral;
-import  com.sun.identity.policy.plugins.OrgReferral;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Collections;
+import org.w3c.dom.*;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.debug.Debug;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.policy.interfaces.Referral;
+import com.sun.identity.policy.plugins.OrgReferral;
 
 /**
  * Class to find set of policy names that are applicable given 

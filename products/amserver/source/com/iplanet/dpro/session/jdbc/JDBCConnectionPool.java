@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBCConnectionPool.java,v 1.1 2005-11-01 00:29:50 arvindp Exp $
+ * $Id: JDBCConnectionPool.java,v 1.2 2006-08-25 21:19:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.jdbc;
 
+import com.iplanet.dpro.session.service.SessionService;
+import com.sun.identity.shared.debug.Debug;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -31,15 +33,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.sql.ConnectionEvent;
 import javax.sql.ConnectionEventListener;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 import javax.sql.PooledConnection;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.dpro.session.service.SessionService;
 
 /**
 * <code>JDBCConnectionPool</code> implements <code>DataSource</code>,

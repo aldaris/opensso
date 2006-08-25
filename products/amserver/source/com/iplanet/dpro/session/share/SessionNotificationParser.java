@@ -17,18 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionNotificationParser.java,v 1.1 2005-11-01 00:29:59 arvindp Exp $
+ * $Id: SessionNotificationParser.java,v 1.2 2006-08-25 21:19:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.share;
 
+import com.sun.identity.shared.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.iplanet.am.util.XMLUtils;
 
 /**
  * <code>SessionNotificationParser</code> parses the 

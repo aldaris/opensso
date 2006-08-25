@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Membership.java,v 1.1 2006-01-28 09:16:00 veiming Exp $
+ * $Id: Membership.java,v 1.2 2006-08-25 21:20:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,9 @@
 
 package com.sun.identity.authentication.modules.membership;
 
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
@@ -39,7 +39,7 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.UserNamePasswordValidationException;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
@@ -422,8 +422,8 @@ public class Membership extends AMLoginModule {
         try {
             String serverHost = null;
             if (!orgHash.contains(getRequestOrg())) {
-                serverHost = Misc.getServerMapAttr(options,
-                "iplanet-am-auth-membership-server");
+                serverHost = CollectionHelper.getServerMapAttr(options,
+                    "iplanet-am-auth-membership-server");
                 if (serverHost == null) {
                     debug.error("Fatal error: primary ldap attribute " +
                     "misconfigured");
@@ -433,8 +433,8 @@ public class Membership extends AMLoginModule {
                     debug.message("Using primary server " + serverHost);
                 }
             } else {
-                serverHost = Misc.getServerMapAttr(options,
-                "iplanet-am-auth-membership-server2");
+                serverHost = CollectionHelper.getServerMapAttr(options,
+                    "iplanet-am-auth-membership-server2");
                 if (serverHost == null) {
                     debug.message("No secondary server, resetting to primary");
                     removeOrg();
@@ -446,27 +446,28 @@ public class Membership extends AMLoginModule {
                     debug.message("Using secondary server " + serverHost);
                 }
             }
-            String baseDN  = Misc.getServerMapAttr(options,
-            "iplanet-am-auth-membership-base-dn");
+            String baseDN  = CollectionHelper.getServerMapAttr(options,
+                "iplanet-am-auth-membership-base-dn");
             if (baseDN == null) {
                 debug.error("Fatal error: baseDN for search has invalid value");
             }
             
-            String bindDN = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-bind-dn", "");
-            String bindPassword = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-bind-passwd", "");
-            String userNamingAttr = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-user-naming-attribute", "uid");
+            String bindDN = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-bind-dn", "");
+            String bindPassword = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-bind-passwd", "");
+            String userNamingAttr = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-user-naming-attribute", "uid");
             Set userSearchAttrs = (Set)options.get(
-            "iplanet-am-auth-membership-user-search-attributes");
-            String searchFilter = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-search-filter", "");
-            boolean ssl = Boolean.valueOf(Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-ssl-enabled", "false")).booleanValue();
+                "iplanet-am-auth-membership-user-search-attributes");
+            String searchFilter = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-search-filter", "");
+            boolean ssl = Boolean.valueOf(CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-ssl-enabled", "false")
+                ).booleanValue();
             
-            String authLevel = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-auth-level");
+            String authLevel = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-auth-level");
             if (authLevel != null) {
                 try {
                     int tmp = Integer.parseInt(authLevel);
@@ -477,8 +478,8 @@ public class Membership extends AMLoginModule {
                 }
             }
             
-            String tmp = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-search-scope", "SUBTREE");
+            String tmp = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-search-scope", "SUBTREE");
             // set default to SUBTREE
             int searchScope = 2;
             if (tmp.equalsIgnoreCase("OBJECT")) {
@@ -495,10 +496,10 @@ public class Membership extends AMLoginModule {
                 serverPort = Integer.parseInt(port);
                 serverHost = serverHost.substring(0,index);
             }
-            regEx = Misc.getMapAttr(options, INVALID_CHARS);
+            regEx = CollectionHelper.getMapAttr(options, INVALID_CHARS);
             
-            String returnUserDN = Misc.getMapAttr(options,
-            "iplanet-am-auth-ldap-return-user-dn", "true");
+            String returnUserDN = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-ldap-return-user-dn", "true");
             
             // setup LDAPAuthUtils
             ldapUtil = new LDAPAuthUtils(serverHost,serverPort,ssl,bundle,
@@ -524,8 +525,8 @@ public class Membership extends AMLoginModule {
                 "\nbind DN: " + bindDN);
             }
             
-            serviceStatus = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-default-user-status", "Active");
+            serviceStatus = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-default-user-status", "Active");
             
             if (getNumberOfStates() >= DISCLAIMER) {
                 isDisclaimerExist = true;
@@ -540,8 +541,8 @@ public class Membership extends AMLoginModule {
                 debug.message("defaultRoles is : " + defaultRoles);
             }
             
-            tmp = Misc.getMapAttr(options,
-            "iplanet-am-auth-membership-min-password-length");
+            tmp = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-membership-min-password-length");
             if (tmp != null) {
                 requiredPasswordLength = Integer.parseInt(tmp);
             }
@@ -550,7 +551,7 @@ public class Membership extends AMLoginModule {
             // Compatibility
             //Map authAttributes =
             //getOrgServiceTemplate(null, "iPlanetAMAuthService");
-            //peopleContainerDN = Misc.getMapAttr(authAttributes,
+            //peopleContainerDN = CollectionHelper.getMapAttr(authAttributes,
             //"iplanet-am-auth-user-container");
             // check people container, it must ends with the org DN in
             // the current session
@@ -720,8 +721,9 @@ public class Membership extends AMLoginModule {
                 case PASSWORD_EXPIRING:
                     validatedUserID = ldapUtil.getUserId();
                     String fmtMsg =  bundle.getString("PasswordExp");
-                    String msg = com.iplanet.am.util.Locale.formatMessage(
-                        fmtMsg, ldapUtil.getExpTime());
+                    String msg = 
+                        com.sun.identity.shared.locale.Locale.formatMessage(
+                            fmtMsg, ldapUtil.getExpTime());
                     replaceHeader(PASSWORD_CHANGE, msg);
                     return PASSWORD_CHANGE;
                     

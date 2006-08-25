@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.3 2006-06-05 20:26:49 bhavnab Exp $
+ * $Id: PolicyUtils.java,v 1.4 2006-08-25 21:21:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,8 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLHandler;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLHandler;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.sso.SSOToken;
@@ -948,7 +948,7 @@ public class PolicyUtils {
             throws SSOException {
         String principalName = token.getPrincipal().getName();
         String uuid = token.getProperty(
-                com.sun.identity.common.Constants.UNIVERSAL_IDENTIFIER);
+                com.sun.identity.shared.Constants.UNIVERSAL_IDENTIFIER);
         return principalName.equals(uuid);
     }
     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMSObject.java,v 1.3 2005-12-08 01:16:29 veiming Exp $
+ * $Id: UMSObject.java,v 1.4 2006-08-25 21:20:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.iplanet.ums;
 
 import java.security.Principal;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOException;

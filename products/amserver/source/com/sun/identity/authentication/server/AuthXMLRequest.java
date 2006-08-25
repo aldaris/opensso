@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.1 2006-01-28 09:16:18 veiming Exp $
+ * $Id: AuthXMLRequest.java,v 1.2 2006-08-25 21:20:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,8 +105,8 @@ public class AuthXMLRequest {
     HttpServletRequest servletRequest = null;
     //String origAuthIdentifier=null;
 
-    static com.iplanet.am.util.Debug debug =
-        com.iplanet.am.util.Debug.getInstance("amXMLHandler");
+    static com.sun.identity.shared.debug.Debug debug =
+        com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
 
     /**
      * This method is used primarily at the server side to reconstruct

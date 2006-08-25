@@ -17,20 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: X509CRLExtensionFactory.java,v 1.1 2006-01-28 09:28:35 veiming Exp $
+ * $Id: X509CRLExtensionFactory.java,v 1.2 2006-08-25 21:19:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.security.x509;
 
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.security.SecurityDebug;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.common.Constants;
-import com.sun.identity.security.SecurityDebug;
 
 /**
  * This is the factory class is to obtain object instances of 

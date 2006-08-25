@@ -17,25 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DynamicGroup.java,v 1.3 2005-12-08 01:16:21 veiming Exp $
+ * $Id: DynamicGroup.java,v 1.4 2006-08-25 21:20:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.ums;
 
-import java.security.Principal;
-
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPUrl;
-import netscape.ldap.LDAPv2;
-
-import com.iplanet.am.util.AMURLEncDec;
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.services.ldap.ModSet;
 import com.iplanet.services.util.I18n;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.URLEncDec;
+import java.security.Principal;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.LDAPUrl;
+import netscape.ldap.LDAPv2;
 
 /**
  * Represents a dynamic group entry.
@@ -340,7 +338,7 @@ public class DynamicGroup extends PersistentObject implements
                 // Converting the url string to
                 // application/x-www-form-urlencoded as expected by
                 // LDAPUrl constructor.
-                url = new LDAPUrl(AMURLEncDec.encodeLDAPUrl(attr
+                url = new LDAPUrl(URLEncDec.encodeLDAPUrl(attr
                         .getStringValues()[0]));
             }
             if (url == null) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProviderBase.java,v 1.3 2006-04-27 07:53:33 veiming Exp $
+ * $Id: LogMessageProviderBase.java,v 1.4 2006-08-25 21:20:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ package com.sun.identity.log.messageid;
  * methods to generate XML for documenting log message.
  */
 
-import com.iplanet.am.util.Resource;
+import com.sun.identity.shared.xml.Resource;
 import com.sun.identity.log.Level;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogRecord;

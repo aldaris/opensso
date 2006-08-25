@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.2 2006-06-24 00:09:08 arviranga Exp $
+ * $Id: SOAPClient.java,v 1.3 2006-08-25 21:20:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,8 +80,10 @@ import com.sun.identity.sm.SMSSchema;
  * endpoint URLs or it will find an active server using Naming service. In the
  * case of JAXRPC, the SOAP response is decoded and returns a java
  * <code>Object</code>; else an exception is thrown.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.jaxrpc.SOAPClient}
  */
-
 public class SOAPClient {
     
     // Debug file

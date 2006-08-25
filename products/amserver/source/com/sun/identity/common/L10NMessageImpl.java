@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessageImpl.java,v 1.3 2005-11-15 04:10:32 veiming Exp $
+ * $Id: L10NMessageImpl.java,v 1.4 2006-08-25 21:20:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,9 @@ import com.iplanet.am.util.AMResourceBundleCache;
  * Convenient implementation of L10NMessage Interface. Extends
  * java.lang.Exception an provides mechanism to provide resource bundle for
  * error messages
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.locale.L10NMessageImpl}
  */
 public class L10NMessageImpl extends Exception implements L10NMessage {
 

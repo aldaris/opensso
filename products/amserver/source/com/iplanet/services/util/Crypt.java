@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.2 2006-07-17 18:10:41 veiming Exp $
+ * $Id: Crypt.java,v 1.3 2006-08-25 21:19:58 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,8 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.security.ISSecurityPermission;
 

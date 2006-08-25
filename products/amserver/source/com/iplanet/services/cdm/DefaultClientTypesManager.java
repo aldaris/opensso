@@ -17,13 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultClientTypesManager.java,v 1.1 2005-11-01 00:30:11 arvindp Exp $
+ * $Id: DefaultClientTypesManager.java,v 1.2 2006-08-25 21:19:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
 
+import com.iplanet.services.cdm.clientschema.AMClientCapData;
+import com.iplanet.services.cdm.clientschema.AMClientCapException;
+import com.iplanet.services.cdm.clientschema.AMClientDataListener;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,18 +43,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
-import com.iplanet.services.cdm.clientschema.AMClientCapData;
-import com.iplanet.services.cdm.clientschema.AMClientCapException;
-import com.iplanet.services.cdm.clientschema.AMClientDataListener;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
  * This class gives out instances of Client object so that it hides the

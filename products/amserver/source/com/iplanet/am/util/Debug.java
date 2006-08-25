@@ -17,21 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.2 2005-12-08 01:16:12 veiming Exp $
+ * $Id: Debug.java,v 1.3 2006-08-25 21:19:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.shared.debug.IDebug;
+import com.sun.identity.shared.debug.IDebugProvider;
+import com.sun.identity.shared.debug.impl.DebugProviderImpl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import com.sun.identity.util.IDebug;
-import com.sun.identity.util.IDebugProvider;
-import com.sun.identity.util.impl.DebugProviderImpl;
 
 // NOTE: Since JVM specs guarantee atomic access/updates to int variables
 // (actually all variables except double and long), the design consciously
@@ -97,6 +96,8 @@ import com.sun.identity.util.impl.DebugProviderImpl;
  * performance.
  * </p>
  * @supported.all.api
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.debug.Debug}
  */
 public class Debug {
 

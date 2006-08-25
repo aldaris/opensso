@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.1 2006-04-26 05:14:50 dillidorai Exp $
+ * $Id: URLResourceName.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.net.URL;
 import java.net.MalformedURLException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.ResBundleUtils;

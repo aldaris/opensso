@@ -17,30 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmailNotificationHelper.java,v 1.1 2006-06-16 19:36:32 rarcot Exp $
+ * $Id: EmailNotificationHelper.java,v 1.2 2006-08-25 21:19:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.ldap;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.mail.MessagingException;
-
-import netscape.ldap.util.DN;
-
-import com.iplanet.services.ldap.Attr;
-import com.iplanet.services.ldap.AttrSet;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-
-import com.sun.identity.sm.SchemaType;
 
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
@@ -50,7 +32,20 @@ import com.iplanet.am.sdk.AMServiceUtils;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMTemplate;
 import com.iplanet.am.util.AMSendMail;
-import com.iplanet.am.util.Debug;
+import com.iplanet.services.ldap.Attr;
+import com.iplanet.services.ldap.AttrSet;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SchemaType;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import javax.mail.MessagingException;
+import netscape.ldap.util.DN;
 
 /**
  * This class has the functionality to send email notifications to the users

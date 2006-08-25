@@ -17,44 +17,41 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Misc.java,v 1.3 2006-01-30 20:58:43 veiming Exp $
+ * $Id: Misc.java,v 1.4 2006-08-25 21:19:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import netscape.ldap.util.DN;
 
-import com.sun.identity.common.Constants;
-
 /**
- * 
  * The Misc class contains various misc methods :)
- * 
- * 
  */
-
 public class Misc {
 
     static final String localDsameServer = SystemProperties
-            .get("com.iplanet.am.server.host");
+        .get("com.iplanet.am.server.host");
 
     // default is false to ensure more stringent (security-wise) check
     private static final boolean isCaseInsensitiveDN = Boolean.valueOf(
-            SystemProperties.get(Constants.CASE_INSENSITIVE_DN)).booleanValue();
+        SystemProperties.get(Constants.CASE_INSENSITIVE_DN)).booleanValue();
 
     /**
      * This method is a convenience to get a single attribute from a Map
      * returned by SMS and the dpro SDK. SDK returns a Map with a tuple of
      * attribute name and a Set for the values. When all you want is a string
      * this method is nice.
+     * 
+     * @deprecated As of OpenSSO version 8.0
+     * {@link com.sun.identity.shared.datastruct.CollectionHelper#getMapAttr(Map, String)}
      */
-
     public static String getMapAttr(Map m, String name) {
 
         String retVal = null;
@@ -71,6 +68,10 @@ public class Misc {
         return retVal;
     }
 
+    /**
+     * @deprecated As of OpenSSO version 8.0
+     * {@link com.sun.identity.shared.datastruct.CollectionHelper#getMapAttr(Map, String, String)}
+     */
     public static String getMapAttr(Map m, String name, String defaultValue) {
 
         String retVal = defaultValue;
@@ -111,6 +112,8 @@ public class Misc {
      * @throws NumberFormatException
      *             when fails to parse the defaultValue argument as a signed
      *             decimal integer for return
+     * @deprecated As of OpenSSO version 8.0
+     * {@link com.sun.identity.shared.datastruct.CollectionHelper#getIntMapAttr(Map, String, String, debug)}
      */
     public static int getIntMapAttr(Map m, String name, String defaultValue,
             Debug debug) throws NumberFormatException {
@@ -139,6 +142,8 @@ public class Misc {
      * @param debug
      *            Debug
      * @return int value
+     * @deprecated As of OpenSSO version 8.0
+     * {@link com.sun.identity.shared.datastruct.CollectionHelper#getIntMapAttr(Map, String, int, debug)}
      */
     public static int getIntMapAttr(Map m, String name, int defaultValue,
             Debug debug) {
@@ -177,8 +182,10 @@ public class Misc {
      * than null is returned as this is an invalid configuration for these type
      * of attributes. This allows services like authentication to support a
      * geographic directory configuration.
+     *
+     * @deprecated As of OpenSSO version 8.0
+     * {@link com.sun.identity.shared.datastruct.CollectionHelper#getServerMapAttr(Map, String)}
      */
-
     public static String getServerMapAttr(Map m, String attrName) {
 
         Set attrValues = (Set) m.get(attrName);
@@ -221,7 +228,6 @@ public class Misc {
      *            String representing a DN.
      * @return a canonicalized form of the DN String
      */
-
     public static String canonicalize(String dn) {
         // CAUTION! toLowerCase() canonicalization
         // is technically too agressive as DN might

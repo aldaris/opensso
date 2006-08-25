@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceComparatorValidator.java,v 1.2 2006-06-05 20:26:49 bhavnab Exp $
+ * $Id: ResourceComparatorValidator.java,v 1.3 2006-08-25 21:21:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceAttributeValidator;
 
 /**

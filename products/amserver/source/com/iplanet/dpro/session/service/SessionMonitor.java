@@ -17,17 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionMonitor.java,v 1.1 2005-11-01 00:29:57 arvindp Exp $
+ * $Id: SessionMonitor.java,v 1.2 2006-08-25 21:19:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
+import com.sun.identity.shared.debug.Debug;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import com.iplanet.am.util.Debug;
 
 /**
  * <code>SessionMonitor</code> monitors a given session table , If a session 

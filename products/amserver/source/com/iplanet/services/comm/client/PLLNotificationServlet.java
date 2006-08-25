@@ -17,27 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLNotificationServlet.java,v 1.1 2005-11-01 00:30:13 arvindp Exp $
+ * $Id: PLLNotificationServlet.java,v 1.2 2006-08-25 21:19:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.client;
 
+import com.iplanet.services.comm.share.NotificationSet;
+import com.iplanet.services.comm.share.PLLBundle;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.RequestUtils;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 import java.io.InputStream;
 import java.util.Vector;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.services.comm.share.NotificationSet;
-import com.iplanet.services.comm.share.PLLBundle;
-import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessageImpl;
-import com.sun.identity.common.RequestUtils;
 
 /**
  * 

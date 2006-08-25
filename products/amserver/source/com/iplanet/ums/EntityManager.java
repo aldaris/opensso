@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityManager.java,v 1.1 2005-11-01 00:30:35 arvindp Exp $
+ * $Id: EntityManager.java,v 1.2 2006-08-25 21:20:03 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.services.util.I18n;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.2 2006-02-01 00:23:56 beomsuk Exp $
+ * $Id: LoginLogoutMapping.java,v 1.3 2006-08-25 21:20:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,12 +26,12 @@
  
 package com.sun.identity.authentication.distUI;           
 
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.common.RequestUtils;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import com.iplanet.am.util.Debug;
-import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessageImpl;
-import com.sun.identity.common.RequestUtils;
 
 /** 
  *

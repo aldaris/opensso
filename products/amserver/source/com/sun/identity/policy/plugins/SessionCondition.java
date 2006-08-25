@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCondition.java,v 1.2 2006-08-21 18:46:37 bhavnab Exp $
+ * $Id: SessionCondition.java,v 1.3 2006-08-25 21:21:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,13 +28,13 @@
 package com.sun.identity.policy.plugins;
 
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.common.DateUtils;
+import com.sun.identity.shared.DateUtils;
 import com.sun.identity.policy.ConditionDecision;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
@@ -164,7 +164,7 @@ public class SessionCondition implements Condition {
     public String getDisplayName(String property, java.util.Locale locale)
         throws PolicyException {
         ResourceBundle rb = amCache.getResBundle(ResBundleUtils.rbName, locale);
-        return com.iplanet.am.util.Locale.getString(rb, property);
+        return com.sun.identity.shared.locale.Locale.getString(rb, property);
     }
 
     /**

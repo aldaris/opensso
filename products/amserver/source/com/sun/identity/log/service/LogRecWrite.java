@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecWrite.java,v 1.3 2006-04-27 07:53:35 veiming Exp $
+ * $Id: LogRecWrite.java,v 1.4 2006-08-25 21:21:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,7 @@ public class LogRecWrite implements LogOperation, ParseOutput {
         elementAt(0)).parameters;
         
         try {
-            msg = new String(com.iplanet.services.util.Base64.decode(msg));
+            msg = new String(com.sun.identity.shared.encode.Base64.decode(msg));
         } catch(RuntimeException ex){
             // if message is not base64 encoded just ignore & 
             // write msg as it is.
@@ -121,8 +121,8 @@ public class LogRecWrite implements LogOperation, ParseOutput {
                             if (key.equalsIgnoreCase(LogConstants.DATA)) {
                                 try {
                                     value = new String(
-                                        com.iplanet.services.util.Base64.decode(
-                                            value));
+                                   com.sun.identity.shared.encode.Base64.decode(
+                                        value));
                                 } catch(RuntimeException ex){
                                     // if message is not base64 encoded just 
                                     // ignore & write msg as it is.

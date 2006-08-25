@@ -17,25 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.6 2006-07-31 20:39:05 bigfatrat Exp $
+ * $Id: LDAPAuthUtils.java,v 1.7 2006-08-25 21:20:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
-
 
 
 package com.sun.identity.authentication.modules.ldap;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.AccessController;
@@ -46,7 +44,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPControl;
@@ -157,7 +154,7 @@ public class LDAPAuthUtils {
             
             poolSize = (Set)attrs.get(CONNECTION_POOL_SIZE_ATTR);
             
-            String defaultPoolSize = Misc.getMapAttr(attrs,
+            String defaultPoolSize = CollectionHelper.getMapAttr(attrs,
             CONNECTION_POOL_DEFAULT_SIZE_ATTR,"");
             int index = defaultPoolSize.indexOf(":");
             if (index != -1) {

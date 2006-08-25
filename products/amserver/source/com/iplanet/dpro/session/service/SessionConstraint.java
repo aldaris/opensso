@@ -17,26 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConstraint.java,v 1.1 2005-11-01 00:29:56 arvindp Exp $
+ * $Id: SessionConstraint.java,v 1.2 2006-08-25 21:19:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.service;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <code>SessionConstraint</code> represents the session quota for a given user
@@ -260,8 +259,9 @@ public class SessionConstraint {
                     AM_SESSION_SERVICE, SessionCount.getAdminToken());
             ServiceSchema schema = ssm.getDynamicSchema();
             Map attrs = schema.getAttributeDefaults();
-            quota = Misc.getIntMapAttr(attrs, SESSION_QUOTA_ATTR_NAME, String
-                    .valueOf(DEFAULT_QUOTA), debug);
+            quota = CollectionHelper.getIntMapAttr(
+                attrs, SESSION_QUOTA_ATTR_NAME, String.valueOf(DEFAULT_QUOTA),
+                debug);
         } catch (Exception e) {
             if (debug.messageEnabled()) {
                 debug.message("Failed to get the default session quota "

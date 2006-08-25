@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDebugProvider.java,v 1.1 2005-11-01 00:31:37 arvindp Exp $
+ * $Id: IDebugProvider.java,v 1.2 2006-08-25 21:21:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,12 +25,13 @@
 package com.sun.identity.util;
 
 /**
- * <p>
  * Allows a pluggable implementation of the Debug service within the Access
  * Manager SDK. The implementation of this interface as well as the
  * <code>com.sun.identity.util.IDebug</code> interface togehter provide the
  * necessary functionality to replace or enhance the Debug service.
- * </p>
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.debug.IDebugProvider}
  */
 public interface IDebugProvider {
 

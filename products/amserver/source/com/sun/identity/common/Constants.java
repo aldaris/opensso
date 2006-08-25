@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.6 2006-07-31 20:31:07 bigfatrat Exp $
+ * $Id: Constants.java,v 1.7 2006-08-25 21:20:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,9 @@ package com.sun.identity.common;
  * This interface contains all the property names defined in in
  * <code>AMConfig.properties</code> and may be expanded with other constant
  * values that are used for Access Manager server development.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.Constants}
  */
 public interface Constants {
     /**

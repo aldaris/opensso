@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.3 2006-07-28 23:54:24 dillidorai Exp $
+ * $Id: PolicyRequestHandler.java,v 1.4 2006-08-25 21:21:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.policy.remote;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Stats;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.stats.Stats;
 import com.iplanet.services.comm.server.RequestHandler;
 import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.Response;

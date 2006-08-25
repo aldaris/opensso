@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequest.java,v 1.1 2005-11-01 00:29:59 arvindp Exp $
+ * $Id: SessionRequest.java,v 1.2 2006-08-25 21:19:44 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session.share;
 
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.services.util.Base64;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.xml.XMLUtils;
 
 /**
  * This <code>SessionRequest</code> class represents a

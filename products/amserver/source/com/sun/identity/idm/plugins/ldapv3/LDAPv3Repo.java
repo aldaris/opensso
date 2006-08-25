@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.12 2006-07-31 20:38:17 bigfatrat Exp $
+ * $Id: LDAPv3Repo.java,v 1.13 2006-08-25 21:20:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,9 +68,9 @@ import netscape.ldap.util.DN;
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
 import com.sun.identity.idm.IdRepoListener;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
@@ -89,7 +89,7 @@ import com.sun.identity.idm.IdRepoFatalException;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
-import com.sun.identity.jaxrpc.SOAPClient;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SchemaType;
 
 public class LDAPv3Repo extends IdRepo {

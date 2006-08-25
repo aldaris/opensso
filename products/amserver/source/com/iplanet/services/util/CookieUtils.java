@@ -17,29 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.1 2005-11-01 00:30:25 arvindp Exp $
+ * $Id: CookieUtils.java,v 1.2 2006-08-25 21:19:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.util;
 
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.URLEncDec;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import com.iplanet.am.util.AMURLEncDec;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.common.Constants;
-
 /**
  * Implements utility methods for handling Cookie.
- * <p>
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.encode.CookieUtils}
  */
 
 public class CookieUtils {
@@ -194,7 +194,7 @@ public class CookieUtils {
         // Check property value and it decode value
         // Bea, IBM
         if (cookieValue != null && cookieEncoding) {
-            return AMURLEncDec.decode(cookieValue);
+            return URLEncDec.decode(cookieValue);
         }
         return cookieValue;
     }
@@ -218,7 +218,7 @@ public class CookieUtils {
                 String cookieValue = checkDoubleQuote(cookies[nCookie]
                         .getValue());
                 if (cookieValue != null) {
-                    cookies[nCookie].setValue(AMURLEncDec.decode(cookieValue));
+                    cookies[nCookie].setValue(URLEncDec.decode(cookieValue));
                 }
             }
         }
@@ -338,7 +338,7 @@ public class CookieUtils {
         // Based on property value it does url encoding.
         // BEA, IBM
         if (cookieEncoding) {
-            cookie = new Cookie(name, AMURLEncDec.encode(value));
+            cookie = new Cookie(name, URLEncDec.encode(value));
         } else {
             cookie = new Cookie(name, value);
         }

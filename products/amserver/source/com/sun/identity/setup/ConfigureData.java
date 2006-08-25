@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.2 2006-08-11 06:51:23 veiming Exp $
+ * $Id: ConfigureData.java,v 1.3 2006-08-25 21:21:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.util.DN;
 
 /**
  * Configures product bootstrap data.
@@ -133,26 +135,29 @@ public class ConfigureData {
     private void setRealmAttributes()
         throws SMSException
     {
+        OrganizationConfigManager ocm = new OrganizationConfigManager(
+            ssoToken, "/");
         Map map = new HashMap();
         Set set1 = new HashSet(2);
         set1.add("Active");
         map.put("sunOrganizationStatus", set1);
         Set set2 = new HashSet(4);
         set2.add(hostname);
-        set2.add("red");
+        Map defaultValues = ServicesDefaultValues.getDefaultValues();
+        set2.add(DNToName((String)defaultValues.get("ROOT_SUFFIX")));
         map.put("sunOrganizationAliases", set2);
-        setRealmAttributes("/", "sunIdentityRepositoryService", map);
+        ocm.setAttributes("sunIdentityRepositoryService", map);
+    }
+    
+    private static String DNToName(String dn) {
+        String ret = dn;
+        if (DN.isDN(dn)) {
+            String[] comps = LDAPDN.explodeDN(dn, true);
+            ret = comps[0];
+        }
+        return ret;
     }
 
-    private void setRealmAttributes(
-        String realmName,
-        String serviceName,
-        Map values
-    ) throws SMSException {
-        OrganizationConfigManager ocm = new OrganizationConfigManager(
-            ssoToken, realmName);
-        ocm.setAttributes(serviceName, values);
-    }
 
     private void createPolicies(String realmName, String xmlFile)
         throws FileNotFoundException, PolicyException, SSOException, IOException

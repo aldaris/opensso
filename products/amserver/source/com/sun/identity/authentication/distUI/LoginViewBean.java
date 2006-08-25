@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.4 2006-03-01 00:56:25 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.5 2006-08-25 21:20:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,24 +25,6 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.ChoiceCallback;
-import javax.security.auth.callback.ConfirmationCallback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -60,11 +42,27 @@ import com.sun.identity.authentication.UI.CallBackTiledView;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
-import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessage;
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.ChoiceCallback;
+import javax.security.auth.callback.ConfirmationCallback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * A default implementation of <code>LoginViewBean</code> auth Login UI.
@@ -1227,7 +1225,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 
                 if ((strButton != null) && (strButton.length() != 0)) {
                     java.util.Locale locale =
-                    com.iplanet.am.util.Locale.getLocale(
+                        com.sun.identity.shared.locale.Locale.getLocale(
                     ssoToken.getProperty("Locale"));
                     rb =  rbCache.getResBundle(bundleName, locale);
                     

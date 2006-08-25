@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.9 2006-07-17 18:10:52 veiming Exp $
+ * $Id: AuthD.java,v 1.10 2006-08-25 21:20:28 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,27 +26,7 @@
 
 package com.sun.identity.authentication.service;
 
-import java.io.IOException;
-import java.security.AccessController;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import netscape.ldap.util.DN;
-
 import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
@@ -57,7 +37,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.idm.AMIdentity;
@@ -72,10 +51,29 @@ import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.IOException;
+import java.security.AccessController;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import netscape.ldap.util.DN;
+
 /**
  * This class is used to initialize the Authentication service and retrieve 
  * the Global attributes for the Authentication service.
@@ -270,13 +268,13 @@ public class AuthD  {
             initPlatformServiceGlobalSettings();
             initSessionServiceDynamicSettings();
             initAuthConfigGlobalSettings();
-            bundle =
-                com.iplanet.am.util.Locale.getInstallResourceBundle(
-                    BUNDLE_NAME);
+            bundle = com.sun.identity.shared.locale.Locale.
+                getInstallResourceBundle(BUNDLE_NAME);
             ResourceBundle platBundle =
-            com.iplanet.am.util.Locale.getInstallResourceBundle("amPlatform");
+                com.sun.identity.shared.locale.Locale.getInstallResourceBundle(
+                    "amPlatform");
             platformCharset = platBundle.getString(
-            ISAuthConstants.PLATFORM_CHARSET_ATTR);
+                ISAuthConstants.PLATFORM_CHARSET_ATTR);
             printProfileAttrs();
             // Initialize AuthXMLHandler so that AdminTokenAction can
             // generate DPro Session's SSOToken
@@ -336,12 +334,12 @@ public class AuthD  {
             debug.message("attrs : " + attrs);
         }
         
-        defaultAuthLocale = Misc.getMapAttr(attrs,
-        ISAuthConstants.AUTH_LOCALE_ATTR);
-        adminAuthModule = Misc.getMapAttr(attrs,
-        ISAuthConstants.ADMIN_AUTH_MODULE);
-        defaultAuthLevel = Misc.getMapAttr(attrs,
-        ISAuthConstants.DEFAULT_AUTH_LEVEL,DEFAULT_AUTH_LEVEL);
+        defaultAuthLocale = CollectionHelper.getMapAttr(
+            attrs, ISAuthConstants.AUTH_LOCALE_ATTR);
+        adminAuthModule = CollectionHelper.getMapAttr(
+            attrs, ISAuthConstants.ADMIN_AUTH_MODULE);
+        defaultAuthLevel = CollectionHelper.getMapAttr(
+            attrs, ISAuthConstants.DEFAULT_AUTH_LEVEL,DEFAULT_AUTH_LEVEL);
         
         Set s = (Set)attrs.get(ISAuthConstants.AUTHENTICATORS);
         Iterator iter = s.iterator();
@@ -370,8 +368,8 @@ public class AuthD  {
             debug.message("Default Failure URL Set = " + defaultFailureURLSet);
         }
         
-        Integer sleepTime = new Integer(Misc.getMapAttr(attrs,
-        ISAuthConstants.SLEEP_INTERVAL));
+        Integer sleepTime = new Integer(CollectionHelper.getMapAttr(
+            attrs, ISAuthConstants.SLEEP_INTERVAL));
         defaultSleepTime = sleepTime.longValue();
         
     }
@@ -442,8 +440,8 @@ public class AuthD  {
         platformSchema = scm.getGlobalSchema();
         Map attrs = platformSchema.getAttributeDefaults();
         
-        platformLocale = Misc.getMapAttr(attrs,
-        ISAuthConstants.PLATFORM_LOCALE_ATTR);
+        platformLocale = CollectionHelper.getMapAttr(
+            attrs, ISAuthConstants.PLATFORM_LOCALE_ATTR);
         
         platformClientCharsets =
         (Set)attrs.get(ISAuthConstants.PLATFORM_CLIENT_CHARSET_ATTR);
@@ -478,12 +476,12 @@ public class AuthD  {
         sessionSchema = scm.getDynamicSchema();
         if (debug.messageEnabled()) {
             Map attrs = sessionSchema.getAttributeDefaults();
-            String defaultMaxSessionTime = Misc.getMapAttr(attrs,
-            ISAuthConstants.MAX_SESSION_TIME, "120");
-            String defaultMaxIdleTime = Misc.getMapAttr(attrs,
-            ISAuthConstants.SESS_MAX_IDLE_TIME, "30");
-            String defaultMaxCachingTime = Misc.getMapAttr(attrs,
-            ISAuthConstants.SESS_MAX_CACHING_TIME, "3");
+            String defaultMaxSessionTime = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.MAX_SESSION_TIME, "120");
+            String defaultMaxIdleTime = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.SESS_MAX_IDLE_TIME, "30");
+            String defaultMaxCachingTime = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.SESS_MAX_CACHING_TIME, "3");
             debug.message("AuthD.defaultMaxSessionTime=" + defaultMaxSessionTime
             + "\nAuthD.defaultMaxIdleTime=" + defaultMaxIdleTime
             + "\nAuthD.defaultMaxCachingTime=" + defaultMaxCachingTime);
@@ -495,7 +493,7 @@ public class AuthD  {
      * @return max session time
      */
     String getDefaultMaxSessionTime() {
-        return Misc.getMapAttr(sessionSchema.getAttributeDefaults(),
+        return CollectionHelper.getMapAttr(sessionSchema.getAttributeDefaults(),
         ISAuthConstants.MAX_SESSION_TIME, "120");
     }
     
@@ -504,7 +502,7 @@ public class AuthD  {
      * @return max session idle time
      */
     String getDefaultMaxIdleTime() {
-        return Misc.getMapAttr(sessionSchema.getAttributeDefaults(),
+        return CollectionHelper.getMapAttr(sessionSchema.getAttributeDefaults(),
         ISAuthConstants.SESS_MAX_IDLE_TIME, "30");
     }
     
@@ -513,7 +511,7 @@ public class AuthD  {
      * @return  max session caching time
      */
     String getDefaultMaxCachingTime() {
-        return Misc.getMapAttr(sessionSchema.getAttributeDefaults(),
+        return CollectionHelper.getMapAttr(sessionSchema.getAttributeDefaults(),
         ISAuthConstants.SESS_MAX_CACHING_TIME, "3");
     }
 
@@ -1079,7 +1077,7 @@ public class AuthD  {
         
         ResourceBundle rb = (ResourceBundle)bundles.get(locale);
         if (rb == null) {
-            rb = com.iplanet.am.util.Locale.getResourceBundle(
+            rb = com.sun.identity.shared.locale.Locale.getResourceBundle(
                 BUNDLE_NAME, locale);
 
             if (rb == null) {

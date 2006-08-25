@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.5 2006-07-21 17:50:51 arviranga Exp $
+ * $Id: AdminTokenAction.java,v 1.6 2006-08-25 21:21:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,7 @@ package com.sun.identity.security;
 import java.security.PrivilegedAction;
 
 import com.iplanet.am.util.AdminUtils;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Crypt;

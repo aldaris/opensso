@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.5 2006-08-11 00:42:27 rarcot Exp $
+ * $Id: SMSLdapObject.java,v 1.6 2006-08-25 21:21:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,9 +53,9 @@ import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPUser;

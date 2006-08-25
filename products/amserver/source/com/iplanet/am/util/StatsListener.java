@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatsListener.java,v 1.1 2005-11-01 00:29:43 arvindp Exp $
+ * $Id: StatsListener.java,v 1.2 2006-08-25 21:19:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,9 @@ package com.iplanet.am.util;
 /**
  * The <code> StatsListener</code> interface needs to be implemented by each
  * component in order to print the statistics.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.stats.StatsListener}
  */
 
 public interface StatsListener {

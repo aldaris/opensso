@@ -1,0 +1,74 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: StatsRunner.java,v 1.1 2006-08-25 21:21:56 veiming Exp $
+ *
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.shared.stats;
+
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import java.util.Vector;
+
+public class StatsRunner extends Thread {
+    static long period = 3600000; // in milliseconds
+
+    static {
+        String statsInterval = SystemPropertiesManager.get(
+            Constants.AM_STATS_INTERVAL);
+        try {
+            period = Long.parseLong(statsInterval);
+            if (period <= 5) {
+                period = 5;
+            }
+            period = period * 1000;
+        } catch (Exception pe) {
+        }
+    }
+
+    public StatsRunner() {
+        setDaemon(true);
+    }
+
+    /**
+     * Runs the stat listeners to print statistics.
+     */
+    public void run() {
+        while (true) {
+            long nextRun = System.currentTimeMillis() + period;
+            try {
+                long sleeptime = nextRun - System.currentTimeMillis();
+                if (sleeptime > 0) {
+                    sleep(sleeptime);
+                }
+            } catch (Exception ex) {
+            }
+
+            if (Stats.statsListeners.size() != 0) {
+                Vector lsnrs = Stats.statsListeners;
+                for (int i = 0; i < lsnrs.size(); i++) {
+                    StatsListener lsnr = (StatsListener) (lsnrs.elementAt(i));
+                    lsnr.printStats();
+                }
+            }
+        }
+    }
+}

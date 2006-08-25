@@ -1,0 +1,80 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-08-25 21:21:40 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso shared library" default="all">
+                
+    <description>Open Web Single Sign-On Shared library</description>
+
+    <import file="../products.xml" />
+
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${sharedlib.classes.dir}"/>
+        <fileset dir="${sharedlib.extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="all" depends="build">
+        <jar destfile="${sharedlib.dist.dir}/opensso-sharedlib.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${sharedlib.classes.dir}" />
+        </jar>
+        <checksum file="${sharedlib.dist.dir}//opensso-sharedlib.jar"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="build" depends="preparebuild">
+        <javac destdir="${sharedlib.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${sharedlib.src.dir}"/>
+            <compilerarg value="-Xlint:deprecation" />
+            <classpath refid="build.class.path"/>
+            <exclude name="**/package-info.java"/>
+        </javac>
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${sharedlib.built.dir}"/>
+        <mkdir dir="${sharedlib.classes.dir}"/>
+        <mkdir dir="${sharedlib.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${sharedlib.dist.dir}"/>
+        <delete dir="${sharedlib.classes.dir}"/>
+        <delete dir="${sharedlib.built.dir}"/>
+    </target>
+</project>

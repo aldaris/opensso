@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoBundle.java,v 1.1 2005-11-01 00:31:09 arvindp Exp $
+ * $Id: IdRepoBundle.java,v 1.2 2006-08-25 21:20:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ public class IdRepoBundle {
 
     public final static String BUNDLE_NAME = "amIdRepo";
     static {
-        profileBundle = com.iplanet.am.util.Locale
+        profileBundle = com.sun.identity.shared.locale.Locale
                 .getInstallResourceBundle(BUNDLE_NAME);
     }
 
@@ -65,8 +65,8 @@ public class IdRepoBundle {
 
         ResourceBundle rb = (ResourceBundle) bundles.get(locale);
         if (rb == null) {
-            rb = com.iplanet.am.util.Locale.getResourceBundle(BUNDLE_NAME,
-                    locale);
+            rb = com.sun.identity.shared.locale.Locale.getResourceBundle(
+                BUNDLE_NAME, locale);
             if (rb == null) {
                 rb = profileBundle;
             }

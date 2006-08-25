@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.2 2006-02-01 22:16:06 mrudul_uchil Exp $
+ * $Id: AuthContextLocal.java,v 1.3 2006-08-25 21:20:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,18 +26,6 @@
 
 package com.sun.identity.authentication.server;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.servlet.http.HttpSession;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AMLoginContext;
@@ -45,6 +33,16 @@ import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.service.LoginStatus;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.ResourceBundle;
+import java.util.Set;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.servlet.http.HttpSession;
 
 /**
  * The <code>AuthContextLocal</code> provides the implementation for

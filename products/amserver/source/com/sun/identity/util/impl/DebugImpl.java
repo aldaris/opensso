@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugImpl.java,v 1.2 2006-07-17 18:11:34 veiming Exp $
+ * $Id: DebugImpl.java,v 1.3 2006-08-25 21:21:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,9 @@ import com.iplanet.am.util.SystemProperties;
 
 /**
  * Debug implementation class.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.debug.impl.DebugImpl}
  */
 public class DebugImpl implements IDebug {
 

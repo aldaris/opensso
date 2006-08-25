@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatsRunner.java,v 1.1 2005-11-01 00:29:43 arvindp Exp $
+ * $Id: StatsRunner.java,v 1.2 2006-08-25 21:19:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,10 @@ package com.iplanet.am.util;
 
 import java.util.Vector;
 
+/**
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.stats.StatsRunner}
+ */
 public class StatsRunner extends Thread {
 
     static long period = 3600000; // in milliseconds

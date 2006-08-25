@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.2 2006-02-01 00:22:34 beomsuk Exp $
+ * $Id: AuthViewBeanBase.java,v 1.3 2006-08-25 21:20:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,23 +26,21 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.io.IOException;
-import java.util.ResourceBundle;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.AMResourceBundleCache;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.iplanet.am.util.BrowserEncoding;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.ViewBeanBase;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.service.AuthUtils;
-import com.sun.identity.common.Constants;
 import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.shared.Constants;
+import java.io.IOException;
+import java.util.ResourceBundle;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class is a default implementation of <code>ViewBean</code> auth UI.

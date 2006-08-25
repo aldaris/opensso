@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.3 2006-04-27 07:53:31 veiming Exp $
+ * $Id: ISArchiveVerify.java,v 1.4 2006-08-25 21:20:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,8 +73,8 @@ public class ISArchiveVerify{
     static Map OPTIONS = new HashMap();
     
     static {
-        bundle = 
-            com.iplanet.am.util.Locale.getInstallResourceBundle("amLogging");
+        bundle = com.sun.identity.shared.locale.Locale.getInstallResourceBundle(
+            "amLogging");
         OPTIONS.put("-l", new Integer(LOGNAME));
         OPTIONS.put("-p", new Integer(PATH));
         OPTIONS.put("-u", new Integer(USERNAME));

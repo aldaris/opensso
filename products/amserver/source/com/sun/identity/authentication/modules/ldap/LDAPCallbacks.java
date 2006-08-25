@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCallbacks.java,v 1.1 2006-01-28 09:15:57 veiming Exp $
+ * $Id: LDAPCallbacks.java,v 1.2 2006-08-25 21:20:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,7 @@ import javax.security.auth.login.LoginException;
 
 public class LDAPCallbacks {
     private CallbackHandler callbackHandler;
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
     private String passwd;
     private String username;
     private String oldPassword;
@@ -48,7 +48,7 @@ public class LDAPCallbacks {
 
     static {
         if (debug == null) {
-            debug = com.iplanet.am.util.Debug.getInstance("amAuthLDAP");
+            debug = com.sun.identity.shared.debug.Debug.getInstance("amAuthLDAP");
         }
     }
     

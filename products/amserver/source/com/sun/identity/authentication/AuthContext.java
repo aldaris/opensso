@@ -17,40 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.1 2006-01-28 09:15:20 veiming Exp $
+ * $Id: AuthContext.java,v 1.2 2006-08-25 21:20:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
 package com.sun.identity.authentication;
 
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLStreamHandler;
-import java.security.KeyStore;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLUtils;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.services.comm.client.PLLClient;
@@ -67,9 +41,30 @@ import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
-import com.sun.identity.common.L10NMessageImpl;
-
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.xml.XMLUtils;
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLStreamHandler;
+import java.security.KeyStore;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.Vector;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The <code>AuthContext</code> provides the implementation for

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Referrals.java,v 1.1 2006-04-26 05:14:05 dillidorai Exp $
+ * $Id: Referrals.java,v 1.2 2006-08-25 21:21:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.iplanet.sso.*;
-import com.iplanet.am.util.XMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.plugins.OrgReferral;
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.5 2006-08-11 00:42:25 rarcot Exp $
+ * $Id: IdServicesImpl.java,v 1.6 2006-08-25 21:20:55 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;

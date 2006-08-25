@@ -17,23 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLoginException.java,v 1.2 2005-12-08 01:16:39 veiming Exp $
+ * $Id: AuthLoginException.java,v 1.3 2006-08-25 21:20:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.authentication.spi;
 
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.L10NMessage;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
 import javax.security.auth.login.LoginException;
-
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.sun.identity.common.L10NMessage;
 
 /**
  * This class is for handling message localization in LoginException.

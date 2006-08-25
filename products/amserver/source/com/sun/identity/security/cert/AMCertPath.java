@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertPath.java,v 1.2 2006-05-31 21:50:10 veiming Exp $
+ * $Id: AMCertPath.java,v 1.3 2006-08-25 21:21:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.SecurityDebug;
 
 /**

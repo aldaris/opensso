@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.3 2006-07-17 18:10:44 veiming Exp $
+ * $Id: LoginServlet.java,v 1.4 2006-08-25 21:20:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,15 +26,6 @@
 
 package com.sun.identity.authentication.UI;
 
-import java.net.URL;
-import java.util.HashMap;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
@@ -43,10 +34,17 @@ import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestContextImpl;
 import com.iplanet.jato.ViewBeanManager;
 import com.sun.identity.authentication.service.AuthUtils;
-import com.sun.identity.common.Constants;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.common.L10NMessageImpl;
 import com.sun.identity.common.RequestUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+import java.net.URL;
+import java.util.HashMap;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is the front controller of authentication UI

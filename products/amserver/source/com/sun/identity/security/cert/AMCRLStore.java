@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.1 2006-01-28 09:28:36 veiming Exp $
+ * $Id: AMCRLStore.java,v 1.2 2006-08-25 21:21:16 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ import com.iplanet.security.x509.IssuingDistributionPoint;
 import com.iplanet.security.x509.IssuingDistributionPointExtension;
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.iplanet.am.util.AMURLEncDec;
+import com.sun.identity.shared.encode.URLEncDec;
 
 /**
 * The class is used to manage crl store in LDAP server
@@ -548,8 +548,8 @@ public class AMCRLStore extends AMCertStore {
                     if (st2.countTokens() == 2) {
                         String param = st2.nextToken();
                         String value = st2.nextToken();
-                        params.append(AMURLEncDec.encode(param) + "=" + 
-                            AMURLEncDec.encode(value));
+                        params.append(URLEncDec.encode(param) + "=" + 
+                            URLEncDec.encode(value));
                     } else {
                         continue;
                     }

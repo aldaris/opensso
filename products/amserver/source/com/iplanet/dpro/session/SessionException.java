@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionException.java,v 1.1 2005-11-01 00:29:47 arvindp Exp $
+ * $Id: SessionException.java,v 1.2 2006-08-25 21:19:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session;
 
-import com.iplanet.am.util.Locale;
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+import com.sun.identity.shared.locale.Locale;
 
 /**
  * A <code>SessionException</code> is thrown if the Naming Service can not

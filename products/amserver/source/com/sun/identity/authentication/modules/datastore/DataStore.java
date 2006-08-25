@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.1 2006-01-28 09:15:47 veiming Exp $
+ * $Id: DataStore.java,v 1.2 2006-08-25 21:20:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,13 +25,13 @@
 
 package com.sun.identity.authentication.modules.datastore;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.spi.AMAuthCallBackException;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.sm.ServiceConfig;
@@ -74,7 +74,7 @@ public class DataStore extends AMLoginModule {
         currentConfig = options;
         currentConfigName = 
             (String)options.get(ISAuthConstants.MODULE_INSTANCE_NAME);
-        String authLevel = Misc.getMapAttr(options, AUTHLEVEL);
+        String authLevel = CollectionHelper.getMapAttr(options, AUTHLEVEL);
         if (authLevel != null) {
             try {
                 setAuthLevel(Integer.parseInt(authLevel));

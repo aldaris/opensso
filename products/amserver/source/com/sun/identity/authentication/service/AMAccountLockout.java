@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.1 2006-01-28 09:16:23 veiming Exp $
+ * $Id: AMAccountLockout.java,v 1.2 2006-08-25 21:20:27 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,19 +26,17 @@
 
 package com.sun.identity.authentication.service;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
-
-import netscape.ldap.util.DN;
-
-import com.iplanet.am.util.Debug;
 import com.sun.identity.common.AccountLockoutInfo;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.ISAccountLockout;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.debug.Debug;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+import netscape.ldap.util.DN;
 
 /**
  * <code>AMAccountLockout</code> contains the utility methods to retrieve and
@@ -167,8 +165,8 @@ class AMAccountLockout {
             }
             return false;
         }
-        Date exprDate = com.iplanet.am.util.Locale.parseNormalizedDateString(
-        accountLife);
+        Date exprDate = com.sun.identity.shared.locale.Locale.
+            parseNormalizedDateString(accountLife);
         if (debug.messageEnabled()) {
             debug.message("exprDate = "+exprDate);
         }

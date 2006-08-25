@@ -17,13 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonUtils.java,v 1.5 2006-06-16 19:36:28 rarcot Exp $
+ * $Id: CommonUtils.java,v 1.6 2006-08-25 21:19:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.ldap;
 
+import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.Attr;
+import com.iplanet.services.ldap.AttrSet;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.Guid;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,23 +43,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import netscape.ldap.util.DN;
-
-import com.iplanet.services.ldap.Attr;
-import com.iplanet.services.ldap.AttrSet;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.ums.Guid;
-
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-
-import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
 
 /**
  * This class contains all the miscellaneous utility methods used in the

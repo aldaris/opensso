@@ -17,21 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.6 2006-07-17 18:11:28 veiming Exp $
+ * $Id: ServiceManager.java,v 1.7 2006-08-25 21:21:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.XMLUtils;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.EncodeAction;
 import java.io.InputStream;

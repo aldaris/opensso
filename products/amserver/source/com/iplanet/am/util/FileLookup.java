@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileLookup.java,v 1.2 2006-03-23 19:10:08 veiming Exp $
+ * $Id: FileLookup.java,v 1.3 2006-08-25 21:19:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -45,6 +45,9 @@ import java.util.StringTokenizer;
  * sequence is rb_zh_CN, rb_zh, rb_JA_JP, rb_ja, rb ie we can't fall back to rb
  * if zh resource bundle is not found Hence We have added more steps to file
  * lookup
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.search.FileLookup}
  */
 public class FileLookup {
 

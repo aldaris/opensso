@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidatorBase.java,v 1.2 2006-04-14 09:07:17 veiming Exp $
+ * $Id: ValidatorBase.java,v 1.3 2006-08-25 21:20:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,9 @@ import java.util.Set;
 
 /**
  * Base class for all validator classes.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.validation.ValidatorBase}
  */
 public abstract class ValidatorBase
     implements Validator

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationException.java,v 1.1 2006-01-28 09:17:01 veiming Exp $
+ * $Id: AuthenticationException.java,v 1.2 2006-08-25 21:20:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 
 package com.sun.identity.authentication.spi;
 
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 
 /**
  * <code>AuthenticationException</code> class is for handling Exception that 

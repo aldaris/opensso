@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.2 2005-12-08 01:16:12 veiming Exp $
+ * $Id: ThreadPool.java,v 1.3 2006-08-25 21:19:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
+
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * <p>

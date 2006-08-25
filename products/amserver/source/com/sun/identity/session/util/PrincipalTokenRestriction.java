@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrincipalTokenRestriction.java,v 1.1 2005-11-01 00:31:18 arvindp Exp $
+ * $Id: PrincipalTokenRestriction.java,v 1.2 2006-08-25 21:21:20 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.session.util;
 import com.iplanet.am.util.Misc;
 import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 
 /**
  * This Class represents a PrincipalTokenRestriction
@@ -86,8 +87,8 @@ public class PrincipalTokenRestriction implements TokenRestriction {
     public boolean isSatisfied(Object context) throws Exception {
         if (context instanceof SSOToken) {
             SSOToken usedBy = (SSOToken) context;
-            return dn
-                    .equals(Misc.canonicalize(usedBy.getPrincipal().getName()));
+            return dn.equals(Misc.canonicalize(
+                usedBy.getPrincipal().getName()));
         }
         return false;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionTypeManager.java,v 1.1 2006-04-26 05:14:00 dillidorai Exp $
+ * $Id: ConditionTypeManager.java,v 1.2 2006-08-25 21:21:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,9 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.*;
 import com.sun.identity.policy.interfaces.Condition;
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 
 /**
  * The class <code>ConditionTypeManager</code> provides
@@ -65,9 +65,9 @@ public class ConditionTypeManager {
      */
     ConditionTypeManager() throws SSOException {
         token = ServiceTypeManager.getSSOToken();
-        String lstr;
-        lstr = token.getProperty("Locale");
-        java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(lstr);
+        String lstr = token.getProperty("Locale");
+        java.util.Locale loc = 
+            com.sun.identity.shared.locale.Locale.getLocale(lstr);
         rb = amCache.getResBundle(ResBundleUtils.rbName, loc);
     }
 
@@ -84,7 +84,7 @@ public class ConditionTypeManager {
         java.util.Locale loc ;
         try {
             String lstr = token.getProperty("Locale");
-            loc = com.iplanet.am.util.Locale.getLocale(lstr);
+            loc = com.sun.identity.shared.locale.Locale.getLocale(lstr);
         } catch (SSOException ex) {
             debug.error ("ConditionTypeManager:Unable to retreive locale from"
                 +"SSOToken", ex);

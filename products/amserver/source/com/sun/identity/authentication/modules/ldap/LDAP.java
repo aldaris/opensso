@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.3 2006-05-10 21:07:23 pawand Exp $
+ * $Id: LDAP.java,v 1.4 2006-08-25 21:20:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,6 @@
 
 package com.sun.identity.authentication.modules.ldap;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.spi.AMAuthCallBackImpl;
@@ -36,9 +34,10 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.UserNamePasswordValidationException;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceConfig;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -155,8 +154,8 @@ public class LDAP extends AMLoginModule {
             if (currentConfig != null) {
                 try {
                     String checkAttr = "iplanet-am-auth-ldap-server-check";
-                    interval = Long.parseLong(
-                    Misc.getServerMapAttr(currentConfig, checkAttr));
+                    interval = Long.parseLong(CollectionHelper.getServerMapAttr(
+                        currentConfig, checkAttr));
                 } catch (NumberFormatException nfe) {
                     if (debug.messageEnabled()) {
                         debug.message("Server Check Interval is not set.\n"+
@@ -166,8 +165,8 @@ public class LDAP extends AMLoginModule {
                 }
                 setInterval(interval);
                 if (primary) {
-                    serverHost = Misc.getServerMapAttr(currentConfig,
-                    "iplanet-am-auth-ldap-server");
+                    serverHost = CollectionHelper.getServerMapAttr(
+                        currentConfig, "iplanet-am-auth-ldap-server");
                     if (serverHost == null) {
                         if (debug.messageEnabled()) {
                             debug.message("No primary server for confing " +
@@ -176,8 +175,8 @@ public class LDAP extends AMLoginModule {
                         return false;
                     }
                 } else {
-                    serverHost = Misc.getServerMapAttr(currentConfig,
-                    "iplanet-am-auth-ldap-server2");
+                    serverHost = CollectionHelper.getServerMapAttr(
+                        currentConfig, "iplanet-am-auth-ldap-server2");
                     
                     if (serverHost == null) {
                         if (debug.messageEnabled()) {
@@ -188,31 +187,32 @@ public class LDAP extends AMLoginModule {
                     }
                 }
                 
-                String baseDN = Misc.getServerMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-base-dn");
+                String baseDN = CollectionHelper.getServerMapAttr(
+                    currentConfig, "iplanet-am-auth-ldap-base-dn");
                 if (baseDN == null) {
                     debug.error("BaseDN for search is invalid: " + baseDN);
                 }
                 
-                bindDN = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-bind-dn", "");
-                String bindPassword = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-bind-passwd", "");
-                String userNamingAttr = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-user-naming-attribute", "uid");
-                Set userSearchAttrs = (Set) currentConfig.get(
-                "iplanet-am-auth-ldap-user-search-attributes");
-                String searchFilter = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-search-filter", "");
-                boolean ssl = Boolean.valueOf(Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-ssl-enabled",
-                "false")).booleanValue();
+                bindDN = CollectionHelper.getMapAttr(currentConfig,
+                    "iplanet-am-auth-ldap-bind-dn", "");
+                String bindPassword = CollectionHelper.getMapAttr(
+                    currentConfig, "iplanet-am-auth-ldap-bind-passwd", "");
+                String userNamingAttr = CollectionHelper.getMapAttr(
+                    currentConfig,
+                    "iplanet-am-auth-ldap-user-naming-attribute", "uid");
+                Set userSearchAttrs = (Set)currentConfig.get(
+                    "iplanet-am-auth-ldap-user-search-attributes");
+                String searchFilter = CollectionHelper.getMapAttr(
+                    currentConfig, "iplanet-am-auth-ldap-search-filter", "");
+                boolean ssl = Boolean.valueOf(CollectionHelper.getMapAttr(
+                    currentConfig, "iplanet-am-auth-ldap-ssl-enabled", "false")
+                    ).booleanValue();
                 getUserCreationAttrs(currentConfig);
-                String tmp = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-search-scope", "SUBTREE");
+                String tmp = CollectionHelper.getMapAttr(currentConfig,
+                    "iplanet-am-auth-ldap-search-scope", "SUBTREE");
                 
-                String authLevel = Misc.getMapAttr(currentConfig,
-                "iplanet-am-auth-ldap-auth-level");
+                String authLevel = CollectionHelper.getMapAttr(currentConfig,
+                    "iplanet-am-auth-ldap-auth-level");
                 if (authLevel != null) {
                     try {
                         setAuthLevel(Integer.parseInt(authLevel));
@@ -227,9 +227,10 @@ public class LDAP extends AMLoginModule {
                     searchScope = 1;
                 }
                 
-                String returnUserDN = Misc.getMapAttr(currentConfig,
-                ISAuthConstants.LDAP_RETURNUSERDN, "true");
-                regEx = Misc.getMapAttr(currentConfig, INVALID_CHARS);
+                String returnUserDN = CollectionHelper.getMapAttr(
+                    currentConfig, ISAuthConstants.LDAP_RETURNUSERDN, "true");
+                regEx = CollectionHelper.getMapAttr(
+                    currentConfig, INVALID_CHARS);
                 
                 // set LDAP Parameters
                 int index = serverHost.indexOf(':');
@@ -241,8 +242,8 @@ public class LDAP extends AMLoginModule {
                     serverHost = serverHost.substring(0, index);
                 }
                 if (!primary) {
-                    primaryServerHost = Misc.getServerMapAttr(currentConfig,
-                        "iplanet-am-auth-ldap-server");
+                    primaryServerHost = CollectionHelper.getServerMapAttr(
+                        currentConfig, "iplanet-am-auth-ldap-server");
                     primaryServerPort = 389;
                     int colonIndex = primaryServerHost.indexOf(':');
                     if (colonIndex != -1) {
@@ -567,9 +568,8 @@ public class LDAP extends AMLoginModule {
                     break;
                 case LDAPAuthUtils.PASSWORD_EXPIRING:
                     String fmtMsg = bundle.getString("PasswordExp");
-                    String msg = com.iplanet.am.util.Locale.formatMessage(
-                        fmtMsg,
-                    ldapUtil.getExpTime());
+                    String msg = com.sun.identity.shared.locale.Locale.
+                        formatMessage(fmtMsg, ldapUtil.getExpTime());
                     replaceHeader(PASSWORD_CHANGE, msg);
                     currentState = PASSWORD_CHANGE;
                     break;

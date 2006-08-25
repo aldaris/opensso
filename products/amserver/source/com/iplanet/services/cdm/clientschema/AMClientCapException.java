@@ -17,20 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientCapException.java,v 1.1 2005-11-01 00:30:12 arvindp Exp $
+ * $Id: AMClientCapException.java,v 1.2 2006-08-25 21:19:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm.clientschema;
 
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.shared.debug.Debug;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
-import com.sun.identity.common.L10NMessage;
 
 /**
  * AMClientCapException: (critical) Thrown to indicate that the Attribute

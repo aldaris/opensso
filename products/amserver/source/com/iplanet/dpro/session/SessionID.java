@@ -17,13 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.1 2005-11-01 00:29:47 arvindp Exp $
+ * $Id: SessionID.java,v 1.2 2006-08-25 21:19:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.share.SessionEncodeURL;
+import com.iplanet.services.naming.WebtopNaming;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.CookieUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -34,15 +40,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.share.SessionEncodeURL;
-import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.services.util.Base64;
-import com.iplanet.services.util.CookieUtils;
 
 /**
  * The <code>SessionID</code> class is used to identify a Session object. It

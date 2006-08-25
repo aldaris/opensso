@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Base64.java,v 1.1 2005-11-01 00:30:25 arvindp Exp $
+ * $Id: Base64.java,v 1.2 2006-08-25 21:19:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,9 @@ package com.iplanet.services.util;
  * 
  * This implementation does not encode/decode streaming data. You need the data
  * that you will encode/decode already on a byte array.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.encode.Base64}
  */
 public final class Base64 {
 

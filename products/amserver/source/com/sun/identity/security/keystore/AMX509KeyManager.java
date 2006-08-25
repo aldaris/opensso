@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509KeyManager.java,v 1.3 2006-04-14 09:05:55 veiming Exp $
+ * $Id: AMX509KeyManager.java,v 1.4 2006-08-25 21:21:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import javax.net.ssl.KeyStoreBuilderParameters;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
-import com.iplanet.am.util.AMResourceBundleCache;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.SecurityDebug;
 
 /**

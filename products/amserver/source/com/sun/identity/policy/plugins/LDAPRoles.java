@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPRoles.java,v 1.2 2006-08-01 01:41:24 bigfatrat Exp $
+ * $Id: LDAPRoles.java,v 1.3 2006-08-25 21:21:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import netscape.ldap.util.*;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyEvaluator;

@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.2 2005-12-08 01:16:13 veiming Exp $
+ * $Id: Client.java,v 1.3 2006-08-25 21:19:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.cdm;
 
+import com.iplanet.services.cdm.clientschema.AMClientCapData;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,10 +34,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.services.cdm.clientschema.AMClientCapData;
-import com.iplanet.sso.SSOToken;
 
 /**
  * Provides common access to client data.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3TimeOut.java,v 1.1 2005-11-01 00:31:14 arvindp Exp $
+ * $Id: LDAPv3TimeOut.java,v 1.2 2006-08-25 21:20:53 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.idm.plugins.ldapv3;
 
 import java.util.Random;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Class which incorporates the functionality to interrupt the Event Service

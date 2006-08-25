@@ -17,16 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RandomString.java,v 1.1 2005-11-01 00:30:28 arvindp Exp $
+ * $Id: RandomString.java,v 1.2 2006-08-25 21:19:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.util.internal;
 
+import com.sun.identity.shared.encode.Base64;
 import java.security.SecureRandom;
-
-import com.iplanet.services.util.Base64;
 
 /**
  * This class is used to get the random string value. It is used during

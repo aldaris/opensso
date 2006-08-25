@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyStatsListener.java,v 1.1 2006-04-26 05:14:04 dillidorai Exp $
+ * $Id: PolicyStatsListener.java,v 1.2 2006-08-25 21:21:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,8 @@
 
 package com.sun.identity.policy;
 
-import com.iplanet.am.util.Stats;
-import com.iplanet.am.util.StatsListener;
+import com.sun.identity.shared.stats.Stats;
+import com.sun.identity.shared.stats.StatsListener;
 
 import com.sun.identity.policy.remote.PolicyRequestHandler;
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrderedSet.java,v 1.1 2005-11-01 00:29:40 arvindp Exp $
+ * $Id: OrderedSet.java,v 1.2 2006-08-25 21:19:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,9 @@ import java.util.Set;
  * This class extends from AbstractSet. It uses List for storing data so that
  * data is stored in the order input. It overwrites add, iterator and size
  * methods. All other methods it needs are in the base class.
+ *
+ * @deprecated As of OpenSSO version 8.0
+ *             {@link com.sun.identity.shared.datastruct.OrderedSet}
  */
 public class OrderedSet extends AbstractSet implements Set, Serializable {
     protected List list_ = new ArrayList();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSelfCheckCondition.java,v 1.1 2006-04-26 05:14:50 dillidorai Exp $
+ * $Id: UserSelfCheckCondition.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>UserSelfCheckCondition</code> checks

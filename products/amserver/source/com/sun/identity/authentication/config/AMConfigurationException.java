@@ -17,16 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfigurationException.java,v 1.2 2006-02-01 22:16:05 mrudul_uchil Exp $
+ * $Id: AMConfigurationException.java,v 1.3 2006-08-25 21:20:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.authentication.config;
 
-import com.sun.identity.common.L10NMessageImpl;
+import com.sun.identity.shared.locale.L10NMessageImpl;
 
 /**
  * Exception that is thrown when there are error in manipulating authentication

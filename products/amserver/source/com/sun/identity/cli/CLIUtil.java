@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.1 2006-05-31 21:49:42 veiming Exp $
+ * $Id: CLIUtil.java,v 1.2 2006-08-25 21:20:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.cli;
 
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

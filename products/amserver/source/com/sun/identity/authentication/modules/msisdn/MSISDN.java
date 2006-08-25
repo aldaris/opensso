@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MSISDN.java,v 1.1 2006-01-28 09:16:05 veiming Exp $
+ * $Id: MSISDN.java,v 1.2 2006-08-25 21:20:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@
 package com.sun.identity.authentication.modules.msisdn;
 
 
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -62,7 +62,7 @@ import javax.servlet.http.Cookie;
 public class MSISDN extends AMLoginModule {
     private  ResourceBundle bundle = null;
     private java.util.Locale locale;
-    private static com.iplanet.am.util.Debug debug = null;
+    private static com.sun.identity.shared.debug.Debug debug = null;
     private static final int DEFAULT_MSISDN_AUTH_LEVEL = 0;
 
     private String userTokenId;
@@ -98,7 +98,7 @@ public class MSISDN extends AMLoginModule {
     private static final int SUBMITTED_CREDENTIALS = 0;
 
     static {
-        debug = com.iplanet.am.util.Debug.getInstance(amAuthMSISDN);
+        debug = com.sun.identity.shared.debug.Debug.getInstance(amAuthMSISDN);
     }
 
     public MSISDN() {
@@ -263,7 +263,7 @@ public class MSISDN extends AMLoginModule {
 
     /** Sets the auth level */
     private void setMSISDNAuthLevel()  {
-        String tmp = Misc.getMapAttr(options,MSISDN_AUTH_LEVEL);
+        String tmp = CollectionHelper.getMapAttr(options,MSISDN_AUTH_LEVEL);
         int authLevel = DEFAULT_MSISDN_AUTH_LEVEL;
         if (tmp != null && tmp.length() > 0) {
             try {

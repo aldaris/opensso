@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.3 2005-12-08 01:16:12 veiming Exp $
+ * $Id: Locale.java,v 1.4 2006-08-25 21:19:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.iplanet.dpro.session.Session;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.text.ParsePosition;
@@ -33,13 +34,13 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import com.iplanet.dpro.session.Session;
-
 /**
  * This class <code>Locale.java</code> is a utility that provides
  * functionality for applications and services to internationalize their
  * messages.
  * @supported.all.api
+ * @deprected As of Opensso version 8.0
+ *            {@link com.sun.identity.shared.locale.Locale}
  */
 public class Locale {
     static BitSet dontEncode;

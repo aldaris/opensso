@@ -17,17 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InvalidAttributeValueException.java,v 1.4 2006-05-31 21:50:11 veiming Exp $
+ * $Id: InvalidAttributeValueException.java,v 1.5 2006-08-25 21:21:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.sun.identity.shared.locale.Locale;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import com.iplanet.am.util.Locale;
 
 /**
  * @see java.lang.Exception

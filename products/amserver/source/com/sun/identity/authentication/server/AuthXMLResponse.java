@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.1 2006-01-28 09:16:20 veiming Exp $
+ * $Id: AuthXMLResponse.java,v 1.2 2006-08-25 21:20:26 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ public class AuthXMLResponse {
     String authErrorMessage;
     String authErrorTemplate;
     String authURL;
-    static com.iplanet.am.util.Debug debug;
+    static com.sun.identity.shared.debug.Debug debug;
     String tokenId = null; 
     AuthContextLocal authContext = null;
     AuthContext.Status loginStatus=AuthContext.Status.IN_PROGRESS;
@@ -75,7 +75,7 @@ public class AuthXMLResponse {
      * @param requestType id of request type
      */
     public AuthXMLResponse(int requestType)  {
-        debug = com.iplanet.am.util.Debug.getInstance("amXMLHandler");
+        debug = com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
         this.requestType = requestType;
         authUtils = new AuthUtils();
     }

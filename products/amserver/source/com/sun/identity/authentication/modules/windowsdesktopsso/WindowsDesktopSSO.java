@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSO.java,v 1.1 2006-01-28 09:16:12 veiming Exp $
+ * $Id: WindowsDesktopSSO.java,v 1.2 2006-08-25 21:20:25 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 
 package com.sun.identity.authentication.modules.windowsdesktopsso;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Misc;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -512,7 +512,7 @@ public class WindowsDesktopSSO extends AMLoginModule {
     }        
 
     private String getMapAttr(Map options, int index) {
-        return Misc.getMapAttr(options, configAttributes[index]);
+        return CollectionHelper.getMapAttr(options, configAttributes[index]);
     }
 
     private void verifyAttributes() throws AuthLoginException {

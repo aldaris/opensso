@@ -17,23 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSendMail.java,v 1.1 2005-11-01 00:29:35 arvindp Exp $
+ * $Id: AMSendMail.java,v 1.2 2006-08-25 21:19:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.shared.Constants;
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import com.sun.identity.common.Constants;
 
 /*
  * This is a send mail utility class which can be used to send notifications to

@@ -17,16 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthConfigType.java,v 1.1 2006-01-28 09:15:30 veiming Exp $
+ * $Id: AMAuthConfigType.java,v 1.2 2006-08-25 21:20:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.authentication.config;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Represents an Authentication Configuration type.

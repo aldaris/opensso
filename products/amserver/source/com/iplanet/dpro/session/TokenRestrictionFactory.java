@@ -17,19 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TokenRestrictionFactory.java,v 1.1 2005-11-01 00:29:49 arvindp Exp $
+ * $Id: TokenRestrictionFactory.java,v 1.2 2006-08-25 21:19:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.dpro.session;
 
+import com.sun.identity.shared.encode.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import com.iplanet.services.util.Base64;
 
 /**
  * Helper class to marshal/unmarshal a Token Restriction object.

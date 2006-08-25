@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimpleTimeCondition.java,v 1.2 2006-08-21 18:46:37 bhavnab Exp $
+ * $Id: SimpleTimeCondition.java,v 1.3 2006-08-25 21:21:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import com.sun.identity.policy.Syntax;
 import com.sun.identity.policy.ResBundleUtils;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 import java.util.*;
 import java.text.*;
@@ -54,9 +54,8 @@ public class SimpleTimeCondition implements Condition {
      *  milliseconds since epoch. If no value is given for this, it is assumed
      *  to be the current system time
      *
-     *
      *	@see #getConditionDecision(SSOToken, Map)
-     *	@see #Condition.ENFORCEMENT_TIME_ZONE
+     *	@see #ENFORCEMENT_TIME_ZONE
      */
     public static final String REQUEST_TIME = "requestTime";
     

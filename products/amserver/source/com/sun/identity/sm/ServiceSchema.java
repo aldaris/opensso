@@ -17,13 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.4 2006-07-17 18:11:29 veiming Exp $
+ * $Id: ServiceSchema.java,v 1.5 2006-08-25 21:21:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,17 +37,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.XMLUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.common.Constants;
 
 /**
  * The class <code>ServiceSchema</code> provides interfaces to manage the
