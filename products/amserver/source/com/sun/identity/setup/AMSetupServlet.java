@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.5 2006-08-25 21:21:21 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.6 2006-08-26 00:28:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
-import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.Debug;
 import com.iplanet.services.util.Crypt;
-import com.sun.identity.shared.encode.Hash;
+import com.iplanet.services.util.Hash;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
@@ -35,7 +35,6 @@ import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.configuration.ConfigurationFileLocator;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 import java.io.BufferedReader;
@@ -79,6 +78,7 @@ public class AMSetupServlet extends HttpServlet {
         "configuratorPlugins";
     private final static String KEY_CONFIGURATOR_PLUGINS =
         "configurator.plugins";
+    private final static String AMCONFIG = "AMConfig";
     private final static String SMS_STR = "sms";
     private final static String AMCONFIG_PROPERTIES = "AMConfig.properties";
     private static SSOToken adminToken = null;
@@ -117,9 +117,20 @@ public class AMSetupServlet extends HttpServlet {
                     FileReader frdr = new FileReader(bootstrap);
                     BufferedReader brdr = new BufferedReader(frdr);
                     String configLocation = brdr.readLine();
-                    reinitSystemProperties(configLocation);
-                    isConfiguredFlag = true;
                     frdr.close();
+                    String overridingAMC =  configLocation + "/" +
+                        AMCONFIG_PROPERTIES; 
+                    FileInputStream fin = new FileInputStream(overridingAMC);
+                    if (fin != null) {
+                        Properties oprops = new Properties();
+                        oprops.load(fin);
+                        SystemProperties.initializeProperties(oprops);
+                        isConfiguredFlag = true;
+                    } else {
+                        Debug.getInstance(DEBUG_NAME).error(
+                            "AMSetupServlet.checkConfigProperties: " +
+                            "Unable to open : " + overridingAMC);
+                    }
                 } else {
                     Debug.getInstance(DEBUG_NAME).error(
                         "AMSetupServlet.checkConfigProperties: " +
@@ -136,21 +147,6 @@ public class AMSetupServlet extends HttpServlet {
             }
         } else {
             isConfiguredFlag = true;
-        }
-    }
-
-    private static void reinitSystemProperties(String dir)
-        throws FileNotFoundException, IOException {
-        String overridingAMC =  dir + "/" + AMCONFIG_PROPERTIES; 
-        FileInputStream fin = new FileInputStream(overridingAMC);
-        if (fin != null) {
-            Properties oprops = new Properties();
-            oprops.load(fin);
-            SystemProperties.initializeProperties(oprops);
-        } else {
-             Debug.getInstance(DEBUG_NAME).error(
-                "AMSetupServlet.reinitSystemProperties: Unable to open: " +
-                    overridingAMC);
         }
     }
    
@@ -212,10 +208,9 @@ public class AMSetupServlet extends HttpServlet {
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get("BASE_DIR");
         String bootstrap = getBootStrapFile();
-        
+
         try {
             if (bootstrap != null) {
-                setDeploymentURI();
                 FileWriter bfout = new FileWriter(bootstrap);
                 bfout.write(basedir+"\n");
                 bfout.close();
@@ -272,22 +267,6 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static void setDeploymentURI() {
-        String path = getAppResource();
-        
-        if (path != null) {
-            int idx1 = path.lastIndexOf("/");
-            if (idx1 != -1 ) {
-                int idx2 = path.lastIndexOf("/", idx1-1);
-                if (idx2 != -1 ) {
-                    Map map = ServicesDefaultValues.getDefaultValues();
-                    String deployuri= path.substring(idx2, idx1);
-                    ServicesDefaultValues.setDeployURI(deployuri, map);
-                }
-            }
-        }
     }
 
     private static void handlePostPlugins(SSOToken adminSSOToken) {
@@ -376,7 +355,32 @@ public class AMSetupServlet extends HttpServlet {
     {
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get("BASE_DIR");
-        reinitSystemProperties(basedir);
+        
+        // Read config file and initialize
+        String fileName = basedir + "/" + AMCONFIG_PROPERTIES;
+        try {
+            FileInputStream FInpStr = new FileInputStream(fileName);
+            if (FInpStr != null) {
+                Properties oprops = new Properties();
+                oprops.load(FInpStr);
+                SystemProperties.initializeProperties(oprops);
+                FInpStr.close();
+            } else {
+                Debug.getInstance(DEBUG_NAME).error(
+                    "AMSetupServlet.reInitConfigProperties: Unable to open: " +
+                        fileName);
+            }
+        } catch (FileNotFoundException fexp) {
+            Debug.getInstance(DEBUG_NAME).error(
+                "AMSetupServlet.reInitConfigProperties: " +
+                "Unable to re-initialize properties", fexp);
+            throw fexp;
+        } catch (IOException ioexp) {
+            Debug.getInstance(DEBUG_NAME).error(
+                "AMSetupServlet.reInitConfigProperties: " +
+                "Unable to load properties", ioexp);
+            throw ioexp;
+        }
     }
 
     /**
@@ -386,20 +390,32 @@ public class AMSetupServlet extends HttpServlet {
      *         cannot be located 
      */
     private static String getBootStrapFile() {
-        String fileName = null;
         if (servletCtx != null) {
-            try {
-                fileName = ConfigurationFileLocator.getBootStrapFileName(
-                    servletCtx);
-            } catch (MalformedURLException e) {
+            String path = getAppResource();
+            
+            if (path != null) {
+                int idx1 = path.lastIndexOf("/");
+                if (idx1 != -1 ) {
+                    int idx2 = path.lastIndexOf("/", idx1-1);
+                    if (idx2 != -1 ) {
+                        Map map = ServicesDefaultValues.getDefaultValues();
+                        String deployuri= path.substring(idx2, idx1);
+                        ServicesDefaultValues.setDeployURI(deployuri, map);
+                    }
+                }
+                path = path.replaceAll("/", "_");
+                return System.getProperty("user.home") + "/" + AMCONFIG +
+                    path;
+            } else {
                 Debug.getInstance(DEBUG_NAME).error(
-                    "AMSetupServlet.getBootStrapFile", e);
+                    "AMSetupServlet.getBootStrapFile: " +
+                    "Cannot read the bootstrap path");
             }
         } else {
             Debug.getInstance(DEBUG_NAME).error(
                 "AMSetupServlet.getBootStrapFile: Context is null");
         }
-        return fileName;
+        return null;
     }
 
     /**
