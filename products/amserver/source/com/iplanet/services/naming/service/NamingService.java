@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.2 2006-08-25 21:19:55 veiming Exp $
+ * $Id: NamingService.java,v 1.3 2006-08-28 18:50:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,11 +103,12 @@ public class NamingService implements RequestHandler, ServiceListener {
         namingDebug = Debug.getInstance("amNaming");
         platformProperties = SystemProperties.getAll();
         server_proto = platformProperties.getProperty(
-                "com.iplanet.am.server.protocol", "");
+            "com.iplanet.am.server.protocol", "");
         server_host = platformProperties.getProperty(
-                "com.iplanet.am.server.host", "");
+            "com.iplanet.am.server.host", "");
         server_port = platformProperties.getProperty(
-                "com.iplanet.am.server.port", "");
+            Constants.AM_SERVER_PORT, "");
+
         try {
             SSOTokenManager mgr = SSOTokenManager.getInstance();
             String adminDN = (String) AccessController

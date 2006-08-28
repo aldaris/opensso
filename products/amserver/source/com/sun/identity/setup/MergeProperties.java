@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MergeProperties.java,v 1.2 2006-08-09 21:14:45 veiming Exp $
+ * $Id: MergeProperties.java,v 1.3 2006-08-28 18:50:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,8 @@ public class MergeProperties {
             }
             buff.append(key)
                 .append("=")
-                .append(val);
+                .append(val)
+                .append("\n");
         }
 
         for (String key : p2Keys) {
@@ -68,7 +69,8 @@ public class MergeProperties {
             if (!p1Keys.contains(key)) {
                 buff.append(key)
                     .append("=")
-                    .append(val);
+                    .append(val)
+                    .append("\n");
             }
         }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.6 2006-08-26 00:28:52 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.7 2006-08-28 18:50:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -125,6 +127,7 @@ public class AMSetupServlet extends HttpServlet {
                         Properties oprops = new Properties();
                         oprops.load(fin);
                         SystemProperties.initializeProperties(oprops);
+                        //dennis
                         isConfiguredFlag = true;
                     } else {
                         Debug.getInstance(DEBUG_NAME).error(
@@ -270,19 +273,25 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     private static void handlePostPlugins(SSOToken adminSSOToken) {
+        List<ConfiguratorPlugin> plugins = getConfigPluginClasses();
+        for (ConfiguratorPlugin plugin : plugins) {
+            plugin.doPostConfiguration(servletCtx, adminSSOToken);
+        }
+    }
+
+    private static List<ConfiguratorPlugin> getConfigPluginClasses() {
+        List<ConfiguratorPlugin> plugins = new ArrayList<ConfiguratorPlugin>();
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
                 PROPERTY_CONFIGURATOR_PLUGINS);
-            String plugins = rb.getString(KEY_CONFIGURATOR_PLUGINS);
+            String strPlugins = rb.getString(KEY_CONFIGURATOR_PLUGINS);
 
-            if (plugins != null) {
-                StringTokenizer st = new StringTokenizer(plugins);
+            if (strPlugins != null) {
+                StringTokenizer st = new StringTokenizer(strPlugins);
                 while (st.hasMoreTokens()) {
                     String className = st.nextToken();
                     Class clazz = Class.forName(className);
-                    ConfiguratorPlugin plugin =
-                        (ConfiguratorPlugin)clazz.newInstance();
-                    plugin.doPostConfiguration(servletCtx, adminSSOToken);
+                    plugins.add((ConfiguratorPlugin)clazz.newInstance());
                 }
             }
         } catch (IllegalAccessException e) {
@@ -294,6 +303,7 @@ public class AMSetupServlet extends HttpServlet {
         } catch (MissingResourceException e) {
             //ignore if there are no configurator plugins.
         }
+        return plugins;
     }
 
     private static void setServiceDefaultValues(HttpServletRequest request) {
@@ -355,9 +365,19 @@ public class AMSetupServlet extends HttpServlet {
     {
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get("BASE_DIR");
-        
+        reInitAMConfigProperties(basedir);
+        List<ConfiguratorPlugin> plugins = getConfigPluginClasses();
+
+        for (ConfiguratorPlugin plugin : plugins) {
+            plugin.reinitConfiguratioFile(basedir);
+        }
+    }
+
+    private static void reInitAMConfigProperties(String baseDir)
+        throws FileNotFoundException, IOException
+    {
         // Read config file and initialize
-        String fileName = basedir + "/" + AMCONFIG_PROPERTIES;
+        String fileName = baseDir + "/" + AMCONFIG_PROPERTIES;
         try {
             FileInputStream FInpStr = new FileInputStream(fileName);
             if (FInpStr != null) {
@@ -367,17 +387,17 @@ public class AMSetupServlet extends HttpServlet {
                 FInpStr.close();
             } else {
                 Debug.getInstance(DEBUG_NAME).error(
-                    "AMSetupServlet.reInitConfigProperties: Unable to open: " +
+                   "AMSetupServlet.reInitAMConfigProperties: Unable to open: " +
                         fileName);
             }
         } catch (FileNotFoundException fexp) {
             Debug.getInstance(DEBUG_NAME).error(
-                "AMSetupServlet.reInitConfigProperties: " +
+                "AMSetupServlet.reInitAMConfigProperties: " +
                 "Unable to re-initialize properties", fexp);
             throw fexp;
         } catch (IOException ioexp) {
             Debug.getInstance(DEBUG_NAME).error(
-                "AMSetupServlet.reInitConfigProperties: " +
+                "AMSetupServlet.reInitAMConfigProperties: " +
                 "Unable to load properties", ioexp);
             throw ioexp;
         }
@@ -484,7 +504,7 @@ public class AMSetupServlet extends HttpServlet {
      * @return Admin Token
      */
     private static SSOToken getAdminSSOToken() {
-        if ( adminToken == null) {
+        if (adminToken == null) {
             adminToken = (SSOToken)AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         }
@@ -496,9 +516,7 @@ public class AMSetupServlet extends HttpServlet {
      */
     private static void initializeConfigProperties()
         throws SecurityException, IOException {
-        String[] dataFiles = new String [] {
-            "WEB-INF/classes/AMConfig.properties",
-            "WEB-INF/template/sms/serverconfig.xml" };
+        List<String> dataFiles = getTagSwapConfigFiles();
 
         String origpath = "@BASE_DIR@";
         Map map = ServicesDefaultValues.getDefaultValues();
@@ -514,8 +532,7 @@ public class AMSetupServlet extends HttpServlet {
             throw e;
         }
 
-         for (int i = 0; i < dataFiles.length; i++) {
-            String file = dataFiles[i];
+         for (String file : dataFiles) {
             InputStreamReader fin = new InputStreamReader(
                 servletCtx.getResourceAsStream(file));
 
@@ -555,6 +572,19 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
         }
+    }
+
+    private static List<String> getTagSwapConfigFiles()
+        throws MissingResourceException
+    {
+        List<String> fileNames = new ArrayList();
+        ResourceBundle rb = ResourceBundle.getBundle("configuratorTagSwap");
+        String strFiles = rb.getString("tagswap.files");
+        StringTokenizer st = new StringTokenizer(strFiles);
+        while (st.hasMoreTokens()) {
+            fileNames.add(st.nextToken());
+        }
+        return fileNames;
     }
 
     private static String getCookieDomain(String cookieDomain, String hostname){

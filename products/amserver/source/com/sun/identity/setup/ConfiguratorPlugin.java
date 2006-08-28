@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguratorPlugin.java,v 1.2 2006-08-16 18:54:06 veiming Exp $
+ * $Id: ConfiguratorPlugin.java,v 1.3 2006-08-28 18:50:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,13 @@ import com.iplanet.sso.SSOToken;
 import javax.servlet.ServletContext;
 
 public interface ConfiguratorPlugin {
+    /**
+     * Re-initialize configuration file.
+     *
+     * @param baseDir Base directory of the configuration data store.
+     */
+    void reinitConfiguratioFile(String baseDir);
+
     /**
      * Does post configuration task.
      *

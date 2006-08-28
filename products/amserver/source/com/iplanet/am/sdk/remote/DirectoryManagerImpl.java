@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.5 2006-08-25 21:19:28 veiming Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.6 2006-08-28 18:50:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,7 @@ import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.SchemaType;
@@ -124,7 +125,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         // Construct serverURL
         serverURL = SystemProperties.get("com.iplanet.am.server.protocol")
         + "://" + SystemProperties.get("com.iplanet.am.server.host")
-        + ":" + SystemProperties.get("com.iplanet.am.server.port");
+        + ":" + SystemProperties.get(Constants.AM_SERVER_PORT);
         
         // Get TokenManager and register this class for events
         try {
@@ -139,7 +140,6 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                     + serverURL);
             }
         } catch (Exception e) {
-            // Debug the message
             debug.error("DirectoryManagerImpl::init ERROR", e);
         }
     }
@@ -151,9 +151,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.createAMTemplate(ssoToken, entryDN, objectType,
                 serviceName, attributes, priority);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.createAMTemplate" + e);
+            throw convertException(e);
         }
         
     }
@@ -166,15 +166,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             dsServices.createEntry(ssoToken, entryName, objectType, parentDN,
                 attributes);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.createEntry" + e);
+            throw convertException(e);
         }
         
     }
     
     public boolean doesEntryExists(String token, String entryDN)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         SSOToken ssoToken = tm.createSSOToken(token);
         return dsServices.doesEntryExists(ssoToken, entryDN);
     }
@@ -186,9 +186,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getAMTemplateDN(ssoToken, entryDN, objectType,
                 serviceName, type);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.getAMTemplateDN", e);
+            throw convertException(e);
         }
         
     }
@@ -200,9 +200,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN,
                 ignoreCompliance, byteValues, profileType);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.getAttributes3" + e);
+            throw convertException(e);
         }
     }
     
@@ -211,9 +211,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         try {
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, profileType);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.getAttributes1" + e);
+            throw convertException(e);
         }
         
     }
@@ -225,9 +225,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                 profileType);
-        } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
-            throw convertException(amex);
+        } catch (AMException e) {
+            debug.error("DirectoryManagerImpl.getAttributes2" + e);
+            throw convertException(e);
         }
         
     }

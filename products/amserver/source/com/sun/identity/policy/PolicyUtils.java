@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.4 2006-08-25 21:21:04 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.5 2006-08-28 18:50:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.messageid.LogMessageProvider;
@@ -82,7 +83,7 @@ public class PolicyUtils {
     private static Logger errorLogger;
 
     static {
-        String status = SystemProperties.get("com.iplanet.am.logstatus");
+        String status = SystemProperties.get(Constants.AM_LOGSTATUS);
         logStatus = ((status != null) && status.equalsIgnoreCase("ACTIVE"));
 
         if (logStatus) {

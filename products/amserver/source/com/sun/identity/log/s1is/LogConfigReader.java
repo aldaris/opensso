@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.4 2006-08-25 21:21:00 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.5 2006-08-28 18:50:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,10 +46,12 @@ import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+
 /**
  * <tt>LogConfigReader</TT> is used to load the configuration from the
  * Directory Server and store the configuration as Properties of
@@ -96,7 +98,7 @@ public class LogConfigReader implements ServiceListener{
     public LogConfigReader() throws IOException {
         localProtocol = SystemProperties.get("com.iplanet.am.server.protocol");
         localHost = SystemProperties.get("com.iplanet.am.server.host");
-        localPort = SystemProperties.get("com.iplanet.am.server.port");
+        localPort = SystemProperties.get(Constants.AM_SERVER_PORT);
         localLogServiceID = localProtocol + "://" + localHost + ":" + localPort;
 
         SSOToken ssoToken;

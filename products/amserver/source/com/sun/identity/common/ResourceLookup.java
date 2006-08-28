@@ -17,22 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceLookup.java,v 1.3 2006-03-23 19:10:09 veiming Exp $
+ * $Id: ResourceLookup.java,v 1.4 2006-08-28 18:50:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.search.FileLookup;
+import com.sun.identity.shared.search.FileLookupException;
 import java.io.File;
 import java.net.URL;
 import java.util.Hashtable;
-
 import javax.servlet.ServletContext;
-
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.FileLookup;
-import com.iplanet.am.util.FileLookupException;
 
 /**
  * ResourceLookup is a partial replacement for implementation of FileLookup. It

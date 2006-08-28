@@ -17,23 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.2 2006-07-17 18:10:40 veiming Exp $
+ * $Id: PLLRequestServlet.java,v 1.3 2006-08-28 18:50:40 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.server;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Hashtable;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.share.PLLBundle;
@@ -41,6 +30,16 @@ import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.ResponseSet;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.naming.service.NamingService;
+import com.sun.identity.shared.Constants;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.Hashtable;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 
@@ -61,7 +60,7 @@ public class PLLRequestServlet extends HttpServlet {
     private static Hashtable requestHandlers = new Hashtable();
 
     private static final String PROPERTY_MAX_CONTENT_LENGTH = 
-        "com.iplanet.services.comm.server.pllrequest.maxContentLength";
+        Constants.SERVICES_COMM_SERVER_PLLREQUEST_MAX_CONTENT_LENGTH;
 
     /* the default content length is set to 16k */
     private static int maxContentLength = 16384;
