@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.1 2006-07-31 20:30:08 bigfatrat Exp $
+ * $Id: LDAPConnectionPool.java,v 1.2 2006-08-29 21:55:07 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Class to maintain a pool of individual connections to the

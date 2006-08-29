@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugImpl.java,v 1.3 2006-08-25 21:21:37 veiming Exp $
+ * $Id: DebugImpl.java,v 1.4 2006-08-29 21:55:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,10 +33,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import com.sun.identity.util.IDebug;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.IDebug;
 
 /**
  * Debug implementation class.

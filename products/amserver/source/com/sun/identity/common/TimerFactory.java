@@ -17,13 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerFactory.java,v 1.1 2006-07-31 20:30:08 bigfatrat Exp $
+ * $Id: TimerFactory.java,v 1.2 2006-08-29 21:55:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.common;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import java.util.Timer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

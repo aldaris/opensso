@@ -17,16 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.7 2006-08-28 18:50:42 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.8 2006-08-29 21:55:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.services.util.Crypt;
-import com.iplanet.services.util.Hash;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
@@ -35,6 +33,8 @@ import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 import java.io.BufferedReader;

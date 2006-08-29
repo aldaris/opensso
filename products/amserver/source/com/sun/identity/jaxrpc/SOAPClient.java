@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.3 2006-08-25 21:20:57 veiming Exp $
+ * $Id: SOAPClient.java,v 1.4 2006-08-29 21:55:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,14 +56,14 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import com.iplanet.am.sdk.remote.AMRemoteException;
-import com.iplanet.am.util.Debug;
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.util.Base64;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entity.EntityException;
-import com.sun.identity.sm.SMSException;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSSchema;
 
 /**

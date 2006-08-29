@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugProviderImpl.java,v 1.2 2006-08-25 21:21:37 veiming Exp $
+ * $Id: DebugProviderImpl.java,v 1.3 2006-08-29 21:55:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,8 @@ package com.sun.identity.util.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.identity.util.IDebug;
-import com.sun.identity.util.IDebugProvider;
+import com.sun.identity.shared.debug.IDebug;
+import com.sun.identity.shared.debug.IDebugProvider;
 
 /**
  * @deprecated As of OpenSSO version 8.0

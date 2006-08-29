@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.6 2006-07-17 18:11:12 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.7 2006-08-29 21:55:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.idm.*;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.spi.AMAuthCallBackImpl;
 import com.sun.identity.authentication.spi.AMAuthCallBackException;
+import com.sun.identity.shared.debug.Debug;
 
 
 public class ISAccountLockout {

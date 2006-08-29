@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IntegerValidator.java,v 1.3 2006-08-25 21:20:39 veiming Exp $
+ * $Id: IntegerValidator.java,v 1.4 2006-08-29 21:55:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.validation;
 
-import com.iplanet.am.util.Locale;
+import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.validation.ValidatorBase;
+import com.sun.identity.shared.validation.ValidationException;
 
 /**
  * Validator for integer format.

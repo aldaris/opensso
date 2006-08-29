@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.4 2006-08-25 21:19:32 veiming Exp $
+ * $Id: Locale.java,v 1.5 2006-08-29 21:55:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.iplanet.am.util;
 
 import com.iplanet.dpro.session.Session;
+import com.sun.identity.shared.debug.Debug;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.text.ParsePosition;

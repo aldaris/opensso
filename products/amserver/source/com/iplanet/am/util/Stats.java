@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.4 2006-08-25 21:19:34 veiming Exp $
+ * $Id: Stats.java,v 1.5 2006-08-29 21:55:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.util;
 
+import com.sun.identity.shared.stats.StatsListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;

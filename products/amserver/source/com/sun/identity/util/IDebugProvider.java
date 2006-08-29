@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDebugProvider.java,v 1.2 2006-08-25 21:21:36 veiming Exp $
+ * $Id: IDebugProvider.java,v 1.3 2006-08-29 21:55:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.util;
+
+import com.sun.identity.shared.debug.IDebug;
 
 /**
  * Allows a pluggable implementation of the Debug service within the Access

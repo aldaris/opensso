@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XSDurationValidator.java,v 1.3 2006-08-25 21:20:40 veiming Exp $
+ * $Id: XSDurationValidator.java,v 1.4 2006-08-29 21:55:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.common.validation;
 
 import com.sun.identity.shared.DateUtils;
+import com.sun.identity.shared.validation.ValidationException;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Set;

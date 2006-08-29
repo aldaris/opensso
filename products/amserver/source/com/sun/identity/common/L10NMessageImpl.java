@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: L10NMessageImpl.java,v 1.4 2006-08-25 21:20:38 veiming Exp $
+ * $Id: L10NMessageImpl.java,v 1.5 2006-08-29 21:55:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,7 @@ package com.sun.identity.common;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
-import com.iplanet.am.util.AMResourceBundleCache;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
 
 /**
  * Convenient implementation of L10NMessage Interface. Extends

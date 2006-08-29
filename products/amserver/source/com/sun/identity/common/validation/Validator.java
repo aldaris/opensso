@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Validator.java,v 1.3 2006-08-25 21:20:40 veiming Exp $
+ * $Id: Validator.java,v 1.4 2006-08-29 21:55:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.common.validation;
 
 import java.util.Set;
+import com.sun.identity.shared.validation.ValidationException;
 
 /**
  * Validator interface defines method for performing validation.
