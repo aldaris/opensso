@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.2 2006-07-17 18:11:01 veiming Exp $
+ * $Id: RequestContext.java,v 1.3 2006-08-29 07:51:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -236,13 +236,6 @@ public class RequestContext {
                 throw createIncorrectOptionException(commandName, argv);
             } else if (arg.trim().length() > 0) {
                 values.add(arg);
-            }
-        }
-        
-        for (Iterator i = mapOptions.keySet().iterator(); i.hasNext(); ) {
-            List v = (List)mapOptions.get(i.next());
-            if (v.isEmpty()) {
-                i.remove();
             }
         }
     }

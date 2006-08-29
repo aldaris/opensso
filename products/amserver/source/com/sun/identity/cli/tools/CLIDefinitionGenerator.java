@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.1 2006-05-31 21:50:08 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.2 2006-08-29 07:51:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public class CLIDefinitionGenerator {
      * @param argv Array of annotated class names.
      */
     public static void main(String[] argv) {
-        String srcDirectory = argv[0];
+        String resourceDir = argv[0];
 
         for (int i = 1; i < argv.length; i++) {
             String className = argv[i];
@@ -68,7 +68,7 @@ public class CLIDefinitionGenerator {
 
                     try {
                         PrintStream rbOut = createResourcePrintStream(
-                            srcDirectory, classInfo);
+                            resourceDir, classInfo);
                         getCommonResourceStrings(rbOut, clazz);
                         rbOut.println("product-name=" +
                             classInfo.productName());
@@ -101,13 +101,11 @@ public class CLIDefinitionGenerator {
     }
 
     private static PrintStream createResourcePrintStream(
-        String srcDirectory,
+        String resourceDir,
         DefinitionClassInfo classInfo
     ) throws IOException {
-        int idx = srcDirectory.lastIndexOf(File.separatorChar);
-        String dir = srcDirectory.substring(0, idx+1) + "resources";
-        String filePath = dir + File.separator + classInfo.resourceBundle() +
-            ".properties";
+        String filePath = resourceDir + File.separator + 
+            classInfo.resourceBundle() + ".properties";
         File rbFile = new File(filePath);
         rbFile.createNewFile();
         FileOutputStream rbStream = new FileOutputStream(rbFile);

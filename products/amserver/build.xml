@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2006-08-25 21:19:15 veiming Exp $
+   $Id: build.xml,v 1.20 2006-08-29 07:50:58 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,10 +34,19 @@
     <!-- top level directory structure -->
     <property name="src.dir" location="source"/>
     <property name="res.dir" location="resources"/>
+    <property name="console.res.dir" location="resources/console"/>
+    <property name="config.res.dir" location="resources/config"/>
+    <property name="res.i18n.dir" location="resources/i18n"/>
     <property name="script.dir" location="scripts"/>
     <property name="www.dir" location="www"/>
     <property name="docs.dir" location="docs"/>
     <property name="xml.dir" location="xml"/>
+    <property name="log.xml.dir" location="xml/log"/>
+    <property name="jaxrpc.xml.dir" location="xml/jaxrpc"/>
+    <property name="dtd.xml.dir" location="xml/dtd"/>
+    <property name="services.xml.dir" location="xml/services"/>
+    <property name="authmodule.xml.dir" location="xml/auth-module"/>
+    <property name="console.xml.dir" location="xml/console"/>
     <property name="extlib.dir" location="extlib"/>
     <property name="jatolib.dir" location="../../resources/jato"/>
     <property name="lockhart.dir" location="../../resources/lockhart"/>
@@ -113,7 +122,13 @@
         <antcall target="jaxrpc" />
 
         <copy todir="${built.res.dir}">
-            <fileset dir="${res.dir}">
+            <fileset dir="${config.res.dir}">
+                <include name="*.properties"/>
+            </fileset>
+            <fileset dir="${console.res.dir}">
+                <include name="*.properties"/>
+            </fileset>
+            <fileset dir="${res.i18n.dir}">
                 <include name="**/*.properties"/>
                 <exclude name="Services.properties"/>
                 <exclude name="DSConfig.properties"/>
@@ -123,13 +138,27 @@
                 <exclude name="authentication_util.properties"/>
             </fileset>
             <fileset dir="${xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${console.xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${jaxrpc.xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${services.xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${authmodule.xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${dtd.xml.dir}">
                 <include name="**/*.dtd"/>
-                <include name="**/*.xml"/>
-                <exclude name="sms.dtd"/>
+                <exclude name="dtd/sms.dtd"/>
             </fileset>
         </copy>
         <concat destfile="${built.res.dir}/amSDK.properties">
-            <fileset dir="${res.dir}">
+            <fileset dir="${res.i18n.dir}">
                 <include name="Services.properties"/>
                 <include name="DSConfig.properties"/>
                 <include name="ums.properties"/>
@@ -138,14 +167,14 @@
                 <include name="authentication_util.properties"/>
             </fileset>
         </concat>
-        <copy file="${xml.dir}/smsflatfile.dtd" 
+        <copy file="${dtd.xml.dir}/smsflatfile.dtd" 
               todir="${classes.dir}/com/sun/identity/sm/flatfile"/>
-        <copy file="${xml.dir}/policyAdmin.dtd" 
+        <copy file="${dtd.xml.dir}/policyAdmin.dtd" 
               todir="${classes.dir}/com/sun/identity/policy"/>
-        <copy file="${xml.dir}/sms.dtd" 
+        <copy file="${dtd.xml.dir}/sms.dtd" 
               todir="${classes.dir}/com/sun/identity/sm"/>
         <copy todir="${classes.dir}/com/sun/identity/log/messageid">
-              <fileset dir="${xml.dir}/log">
+              <fileset dir="${log.xml.dir}">
                 <include name="*.xml" />
                 <include name="*.dtd" />
               </fileset>
@@ -163,7 +192,7 @@
             <arg value="-gen:server" />
             <arg value="-d" />
             <arg value="${classes.dir}" />
-            <arg value="${xml.dir}/config.xml" />
+            <arg value="${jaxrpc.xml.dir}/config.xml" />
         </java>
         <move file="${classes.dir}/IdentityManagementServices.wsdl" tofile="${classes.dir}/jaxrpc/IdentityManagementServices.wsdl" />
     </target>
@@ -243,7 +272,7 @@
                                                                                
         <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
             <classpath refid="build.class.path"/>
-            <arg value="${src.dir}"/>
+            <arg value="${res.i18n.dir}"/>
             <arg value="com.sun.identity.cli.definition.AccessManager"/>
         </java>
     </target>
@@ -259,40 +288,13 @@
     </target>
    
     <target name="war" depends="build">
+        <copy todir="${built.war.dir}/xml/services">
+            <fileset dir="${services.xml.dir}">
+                <include name="*.xml" />
+            </fileset>
+        </copy>
         <copy todir="${built.war.dir}/xml">
             <fileset dir="${xml.dir}">
-                <include name="ums.xml" />
-                <include name="amAgent70.xml" />
-                <include name="amAuthConfig.xml" />
-                <include name="amAuthHTTPBasic.xml" />
-                <include name="amAdminConsole.xml" />
-                <include name="amAuth.xml" />
-                <include name="amAuthAD.xml" />
-                <include name="amAuthAnonymous.xml" />
-                <include name="amAuthCert.xml" />
-                <include name="amAuthDataStore.xml" />
-                <include name="amAuthJDBC.xml" />
-                <include name="amAuthLDAP.xml" />
-                <include name="amAuthMSISDN.xml" />
-                <include name="amAuthMembership.xml" />
-                <include name="amAuthNT.xml" />
-                <include name="amAuthWindowsDesktopSSO.xml" />
-                <include name="amClientData.xml" />
-                <include name="amClientDetection.xml" />
-                <include name="amDelegation.xml" />
-                <include name="amG11NSettings.xml" />
-                <include name="amLogging.xml" />
-                <include name="amNaming.xml" />
-                <include name="amPlatform.xml" />
-                <include name="amPolicy.xml" />
-                <include name="amPolicyConfig.xml" />
-                <include name="amRealmService.xml" />
-                <include name="amSession.xml" />
-                <include name="amWebAgent.xml" />
-                <include name="idRepoService.xml" />
-                <include name="identityLocaleService.xml" />
-                <include name="amUser.xml" />
-                <include name="amEntrySpecific.xml" />
                 <include name="serverconfig.xml" />
             </fileset>
         </copy>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-08-17 17:09:41 veiming Exp $
+   $Id: build.xml,v 1.3 2006-08-29 07:51:43 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -88,6 +88,18 @@
         </copy>
 
         <copy todir="${samples.package.dir}/classes">
+            <fileset dir="${res.i18n.dir}">
+                <include name="amAuth.properties" />
+                <include name="amAuthContext.properties" />
+                <include name="amIdRepo.properties" />
+                <include name="amUtilMsgs.properties" />
+                <include name="amNaming.properties" />
+                <include name="amProfile.properties" />
+                <include name="amSDK.properties" />
+                <include name="amSecurity.properties" />
+                <include name="amSSOProvider.properties" />
+                <include name="amSession.properties" />
+            </fileset>
             <fileset dir="${samples.classes.dir}">
                 <exclude name="com/sun/identity/samples/setup/Scripts.class" />
                 <exclude name="com/sun/identity/samples/setup/ScriptFileFilter.class" />

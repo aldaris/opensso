@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+  
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+  
+   $Id: ums.xml,v 1.1 2006-08-29 07:52:34 veiming Exp $
+  
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="DAI" version="1.0">
+        <Schema> <Global>
+            <SubSchema name="templates">
+                <SubSchema name="StructureTemplates">
+                    <SubSchema name="StructureUmsObjects"
+                        inheritance="multiple">
+                        <AttributeSchema name="class" />
+                        <AttributeSchema name="name" />
+                        <AttributeSchema name="childNode" />
+                        <AttributeSchema name="template" />
+                        <AttributeSchema name="filter" />
+                        <AttributeSchema name="priority" />
+                    </SubSchema>
+                </SubSchema>
+
+                <SubSchema name="CreationTemplates">
+                    <SubSchema name="CreationUmsObjects">
+                        <AttributeSchema name="name" />
+                        <AttributeSchema name="javaclass" />
+                        <AttributeSchema name="required" />
+                        <AttributeSchema name="optional" />
+                        <AttributeSchema name="validated" />
+                        <AttributeSchema name="namingattribute" />
+                    </SubSchema>
+                </SubSchema>
+
+                <SubSchema name="SearchTemplates">
+                    <SubSchema name="SearchUmsObjects">
+                        <AttributeSchema name="name" />
+                        <AttributeSchema name="searchfilter" />
+                        <AttributeSchema name="attrs" />
+                    </SubSchema>
+                </SubSchema>
+
+                <SubSchema name="ObjectResolver">
+                    <AttributeSchema name="oc_jc_map" />
+                </SubSchema>
+
+            </SubSchema>
+        </Global> </Schema>
+        <Configuration> <GlobalConfiguration>
+            <SubConfiguration name="templates">
+                <SubConfiguration name="StructureTemplates">
+                    <SubConfiguration name="Organization" id="StructureUmsObjects">
+                        <AttributeValuePair>
+                            <Attribute name="class" />
+                            <Value>com.iplanet.ums.Organization</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="name" />
+                            <Value>o=org</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="childNode" />
+                            <Value>OrganizationalUnit</Value>
+                            <Value>PeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="template" />
+                            <Value>BasicOrganization</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="filter" />
+                            <Value>(o=org)</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="priority" />
+                            <Value>0</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                    <SubConfiguration name="OrganizationalUnit" id="StructureUmsObjects">
+                        <AttributeValuePair> <Attribute name="class" />
+                            <Value>com.iplanet.ums.OrganizationalUnit</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>ou=Groups</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="childNode" />
+                            <Value>DomainAdminGroup</Value>
+                            <Value>DomainHelpDeskAdminGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="template" />
+                            <Value>BasicOrganizationalUnit</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="filter" />
+                            <Value>(ou=Groups)</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="priority" />
+                            <Value>0</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                    <SubConfiguration name="DomainAdminGroup" id="StructureUmsObjects">
+                        <AttributeValuePair> <Attribute name="class" />
+                            <Value>com.iplanet.ums.StaticGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>cn=DomainAdminGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="template" />
+                            <Value>BasicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="filter" />
+                            <Value>(cn=DomainAdminGroup)</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="priority" />
+                            <Value>0</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                    <SubConfiguration name="DomainHelpDeskAdminGroup" id="StructureUmsObjects">
+                        <AttributeValuePair> <Attribute name="class" />
+                            <Value>com.iplanet.ums.StaticGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>cn=DomainHelpDeskAdminGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="template" />
+                            <Value>BasicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="filter" />
+                            <Value>(cn=DomainHelpDeskAdminGroup)</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="priority" />
+                            <Value>0</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                    <SubConfiguration name="PeopleContainer" id="StructureUmsObjects">
+                        <AttributeValuePair> <Attribute name="class" />
+                            <Value>com.iplanet.ums.PeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>ou=People</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="template" />
+                            <Value>BasicPeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="filter" />
+                            <Value>(ou=People)</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="priority" />
+                            <Value>0</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                </SubConfiguration>
+
+                <SubConfiguration name="CreationTemplates" >
+                    <SubConfiguration name="BasicUser" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicUser</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.User</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=person</Value>
+                            <Value>objectClass=organizationalPerson</Value>
+                            <Value>objectClass=inetOrgPerson</Value>
+                            <Value>objectClass=inetUser</Value>
+                            <Value>objectClass=nsManagedPerson</Value>
+                            <Value>objectClass=iplanetpreferences</Value>
+                            <Value>cn</Value>
+                            <Value>sn</Value>
+                            <Value>uid</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="optional" />
+                            <Value>userpassword</Value>
+                            <Value>telephonenumber</Value>
+                            <Value>givenname</Value>
+                            <Value>displayname</Value>
+                            <Value>title</Value>
+                            <Value>description</Value>
+                            <Value>mail</Value>
+                            <Value>postaladdress</Value>
+                            <Value>usercertificate</Value>
+                            <Value>preferredLanguage</Value>
+                            <Value>preferredLocale</Value>
+                            <Value>preferredTimeZone</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="validated" />
+                            <Value>mail=com.iplanet.ums.validation.MailAddressValidator</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>uid</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicResource" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicResource</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.Resource</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=icsCalendarResource</Value>
+                            <Value>uid</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="optional" />
+                            <Value>icsCalendar</Value>
+                            <Value>icsStatus</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>uid</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+
+                    <SubConfiguration name="BasicGroup" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.StaticGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=groupofuniquenames</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="optional" />
+                            <Value>uniquemember</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicDynamicGroup" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicDynamicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.DynamicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=groupofurls</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="optional" />
+                            <Value>memberurl</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicAssignableDynamicGroup" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicAssignableDynamicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.AssignableDynamicGroup</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=groupofurls</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="optional" />
+                            <Value>memberurl</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicOrganization" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicOrganization</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.Organization</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=organization</Value>
+                            <Value>objectClass=nsManagedDomain</Value>
+                            <Value>o</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>o</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicDirectCOSDef" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicDirectCOSDef</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.cos.DirectCOSDefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=ldapsubentry</Value>
+                            <Value>objectClass=cossuperdefinition</Value>
+                            <Value>objectClass=cosclassicdefinition</Value>
+                            <Value>cn</Value>
+                            <Value>cosspecifier</Value>
+                            <Value>cosattribute</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicManagedRole" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicManagedRole</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.ManagedRole</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=ldapsubentry</Value>
+                            <Value>objectClass=nsroledefinition</Value>
+                            <Value>objectClass=nssimpleroledefinition</Value>
+                            <Value>objectClass=nsmanagedroledefinition</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicCOSTemplate" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicCOSTemplate</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.cos.COSTemplate</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=costemplate</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicCOSDef" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicCOSDef</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.cos.COSDefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=cosdefinition</Value>
+                            <Value>cn</Value>
+                            <Value>cosspecifier</Value>
+                            <Value>cosattribute</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicOrganizationalUnit" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicOrganizationalUnit</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.OrganizationalUnit</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=organizationalUnit</Value>
+                            <Value>objectClass=nsManagedOrgUnit</Value>
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicFilteredRole" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicFilteredRole</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.FilteredRole</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=ldapsubentry</Value>
+                            <Value>objectClass=nsroledefinition</Value>
+                            <Value>objectClass=nscomplexroledefinition</Value>
+                            <Value>objectClass=nsfilteredroledefinition</Value>
+                            <Value>cn</Value>
+                            <Value>nsrolefilter</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicPeopleContainer" id="CreationUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicPeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="javaclass" />
+                            <Value>com.iplanet.ums.PeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="required" />
+                            <Value>objectClass=top</Value>
+                            <Value>objectClass=nsManagedPeopleContainer</Value>
+                            <Value>objectClass=organizationalUnit</Value>
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="namingattribute" />
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+
+                <SubConfiguration name="SearchTemplates">
+                    <SubConfiguration name="BasicPeopleContainerSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicPeopleContainerSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=nsManagedPeopleContainer</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicDirectCOSDefSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicDirectCOSDefSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=cosclassicdefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>costemplatedn</Value>
+                            <Value>cosspecifier</Value>
+                            <Value>cosattribute</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicOrganizationSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicOrganizationSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=organization</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>o</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicManagedRoleSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicManagedRoleSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=nsmanagedroledefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicCOSDefSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicCOSDefSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=cosdefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>costemplatedn</Value>
+                            <Value>cosspecifier</Value>
+                            <Value>cosattribute</Value>
+                            <Value>costargettree</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicFilteredRoleSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicFilteredRoleSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=nsfilteredroledefinition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>nsrolefilter</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicUserSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicUserSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=inetorgperson</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>sn</Value>
+                            <Value>uid</Value>
+                            <Value>telephonenumber</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                   <SubConfiguration name="BasicResourceSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicResourceSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>(&amp;(objectclass=icsCalendarResource)(icsStatus != deleted))</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>uid</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicDynamicGroupSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicDynamicGroupSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=groupofurls</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>memberurl</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicCOSTemplateSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicCOSTemplateSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=costemplate</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicGroupSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicGroupSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=groupofuniquenames</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>cn</Value>
+                            <Value>uniquemember</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="BasicOrganizationalUnitSearch" id="SearchUmsObjects">
+                        <AttributeValuePair> <Attribute name="name" />
+                            <Value>BasicOrganizationalUnitSearch</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="searchfilter" />
+                            <Value>objectclass=organizationalunit</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair> <Attribute name="attrs" />
+                            <Value>objectclass</Value>
+                            <Value>ou</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+
+                <SubConfiguration name="ObjectResolver">
+                    <AttributeValuePair> <Attribute name="oc_jc_map" />
+                        <Value>organization=com.iplanet.ums.Organization;nsmanagedpeoplecontainer=com.iplanet.ums.PeopleContainer;organizationalunit=com.iplanet.ums.OrganizationalUnit;inetorgperson=com.iplanet.ums.User;groupofuniquenames=com.iplanet.ums.StaticGroup;groupofurls=com.iplanet.ums.DynamicGroup;nspolicy=com.iplanet.ums.policy.Policy;nsmanagedroledefinition=com.iplanet.ums.ManagedRole;nsfilteredroledefinition=com.iplanet.ums.FilteredRole;cosdefinition=com.iplanet.ums.cos.COSDefinition;cosclassicdefinition=com.iplanet.ums.cos.DirectCOSDefinition;costemplate=com.iplanet.ums.cos.COSTemplate;inetdomain=com.iplanet.ums.dctree.DomainComponent</Value>
+                    </AttributeValuePair>
+                </SubConfiguration>
+
+            </SubConfiguration>
+
+<!--
+            <Organization name="test">
+                <SubConfiguration name="templates">
+                       <SubConfiguration name="StructureTemplates">
+                            <SubConfiguration name="Organization" id="StructureUmsObjects">
+                                <AttributeValuePair> <Attribute name="class" />
+                                    <Value>com.iplanet.ums.Organization</Value>
+                                </AttributeValuePair>
+                                <AttributeValuePair> <Attribute name="name" />
+                                    <Value>o org</Value>
+                                </AttributeValuePair>
+                                <AttributeValuePair> <Attribute name="childNode" />
+                                    <Value>OrganizationalUnit</Value>
+                                    <Value>PeopleContainer</Value>
+                                </AttributeValuePair>
+                                <AttributeValuePair> <Attribute name="template" />
+                                    <Value>BasicOrganization</Value>
+                                </AttributeValuePair>
+                            </SubConfiguration>
+                        </SubConfiguration>
+                    <SubConfiguration name="CreationTemplates">
+                    </SubConfiguration>
+                    <SubConfiguration name="SearchTemplates">
+                    </SubConfiguration>
+                </SubConfiguration>
+            </Organization>
+-->
+        </GlobalConfiguration>
+        </Configuration>
+    </Service>
+</ServicesConfiguration>
+

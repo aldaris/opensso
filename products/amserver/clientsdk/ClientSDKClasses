@@ -328,6 +328,7 @@ com/sun/identity/util/*.class
 com/sun/identity/util/impl/*.class
 com/sun/identity/shared/xml/ValidationErrorHandler.class
 com/sun/identity/common/SystemProperties.class
+com/sun/identity/configuration/SystemProperties.class
 com/sun/identity/shared/configuration/ISystemProperties.class
 com/sun/identity/shared/configuration/SystemPropertiesManager.class
 com/sun/identity/shared/debug/Debug.class
