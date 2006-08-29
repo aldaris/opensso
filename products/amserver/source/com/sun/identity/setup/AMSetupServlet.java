@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.8 2006-08-29 21:55:09 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.9 2006-08-29 23:05:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,7 +127,7 @@ public class AMSetupServlet extends HttpServlet {
                         Properties oprops = new Properties();
                         oprops.load(fin);
                         SystemProperties.initializeProperties(oprops);
-                        //dennis
+                        reInitConfigProperties(configLocation, false);
                         isConfiguredFlag = true;
                     } else {
                         Debug.getInstance(DEBUG_NAME).error(
@@ -354,18 +354,27 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
+    private static void reInitConfigProperties() 
+        throws FileNotFoundException, IOException {
+        Map map = ServicesDefaultValues.getDefaultValues();
+        String basedir = (String)map.get("BASE_DIR");
+        reInitConfigProperties(basedir, true);
+    }
+
     /**
      * Reinitializes the system with the new properties values.
-     **
+     *
      * @throws FileNotFoundException if config file is missing.
      * @throws IOException if config file cannot be read.
      */
-    private static void reInitConfigProperties() 
-        throws FileNotFoundException, IOException 
+    private static void reInitConfigProperties(
+        String basedir, 
+        boolean initAMConfig
+    ) throws FileNotFoundException, IOException 
     {
-        Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get("BASE_DIR");
-        reInitAMConfigProperties(basedir);
+        if (initAMConfig) {
+            reInitAMConfigProperties(basedir);
+        }
         List<ConfiguratorPlugin> plugins = getConfigPluginClasses();
 
         for (ConfiguratorPlugin plugin : plugins) {
