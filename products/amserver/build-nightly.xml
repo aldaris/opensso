@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-nightly.xml,v 1.6 2006-08-25 21:19:14 veiming Exp $
+   $Id: build-nightly.xml,v 1.7 2006-08-31 21:56:07 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -111,7 +111,8 @@
             </fileset>
         </copy>
 
-        <copy file="${docs.dir}/nightly.html" tofile="${nightly.dist.dir}/index.html" />
+        <filter token="DATE" value="${nightly.date}" />
+        <copy file="${docs.dir}/nightly.html" tofile="${nightly.dist.dir}/index.html" filtering="true" />
         <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
             <classpath refid="build.class.path"/>
             <arg value="${built.dir}/nightly" />
