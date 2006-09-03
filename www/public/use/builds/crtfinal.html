@@ -166,7 +166,7 @@ function ajax_upload() {
 	try {
 		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 	} catch (e) {
-		alert("Permission open connection was denied." + e);
+	//	alert("Permission open connection was denied." + e);
 	}
 	http_request = false;
 	http_request = new XMLHttpRequest();
@@ -220,7 +220,9 @@ function requestdone() {
 	if (http_request.readyState == 4) {
 		if (http_request.status == 200) {
 			result = http_request.responseText;
-			document.getElementById('myspan').innerHTML = result;            
+		        //document.getElementById('myspan').innerHTML = result;            
+                        document.write(result);
+                        document.close();
 		} else {
 			alert('There was a problem with the request.');
 		}
@@ -581,43 +583,41 @@ configuration file and new components typically require at least one of the abov
 <br><br>******** Please ignore stuff below : its for debugging **********<br><br>
 
 <FORM name="IT" action="https://opensso.dev.java.net/issues/process_bug.cgi" method="post">
-    <P>
-    ID : <INPUT type="text" name="id" crtn="Issue#"><BR>
-    Component : <INPUT type="text" name="component" crtn="Component" value="opensso"><BR>
-    Sub Component: <INPUT type="text" name="subcomponent" value="Web site"><BR>
-    Version : <INPUT type="text" name="version" value="current"><BR>
-    Rep Platform : <INPUT type="text" name="rep_platform" value="All"><BR>
-    Operating System: <INPUT type="text" name="op_sys" value="All"><BR>
-    Priority: <INPUT type="text" name="priority" value="P3"><BR>
-    Issue Type: <INPUT type="text" name="issue_type" value=PATCH><BR>
-    Knob : <INPUT type="text" name="knob" value="reassignbysubcomponent"><BR>
-    Assigned To : <INPUT type="text" name="assigned_to"><BR>
-    CC : <INPUT type="text" name="newcc" ><BR>
-    Issue File Loc : <INPUT type="text" name="issue_file_loc" value="http://"><BR>
-    Short Desc : <INPUT type="text" name="short_desc" value="TEST, IGNORE"><BR>
-    Comment : <textarea name="comment" rows="10" cols="80" value="TEST, IGNORE"></textarea><BR>
-    logdesclength : <INPUT type="text" name="longdesclength" value="8000"><BR>
-    <input label="Submit" name="IDButton" value="submit" type="submit">
+    <INPUT type="hidden" name="id"><BR>
+    <INPUT type="hidden" name="component" value="opensso">
+    <INPUT type="hidden" name="subcomponent" value="Web site">
+    <INPUT type="hidden" name="version" value="current">
+    <INPUT type="hidden" name="rep_platform" value="All">
+    <INPUT type="hidden" name="op_sys" value="All">
+    <INPUT type="hidden" name="priority" value="P3">
+    <INPUT type="hidden" name="issue_type" value=PATCH>
+    <INPUT type="hidden" name="knob" value="reassignbysubcomponent">
+    <INPUT type="hidden" name="assigned_to">
+    <INPUT type="hidden" name="newcc" >
+    <INPUT type="hidden" name="issue_file_loc" value="http://">
+    <INPUT type="hidden" name="short_desc" value="TEST, IGNORE">
+    <textarea name="comment" rows="10" cols="80" value="TEST, IGNORE"></textarea>
+    <INPUT type="hidden" name="longdesclength" value="8000">
+    <input label="hidden" name="IDButton" value="submit" type="hidden">
     </P>
  </FORM>
 <FORM name="ITU" action="https://opensso.dev.java.net/issues/createattachment.cgi" method="post" enctype="multipart/form-data">
-id:<input name="id" type="text"><br>
-<!-- Data:<textarea name="data"></textarea> <br>  -->
-Data:<input name="data" type="file" value="C:\Sun\arch\CRTstuff\1.txt"><br>
-Desc : <input name="description" type="text"><br>
-Type: <input name="type" type="text" value="text/plain"><br>
-OtherType : <input name="othertype" type="text"><br>
-<input name="IDButton" value="submit" type="submit">
+<input name="id" type="hidden">
+<input name="data" type="hidden" value="C:\Sun\arch\CRTstuff\1.txt">
+<input name="description" type="hidden">
+<input name="type" type="hidden" value="text/plain">
+<input name="othertype" type="hidden">
+<input name="IDButton" value="submit" type="hidden">
 </FORM>
 
 <FORM>
-id:<input name="id" id="id" type="text"><br>
-Data:<textarea name="data" id="data"></textarea> <br>
+<input name="id" id="id" type="hidden">
+<textarea name="data" id="data"></textarea>
 <!-- Data:<input name="data" type="file" value="C:\Sun\arch\CRTstuff\1.txt"><br> -->
-Desc : <input name="description" id="description" type="text"><br>
-Type: <input name="type" id="type" type="text" value="text/plain"><br>
-OtherType : <input name="othertype" id="othertype"  type="text"><br>
-<input type="button" name="IDButton" id="ajaxbutton" value="submit" onclick="upload();">
+<input name="description" id="description" type="hidden">
+<input name="type" id="type" type="hidden" value="text/plain">
+<input name="othertype" id="othertype"  type="hidden">
+<input type="hidden" name="IDButton" id="ajaxbutton" value="submit" onclick="upload();">
 </FORM>
 
 <div id="sizespan"></div>
@@ -627,24 +627,22 @@ OtherType : <input name="othertype" id="othertype"  type="text"><br>
 
 <FORM name="NEWPATCH" action="https://opensso.dev.java.net/issues/post_bug.cgi" method="post">
     <P>
-    Reporter : <INPUT type="text" name="reporter" value="rajeevangal"><BR>
-    Component : <INPUT type="text" name="component" value="opensso"><BR>
-    Sub Component: <INPUT type="text" name="subcomponent" value="Web site"><BR>
-    Version : <INPUT type="text" name="version" value="current"><BR>
-    Rep Platform : <INPUT type="text" name="rep_platform" value="All"><BR>
-    Operating System: <INPUT type="text" name="op_sys" value="All"><BR>
-    Priority: <INPUT type="text" name="priority" value="P3"><BR>
-    Issue Type: <INPUT type="text" name="issue_type" value=PATCH><BR>
-    Assigned To : <INPUT type="text" name="assigned_to"><BR>
-    CC : <INPUT type="text" name="cc"><BR>
-    Issue File Loc : <INPUT type="text" name="issue_file_loc" value="http://"><BR>
-    Short Desc : <INPUT type="text" name="short_desc" value="TEST, IGNORE"><BR>
-    Comment : <textarea name="comment"></textarea><BR>
-    <input type="button" label="Submit" name="IDButton" value="submit" type="submit">
+    <INPUT type="hidden" name="reporter" value="rajeevangal">
+    <INPUT type="hidden" name="component" value="opensso">
+    <INPUT type="hidden" name="subcomponent" value="Web site">
+    <INPUT type="hidden" name="version" value="current">
+    <INPUT type="hidden" name="rep_platform" value="All">
+    <INPUT type="hidden" name="op_sys" value="All">
+    <INPUT type="hidden" name="priority" value="P3">
+    <INPUT type="hidden" name="issue_type" value=PATCH>
+    <INPUT type="hidden" name="assigned_to">
+    <INPUT type="hidden" name="cc">
+    <INPUT type="hidden" name="issue_file_loc" value="http://">
+    <INPUT type="hidden" name="short_desc" value="TEST, IGNORE">
+    <textarea name="comment"></textarea>
+    <input type="hidden" label="Submit" name="IDButton" value="submit">
     </P>
  </FORM>
-
-
 
 </body>
 </html>
