@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACIEventListener.java,v 1.2 2006-08-25 21:19:23 veiming Exp $
+ * $Id: ACIEventListener.java,v 1.3 2006-09-04 04:08:02 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,8 @@ public class ACIEventListener implements IDSEventListener {
         IDirectoryServices dsServices = DirectoryServicesFactory.getInstance();
         if (DirectoryServicesFactory.isCachingEnabled()) {
             ((ICachedDirectoryServices) dsServices).dirtyCache(affectedDNs,
-                    AMEvent.OBJECT_CHANGED, false, true, Collections.EMPTY_SET);
+                dsEvent.getEventType(), false, true,
+                Collections.EMPTY_SET);
         }
 
         // Call Listeners
@@ -99,8 +100,13 @@ public class ACIEventListener implements IDSEventListener {
             Set keys = listeners.keySet();
             for (Iterator items = keys.iterator(); items.hasNext();) {
                 AMObjectListener listener = (AMObjectListener) items.next();
-                listener.permissionsChanged(dsEvent.getID(), (Map) listeners
-                        .get(listener));
+                if (dsEvent.getEventType() == DSEvent.OBJECT_CHANGED) {
+                    listener.permissionsChanged(dsEvent.getID(),
+                        (Map) listeners.get(listener));
+                } else {
+                    listener.objectChanged(affectedDNs, dsEvent.getEventType(),
+                        (Map) listeners.get(listener));
+                }
             }
         }
     }
