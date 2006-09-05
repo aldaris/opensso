@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.1 2006-04-26 05:24:46 dillidorai Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.2 2006-09-05 16:23:33 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
+import java.security.AccessController;
 import netscape.ldap.util.DN;
 
 import com.iplanet.sso.SSOToken;
@@ -40,6 +41,8 @@ import com.iplanet.sso.SSOException;
 
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
+
+import com.sun.identity.security.AdminTokenAction;
 
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
@@ -50,6 +53,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdEventListener;
 
+import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -96,7 +100,8 @@ public class DelegationPolicyImpl implements DelegationInterface,
     private static final String DELEGATION_SUBJECT = "delegation-subject";
     private static final String POLICY_SUBJECT = "AMIdentitySubject";
     private static final String AUTHN_USERS_ID = 
-        "id=All Authenticated Users,ou=role";
+        "id=All Authenticated Users,ou=role" +
+        com.sun.identity.sm.ServiceManager.getBaseDN();
     private static final String DELEGATION_AUTHN_USERS = "AuthenticatedUsers";
     private static final String AUTHENTICATED_USERS_SUBJECT = 
                                                   "AuthenticatedUsers";
@@ -241,6 +246,12 @@ public class DelegationPolicyImpl implements DelegationInterface,
         throws SSOException, DelegationException {
         try {
             Set privileges = new HashSet();
+            // Need to check if user has "delegate" permissions for org
+            if (hasDelegationPermissionsForRealm(token, orgName)) {
+                // Replace token with AdminToken
+                token = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            }
             PolicyManager pm = new PolicyManager(token,
                                     POLICY_REPOSITORY_REALM);
             Set pnames = pm.getPolicyNames();
@@ -298,7 +309,13 @@ public class DelegationPolicyImpl implements DelegationInterface,
     public void addPrivilege(SSOToken token, String orgName, 
       DelegationPrivilege privilege) throws SSOException, DelegationException {
         if (privilege != null) {
-            try { 
+            try {
+                // Need to check if user has "delegate" permissions for org
+                if (hasDelegationPermissionsForRealm(token, orgName)) {
+                    // Replace token with AdminToken
+                    token = (SSOToken) AccessController.doPrivileged(
+                        AdminTokenAction.getInstance());
+                }
                 PolicyManager pm = new PolicyManager(token,
                                     POLICY_REPOSITORY_REALM);
                 Policy p = privilegeToPolicy(pm, privilege);
@@ -345,7 +362,13 @@ public class DelegationPolicyImpl implements DelegationInterface,
 
     public void removePrivilege(SSOToken token, String orgName, 
         String privilegeName) throws SSOException, DelegationException {
-        try { 
+        try {
+            // Need to check if user has "delegate" permissions for org
+            if (hasDelegationPermissionsForRealm(token, orgName)) {
+                // Replace token with AdminToken
+                token = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            }            
             PolicyManager pm = new PolicyManager(token,
                                     POLICY_REPOSITORY_REALM);
             String prefix = null;
@@ -1124,5 +1147,20 @@ public class DelegationPolicyImpl implements DelegationInterface,
            "DelegationPolicyImpl: delegation policy changed.");
         }
         cleanupCache();
+    }
+     
+    /**
+     * Returns true if the user has delegation permissions for the
+     * organization
+     */
+    private boolean hasDelegationPermissionsForRealm(SSOToken token,
+        String orgName) throws SSOException, DelegationException {
+        // Construct delegation permission object
+        Set action = new HashSet();
+        action.add("DELEGATE");
+        DelegationPermission de = new DelegationPermission(orgName,
+            "sunAMRealmService", "1.0", "organizationconfig", null,
+             action, Collections.EMPTY_MAP);
+        return (isAllowed(token, de, Collections.EMPTY_MAP));
     }
 }
