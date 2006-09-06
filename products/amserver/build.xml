@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.20 2006-08-29 07:50:58 veiming Exp $
+   $Id: build.xml,v 1.21 2006-09-06 18:25:18 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -56,6 +56,7 @@
     <property name="clientsdkbase.dir" location="clientsdk"/>
     <property name="demobase.dir" location="demo"/>
     <property name="samples.dir" location="samples"/>
+    <property name="unittest.dir" location="test"/>
 
     <!-- nested directory structure -->
     <property name="script.bin.dir" location="${script.dir}/bin"/>
@@ -277,7 +278,7 @@
         </java>
     </target>
 
-    <target name="clean" depends="nightly-clean,war-clean,clientsdk-clean,demo-clean,samples-clean">
+    <target name="clean" depends="nightly-clean,war-clean,clientsdk-clean,demo-clean,samples-clean,unittest-clean">
         <delete dir="${built.publicapidocs.dir}"/>
         <delete dir="${built.apidocs.dir}"/>
         <delete dir="${built.docs.dir}"/>
@@ -356,6 +357,14 @@
         </java>
     </target>
 
+    <target name="unittest" depends="build">
+        <ant antfile="test/build.xml" target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="unittest-clean">
+        <ant antfile="test/build.xml" inheritRefs="true" target="clean"/>
+    </target>
+
     <target name="usage">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
@@ -373,6 +382,8 @@
         <echo message=" nightly    : does nightly build"/>
         <echo message=" demo       : does demo build"/>
         <echo message=" demo-clean : delete demo generated files"/>
+        <echo message=" unittest   : does unit test build"/>
+        <echo message=" unittest-clean : delete unit test generated files"/>
         <echo message=" usage      : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

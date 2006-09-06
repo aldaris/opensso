@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2006-08-09 21:14:40 veiming Exp $
+$Id: README,v 1.5 2006-09-06 18:25:17 veiming Exp $
 
 Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ Copyright 2005 Sun Microsystems Inc. All Rights Reserved
                jaxrpc-api.jar, activation.jar, saaj-api.jar and saaj-impl.jar
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
+        %% 2.5 Obtaining testng-5.1-jdk15.jar
     %% 3. Building the workspace
         %% 3.1 build target
         %% 3.2 doc target
@@ -205,6 +206,11 @@ Software. Follow these steps to obtain the db.jar library:
 
 Once this process is complete, the db.jar library can be obtained from 
 under the db-4.2.52.NC/build_unix directory.
+
+%% 2.5 Obtaining testng-5.1-jdk15.jar
+
+Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
+testng-5.1-jdk15.jar in the base directory.
 
 %% 3. Building the workspace
 
