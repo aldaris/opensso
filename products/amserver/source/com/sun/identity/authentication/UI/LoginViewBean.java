@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.5 2006-08-25 21:20:07 veiming Exp $
+ * $Id: LoginViewBean.java,v 1.6 2006-09-07 00:39:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,7 +43,6 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
-import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -457,8 +456,8 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message("LoginViewBean.forwardRequest=true");
                         RequestDispatcher dispatcher =
                         request.getRequestDispatcher(redirect_url);
-                        request.setAttribute(ISAuthConstants.FORWARD_PARAM,
-                        ISAuthConstants.FORWARD_YES_VALUE);
+                        request.setAttribute(Constants.FORWARD_PARAM,
+                            Constants.FORWARD_YES_VALUE);
                         dispatcher.forward(request, response);
                     } else {
                         response.sendRedirect(redirect_url);

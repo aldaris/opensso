@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.3 2006-01-27 20:29:24 mrudul_uchil Exp $
+ * $Id: ISAuthConstants.java,v 1.4 2006-09-07 00:39:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,13 +51,20 @@ public interface ISAuthConstants {
 
     /**
      * Forward parameter, used by UI to inform Liberty federation if this is a
-     * forward request or not after successful authentication
+     * forward request or not after successful authentication.
+     *
+     * @deprecated As of OpenSSO version 8.0
+     *             {@link com.sun.identity.shared.Constants#FORWARD_PARAM}
+     *
      */
     public static final String FORWARD_PARAM = "forwardrequest";
 
     /**
      * Value for <code>FORWARD_PARAM</code> indicating this is a forward
-     * request
+     * request.
+     *
+     * @deprecated As of OpenSSO version 8.0
+     *             {@link com.sun.identity.shared.Constants#FORWARD_YES_VALUE}
      */
     public static final String FORWARD_YES_VALUE = "yes";
 
