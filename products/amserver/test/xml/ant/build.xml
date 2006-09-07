@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-06 18:25:24 veiming Exp $
+   $Id: build.xml,v 1.2 2006-09-07 19:48:13 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,9 +30,12 @@
     <property name="test.classes.dir" location="test/classes"/>
     <property name="lib.dir" location="lib"/>
     <property name="output.dir" location="output"/>
+    <property name="logs.dir" location="logs"/>
     <property name="template.dir" location="template"/>
     <property name="report.dir" location="report"/>
     <property name="testng.dir" value="testng"/>
+
+    <property name="log.level" value="ALL"/>
 
     <path id="build.class.path">
         <pathelement location="${classes.dir}"/>
@@ -45,8 +48,11 @@
     <target name="all">
         <delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
+        <delete dir="${logs.dir}" />
+        <mkdir dir="${logs.dir}" />
 
         <java classname="org.testng.TestNG" fork="true">
+            <jvmarg value="-Dlog.level=${log.level}"/>
             <arg value="-d"/>
             <arg value="${output.dir}"/>
             <arg value="${testng.dir}/idm-testng.xml"/>

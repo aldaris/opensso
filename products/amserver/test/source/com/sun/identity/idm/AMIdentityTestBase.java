@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityTestBase.java,v 1.1 2006-09-06 18:25:19 veiming Exp $
+ * $Id: AMIdentityTestBase.java,v 1.2 2006-09-07 19:48:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,27 +26,19 @@ package com.sun.identity.idm;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchResults;
-import com.sun.identity.idm.IdType;
-import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.test.common.CollectionUtils;
 import com.sun.identity.test.common.FileHelper;
 import com.sun.identity.test.common.TestBase;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
@@ -58,6 +50,11 @@ import org.testng.annotations.Test;
  * This class tests the <code>com.sun.identity.idm.AMIdentity</code> class.
  */
 public class AMIdentityTestBase extends TestBase {
+    
+    public AMIdentityTestBase() {
+        super("IDM");
+    }
+    
     /**
      * Creates realm before the test suites are executed.
      *
@@ -65,32 +62,27 @@ public class AMIdentityTestBase extends TestBase {
      * @throws SSOException if the super administrator Single Sign On is 
      *         invalid.
      */
-    @Parameters({"parent-realm"})
+    @Parameters({"parent-realms"})
     @BeforeSuite(groups = {"api"})
-    public void suiteSetup(String parentRealm)
-        throws SMSException, SSOException {
-        if ((parentRealm != null) && !parentRealm.equals("/")) {
-            OrganizationConfigManager orgMgr = getParentOrgConfigManager(
-                getAdminSSOToken(), parentRealm);
-            int idx = parentRealm.lastIndexOf("/");
-            try {
-                orgMgr.createSubOrganization(
-                    parentRealm.substring(idx+1), null);
-            } catch (SMSException e) {
-                //ignore if the sub organization already exists.
-            }
+    public void suiteSetup(String realms)
+        throws SSOException, SMSException {
+        Object[] params = {realms};
+        entering("suiteSetup", params);
+        
+        StringTokenizer st = new StringTokenizer(realms, ",");
+        while (st.hasMoreElements()) {
+            String realm = st.nextToken().trim();
+            createSubRealm(getAdminSSOToken(), realm);
         }
+        
+        exiting("suiteSetup");
     }
 
     /**
      * Creates realm and <code>AMIdenity</code> object before the testcases are
      * executed.
      *
-     * @throws IdRepoException if <code>AMIdenity</code> object cannot be 
-     *         created.
-     * @throws SMSException if realm cannot be created.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid.
+     * @throws Exception if <code>AMIdenity</code> object cannot be created.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name",
         "entity-creation-attributes"})
@@ -100,26 +92,34 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName,
         String createAttributes
-    ) throws IdRepoException, SMSException, SSOException {
-        IdType type = IdUtils.getType(idType);
-        Map values = CollectionUtils.parseStringToMap(createAttributes);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName, createAttributes};
+        entering("setup", params);
+        try {
+            IdType type = IdUtils.getType(idType);
+            Map values = CollectionUtils.parseStringToMap(createAttributes);
 
-        AMIdentity amid = createIdentity(parentRealm, type, entityName, values);
-        assert amid.getName().equals(entityName);
-        assert amid.getType().equals(type);
-        assert amid.getRealm().equals(parentRealm);
-        assert amid.getAttributes().equals(values);
-        assert amid.isActive();
-        assert amid.isExists();
+            AMIdentity amid = createIdentity(parentRealm, type, entityName,
+                values);
+            assert amid.getName().equals(entityName);
+            assert amid.getType().equals(type);
+            assert amid.getRealm().equals(parentRealm);
+            assert amid.getAttributes().equals(values);
+            assert amid.isActive();
+            assert amid.isExists();
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("setup");
     }
     
     /**
      * Assigning and deassigning services to <code>AMIdentity</code> object.
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code>
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid. 
+     * @throws Exception if cannot access to <code>AMIdentity</code> object.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name",
         "entity-modify-service1-name", "entity-modify-service1-attributes"})
@@ -130,47 +130,56 @@ public class AMIdentityTestBase extends TestBase {
         String entityName,
         String strServiceNames,
         String svcModificationAttrs
-    ) throws IdRepoException, SSOException {
-        AMIdentity amid = getIdentity(parentRealm,
-            IdUtils.getType(idType), entityName);
-        Set assignableServices = amid.getAssignableServices();
-        
-        if (!assignableServices.isEmpty()) {
-            for (Iterator i = assignableServices.iterator(); i.hasNext(); ) {
-                amid.assignService((String)i.next(), Collections.EMPTY_MAP);
-            }
-            Set temp = amid.getAssignableServices();
-            assert temp.isEmpty();
-            temp = amid.getAssignedServices();
-            assert temp.equals(assignableServices);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName, strServiceNames,
+            svcModificationAttrs};
+        entering("assignUnassignService", params);
+        try {
+            
+            AMIdentity amid = getIdentity(parentRealm,
+                IdUtils.getType(idType), entityName);
+            Set assignableServices = amid.getAssignableServices();
 
-            for (Iterator i = assignableServices.iterator(); i.hasNext(); ) {
-                amid.unassignService((String)i.next());
+            if (!assignableServices.isEmpty()) {
+                for (Iterator i = assignableServices.iterator(); i.hasNext(); ){
+                    amid.assignService((String)i.next(), Collections.EMPTY_MAP);
+                }
+                Set temp = amid.getAssignableServices();
+                assert temp.isEmpty();
+                temp = amid.getAssignedServices();
+                assert temp.equals(assignableServices);
+
+                for (Iterator i = assignableServices.iterator(); i.hasNext(); ){
+                    amid.unassignService((String)i.next());
+                }
+                temp = amid.getAssignableServices();
+                assert temp.equals(assignableServices);
             }
-            temp = amid.getAssignableServices();
-            assert temp.equals(assignableServices);
+
+            Set<String> serviceNames = CollectionUtils.parseStringToSet(
+                strServiceNames);
+            if ((serviceNames != null) && !serviceNames.isEmpty()) {
+                String serviceName = serviceNames.iterator().next();
+                amid.assignService(serviceName, Collections.EMPTY_MAP);
+                Map<String, Set<String>> values = 
+                    CollectionUtils.parseStringToMap(svcModificationAttrs);
+                amid.modifyService(serviceName, values);
+                Map verification = amid.getServiceAttributes(serviceName);
+                assert verification.equals(svcModificationAttrs);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
         }
-    
-        Set<String> serviceNames = CollectionUtils.parseStringToSet(
-            strServiceNames);
-        if ((serviceNames != null) && !serviceNames.isEmpty()) {
-            String serviceName = serviceNames.iterator().next();
-            amid.assignService(serviceName, Collections.EMPTY_MAP);
-            Map<String, Set<String>> values = 
-                CollectionUtils.parseStringToMap(svcModificationAttrs);
-            amid.modifyService(serviceName, values);
-            Map verification = amid.getServiceAttributes(serviceName);
-            assert verification.equals(svcModificationAttrs);
-        }
+
+        exiting("assignUnassignService");
     }
 
     /**
      * Modifies attributes
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code>
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid. 
+     * @throws Exception if cannot access to <code>AMIdentity</code> object.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name",
         "entity-modify-attributes"})
@@ -180,26 +189,36 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName,
         String modificationAttributes
-    ) throws IdRepoException, SSOException {
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName, 
+            modificationAttributes};
+        entering("modifyAttributes", params);
+
         Map<String, Set<String>> values = CollectionUtils.parseStringToMap(
             modificationAttributes);
         if (!values.isEmpty()) {
-            AMIdentity amid = getIdentity(parentRealm,
-                IdUtils.getType(idType), entityName);
-            modifyIdentity(amid, values);
-            Map verification = amid.getAttributes(
-                values.keySet());
-            assert verification.equals(modificationAttributes);
+            try {
+                AMIdentity amid = getIdentity(parentRealm,
+                    IdUtils.getType(idType), entityName);
+                modifyIdentity(amid, values);
+                Map verification = amid.getAttributes(
+                    values.keySet());
+                assert verification.equals(modificationAttributes);
+            } catch (Exception e) {
+                log(Level.SEVERE, "modifyAttributes", e.getMessage(), 
+                    params);
+                e.printStackTrace();
+                throw e;
+            }
         }
+        
+        exiting("modifyAttributes");
     }
 
     /**
      * Sets and gets binary attributes
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code>
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is
-     *         invalid.
+     * @throws Exception if cannot access to <code>AMIdentity</code> object.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name",
         "entity-binary-attributes"})
@@ -209,29 +228,37 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName,
         String fileName
-    ) throws IOException, IdRepoException, SSOException {
-        byte[] content = FileHelper.getBinary(fileName);
-        AMIdentity amid = getIdentity(parentRealm,
-            IdUtils.getType(idType), entityName);
-        Map<String, byte[][]> map = new HashMap<String, byte[][]>();
-        byte[][] values = new byte[1][];
-        map.put("telephonenumber", values);
-        values[0] = content;
-        amid.setBinaryAttributes(map);
-        
-        Set<String> set = new HashSet<String>();
-        set.add("telephonenumber");
-        Map verify = amid.getBinaryAttributes(set);
-        assert verify.equals(map);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName, fileName};
+        entering("setGetBinaryAttributes", params);
+        try {
+            byte[] content = FileHelper.getBinary(fileName);
+            AMIdentity amid = getIdentity(parentRealm,
+                IdUtils.getType(idType), entityName);
+            Map<String, byte[][]> map = new HashMap<String, byte[][]>();
+            byte[][] values = new byte[1][];
+            map.put("telephonenumber", values);
+            values[0] = content;
+            amid.setBinaryAttributes(map);
+            
+            Set<String> set = new HashSet<String>();
+            set.add("telephonenumber");
+            Map verify = amid.getBinaryAttributes(set);
+            assert verify.equals(map);
+         } catch (Exception e) {
+            log(Level.SEVERE, "setGetBinaryAttributes", 
+                e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
+        }
+       
+        exiting("setGetBinaryAttributes");
     }
         
     /**
      * Passes an null (Map) to the modify attribute API.
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code>
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid. 
+     * @throws Exception if cannot access to <code>AMIdentity</code> object.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name"})
     @Test(groups = {"api"})
@@ -239,19 +266,29 @@ public class AMIdentityTestBase extends TestBase {
         String parentRealm,
         String idType,
         String entityName
-    ) throws IdRepoException, SSOException {
-        AMIdentity amid = getIdentity(parentRealm,
-            IdUtils.getType(idType), entityName);
-        modifyIdentity(amid, null);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName};
+        entering("modifyWithNullValues", params);
+        
+        try {
+            
+            AMIdentity amid = getIdentity(parentRealm,
+                IdUtils.getType(idType), entityName);
+            modifyIdentity(amid, null);
+        } catch (Exception e) {
+            log(Level.SEVERE, "modifyWithNullValues", e.getMessage(),
+                params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("modifyWithNullValues");
     }
 
     /**
      * Adds and removes members from the <code>AMIdentity</code> object.
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code>
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid. 
+     * @throws Exception if cannot access to <code>AMIdentity</code>
      */
     @Parameters({"parent-realm", "entity-type", "entity-name"})
     @Test(groups = {"api", "memberships"})
@@ -259,43 +296,55 @@ public class AMIdentityTestBase extends TestBase {
         String parentRealm,
         String idType,
         String entityName
-    ) throws IdRepoException, SSOException {
-        AMIdentity amid1 = createDummyUser(parentRealm, entityName, "1");
-        AMIdentity amid2 = createDummyUser(parentRealm, entityName, "2");
-        AMIdentity amid3 = createDummyUser(parentRealm, entityName, "3");
-        AMIdentity amid = getIdentity(parentRealm,
-            IdUtils.getType(idType), entityName);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName};
+        entering("assignUnassignMembers", params);
+        try {
+            
+            AMIdentity amid1 = createDummyUser(parentRealm, entityName, "1");
+            AMIdentity amid2 = createDummyUser(parentRealm, entityName, "2");
+            AMIdentity amid3 = createDummyUser(parentRealm, entityName, "3");
+            AMIdentity amid = getIdentity(parentRealm,
+                IdUtils.getType(idType), entityName);
+            
+            amid.addMember(amid1);
+            // add twice
+            amid.addMember(amid1);
+
+            assert amid.isMember(amid1);
+            amid.addMember(amid2);
+            assert amid.isMember(amid1);
+            assert amid.isMember(amid2);
+            amid.addMember(amid3);
+            assert amid.isMember(amid1);
+            assert amid.isMember(amid2);
+            assert amid.isMember(amid3);
+
+            Set<AMIdentity> set = new HashSet<AMIdentity>();
+            set.add(amid2);
+            set.add(amid3);
+
+            amid.removeMember(amid1);
+            assert !amid.isMember(amid1);
+
+            Set members = amid.getMembers(IdType.USER);
+            assert members.equals(set);
+
+            amid.removeMembers(set);
+            assert !amid.isMember(amid1);
+            assert !amid.isMember(amid2);
+            assert !amid.isMember(amid3);
+            deleteIdentity(parentRealm, IdType.USER, entityName + "1");
+            deleteIdentity(parentRealm, IdType.USER, entityName + "2");
+            deleteIdentity(parentRealm, IdType.USER, entityName + "3");
+        } catch (Exception e) {
+            log(Level.SEVERE, "assignUnassignMembers", e.getMessage(), 
+                params);
+            e.printStackTrace();
+            throw e;
+        }
         
-        amid.addMember(amid1);
-        // add twice
-        amid.addMember(amid1);
-
-        assert amid.isMember(amid1);
-        amid.addMember(amid2);
-        assert amid.isMember(amid1);
-        assert amid.isMember(amid2);
-        amid.addMember(amid3);
-        assert amid.isMember(amid1);
-        assert amid.isMember(amid2);
-        assert amid.isMember(amid3);
-
-        Set<AMIdentity> set = new HashSet<AMIdentity>();
-        set.add(amid2);
-        set.add(amid3);
-
-        amid.removeMember(amid1);
-        assert !amid.isMember(amid1);
-
-        Set members = amid.getMembers(IdType.USER);
-        assert members.equals(set);
-
-        amid.removeMembers(set);
-        assert !amid.isMember(amid1);
-        assert !amid.isMember(amid2);
-        assert !amid.isMember(amid3);
-        deleteIdentity(parentRealm, IdType.USER, entityName + "1");
-        deleteIdentity(parentRealm, IdType.USER, entityName + "2");
-        deleteIdentity(parentRealm, IdType.USER, entityName + "3");
+        exiting("assignUnassignMembers");
     }
     
 
@@ -316,9 +365,22 @@ public class AMIdentityTestBase extends TestBase {
         String entityName,
         String createAttributes
     ) throws IdRepoException, SSOException {
-        IdType type = IdUtils.getType(idType);
-        Map values = CollectionUtils.parseStringToMap(createAttributes);
-        createIdentity(parentRealm, type, entityName, values);
+        Object[] params = {parentRealm, idType, entityName, createAttributes};
+        entering("createIdentityTwice", params);
+        
+        try {
+                
+            IdType type = IdUtils.getType(idType);
+            Map values = CollectionUtils.parseStringToMap(createAttributes);
+            createIdentity(parentRealm, type, entityName, values);
+        } catch (SSOException e) {
+            log(Level.SEVERE, "createIdentityTwice", e.getMessage(), 
+                params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("createIdentityTwice");
     }
 
     /**
@@ -338,13 +400,25 @@ public class AMIdentityTestBase extends TestBase {
         String entityName,
         String createAttributes
     ) throws IdRepoException, SSOException {
-        String name = entityName;
-        for (int i = 0; i < 100; i++) {
-            name += entityName;
+        Object[] params = {parentRealm, idType, entityName, createAttributes};
+        entering("createIdenityWithLongName", params);
+        try {
+            
+            String name = entityName;
+            for (int i = 0; i < 100; i++) {
+                name += entityName;
+            }
+            IdType type = IdUtils.getType(idType);
+            Map values = CollectionUtils.parseStringToMap(createAttributes);
+            createIdentity(parentRealm, type, name, values);
+        } catch (SSOException e) {
+            log(Level.SEVERE, "createIdenityWithLongName", e.getMessage(), 
+                params);
+            e.printStackTrace();
+            throw e;
         }
-        IdType type = IdUtils.getType(idType);
-        Map values = CollectionUtils.parseStringToMap(createAttributes);
-        createIdentity(parentRealm, type, name, values);
+        
+        exiting("createIdenityWithLongName");
     }
 
 
@@ -363,9 +437,21 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String createAttributes
     ) throws IdRepoException, SSOException {
-        IdType type = IdUtils.getType(idType);
-        Map values = CollectionUtils.parseStringToMap(createAttributes);
-        createIdentity(parentRealm, type, "", values);
+        Object[] params = {parentRealm, idType, createAttributes};
+        entering("createIdenityWithNoName", params);
+        try {
+            
+            IdType type = IdUtils.getType(idType);
+            Map values = CollectionUtils.parseStringToMap(createAttributes);
+            createIdentity(parentRealm, type, "", values);
+        } catch (SSOException e) {
+            log(Level.SEVERE, "createIdenityWithNoName", e.getMessage(), 
+                params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("createIdenityWithNoName");
     }
 
 
@@ -386,17 +472,29 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName,
         String requiredAttributes
-    ) throws IdRepoException, SSOException, SMSException {
-        Set<String> setRequiredAttributes = CollectionUtils.parseStringToSet(
-            requiredAttributes);
-        if (!setRequiredAttributes.isEmpty()) {
-            Map<String, Set<String>> emptyValues =
-                CollectionUtils.getEmptyValuesMap(setRequiredAttributes);
-            AMIdentity amid = getIdentity(parentRealm,
-                IdUtils.getType(idType), entityName);
-            amid.setAttributes(emptyValues);
-            amid.store();
+    ) throws IdRepoException, SSOException {
+        Object[] params = {parentRealm, idType, entityName, requiredAttributes};
+        entering("nullifyRequiredAttribute", params);
+        try {
+            
+            Set<String> setRequiredAttributes =
+                CollectionUtils.parseStringToSet(requiredAttributes);
+            if (!setRequiredAttributes.isEmpty()) {
+                Map<String, Set<String>> emptyValues =
+                    CollectionUtils.getEmptyValuesMap(setRequiredAttributes);
+                AMIdentity amid = getIdentity(parentRealm,
+                    IdUtils.getType(idType), entityName);
+                amid.setAttributes(emptyValues);
+                amid.store();
+            }
+        } catch (SSOException e) {
+            log(Level.SEVERE, "nullifyRequiredAttribute", e.getMessage(), 
+                params);
+            e.printStackTrace();
+            throw e;
         }
+        
+        exiting("nullifyRequiredAttribute");
     }
 
     /**
@@ -414,19 +512,27 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName
     ) throws IdRepoException, SSOException {
-        AMIdentity amid = getIdentity(parentRealm,
-            IdUtils.getType(idType), entityName);
-        amid.removeMember(amid);
+        Object[] params = {parentRealm, idType, entityName};
+        entering("addItselfAsMember", params);
+        
+        try {
+            AMIdentity amid = getIdentity(parentRealm,
+                IdUtils.getType(idType), entityName);
+            amid.removeMember(amid);
+        } catch (SSOException e) {
+            log(Level.SEVERE, "addItselfAsMember", e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("addItselfAsMember");
     }
     
     
     /**
      * Tests <code>isExists</code> method.
      *
-     * @throws IdRepoException if cannot access to <code>AMIdentity</code> 
-     *         object.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid. 
+     * @throws Exception if cannot access to <code>AMIdentity</code> object.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name", 
         "entity-creation-attributes"})
@@ -436,24 +542,31 @@ public class AMIdentityTestBase extends TestBase {
         String idType,
         String entityName,
         String createAttributes
-    ) throws IdRepoException, SSOException, SMSException {
-        Map values = CollectionUtils.parseStringToMap(createAttributes);
-        IdType type = IdUtils.getType(idType);
-        AMIdentity a = createIdentity(parentRealm, type, entityName + "exist", 
-            values);
-        deleteIdentity(parentRealm, type, entityName + "exist");
-        assert !a.isExists();
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName, createAttributes};
+        entering("verifyExistence", params);
+        try {
+            
+            Map values = CollectionUtils.parseStringToMap(createAttributes);
+            IdType type = IdUtils.getType(idType);
+            AMIdentity a = createIdentity(parentRealm, type, entityName +
+                "exist", values);
+            deleteIdentity(parentRealm, type, entityName + "exist");
+            assert !a.isExists();
+        } catch (Exception e) {
+            log(Level.SEVERE, "verifyExistence", e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("verifyExistence");
     }
 
     /**
      * Removes <code>AMIdentity</code> object after suite test is
      * done.
      * 
-     * @throws IdRepoException if <code>AMIdenity</code> object cannot be 
-     *         deleted.
-     * @throws SMSException if realm cannot be deleted.
-     * @throws SSOException if the super administrator Single Sign On is 
-     *         invalid.
+     * @throws Exception if <code>AMIdenity</code> object cannot be deleted.
      */
     @Parameters({"parent-realm", "entity-type", "entity-name"})
     @AfterTest(groups = {"api"})
@@ -461,8 +574,19 @@ public class AMIdentityTestBase extends TestBase {
         String parentRealm,
         String idType,
         String entityName
-    ) throws IdRepoException, SSOException, SMSException {
-        deleteIdentity(parentRealm, IdUtils.getType(idType), entityName);
+    ) throws Exception {
+        Object[] params = {parentRealm, idType, entityName};
+        entering("tearDown", params);
+        try {
+            
+            deleteIdentity(parentRealm, IdUtils.getType(idType), entityName);
+        } catch (Exception e) {
+            log(Level.SEVERE, "tearDown", e.getMessage(), params);
+            e.printStackTrace();
+            throw e;
+        }
+        
+        exiting("tearDown");
     }
     
     /**
@@ -472,16 +596,20 @@ public class AMIdentityTestBase extends TestBase {
      * @throws SSOException if the super administrator Single Sign On is 
      *         invalid.
      */
-    @Parameters({"parent-realm"})
+    @Parameters({"parent-realms"})
     @AfterSuite(groups = {"api"})
-    public void suiteTearDown(String parentRealm)
+    public void suiteTearDown(String realms)
         throws SSOException, SMSException {
-        if ((parentRealm != null) && !parentRealm.equals("/")) {
-            OrganizationConfigManager orgMgr = getParentOrgConfigManager(
-                getAdminSSOToken(), parentRealm);
-            int idx = parentRealm.lastIndexOf("/");
-            orgMgr.deleteSubOrganization(parentRealm.substring(idx+1), true);
+        Object[] params = {realms};
+        entering("suiteTearDown", params);
+        
+        StringTokenizer st = new StringTokenizer(realms, ",");
+        while (st.hasMoreElements()) {
+            String realm = st.nextToken().trim();
+            deleteRealm(getAdminSSOToken(), realm);
         }
+
+        exiting("suiteTearDown");
     }
 
     private AMIdentity createIdentity(
@@ -555,15 +683,46 @@ public class AMIdentityTestBase extends TestBase {
             map);
     }
    
-    private OrganizationConfigManager getParentOrgConfigManager(
-        SSOToken ssoToken,
-        String parentRealm
-    ) throws SMSException {
-        int idx = parentRealm.lastIndexOf("/");
+    private String getParentRealm(String realm) {
+        int idx = realm.lastIndexOf("/");
         if (idx == -1) {
-            throw new RuntimeException("Incorrect Realm, " + parentRealm);
+            throw new RuntimeException("Incorrect Realm, " + realm);
         }
-        return new OrganizationConfigManager(ssoToken,
-            (idx == 0) ? "/" : parentRealm.substring(0, idx));
+        return (idx == 0) ? "/" : realm.substring(0, idx);
+    }
+    
+    private void createSubRealm(SSOToken ssoToken, String realm)
+        throws SSOException, SMSException
+    {
+        if ((realm != null) && !realm.equals("/")) {
+            String parentRealm = getParentRealm(realm);
+            createSubRealm(ssoToken, parentRealm);
+            OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+                ssoToken, parentRealm);
+            int idx = realm.lastIndexOf("/");
+            try {
+                orgMgr.createSubOrganization(realm.substring(idx+1), null);
+            } catch (SMSException e) {
+                //ignore if the sub organization already exists.
+            }
+        }
+    }
+
+    private void deleteRealm(SSOToken ssoToken, String realm)
+        throws SSOException
+    {
+        if ((realm != null) && !realm.equals("/")) {
+            String parentRealm = getParentRealm(realm);
+            try {
+                OrganizationConfigManager orgMgr = new
+                    OrganizationConfigManager(ssoToken, parentRealm);
+                int idx = realm.lastIndexOf("/");
+                orgMgr.deleteSubOrganization(realm.substring(idx+1), true);
+            } catch (SMSException e) {
+                //ignore if the sub organization already exists.
+            }
+            deleteRealm(ssoToken, parentRealm);
+        }
     }
 }
+
