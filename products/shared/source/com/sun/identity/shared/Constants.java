@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.1 2006-08-25 21:21:41 veiming Exp $
+ * $Id: Constants.java,v 1.2 2006-09-07 00:41:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -942,4 +942,17 @@ public interface Constants {
      * Install Time System property key.
      */
     String SYS_PROPERTY_INSTALL_TIME = "installTime";
+
+    /**
+     * This is a HTTP parameter to indicate to the authentication component
+     * to either forward the request or redirect it after authentication
+     * succeed.
+     */
+    String FORWARD_PARAM = "forwardrequest";
+                                                                                
+    /**
+     * Value is for <code>FORWARD_PARAM</code> to indicate that the 
+     * authentication component should forward request.
+     */
+    String FORWARD_YES_VALUE = "yes";
 }
