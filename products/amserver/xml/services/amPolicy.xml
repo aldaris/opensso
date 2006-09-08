@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.1 2006-08-29 07:52:31 veiming Exp $
+    $Id: amPolicy.xml,v 1.2 2006-09-08 19:03:49 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -146,12 +146,6 @@
             i18nFileName="amPolicy"
             i18nKey="SunIdentityServer-subject-AuthenticatedUsers-name"
 	    propertiesViewBeanURL = "../policy/PMAuthenticatedUsersSubject" />
-        <PluginSchema
-            name="WebServicesClients"
-            interfaceName="Subject"
-            className="com.sun.identity.policy.plugins.WebServicesClients"
-            i18nFileName="amPolicy"
-            i18nKey="SunIdentityServer-subject-WebServicesClients-name" />
         <PluginSchema
             name="AMIdentitySubject"
             interfaceName="Subject"
