@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.5 2006-08-25 21:21:30 veiming Exp $
+ * $Id: ServiceSchema.java,v 1.6 2006-09-12 00:47:47 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.sm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.InputStream;
@@ -443,7 +444,8 @@ public class ServiceSchema {
         // Check if attribute exists
         Document doc = SMSSchema.getXMLDocument(xmlAttrSchema, false);
         NodeList nl = doc.getElementsByTagName(SMSUtils.SCHEMA_ATTRIBUTE);
-        Set asNames = ss.getAttributeSchemaNames();
+        CaseInsensitiveHashSet asNames =
+            new CaseInsensitiveHashSet(ss.getAttributeSchemaNames());
         for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
             AttributeSchemaImpl as = new AttributeSchemaImpl(node);

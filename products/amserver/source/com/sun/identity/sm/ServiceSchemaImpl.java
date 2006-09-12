@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaImpl.java,v 1.2 2006-08-25 21:21:31 veiming Exp $
+ * $Id: ServiceSchemaImpl.java,v 1.3 2006-09-12 00:47:48 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.sm;
 
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -248,11 +249,21 @@ class ServiceSchemaImpl {
             // Do not validate attributes in this subschema
             return (true);
         }
+
+        // to check for duplicates (case insensitive)
+        CaseInsensitiveHashSet asNames = new CaseInsensitiveHashSet();
         // For each attribute, validate its values
         for (Iterator items = attributeSet.keySet().iterator(); 
                                                     items.hasNext();) 
         {
             String attrName = (String) items.next();
+            if (asNames.contains(attrName)) {
+                Object[] args = { attrName };
+                throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                        "sms-attributeschema-duplicates", args);
+            } else {
+                asNames.add(attrName);
+            }
             if (!attrName.equalsIgnoreCase(SMSUtils.COSPRIORITY)) {
                 Set vals = (Set) attributeSet.get(attrName);
                 validateAttrValues(attrName, vals, encodePassword, orgName);
