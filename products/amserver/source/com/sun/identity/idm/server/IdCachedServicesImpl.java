@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.3 2006-06-24 00:09:09 arviranga Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.4 2006-09-12 20:41:52 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -492,34 +492,49 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
     public IdSearchResults search(SSOToken token, IdType type, String pattern,
         IdSearchControl ctrl, String orgName)
         throws IdRepoException, SSOException {
-        IdSearchResults answer;
-        // Check if search is for a specific identity
-        if ((pattern.indexOf('*') == -1) &&
-            (ctrl.getSearchModifierMap() == null)) {
-            // Search is for a specific user, look in the cache
-            answer = new IdSearchResults(type, orgName);
-            Map attributes;
-            try {
-                if (ctrl.isGetAllReturnAttributesEnabled ()) {
-                    attributes = getAttributes (token, type, pattern,
-                        orgName, null);
-                } else {
-                    Set attrNames = ctrl.getReturnAttributes ();
-                    attributes = getAttributes (token, type, pattern,
-                        attrNames, orgName, null, true);
+        IdSearchResults answer = new IdSearchResults(type, orgName);
+        if (pattern.indexOf('*') == -1) {
+            // First check if the specific identity is in cache.
+            // If yes, get Attributes from cache.
+            // If not search in server.
+            AMIdentity uvid = new AMIdentity(token, pattern, type,
+                orgName, null);
+            String universalID = uvid.getUniversalId().toLowerCase();
+            IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(universalID);
+            if ((cb != null) && !cb.hasExpiredAndUpdated() &&
+                cb.isExists() &&
+                (ctrl.getSearchModifierMap() == null)) {
+
+                // Check if search is for a specific identity
+                // Search is for a specific user, look in the cache
+                Map attributes;
+                try {
+                    if (ctrl.isGetAllReturnAttributesEnabled()) {
+                        attributes = getAttributes(token, type, pattern,
+                            orgName, null);
+                    } else {
+                        Set attrNames = ctrl.getReturnAttributes();
+                        attributes = getAttributes(token, type, pattern,
+                            attrNames, orgName, null, true);
+                    }
+                    // Construct IdSearchResults
+                    AMIdentity id = new AMIdentity(token, pattern,
+                        type, orgName, null);
+                    answer.addResult(id, attributes);
+                } catch (IdRepoException ide) {
+                    // Check if the exception is name not found
+                    if (!ide.getErrorCode().equals("220")) {
+                        // Throw the exception
+                        throw (ide);
+                    }
                 }
-                // Construct IdSearchResults
-                AMIdentity id = new AMIdentity (token, pattern,
-                    type, orgName, null);
-                answer.addResult (id, attributes);
-            }  catch (IdRepoException ide) {
-                // Check if the exception is name not found
-                if (!ide.getErrorCode ().equals ("220")) {
-                    // Throw the exception
-                    throw (ide);
-                }
+            } else {
+                // Not in Cache.
+                // Do a search is server.
+                answer = super.search(token, type, pattern, ctrl, orgName);
             }
         } else {
+            // Pattern contains "*", need a search in server.
             answer = super.search(token, type, pattern, ctrl, orgName);
         }
         return (answer);
