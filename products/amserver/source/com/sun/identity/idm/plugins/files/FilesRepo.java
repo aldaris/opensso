@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.8 2006-08-25 21:20:50 veiming Exp $
+ * $Id: FilesRepo.java,v 1.9 2006-09-13 23:59:54 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.idm.plugins.files;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -46,8 +47,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
 import com.iplanet.am.sdk.AMEvent;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.encode.Hash;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -61,9 +60,11 @@ import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
-import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SchemaType;
 
 /*******************************************************************************
@@ -704,8 +705,15 @@ public class FilesRepo extends IdRepo {
             debug.error("FilesRepo: throwing initialization exception");
             throw (initializationException);
         }
-        Map map = getAttributes(token, type, name);
-        return (!map.isEmpty());
+        
+        boolean entryExists = true;
+        try {
+            getAttributes(token, type, name);            
+        } catch (FilesRepoEntryNotFoundException fe) {
+            entryExists = false;
+        }
+        
+        return entryExists;
     }
 
     /*
@@ -1176,27 +1184,19 @@ public class FilesRepo extends IdRepo {
         }
 
         // Get user's password attribute
-        Map attrs = null;
-        try {
-            attrs = getAttributes(null, IdType.USER, username);
-            if (attrs.isEmpty()) {
-                // Try agent
-                if (debug.messageEnabled()) {
-                    debug.message("FilesRepo:authn user not found. "
-                            + "Searching for agent");
-                }
-                attrs = getAttributes(null, IdType.AGENT, username);
-            } else if (debug.messageEnabled()) {
-                debug.message("FilesRepo:authenticate found user entry");
-            }
-        } catch (SSOException ssoe) {
-            // Since SSOToken are not sent, this should not happen
+        Map attrs = searchForAuthN(IdType.USER, username);
+                          
+        if (attrs == null) {
+            // Try agent        
+            attrs = searchForAuthN(IdType.AGENT, username);
         }
+        
         if (attrs == null || attrs.isEmpty()
                 || !attrs.containsKey(passwordAttribute)) {
             // Cound not find user or agent, return false
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo:authenticate not found user/agent");
+                debug.message("FilesRepo:authenticate did not found " +
+                    "user/agent");
             }
             return (false);
         }
@@ -1216,6 +1216,28 @@ public class FilesRepo extends IdRepo {
                     + password.equals(storedPassword));
         }
         return (password.equals(storedPassword));
+    }
+    
+    private Map searchForAuthN(IdType type, String userName) 
+        throws IdRepoException 
+    {        
+        Map attributes = null;
+        try {
+            attributes = getAttributes(null, type, userName);
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:searchForAuthN found " + 
+                        type.getName() + " entry: " + userName);
+            }
+        } catch (FilesRepoEntryNotFoundException fe) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:searchForAuthn did not find " + 
+                        type.getName() + " entry: " + userName);
+            }                
+        } catch (SSOException ssoe) {
+            // Can ignore this as this won't happen. No token was passed.
+        }
+        
+        return attributes;
     }
 
     // -----------------------------------------------
@@ -1334,6 +1356,13 @@ public class FilesRepo extends IdRepo {
             }
             // Add to cache
             identityCache.put(cacheName, answer);
+        } catch (FileNotFoundException fn) {
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo: file not found: " + fileName);
+            }
+            String[] args = { NAME, fileName };
+            throw (new FilesRepoEntryNotFoundException(IdRepoBundle.BUNDLE_NAME,
+                    "220", args));                        
         } catch (IOException e) {
             if (debug.messageEnabled()) {
                 debug.message("FilesRepo: error reading file: " + fileName, e);
