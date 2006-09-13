@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.5 2006-08-25 21:21:27 veiming Exp $
+ * $Id: SMSEventListenerManager.java,v 1.6 2006-09-13 22:37:47 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,18 +100,20 @@ class SMSEventListenerManager implements SMSObjectListener {
         // if backend datastore notification is not enabled
         if (!isLocal && !SMSEntry.enableDataStoreNotification
                 && event == SMSObjectListener.DELETE) {
-            // Collect the immidiate children of the current sdn
+            // Collect the immediate children of the current sdn
             // from nodeChanges. All "subNodeChanges" entries would
             // have an entry in "nodeChanges", hence donot have to
             // iterate throught it
             Set childDNs = new HashSet();
+            HashSet itemSet = new HashSet(2);
             synchronized (nodeChanges) {
-                for (Iterator items = nodeChanges.keySet().iterator(); items
-                        .hasNext();) {
-                    String cdn = (String) items.next();
-                    if ((new DN(cdn)).isDescendantOf(sdn)) {
-                        childDNs.add(cdn);
-                    }
+                itemSet.addAll(nodeChanges.keySet());
+            }
+            Iterator keyitems = itemSet.iterator();
+            while (keyitems.hasNext()) {
+                String cdn = (String) keyitems.next();
+                if ((new DN(cdn)).isDescendantOf(sdn)) {
+                    childDNs.add(cdn);
                 }
             }
             // Send the notifications
