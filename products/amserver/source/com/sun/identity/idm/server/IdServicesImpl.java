@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.6 2006-08-25 21:20:55 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.7 2006-09-13 19:08:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1626,9 +1626,11 @@ public class IdServicesImpl implements IdServices {
 
         // First get the list of plugins that support the create operation.
         Set unionSupportedTypes = new HashSet();
-        Set plugIns = getIdRepoPlugins(token, amOrgName);
-        Set configuredPluginClasses = getAllConfiguredPlugins(token, amOrgName,
-                plugIns);
+        SSOToken stoken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Set plugIns = getIdRepoPlugins(stoken, amOrgName);
+        Set configuredPluginClasses = 
+            getAllConfiguredPlugins(stoken, amOrgName, plugIns);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -1653,9 +1655,11 @@ public class IdServicesImpl implements IdServices {
 
         // First get the list of plugins that support the create operation.
         Set unionSupportedOps = new HashSet();
-        Set plugIns = getIdRepoPlugins(token, amOrgName);
-        Set configuredPluginClasses = getAllConfiguredPlugins(token, amOrgName,
-                plugIns);
+        SSOToken stoken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Set plugIns = getIdRepoPlugins(stoken, amOrgName);
+        Set configuredPluginClasses = 
+            getAllConfiguredPlugins(stoken, amOrgName, plugIns);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
