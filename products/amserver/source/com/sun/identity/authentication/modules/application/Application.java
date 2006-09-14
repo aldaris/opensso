@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.2 2006-08-25 21:20:19 veiming Exp $
+ * $Id: Application.java,v 1.3 2006-09-14 22:29:52 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
 
 /**
  * Application login module.<br>
@@ -217,6 +219,15 @@ public class Application extends AMLoginModule {
                         "Internal Auth is successful : User = " + userTokenId);
                 }
                 success = true;
+            } else if (authenticateToDatastore(userName, userPassword)) {
+                if (debug.messageEnabled()){
+                    debug.message("Application.doFallbackAuth: Authenticating "
+                    + "to DataStore Auth Module.");
+                }
+                if (userTokenId == null) {
+                    userTokenId = userName;
+                }
+                success = true;
             } else if (authenticateToLDAP(userName, userPassword) ==
                 LDAPAuthUtils.SUCCESS
             ) {
@@ -299,7 +310,7 @@ public class Application extends AMLoginModule {
         }
         return null;
     }
-    
+
     private int authenticateToLDAP(String userName, String userPassword)
             throws AuthLoginException {
         if (debug.messageEnabled()){
@@ -347,6 +358,39 @@ public class Application extends AMLoginModule {
                     "basicLDAPex", null);
             }
         }
+    }
+
+    /**
+     * Authenticates to the datastore using idRepo API
+     *
+     * @param userName User Name
+     * @param userPassword User Password
+     * @return <code>true</code> if success. <code>false</code> if failure
+     * @throws <code> AuthLoginException </code> 
+     */
+    private boolean authenticateToDatastore(String userName, 
+        String userPassword) throws AuthLoginException {
+        boolean retval = false;
+        Callback[] callbacks = new Callback[2];
+        NameCallback nameCallback = new NameCallback("NamePrompt");
+        nameCallback.setName(userName);
+        callbacks[0] = nameCallback;
+        PasswordCallback passwordCallback = new PasswordCallback(
+            "PasswordPrompt",false);
+        passwordCallback.setPassword(userPassword.toCharArray());
+        callbacks[1] = passwordCallback;
+        try {
+            AMIdentityRepository idrepo = getAMIdentityRepository(
+                getRequestOrg());
+            retval = idrepo.authenticate(callbacks);
+        } catch (IdRepoException idrepoExp) {
+            if (debug.messageEnabled()){
+                debug.message("Application.authenticateToDatastore:  "
+                    + "IdRepo Exception", idrepoExp);
+            }
+        }
+        return retval;
+
     }
     
     private boolean initLDAPAttributes(String serviceName)
