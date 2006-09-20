@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.1 2006-08-29 07:52:30 veiming Exp $
+   $Id: amDelegation.xml,v 1.2 2006-09-20 23:17:50 bigfatrat Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -170,6 +170,26 @@
                             <Value>READ</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
+                    <SubConfiguration name="LogWrite" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*@ROOT_SUFFIX@/iPlanetAMLoggingService/1.0/application/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>MODIFY</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="LogRead" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*@ROOT_SUFFIX@/iPlanetAMLoggingService/1.0/application/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
                 </SubConfiguration>
                 <SubConfiguration name="Privileges">
                     <SubConfiguration name="RealmAdmin" id="Privilege">
@@ -192,6 +212,25 @@
                         <AttributeValuePair>
                             <Attribute name="defaultSubjectInLegacyMode" />
                             <Value>id=Organization Policy Admin Role,ou=role,REALM,amsdkdn=cn=Organization Policy Admin Role,REALM</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="LogAdmin" id="Privilege">
+                        <AttributeValuePair>
+                            <Attribute name="listOfPermissions" />
+                            <Value>LogWrite</Value>
+                            <Value>LogRead</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="LogRead" id="Privilege">
+                        <AttributeValuePair>
+                            <Attribute name="listOfPermissions" />
+                            <Value>LogRead</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="LogWrite" id="Privilege">
+                        <AttributeValuePair>
+                            <Attribute name="listOfPermissions" />
+                            <Value>LogWrite</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

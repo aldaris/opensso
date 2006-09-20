@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthorizer.java,v 1.3 2006-04-27 07:53:37 veiming Exp $
+ * $Id: ISAuthorizer.java,v 1.4 2006-09-20 23:22:22 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,24 @@
 
 package com.sun.identity.log.spi;
 
-import com.iplanet.sso.SSOToken;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+
+import com.sun.identity.common.Constants;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+
 
 /**
  * This class implements the authorization plugin interface.
@@ -64,9 +79,51 @@ public class ISAuthorizer implements IAuthorizer {
         }
         
         try {
+            String tmpID = ssoToken.getPrincipal().getName();
+            if (Debug.messageEnabled()) {
+                Debug.message(
+                    "ISAuthorizer.isAuthorized():logName = " + logName +
+                    ", op = " + operation + ", uid = " + tmpID);
+            }
+
+            String thisSubConfig = "LogWrite";
+            if (operation.equalsIgnoreCase("READ")) {
+                thisSubConfig = "LogRead";
+            }
+
             SSOTokenManager ssoMgr = SSOTokenManager.getInstance();
             if (ssoMgr.isValidToken(ssoToken)) {
-                return true;
+                Map tmap = new HashMap();
+                Set actSet;
+                actSet = Collections.singleton(operation);
+                try {
+                    String amRealm =
+                        ssoToken.getProperty(Constants.ORGANIZATION);
+
+                    DelegationPermission dp =
+                        new DelegationPermission(amRealm,   // realm
+                                "iPlanetAMLoggingService",  // service name
+                                "1.0",                      // version
+                                "application",              // config type
+                                thisSubConfig,              // subConfig name
+                                actSet,                     // actions
+                                tmap);                      // extensions
+                    DelegationEvaluator de = new DelegationEvaluator();
+                    if (de.isAllowed(ssoToken, dp, null)) {
+                        return true;
+                    } else {
+                        Debug.error(logName +
+                            ":ISAuthorizer.isAuthorized():log rqt to " +
+                            operation + " by " + tmpID + " denied.");
+                    }
+                } catch (DelegationException dex) {
+                    String loggedByID = ssoToken.getPrincipal().getName();
+                    Debug.error(
+                        "ISAuthorizer.isAuthorized():delegation error: " + 
+                        "user: " + loggedByID + ", logName = " + logName +
+                        ", op = " + operation + ", msg = " +
+                        dex.getMessage());
+                }
             } else {
                 String loggedByID = ssoToken.getPrincipal().getName();
                 Debug.error("ISAuthorizer.isAuthorized(): access denied " + 

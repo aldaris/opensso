@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.5 2006-07-31 20:34:31 bigfatrat Exp $
+ * $Id: RemoteHandler.java,v 1.6 2006-09-20 23:23:40 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.URLNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.common.TimerFactory;
+import com.sun.identity.log.AMLogException;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
@@ -183,6 +184,8 @@ public class RemoteHandler extends Handler {
         if (Debug.messageEnabled()) {
             Debug.message("RemoteHandler.flush(): sending buffered records");
         }
+
+	String thisAMException = null;
         try {
             Iterator sidIter = reqSetMap.keySet().iterator();
             while (sidIter.hasNext()) {
@@ -204,6 +207,10 @@ public class RemoteHandler extends Handler {
                     if (!respContent.equals("OK")) {
                         Debug.error("RemoteHandler.flush(): " + respContent 
                             + " on remote machine");
+                        if (thisAMException == null) {
+                            thisAMException = "RemoteHandler.flush(): " +
+                            respContent + " on remote machine";
+                        }
                     }
                 }
             }
@@ -212,6 +219,9 @@ public class RemoteHandler extends Handler {
         }
         this.recCount = 0;
         reqSetMap = new HashMap();
+        if (thisAMException != null) {
+            throw new AMLogException(thisAMException);
+        }
     }
     
     private URL getLogHostURL(String loggedBySID) {
