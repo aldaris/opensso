@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-08-25 21:21:40 veiming Exp $
+   $Id: build.xml,v 1.2 2006-09-20 19:14:47 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,7 +36,7 @@
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${sharedlib.classes.dir}"/>
-        <fileset dir="${sharedlib.extlib.dir}">
+        <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
     </path>

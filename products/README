@@ -20,9 +20,9 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2006-09-06 18:25:17 veiming Exp $
+$Id: README,v 1.1 2006-09-20 19:14:42 veiming Exp $
 
-Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
 
 %% Contents:
@@ -65,7 +65,7 @@ the library vendor or distributor. Some of these libraries are available in
 source distribution form and must be built locally before they can be used. 
 The libraries needed for compiling OpenSSO sources are:
 
-   - J2EE SDK version 1.4: j2ee.jar
+   - J2EE SDK version 1.5: j2ee.jar
    - JWSDP version 2.0: jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
      jaxrpc-api.jar, activation.jar, saaj-api.jar, saaj-impl.jar
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
@@ -89,10 +89,10 @@ conditions.
 
 %% 2.1 Obtaining j2ee.jar and mail.jar
 
-The j2ee.jar and mail.jar library can be obtained from J2EE SDK version 1.4.
+The j2ee.jar and mail.jar library can be obtained from J2EE SDK version 1.5.
 Follow these steps to obtain the J2EE SDK:
 
-2.1.1 Open the web page: http://java.sun.com/j2ee/1.4/download.html
+2.1.1 Open the web page: http://java.sun.com/javaee/downloads/index.jsp
 2.1.2 Depending on your choice of platform, you may choose to download any
       one of the three distribution types available.
 2.1.3 Extract or extract and install the downloaded file as necessary to

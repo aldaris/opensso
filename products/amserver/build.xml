@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2006-09-06 18:25:18 veiming Exp $
+   $Id: build.xml,v 1.22 2006-09-20 19:14:44 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,7 +47,6 @@
     <property name="services.xml.dir" location="xml/services"/>
     <property name="authmodule.xml.dir" location="xml/auth-module"/>
     <property name="console.xml.dir" location="xml/console"/>
-    <property name="extlib.dir" location="extlib"/>
     <property name="jatolib.dir" location="../../resources/jato"/>
     <property name="lockhart.dir" location="../../resources/lockhart"/>
     <property name="javahelp.dir" location="../../resources/javahelp"/>
@@ -100,17 +99,17 @@
         </fileset>
     </path>
 
-    <ant antfile="build-checkjars.xml" inheritRefs="true" />
+    <target name="checkjar">
+        <ant antfile="${products.basedir}/build-checkjars.xml" inheritRefs="true" />
+        <fail message="*** missing library ***">
+            <condition>
+	        <isset property="extlib.jar.exists"/>
+            </condition>
+        </fail>
+    </target>
 
-    <!-- library checks  -->
-    <fail message="*** missing library ***">
-        <condition>
-	    <isset property="extlib.jar.exists"/>
-        </condition>
-    </fail>
 
-
-    <target name="build" depends="preparebuild, sharedlib">
+    <target name="build" depends="checkjar, preparebuild, sharedlib">
         <javac destdir="${classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${src.dir}"/>
