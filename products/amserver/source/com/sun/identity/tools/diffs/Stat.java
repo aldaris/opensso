@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stat.java,v 1.1 2006-06-12 22:07:12 veiming Exp $
+ * $Id: Stat.java,v 1.2 2006-09-21 18:29:17 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,10 @@ public class Stat {
     private static final String MODIFIED = "Status: Locally Modified";
     private static final String ADDED = "Status: Locally Added";
     private static final String REMOVED = "Status: Locally Removed";
-    private static final String TEMPLATE = "{0} ({1})\n";
+    private static final String TAG_MODIFIED = "M";
+    private static final String TAG_ADDED = "A";
+    private static final String TAG_REMOVED = "R";
+    private static final String TEMPLATE = "{0} {1}\n";
     
     /**
      * Creates a new instance of <code>Stat</code>.
@@ -60,13 +63,18 @@ public class Stat {
             : filename.substring(0, fileIdx+1);
         String content = getFileContent(filename);
         StringBuffer buff = new StringBuffer();
-        discover(content, ADDED, buff);
-        discover(content, REMOVED, buff);
-        discover(content, MODIFIED, buff);
+        discover(content, ADDED, TAG_ADDED, buff);
+        discover(content, REMOVED, TAG_REMOVED, buff);
+        discover(content, MODIFIED, TAG_MODIFIED, buff);
         writeToFile(baseDir + "stat", buff.toString());
     }
 
-    private static void discover(String content, String tag, StringBuffer buff){
+    private static void discover(
+        String content,
+        String tag,
+        String marker,
+        StringBuffer buff
+    ) {
         int idx = content.indexOf(tag);
         while (idx != -1) {
             int idx2 = content.lastIndexOf("File: ", idx);
@@ -88,7 +96,7 @@ public class Stat {
                     }
                 }
 
-                Object[] params = {fileName, tag};
+                Object[] params = {marker, fileName};
                 buff.append(MessageFormat.format(TEMPLATE, params));
             }
             idx = content.indexOf(tag, idx+1);

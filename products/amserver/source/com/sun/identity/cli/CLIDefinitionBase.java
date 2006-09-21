@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.1 2006-08-15 19:32:58 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.2 2006-09-21 18:29:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,12 +27,12 @@ package com.sun.identity.cli;
 import com.sun.identity.cli.annotation.DefinitionClassInfo;
 import com.sun.identity.cli.annotation.Macro;
 import com.sun.identity.cli.annotation.SubCommandInfo;
+import com.sun.identity.cli.tools.CLIDefinitionGenerator;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 /**
  * This is the base class for CLI definition class.
@@ -106,18 +106,24 @@ public abstract class CLIDefinitionBase implements IDefinition {
                         ExitCodes.INCORRECT_DEFINITION_CLASS);
                 }
 
-                String mandatoryOptions = info.mandatoryOptions();
-                String optionalOptions = info.optionalOptions();
-                String optionAliases = info.optionAliases();
+                List<String> mandatoryOptions = CLIDefinitionGenerator.toList(
+                    info.mandatoryOptions());
+                List<String> optionalOptions = CLIDefinitionGenerator.toList(
+                    info.optionalOptions());
+                List<String> optionAliases = CLIDefinitionGenerator.toList(
+                    info.optionAliases());
 
                 if ((info.macro() != null) && (info.macro().length() > 0)) {
                     try {
                         Field fldMarco = clazz.getDeclaredField(info.macro());
                         Macro macroInfo =(Macro)fldMarco.getAnnotation(
                             Macro.class);
-                        mandatoryOptions += "@" + macroInfo.mandatoryOptions();
-                        optionalOptions += "@" + macroInfo.optionalOptions();
-                        optionAliases += "@" + macroInfo.optionAliases();
+                        CLIDefinitionGenerator.appendToList(mandatoryOptions,
+                            macroInfo.mandatoryOptions());
+                        CLIDefinitionGenerator.appendToList(optionalOptions,
+                            macroInfo.optionalOptions());
+                        CLIDefinitionGenerator.appendToList(optionAliases,
+                            macroInfo.optionAliases());
                     } catch (NoSuchFieldException e) {
                         throw new CLIException(e,
                             ExitCodes.INCORRECT_DEFINITION_CLASS);

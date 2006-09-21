@@ -1,0 +1,78 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-09-21 18:29:10 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="top" default="usage">
+                
+    <description>Open Web Single Sign-On</description>
+    <import file="products.xml" />
+
+    <property name="diff.dir" location="${products.basedir}/diffs" />
+    <property name="classes.dir" location="${products.basedir}/amserver/built/classes" />
+    <property name="src.dir" location="${products.basedir}/amserver/source" />
+
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <target name="build-diff">
+        <mkdir dir="${classes.dir}" />
+        <javac destdir="${classes.dir}" source="1.5" target="1.5">
+            <src path="${src.dir}"/>
+            <classpath refid="build.class.path"/>
+            <include name="com/sun/identity/tools/diffs/*.java"/>
+        </javac>
+
+    </target>
+
+    <target name="cvsdiff" depends="build-diff">
+        <delete dir="${diff.dir}" />
+        <mkdir dir="${diff.dir}" />
+        <cvs command="-q diff -cw" output="${diff.dir}/.diffs"/>
+        <java classname="com.sun.identity.tools.diffs.Diffs">
+            <classpath refid="build.class.path"/>
+            <arg value="${diff.dir}/.diffs"/>
+        </java>
+        <cvs command="-q stat" output="${diff.dir}/.stat"/>
+        <java classname="com.sun.identity.tools.diffs.Stat">
+            <classpath refid="build.class.path"/>
+            <arg value="${diff.dir}/.stat"/>
+        </java>
+    </target>
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available:"/>
+        <echo message=" "/>
+        <echo message=" cvsdiff    : generate diffs under diffs subdirectory"/>
+        <echo message=" usage      : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+
+</project>

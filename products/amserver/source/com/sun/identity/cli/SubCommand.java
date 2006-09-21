@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.2 2006-07-17 18:11:02 veiming Exp $
+ * $Id: SubCommand.java,v 1.3 2006-09-21 18:29:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,9 +154,9 @@ public class SubCommand {
         IDefinition definition,
         ResourceBundle rb,
         String name,
-        String mandatoryOptions,
-        String optionalOptions,
-        String optionAliases,
+        List<String> mandatoryOptions,
+        List<String> optionalOptions,
+        List<String> optionAliases,
         String implClassName
     ) throws CLIException {
         this.definition = definition;
@@ -456,14 +456,13 @@ public class SubCommand {
     }
 
     private void parseOptions(
-        String strOpt,
+        List<String> strOpt,
         List<String> options,
         Set<String> shortOptions)
         throws CLIException
     {
-        StringTokenizer st = new StringTokenizer(strOpt, "@");
-        while (st.hasMoreTokens()) {
-            StringTokenizer t = new StringTokenizer(st.nextToken(), "|");
+        for (String token : strOpt) {
+            StringTokenizer t = new StringTokenizer(token, "|");
             String name = t.nextToken();
             String shortName = t.nextToken();
             String type = t.nextToken();
@@ -513,10 +512,9 @@ public class SubCommand {
         }
     }
 
-    private void parseAliases(String aliases) {
-        StringTokenizer st = new StringTokenizer(aliases, "@");
-        while (st.hasMoreTokens()) {
-            StringTokenizer t = new StringTokenizer(st.nextToken(), "|");
+    private void parseAliases(List<String> aliases) {
+        for (String al : aliases) {
+            StringTokenizer t = new StringTokenizer(al, "|");
             String head = t.nextToken();
             String alias = t.nextToken();
 

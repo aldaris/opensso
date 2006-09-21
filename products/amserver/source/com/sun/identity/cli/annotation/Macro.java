@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Macro.java,v 1.1 2006-05-31 21:49:47 veiming Exp $
+ * $Id: Macro.java,v 1.2 2006-09-21 18:29:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Macro {
-    String mandatoryOptions();
-    String optionalOptions();
-    String optionAliases();
+    String[] mandatoryOptions();
+    String[] optionalOptions();
+    String[] optionAliases();
 }

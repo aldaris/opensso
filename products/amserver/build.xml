@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2006-09-20 19:14:44 veiming Exp $
+   $Id: build.xml,v 1.23 2006-09-21 18:29:11 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -70,7 +70,6 @@
     <property name="built.samples.dir" location="${built.dir}/samples"/>
     <property name="war.dist.dir" location="${built.war.dir}/dist"/>
     <property name="samples.dist.dir" location="${built.samples.dir}/dist"/>
-    <property name="built.diff.dir" location="${built.dir}/diff"/>
     <property name="classes.dir" location="${built.dir}/classes"/>   
     <property name="built.res.dir" location="${built.dir}/resources"/>
     <property name="built.docs.dir" location="${built.dir}/docs"/>   
@@ -340,20 +339,6 @@
     <target name="clientsdk-clean">
         <ant antfile="${clientsdkbase.dir}/build.xml"
              inheritRefs="true" target="clean"/>
-    </target>
-
-    <target name="cvsdiff">
-        <mkdir dir="${built.diff.dir}" />
-        <cvs command="-q diff -cw" output="${built.diff.dir}/.diffs"/>
-        <java classname="com.sun.identity.tools.diffs.Diffs">
-            <classpath refid="build.class.path"/>
-            <arg value="${built.diff.dir}/.diffs"/>
-        </java>
-        <cvs command="-q stat" output="${built.diff.dir}/.stat"/>
-        <java classname="com.sun.identity.tools.diffs.Stat">
-            <classpath refid="build.class.path"/>
-            <arg value="${built.diff.dir}/.stat"/>
-        </java>
     </target>
 
     <target name="unittest" depends="build">

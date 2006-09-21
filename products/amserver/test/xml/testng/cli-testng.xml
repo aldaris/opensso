@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: cli-testng.xml,v 1.1 2006-09-21 00:00:02 veiming Exp $
+   $Id: cli-testng.xml,v 1.2 2006-09-21 18:29:18 veiming Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,7 +28,6 @@
 
 <suite name="OpenSSO_CLI" verbose="1">
     <test name="CLI Framework">
-        <parameter name="subschema" value="" />
         <groups>
             <run>
                 <include name="cli-framework" />

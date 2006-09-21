@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.2 2006-08-29 07:51:44 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.3 2006-09-21 18:29:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,14 +29,14 @@ import com.sun.identity.cli.annotation.DefinitionClassInfo;
 import com.sun.identity.cli.annotation.Macro;
 import com.sun.identity.cli.annotation.ResourceStrings;
 import com.sun.identity.cli.annotation.SubCommandInfo;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -128,16 +128,17 @@ public class CLIDefinitionGenerator {
                         "class=" + className + " field=" + fld.toString());
                 }
 
-                String mandatoryOptions = info.mandatoryOptions();
-                String optionalOptions = info.optionalOptions();
-                String optionAliases = info.optionAliases();
+                List<String> mandatoryOptions = toList(info.mandatoryOptions());
+                List<String> optionalOptions = toList(info.optionalOptions());
+                List<String> optionAliases = toList(info.optionAliases());
 
                 if ((info.macro() != null) && (info.macro().length() > 0)) {
                     Field fldMarco = clazz.getDeclaredField(info.macro());
                     Macro macroInfo =(Macro)fldMarco.getAnnotation(Macro.class);
-                    mandatoryOptions += "@" + macroInfo.mandatoryOptions();
-                    optionalOptions += "@" + macroInfo.optionalOptions();
-                    optionAliases += "@" + macroInfo.optionAliases();
+                    appendToList(mandatoryOptions, 
+                        macroInfo.mandatoryOptions());
+                    appendToList(optionalOptions, macroInfo.optionalOptions());
+                    appendToList(optionAliases, macroInfo.optionAliases());
                 }
                 
                 validateOption(mandatoryOptions);
@@ -151,18 +152,16 @@ public class CLIDefinitionGenerator {
                     mandatoryOptions, rbOut);
                 createResourceForOptions(resPrefix + "-",
                     optionalOptions, rbOut);
-                addResourceStrings(info.resourceStrings(), rbOut);
+                addResourceStrings(toList(info.resourceStrings()), rbOut);
             }
         }
     }
     
-    private static void validateOption(String options) {
-        StringTokenizer st = new StringTokenizer(options, "@");
-        while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            int idx = token.indexOf('|');
-            String longName = token.substring(0, idx);
-            String shortName = token.substring(idx+1, idx+2);
+    private static void validateOption(List<String> options) {
+        for (String option : options) {
+            int idx = option.indexOf('|');
+            String longName = option.substring(0, idx);
+            String shortName = option.substring(idx+1, idx+2);
 
             String test = (String)mapLongToShortOptionName.get(longName);
             if (test == null) {
@@ -175,27 +174,55 @@ public class CLIDefinitionGenerator {
         }
     }
 
-    private static void addResourceStrings(String res, PrintStream rbOut) {
-        StringTokenizer st = new StringTokenizer(res, "\n");
-        while (st.hasMoreTokens()) {
-            rbOut.println(st.nextToken());
+    private static void addResourceStrings(List<String> res, PrintStream rbOut){
+        for (String s : res) {
+            rbOut.println(s);
         }
     }
 
     private static void createResourceForOptions(
         String prefix,
-        String options,
+        List<String> options,
         PrintStream rbOut
     ) {
-        StringTokenizer st = new StringTokenizer(options, "@");
-        while (st.hasMoreTokens()) {
-            StringTokenizer t = new StringTokenizer(st.nextToken(), "|");
+        for (String option : options) {
+            StringTokenizer t = new StringTokenizer(option, "|");
             String opt = t.nextToken();
             String shortOpt = t.nextToken();
             String optionType = t.nextToken();
             String description = t.nextToken();
 
             rbOut.println(prefix + opt + "=" + description);
+        }
+    }
+    
+    /**
+     * Returns a list of string by adding string in an array to it.
+     *
+     * @param array Array of String.
+     * @return a list of string.
+     */
+    public static List toList(String[] array) {
+        List<String> list = new ArrayList<String>();
+        if ((array != null) && (array.length > 0)) {
+            for (int i = 0; i < array.length; i++) {
+                list.add(array[i]);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Adds string in an array to a list.
+     *
+     * @param list List of string where new string are to be added.
+     * @param array Array of String.
+     */
+    public static void appendToList(List<String> list, String[] array) {
+        if ((array != null) && (array.length > 0)) {
+            for (int i = 0; i < array.length; i++) {
+                list.add(array[i]);
+            }
         }
     }
 }
