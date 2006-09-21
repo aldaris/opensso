@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetServiceSchemaI18nKey.java,v 1.1 2006-05-31 21:50:07 veiming Exp $
+ * $Id: SetServiceSchemaI18nKey.java,v 1.2 2006-09-20 23:59:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ import java.util.logging.Level;
  * Sets service schema i18n key.
  */
 public class SetServiceSchemaI18nKey extends SchemaCommand {
-    private static final String ARGUMENT_I18N_KEY = "i18nkey";
+    static final String ARGUMENT_I18N_KEY = "i18nkey";
     
     /**
      * Services a Commandline Request.

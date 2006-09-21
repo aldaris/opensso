@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModifySubConfiguration.java,v 1.1 2006-05-31 21:50:03 veiming Exp $
+ * $Id: ModifySubConfiguration.java,v 1.2 2006-09-20 23:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,7 @@ import java.util.logging.Level;
  * Modifies sub configuration.
  */
 public class ModifySubConfiguration extends SchemaCommand {
-    private static final String ARGUMENT_OPERATION = "operation";
+    static final String ARGUMENT_OPERATION = "operation";
 
     /**
      * Services a Commandline Request.

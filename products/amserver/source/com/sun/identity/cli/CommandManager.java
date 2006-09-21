@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.2 2006-08-25 21:20:36 veiming Exp $
+ * $Id: CommandManager.java,v 1.3 2006-09-20 23:59:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,6 +155,9 @@ public class CommandManager {
         }
 
         Locale locale = (Locale)env.get(CLIConstants.ARGUMENT_LOCALE);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
         environment.put(CLIConstants.ARGUMENT_LOCALE, locale);
 
         try {

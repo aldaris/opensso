@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.2 2006-07-17 18:11:05 veiming Exp $
+ * $Id: AccessManager.java,v 1.3 2006-09-20 23:59:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,7 +135,7 @@ public class AccessManager {
         mandatoryOptions="servicename|s|s|Service Name.@schematype|t|s|Schema Type.@attributeschemafile|F|m|XML file containing attribute schema definition.",
         optionAliases="",
         macro="authentication",
-        optionalOptions="",
+        optionalOptions="subschemaname|c|s|Name of sub schema.",
         resourceStrings="attribute-schema-added=Attribute schema is added.\nadd-attribute-schema-failed=Attribute schema is not added.")
     private String add_attribute;
 
@@ -562,20 +562,20 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddSubSchema",
         description="Add sub schema.",
-        mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@subschemaname|c|s|Name of sub schema.@filename|F|s|Name of file that contains the schema",
+        mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@filename|F|s|Name of file that contains the schema",
         optionAliases="",
         macro="authentication",
-        optionalOptions="",
+        optionalOptions="@subschemaname|c|s|Name of sub schema.",
         resourceStrings="add-subschema-succeed=Sub Schema, {2} of type, {1} is added to service {0}.")
     private String add_sub_schema;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveSubSchema",
         description="Remove sub schema.",
-        mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@subschemaname|c|s|Name of parent sub schema.@subschemanames|a|m|Name(s) of sub schema to be removed.",
+        mandatoryOptions="servicename|s|s|Name of service.@schematype|t|s|Type of schema.@subschemanames|a|m|Name(s) of sub schema to be removed.",
         optionAliases="",
         macro="authentication",
-        optionalOptions="",
+        optionalOptions="@subschemaname|c|s|Name of parent sub schema.",
         resourceStrings="remove-subschema-succeed={3} of Sub Schema, {2} of type, {1} is removed from service {0}.")
     private String remove_sub_schema;
 

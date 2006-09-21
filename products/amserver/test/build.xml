@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-06 18:25:18 veiming Exp $
+   $Id: build.xml,v 1.2 2006-09-20 23:59:58 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,6 +49,15 @@
             <src path="${unittest.dir}/source"/>
             <classpath refid="build.class.path"/>
         </javac>
+
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${test.classes.dir}"/>
+            </classpath>
+            <arg value="${test.classes.dir}"/>
+            <arg value="com.sun.identity.cli.definition.MockCLI"/>
+        </java>
     </target>
 
     <target name="all" depends="build">

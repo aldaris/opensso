@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-09-07 19:48:13 veiming Exp $
+   $Id: build.xml,v 1.3 2006-09-21 00:00:02 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -56,6 +56,7 @@
             <arg value="-d"/>
             <arg value="${output.dir}"/>
             <arg value="${testng.dir}/idm-testng.xml"/>
+            <arg value="${testng.dir}/cli-testng.xml"/>
             <classpath refid="build.class.path"/>
         </java>
 

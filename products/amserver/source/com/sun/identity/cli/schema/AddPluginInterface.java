@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddPluginInterface.java,v 1.1 2006-05-31 21:49:59 veiming Exp $
+ * $Id: AddPluginInterface.java,v 1.2 2006-09-20 23:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,9 +41,9 @@ import java.util.logging.Level;
  * Adds plug-in interface to a service schema.
  */
 public class AddPluginInterface extends SchemaCommand {
-    private static final String ARGUMENT_I18N_KEY = "i18nkey";
-    private static final String ARGUMENT_PLUGIN_NAME = "pluginname";
-    private static final String ARGUMENT_INTERFACE_NAME = "interfacename";
+    static final String ARGUMENT_I18N_KEY = "i18nkey";
+    static final String ARGUMENT_PLUGIN_NAME = "pluginname";
+    static final String ARGUMENT_INTERFACE_NAME = "interfacename";
     
     /**
      * Services a Commandline Request.

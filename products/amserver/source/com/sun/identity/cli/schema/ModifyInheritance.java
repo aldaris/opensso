@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModifyInheritance.java,v 1.1 2006-05-31 21:50:03 veiming Exp $
+ * $Id: ModifyInheritance.java,v 1.2 2006-09-20 23:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ import java.util.logging.Level;
  * Modifies service schema inheritance value.
  */
 public class ModifyInheritance extends SchemaCommand {
-    private static final String ARGUMENT_INHERITANCE = "inheritance";
+    static final String ARGUMENT_INHERITANCE = "inheritance";
 
     /**
      * Services a Commandline Request.

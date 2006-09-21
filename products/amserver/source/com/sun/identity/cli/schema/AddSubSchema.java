@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubSchema.java,v 1.2 2006-07-17 18:11:08 veiming Exp $
+ * $Id: AddSubSchema.java,v 1.3 2006-09-20 23:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,7 @@ import java.util.logging.Level;
  * Adds sub configuration.
  */
 public class AddSubSchema extends SchemaCommand {
-    private final static String ARGUMENT_FILENAME = "filename";
+    final static String ARGUMENT_FILENAME = "filename";
 
     /**
      * Services a Commandline Request.
@@ -62,6 +62,10 @@ public class AddSubSchema extends SchemaCommand {
         String schemaType = getStringOptionValue(IArgument.SCHEMA_TYPE);
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
         String fileName = getStringOptionValue(ARGUMENT_FILENAME);
+        
+        if (subSchemaName == null) {
+            subSchemaName = "/";
+        }
 
         IOutput outputWriter = getOutputWriter();
         String[] params = {serviceName, schemaType, subSchemaName};

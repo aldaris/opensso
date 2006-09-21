@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaBooleanValues.java,v 1.1 2006-07-17 18:11:10 veiming Exp $
+ * $Id: SetAttributeSchemaBooleanValues.java,v 1.2 2006-09-20 23:59:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,10 +47,10 @@ import java.util.logging.Level;
  * Sets attribute choice values to attribute schema.
  */
 public class SetAttributeSchemaBooleanValues extends SchemaCommand {
-    private static final String ARGUMENT_TRUE_VALUE = "truevalue";
-    private static final String ARGUMENT_FALSE_VALUE = "falsevalue";
-    private static final String ARGUMENT_TRUE_I18N_KEY = "truei18nkey";
-    private static final String ARGUMENT_FALSE_I18N_KEY = "falsei18nkey";
+    static final String ARGUMENT_TRUE_VALUE = "truevalue";
+    static final String ARGUMENT_FALSE_VALUE = "falsevalue";
+    static final String ARGUMENT_TRUE_I18N_KEY = "truei18nkey";
+    static final String ARGUMENT_FALSE_I18N_KEY = "falsei18nkey";
 
     /**
      * Services a Commandline Request.

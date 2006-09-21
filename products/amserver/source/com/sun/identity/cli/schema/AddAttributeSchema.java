@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAttributeSchema.java,v 1.2 2006-07-17 18:11:08 veiming Exp $
+ * $Id: AddAttributeSchema.java,v 1.3 2006-09-20 23:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,7 @@ import java.util.logging.Level;
  * Adds attribute schema command.
  */
 public class AddAttributeSchema extends SchemaCommand {
-    private static final String ARGUMENT_SCHEMA_FILES = "attributeschemafile";
+    static final String ARGUMENT_SCHEMA_FILES = "attributeschemafile";
 
     /**
      * Services a Commandline Request.
