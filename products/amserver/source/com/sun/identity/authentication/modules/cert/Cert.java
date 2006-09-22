@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.2 2006-08-25 21:20:20 veiming Exp $
+ * $Id: Cert.java,v 1.3 2006-09-22 19:17:35 pbryan Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,8 +108,6 @@ public class Cert extends AMLoginModule {
     private String amAuthCert_chkCertInLDAP; 
     // attr to use in search for user cert in LDAP
     private String amAuthCert_chkAttrCertInLDAP = null;
-    // should the usertoken come from user's ldap server.
-    private String amAuthCert_ldapProfileID; 
     // this is what appears in the user selectable choice field.
     private String amAuthCert_emailAddrTag; 
     private int amAuthCert_serverPort =389;
@@ -211,8 +209,6 @@ public class Cert extends AMLoginModule {
                         amAuthCert, "noLDAPAttr", null);
                 }
             }
-            amAuthCert_ldapProfileID = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-cert-ldap-profile-id"); 
             String ocspChk = CollectionHelper.getMapAttr(
                 options, "iplanet-am-auth-cert-check-ocsp"); 
             ocspEnabled = (ocspChk != null && ocspChk.equalsIgnoreCase("true"));
@@ -324,7 +320,6 @@ public class Cert extends AMLoginModule {
                     "\n\tchkCertInLDAP=" + amAuthCert_chkCertInLDAP +
                     "\n\tchkAttrCertInLDAP=" + amAuthCert_chkAttrCertInLDAP +
                     "\n\temailAddr=" + amAuthCert_emailAddrTag +
-                    "\n\tldapProfileID=" + amAuthCert_ldapProfileID +
                     "\n\tgw-cert-auth-enabled="+portal_gw_cert_auth_enabled +
                     "\n\tclient=" + client);
             }
@@ -782,7 +777,6 @@ public class Cert extends AMLoginModule {
         amAuthCert_uriParamsCRL = null;
         amAuthCert_chkCertInLDAP = null;
         amAuthCert_chkAttrCertInLDAP = null;
-        amAuthCert_ldapProfileID = null;
         amAuthCert_emailAddrTag = null;
         portalGateways = null;
     }
