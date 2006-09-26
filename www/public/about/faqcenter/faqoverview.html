@@ -17,10 +17,12 @@
 <li><a href="#license">What license is used for the OpenSSO code base?</a></li>
 <li><a href="#cost">Is there any cost for using the OpenSSO source code?</a></li>
 <li><a href="#register">Do I need to register to use the OpenSSO source code I downloaded from the site?</a></li>
+<li><a href="#related">How are OpenSSO, Sun Java System Access Manager and Sun Java System Federation Manager related?</a></li>
 <li><a href="#amversion">What version of Sun Java System Access Manager has been open sourced?</a></li>
 <li><a href="#amname">If I build the code for Access Manager, can I call it Access Manager?</a></li>
 <li><a href="#participate">How do I participate in the OpenSSO project?</a></li>
 <li><a href="#start">Where do I start?</a></li>
+<li><a href="#support">Can I get support on OpenSSO?</a></li>
 </ol>
 </font></td></tr>
 <tr><td><p><b>Q:<b><a name="what_is"></a> What is OpenSSO?</b></b></p>
@@ -107,11 +109,14 @@
 <p>You do not need to register as a user on the java.net site in order to download the source code for OpenSSO. Nor is there a need to register specifically as a member of the OpenSSO project.</p></td></tr>
 
 
+<tr><td><p><b>Q:<b><a name="related"></a> How are OpenSSO, Sun Java System Access Manager and Sun Java System Federation Manager related?</b></b></p>
+
+<p>OpenSSO is based on the Access Manager 7.0 code base. There are some changes (for example, Access Manager contains some third-party source code which we cannot redistribute) but we have worked to minimize these. The next versions of both Federation Manager and Access Manager will be built from the OpenSSO source (just as Sun Java System Application Server is built from the Glassfish source). When Sun decides that OpenSSO contains the features we want to use in the next Access Manager/Federation Manager product release, we will branch the code and stabilize the release branch - all in public. New feature development can and will continue on the trunk and fixes in the Sun release branch will be copied back to the OpenSSO trunk.</p></td></tr>
+
 <tr><td><p><b>Q:<b><a name="amversion"></a> What version of Sun Java System Access Manager has been open sourced?</b></b></p>
 
 <p>Open sourced components are snapshots of the latest version of Access Manager under development, roughly corresponding to version 7.1. At this time, there are no plans to open source the code for previous versions of Access Manager.
 </p></td></tr>
-
 
 <tr><td><p><b>Q:<b><a name="amname"></a> If I build the code for Access Manager, can I call it Access Manager?</b></b></p>
 
@@ -141,10 +146,13 @@ See the <a href="https://opensso.dev.java.net/public/about/governance/index.html
 
 </p></td></tr>
 
-
 <tr><td><p><b>Q:<b><a name="start"></a> Where do I start?</b></b></p>
 
 <p>The best place to start is the <a href="https://opensso.dev.java.net/">OpenSSO home page</a> where you can find links to the nightly builds, discussion groups, documentation, downloads, source code, white papers, and more. You can also find information in the <a href="index.html">FAQ Center</a>.</p></td></tr>
+
+<tr><td><p><b>Q:<b><a name="support"></a> Can I get support on OpenSSO?</b></b></p>
+
+<p>The short answer is <b>No</b>. Sun will support Access Manager and Federation Manager, which will be built from the OpenSSO source. However, never say never. If there is sufficient demand, we will consider new support offerings.</p></td></tr>
 
 </table>
 
