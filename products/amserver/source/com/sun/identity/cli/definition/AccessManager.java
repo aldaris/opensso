@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.4 2006-09-21 18:29:15 veiming Exp $
+ * $Id: AccessManager.java,v 1.5 2006-09-26 20:27:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,9 @@ public class AccessManager {
     private String product;
 
     @ResourceStrings(
-        string="resourcebundle-not-found=Resource Bundle not found.\nmissing-attributevalues=attributevalues and datafile options are missing.\nmissing-choicevalues=choicevalues and datafile options are missing."
+        string={"resourcebundle-not-found=Resource Bundle not found.",
+        "missing-attributevalues=attributevalues and datafile options are missing.",
+        "missing-choicevalues=choicevalues and datafile options are missing."}
     )
     private String resourcestrings;
 

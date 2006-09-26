@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmDeletePolicy.java,v 1.1 2006-05-31 21:49:56 veiming Exp $
+ * $Id: RealmDeletePolicy.java,v 1.2 2006-09-26 20:27:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,7 @@ import java.util.logging.Level;
  * Deletes policies in a realm.
  */
 public class RealmDeletePolicy extends AuthenticatedCommand {
-    private static final String ARGUMENT_POLICY_NAMES = "policynames";
+    static final String ARGUMENT_POLICY_NAMES = "policynames";
     /**
      * Services a Commandline Request.
      *

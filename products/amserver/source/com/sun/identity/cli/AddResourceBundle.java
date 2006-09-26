@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddResourceBundle.java,v 1.2 2006-07-17 18:10:56 veiming Exp $
+ * $Id: AddResourceBundle.java,v 1.3 2006-09-26 20:27:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,7 @@ import java.util.logging.Level;
  * made available to different hosts.
  */
 public class AddResourceBundle extends AuthenticatedCommand {
-    private static final String ARGUMENT_RESOURCE_BUNDLE_FILE_NAME =
+    static final String ARGUMENT_RESOURCE_BUNDLE_FILE_NAME =
         "bundlefilename";
 
     /**

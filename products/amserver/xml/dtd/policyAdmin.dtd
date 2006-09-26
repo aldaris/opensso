@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: policyAdmin.dtd,v 1.1 2006-08-29 07:52:17 veiming Exp $
+   $Id: policyAdmin.dtd,v 1.2 2006-09-26 20:27:32 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,7 +27,7 @@
      policies via commandline interface tools.
 
      Unique Declaration name for DOCTYPE tag:
-     "Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD"
+     "Sun Java System Access Manager 8.0 Policy Administration DTD"
 -->
 
 <!-- Policies is a collection of Policy element -->

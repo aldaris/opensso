@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: cli-testng.xml,v 1.2 2006-09-21 18:29:18 veiming Exp $
+   $Id: cli-testng.xml,v 1.3 2006-09-26 20:27:32 veiming Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,6 +37,35 @@
             <class name="com.sun.identity.cli.CLIFrameworkTest"/>
         </classes>
     </test>
+    <test name="CLI Resource Bundle">
+        <parameter name="bundle-name" value="testbundle" />
+        <parameter name="bundle-file-name" 
+            value="mock/cli/testbundle.properties" />
+        <parameter name="locale" value="" />
+        <groups>
+            <run>
+                <include name="cli-resource-bundle" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.cli.ResourceBundleTest"/>
+        </classes>
+    </test>
+    <test name="CLI JP Resource Bundle">
+        <parameter name="bundle-name" value="testbundle" />
+        <parameter name="bundle-file-name" 
+            value="mock/cli/testbundle_jp.properties" />
+        <parameter name="locale" value="jp" />
+        <groups>
+            <run>
+                <include name="cli-resource-bundle" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.cli.ResourceBundleTest"/>
+        </classes>
+    </test>
+
     <test name="CLI Schema">
         <parameter name="subschema" value="" />
         <groups>
@@ -59,6 +88,21 @@
         </groups>
         <classes>
             <class name="com.sun.identity.cli.schema.SchemaTest"/>
+        </classes>
+    </test>
+    <test name="CLI Realm">
+        <parameter name="realm" value="/clitest" />
+        <parameter name="parent-realm" value="/" />
+        <parameter name="service-name" value="iPlanetAMSessionService" />
+        <parameter name="attribute-value" value="iplanet-am-session-max-session-time=150" />
+        <parameter name="modify-attribute-value" value="iplanet-am-session-max-session-time=100" />
+        <groups>
+            <run>
+                <include name="cli-realm" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.cli.realm.RealmTest"/>
         </classes>
     </test>
 </suite>

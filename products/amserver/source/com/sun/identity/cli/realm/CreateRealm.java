@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealm.java,v 1.1 2006-05-31 21:49:54 veiming Exp $
+ * $Id: CreateRealm.java,v 1.2 2006-09-26 20:27:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,6 @@ public class CreateRealm extends AuthenticatedCommand {
         ldapLogin();
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
-        String dataFile = getStringOptionValue(IArgument.DATA_FILE);
 
         String parentRealm = RealmUtils.getParentRealm(realm);
         String childRealm = RealmUtils.getChildRealm(realm);
