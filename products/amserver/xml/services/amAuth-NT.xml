@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth-NT.xml,v 1.1 2006-08-29 07:52:25 veiming Exp $
+    $Id: amAuth-NT.xml,v 1.2 2006-09-26 07:17:53 bigfatrat Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -295,6 +295,7 @@
                     <DefaultValues>
                         <Value>User</Value>
                     </DefaultValues>
+		</AttributeSchema>
             </Organization>
         </Schema>
         <Configuration>
