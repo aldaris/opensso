@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthCert.xml,v 1.2 2006-09-22 19:17:35 pbryan Exp $
+    $Id: amAuthCert.xml,v 1.3 2006-09-26 07:03:24 bigfatrat Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -273,7 +273,6 @@
                         type="single"
                         syntax="password"
                         i18nKey="a108">
-                    </AttributeSchema>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-cert-use-ssl"
                         type="single"
