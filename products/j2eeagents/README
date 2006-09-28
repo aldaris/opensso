@@ -1,0 +1,173 @@
+------------------------------------------------------------------------------
+README file for Open Web Single Sign-On J2EE Agent
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2006-09-28 22:16:41 huacui Exp $
+
+Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+------------------------------------------------------------------------------
+
+%% Contents:
+    %% 1. Build requirements
+    %% 2. Library dependencies
+        %% 2.1 Obtaining OpenSSO Agents Common Installer libraries
+        %% 2.2 Obtaining OpenSSO ClientSDK library
+        %% 2.3 Obtaining J2EE Container specific libraries
+    %% 3. Building the workspace
+        %% 3.1 build target
+        %% 3.2 clean target
+        %% 3.3 usage target
+        %% 3.4 appserver_v81 target
+
+
+%% 1. Build requirements
+
+The OpenSSO J2EE Agent workspace uses Apache Ant as the build tool. 
+The build scripts in this workspace use features not present in 
+releases of Ant prior to 1.6.5.  Thus, in order to build this workspace 
+you must have Ant version 1.6.5 or above installed and available in 
+your system path.
+
+The sources in this workspace should be compiled using JDK 5.0 with 
+the source and target levels set to "1.4". In order to allow this, you 
+must ensure that JDK 5.0 is present in your system path and the JAVA_HOME 
+environment variable is setup correctly pointing to its location.
+
+
+%% 2. Library dependencies
+
+The OpenSSO J2EE Agent sources depend upon a few third-party libraries 
+that are not included as a part of the workspace and must be obtained 
+directly from the library vendor or distributor. Some of these libraries 
+are available in source distribution form and must be built locally 
+before they can be used. 
+
+The libraries needed for compiling OpenSSO J2EE Agent sources are:
+
+   - OpenSSO Agents Common Installer libraries
+   - OpenSSO ClientSDK library
+   - J2EE Container specific libraries
+
+Once these libraries are available, they should be placed under the 
+extlib directory of the specific J2EE Container in workspace. For example,
+the libraries for Sun Application Server 8.1/8.2 agent should be placed
+under appserver/v81/extlib directory.  Any library placed in this directory 
+is automatically included in the classpath during the compilation phase of
+the build process.
+
+The following subsections briefly describe how these libraries may be 
+obtained. These instructions are provided for your convenience only and
+are not intended to replace or invalidate the procedures/guidelines set
+by the library vendor or distributor for obtaining those libraries. Before
+you follow these instructions, you must agree to abide by any terms and
+conditions set forth by the library vendor or distributor. In case any of
+these instructions are in contradiction to such terms or conditions, you 
+must disregard those instructions and instead follow the ones provided by
+the library vendor or distributor in accordance with their terms and 
+conditions.
+
+%% 2.1 Obtaining OpenSSO Agents Common Installer libraries
+
+The OpenSSO Agents Common installer libraries install-tools.jar and 
+install-tools-launcher.jar can be built from the OpenSSO Agents Common 
+Installer workspace.
+
+Follow these steps to obtain the libraries:
+2.1.1 Check out the OpenSSO Agents Common installer workspace.
+2.1.2 Set JAVA_HOME to the location of JDK 1.5.
+2.1.3 At the root of the workspace, run: ant
+2.1.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar 
+from the dist directory of the OpenSSO Agents Common installer workspace
+into extlib directory of the specific J2EE Container directory in this 
+workspace. For Sun Application Server 8.1/8.2, the directory is appserver/v81/extlib.
+
+%% 2.2 Obtaining OpenSSO ClientSDK library
+
+2.2.1 The OpenSSO ClientSDK library amclientsdk.jar can be obtained from 
+the OpenSSO nightly build.
+
+Follow these steps to obtain the library:
+2.2.1.1 download amclientsdk.jar from:
+    http://download.java.net/general/opensso/nightly/latest/
+2.2.1.2 Copy the downloaded amclientsdk.jar into extlib directory of 
+the specific J2EE Container directory in this workspace. For Sun Application 
+Server 8.1/8.2, the directory is appserver/v81/extlib.
+
+2.2.2 Alternatively the OpenSSO ClientSDK library amclientsdk.jar can be
+built from the OpenSSO workspace.
+
+Follow these steps to obtain the library:
+2.2.2.1 Check out the OpenSSO workspace.
+2.2.2.2 Set JAVA_HOME to the location of JDK 1.5.
+2.2.2.3 At the root of the workspace, run: ant clientsdk
+2.2.2.4 Copy the library amclientsdk.jar from the built/clientsdk/dist of
+the OpenSSO workspace into extlib directory of the specific J2EE Container
+directory in this workspace. For Sun Application Server 8.1/8.2, the 
+directory is appserver/v81/extlib.
+
+%% 2.3 Obtaining J2EE container specific libraries
+The J2EE Container specific libraries can be obtained from the J2EE 
+container installation.
+
+2.3.1 Obtaining libraries for Sun Application Server 8.1/8.2
+Follow these steps to obtain the libraries for Sun Application Server 8.1 or 8.2:
+2.3.1.1 Install Sun Application Server 8.1 or 8.2 
+2.3.1.2 Copy the appserv-ext.jar, appserv-rt.jar, and j2ee.jar from the 
+lib directory of the server installation into the appserver/v81/extlib 
+directory of this workspace.
+
+
+%% 3. Building the workspace
+
+The workspace build system offers several build targets. You can view the
+available targets by issuing the ant command from the root of the
+workspace. The default target that is executed is the usage target which
+displays a brief description about the other targets. Currently the main
+targets available in the workspace are:
+   
+     - build         : compiles the sources
+     - clean         : deletes the generated files
+     - usage         : displays this usage message
+     - appserver_v81 : build the Sun Appserver 8.1/8.2 agent
+
+%% 3.1 build target
+
+The build target compiles the common sources
+
+
+%% 3.2 clean target
+
+The clean target removes all the build output directories.
+
+
+%% 3.3 usage target
+
+Displays a list of available targets along with a brief description of
+each available target for quick reference.
+
+%% 3.4 appserver_v81 target
+
+The appserver_v81 target first invokes the build target and then 
+delegates the further processing to the build.xml files present under 
+the appserver and appserver/v81 directories.  Upon successful execution,
+a zip file appserver_v81_agent.zip will be created under built/appserver_v81/dist 
+directory, and it can be used later to install the agent.
+
