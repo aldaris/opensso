@@ -1,0 +1,176 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-09-28 22:33:46 huacui Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="open-source-j2ee-agents" default="usage">
+                
+    <description>Open Web Single Sign-On J2EE Agents</description>
+
+    <property name="containername" value="appserver"/>
+    <property name="containerversion" value="v81"/>
+
+    <!-- enforce invocation via container level build only -->
+    <fail message="*** Set the name and version of J2EE container first ***">
+        <condition>
+            <or>
+                <not><isset property="containername"/></not>
+                <not><isset property="containerversion"/></not>
+            </or>
+        </condition>
+    </fail>
+
+
+    <!-- global environment -->
+    <!-- top level directory structure -->
+    <property name="src.dir" location="agentsdk/source"/>
+    <property name="extlib.dir" location="${containername}/${containerversion}/extlib"/>
+
+   
+    <!-- generated directory structure -->
+    <property name="built.dir" location="built"/>
+    <property name="classes.dir" location="${built.dir}/${containername}_${containerversion}/classes"/>   
+    <property name="lib.dir" location="${built.dir}/${containername}_${containerversion}/lib"/> 
+    <property name="archive.dir" location="${built.dir}/${containername}_${containerversion}/archive"/>   
+    <property name="dist.dir" location="${built.dir}/${containername}_${containerversion}/dist"/>   
+    <property name="scratch.dir" location="${built.dir}/${containername}_${containerversion}/scratch"/>   
+    <property name="j2ee_agents.dir" location="${scratch.dir}/j2ee_agents"/>   
+    <property name="j2ee_agent.dir" location="${j2ee_agents.dir}/${containername}_${containerversion}_agent"/>   
+    <property name="j2ee_agent.bin.dir" location="${j2ee_agent.dir}/bin"/>   
+    <property name="j2ee_agent.config.dir" location="${j2ee_agent.dir}/config"/>   
+    <property name="j2ee_agent.data.dir" location="${j2ee_agent.dir}/data"/>   
+    <property name="j2ee_agent.etc.dir" location="${j2ee_agent.dir}/etc"/>   
+    <property name="j2ee_agent.jce.dir" location="${j2ee_agent.dir}/jce"/>   
+    <property name="j2ee_agent.jsse.dir" location="${j2ee_agent.dir}/jsse"/>   
+    <property name="j2ee_agent.lib.dir" location="${j2ee_agent.dir}/lib"/>   
+    <property name="j2ee_agent.locale.dir" location="${j2ee_agent.dir}/locale"/>   
+    <property name="j2ee_agent.logs.dir" location="${j2ee_agent.dir}/logs"/>   
+    <property name="j2ee_agent.sampleapp.dir" location="${j2ee_agent.dir}/sampleapp"/>   
+
+
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${classes.dir}"/>
+        <fileset dir="${extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="build" depends="preparebuild">
+        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${src.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${built.dir}"/>
+        <mkdir dir="${built.dir}/${containername}_${containerversion}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${archive.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${scratch.dir}"/>
+        <mkdir dir="${j2ee_agents.dir}"/>
+        <mkdir dir="${j2ee_agent.dir}"/>
+        <mkdir dir="${j2ee_agent.bin.dir}"/>
+        <mkdir dir="${j2ee_agent.config.dir}"/>
+        <mkdir dir="${j2ee_agent.data.dir}"/>
+        <mkdir dir="${j2ee_agent.etc.dir}"/>
+        <mkdir dir="${j2ee_agent.jce.dir}"/>
+        <mkdir dir="${j2ee_agent.jsse.dir}"/>
+        <mkdir dir="${j2ee_agent.lib.dir}"/>
+        <mkdir dir="${j2ee_agent.locale.dir}"/>
+        <mkdir dir="${j2ee_agent.logs.dir}"/>
+        <mkdir dir="${j2ee_agent.sampleapp.dir}"/>
+    </target>
+
+    <target name="scratch">
+        <copy todir="${j2ee_agent.dir}">
+            <fileset dir="agentsdk/legal">
+                <include name="license.txt"/>
+                <include name="README.TXT"/>
+            </fileset>
+        </copy>
+        <copy todir="${j2ee_agent.bin.dir}">
+            <fileset dir="agentsdk/scripts">
+                <include name="agentadmin"/>
+                <include name="agentadmin.bat"/>
+            </fileset>
+        </copy>
+        <copy todir="${j2ee_agent.locale.dir}">
+            <fileset dir="agentsdk/resources">
+                <include name="**/*.txt"/>
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean">
+        <delete dir="${j2ee_agent.bin.dir}"/>
+        <delete dir="${j2ee_agent.config.dir}"/>
+        <delete dir="${j2ee_agent.data.dir}"/>
+        <delete dir="${j2ee_agent.etc.dir}"/>
+        <delete dir="${j2ee_agent.jce.dir}"/>
+        <delete dir="${j2ee_agent.jsse.dir}"/>
+        <delete dir="${j2ee_agent.lib.dir}"/>
+        <delete dir="${j2ee_agent.locale.dir}"/>
+        <delete dir="${j2ee_agent.logs.dir}"/>
+        <delete dir="${j2ee_agent.sampleapp.dir}"/>
+        <delete dir="${j2ee_agent.dir}"/>
+        <delete dir="${j2ee_agents.dir}"/>
+        <delete dir="${scratch.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${archive.dir}"/>
+        <delete dir="${lib.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete dir="${built.dir}/${containername}_${containerversion}"/>
+        <delete dir="${built.dir}"/>
+    </target>
+
+    <target name="appserver_v81" depends="build,scratch">
+        <echo message="Dispatch to ${containername}_${containerversion}"/>
+        <ant antfile="${containername}/build.xml" target="${containerversion}" inheritRefs="true"/>
+    </target>
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available for J2EE Agents:"/>
+        <echo message=" "/>
+        <echo message=" build      : compiles the sources"/>
+        <echo message=" appserver_v81   : build the Sun Appserver 8.1/8.2 agent"/>
+        <echo message=" clean      : deletes the generated files"/>
+        <echo message=" usage      : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+
+</project>
