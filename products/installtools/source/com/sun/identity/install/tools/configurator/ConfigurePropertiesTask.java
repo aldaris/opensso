@@ -1,0 +1,124 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: ConfigurePropertiesTask.java,v 1.1 2006-09-28 07:37:20 rarcot Exp $
+ *
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.install.tools.configurator;
+
+import java.io.File;
+import java.util.Map;
+
+import com.sun.identity.install.tools.util.ConfigUtil;
+import com.sun.identity.install.tools.util.Debug;
+import com.sun.identity.install.tools.util.LocalizedMessage;
+import com.sun.identity.install.tools.util.ReplaceTokens;
+
+public class ConfigurePropertiesTask implements ITask, InstallConstants {
+
+    public boolean execute(String name, IStateAccess stateAccess, 
+            Map properties) throws InstallException {
+        boolean status = false;
+
+        String configFile = ConfigUtil.getConfigDirPath()
+                + FILE_SEP
+                + (String) properties.get(
+                        STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY);
+        String instanceConfigFile = getInstanceConfigFile(stateAccess,
+                properties);
+
+        Debug.log("ConfigurePropertiesTask.execute() - Generating a tag "
+                + "swapped '" + instanceConfigFile + "' using file '"
+                + configFile);
+
+        try {
+            Map tokens = stateAccess.getData();
+            ReplaceTokens filter = new ReplaceTokens(configFile,
+                    instanceConfigFile, tokens);
+            filter.tagSwapAndCopyFile();
+            // Copy the Config File location to the state
+            stateAccess.put(STR_CONFIG_FILE_PATH_TAG, instanceConfigFile);
+            status = true;
+        } catch (Exception e) {
+            Debug.log("ConfigurePropertiesTask.execute() - Exception "
+                    + "occurred while tag swapping properties. ", e);
+        }
+
+        return status;
+    }
+
+    public LocalizedMessage getExecutionMessage(IStateAccess stateAccess,
+            Map properties) {
+        String productConfigFileName = (String) properties
+                .get(STR_PRODUCT_CONFIG_FILENAME_KEY);
+        Object[] args = { productConfigFileName, stateAccess.getInstanceName() 
+                };
+        LocalizedMessage message = LocalizedMessage.get(
+                LOC_TSK_MSG_CONFIGURE_PRODUCT_PROPS_EXECUTE, args);
+        return message;
+    }
+
+    public LocalizedMessage getRollBackMessage(IStateAccess stateAccess,
+            Map properties) {
+        String productConfigFileName = (String) properties
+                .get(STR_PRODUCT_CONFIG_FILENAME_KEY);
+        Object[] args = { productConfigFileName, stateAccess.getInstanceName() 
+                };
+        LocalizedMessage message = LocalizedMessage.get(
+                LOC_TSK_MSG_CONFIGURE_PRODUCT_PROPS_ROLLBACK, args);
+        return message;
+    }
+
+    public boolean rollBack(String name, IStateAccess stateAccess,
+            Map properties) throws InstallException {
+        String instanceConfigFile = getInstanceConfigFile(stateAccess,
+                properties);
+        File file = new File(instanceConfigFile);
+        boolean status = file.delete();
+
+        String printStatus = (status) ? "Successful." : "FAILED.";
+        Debug.log("ConfigurePropertiesTask.rollBack() - Deleting file '"
+                + instanceConfigFile + "'. " + printStatus);
+
+        return status;
+    }
+
+    private String getInstanceConfigFile(IStateAccess stateAccess,
+            Map properties) {
+        return (String) stateAccess.get(STR_CONFIG_DIR_PREFIX_TAG) + FILE_SEP
+                + (String) properties.get(STR_PRODUCT_CONFIG_FILENAME_KEY);
+    }
+
+    public static final String LOC_DR_ERR_TAG_SWAP_CONFIG = 
+        "DR_ERR_TAG_SWAP_CONFIG";
+
+    public static final String STR_PRODUCT_CONFIG_FILENAME_TEMPLATE_KEY = 
+        "CONFIG_FILENAME_TEMPLATE";
+
+    public static final String STR_PRODUCT_CONFIG_FILENAME_KEY = 
+        "CONFIG_FILENAME";
+
+    public static final String LOC_TSK_MSG_CONFIGURE_PRODUCT_PROPS_EXECUTE = 
+        "TSK_MSG_CONFIGURE_PRODUCT_PROPS_EXECUTE";
+
+    public static final String LOC_TSK_MSG_CONFIGURE_PRODUCT_PROPS_ROLLBACK = 
+        "TSK_MSG_CONFIGURE_PRODUCT_PROPS_ROLLBACK";
+}

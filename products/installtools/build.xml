@@ -1,0 +1,130 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-09-28 07:37:14 rarcot Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="OpenSSO-Install-Tools" default="all">
+
+	<description>Open Web Single Sign-On Install Tools Library</description>
+	
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>	
+	
+	<!-- directory related properties -->
+	<property name="installtools.source.dir" value="source"/>
+	<property name="installtools.built.dir" value="built"/>
+	<property name="installtools.classes.dir" 
+		value="${installtools.built.dir}/classes"/>
+	<property name="installtools.dist.dir" 
+		value="${installtools.built.dir}/dist"/>
+	
+	<!-- include/exclude file properties -->
+	<property name="installtools.launcher.classes" 
+		value="com/sun/identity/install/tools/launch/*.class"/>
+    <property name="installtools.launcher.dir" 
+        value="com/sun/identity/install/tools/launch"/>		
+	
+	<!-- source fileset for launcher class -->
+	<fileset dir="${installtools.classes.dir}">
+		<patternset id="installtool-classes">
+			<exclude name="${installtools.launcher.classes}"/>
+            <exclude name="${installtools.launcher.dir}"/> 
+		</patternset>
+	</fileset>
+	
+	<fileset dir="${installtools.classes.dir}">
+		<patternset id="installtool-launcher-classes">
+			<include name="${installtools.launcher.classes}"/>		
+		</patternset>
+	</fileset>
+
+    <!-- all the targets start from here -->
+    <target name="all" depends="build">
+        <jar destfile="${installtools.dist.dir}/opensso-installtools.jar">
+            <manifest>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>   
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>      
+            <fileset dir="${installtools.classes.dir}">
+            	<patternset refid="installtool-classes"/>
+        	</fileset>         
+        </jar>
+    	
+        <jar destfile=
+        	"${installtools.dist.dir}/opensso-installtools-launcher.jar">
+            <manifest>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>   
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>      
+            <fileset dir="${installtools.classes.dir}">
+            	<patternset refid="installtool-launcher-classes"/>
+        	</fileset>
+        </jar>
+        <checksum file="${installtools.dist.dir}/opensso-installtools.jar"
+            algorithm="SHA" fileext=".sha" />
+        <checksum 
+        	file="${installtools.dist.dir}/opensso-installtools-launcher.jar"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="build" depends="preparebuild">
+        <javac destdir="${installtools.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${installtools.source.dir}"/>
+            <compilerarg value="-Xlint:deprecation" />
+        </javac>
+    </target>
+
+    <target name="preparebuild">    	
+        <mkdir dir="${installtools.built.dir}"/>
+        <mkdir dir="${installtools.classes.dir}"/>
+        <mkdir dir="${installtools.dist.dir}"/>
+    </target>
+
+    <target name="clean">    	
+        <delete dir="${installtools.dist.dir}"/>
+        <delete dir="${installtools.classes.dir}"/>
+        <delete dir="${installtools.built.dir}"/>
+    </target>					
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available for Install Tools:"/>
+        <echo message=" "/>
+        <echo message=" all   : compiles the sources and creates the jar files"/>
+        <echo message=" build : compiles the sources"/>
+        <echo message=" clean : deletes the generated files"/>
+        <echo message=" usage : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+
+</project>
