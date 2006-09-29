@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+ Use is subject to license terms.
+-->
+
+<application version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+
+    <description> Sun Java System Access Manager J2EE Policy Agent Sample Application </description>
+    <display-name>SampleApplication</display-name>
+
+    <module id="EjbModule_agentsample">
+        <ejb>agentejb.jar</ejb>
+    </module>
+   
+    <module id="WebModule_TestSuite">
+        <web>
+            <web-uri>agentservlets.war</web-uri>
+            <context-root>agentsample</context-root>
+        </web>
+    </module>
+   
+    <security-role id="SR_MANAGER_ROLE">
+        <role-name>MANAGER_ROLE</role-name>
+    </security-role>
+   
+    <security-role id="SR_EMPLOYEE_ROLE">
+        <role-name>EMPLOYEE_ROLE</role-name>
+    </security-role>  
+
+    <security-role id="SR_ALL_ROLE">
+        <role-name>ALL_ROLE</role-name>
+    </security-role>
+
+</application>

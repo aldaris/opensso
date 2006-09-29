@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ $Id: ejb-jar.xml,v 1.1 2006-09-29 00:26:19 huacui Exp $
+
+ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
+ Use is subject to license terms.
+-->
+
+<ejb-jar version="2.1" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
+
+    <enterprise-beans>
+        <session id="Session_ProtectedEJB">
+            <ejb-name>ProtectedEJB</ejb-name>
+            <home>com.sun.identity.agents.sample.ProtectedEJBHome</home>
+            <remote>com.sun.identity.agents.sample.ProtectedEJB</remote>
+            <ejb-class>com.sun.identity.agents.sample.ProtectedEJBImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+        <session id="Session_SecurityAwareEJB">
+            <ejb-name>SecurityAwareEJB</ejb-name>
+            <home>com.sun.identity.agents.sample.SecurityAwareEJBHome</home>
+            <remote>com.sun.identity.agents.sample.SecurityAwareEJB</remote>
+            <ejb-class>com.sun.identity.agents.sample.SecurityAwareEJBImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <security-role-ref>
+                <role-name>MANAGER_ROLE</role-name>
+                <role-link>MANAGER_ROLE</role-link>
+            </security-role-ref>
+            <security-role-ref>
+                <role-name>EMPLOYEE_ROLE</role-name>
+                <role-link>EMPLOYEE_ROLE</role-link>
+            </security-role-ref>
+        </session>
+    </enterprise-beans>
+
+    <assembly-descriptor>      
+        <security-role id="SR_MANAGER_ROLE">
+            <role-name>MANAGER_ROLE</role-name>
+        </security-role>
+        <security-role id="SR_EMPLOYEE_ROLE">
+            <role-name>EMPLOYEE_ROLE</role-name>
+        </security-role>
+        <method-permission>
+            <role-name>EMPLOYEE_ROLE</role-name>
+            <method>
+                <ejb-name>ProtectedEJB</ejb-name>
+                <method-name>*</method-name>
+            </method>
+        </method-permission>
+    </assembly-descriptor>
+</ejb-jar>

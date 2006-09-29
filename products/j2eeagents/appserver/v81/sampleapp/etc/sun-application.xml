@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ $Id: sun-application.xml,v 1.1 2006-09-29 00:26:24 huacui Exp $
+
+ Copyright (c) 2004 Sun Microsystems, Inc. All rights reserved.
+ Use is subject to license terms.
+-->
+
+<!DOCTYPE sun-application PUBLIC '-//Sun Microsystems, Inc.//DTD Application Server 8.1 J2EE Application 1.4//EN' 'http://www.sun.com/software/appserver/dtds/sun-application_1_4-0.dtd'> 
+
+<sun-application>
+
+    <security-role-mapping>
+        <role-name>MANAGER_ROLE</role-name>
+        <group-name>id=manager,ou=role,dc=opensso,dc=java,dc=net</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>EMPLOYEE_ROLE</role-name>
+        <group-name>id=employee,ou=role,dc=opensso,dc=java,dc=net</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ALL_ROLE</role-name>
+        <group-name>everyone</group-name>
+    </security-role-mapping>
+
+</sun-application>
+

@@ -1,0 +1,109 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-09-29 00:13:26 huacui Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="open-source-j2ee-agents-appserver-v81" default="build">
+                
+    <description>Open Web Single Sign-On AppServer 8.1 J2EE Agent</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** J2EE Agent may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="containername"/></not>
+                <not><isset property="containerversion"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <property name="appserver.v81.src.dir" location="${containername}/${containerversion}/source"/>
+
+    <target name="build">
+        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${appserver.v81.src.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
+        <copy todir="${classes.dir}">
+            <fileset dir="${containername}/${containerversion}">
+                <include name=".version"/>
+            </fileset>
+        </copy>
+
+        <jar destfile="${archive.dir}/agent.jar" basedir="${classes.dir}"/>
+        <copy todir="${lib.dir}">
+            <fileset dir="${extlib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${j2ee_agent.config.dir}">
+            <fileset dir="${containername}/${containerversion}/config">
+                <include name="AMAgent.template"/>
+                <include name="AMToolsConfig.properties"/>
+                <include name="AMAgentLogConfig.properties"/>
+            </fileset>
+            <fileset dir="${containername}/${containerversion}/xml">
+                <include name="configure.xml"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${j2ee_agent.locale.dir}">
+            <fileset dir="${containername}/${containerversion}/resources">
+                <include name="as81Tools.properties"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${j2ee_agent.etc.dir}">
+            <fileset dir="${containername}/${containerversion}/etc">
+                <include name="agentapp.war"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${j2ee_agent.lib.dir}">
+            <fileset dir="${containername}/${containerversion}/extlib">
+                <include name="amclientsdk.jar"/>
+                <include name="opensso-installtools-launcher.jar"/>
+                <include name="opensso-installtools.jar"/>
+                <include name="jdk_logging.jar"/>
+            </fileset>
+            <fileset dir="${archive.dir}">
+                <include name="agent.jar"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${j2ee_agent.sampleapp.dir}">
+            <fileset dir="${containername}/${containerversion}/sampleapp">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+      
+        <zip destfile="${dist.dir}/${containername}_${containerversion}_agent.zip"
+             basedir="${scratch.dir}"
+        /> 
+
+    </target>
+
+</project>
