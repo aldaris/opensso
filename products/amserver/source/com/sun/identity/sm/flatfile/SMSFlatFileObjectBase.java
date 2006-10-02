@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.2 2006-08-25 21:21:33 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.3 2006-10-02 17:06:05 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 
 /**
  * This is the base implementation of flat file data store object.
@@ -224,6 +229,44 @@ public abstract class SMSFlatFileObjectBase extends SMSObject {
             sb.append(val);
         }
         return sb.toString();
+    }
+
+    protected void modifyValues(
+        String objName,
+        ModificationItem modItem,
+        Properties props
+    ) {
+        Attribute attr = modItem.getAttribute(); // will not be null
+        String key = attr.getID(); // will not be null
+        try {
+            int op = modItem.getModificationOp();
+            switch (op) {
+            case DirContext.ADD_ATTRIBUTE:
+                Set values = toValSet(key, (String)props.get(key));
+                for (NamingEnumeration e = attr.getAll(); 
+                    e.hasMoreElements();) {
+                    values.add(e.nextElement());
+                }
+                props.put(key, toValString(values));
+                break;
+            case DirContext.REMOVE_ATTRIBUTE:
+                Set val = toValSet(key, (String)props.get(key));
+                for (NamingEnumeration e = attr.getAll(); 
+                    e.hasMoreElements();) {
+                    val.remove(e.nextElement());
+                }
+                props.put(key, toValString(val));
+                break;
+            case DirContext.REPLACE_ATTRIBUTE:
+                props.put(key, toValString(attr.getAll()));
+                break;
+            }
+        } catch (NamingException e) {
+            mDebug.error("SMSFlatFileObjectBase.modifyValues", e);
+            throw new IllegalArgumentException(
+                "SMSFlatFileObjectBase.modifyValues: " + objName +
+                    ": Error modifying attributes: " + e.getMessage());
+        }
     }
 
     /**

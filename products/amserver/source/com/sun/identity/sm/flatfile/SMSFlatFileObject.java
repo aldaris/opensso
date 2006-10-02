@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObject.java,v 1.6 2006-07-17 18:11:32 veiming Exp $
+ * $Id: SMSFlatFileObject.java,v 1.7 2006-10-02 17:06:05 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,9 +34,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
 import com.sun.identity.sm.SMSEntry;  // for the sunserviceID hack.
 import com.sun.identity.sm.SMSException;
@@ -685,18 +682,7 @@ public class SMSFlatFileObject extends SMSFlatFileObjectBase {
 
             // Replace modification items in attributes properties 
             for (int i = 0; i < mods.length; i++) {
-                Attribute attr = mods[i].getAttribute(); // will not be null
-                String key = attr.getID(); // will not be null
-                NamingEnumeration en = null;
-                try {
-                    en = attr.getAll(); // will not be null
-                } catch (NamingException e) {
-                    mDebug.error("SMSFlatFileObject.modify", e);
-                    throw new IllegalArgumentException(
-                        "SMSFlatFileObject.modify: " + objName +
-                        ": Error getting attributes: " + e.getMessage());
-                }
-                props.put(key, toValString(en));
+                modifyValues(objName, mods[i], props);
             }
 
             /*

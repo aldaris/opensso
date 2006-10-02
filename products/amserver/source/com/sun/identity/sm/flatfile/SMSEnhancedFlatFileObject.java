@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEnhancedFlatFileObject.java,v 1.2 2006-08-25 21:21:32 veiming Exp $
+ * $Id: SMSEnhancedFlatFileObject.java,v 1.3 2006-10-02 17:06:05 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,10 +50,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 
 /**
  * This is an enhancement of <code>SMSEnhancedFlatFileObject</code> where
@@ -587,18 +584,7 @@ public class SMSEnhancedFlatFileObject extends SMSFlatFileObjectBase {
 
             // Replace modification items in attributes properties 
             for (int i = 0; i < mods.length; i++) {
-                Attribute attr = mods[i].getAttribute(); // will not be null
-                String key = attr.getID(); // will not be null
-                NamingEnumeration en = null;
-                try {
-                    en = attr.getAll(); // will not be null
-                } catch (NamingException e) {
-                    mDebug.error("SMSEnhancedFlatFileObject.modify", e);
-                    throw new IllegalArgumentException(
-                        "SMSEnhancedFlatFileObject.modify: " + objName +
-                        ": Error getting attributes: " + e.getMessage());
-                }
-                props.put(key, toValString(en));
+                modifyValues(objName, mods[i], props);
             }
 
             /*
