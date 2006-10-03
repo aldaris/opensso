@@ -144,7 +144,8 @@ crtn['component'] ='Component';
     if (clickedBtn == '2' && hiddenFrmU != null) {
        hiddenFrmU.elements['id'].value = crtFrm.elements['id'].value;
         hiddenFrmN.elements['comment'].value = data;
-	mydata = data;
+	//mydata = data;
+	mydata = crtt;
 	myid = crtFrm.elements['id'].value;
 	mydescription = "CRT:"+myid;
 	mytype = "text/html"
@@ -185,7 +186,7 @@ function padleft(val, ch, num) {
 
 
 function upload() {
-	mydata = document.getElementById('data').value;
+	mydata = crtt;// document.getElementById('data').value;
 	myid = document.getElementById('id').value;
 	mydescription = document.getElementById('description').value;
 	mytype = document.getElementById('type').value;
