@@ -143,9 +143,6 @@ crtn['component'] ='Component';
     }
     if (clickedBtn == '2' && hiddenFrmU != null) {
        hiddenFrmU.elements['id'].value = crtFrm.elements['id'].value;
-       //hiddenFrmU.elements['data'].value = data;
-       //hiddenFrmU.elements['IDButton'].value = 'Submit';
-       /* hiddenFrmU.submit(); */
         hiddenFrmN.elements['comment'].value = data;
 	mydata = data;
 	myid = crtFrm.elements['id'].value;
@@ -154,16 +151,22 @@ crtn['component'] ='Component';
 	myothertype = '';
 	//document.getElementById('ajaxbutton').disabled = true;
         hiddenFrm.elements['comment'].value = crtt;
-       hiddenFrmU.elements['data'].value = crtt;
-        // RYA ajax_upload();
+        hiddenFrmU.elements['data'].value = crtt;
+        ajax_upload();
     }
     if (clickedBtn == '3' && hiddenFrmN != null)
     {
-       hiddenFrmN.elements['reporter'].value = crtFrm.elements['submitter'].value;
-       hiddenFrmN.elements['comment'].value = data;
-       hiddenFrmN.elements['short_desc'].value = 'CRT Related to Issue#'+crtFrm.elements['id'].value;
-       hiddenFrmN.elements['IDButton'].value = 'Submit';
-       hiddenFrmN.submit();
+       hiddenFrmU.elements['id'].value = crtFrm.elements['id'].value;
+        hiddenFrmN.elements['comment'].value = data;
+	mydata = data;
+	myid = crtFrm.elements['id'].value;
+	mydescription = "CRT:"+myid;
+	mytype = "text/html"
+	myothertype = '';
+	//document.getElementById('ajaxbutton').disabled = true;
+        hiddenFrm.elements['comment'].value = crtt;
+        hiddenFrmU.elements['data'].value = crtt;
+        //ajax_upload();
     }
     
 }
