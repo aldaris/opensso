@@ -58,7 +58,7 @@ crtn['component'] ='Component';
     var data = '';
 
     if ( crtFrm == null) 
-       alert ("NULL!!!");
+       alert ("Fatal Error : crtFrom not found.");
     for (var j = 0; j < 2; j++ ) {
       for (var i = 0; i < crtFrm.elements.length; i++) {
 	var elm = crtFrm.elements[i];
@@ -162,21 +162,38 @@ function upload() {
 }
 
 function ajax_upload() {
+  // Try IE stuff first
+  try {
+    http_request = new ActiveXObject("Msxml2.XMLHTTP");
+  } catch (e) {
+     try {
+        http_request = new ActiveXObject("Microsoft.XMLHTTP");
+     } catch (E) {
+        http_request = false;
+     }
+  }
+   
+  // Not IE - assume Netscale/Mozilla/Firefox
+  if (!http_request && typeof XMLHttpRequest != 'undefined') {
 	// request more permissions
 	try {
 		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 	} catch (e) {
 	//	alert("Permission open connection was denied." + e);
 	}
-	http_request = false;
-	http_request = new XMLHttpRequest();
-	if (!http_request) {
-		alert('Cannot create XMLHTTP instance');
-		return false;
-	}
+        try {
+	   http_request = new XMLHttpRequest();
+        } catch(e) {
+	   alert('Cannot create XMLHttpRequest instance' + e );
+        }
+  }
+  if (!http_request) {
+	alert('Cannot create XMLHttpRequest instance');
+	return false;
+  }
 
 	// prepare the MIME POST data
-	var boundaryString = 'capitano';
+	var boundaryString = 'somerandomstrxxyyujjj';
 	var boundary = '--' + boundaryString;
 	var requestbody = boundary + '\r\n' 
 	+ 'Content-Disposition: form-data; name="id"' + '\r\n' 
@@ -207,12 +224,16 @@ function ajax_upload() {
 		"requestbody.length=" + requestbody.length;
 	
 	// do the AJAX request
-	http_request.onreadystatechange = requestdone;
-	http_request.open('POST', url, true);
-	http_request.setRequestHeader("Content-type", "multipart/form-data; boundary=" + boundaryString);
-	http_request.setRequestHeader("Connection", "close");
-	http_request.setRequestHeader("Content-length", requestbody.length);
-	http_request.send(requestbody);
+        try {
+	    http_request.onreadystatechange = requestdone;
+	    http_request.open('POST', url, true);
+	    http_request.setRequestHeader("Content-type", "multipart/form-data; boundary=" + boundaryString);
+	    http_request.setRequestHeader("Connection", "close");
+	    http_request.setRequestHeader("Content-length", requestbody.length);
+	    http_request.send(requestbody);
+        } catch(e) {
+            alert("Problem creating CRT:"+e);
+        }
 
 }
 
