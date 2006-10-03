@@ -153,18 +153,8 @@ crtn['component'] ='Component';
 	mytype = "text/html"
 	myothertype = '';
 	//document.getElementById('ajaxbutton').disabled = true;
-     var var1 = document.getElementById('ENTIREHTML');
-     var entirestuff = var1.innerHTML;
-     var escentirestuff = escapeHTML(var1.innerHTML);
-     //document.getElementById('TEST').innerHTML = entirestuff;
-newContent = document.getElementById("ENTIREHTML").cloneNode(true);
-     //document.getElementById('TEST').innerHTML = "slen="+entirestuff.length + " elen="+escentirestuff.length;
-document.getElementById('TEST').appendChild(newContent);
-var1 = document.getElementById('TEST');
-entirestuff = var1.innerHTML;
         hiddenFrm.elements['comment'].value = crtt;
        hiddenFrmU.elements['data'].value = crtt;
-     //alert ("ENTIRE STUFF="+entirestuff);
         // RYA ajax_upload();
     }
     if (clickedBtn == '3' && hiddenFrmN != null)
