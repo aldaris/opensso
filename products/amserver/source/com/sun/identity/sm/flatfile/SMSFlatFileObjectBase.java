@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.3 2006-10-02 17:06:05 goodearth Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.4 2006-10-04 05:36:47 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -331,30 +331,32 @@ public abstract class SMSFlatFileObjectBase extends SMSObject {
     protected Set toValSet(String attrName, String vals) {
         Set valset = (SMSEntry.isAttributeCaseSensitive(attrName)) ?
             new HashSet() : new CaseInsensitiveHashSet();
-        char[] valchars = vals.toCharArray();
-        int i, j;
+        if ((vals != null) && (vals.length() > 0)) { 
+            char[] valchars = vals.toCharArray();
+            int i, j;
 
-        for (i = 0, j = 0; j < valchars.length; j++) {
-            char c = valchars[j];
-            if (c == ',') {
-                if (i == j) {
-                    i = j +1;
-                } else { // separator found
-                    String val = new String(valchars, i, j-i).trim();
-                    if (val.length() > 0) {
-                        val = decodeVal(val);
+            for (i = 0, j = 0; j < valchars.length; j++) {
+                char c = valchars[j];
+                if (c == ',') {
+                    if (i == j) {
+                        i = j +1;
+                    } else { // separator found
+                        String val = new String(valchars, i, j-i).trim();
+                        if (val.length() > 0) {
+                            val = decodeVal(val);
+                        }
+                        valset.add(val);
+                        i = j +1;
                     }
-                    valset.add(val);
-                    i = j +1;
                 }
             }
-        }
-        if (j == valchars.length && i < j) {
-            String val = new String(valchars, i, j-i).trim();
-            if (val.length() > 0) {
-                val = decodeVal(val);
+            if (j == valchars.length && i < j) {
+                String val = new String(valchars, i, j-i).trim();
+                if (val.length() > 0) {
+                    val = decodeVal(val);
+                }
+                valset.add(val);
             }
-            valset.add(val);
         }
         return valset;
     }
