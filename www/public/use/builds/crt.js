@@ -1,6 +1,7 @@
-var crttemplate='<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><div id="ENTIREHTML"><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>OpenSSO CRT</title>  <link rel="stylesheet" href="https://opensso.dev.java.net/public/use/builds/crt.css"> <script src="https://opensso.dev.java.net/public/use/builds/crt.js" type="text/javascript"></script> </head> <body onload="getUser()" bgcolor="#ffffff" text="#000000"> <table cellpadding="2" width="100%"> <tbody><tr> <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (Draft v0.1)</h2> </td>  <!-- <td align="right" bgcolor="#eeeeee" nowrap="nowrap" width="1%"> View<br> <a href="http://policy.red.iplanet.com/cgi-bin/crtviewer7_1.cgi">all CRTs</a><br> <a href="http://policy.red.iplanet.com/cgi-bin/crtviewer_installer7_1.cgi">installer related CRTs</a><br> <a href="http://policy.red.iplanet.com/cgi-bin/crtviewer_migration7_1.cgi">migration related CRTs</a><br> </td> --> </tr> </tbody></table> <div id="collabnet"> <div id="login"> <div> Logged in: <strong class="username">rajeevangal</strong> |    <a href="https://www.dev.java.net/servlets/Logout">Logout</a>   </div> </div> <a href="http://www.collab.net/special/clickpbc0502.html" id="cnlogo"> <span class="alt">CollabNet Enterprise Edition</span></a> </div> <hr color="#cccccc" noshade="noshade" size="1">  <form name="CRT" onSubmit="aggSubmit();return false;" >  <div class="secHdrTxt">General</div> <br>  <table> <tbody> <tr> <td>&nbsp;</td> <td>Summitter :</td> <td><input size="17" name="submitter" type="text" value="CRTsubmitter"></td> </tr> <tr> <td>&nbsp;</td> <td>Issue number:</td> <td><input size="17" name="id" type="text" value="CRTid"></td> </tr> <tr> <td valign="top"><font color="red">*</font></td> <td colspan="2" valign="top">Short description of the problem and the solution:</td> </tr> <tr> <td>&nbsp;</td> <td colspan="2"><textarea name="descr" cols="80" rows="5">CRTdescr</textarea></td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Engineering</div> <br>  <table> <tbody><tr> <td><input name="otherparts" type="checkbox" CRTotherparts></td> <td>Affects other parts of the product</td> </tr> <tr> <td>&nbsp;</td> <td> <table> <tbody><tr> <td>** Were the dependencies rebuilt and tested? <input name="otherpartstested" type="checkbox" CRTotherpartstested > </td> </tr> </tbody></table> </td> </tr> <tr> <td><input name="apichange" type="checkbox" CRTapichange></td> <td>API Changes</td> </tr>  <tr> <td><input name="uichange" type="checkbox" CRTuichange></td> <td>User Interface Modified</td> </tr> <tr> <td>&nbsp;</td> <td>UI reviewer :</td> <td><input size="17" name="uireviewer" type="text" value="CRTuireviewer"> <a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById(\'CRT\').uireviewer)">Lookup users</a> </td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Documentation</div> <br>  <table> <tbody> <tr> <td valign="top"><font color="red">*</font></td> <td>User documentation :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="userdocs" type="text" size="50" value="CRTuserdocs"></td> </tr> <tr> <td valign="top"><font color="red">*</font></td> <td>Diagnostics/Troubleshooting documentation :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="tddocs" type="text" value="CRTtddocs" size="50"></td> </tr>  <tr> <td valign="top"><font color="red">*</font></td> <td>Online Help Changes :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="online" type="text" value="CRTonline" size="50"></td> </tr> </tbody></table>  <blockquote> <font size="-1"><i>NOTE: UI, programmatic interfaces, command line parameter, configuration file and new components typically require at least one of the above. Diagnostic and troubleshooting documentation should include detection of misconfigurations and tips on correcting them. <br> Wiki instructions : (1) Create a anchor eg :</i>#CrtDoc&lt;issueid&gt;<i> (2) Append </i>CrtDoc&lt;issueid&gt; <i> to the URLs above when you are done.  </i></font> </blockquote> <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Migration/Upgrading</div> <br> <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td> Does this affect migration/upgrading from previous release?  <font color="#6666cc"><a href="javascript:popUpWindow(\'migration_help.html\')"> <i>(more information...)</i> </a></font> </td> </tr> <tr> <td>&nbsp;</td> <td>If yes, please describe. <br><textarea name="desc_migration_updating" cols="80" rows="5">CRTdesc_migration_updating</textarea> </td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Installer</div> <br> <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  Does this affect the installer?<font color="#6666cc"><a href="javascript:popUpWindow(\'installer_help.html\')"> <i>(more information...)</i> </a></font> </td> </tr> <tr> <td>&nbsp;</td> <td> If yes, please describe. <br><textarea name="desc_installer_change" cols="80" rows="5">CRTdesc_installer_change</textarea> </td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Test/Quality</div> <br> <table> <tbody><tr> <td>&nbsp;</td> <td>&nbsp;</td> <td> Component packaging tested? </td> </tr> <tr> <td>&nbsp;</td> <td>&nbsp;</td> <td> Unit test developed? </td> </tr> <tr> <td colspan="2">&nbsp;</td> <td valign="top">Location of the unit test files.</td> </tr> <tr> <td colspan="2">&nbsp;</td> <td><textarea name="unittestloc" cols="80" rows="5">CRTunittestloc</textarea></td> </tr>  <tr><td colspan="3">&nbsp;</td></tr> <tr> <td><font color="red">*</font></td> <td colspan="2" valign="top">Description of testing performed.</td> </tr> <tr> <td>&nbsp;</td> <td colspan="2"><textarea name="testing" cols="80" rows="5">CRTtesting</textarea></td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Review/Diffs</div> <br>  <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  Code following coding standards? </td> </tr> </tbody></table>  <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  All reviewer comments completed/addressed? </td> </tr> <tr> <td>&nbsp;</td> <td> If not, why. <br><textarea name="desc_comments_addressed" cols="80" rows="5">CRTdesc_comments_addressed</textarea> </td> </tr> </tbody></table>  <table> <tbody><tr> <td><font color="red">*</font></td> <td>Path to local workspace: <input size="30" name="localworkspace" type="text" value="CRTlocalworkspace"></td> </tr> <tr> <td><font color="red">*</font></td> <td> Listing of the files created/deleted/updated. <i>(use \'cvs stat\')</i> </td> </tr> <tr> <td>&nbsp;</td> <td><textarea name="files" cols="80" rows="10">CRTfiles</textarea></td> </tr> </tbody></table>   <p> <table> <tbody><tr> <td><font color="red">*</font></td> <td>Change Reviewer(s):&nbsp;<input size="30" name="codereviewer" type="text" value="CRTcodereviewer"> <a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById(\'CRT\').codereviewer)">Lookup users</a> </td>  </tr> <tr> <td><font color="red">*</font></td> <td>Context specific diffs (or pointer to the diffs) of the added/modified/removed files</td> </tr> <tr> <td>&nbsp;</td> <td><textarea name="diffs" cols="80" rows="10">CRTdiffs</textarea></td> </tr> </tbody></table>  </p><hr color="#cccccc" noshade="noshade" size="1">   <table> <tbody><tr> <td><input name="submitN" value="Submit (Update)" type="submit" onclick="return setBtn(\'1\');"></td> <td><input name="submitC" value="Submit (Attach)" type="submit" onclick="return setBtn(\'2\');"></td> <td><input name="submitN" value="Submit (New)" type="submit" onclick="return setBtn(\'3\');"></td> <td><input name="reset" value="Reset" type="reset"></td> </tr> </tbody></table>  </form> <br><b>Notes: </b> <br><b>Submit (Update)</b> will update an existing issue (specified by Issue# parameter) with a CRT instance in the description field.  <br><b>Submit (Attach)</b> will update an existing issue (Issue#) with a CRT instance as an attachment to the issue.  <br><b>Submit (New)</b> will create a new issue with Issue# in short summary and CRT instance in the description field.  <br><br>******** Please ignore stuff below : its for debugging **********<br><br> <FORM name="IT" action="https://opensso.dev.java.net/issues/process_bug.cgi" method="post"> <INPUT type="hidden" name="id"><BR> <INPUT type="hidden" name="component" value="opensso"> <INPUT type="hidden" name="subcomponent" value="Web site"> <INPUT type="hidden" name="version" value="current"> <INPUT type="hidden" name="rep_platform" value="All"> <INPUT type="hidden" name="op_sys" value="All"> <INPUT type="hidden" name="priority" value="P3"> <INPUT type="hidden" name="issue_type" value=PATCH> <INPUT type="hidden" name="knob" value="reassignbysubcomponent"> <INPUT type="hidden" name="assigned_to"> <INPUT type="hidden" name="newcc" > <INPUT type="hidden" name="issue_file_loc" value="http://"> <INPUT type="hidden" name="short_desc" value="TEST, IGNORE"> <textarea name="comment" rows="10" cols="80" >CRTcomment</textarea> <INPUT type="hidden" name="longdesclength" value="8000"> <input label="hidden" name="IDButton" value="submit" type="hidden"> </P> </FORM> <FORM name="ITU" action="https://opensso.dev.java.net/issues/createattachment.cgi" method="post" enctype="multipart/form-data"> <input name="id" type="hidden"> <input name="data" type="hidden" value="C:\Sun\arch\CRTstuff\1.txt"> <input name="description" type="hidden"> <input name="type" type="hidden" value="text/html"> <input name="othertype" type="hidden"> <input name="IDButton" value="submit" type="hidden"> </FORM> <FORM> <input name="id" id="id" type="hidden"> <textarea name="data" id="data"></textarea> <!-- Data:<input name="data" type="file" value="C:\Sun\arch\CRTstuff\1.txt"><br> --> <input name="description" id="description" type="hidden"> <input name="type" id="type" type="hidden" value="text/html"> <input name="othertype" id="othertype"  type="hidden"> <input type="hidden" name="IDButton" id="ajaxbutton" value="submit" onclick="upload();"> </FORM> <div id="sizespan"></div> <hr> <div id="myspan"></div> <FORM name="NEWPATCH" action="https://opensso.dev.java.net/issues/post_bug.cgi" method="post"> <P> <INPUT type="hidden" name="reporter" value="rajeevangal"> <INPUT type="hidden" name="component" value="opensso"> <INPUT type="hidden" name="subcomponent" value="Web site"> <INPUT type="hidden" name="version" value="current"> <INPUT type="hidden" name="rep_platform" value="All"> <INPUT type="hidden" name="op_sys" value="All"> <INPUT type="hidden" name="priority" value="P3"> <INPUT type="hidden" name="issue_type" value=PATCH> <INPUT type="hidden" name="assigned_to"> <INPUT type="hidden" name="cc"> <INPUT type="hidden" name="issue_file_loc" value="http://"> <INPUT type="hidden" name="short_desc" value="TEST, IGNORE"> <textarea name="comment"></textarea> <input type="hidden" label="Submit" name="IDButton" value="submit"> </P> </FORM> </body> </div> <div id=TEST></div> </html>';
+var crttemplate='<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>OpenSSO CRT</title><link rel="stylesheet" href="https://opensso.dev.java.net/public/use/builds/crt.css"> <script src="crt.js" type="text/javascript"></script> </head> <body onload="setupUser(\'submitter\', false)" bgcolor="#ffffff" text="#000000"> <table cellpadding="2" width="100%"> <tbody><tr> <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (Draft v0.1)</h2> </td> </tr> </tbody></table> <hr color="#cccccc" noshade="noshade" size="1"><div style="display:inline"><fieldset><legend>Approval</legend><form name="approve" id="approve" onSubmit="approveSubmit();return false;"><a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById(\'CRT\').uireviewer)">UserId:</a><input name="userid" type="text">Check if Approved:<input name="approval" type="checkbox">Brief comment :<input name="comment" type="text"><input name="Submit" type="Submit" value="Submit" ></form></formset><p></div><div id="crtform" style="display:inline"><p><a>*Form View</a>&nbsp;|&nbsp;<a onClick="showStuff(\'crttext\');hideStuff(\'crtform\');" href="#">Text View</a> <form name="CRT" id="CRT" onSubmit="aggSubmit();return false;" >  <div class="secHdrTxt">General</div> <br>  <table> <tbody> <tr> <td>&nbsp;</td> <td>Submitter :</td> <td><input size="17" name="submitter" type="text" valuel="CRTsubmitter" value=""></td> </tr> <tr> <td>&nbsp;</td> <td>Issue number:</td> <td><input size="17" name="id" type="text" valuel="CRTid" value=""></td> </tr> <tr> <td valign="top"><font color="red">*</font></td> <td colspan="2" valign="top">Short description of the problem and the solution:</td> </tr> <tr> <td>&nbsp;</td> <td colspan="2"><textarea name="descr" cols="80" rows="5" CRTdescr></textarea></td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Engineering</div> <br>  <table> <tbody><tr> <td><input name="otherparts" type="checkbox" CRTotherparts></td> <td>Affects other parts of the product</td> </tr> <tr> <td>&nbsp;</td> <td> <table> <tbody><tr> <td>** Were the dependencies rebuilt and tested? <input name="otherpartstested" type="checkbox" CRTotherpartstested > </td> </tr> </tbody></table> </td> </tr> <tr> <td><input name="apichange" type="checkbox" CRTapichange></td> <td>API Changes</td> </tr>  <tr> <td><input name="uichange" type="checkbox" CRTuichange></td> <td>User Interface Modified</td> </tr> <tr> <td>&nbsp;</td> <td>UI reviewer :</td> <td><input size="17" name="uireviewer" type="text" valuel="CRTuireviewer" value=""><a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById(\'CRT\').uireviewer)">Lookup users</a></td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Documentation</div> <br>  <table> <tbody> <tr> <td valign="top"><font color="red">*</font></td> <td>User documentation :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="userdocs" type="text" size="50" valuel="CRTuserdocs" value=""></td> </tr> <tr> <td valign="top"><font color="red">*</font></td> <td>Diagnostics/Troubleshooting documentation :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="tddocs" type="text" valuel="CRTtddocs" value="" size="50"></td> </tr>  <tr> <td valign="top"><font color="red">*</font></td> <td>Online Help Changes :<br>Please provide <a href="javascript:popUpWindow(\'http://wiki.java.net/bin/view/Projects/OpenSSO\')">Wiki</a> pointer :</td> <td><input name="online" type="text" valuel="CRTonline" value="" size="50"></td> </tr> </tbody></table>  <blockquote> <font size="-1"><i>NOTE: UI, programmatic interfaces, command line parameter, configuration file and new components typically require at least one of the above. Diagnostic and troubleshooting documentation should include detection of misconfigurations and tips on correcting them. <br> Wiki instructions : (1) Create a anchor eg :</i>#CrtDoc&lt;issueid&gt;<i> (2) Append </i>CrtDoc&lt;issueid&gt; <i> to the URLs above when you are done.  </i></font> </blockquote> <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Migration/Upgrading</div> <br> <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td> Does this affect migration/upgrading from previous release?  <font color="#6666cc"><a href="javascript:popUpWindow(\'https://opensso.dev.java.net/public/use/builds/migration_help.html\')"> <i>(more information...)</i> </a></font> </td> </tr> <tr> <td>&nbsp;</td> <td>If yes, please describe. <br><textarea name="desc_migration_updating" cols="80" rows="5" CRTdesc_migration_updating></textarea> </td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Installer</div> <br> <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  Does this affect the installer?<font color="#6666cc"><a href="javascript:popUpWindow(\'https://opensso.dev.java.net/public/use/builds/installer_help.html\')"> <i>(more information...)</i> </a></font> </td> </tr> <tr> <td>&nbsp;</td> <td> If yes, please describe. <br><textarea name="desc_installer_change" cols="80" rows="5" CRTdesc_installer_change></textarea> </td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Test/Quality</div> <br> <table> <tbody><tr> <td>&nbsp;</td> <td>&nbsp;</td> <td> Component packaging tested? </td> </tr> <tr> <td>&nbsp;</td> <td>&nbsp;</td> <td> Unit test developed? </td> </tr> <tr> <td colspan="2">&nbsp;</td> <td valign="top">Location of the unit test files.</td> </tr> <tr> <td colspan="2">&nbsp;</td> <td><textarea name="unittestloc" cols="80" rows="5" CRTunittestloc></textarea></td> </tr>  <tr><td colspan="3">&nbsp;</td></tr> <tr> <td><font color="red">*</font></td> <td colspan="2" valign="top">Description of testing performed.</td> </tr> <tr> <td>&nbsp;</td> <td colspan="2"><textarea name="testing" cols="80" rows="5" CRTtesting></textarea></td> </tr> </tbody></table>  <p> </p><hr color="#cccccc" noshade="noshade" size="1"> <div class="secHdrTxt">Review/Diffs</div> <br>  <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  Code following coding standards? </td> </tr> </tbody></table>  <table> <tbody><tr> <td align="top"><font color="red">*</font></td> <td>  All reviewer comments completed/addressed? </td> </tr> <tr> <td>&nbsp;</td> <td> If not, why. <br><textarea name="desc_comments_addressed" cols="80" rows="5" CRTdesc_comments_addressed></textarea> </td> </tr> </tbody></table>  <table> <tbody><tr> <td><font color="red">*</font></td> <td>Path to local workspace: <input size="30" name="localworkspace" type="text" valuel="CRTlocalworkspace" value=""></td> </tr> <tr> <td><font color="red">*</font></td> <td> Listing of the files created/deleted/updated. <i>(use \'cvs stat\')</i> </td> </tr> <tr> <td>&nbsp;</td> <td><textarea name="files" cols="80" rows="10" CRTfiles></textarea></td> </tr> </tbody></table>   <p> <table> <tbody><tr> <td><font color="red">*</font></td> <td>Change Reviewer(s):&nbsp;<input size="30" name="codereviewer" type="text" valuel="CRTcodereviewer" value=""> <a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById(\'CRT\').codereviewer)">Lookup users</a> </td>  </tr> <tr> <td><font color="red">*</font></td> <td>Context specific diffs (or pointer to the diffs) of the added/modified/removed files</td> </tr> <tr> <td>&nbsp;</td> <td><textarea name="diffs" cols="80" rows="10" CRTdiffs></textarea></td> </tr> </tbody></table>  </p><hr color="#cccccc" noshade="noshade" size="1">   <table> <tbody><tr><td><input name="submitC" value="Submit (Attach)" type="submit" onclick="return setBtn(\'2\');"></td><td><input name="reset" value="Reset" type="reset"></td> </tr> </tbody></table>  </form></div><div id="crttext" style="display:none"> <p><a onClick="hideStuff(\'crttext\');showStuff(\'crtform\');" href="#">Form View</a>&nbsp;|&nbsp;*Text View <br><br><textarea id="crttexttb" cols=80 rows=100>CRTTEXTDATA</textarea><div><div id="sizespan"></div> <hr> <div id="myspan"></div></body> </div> <div id=TEST></html>';
 var clickedBtn = '0';
 var url = "https://opensso.dev.java.net/issues/createattachment.cgi";
+var uurl = "https://opensso.dev.java.net";
 var mydata;
 var myid;
 var mydescription;
@@ -10,11 +11,23 @@ var userid = "unknown";
 
 if (typeof(launch) == "undefined")
 {
-   alert("launch NOT defined");
+   alert("launch NOT defined:" + window.document.location);
   document.write( "\<SCRIPT SRC='https://opensso.dev.java.net/branding/scripts/tigris.js'\>\</SCRIPT\>" );
 } else
-   alert("launch already defined");
+   alert("launch already defined:"+window.document.location);
 
+function hideStuff(id)
+{
+   var obj = document.getElementById(id);
+   //obj.style.visibility = 'hidden';
+   obj.style.display = 'none';
+}
+function showStuff(id)
+{
+   var obj = document.getElementById(id);
+   //obj.style.visibility = 'visible';
+   obj.style.display = 'inline';
+}
 function escapeHTML(str)
 {
     var div = document.createElement('div');
@@ -22,18 +35,76 @@ function escapeHTML(str)
     div.appendChild(text);
     return div.innerHTML;
 }
-function getUser()
+function setupUser(elem, usereq)
+{
+    getUser(usereq);
+    if (userid != null && userid != '' && userid != 'unknown')
+    {
+       var frms = document.forms;
+       var crtFrm = frms['CRT'];
+       crtFrm.elements[elem].value = userid;
+    }
+}
+
+var uhttp_request;
+function getUser(usereq)
 {
     var var1 = document.getElementById('login');
-    var userid = var1.childNodes[1].childNodes[1].innerHTML;
-    var frms = document.forms;
-    var crtFrm = frms['CRT'];
-    crtFrm.elements['submitter'].value = userid;
+    if (var1 != null) {
+        userid = var1.childNodes[1].childNodes[1].innerHTML;
+    } 
+    if (usereq) {
+       uhttp_request = get_request_handle()
+       try {
+	   uhttp_request.onreadystatechange = urequestdone;
+	   uhttp_request.open('GET', uurl, false);
+	   uhttp_request.send(null);
+       } catch(e) {
+            alert("Problem scraping for user:"+e);
+        }
+    }
+        
+}
+function urequestdone() {
+    if (uhttp_request.readyState == 4) {
+        if (uhttp_request.status == 200) {
+            result = uhttp_request.responseXML;
+            var var1 = result.getElementById('login');
+            if (var1 != null) {
+               userid = var1.childNodes[1].childNodes[1].innerHTML;
+            }
+        } 
+    } else {
+        alert('There was a problem with the request.');
+    }
 }
 function setBtn(val)
 {
      clickedBtn = val;
      return true;
+}
+
+function approveSubmit()
+{
+    var frms = document.forms;
+    var crtFrm = frms['CRT'];
+    myid = crtFrm.elements['id'].value;
+    var approveFrm = frms['approve'];
+    mydescription = "CRT_notapproved:"+myid;
+    var approved = 'NOTAPPROVED';
+    mydescription = "CRT_notapproved:"+myid;
+    if (approveFrm.elements['approval'].checked) {
+       approved = 'APPROVED';
+       mydescription = "CRT_approved:"+myid;
+    }
+    var approver = approveFrm.elements['userid'].value;
+    var comment = approveFrm.elements['comment'].value;
+
+    mydata = "CRT="+window.document.location+"\nstatus="+approved+"\nBY="+approver+"\nComment="+comment; 
+    mytype = "text/plain"
+    myothertype = '';
+alert("Approval:"+mydata);
+    ajax_upload();
 }
 function aggSubmit() {
 var crtn=new Array(37);
@@ -107,7 +178,7 @@ crtn['component'] ='Component';
               }
             } else { // Assume text
                 eval = elm.value;
-                crtt = crtt.replace('CRT'+elm.name, escapeHTML(eval));
+                crtt = crtt.replace('valuel="CRT'+elm.name+'" ', 'value="'+escapeHTML(eval)+'" o');
             }
             
             var prt = crtn[elm.name];
@@ -125,51 +196,23 @@ crtn['component'] ='Component';
             if (val == '')
                 val = '*Not Specified*'
             data = data + '\n' + prt + '\n--------------------\n'+val + '\n';
-            crtt = crtt.replace('CRT'+elm.name, escapeHTML(val));
+            crtt = crtt.replace('CRT'+elm.name+'>', '>'+escapeHTML(val));
         }
 
        }
    }
-   var hiddenFrm = document.forms['IT'];
-   var hiddenFrmU = document.forms['ITU'];
-   var hiddenFrmN = document.forms['NEWPATCH'];
-
-    if (clickedBtn == '1' && hiddenFrm != null) {
-        hiddenFrm.elements['id'].value = crtFrm.elements['id'].value;
-        hiddenFrm.elements['comment'].value = data;
-        /* alert(data); */
-        hiddenFrm.elements['IDButton'].value = 'Submit';
-        hiddenFrm.submit();
-    }
-    if (clickedBtn == '2' && hiddenFrmU != null) {
-       hiddenFrmU.elements['id'].value = crtFrm.elements['id'].value;
-        hiddenFrmN.elements['comment'].value = data;
+    if (clickedBtn == '2' ) {
 	//mydata = data;
+	document.getElementById('crttexttb').value=escapeHTML(data);
+        crtt = crtt.replace('CRTTEXTDATA', escapeHTML(data));
 	mydata = crtt;
 	myid = crtFrm.elements['id'].value;
 	mydescription = "CRT:"+myid;
 	mytype = "text/html"
 	myothertype = '';
 	//document.getElementById('ajaxbutton').disabled = true;
-        hiddenFrm.elements['comment'].value = crtt;
-        hiddenFrmU.elements['data'].value = crtt;
         ajax_upload();
     }
-    if (clickedBtn == '3' && hiddenFrmN != null)
-    {
-       hiddenFrmU.elements['id'].value = crtFrm.elements['id'].value;
-        hiddenFrmN.elements['comment'].value = data;
-	mydata = data;
-	myid = crtFrm.elements['id'].value;
-	mydescription = "CRT:"+myid;
-	mytype = "text/html"
-	myothertype = '';
-	//document.getElementById('ajaxbutton').disabled = true;
-        hiddenFrm.elements['comment'].value = crtt;
-        hiddenFrmU.elements['data'].value = crtt;
-        //ajax_upload();
-    }
-    
 }
 function padleft(val, ch, num) {
    var ll = val.length;
@@ -197,20 +240,22 @@ function upload() {
 	window.setTimeout("ajax_upload()", 1000);
 }
 
-function ajax_upload() {
+function get_request_handle()
+{
   // Try IE stuff first
+  var hr;
   try {
-    http_request = new ActiveXObject("Msxml2.XMLHTTP");
+    hr = new ActiveXObject("Msxml2.XMLHTTP");
   } catch (e) {
      try {
-        http_request = new ActiveXObject("Microsoft.XMLHTTP");
+        hr = new ActiveXObject("Microsoft.XMLHTTP");
      } catch (E) {
-        http_request = false;
+        hr = false;
      }
   }
    
   // Not IE - assume Netscape/Mozilla/Firefox
-  if (!http_request && typeof XMLHttpRequest != 'undefined') {
+  if (!hr && typeof XMLHttpRequest != 'undefined') {
 	// request more permissions
 	try {
 		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -218,16 +263,21 @@ function ajax_upload() {
 	//	alert("Permission open connection was denied." + e);
 	}
         try {
-	   http_request = new XMLHttpRequest();
+	   hr = new XMLHttpRequest();
         } catch(e) {
 	   alert('Cannot create XMLHttpRequest instance' + e );
         }
   }
-  if (!http_request) {
+  if (!hr) {
 	alert('Cannot create XMLHttpRequest instance');
 	return false;
   }
+  return hr;
 
+}
+var http_request;
+function ajax_upload() {
+        http_request = get_request_handle();
 	// prepare the MIME POST data
 	var boundaryString = 'somerandomstrxxyyujjj';
 	var boundary = '--' + boundaryString;
@@ -256,8 +306,8 @@ function ajax_upload() {
 	+ '\r\n' + boundary + '--\r\n';
         
 
-	document.getElementById('sizespan').innerHTML = 
-		"requestbody.length=" + requestbody.length;
+	//document.getElementById('sizespan').innerHTML = 
+		//"requestbody.length=" + requestbody.length;
 	
 	// do the AJAX request
         try {
