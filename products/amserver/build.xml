@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2006-09-21 18:29:11 veiming Exp $
+   $Id: build.xml,v 1.24 2006-10-04 17:42:05 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -308,7 +308,7 @@
         <ant antfile="${samples.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples">
+    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples,unittest">
         <ant antfile="build-nightly.xml" inheritRefs="true"/>
     </target>
 

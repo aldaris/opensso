@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-nightly.xml,v 1.7 2006-08-31 21:56:07 veiming Exp $
+   $Id: build-nightly.xml,v 1.8 2006-10-04 17:42:04 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,10 +57,29 @@
             </fileset>
             <zipfileset dir="${built.dir}/classes" />
             <zipfileset dir="${script.dir}" prefix="script" />
-            <zipfileset dir="${res.dir}" prefix="resources" />
+            <zipfileset dir="${res.i18n.dir}" />
+            <zipfileset dir="${console.res.dir}" />
             <zipfileset dir="${www.dir}" prefix="www" />
         </jar>
         <checksum file="${nightly.dist.dir}/opensso.jar" 
+            algorithm="SHA" fileext=".sha" />
+
+        <jar destfile="${nightly.dist.dir}/opensso-test.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${built.dir}/classes" />
+            <zipfileset dir="${built.dir}/test/classes" />
+            <zipfileset dir="${script.dir}" prefix="script" />
+            <zipfileset dir="${res.i18n.dir}" />
+            <zipfileset dir="${console.res.dir}" />
+            <zipfileset dir="${www.dir}" prefix="www" />
+        </jar>
+        <checksum file="${nightly.dist.dir}/opensso-test.jar" 
             algorithm="SHA" fileext=".sha" />
 
         <jar destfile="${nightly.dist.dir}/opensso-src.jar">

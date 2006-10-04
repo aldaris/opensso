@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-09-20 23:59:58 veiming Exp $
+   $Id: build.xml,v 1.3 2006-10-04 17:42:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,7 +39,6 @@
     <property name="test.package.dir" location="${built.dir}/test/package"/>
     <property name="test.classes.dir" location="${built.dir}/test/classes"/>
     <property name="test.dist.dir" location="${built.dir}/test/dist"/>
-
 
     <target name="build" depends="preparebuild">
         <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
