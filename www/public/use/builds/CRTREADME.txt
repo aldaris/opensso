@@ -72,9 +72,11 @@ Design :
    a templatized version of crtfinal.html is included as a string variable.
    
    Hence if any change is made to crtfinal.html, make sure crt.js is
-   updated to :
+   updated as follows :
      - remove newlines from crtfinal.html so that it is a single line.
      - escape embedded single quotes : "'" to "\'"
+     - change the "approve" form from display:none to display:inline.
      - update the crttemplate variable in crt.js.
+   
 --
 
