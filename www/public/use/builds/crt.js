@@ -45,7 +45,6 @@ var uhttp_request;
 function getUser(usereq)
 {
     var var1 = document.getElementById('login');
-alert("getUser start:var1="+var1);
     if (var1 != null) {
         userid = var1.childNodes[1].childNodes[1].innerHTML;
     } else {
@@ -56,7 +55,6 @@ alert("getUser start:var1="+var1);
 	      uhttp_request.send(null);
               var result = uhttp_request.responseText;
               var st1 = result.indexOf('class="username"');
-              alert("st1="+st1);
               if (st1 == -1)
                  return;
               var st2 = result.indexOf(">", st1);
@@ -67,7 +65,6 @@ alert("getUser start:var1="+var1);
             }
         }
     }
-alert("getUser found:userid="+userid);
         
 }
 
@@ -96,7 +93,6 @@ function approveSubmit()
     mydata = "CRT="+window.document.location+"\nstatus="+approved+"\nBY="+approver+"\nComment="+comment; 
     mytype = "text/plain"
     myothertype = '';
-alert("Approval:"+mydata);
     ajax_upload();
 }
 function aggSubmit() {
@@ -320,8 +316,8 @@ function requestdone() {
     if (http_request.readyState == 4) {
         if (http_request.status == 200) {
             result = http_request.responseText;
-            result = result.replace('@import "/branding','@import "https://opensso.dev.java.net/branding');
-            result = result.replace('@import "/branding','@import "https://opensso.dev.java.net/branding');
+            result = result.replace('/@import "/g','@import "https://opensso.dev.java.net');
+            result = result.replace('UTF-8', 'iso-8859-1');
             document.write(result);
             document.close();
         } else {
