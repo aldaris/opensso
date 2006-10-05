@@ -320,7 +320,7 @@ function requestdone() {
     if (http_request.readyState == 4) {
         if (http_request.status == 200) {
             result = http_request.responseText;
-            result = result.replace('@import "','@import "https://opensso.dev.java.net');
+            result = result.replace('/@import "/g','@import "https://opensso.dev.java.net');
             document.write(result);
             document.close();
         } else {
