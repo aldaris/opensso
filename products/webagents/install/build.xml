@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="jar" name="INSTALL">
+    <property name="webagents.home.dir" location="../"/>
+    <property name="extlib.dir" location="${webagents.home.dir}/extlib"/>
+    <property name="built.dir" location="${webagents.home.dir}/built"/>
+    <property name="dist.dir" location="${webagents.home.dir}/dist"/>
+    <property name="classes.dir" location="${webagents.home.dir}/built/classes"/>
+
+    <path id="project.classpath">
+        <pathelement location="$(built.dir}/classes.dir"/>
+    </path>
+    <target name="init">
+        <mkdir dir="${built.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+    </target>
+    <target name="clean">
+        <delete dir="${built.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <path id="compile.classpath">
+        <fileset dir="${extlib.dir}">
+          <include name="opensso-installtools.jar"/>
+        </fileset>
+    </path>
+    <target depends="init" name="common">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac destdir="${classes.dir}">
+            <src path="common/source"/>
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+    <target depends="common" name="${agent_name}">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac destdir="${classes.dir}">
+            <src path="${agent_name}/source"/>
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+    <target depends="common,${agent_name}" name="jar">
+        <copy todir="${classes.dir}">
+            <fileset dir="${agent_name}">
+                <include name=".version"/>
+            </fileset>
+        </copy>
+
+        <jar jarfile="${dist.dir}/${agent_name}-install.jar" >
+            <fileset dir="${classes.dir}" includes="**" />
+        </jar>
+    </target>
+</project>

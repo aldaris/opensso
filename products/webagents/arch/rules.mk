@@ -1,27 +1,32 @@
-# $Id: rules.mk,v 1.1 2006-05-03 22:43:34 madan_ranganath Exp $
 #
-# Copyright © 2006 Sun Microsystems, Inc. All rights reserved.
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: rules.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
 # 
-# U.S. Government Rights - Commercial software. Government users are
-# subject to the Sun Microsystems, Inc. standard license agreement and
-# applicable provisions of the FAR and its supplements. Use is subject to
-# license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
-# trademarks or registered trademarks of Sun Microsystems, Inc. in the
-# U.S. and other countries.
-# 
-# Copyright © 2006 Sun Microsystems, Inc. Tous droits réservés.
-# 
-# Droits du gouvernement américain, utlisateurs gouvernmentaux - logiciel
-# commercial. Les utilisateurs gouvernmentaux sont soumis au contrat de
-# licence standard de Sun Microsystems, Inc., ainsi qu aux dispositions en
-# vigueur de la FAR [ (Federal Acquisition Regulations) et des suppléments
-# à celles-ci.
-# 
-# Distribué par des licences qui en restreignent l'utilisation. Sun, Sun
-# Microsystems, le logo Sun et Sun ONE sont des marques de fabrique ou des
-# marques déposées de Sun Microsystems, Inc. aux Etats-Unis et dans
-# d'autres pays.
-# 
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+#
+
 #
 # This makefile defines the standard rules used to build the Agent Pack.
 #
@@ -53,9 +58,6 @@ include $(USERX_ROOT)/arch/rules_$(OS_ARCH).mk
 $(internal_DEST_DIRS):
 	$(MKDIR) $@
 
-bytecode: $(DEST_CLASS_DIR)
-	$(JAVAC) $(JAVAC_FLAGS) -classpath "$(CLASSPATH)" -d $(DEST_CLASS_DIR) $(filter %.java, $(SRCS))
-
 #
 # Provide this for backward compatibility.
 #
@@ -73,25 +75,6 @@ endif
 
 $(DEST_LIB_DIR)/% $(DEST_INC_DIR)/%: %
 	$(CP) $< $@
-
-ifdef	PACKAGE_PREFIX
-DEST_PACKAGE_CLASS_DIR := $(DEST_CLASS_DIR)/$(PACKAGE_PREFIX)
-JAVA_OBJS += $(patsubst %.java, %.class, $(filter %.java, $(SRCS)))
-
-ifeq	($(strip $(JAVA_OBJS)),)
-clean_bytecode:
-	@echo "No bytecode to clean up."
-else
-clean_bytecode:
-	if [ -d $(DEST_PACKAGE_CLASS_DIR) ]; then \
-	    (cd $(DEST_PACKAGE_CLASS_DIR) ; $(RM) $(JAVA_OBJS)) ; \
-	    $(RMDIR) $(DEST_PACKAGE_CLASS_DIR) || exit 0; \
-	fi
-endif
-else
-clean_bytecode:
-	@echo "Must define PACKAGE_PREFIX to use the clean_bytecode target."
-endif
 
 clean_headers:
 	if [ -d $(DEST_INC_DIR) ]; then \

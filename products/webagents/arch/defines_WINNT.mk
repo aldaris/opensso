@@ -1,27 +1,32 @@
-# $Id: defines_WINNT.mk,v 1.1 2006-05-03 22:43:33 madan_ranganath Exp $
 #
-# Copyright © 2006 Sun Microsystems, Inc. All rights reserved.
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: defines_WINNT.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
 # 
-# U.S. Government Rights - Commercial software. Government users are
-# subject to the Sun Microsystems, Inc. standard license agreement and
-# applicable provisions of the FAR and its supplements. Use is subject to
-# license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
-# trademarks or registered trademarks of Sun Microsystems, Inc. in the
-# U.S. and other countries.
-# 
-# Copyright © 2006 Sun Microsystems, Inc. Tous droits réservés.
-# 
-# Droits du gouvernement américain, utlisateurs gouvernmentaux - logiciel
-# commercial. Les utilisateurs gouvernmentaux sont soumis au contrat de
-# licence standard de Sun Microsystems, Inc., ainsi qu aux dispositions en
-# vigueur de la FAR [ (Federal Acquisition Regulations) et des suppléments
-# à celles-ci.
-# 
-# Distribué par des licences qui en restreignent l'utilisation. Sun, Sun
-# Microsystems, le logo Sun et Sun ONE sont des marques de fabrique ou des
-# marques déposées de Sun Microsystems, Inc. aux Etats-Unis et dans
-# d'autres pays.
-# 
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+#
+
 #
 # This makefile defines a number of standard OS-dependent symbols
 # used in by the makefiles that build the Agent Pack.
@@ -70,12 +75,6 @@ ifndef DEBUG_FLAGS
 endif
 
 SHELL_EXEC_EXTENSION := .bat
-
-JAVA    := java
-JAVAC   := javac 
-JAVAH   := javah 
-JAVADOC := javadoc
-JAR     := jar
 
 #
 # Give MSDEV_BUILD_TYPE a default setting based on the build type

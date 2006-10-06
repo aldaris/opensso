@@ -1,27 +1,28 @@
-# $Id: defines.mk,v 1.1 2006-05-03 22:43:33 madan_ranganath Exp $
 #
-# Copyright © 2006 Sun Microsystems, Inc. All rights reserved.
-# 
-# U.S. Government Rights - Commercial software. Government users are
-# subject to the Sun Microsystems, Inc. standard license agreement and
-# applicable provisions of the FAR and its supplements. Use is subject to
-# license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
-# trademarks or registered trademarks of Sun Microsystems, Inc. in the
-# U.S. and other countries.
-# 
-# Copyright © 2006 Sun Microsystems, Inc. Tous droits réservés.
-# 
-# Droits du gouvernement américain, utlisateurs gouvernmentaux - logiciel
-# commercial. Les utilisateurs gouvernmentaux sont soumis au contrat de
-# licence standard de Sun Microsystems, Inc., ainsi qu aux dispositions en
-# vigueur de la FAR [ (Federal Acquisition Regulations) et des suppléments
-# à celles-ci.
-# 
-# Distribué par des licences qui en restreignent l'utilisation. Sun, Sun
-# Microsystems, le logo Sun et Sun ONE sont des marques de fabrique ou des
-# marques déposées de Sun Microsystems, Inc. aux Etats-Unis et dans
-# d'autres pays.
-# 
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: defines.mk,v 1.2 2006-10-06 18:27:27 subbae Exp $
+#
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+#
+
 #
 # This makefile defines a number of standard symbols used in by the
 # makefiles that build the Agent Pack.
@@ -64,6 +65,7 @@ ARFLAGS := -ru
 
 SRC_DIR := $(USERX_ROOT)
 BUILT_DIR := $(USERX_ROOT)/built
+DIST_DIR := $(USERX_ROOT)/dist
 DEST_DIR := $(BUILT_DIR)
 DEST_BIN_DIR := $(DEST_DIR)/bin
 DEST_CLASS_DIR := $(DEST_DIR)/classes
@@ -89,6 +91,15 @@ ifeq ($(MC_ARCH), i86pc)
 EXTERNAL_DIR := $(USERX_ROOT)/extlib/$(OS_ARCH)_$(MC_ARCH)
 endif
 
+INSTALL_DIR := $(BUILT_DIR)/web_agents
+INSTALL_AGENT_DIR := $(INSTALL_DIR)/$(BUILD_AGENT)_agent
+INSTALL_BIN := $(INSTALL_AGENT_DIR)/bin
+INSTALL_CONF := $(INSTALL_AGENT_DIR)/config
+INSTALL_LIB := $(INSTALL_AGENT_DIR)/lib
+INSTALL_JCE := $(INSTALL_AGENT_DIR)/jce
+INSTALL_JSSE := $(INSTALL_AGENT_DIR)/jsse
+INSTALL_LOCALE := $(INSTALL_AGENT_DIR)/locale
+INSTALL_ETC := $(INSTALL_AGENT_DIR)/etc
 #
 # Crypt Util Executable
 #
@@ -97,24 +108,6 @@ CRYPT_EXE := cryptit.exe
 else
 CRYPT_EXE := crypt_util
 endif
-
-#
-# Java Information 
-#
-JAVAC_FLAGS :=-deprecation
-ifeq ($(BUILD_DEBUG), optimize)
-    JAVAC_FLAGS += -O
-else
-    JAVAC_FLAGS += -g
-endif
-
-JAVA_FLAGS :=
-#
-# NOTE: The JAVA_HOME variable needs to be set with '=', rather than ':=',
-# because the JDK_DIR variable is set in components.mk, which includes this
-# file before defining that variable.
-#
-JAVA_HOME = $(JDK_DIR)
 
 #
 # The following four symbols are intentionally defined with '=', and not

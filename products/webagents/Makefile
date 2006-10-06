@@ -26,7 +26,6 @@
 
 override BUILD_MODULE := USERX_ROOT
 USERX_ROOT := .
-
 include $(USERX_ROOT)/arch/components.mk
 
 #
@@ -48,10 +47,11 @@ else
    LIB_XML_SUFFIX := .2
 endif
 
-all: all_subdirs $(DEST_DROP_DIR)/$(DSAME_DROP_FILE)
+all: all_subdirs $(DEST_DROP_DIR)/$(DSAME_DROP_FILE) agent_install
 
 clean: clean_subdirs
 	$(RM) -r $(DEST_DIR)
+	$(RM) -r $(DIST_DIR)
 
 drop: $(DEST_DROP_DIR)/$(DSAME_DROP_FILE)
 
@@ -83,6 +83,69 @@ endif
 endif
 endif
 
+agent_install:
+	ant -buildfile $(USERX_ROOT)/install/build.xml -Dagent_name=$(BUILD_AGENT)
+
+	$(MKDIR) $(INSTALL_BIN)
+	$(MKDIR) $(INSTALL_ETC)
+	$(MKDIR) $(INSTALL_CONF)
+	$(MKDIR) $(INSTALL_LIB)
+	$(MKDIR) $(INSTALL_JCE)
+	$(MKDIR) $(INSTALL_JSSE)
+	$(MKDIR) $(INSTALL_LOCALE)
+
+ifeq ($(OS_ARCH), WINNT)
+	$(CP) $(USERX_ROOT)/am/source/cryptit.exe $(INSTALL_BIN)
+else
+	$(CP) $(USERX_ROOT)/am/source/crypt_util $(INSTALL_BIN)
+endif
+ifeq ($(OS_ARCH), WINNT)
+	$(CP) $(LIBXML_LIB_DIR)/libxml2.dll $(INSTALL_LIB)
+else
+	$(CP) $(LIBXML_LIB_DIR)/libxml2.so $(INSTALL_LIB)
+endif
+	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(INSTALL_CONF)/AMAgent.template
+	$(CP) $(USERX_ROOT)/dist/$(BUILD_AGENT)-install.jar $(INSTALL_LIB)/
+	$(CP) $(USERX_ROOT)/extlib/opensso-installtools.jar $(INSTALL_LIB)/
+	$(CP) $(USERX_ROOT)/extlib/opensso-installtools-launcher.jar $(INSTALL_LIB)/
+	$(CP) $(USERX_ROOT)/install/scripts/agentadmin $(INSTALL_BIN)/
+	$(CP) $(USERX_ROOT)/install/scripts/agentadmin.bat $(INSTALL_BIN)/
+	$(CP) $(USERX_ROOT)/install/resources/amToolsMessages.properties $(INSTALL_LOCALE)/
+	$(CP) $(USERX_ROOT)/install/resources/AMToolsConfig.properties $(INSTALL_CONF)/
+	$(CP) $(USERX_ROOT)/install/$(BUILD_AGENT)/resources/$(BUILD_AGENT)Tools.properties $(INSTALL_LOCALE)/
+	$(CP) $(USERX_ROOT)/install/$(BUILD_AGENT)/xml/configure.xml $(INSTALL_CONF)/
+	$(CP) $(USERX_ROOT)/legal/license.txt $(INSTALL_AGENT_DIR)/
+	$(CP) $(USERX_ROOT)/README $(INSTALL_AGENT_DIR)/
+
+ifeq ($(BUILD_AGENT), apache)
+ifeq ($(OS_ARCH), WINNT)
+	$(CP) $(DEST_LIB_DIR)/libamapc2.dll $(INSTALL_LIB)
+else
+	$(CP) $(DEST_LIB_DIR)/libamapc2.so $(INSTALL_LIB)
+endif
+	$(CP) $(USERX_ROOT)/agents/source/apache/dsame.conf $(INSTALL_ETC)/dsame.template
+endif
+
+ifeq ($(OS_ARCH), SunOS)
+	cd $(BUILT_DIR); \
+	$(TAR) cvf $(BUILD_AGENT)_SunOS_agent.tar web_agents; \
+	gzip -f $(BUILD_AGENT)_SunOS_agent.tar; \
+	$(MV) $(BUILD_AGENT)_SunOS_agent.tar.gz ../dist/ 
+	$(RM) $(USERX_ROOT)/dist/$(BUILD_AGENT)-install.jar
+endif
+ifeq ($(OS_ARCH), Linux)
+	cd $(BUILT_DIR); \
+	$(TAR) cvf $(BUILD_AGENT)_Linux_agent.tar web_agents; \
+	gzip -f $(BUILD_AGENT)_Linux_agent.tar; \
+	$(MV) $(BUILD_AGENT)_Linux_agent.tar.gz ../dist/ 
+	$(RM) $(USERX_ROOT)/dist/$(BUILD_AGENT)-install.jar
+endif
+ifeq ($(OS_ARCH), WINNT)
+	cd $(BUILT_DIR); \
+	zip -r $(BUILD_AGENT)_WINNT_agent.zip web_agents; \
+	$(MV) $(BUILD_AGENT)_WINNT_agent.zip ../dist/ 
+	$(RM) $(USERX_ROOT)/dist/$(BUILD_AGENT)-install.jar
+endif
 
 make_zip:
 ifdef BUILD_SHIP

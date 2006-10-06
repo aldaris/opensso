@@ -21,6 +21,8 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
+# $Id: README.txt,v 1.3 2006-10-06 18:27:31 subbae Exp $
+#
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
 %% Contents:
@@ -30,7 +32,8 @@ README file for Open Web Single Sign-On - Web Agents
         %% 2.2 Obtaining LIBXML2 2.6.23
         %% 2.3 Obtaining NSS 3.11
         %% 2.4 Obtaining NSPR 4.6.1
-		%% 2.5 Download Apache Header files (if using Apache Agent)
+	%% 2.5 Download Apache Header files (if using Apache Agent)
+        %% 2.6 Obtaining OpenSSO Agents Common Installer libraries
     %% 3. Building the workspace
 
 %% 1. Build requirements
@@ -39,6 +42,18 @@ The OpenSSO - Web Agents workspace uses GNU Make as the build tool. You must hav
 
 Also make sure that the gcc version is above 3.2.1 (you can find this thru 
 gcc --version)
+
+Also Apache Ant is required to build the agent installer.
+The build scripts in this workspace use features not present in
+releases of Ant prior to 1.6.5.  Thus, in order to build this workspace
+you must have Ant version 1.6.5 or above installed and available in
+your system path.
+
+The sources in this workspace should be compiled using JDK 5.0 with
+the source and target levels set to "1.4". In order to allow this, you
+must ensure that JDK 5.0 is present in your system path and the JAVA_HOME
+environment variable is setup correctly pointing to its location.
+
 
 %% 2. Library dependencies
 
@@ -51,7 +66,8 @@ The libraries needed for compiling OpenSSO sources are:
         - Visual Studio 6 or 7, MKS Tool Kit
         - LIBXML2 2.6.23
         - NSS 3.11
-	    - NSPR 4.6.1
+	- NSPR 4.6.1
+        - OpenSSO Agents Common Installer libraries
 
 The following subsections briefly describe how these libraries may be 
 obtained. These instructions are provided for your convenience only and
@@ -117,6 +133,22 @@ Follow these steps to obtain the binaries:
 (For more information on compiling Apache, check-out the below url:)
 http://httpd.apache.org/docs/2.0/platform/win_compiling.html
 
+
+%% 2.6 Obtaining OpenSSO Agents Common Installer libraries
+
+The OpenSSO Agents Common installer libraries opensso-installtools.jar and
+opensso-installtools-launcher.jar can be built from the OpenSSO Agents Common
+Installer workspace.
+
+Follow these steps to obtain the libraries:
+2.6.1 Check out the OpenSSO Agents Common installer workspace.
+2.6.2 Set JAVA_HOME to the location of JDK 1.5.
+2.6.3 At the root of the workspace, run: ant
+2.6.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar
+from the dist directory of the OpenSSO Agents Common installer workspace
+into extlib directory
+
+
 %% 3. Building the workspace
 
 3.1 cd <opensso_webagent>
@@ -124,14 +156,37 @@ http://httpd.apache.org/docs/2.0/platform/win_compiling.html
       <options> are:
      - BUILD_DEBUG=optimize : compiles the sources in optimize mode.
      - BUILD_DEBUG=full    : compiles the sources in full debug mode.
+     - BUILD_AGENT=agent_name**    : agent to be built.
      - clean      : deletes the generated files
 
+agent_name** : Currently supported agents are
 
-3.3 Creation of build output directories such as 
-        <opensso_webagent>/built
-        <opensso_webagent>/bin
-        <opensso_webagent>/drop
-        <opensso_webagent>/include
-        <opensso_webagent>/samples
+     - apache
 
-%% 4. Building the demo
+
+Examples:
+
+Building Apache agent:
+
+     - make BUILD_DEBUG=optimize BUILD_AGENT=apache
+
+
+3.3 Creation of build output directories such as
+        <opensso_webagent>\built
+        <opensso_webagent>\bin
+        <opensso_webagent>\drop
+        <opensso_webagent>\include
+        <opensso_webagent>\samples
+        <opensso_webagent>\dist
+
+3.4 Build output
+
+Build generates agent installation bits either in .gz or .zip format,
+based on the OS platform, in the dist/ directory. The agent installer archive
+name is in this format: <agent_name>_<OS>_agent.zip)
+
+    - <agent_name> : This is the name given in the make BUILD_AGENT command line option.
+    - <OS> : SunOS, Linux, WINNT
+
+Example: apache_WINNTS_agent.zip
+

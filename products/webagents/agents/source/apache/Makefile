@@ -18,6 +18,8 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
+# $Id: Makefile,v 1.2 2006-10-06 18:27:26 subbae Exp $
+#
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
 # Makefile for building the Apache Policy Agent.
@@ -44,19 +46,9 @@ EXPORTED_LIBS := $(APACHE25_LIB)
 OBJS := $(APACHE25_OBJS)
 $(APACHE25_LIB): $(APACHE25_OBJS) libamapc.def
 	$(MAKE_SHARED_LIB)
+	$(CP) $(APACHE25_LIB_NAME).dll $(DEST_LIB_DIR)
 
-PKG_DIR := $(DEST_PACKAGE_SCRATCH_DIR)/SUNWamapache
-APACHE25_ZIP_FILE := SUNWamapache.zip
-ZIP_DIRS := bin config 
-
-$(APACHE25_ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(APACHE25_LIB)
-	$(RM) -r $(PKG_DIR)
-	$(MKDIR) $(patsubst %, $(PKG_DIR)/apache/%, $(ZIP_DIRS))
-	$(CP) $(filter %$(SO_EXT), $^) $(PKG_DIR)/apache/bin
-	$(CP) dsame.conf $(PKG_DIR)/apache/config/dsame.conf.orig
-	cd $(PKG_DIR) ; zip -r ../$(notdir $@) apache
-
-all: $(APACHE25_ZIP_FILE)
+all: $(APACHE25_LIB)
 
 clean: clean_libs clean_objs
 	$(RM) $(APACHE25_LIB_NAME).o $(APACHE25_LIB_NAME).dll $(APACHE25_LIB_NAME).lib $(APACHE25_LIB_NAME).exp
@@ -102,12 +94,6 @@ LDLIBS += -Bstatic -lamsdk
 $(APACHE2_LIB_NAME).o: apache_agent.c
 	$(COMPILE.c) $(APACHE2_CFLAGS) $< $(OUTPUT_OPTION)
 
-ifeq ($(OS_ARCH), Linux)
-$(APACHE2_LIB): APACHE_VERSION:=$(APACHE_252_VERSION)
-else
-$(APACHE2_LIB): APACHE_VERSION:=$(APACHE_2_VERSION)
-endif
-
 SRCS := apache_agent.c
 APACHE2_OBJS := $(patsubst %.c, $(APACHE2_LIB_NAME).o, $(SRCS))
 OBJS := $(APACHE2_OBJS)
@@ -118,45 +104,6 @@ $(APACHE2_LIB): $(APACHE2_OBJS) libamapc.mapfile
 	$(MAKE_SHARED_LIB)
  
 all: export_libs
-
-EXTRA_RPM_FILES := dsame.conf apcagent-2.2-0.spec
-RPM := $(RPM_DIR)/apcagent-2.2-0.$(MC_ARCH).rpm
-BUILDROOT_APACHE := $(BUILDROOT)/$(INSTALL_DIR)/apache
-BUILDROOT_APACHE_LIB_DIR := $(BUILDROOT_APACHE)/lib
-BUILDROOT_APACHE_CONF_DIR := $(BUILDROOT_APACHE)/config
-BUILDROOT_APACHE_BIN_DIR := $(BUILDROOT_APACHE)/bin
-BUILDROOT_APACHE_CERT_DIR := $(BUILDROOT_APACHE)/cert
-ifeq ($(OS_ARCH), Linux)
-all: $(RPM)
-endif
-
-$(RPM): $(EXPORTED_LIBS) $(EXTRA_RPM_FILES)
-	$(MKDIR) $(BUILDROOT_CONF_DIR)
-	$(MKDIR) $(BUILDROOT_BIN_DIR)
-	$(MKDIR) $(RPM_DIR)/apache
-	$(RM) -r $(BUILDROOT_APACHE)
-	$(MKDIR) $(BUILDROOT_APACHE_LIB_DIR)
-	$(MKDIR) $(BUILDROOT_APACHE_CONF_DIR)
-	$(MKDIR) $(BUILDROOT_APACHE_BIN_DIR)
-	$(MKDIR) $(BUILDROOT_APACHE_CERT_DIR)
-	$(MKDIR) $(BUILDROOT_RPM_DIR)
-	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(BUILDROOT_CONF_DIR)/AMAgent.properties.orig
-	$(CP) $(USERX_ROOT)/am/source/crypt_util $(BUILDROOT_BIN_DIR)
-	$(CP) config_linux $(BUILDROOT_APACHE_BIN_DIR)
-	$(CP) unconfig_linux $(BUILDROOT_APACHE_BIN_DIR)
-	$(CP) $(NSS_BIN_DIR)/certutil $(BUILDROOT_APACHE_CERT_DIR)
-	$(CP) $(DEST_LIB_DIR)/libamapc2.so $(BUILDROOT_APACHE_LIB_DIR)
-	$(CP) dsame.conf $(BUILDROOT_APACHE_CONF_DIR)/dsame.conf.orig
-	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(BUILDROOT_APACHE_LIB_DIR)
-	$(CP) ../common/comlib_linux $(BUILDROOT_APACHE_BIN_DIR)
-	if [ -f $(HOME)/.rpmmacros ] ; then mv $(HOME)/.rpmmacros $(HOME)/.rpmmacros.agent; fi
-	echo "%_topdir $(BUILDROOT)" > $(HOME)/.rpmmacros
-	rpmbuild -bb --buildroot $(BUILDROOT) --target $(MC_ARCH) apcagent-2.2-0.spec
-	$(RM) $(HOME)/.rpmmacros
-	if [ -f $(HOME)/.rpmmacros.agent ] ; then mv $(HOME)/.rpmmacros.agent $(HOME)/.rpmmacros ; fi
-
-	$(MV) $(BUILDROOT_RPM_DIR)/apcagent-2.2-0.$(MC_ARCH).rpm $(RPM_DIR)/apache
-	$(RM) -r $(BUILDROOT)
 
 clean: clean_libs clean_objs
 	$(RM) $(EXPORTED_LIBS) pkginfo.apache

@@ -20,6 +20,8 @@
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
+# $Id: Makefile,v 1.2 2006-10-06 18:27:26 subbae Exp $
+#
 # Makefile file for building the Agents tree.
 #
 #
@@ -37,19 +39,19 @@ AGENT_COMPONENTS := \
 SUBDIRS := common
 
 ifeq ($(OS_ARCH), Linux)
-SUBDIRS += apache
+SUBDIRS += $(BUILD_AGENT)
 endif
 
 ifeq ($(OS_ARCH), SunOS)
 ifeq ($(MC_ARCH), i86pc)
-SUBDIRS += apache
+SUBDIRS += $(BUILD_AGENT)
 else
-SUBDIRS += apache
+SUBDIRS += $(BUILD_AGENT)
 endif
 endif
 
 ifeq ($(OS_ARCH), WINNT)
-SUBDIRS += apache
+SUBDIRS += $(BUILD_AGENT)
 endif
 
 all: all_subdirs
