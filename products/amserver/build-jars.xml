@@ -1,0 +1,109 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build-jars.xml,v 1.1 2006-10-09 19:14:44 veiming Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="opensso-jars" default="all">
+                
+    <description>Open Web Single Sign-On: Jars Creation</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** nightly build may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="amserver.built.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <target name="all" depends="preparebuild">
+        <jar destfile="${amserver.dist.dir}/opensso.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${amserver.built.dir}/classes" />
+            <zipfileset dir="${amserver.script.dir}" prefix="script" />
+            <zipfileset dir="${amserver.res.i18n.dir}" />
+            <zipfileset dir="${amserver.console.res.dir}" />
+            <zipfileset dir="${amserver.www.dir}" prefix="www" />
+        </jar>
+        <checksum file="${amserver.dist.dir}/opensso.jar" 
+            algorithm="SHA" fileext=".sha" />
+
+        <jar destfile="${amserver.dist.dir}/opensso-test.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${amserver.built.dir}/classes" />
+            <zipfileset dir="${amserver.built.dir}/test/classes" />
+            <zipfileset dir="${amserver.script.dir}" prefix="script" />
+            <zipfileset dir="${amserver.res.i18n.dir}" />
+            <zipfileset dir="${amserver.console.res.dir}" />
+            <zipfileset dir="${amserver.www.dir}" prefix="www" />
+        </jar>
+        <checksum file="${amserver.dist.dir}/opensso-test.jar" 
+            algorithm="SHA" fileext=".sha" />
+
+        <jar destfile="${amserver.dist.dir}/opensso-src.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${amserver.built.dir}/classes" prefix="classes" />
+            <zipfileset dir="${amserver.script.dir}" prefix="script" />
+            <zipfileset dir="${amserver.res.i18n.dir}"/>
+            <zipfileset dir="${amserver.console.res.dir}"/>
+            <zipfileset dir="${amserver.src.dir}" prefix="source" />
+            <zipfileset dir="${amserver.www.dir}" prefix="www" />
+            <zipfileset dir="${amserver.xml.dir}" prefix="xml" />
+            <zipfileset dir="${amserver.built.docs.dir}" prefix="javadocs" />
+        </jar>
+
+        <checksum file="${amserver.dist.dir}/opensso-src.jar" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${amserver.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete file="${amserver.dist.dir}/opensso.jar"/>
+        <delete file="${amserver.dist.dir}/opensso.jar.sha"/>
+        <delete file="${amserver.dist.dir}/opensso-test.jar"/>
+        <delete file="${amserver.dist.dir}/opensso-test.jar.sha"/>
+        <delete file="${amserver.dist.dir}/opensso-src.jar"/>
+        <delete file="${amserver.dist.dir}/opensso-src.jar.sha"/>
+    </target>
+</project>
