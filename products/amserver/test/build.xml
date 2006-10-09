@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2006-10-04 17:42:05 veiming Exp $
+   $Id: build.xml,v 1.4 2006-10-09 17:57:36 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,21 +31,20 @@
     <fail message="*** war may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="unittest.dir"/></not>
+                <not><isset property="amserver.unittest.dir"/></not>
             </or>
         </condition>
     </fail>
 
-    <property name="test.package.dir" location="${built.dir}/test/package"/>
-    <property name="test.classes.dir" location="${built.dir}/test/classes"/>
-    <property name="test.dist.dir" location="${built.dir}/test/dist"/>
+    <property name="test.package.dir" location="${amserver.built.dir}/test/package"/>
+    <property name="test.classes.dir" location="${amserver.built.dir}/test/classes"/>
 
     <target name="build" depends="preparebuild">
         <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
                debug="on" debuglevel="lines,vars,source">
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xlint:deprecation"/>
-            <src path="${unittest.dir}/source"/>
+            <src path="${amserver.unittest.dir}/source"/>
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -67,14 +66,14 @@
         <mkdir dir="${test.package.dir}/lib" />
 
         <copy todir="${test.package.dir}/mock">
-            <fileset dir="${unittest.dir}/mock" />
+            <fileset dir="${amserver.unittest.dir}/mock" />
         </copy>
 
 
         <copy todir="${test.package.dir}/classes">
             <fileset dir="${sharedlib.classes.dir}" />
-            <fileset dir="${classes.dir}" />
-            <fileset dir="${res.i18n.dir}" />
+            <fileset dir="${amserver.classes.dir}" />
+            <fileset dir="${amserver.res.i18n.dir}" />
         </copy>
 
         <copy todir="${test.package.dir}/test/classes">
@@ -88,36 +87,36 @@
         </copy>
 
         <copy todir="${test.package.dir}">
-            <fileset dir="${unittest.dir}/xml/ant">
+            <fileset dir="${amserver.unittest.dir}/xml/ant">
                 <include name="*.xml" />
             </fileset>
         </copy>
 
-        <copy file="${unittest.dir}/README"
+        <copy file="${amserver.unittest.dir}/README"
             tofile="${test.package.dir}/README" />
 
         <copy todir="${test.package.dir}/testng">
-            <fileset dir="${unittest.dir}/xml/testng" />
+            <fileset dir="${amserver.unittest.dir}/xml/testng" />
         </copy>
 
         <copy todir="${test.package.dir}/template">
-            <fileset dir="${unittest.dir}/www/template" />
-            <fileset dir="${unittest.dir}/www/css" />
+            <fileset dir="${amserver.unittest.dir}/www/template" />
+            <fileset dir="${amserver.unittest.dir}/www/css" />
         </copy>
 
-        <zip destfile="${test.dist.dir}/opensso-server-test.zip"
+        <zip destfile="${amserver.dist.dir}/opensso-server-test.zip"
             basedir="${test.package.dir}" />
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${test.package.dir}"/>
-        <mkdir dir="${test.dist.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${test.classes.dir}"/>
         <delete dir="${test.package.dir}"/>
-        <delete dir="${test.dist.dir}"/>
+        <delete file="${amserver.dist.dir}/opensso-server-test.zip"/>
     </target>
 </project>

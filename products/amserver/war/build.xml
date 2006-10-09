@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2006-08-29 07:51:44 veiming Exp $
+   $Id: build.xml,v 1.6 2006-10-09 17:57:38 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,20 +31,19 @@
     <fail message="*** war may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="warbase.dir"/></not>
-                <not><isset property="built.war.dir"/></not>
+                <not><isset property="amserver.warbase.dir"/></not>
+                <not><isset property="amserver.built.war.dir"/></not>
             </or>
         </condition>
     </fail>
 
     <!-- war environment variables -->
-    <property name="war.built.dir" location="${built.war.dir}"/>
-    <property name="war.classes.dir" location="${war.built.dir}/classes"/>
-    <property name="war.xml.dir" location="${warbase.dir}/xml"/>
-    <property name="war.www.dir" location="${warbase.dir}/www"/>
+    <property name="war.built.dir" location="${amserver.built.war.dir}"/>
+    <property name="war.xml.dir" location="${amserver.warbase.dir}/xml"/>
+    <property name="war.www.dir" location="${amserver.warbase.dir}/www"/>
 
     <target name="all" depends="preparebuild">
-        <war destfile="${war.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
+        <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
             </lib>
@@ -53,16 +52,15 @@
             <lib dir="${jatolib.dir}">
                 <include name="jato.jar" />
             </lib>
-            <classes dir="${built.dir}/classes" />
+            <classes dir="${amserver.built.dir}/classes" />
             <classes dir="${sharedlib.classes.dir}" />
-            <classes dir="${war.classes.dir}" />
 
-            <zipfileset dir="${www.dir}/authentication/UI">
+            <zipfileset dir="${amserver.www.dir}/authentication/UI">
                 <include name="index.html" />
             </zipfileset>
-            <zipfileset dir="${www.dir}/authentication/UI/login_images" prefix="login_images" />
-            <zipfileset dir="${www.dir}/authentication/UI/js" prefix="js" />
-            <zipfileset dir="${www.dir}/authentication/UI/js" prefix="js" />
+            <zipfileset dir="${amserver.www.dir}/authentication/UI/login_images" prefix="login_images" />
+            <zipfileset dir="${amserver.www.dir}/authentication/UI/js" prefix="js" />
+            <zipfileset dir="${amserver.www.dir}/authentication/UI/js" prefix="js" />
             <zipfileset dir="${lockhart.dir}/js" prefix="js">
                 <include name="browserVersion.js" />
             </zipfileset>
@@ -81,25 +79,25 @@
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/js" prefix="com_sun_web_ui/js" />
             <zipfileset dir="${lockhart.dir}/jsp" prefix="com_sun_web_ui/jsp" />
-            <zipfileset dir="${www.dir}/authentication/UI" prefix="config/auth/default">
+            <zipfileset dir="${amserver.www.dir}/authentication/UI" prefix="config/auth/default">
                 <include name="*.jsp" />
                 <include name="*.html" />
             </zipfileset>
-            <zipfileset dir="${authmodule.xml.dir}" prefix="config/auth/default" />
-            <zipfileset dir="${authmodule.xml.dir}" prefix="config/auth/default_en" />
-            <zipfileset dir="${console.xml.dir}" prefix="WEB-INF/classes" />
-            <zipfileset dir="${built.war.dir}/xml/services" prefix="WEB-INF/classes" />
-            <zipfileset dir="${built.war.dir}/xml" prefix="WEB-INF/template/sms">
+            <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default" />
+            <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default_en" />
+            <zipfileset dir="${amserver.console.xml.dir}" prefix="WEB-INF/classes" />
+            <zipfileset dir="${amserver.built.war.dir}/xml/services" prefix="WEB-INF/classes" />
+            <zipfileset dir="${amserver.built.war.dir}/xml" prefix="WEB-INF/template/sms">
                 <include name="serverconfig.xml" />
             </zipfileset>
             <zipfileset dir="${war.xml.dir}" prefix="WEB-INF">
                 <include name="jaxrpc-ri-runtime.xml" />
             </zipfileset>
-            <zipfileset dir="${built.res.dir}" prefix="WEB-INF/classes">
+            <zipfileset dir="${amserver.built.res.dir}" prefix="WEB-INF/classes">
                 <include name="*.properties" />
                 <exclude name="AMConfig.properties" />
             </zipfileset>
-            <zipfileset dir="${www.dir}/jsp">
+            <zipfileset dir="${amserver.www.dir}/jsp">
                 <include name="isAlive.jsp" />
                 <include name="Debug.jsp" />
                 <include name="amadm.jsp" />
@@ -108,11 +106,11 @@
                 <exclude name="server" />
                 <exclude name="client" />
             </zipfileset>
-            <zipfileset dir="${dtd.xml.dir}" prefix="WEB-INF" />
+            <zipfileset dir="${amserver.dtd.xml.dir}" prefix="WEB-INF" />
             <zipfileset dir="${war.xml.dir}" prefix="WEB-INF">
                 <include name="jaxrpc-ri-runtime.xml" />
             </zipfileset>
-            <zipfileset dir="${classes.dir}/jaxrpc" prefix="WEB-INF/wsdl">
+            <zipfileset dir="${amserver.classes.dir}/jaxrpc" prefix="WEB-INF/wsdl">
                 <include name="IdentityManagementServices.wsdl" />
             </zipfileset>
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/template/sms">
@@ -129,50 +127,49 @@
                 <include name="jato.tld" />
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF/com_sun_web_ui" />
-            <zipfileset dir="${www.dir}/console" prefix="console">
+            <zipfileset dir="${amserver.www.dir}/console" prefix="console">
                 <exclude name="html" />
                 <exclude name="html/*" />
             </zipfileset>
-            <zipfileset dir="${www.dir}/console/html/level1" prefix="console" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/authentication" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/base" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/css" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/delegation" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/dm" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/idm" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/images" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/js" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/policy" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/realm" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/service" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/session" />
-            <zipfileset dir="${www.dir}/console/html/level2" prefix="console/user" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/authentication" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/base" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/css" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/delegation" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/dm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/idm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/images" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/js" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/policy" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/realm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/service" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/session" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/user" />
             <zipfileset dir="${lockhart.dir}/css" prefix="css">
                 <exclude name="css_generic.css" />
             </zipfileset>
-            <zipfileset dir="${docs.dir}/console/javahelp" prefix="html/en/help">
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/en/help">
                 <include name="app.hs" />
                 <include name="map.jhm" />
                 <include name="version.html" />
             </zipfileset>
-            <zipfileset dir="${docs.dir}/console/javahelp/en" prefix="html/en/help" />
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp/en" prefix="html/en/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/en/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/en/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/en/help/graphics" />
         </war>
-        <checksum file="${war.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${war.built.dir}"/>
-        <mkdir dir="${war.classes.dir}"/>
-        <mkdir dir="${war.dist.dir}"/>
+        <mkdir dir="${amserver.built.war.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${war.dist.dir}"/>
-        <delete dir="${war.classes.dir}"/>
-        <delete dir="${war.built.dir}"/>
+        <delete dir="${amserver.built.war.dir}"/>
+        <delete file="${amserver.dist.dir}/opensso.war" />
+        <delete file="${amserver.dist.dir}/opensso.war.sha" />
     </target>
 
 </project>

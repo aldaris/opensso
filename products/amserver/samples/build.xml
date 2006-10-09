@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2006-08-29 07:51:43 veiming Exp $
+   $Id: build.xml,v 1.4 2006-10-09 17:57:33 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,24 +31,24 @@
     <fail message="*** war may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="samples.dir"/></not>
+                <not><isset property="amserver.samples.dir"/></not>
             </or>
         </condition>
     </fail>
 
-    <property name="samples.classes.dir" location="${built.samples.dir}/classes"/>
-    <property name="samples.package.dir" location="${built.samples.dir}/packages"/>
-    <property name="samples.xml.dir" location="${samples.dir}/xml"/>
-    <property name="samplesrc.dir" location="${samples.dir}/source"/>
+    <property name="samples.classes.dir" location="${amserver.built.samples.dir}/classes"/>
+    <property name="samples.package.dir" location="${amserver.built.samples.dir}/packages"/>
+    <property name="samples.xml.dir" location="${amserver.samples.dir}/xml"/>
+    <property name="samples.src.dir" location="${amserver.samples.dir}/source"/>
 
     <target name="all" depends="client">
-        <ant antfile="${samples.dir}/server/build.xml" inheritRefs="true"/>
+        <ant antfile="${amserver.samples.dir}/server/build.xml" inheritRefs="true"/>
     </target>
 
     <target name="client" depends="preparebuild">
         <javac destdir="${samples.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${samplesrc.dir}"/>
+            <src path="${samples.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -56,14 +56,14 @@
             <classpath>
                 <pathelement path="${samples.classes.dir}"/>
             </classpath>
-            <arg value="${samples.dir}" />
+            <arg value="${amserver.samples.dir}" />
         </java>
 
-        <copy file="${samples.dir}/buildXml" tofile="${samples.package.dir}/build.xml" />
-        <copy file="${samples.dir}/resources/clientDefault.properties" tofile="${samples.package.dir}/classes/clientDefault.properties" />
+        <copy file="${amserver.samples.dir}/buildXml" tofile="${samples.package.dir}/build.xml" />
+        <copy file="${amserver.samples.dir}/resources/clientDefault.properties" tofile="${samples.package.dir}/classes/clientDefault.properties" />
 
         <copy todir="${samples.package.dir}/source">
-            <fileset dir="${samples.dir}/source">
+            <fileset dir="${amserver.samples.dir}/source">
                 <include name="**/*.java" />
                 <exclude name="com/sun/identity/samples/setup/Scripts.java" />
                 <exclude name="com/sun/identity/samples/setup/ScriptFileFilter.java" />
@@ -71,7 +71,7 @@
         </copy>
 
         <copy todir="${samples.package.dir}/scripts">
-            <fileset dir="${samples.dir}/scripts">
+            <fileset dir="${amserver.samples.dir}/scripts">
                 <include name="*.sh" />
                 <include name="*.bat" />
             </fileset>
@@ -82,13 +82,13 @@
                 <include name="j2ee.jar" />
                 <include name="ldapjdk.jar" />
             </fileset>
-            <fileset dir="${clientsdk.dist.dir}">
+            <fileset dir="${amserver.dist.dir}">
                 <include name="amclientsdk.jar" />
             </fileset>
         </copy>
 
         <copy todir="${samples.package.dir}/classes">
-            <fileset dir="${res.i18n.dir}">
+            <fileset dir="${amserver.res.i18n.dir}">
                 <include name="amAuth.properties" />
                 <include name="amAuthContext.properties" />
                 <include name="amIdRepo.properties" />
@@ -106,20 +106,20 @@
             </fileset>
         </copy>
 
-        <xslt in="${samples.dir}/xml/Readme.xml"
+        <xslt in="${amserver.samples.dir}/xml/Readme.xml"
             out="${samples.package.dir}/docs/Readme.txt"
-            style="${samples.dir}/xml/ReadmeText.xsl" />
+            style="${amserver.samples.dir}/xml/ReadmeText.xsl" />
 
-        <ant antfile="${samples.dir}/clientsdk/build.xml" inheritRefs="true"/>
+        <ant antfile="${amserver.samples.dir}/clientsdk/build.xml" inheritRefs="true"/>
 
-        <zip destfile="${samples.dist.dir}/openssosamples.zip"
+        <zip destfile="${amserver.dist.dir}/openssosamples.zip"
             basedir="${samples.package.dir}" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${built.samples.dir}"/>
+        <mkdir dir="${amserver.built.samples.dir}"/>
         <mkdir dir="${samples.classes.dir}"/>
-        <mkdir dir="${samples.dist.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
         <mkdir dir="${samples.package.dir}" />
         <mkdir dir="${samples.package.dir}/source" />
         <mkdir dir="${samples.package.dir}/scripts" />
@@ -131,7 +131,7 @@
     </target>
 
     <target name="clean">
-        <delete dir="${samples.dist.dir}"/>
+        <delete file="${amserver.dist.dir}/openssosamples.zip"/>
         <delete dir="${samples.package.dir}/xml" />
         <delete dir="${samples.package.dir}/resources" />
         <delete dir="${samples.package.dir}/docs" />
@@ -141,8 +141,8 @@
         <delete dir="${samples.package.dir}/source" />
         <delete dir="${samples.package.dir}"/>
         <delete dir="${samples.classes.dir}"/>
-        <delete dir="${built.samples.dir}"/>
-        <ant antfile="${samples.dir}/clientsdk/build.xml" inheritRefs="true"
+        <delete dir="${amserver.built.samples.dir}"/>
+        <ant antfile="${amserver.samples.dir}/clientsdk/build.xml" inheritRefs="true"
             target="clean"/>
     </target>
 </project>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-08-25 21:19:15 veiming Exp $
+   $Id: build.xml,v 1.5 2006-10-09 17:57:32 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,14 +31,14 @@
     <fail message="*** clientsdk may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="clientsdkbase.dir"/></not>
+                <not><isset property="amserver.clientsdkbase.dir"/></not>
             </or>
         </condition>
     </fail>
 
     <!-- properties for clientsdk -->
     <property name="clientsdk.name" value="am_client_sdk"/>
-    <property name="clientsdk.version" value="${version}"/>
+    <property name="clientsdk.version" value="${amserver.version}"/>
     <tstamp>
         <format property="pstamp" pattern="yyyy-MMMM-d hh:mm"/>
     </tstamp>
@@ -53,15 +53,15 @@
     <target name="package-clientsdk" depends="preparebuild">
         <echo message="Building clientSDK"/>
 
-        <jar destfile="${clientsdk.dist.dir}/amclientsdk.jar">
-            <fileset dir="${classes.dir}">
-                <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
+        <jar destfile="${amserver.dist.dir}/amclientsdk.jar">
+            <fileset dir="${amserver.classes.dir}">
+                <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
             <fileset dir="${sharedlib.classes.dir}">
-                <includesfile name="${clientsdkbase.dir}/ClientSDKClasses"/>
+                <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
-            <fileset dir="${res.dir}">
-                <includesfile name="${clientsdkbase.dir}/ClientSDKProperties"/>
+            <fileset dir="${amserver.res.dir}">
+                <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKProperties"/>
             </fileset>
             <manifest>
                <attribute name="Created-On" value="${pstamp}" />
@@ -82,25 +82,26 @@
             </manifest>
         </jar>
 
-        <jar destfile="${clientsdk.dist.dir}/amclientsdkcopy.jar"
+        <jar destfile="${amserver.dist.dir}/amclientsdkcopy.jar"
              filesetmanifest="merge">
                 <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
-                <zipfileset src="${clientsdk.dist.dir}/amclientsdk.jar"/>
+                <zipfileset src="${amserver.dist.dir}/amclientsdk.jar"/>
         </jar>
 
-        <copy file="${clientsdk.dist.dir}/amclientsdkcopy.jar" 
-            tofile="${clientsdk.dist.dir}/amclientsdk.jar"/>
-        <delete file="${clientsdk.dist.dir}/amclientsdkcopy.jar"/>
-        <checksum file="${clientsdk.dist.dir}/amclientsdk.jar"
+        <copy file="${amserver.dist.dir}/amclientsdkcopy.jar" 
+            tofile="${amserver.dist.dir}/amclientsdk.jar"/>
+        <delete file="${amserver.dist.dir}/amclientsdkcopy.jar"/>
+        <checksum file="${amserver.dist.dir}/amclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${clientsdk.dist.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${clientsdk.dist.dir}"/>
+        <delete file="${amserver.dist.dir}/amclientsdk.jar"/>
+        <delete file="${amserver.dist.dir}/amclientsdk.jar.sha"/>
     </target>
    
 </project>

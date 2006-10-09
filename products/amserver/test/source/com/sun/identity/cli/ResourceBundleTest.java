@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBundleTest.java,v 1.1 2006-09-26 20:27:31 veiming Exp $
+ * $Id: ResourceBundleTest.java,v 1.2 2006-10-09 17:57:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,13 +149,12 @@ public class ResourceBundleTest extends TestBase{
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();
         try {
-
             ResourceBundle res = (locale.length() == 0) ?
                 ISResourceBundle.getResourceBundle(getAdminSSOToken(), 
                     bundleName, (String)null) :
                 ISResourceBundle.getResourceBundle(getAdminSSOToken(), 
                     bundleName, locale);
-            assert (res == null);
+            assert (res.getLocale() == null);
         } catch (MissingResourceException e) {
             //Ignored
         }

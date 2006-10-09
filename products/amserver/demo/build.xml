@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2006-07-17 18:10:11 veiming Exp $
+   $Id: build.xml,v 1.6 2006-10-09 17:57:32 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,21 +31,20 @@
     <fail message="*** demo may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="demobase.dir"/></not>
+                <not><isset property="amserver.demobase.dir"/></not>
             </or>
         </condition>
     </fail>
 
     <!-- demo environment variables -->
-    <property name="demo.src.dir" location="${demobase.dir}/source"/>
-    <property name="demo.www.dir" location="${demobase.dir}/www"/>
-    <property name="demo.xml.dir" location="${demobase.dir}/xml"/>
-    <property name="demo.classes.dir" location="${demo.built.dir}/classes"/>
-    <property name="demo.package.dir" location="${demo.built.dir}/package"/>
+    <property name="demo.src.dir" location="${amserver.demobase.dir}/source"/>
+    <property name="demo.www.dir" location="${amserver.demobase.dir}/www"/>
+    <property name="demo.classes.dir" location="${amserver.demo.built.dir}/classes"/>
+    <property name="demo.package.dir" location="${amserver.demo.built.dir}/package"/>
 
     <target name="all" depends="build">
         <delete dir="${demo.package.dir}" />
-        <unjar src="${war.dist.dir}/opensso.war" dest="${demo.package.dir}" />
+        <unjar src="${amserver.dist.dir}/opensso.war" dest="${demo.package.dir}" />
         <copy file="${demo.www.dir}/jsp/EvaluatePolicy.jsp" todir="${demo.package.dir}" />
         <mkdir dir="${demo.package.dir}/WEB-INF/classes/com/sun/identity/demo/server" />
         <copy file="${demo.classes.dir}/com/sun/identity/demo/server/EvaluatePolicyServlet.class"
@@ -58,10 +57,10 @@
             value="&lt;servlet-mapping&gt;&lt;servlet-name&gt;EvaluatePolicyServlet&lt;/servlet-name&gt;&lt;url-pattern&gt;/evaluatePolicy&lt;/url-pattern&gt;&lt;/servlet-mapping&gt;&lt;!-- servlet mapping --&gt;">
             <replacetoken>&lt;!-- servlet mapping --&gt;</replacetoken>
         </replace>
-        <jar destfile="${demo.dist.dir}/openssodemo.war">
+        <jar destfile="${amserver.dist.dir}/openssodemo.war">
             <fileset dir="${demo.package.dir}" />
         </jar>
-        <checksum file="${demo.dist.dir}/openssodemo.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${amserver.dist.dir}/openssodemo.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="build" depends="preparebuild">
@@ -73,17 +72,18 @@
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${demo.built.dir}"/>
+        <mkdir dir="${amserver.demo.built.dir}"/>
         <mkdir dir="${demo.classes.dir}"/>
         <mkdir dir="${demo.package.dir}"/>
-        <mkdir dir="${demo.dist.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${demo.dist.dir}"/>
+        <delete file="${amserver.dist.dir}/openssodemo.war"/>
+        <delete file="${amserver.dist.dir}/openssodemo.war.sha"/>
         <delete dir="${demo.classes.dir}"/>
         <delete dir="${demo.package.dir}"/>
-        <delete dir="${demo.built.dir}"/>
+        <delete dir="${amserver.demo.built.dir}"/>
     </target>
 
 </project>

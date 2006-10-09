@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-docs.xml,v 1.1 2006-08-17 17:09:41 veiming Exp $
+   $Id: build-docs.xml,v 1.2 2006-10-09 17:57:34 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,15 +30,15 @@
     <target name="all">
         <xslt in="${server.sample.dir}/docs/Readme.xml"
             out="${samples.server.package.dir}/Readme.html"
-            style="${samples.dir}/xml/ReadmeHTML.xsl" />
+            style="${amserver.samples.dir}/xml/ReadmeHTML.xsl" />
 
         <!-- Authentication Samples -->
         <xslt in="${server.sample.dir}/docs/Authentication.xml"
             out="${samples.server.package.dir}/Authentication.html"
-            style="${samples.dir}/xml/ReadmeHTML.xsl" />
+            style="${amserver.samples.dir}/xml/ReadmeHTML.xsl" />
         <xslt in="${server.sample.dir}/docs/AuthSampleLoginModule.xml"
             out="${samples.server.package.dir}/AuthSampleLoginModule.html"
-            style="${samples.dir}/xml/ReadmeHTML.xsl" />
+            style="${amserver.samples.dir}/xml/ReadmeHTML.xsl" />
 
     </target>
 

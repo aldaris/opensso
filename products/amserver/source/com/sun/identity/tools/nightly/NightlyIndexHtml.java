@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NightlyIndexHtml.java,v 1.2 2006-08-05 07:12:28 veiming Exp $
+ * $Id: NightlyIndexHtml.java,v 1.3 2006-10-09 17:57:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class NightlyIndexHtml {
         content = content.replaceAll(
             "<a href=.+?>latest</a>",
             MessageFormat.format(LATEST, param));
-        writeToFile(baseDir + "/index.html", content);
+        writeToFile(baseDir + "/top.index.html", content);
     }
 
     private static void writeToFile(String filename, String content)

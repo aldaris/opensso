@@ -1,0 +1,4 @@
+<project name="amserver">
+    <dirname property="amserver.basedir" file="${ant.file.amserver}"/>
+    <property file="${amserver.basedir}/amserver.properties"/>
+</project>

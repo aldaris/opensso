@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.1 2006-09-26 20:27:31 veiming Exp $
+ * $Id: RealmTest.java,v 1.2 2006-10-09 17:57:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -202,7 +202,6 @@ public class RealmTest extends TestBase{
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();
-        System.out.println(outputWriter.getMessages());
         exiting("getRealmAttributeValues");
     }
     
@@ -216,7 +215,7 @@ public class RealmTest extends TestBase{
         String[] args = {
             "set-realm-attributes",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
-            "/",
+            realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
             "sunIdentityRepositoryService",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.ATTRIBUTE_VALUES,
@@ -230,7 +229,7 @@ public class RealmTest extends TestBase{
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             getAdminSSOToken(), realm);
         Map values = ocm.getAttributes("sunIdentityRepositoryService");
-        Set attrValues = (Set)values.get("sunOrganizationAliases");
+        Set attrValues = (Set)values.get("sunOrganizationStatus");
         assert attrValues.contains("Active");
         exiting("setRealmAttributeValues");
     }  
@@ -254,7 +253,6 @@ public class RealmTest extends TestBase{
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();
-        System.out.println(outputWriter.getMessages());
         
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             getAdminSSOToken(), realm);
@@ -414,7 +412,7 @@ public class RealmTest extends TestBase{
         AMIdentity ai = amir.getRealmIdentity();
         Map map = ai.getServiceAttributes(serviceName);
         Map orig = CollectionUtils.parseStringToMap(attributeValue);
-        assert map.equals(orig);
+        assert !map.equals(orig);
         exiting("unassignServiceFromRealm");
     }
     

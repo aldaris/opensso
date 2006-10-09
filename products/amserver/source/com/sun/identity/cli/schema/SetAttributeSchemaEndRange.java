@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaEndRange.java,v 1.1 2006-05-31 21:50:06 veiming Exp $
+ * $Id: SetAttributeSchemaEndRange.java,v 1.2 2006-10-09 17:57:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class SetAttributeSchemaEndRange extends SchemaCommand {
                 "ATTEMPT_SET_ATTRIBUTE_SCHEMA_END_RANGE", params);
             AttributeSchema attrSchema = ss.getAttributeSchema(
                 attributeSchemaName);
-            attrSchema.setStartRange(range);
+            attrSchema.setEndRange(range);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_SET_ATTRIBUTE_SCHEMA_END_RANGE", params);
             outputWriter.printlnMessage(MessageFormat.format(

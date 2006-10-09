@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-08-17 17:09:41 veiming Exp $
+   $Id: build.xml,v 1.2 2006-10-09 17:57:34 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,17 +31,17 @@
     <fail message="*** war may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="built.samples.dir"/></not>
+                <not><isset property="amserver.built.samples.dir"/></not>
             </or>
         </condition>
     </fail>
-    <property name="server.sample.dir" location="${samples.dir}/server" />
+    <property name="server.sample.dir" location="${amserver.samples.dir}/server" />
     <property name="samples.server.package.dir"
-        location="${built.samples.dir}/server/packages" />
+        location="${amserver.built.samples.dir}/server/packages" />
     <property name="samples.server.packageweb.dir"
-        location="${built.samples.dir}/server/packagesweb" />
+        location="${amserver.built.samples.dir}/server/packagesweb" />
     <property name="samples.server.classes.dir"
-        location="${built.samples.dir}/server" />
+        location="${amserver.built.samples.dir}/server" />
     <property name="samples.server.source.dir"
         location="${server.sample.dir}/source" />
 
@@ -51,13 +51,13 @@
             <src path="${samples.server.source.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
-        <unjar src="${war.dist.dir}/opensso.war"
+        <unjar src="${amserver.dist.dir}/opensso.war"
             dest="${samples.server.package.dir}" />
         <ant antfile="${server.sample.dir}/build-docs.xml" inheritRefs="true"/>
 
-        <copy file="${samples.dir}/clientsdk/www/sample.css"
+        <copy file="${amserver.samples.dir}/clientsdk/www/sample.css"
             tofile="${samples.server.package.dir}/sample.css" />
-        <copy file="${samples.dir}/clientsdk/www/sunLogo.gif"
+        <copy file="${amserver.samples.dir}/clientsdk/www/sunLogo.gif"
             tofile="${samples.server.package.dir}/sunLogo.gif" />
         <copy todir="${samples.server.package.dir}/WEB-INF/classes">
             <fileset dir="${samples.server.classes.dir}"/>
@@ -77,14 +77,14 @@
         <mkdir dir="${samples.server.packageweb.dir}" />
         <move file="${samples.server.package.dir}/WEB-INF/web.xml"
             tofile="${samples.server.packageweb.dir}/web.xml" />
-        <war destfile="${samples.dist.dir}/opensso_server_samples.war"
+        <war destfile="${amserver.dist.dir}/opensso_server_samples.war"
             webxml="${samples.server.packageweb.dir}/web.xml">
             <zipfileset dir="${samples.server.package.dir}" />
         </war>
         <move file="${samples.server.packageweb.dir}/web.xml"
             tofile="${samples.server.package.dir}/WEB-INF/web.xml" />
         <delete dir="${samples.server.packageweb.dir}" />
-        <checksum file="${samples.dist.dir}//opensso_server_samples.war"
+        <checksum file="${amserver.dist.dir}/opensso_server_samples.war"
             algorithm="SHA" fileext=".sha" />
 
     </target>

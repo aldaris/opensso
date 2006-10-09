@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-08-04 21:06:51 veiming Exp $
+   $Id: build.xml,v 1.2 2006-10-09 17:57:33 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,12 +31,13 @@
     <fail message="*** war may be built from top level only ***">
         <condition>
             <or>
-                <not><isset property="built.samples.dir"/></not>
+                <not><isset property="amserver.built.samples.dir"/></not>
+                <not><isset property="samples.package.dir"/></not>
             </or>
         </condition>
     </fail>
-    <property name="clientsdk.sample.dir" location="${samples.dir}/clientsdk" />
-    <property name="samples.clientsdk.classes.dir" location="${built.samples.dir}/clientsdk" />
+    <property name="clientsdk.sample.dir" location="${amserver.samples.dir}/clientsdk" />
+    <property name="samples.clientsdk.classes.dir" location="${amserver.built.samples.dir}/clientsdk" />
     <property name="samples.clientsdk.source.dir" location="${clientsdk.sample.dir}/source" />
 
     <target name="all" depends="preparebuild">
@@ -53,7 +54,7 @@
         </copy>
         <xslt in="${clientsdk.sample.dir}/xml/Readme.xml"
             out="${samples.package.dir}/war/index.html"
-            style="${samples.dir}/xml/ReadmeHTML.xsl" />
+            style="${amserver.samples.dir}/xml/ReadmeHTML.xsl" />
 
         <copy todir="${samples.package.dir}/war">
             <fileset dir="${clientsdk.sample.dir}/www">
@@ -67,7 +68,7 @@
             </fileset>
         </copy>
         <copy todir="${samples.package.dir}/resources">
-            <fileset dir="${clientsdkbase.dir}/resources">
+            <fileset dir="${amserver.clientsdkbase.dir}/resources">
                 <include name="AMClient.properties"/>
             </fileset>
         </copy>
@@ -87,7 +88,7 @@
                 <include name="saaj-api.jar" />
                 <include name="saaj-impl.jar" />
             </fileset>
-            <fileset dir="${clientsdk.dist.dir}">
+            <fileset dir="${amserver.dist.dir}">
                 <include name="amclientsdk.jar" />
             </fileset>
         </copy>

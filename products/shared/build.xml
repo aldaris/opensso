@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-09-20 19:14:47 veiming Exp $
+   $Id: build.xml,v 1.3 2006-10-09 17:57:39 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -73,7 +73,8 @@
     </target>
 
     <target name="clean">
-        <delete dir="${sharedlib.dist.dir}"/>
+        <delete file="${sharedlib.dist.dir}/opensso-sharedlib.jar"/>
+        <delete file="${sharedlib.dist.dir}/opensso-sharedlib.jar.sha"/>
         <delete dir="${sharedlib.classes.dir}"/>
         <delete dir="${sharedlib.built.dir}"/>
     </target>
