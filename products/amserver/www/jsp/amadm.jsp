@@ -249,11 +249,18 @@ try {
                         !key.endsWith("lblb")
                     ) {
                         String[] values = (String[])map.get(key);
-                        list.add("--" + key);
+                        List temp = new ArrayList();
                         for (int j = 0; j < values.length; j++) {
                             String str = values[j];
                             str = str.trim();
-                            list.add(str);
+                            if (str.length() > 0) {
+                                temp.add(str);
+                            }
+                        }
+
+                        if (!temp.isEmpty()) {
+                            list.add("--" + key);
+                            list.addAll(temp);
                         }
                     }
                 }

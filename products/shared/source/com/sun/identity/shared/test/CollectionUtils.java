@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CollectionUtils.java,v 1.1 2006-09-06 18:25:19 veiming Exp $
+ * $Id: CollectionUtils.java,v 1.1 2006-10-10 07:38:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.test.common;
+package com.sun.identity.shared.test;
 
 import java.util.HashMap;
 import java.util.HashSet;

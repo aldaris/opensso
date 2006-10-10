@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.2 2006-10-09 17:57:36 veiming Exp $
+ * $Id: RealmTest.java,v 1.3 2006-10-10 07:40:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,9 +37,9 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.shared.test.CollectionUtils;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.test.common.CollectionUtils;
 import com.sun.identity.test.common.TestBase;
 import java.util.HashMap;
 import java.util.Map;

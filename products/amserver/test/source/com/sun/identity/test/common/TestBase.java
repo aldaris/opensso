@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestBase.java,v 1.2 2006-09-07 19:48:13 veiming Exp $
+ * $Id: TestBase.java,v 1.3 2006-10-10 07:40:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,45 +26,18 @@ package com.sun.identity.test.common;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
-import java.io.IOException;
+import com.sun.identity.shared.test.UnitTestBase;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.text.MessageFormat;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class is the base for all <code>OpenSSO</code> unit testcases.
  * It has commonly used methods; and hopefully we can grow this class
  * to support more methods in future.
  */
-public abstract class TestBase {
-    private String logEntryTemplate;
-    private String className;
-    
-    static private Logger logger;
-
-    static {
-        try {
-            logger = Logger.getLogger("com.sun.identity.test");
-            logger.addHandler(new FileHandler("logs/unittest"));
-            String logLevel = System.getProperty("log.level");
-            if ((logLevel != null)) {
-                logger.setLevel(Level.parse(logLevel));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }    
-    
-    private TestBase() {
-    }
-    
+public abstract class TestBase extends UnitTestBase {
     protected TestBase(String componentName) {
-        logEntryTemplate = componentName + "." + 
-            this.getClass().getName() + ".{0}: {1}";
-        className = this.getClass().getName();
+        super(componentName);
     }
     
     /**
@@ -76,58 +49,5 @@ public abstract class TestBase {
         AdminTokenAction action = AdminTokenAction.getInstance();
         return (SSOToken)AccessController.doPrivileged(
             (PrivilegedAction<AdminTokenAction>)action);
-    }
-
-    /**
-     * Writes a log entry for entering a test method.
-     *
-     * @param methodName Name of method.
-     * @param params Parameter to the method being entered.
-     */
-    protected void entering(String methodName, Object[] params) {
-        if (params != null) {
-            logger.entering(className, methodName, params);
-        } else {
-            logger.entering(className, methodName);
-        }
-    }
-
-    /**
-     * Writes a log entry for exiting a test method.
-     *
-     * @param methodName Name of method.
-     */
-    protected void exiting(String methodName) {
-        logger.exiting(className, methodName);
-    }
-    
-    /**
-     * Writes a log entry.
-     *
-     * @param level Log Level.
-     * @param methodName Name of method.
-     * @param message Log Message.
-     */
-    protected void log(Level level, String methodName, String message) {
-        Object[] args = {methodName, message};
-        logger.log(level, MessageFormat.format(logEntryTemplate, args));
-    }
-
-    /**
-     * Writes a log entry.
-     *
-     * @param level Log Level.
-     * @param methodName Name of method.
-     * @param message Log Message.
-     * @param params Parameters for the log message.
-     */
-    protected void log(
-        Level level, 
-        String methodName, 
-        String message, 
-        Object[] params
-    ) {
-        Object[] args = {methodName, message};
-        logger.log(level, MessageFormat.format(logEntryTemplate, args), params);
     }
 }
