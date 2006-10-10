@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.7 2006-08-25 21:19:43 veiming Exp $
+ * $Id: SessionService.java,v 1.8 2006-10-10 02:03:03 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1699,6 +1699,7 @@ public class SessionService {
             }
 
             Thread sm = new SessionMonitor(this, sessionTable);
+            sm.setDaemon(true);
             sm.setName("amSessionMonitor");
             sm.start();
         } catch (Exception ex) {
