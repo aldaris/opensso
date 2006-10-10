@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2006-09-28 22:16:41 huacui Exp $
+$Id: README,v 1.2 2006-10-10 22:18:18 huacui Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -86,8 +86,8 @@ conditions.
 
 %% 2.1 Obtaining OpenSSO Agents Common Installer libraries
 
-The OpenSSO Agents Common installer libraries install-tools.jar and 
-install-tools-launcher.jar can be built from the OpenSSO Agents Common 
+The OpenSSO Agents Common installer libraries opensso-installtools.jar and 
+opensso-installtools-launcher.jar can be built from the OpenSSO Agents Common 
 Installer workspace.
 
 Follow these steps to obtain the libraries:
