@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.1 2006-09-28 23:35:19 huacui Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.2 2006-10-12 06:24:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ import com.sun.identity.agents.policy.AmWebPolicyResultStatus;
 import com.sun.identity.agents.policy.IAmWebPolicy;
 import com.sun.identity.agents.util.NameValuePair;
 import com.sun.identity.agents.util.StringUtils;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.Constants;
 
 /**
  * <p>

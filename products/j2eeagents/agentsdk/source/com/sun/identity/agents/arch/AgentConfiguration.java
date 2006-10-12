@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.1 2006-09-28 23:21:03 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.2 2006-10-12 06:24:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 
 

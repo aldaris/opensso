@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWebPolicy.java,v 1.1 2006-09-28 23:48:09 huacui Exp $
+ * $Id: AmWebPolicy.java,v 1.2 2006-10-12 06:24:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.Constants;
 import com.sun.identity.agents.arch.AgentBase;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
@@ -43,7 +42,7 @@ import com.sun.identity.policy.PolicyDecision;
 import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.client.PolicyEvaluatorFactory;
 import com.sun.identity.policy.plugins.IPCondition;
-import com.sun.identity.agents.arch.ServiceFactory;
+import com.sun.identity.shared.Constants;
 
 /**
  * The class handles and evaluates URL policies

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Module.java,v 1.1 2006-09-28 23:22:36 huacui Exp $
+ * $Id: Module.java,v 1.2 2006-10-12 06:24:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,7 @@ package com.sun.identity.agents.arch;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * <p>
