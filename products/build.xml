@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-21 18:29:10 veiming Exp $
+   $Id: build.xml,v 1.2 2006-10-12 06:24:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,6 +27,8 @@
                 
     <description>Open Web Single Sign-On</description>
     <import file="products.xml" />
+    <import file="amserver/amserver.xml" />
+    <import file="installtools/installtools.xml" />
 
     <property name="diff.dir" location="${products.basedir}/diffs" />
     <property name="classes.dir" location="${products.basedir}/amserver/built/classes" />
@@ -36,6 +38,32 @@
     <path id="build.class.path">
         <pathelement location="${classes.dir}"/>
     </path>
+
+    <target name="nightly">
+        <tstamp>
+            <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
+                unit="day"/>
+        </tstamp>
+
+        <mkdir dir="${prd.nightly.dist.dir}" />
+        <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
+            target="nightly" />
+        <mkdir dir="${prd.nightly.dist.dir}/amserver/${nightly.date}" />
+        <copy todir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
+            <fileset dir="${amserver.dist.dir}"/>
+        </copy>
+        <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
+
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${prd.nightly.dir}" />
+        <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+    </target>
 
     <target name="build-diff">
         <mkdir dir="${classes.dir}" />
@@ -66,7 +94,9 @@
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
-        <echo message=" cvsdiff    : generate diffs under diffs subdirectory"/>
+        <echo message=" cvsdiff    : generates diffs under diffs subdirectory"/>
+        <echo message=" nightly    : performs nightly builds for all products"/>
+        <echo message=" clean      : cleans generated files for all products"/>
         <echo message=" usage      : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

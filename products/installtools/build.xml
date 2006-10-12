@@ -18,46 +18,35 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-28 07:37:14 rarcot Exp $
+   $Id: build.xml,v 1.2 2006-10-12 06:24:41 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project name="OpenSSO-Install-Tools" default="all">
 
-	<description>Open Web Single Sign-On Install Tools Library</description>
-	
+    <description>Open Web Single Sign-On Install Tools Library</description>
+
+    <import file="../products.xml" />
+    <import file="installtools.xml" />
+    
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
-    <property name="build.debuglevel" value="lines,vars,source"/>	
-	
-	<!-- directory related properties -->
-	<property name="installtools.source.dir" value="source"/>
-	<property name="installtools.built.dir" value="built"/>
-	<property name="installtools.classes.dir" 
-		value="${installtools.built.dir}/classes"/>
-	<property name="installtools.dist.dir" 
-		value="${installtools.built.dir}/dist"/>
-	
-	<!-- include/exclude file properties -->
-	<property name="installtools.launcher.classes" 
-		value="com/sun/identity/install/tools/launch/*.class"/>
-    <property name="installtools.launcher.dir" 
-        value="com/sun/identity/install/tools/launch"/>		
-	
-	<!-- source fileset for launcher class -->
-	<fileset dir="${installtools.classes.dir}">
-		<patternset id="installtool-classes">
-			<exclude name="${installtools.launcher.classes}"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>    
+    
+    <!-- source fileset for launcher class -->
+    <fileset dir="${installtools.classes.dir}">
+        <patternset id="installtool-classes">
+            <exclude name="${installtools.launcher.classes}"/>
             <exclude name="${installtools.launcher.dir}"/> 
-		</patternset>
-	</fileset>
-	
-	<fileset dir="${installtools.classes.dir}">
-		<patternset id="installtool-launcher-classes">
-			<include name="${installtools.launcher.classes}"/>		
-		</patternset>
-	</fileset>
+        </patternset>
+    </fileset>
+    
+    <fileset dir="${installtools.classes.dir}">
+        <patternset id="installtool-launcher-classes">
+            <include name="${installtools.launcher.classes}"/>        
+        </patternset>
+    </fileset>
 
     <!-- all the targets start from here -->
     <target name="all" depends="build">
@@ -69,12 +58,12 @@
                 <include name="license.txt" />
             </fileset>      
             <fileset dir="${installtools.classes.dir}">
-            	<patternset refid="installtool-classes"/>
-        	</fileset>         
+                <patternset refid="installtool-classes"/>
+            </fileset>         
         </jar>
-    	
+        
         <jar destfile=
-        	"${installtools.dist.dir}/opensso-installtools-launcher.jar">
+            "${installtools.dist.dir}/opensso-installtools-launcher.jar">
             <manifest>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>   
@@ -82,13 +71,13 @@
                 <include name="license.txt" />
             </fileset>      
             <fileset dir="${installtools.classes.dir}">
-            	<patternset refid="installtool-launcher-classes"/>
-        	</fileset>
+                <patternset refid="installtool-launcher-classes"/>
+            </fileset>
         </jar>
         <checksum file="${installtools.dist.dir}/opensso-installtools.jar"
             algorithm="SHA" fileext=".sha" />
         <checksum 
-        	file="${installtools.dist.dir}/opensso-installtools-launcher.jar"
+            file="${installtools.dist.dir}/opensso-installtools-launcher.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
@@ -100,17 +89,17 @@
         </javac>
     </target>
 
-    <target name="preparebuild">    	
+    <target name="preparebuild">        
         <mkdir dir="${installtools.built.dir}"/>
         <mkdir dir="${installtools.classes.dir}"/>
         <mkdir dir="${installtools.dist.dir}"/>
     </target>
 
-    <target name="clean">    	
+    <target name="clean">        
         <delete dir="${installtools.dist.dir}"/>
         <delete dir="${installtools.classes.dir}"/>
         <delete dir="${installtools.built.dir}"/>
-    </target>					
+    </target>                    
 
     <target name="usage">
         <echo message=" "/>
