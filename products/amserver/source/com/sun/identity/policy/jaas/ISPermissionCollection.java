@@ -17,21 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPermissionCollection.java,v 1.1 2006-09-01 20:01:03 bhavnab Exp $
+ * $Id: ISPermissionCollection.java,v 1.2 2006-10-12 06:23:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.policy.jaas;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.policy.ResBundleUtils;
+import com.sun.identity.shared.debug.Debug;
 
 import java.security.Permission;
 import java.security.PermissionCollection;
-
-import java.util.Hashtable;
 import java.util.Enumeration;
-
-import com.sun.identity.policy.ResBundleUtils;
+import java.util.Hashtable;
 
 /**
  * This class represents a collection of <code>ISPermission</code> objects.

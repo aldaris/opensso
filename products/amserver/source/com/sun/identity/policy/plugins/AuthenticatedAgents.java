@@ -17,12 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedAgents.java,v 1.1 2006-09-20 23:20:43 bigfatrat Exp $
+ * $Id: AuthenticatedAgents.java,v 1.2 2006-10-12 06:23:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
 
 
 package com.sun.identity.policy.plugins;
@@ -33,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -50,6 +47,7 @@ import com.sun.identity.policy.Syntax;
 import com.sun.identity.policy.ValidValues;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This subject applies to all users with valid <code>SSOToken</code>.

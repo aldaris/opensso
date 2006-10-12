@@ -17,20 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPolicy.java,v 1.1 2006-09-01 20:01:04 bhavnab Exp $
+ * $Id: ISPolicy.java,v 1.2 2006-10-12 06:23:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.policy.jaas;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 
+import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.Policy;
-
 import java.security.ProtectionDomain;
-import java.security.CodeSource;
-
 import java.util.Enumeration;
 
 /**

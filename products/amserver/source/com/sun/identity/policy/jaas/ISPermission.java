@@ -17,22 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPermission.java,v 1.1 2006-09-01 20:01:03 bhavnab Exp $
+ * $Id: ISPermission.java,v 1.2 2006-10-12 06:23:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-package com.sun.identity.policy.jaas;
 
-import com.iplanet.am.util.Debug;
+package com.sun.identity.policy.jaas;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
 
 import com.sun.identity.authentication.service.SSOTokenPrincipal;
-
 import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.client.PolicyEvaluatorFactory;
+import com.sun.identity.shared.debug.Debug;
 
 import java.security.Permission;
 import java.security.CodeSource;
