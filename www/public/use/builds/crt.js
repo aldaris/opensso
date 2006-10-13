@@ -53,12 +53,13 @@ alert("IN GETUSER");
     var var1 = document.getElementById('login');
 alert("get login element os : "+var1);
     if (var1 != null) {
-alert("userid aa"+var1.childNodes[1].innerHTML);
+alert("userid aa"+var1.childNodes);
+alert("userid aa"+var1.childNodes[1]);
 alert("userid bb"+var1.childNodes[1].childNodes[1]);
         userid = var1.childNodes[1].childNodes[1].innerHTML;
 alert("userid1111 : "+userid);
     } else {
-alert("userid2222 : "+usserid);
+alert("userid2222 : ");
         if (usereq) {
 alert("userid333 start : "+usserid);
            uhttp_request = get_request_handle()
