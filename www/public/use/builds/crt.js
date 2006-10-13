@@ -54,8 +54,8 @@ alert("IN GETUSER");
 alert("get login element os : "+var1);
     if (var1 != null) {
 alert("userid aa"+var1.childNodes);
-alert("userid aa"+var1.childNodes[1]);
-alert("userid bb"+var1.childNodes[1].childNodes[1]);
+alert("userid bb"+var1.childNodes.innerHTML);
+alert("userid cc"+var1.childNodes[1].childNodes[1]);
         userid = var1.childNodes[1].childNodes[1].innerHTML;
 alert("userid1111 : "+userid);
     } else {
