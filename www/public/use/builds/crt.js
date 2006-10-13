@@ -65,9 +65,7 @@ function getUser(usereq)
         var st3 = str.indexOf("<", st2);
         userid = str.substring(st2+1,st3);
     } else {
-alert("userid2222 : ");
         if (usereq) {
-alert("userid333 start : "+userid);
            uhttp_request = get_request_handle()
            try {
 	      uhttp_request.open('GET', uurl, false);
@@ -82,7 +80,6 @@ alert("userid333 start : "+userid);
               var st2 = result.indexOf(">", st1);
               var st3 = result.indexOf("<", st2);
               userid = result.substring(st2+1,st3);
-alert("userid333 end : "+userid);
            } catch(e) {
                 alert("Problem scraping for user:"+e);
             }
@@ -93,7 +90,6 @@ alert("userid333 end : "+userid);
 function isValidIssueId(id, writemsg)
 {
     uhttp_request = get_request_handle()
-alert("Check..."+id);
     try {
         if (id == null || id.length == 0) {
            if (writemsg)
@@ -258,8 +254,6 @@ crtn['component'] ='Component';
         crtt = crtt.replace('CRTTEXTDATA', escapeHTML(data));
 	mydata = crtt;
 	myid = crtFrm.elements['id'].value;
-ret = isValidIssueId(myid, false);
-alert ("ISVALID RETURNS:"+ret);
         if (!isValidIssueId(myid, false)) {
             alert ("Error : Issue#"+myid+" does not exist.");
             return;
