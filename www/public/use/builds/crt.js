@@ -51,10 +51,14 @@ function getUser(usereq)
 {
 alert("IN GETUSER");
     var var1 = document.getElementById('login');
+alert("get login element os : "+var1);
     if (var1 != null) {
         userid = var1.childNodes[1].childNodes[1].innerHTML;
+alert("userid1111 : "+usserid);
     } else {
+alert("userid2222 : "+usserid);
         if (usereq) {
+alert("userid333 start : "+usserid);
            uhttp_request = get_request_handle()
            try {
 	      uhttp_request.open('GET', uurl, false);
@@ -66,6 +70,7 @@ alert("IN GETUSER");
               var st2 = result.indexOf(">", st1);
               var st3 = result.indexOf("<", st2);
               userid = result.substring(st2+1,st3);
+alert("userid333 end : "+usserid);
            } catch(e) {
                 alert("Problem scraping for user:"+e);
             }
