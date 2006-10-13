@@ -53,6 +53,7 @@ alert("IN GETUSER");
     var var1 = document.getElementById('login');
 alert("get login element os : "+var1);
     if (var1 != null) {
+alert("userid aa"+var1.innerHTML);
 alert("userid aa"+var1.childNodes);
 alert("userid bb"+var1.childNodes.innerHTML);
 alert("userid cc"+var1.childNodes[1].childNodes[1]);
