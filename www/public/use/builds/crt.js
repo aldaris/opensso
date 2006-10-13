@@ -7,6 +7,7 @@ var noissue = "There does not seem to be an issue numbered";
 var nossue1 ="Issue ";
 var fixissue1 = "show_bug.cgi?id=";
 var fixissue2 = "https://opensso.dev.java.net/issues/show_bug.cgi?id=";
+var uidstr = "Logged in: <STRONG class=username>";
 var mydata;
 var myid;
 var mydescription;
@@ -49,16 +50,18 @@ function setupUser(formn, elem)
 var uhttp_request;
 function getUser(usereq)
 {
-alert("IN GETUSER");
     var var1 = document.getElementById('login');
-alert("get login element os : "+var1);
     if (var1 != null) {
-alert("userid aa"+var1.innerHTML);
-alert("userid aa"+var1.childNodes);
-alert("userid bb"+var1.childNodes.innerHTML);
-alert("userid cc"+var1.childNodes[1].childNodes[1]);
-        userid = var1.childNodes[1].childNodes[1].innerHTML;
-alert("userid1111 : "+userid);
+        var str = var1.innerHTML;
+        //userid = var1.childNodes[1].childNodes[1].innerHTML;
+        var st1 = str.indexOf('class="username"');
+        if (st1 == -1) {
+alert("Problem getting userid:"+str);
+           return;
+        }
+        var st2 = str.indexOf(">", st1);
+        var st3 = str.indexOf("<", st2);
+        userid = str.substring(st2+1,st3);
     } else {
 alert("userid2222 : ");
         if (usereq) {
