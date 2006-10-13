@@ -55,9 +55,11 @@ function getUser(usereq)
         var str = var1.innerHTML;
         //userid = var1.childNodes[1].childNodes[1].innerHTML;
         var st1 = str.indexOf('class="username"');
-        if (st1 == -1) {
-alert("Problem getting userid:"+str);
-           return;
+        if (st1 == -1) { // IE
+           st1 = str.indexOf('class=username');
+           if (st1 == -1) {
+              alert("Problem getting userid from :"+str);
+           }
         }
         var st2 = str.indexOf(">", st1);
         var st3 = str.indexOf("<", st2);
@@ -65,19 +67,22 @@ alert("Problem getting userid:"+str);
     } else {
 alert("userid2222 : ");
         if (usereq) {
-alert("userid333 start : "+usserid);
+alert("userid333 start : "+userid);
            uhttp_request = get_request_handle()
            try {
 	      uhttp_request.open('GET', uurl, false);
 	      uhttp_request.send(null);
               var result = uhttp_request.responseText;
               var st1 = result.indexOf('class="username"');
-              if (st1 == -1)
-                 return;
+              if (st1 == -1) {
+                 st1 = result.indexOf('class=username');
+                 if (st1 == -1)
+                     return;
+              }
               var st2 = result.indexOf(">", st1);
               var st3 = result.indexOf("<", st2);
               userid = result.substring(st2+1,st3);
-alert("userid333 end : "+usserid);
+alert("userid333 end : "+userid);
            } catch(e) {
                 alert("Problem scraping for user:"+e);
             }
