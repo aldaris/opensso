@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.9 2006-09-13 23:59:54 rarcot Exp $
+ * $Id: FilesRepo.java,v 1.10 2006-10-13 21:31:07 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -924,8 +924,8 @@ public class FilesRepo extends IdRepo {
                     } else {
                         // Check if the values are present
                         Set matchValues = (Set) allAttrs.get(attrName);
-                        if (matchValues != null
-                                && matchValues.contains(attrValue)) {
+                        if (matchValues != null &&
+                                containsAttrValue (matchValues, attrValue)) {
                             if (filterOp == IdRepo.OR_MOD) {
                                 addResult = true;
                                 break;
@@ -1374,7 +1374,9 @@ public class FilesRepo extends IdRepo {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    debug.error("FilesRepo: read error: " + fileName, e);
+                    if (debug.warningEnabled()) {
+                        debug.warning("FilesRepo: read error: " + fileName, e);
+                    }
                 }
             }
         }
@@ -1439,6 +1441,25 @@ public class FilesRepo extends IdRepo {
             }
         }
         return (attrs);
+    }
+
+    // Method to compare wild card attribute values
+    boolean containsAttrValue(Set attrValues, Set patterns) {
+        for (Iterator ps = patterns.iterator(); ps.hasNext();) {
+             String pattern = ps.next().toString();
+            if (pattern.indexOf('*') != -1) {
+                FileRepoFileFilter ff = new FileRepoFileFilter(pattern);
+                for (Iterator items = attrValues.iterator();
+                    items.hasNext();) {
+                    if (ff.accept(null, items.next().toString())) {
+                        return (true);
+                    }
+                }
+            } else if (attrValues.contains(pattern)) {
+                return (true);
+            }
+        }
+        return (false);
     }
 
     // File name filter inner class
