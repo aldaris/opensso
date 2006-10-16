@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.7 2006-09-13 19:08:21 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.8 2006-10-16 20:50:06 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,7 +131,8 @@ public class IdServicesImpl implements IdServices {
             // configurations.
             if (getDebug().messageEnabled()) {
                 getDebug().message(
-                        "IdServicesImpl(): setting up " + "ServiceListener");
+                    "IdServicesImpl.initializeListeners: "
+                    + "setting up ServiceListener");
             }
             SSOToken stoken = (SSOToken) AccessController
                     .doPrivileged(AdminTokenAction.getInstance());
@@ -155,12 +156,16 @@ public class IdServicesImpl implements IdServices {
                 // Are'nt they Fatal that we should not start the system ??
             } catch (SMSException smse) {
                 if (getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl(): Unable to set up a "
-                            + " service listener for IdRepo", smse);
+                    getDebug().warning(
+                        "IdServicesImpl.initializeListeners: "
+                        + "Unable to set up a service listener for IdRepo",
+                        smse);
                 }
             } catch (SSOException ssoe) {
-                getDebug().error("IdServicesImpl(): Unable to set up a service"
-                        + " listener for IdRepo. ", ssoe);
+                getDebug().error(
+                    "IdServicesImpl.initializeListeners: "
+                    + "Unable to set up a service listener for IdRepo. ",
+                    ssoe);
             }
         }
     }
@@ -184,7 +189,7 @@ public class IdServicesImpl implements IdServices {
             throws IdRepoException, AuthLoginException {
         if (getDebug().messageEnabled()) {
             getDebug().message(
-                    "IdServicesImpl::authenticate called for org: " + orgName);
+                "IdServicesImpl.authenticate: called for org: " + orgName);
         }
 
         IdRepoException firstException = null;
@@ -198,16 +203,18 @@ public class IdServicesImpl implements IdServices {
             if (idRepo.supportsAuthentication()) {
                 if (getDebug().messageEnabled()) {
                     getDebug().message(
-                            "AuthN to " + idRepo.getClass().getName()
-                                    + " in org: " + orgName);
+                        "IdServicesImpl.authenticate: "
+                        + "AuthN to " + idRepo.getClass().getName()
+                        + " in org: " + orgName);
                 }
                 try {
                     if (idRepo.authenticate(credentials)) {
                         // Successfully authenticated
                         if (getDebug().messageEnabled()) {
                             getDebug().message(
-                                    "AuthN success for "
-                                            + idRepo.getClass().getName());
+                                "IdServicesImpl.authenticate: "
+                                + "AuthN success for "
+                                + idRepo.getClass().getName());
                         }
                         return (true);
                     }
@@ -219,10 +226,9 @@ public class IdServicesImpl implements IdServices {
                     }
                 }
             } else if (getDebug().messageEnabled()) {
-                getDebug()
-                        .message(
-                                "AuthN not supported by "
-                                        + idRepo.getClass().getName());
+                getDebug().message(
+                    "IdServicesImpl.authenticate: "
+                    + "AuthN not supported by " + idRepo.getClass().getName());
             }
         }
         if (firstException != null) {
@@ -269,24 +275,28 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to create identity in the"
-                                    + " following repository"
-                                    + idRepo.getClass().getName() + ":: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.create: "
+                        + "Unable to create identity in the"
+                        + " following repository "
+                        + idRepo.getClass().getName() + ":: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Create: Fatal Exception", idf);
+                getDebug().error(
+                    "IdServicesImpl.create: "
+                    + "Create: Fatal Exception", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to create identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.create: "
+                        + "Unable to create identity in the following "
+                        + "repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
@@ -296,8 +306,9 @@ public class IdServicesImpl implements IdServices {
         if (noOfSuccess == 0) {
             if (getDebug().warningEnabled()) {
                 getDebug().warning(
-                    "Unable to create identity " + type.getName() + " :: " +
-                        name + "in any of the configured data stores", origEx);
+                    "IdServicesImpl.create: "
+                    + "Unable to create identity " + type.getName() + " :: "
+                    + name + " in any of the configured data stores", origEx);
             }
             throw origEx;
         } else {
@@ -343,24 +354,25 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to delete identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.delete: "
+                        + "Unable to delete identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Delete: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.delete: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to delete identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.delete: "
+                        + "Unable to delete identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 if (!ide.getErrorCode().equalsIgnoreCase("220")
@@ -370,10 +382,12 @@ public class IdServicesImpl implements IdServices {
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to delete identity " + type.getName() + " :: "
-                            + name + "in any of the configured data stores",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.delete: "
+                    + "Unable to delete identity " + type.getName() + " :: "
+                    + name + " in any of the configured data stores", origEx);
+            }
             throw origEx;
         }
     }
@@ -435,10 +449,10 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAttributes: "
+                        + "Unable to read identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
@@ -449,10 +463,10 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAttributes: "
+                        + "Unable to read identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
@@ -513,24 +527,26 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAttributes: "
+                        + "Unable to read identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("GetAttributes: Fatal Exception ", idf);
+                getDebug().error(
+                        "IdServicesImpl.getAttributes: "
+                        + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAttributes: "
+                        + "Unable to read identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
@@ -539,7 +555,9 @@ public class IdServicesImpl implements IdServices {
         if (noOfSuccess == 0) {
             if (getDebug().warningEnabled()) {
                 getDebug().warning(
-                    "Unable to get attributes for identity " + type.getName() +
+                    "IdServicesImpl.getAttributes: "
+                    + "Unable to get attributes for identity "
+                    + type.getName() +
                     "::" + name + " in any configured data store", origEx);
             }
             throw origEx;
@@ -599,34 +617,38 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity members in the following"
-                                    + " repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getMembers: "
+                        + "Unable to read identity members in the following"
+                        + " repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Get Members: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.getMembers: "
+                    + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity members in the following"
-                                    + " repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getMembers: "
+                        + "Unable to read identity members in the following"
+                        + " repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to get members for identity " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.getMembers: "
+                    + "Unable to get members for identity " + type.getName()
+                    + "::" + name + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             Set results = combineMembers(token, membersSet, membersType,
@@ -691,33 +713,37 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to get memberships in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getMemberships: "
+                        + "Unable to get memberships in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Get memberships: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.getMemberships: "
+                    + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to read identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName(), ide);
+                        "IdServicesImpl.getMemberships: "
+                        + "Unable to read identity in the following "
+                        + "repository " + idRepo.getClass().getName(), ide);
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to get members for identity " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.getMemberships: "
+                    + "Unable to get members for identity " + type.getName()
+                    + "::" + name + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             Set results = combineMembers(token, membershipsSet, membershipType,
@@ -832,15 +858,17 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("IsActive: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.isActive: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to check isActive identity in the "
-                                    + "following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.isActive: "
+                        + "Unable to check isActive identity in the "
+                        + "following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
@@ -848,10 +876,12 @@ public class IdServicesImpl implements IdServices {
         }
 
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to check if identity is active " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.isActive: "
+                    + "Unable to check if identity is active " + type.getName()
+                    + "::" + name + " in any configured data store", origEx);
+            }
             throw origEx;
         }
 
@@ -896,34 +926,38 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to modify memberships  in the following"
-                                    + " repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.modifyMembership: "
+                        + "Unable to modify memberships  in the following"
+                        + " repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Modify membership: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.modifyMembership: "
+                    + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().error(
-                            "Unable to modify memberships in the following"
-                                    + " repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.modifyMembership: "
+                        + "Unable to modify memberships in the following"
+                        + " repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to modify members for identity " + type.getName()
-                            + "::" + name + " in any configured data store",
-                    origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.modifyMemberShip: "
+                    + "Unable to modify members for identity " + type.getName()
+                    + "::" + name + " in any configured data store", origEx);
+            }
             throw origEx;
         }
     }
@@ -969,24 +1003,25 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to modify identity in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.removeAttributes: "
+                        + "Unable to modify identity in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Remove attributes: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.removeAttributes: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to remove attributes in the following "
-                                    + "repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.removeAttributes: "
+                        + "Unable to remove attributes in the following "
+                        + "repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 // 220 is entry not found. this error should have lower
@@ -999,10 +1034,13 @@ public class IdServicesImpl implements IdServices {
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to remove attributes  for identity "
-                            + type.getName() + "::" + name
-                            + " in any configured data store", origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.removeAttributes: "
+                    + "Unable to remove attributes  for identity "
+                    + type.getName() + "::" + name
+                    + " in any configured data store", origEx);
+            }
             throw origEx;
         }
     }
@@ -1066,34 +1104,38 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().error(
-                            "Unable to search in the following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.search: "
+                        + "Unable to search in the following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Search: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.search: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to search identity in the following"
-                                    + " repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.search: "
+                        + "Unable to search identity in the following"
+                        + " repository " + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug()
-                    .error(
-                            "Unable to search for identity " + type.getName()
-                                    + "::" + pattern
-                                    + " in any configured data store", origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.search: "
+                    + "Unable to search for identity " + type.getName()
+                    + "::" + pattern
+                    + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             IdSearchResults res = combineSearchResults(token, arrayOfResult,
@@ -1133,7 +1175,9 @@ public class IdServicesImpl implements IdServices {
                         pluginClasses.add(thisPlugin);
                     }
                 } catch (Exception e) {
-                    getDebug().error("Unable to instantiate plugin: " + p, e);
+                    getDebug().error(
+                        "IdServicesImpl.getSpecialIdentities: "
+                        + "Unable to instantiate plugin: " + p, e);
                 }
             } else {
                 Set opSet = pClass.getSupportedOperations(type);
@@ -1215,9 +1259,9 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl:setAttributes: "
+                    getDebug().warning("IdServicesImpl.setAttributes: "
                             + "Unable to set attributes in the following "
-                            + "repository"
+                            + "repository "
                             + idRepo.getClass().getName()
                             + " :: " + ide.getMessage());
                 }
@@ -1225,15 +1269,17 @@ public class IdServicesImpl implements IdServices {
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("Set Attributes: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.setAttributes: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to modify identity in the "
-                                    + "following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.setAttributes: "
+                        + "Unable to modify identity in the "
+                        + "following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 // 220 is entry not found. this error should have lower
@@ -1246,10 +1292,13 @@ public class IdServicesImpl implements IdServices {
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to set attributes  for identity " + type.getName()
-                            + "::" + name + " in any configured data"
-                            + " store", origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.setAttributes: "
+                    + "Unable to set attributes  for identity "
+                    + type.getName() + "::" + name + " in any configured data"
+                    + " store", origEx);
+            }
             throw origEx;
 
         }
@@ -1303,34 +1352,40 @@ public class IdServicesImpl implements IdServices {
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().error(
-                            "IdServicesImpl.getAssignedServices: "
-                                    + "Services not supported for repository "
-                                    + repo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAssignedServices: "
+                        + "Services not supported for repository "
+                        + repo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("GetAssignedServices: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.getAssignedServices: Fatal Exception ",
+                    idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to get services for identity "
-                                    + "in the following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.getAssignedServices: "
+                        + "Unable to get services for identity "
+                        + "in the following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to get assigned services for identity "
-                            + type.getName() + "::" + name
-                            + " in any configured data store", origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.getAssignedServices: "
+                    + "Unable to get assigned services for identity "
+                    + type.getName() + "::" + name
+                    + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             return resultsSet;
@@ -1376,7 +1431,7 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error("IdServicesImpl.assignServices: "
+                    getDebug().error("IdServicesImpl.assignService: "
                             + "Assign Services not supported for repository "
                             + repo.getClass().getName()
                             + " :: " + ide.getMessage());
@@ -1385,24 +1440,30 @@ public class IdServicesImpl implements IdServices {
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("AssignService: FatalException ", idf);
+                getDebug().error(
+                    "IdServicesImpl.assignService: FatalException ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error("Unable to assign Service identity in "
-                            + "the following repository"
-                            + idRepo.getClass().getName() + " :: "
-                            + ide.getMessage());
+                    getDebug().error(
+                        "IdServicesImpl.assignService: "
+                        + "Unable to assign Service identity in "
+                        + "the following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }   
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error("Unable to assign service for identity " 
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.assignService: "
+                    + "Unable to assign service for identity " 
                     + type.getName()
-                    + "::" + name + " in any configured data"
-                    + " store ", origEx);
+                    + "::" + name + " in any configured data store ", origEx);
+            }
             throw origEx;
         }
     }
@@ -1444,34 +1505,40 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error("IdServicesImpl.assignServices: "
-                            + "Assign Services not supported for repository "
-                            + repo.getClass().getName()
-                            + " :: " + ide.getMessage());
+                    getDebug().error(
+                        "IdServicesImpl.unassignService: "
+                        + "Unassign Service not supported for repository "
+                        + repo.getClass().getName()
+                        + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("UnassignService: Fatal Exception ", idf);
+                getDebug().error(
+                   "IdServicesImpl.unassignService: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
                     getDebug().warning(
-                            "Unable to unassign service in the "
-                                    + "following repository"
-                                    + idRepo.getClass().getName() + " :: "
-                                    + ide.getMessage());
+                        "IdServicesImpl.unassignService: "
+                        + "Unable to unassign service in the "
+                        + "following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error(
-                    "Unable to unassign Service for identity " + type.getName()
-                            + "::" + name + " in any configured "
-                            + "data store ", origEx);
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.unassignService: "
+                    + "Unable to unassign Service for identity "
+                    + type.getName() + "::" + name + " in any configured "
+                    + "data store ", origEx);
+            }
             throw origEx;
         }
 
@@ -1518,34 +1585,41 @@ public class IdServicesImpl implements IdServices {
                 resultsSet.add(attrs);
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl."
-                            + "getServiceAttributes: Services not supported "
-                            + "for repository "
-                            + repo.getClass().getName()
-                            + " :: " + ide.getMessage());
+                    getDebug().warning(
+                        "IdServicesImpl.getServiceAttributes: "
+                        + "Services not supported for repository "
+                        + repo.getClass().getName()
+                        + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("GetServiceAttributes: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.getServiceAttributes: Fatal Exception ",
+                    idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl."
-                            + "getServiceAttributes: Unable to get service "
-                            + "attributes for the repository "
-                            + idRepo.getClass().getName()
-                            + " :: " + ide.getMessage());
+                    getDebug().warning(
+                        "IdServicesImpl.getServiceAttributes: "
+                        + "Unable to get service "
+                        + "attributes for the repository "
+                        + idRepo.getClass().getName()
+                        + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
                 origEx = ide;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error("Unable to get service attributes for identity "
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.getServiceAttributes: "
+                    + "Unable to get service attributes for identity "
                     + type.getName() + "::" + name
                     + " in any configured data store", origEx);
+            }
             throw origEx;
         } else {
             Map resultsMap = combineAttrMaps(resultsSet, true);
@@ -1591,7 +1665,7 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error("IdServicesImpl.modifyServices: "
+                    getDebug().warning("IdServicesImpl.modifyService: "
                             + "Modify Services not supported for repository "
                             + repo.getClass().getName()
                             + " :: " + ide.getMessage());
@@ -1599,22 +1673,29 @@ public class IdServicesImpl implements IdServices {
                 noOfSuccess--;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error("ModifyService: Fatal Exception ", idf);
+                getDebug().error(
+                    "IdServicesImpl.modifyService: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("Unable to modify service in the "
-                            + "following repository "
-                            + idRepo.getClass().getName() + " :: "
-                            + ide.getMessage());
+                    getDebug().warning(
+                        "IdServicesImpl.modifyService: "
+                        + "Unable to modify service in the "
+                        + "following repository "
+                        + idRepo.getClass().getName() + " :: "
+                        + ide.getMessage());
                 }   
                 noOfSuccess--;
             }
         }
         if (noOfSuccess == 0) {
-            getDebug().error("Unable to modify service attributes for identity "
+            if (getDebug().warningEnabled()) {
+                getDebug().warning(
+                    "IdServicesImpl.modifyService: "
+                    + "Unable to modify service attributes for identity "
                     + type.getName() + "::" + name
                     + " in any configured data store");
+            }
             Object[] args = { IdOperation.SERVICE.toString() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
                     "302", args);
@@ -1754,7 +1835,9 @@ public class IdServicesImpl implements IdServices {
                         pluginClasses.add(thisPlugin);
                     }
                 } catch (Exception e) {
-                    getDebug().error("Unable to instantiate plguin: " + p, e);
+                    getDebug().error(
+                        "IdServicesImpl.getConfiguredPlugins: "
+                        + "Unable to instantiate plugin: " + p, e);
                 }
             } else {
                 Set opSet = pClass.getSupportedOperations(type);
@@ -1795,7 +1878,9 @@ public class IdServicesImpl implements IdServices {
                         pluginClasses.add(thisPlugin);
                     }
                 } catch (Exception e) {
-                    getDebug().error("Unable to instantiate plugin: " + p, e);
+                    getDebug().error(
+                        "IdServicesImpl.getConfiguredPlugins: "
+                        + "Unable to instantiate plugin: " + p, e);
                 }
             } else {
                 Set opSet = pClass.getSupportedOperations(type);
@@ -1883,8 +1968,9 @@ public class IdServicesImpl implements IdServices {
                                 }
                             } catch (Exception e) {
                                 getDebug().error(
-                                        "Unable to instantiate plugin: "
-                                                + className, e);
+                                    "IdServicesImpl.getConfiguredPlugins: "
+                                    + "Unable to instantiate plugin: "
+                                    + className, e);
                             }
                         }
                     } else {
@@ -1924,7 +2010,9 @@ public class IdServicesImpl implements IdServices {
                     }
                     pluginClasses.add(thisPlugin);
                 } catch (Exception e) {
-                    getDebug().error("Unable to instantiate plguin: " + p, e);
+                    getDebug().error(
+                        "IdServicesImpl.getAllConfiguredPlugins: "
+                        + "Unable to instantiate plugin: " + p, e);
                 }
             } else {
                 pluginClasses.add(pClass);
@@ -1959,7 +2047,9 @@ public class IdServicesImpl implements IdServices {
                     }
                     pluginClasses.add(thisPlugin);
                 } catch (Exception e) {
-                    getDebug().error("Unable to instantiate plugin: " + p, e);
+                    getDebug().error(
+                        "IdServicesImpl.getAllConfiguredPlugins: "
+                        + "Unable to instantiate plugin: " + p, e);
                 }
             } else {
                 pluginClasses.add(pClass);
@@ -2035,8 +2125,9 @@ public class IdServicesImpl implements IdServices {
                                 pluginClasses.add(thisPlugin);
                             } catch (Exception e) {
                                 getDebug().error(
-                                        "Unable to instantiate plugin: "
-                                                + className, e);
+                                    "IdServicesImpl.getAllConfiguredPlugins: "
+                                    + "Unable to instantiate plugin: "
+                                    + className, e);
                             }
                         }
                     } else {
@@ -2090,11 +2181,14 @@ public class IdServicesImpl implements IdServices {
             // we avoid writing to debug logs at install time
             if (ServiceManager.isConfigMigratedTo70()) {
                 getDebug().error(
-                        "SM Exception: unable to get plugin information", smse);
+                    "IdServicesImpl.getConfiguredPluginNames: "
+                    + "SM Exception: unable to get plugin information", smse);
             }
             return cPlugins;
         } catch (SSOException ssoe) {
-            getDebug().error("SSO Exception: ", ssoe);
+            getDebug().error(
+                "IdServicesImpl.getConfiguredPluginNames: "
+                + "SSO Exception: ", ssoe);
             return cPlugins;
         }
 
@@ -2142,11 +2236,15 @@ public class IdServicesImpl implements IdServices {
 
             return configMap;
         } catch (SMSException smse) {
-            getDebug().error("SM Exception: unable to get plugin information",
-                    smse);
+            getDebug().error(
+                "IdServicesImpl.getConfigMap: "
+                + "SM Exception: unable to get plugin information",
+                smse);
             return configMap;
         } catch (SSOException ssoe) {
-            getDebug().error("SSO Exception: ", ssoe);
+            getDebug().error(
+                "IdServicesImpl.getConfigMap: "
+                + "SSO Exception: ", ssoe);
             return configMap;
         }
 
@@ -2441,7 +2539,7 @@ public class IdServicesImpl implements IdServices {
         } catch (DelegationException dex) {
             getDebug().error(
                     "IdServicesImpl.checkPermission "
-                            + "Got Delegation Exception: ", dex);
+                    + "Got Delegation Exception: ", dex);
             Object[] args = { op.getName(), token.getPrincipal().getName() };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "402", args);
         }
