@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.4 2006-08-25 21:21:23 veiming Exp $
+ * $Id: CachedSubEntries.java,v 1.5 2006-10-16 17:17:59 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,7 +111,9 @@ class CachedSubEntries {
         SSOToken token = cEntry.getValidSSOToken();
         if (token == null) {
             // Need to remove this entry from the cache
-            smsEntries.remove(dn.toRFCString());
+            synchronized (smsEntries) {
+                smsEntries.remove(dn.toRFCString());
+            }
             SMSEventListenerManager.removeNotification(notificationID);
             throw (new SMSException(SMSEntry.bundle
                     .getString("sms-INVALID_SSO_TOKEN"),
@@ -172,14 +174,18 @@ class CachedSubEntries {
         }
         String entry = (new DN(dn)).toRFCString();
         CachedSubEntries answer = null;
-        answer = (CachedSubEntries) smsEntries.get(entry);
+        synchronized (smsEntries) {
+            answer = (CachedSubEntries) smsEntries.get(entry);
+        }
         if (answer == null) {
+            answer = new CachedSubEntries(token, dn);
+            CachedSubEntries tmp;
             synchronized (smsEntries) {
-                if ((answer = (CachedSubEntries) smsEntries.get(entry)) == null)
-                {
-                    // Not present in cached, create a new instance
-                    answer = new CachedSubEntries(token, dn);
-                    smsEntries.put(entry, answer);
+                if ((tmp = (CachedSubEntries) smsEntries.get(entry)) == null) {
+                    // Not present in cached, add the created one to cache
+                     smsEntries.put(entry, answer);
+                } else {
+                    answer = tmp;
                 }
             }
         } else {
@@ -198,7 +204,9 @@ class CachedSubEntries {
         }
         if (token == null) {
             // Need to remove this entry from the cache
-            smsEntries.remove(dn.toRFCString());
+            synchronized (smsEntries) {
+                smsEntries.remove(dn.toRFCString());
+            }
             SMSEventListenerManager.removeNotification(notificationID);
             throw (new SMSException(SMSEntry.bundle
                     .getString("sms-INVALID_SSO_TOKEN"),
@@ -226,6 +234,8 @@ class CachedSubEntries {
     }
 
     static void clearCache() {
-        smsEntries = new CaseInsensitiveHashMap(100);
+        synchronized (smsEntries) {
+            smsEntries.clear();
+        }
     }
 }
