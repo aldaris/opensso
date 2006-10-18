@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.28 2006-10-18 20:55:27 veiming Exp $
+   $Id: build.xml,v 1.29 2006-10-18 21:22:49 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -190,7 +190,7 @@
         </javadoc>
     </target>
 
-    <target name="jars" depends="build">
+    <target name="jars" depends="unittest">
         <ant antfile="${amserver.basedir}/build-jars.xml" inheritRefs="true"/>
     </target>
 
