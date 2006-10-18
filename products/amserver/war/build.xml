@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2006-10-09 17:57:38 veiming Exp $
+   $Id: build.xml,v 1.7 2006-10-18 05:51:08 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,6 +46,7 @@
         <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
+                <exclude name="db.jar"/>
             </lib>
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />

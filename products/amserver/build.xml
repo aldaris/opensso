@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2006-10-12 06:24:40 veiming Exp $
+   $Id: build.xml,v 1.27 2006-10-18 05:51:07 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -278,6 +278,11 @@
             <arg value="${amserver.dist.dir}" />
             <arg value="${nightly.date}" />
         </java>
+
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
+            tofile="${amserver.dist.dir}/opensso-sharedlib.jar" />
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar.sha"
+            tofile="${amserver.dist.dir}/opensso-sharedlib.jar.sha" />
     </target>
 
     <target name="nightly-clean">
