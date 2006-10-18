@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.3 2006-08-15 05:04:10 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.4 2006-10-18 20:55:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ public class ServicesDefaultValues {
     private static ServicesDefaultValues instance = new ServicesDefaultValues();
     private static Set preappendSlash = new HashSet();
     private static Set trimSlash = new HashSet();
-    private Map defValues = new HashMap();
+    private Map<String, String> defValues = new HashMap<String, String>();
     
     static {
         preappendSlash.add("IS_PRODNAME");
@@ -67,7 +67,7 @@ public class ServicesDefaultValues {
      *
      * @return the map of default attribute name to its value.
      */
-    public static Map getDefaultValues() {
+    public static Map<String, String> getDefaultValues() {
         return instance.defValues;
     }
     
@@ -77,7 +77,7 @@ public class ServicesDefaultValues {
      * @param deployURI Deploy URI.
      * @param map Service attribute values.
      */
-    public static void setDeployURI(String deployURI, Map map) {
+    public static void setDeployURI(String deployURI, Map<String, String> map) {
         map.put("IS_PRODNAME", deployURI);
         map.put("OLDCON_DEPLOY_URI", deployURI);
         map.put("CONSOLE_URI", deployURI);

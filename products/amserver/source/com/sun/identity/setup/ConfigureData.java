@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.3 2006-08-25 21:21:21 veiming Exp $
+ * $Id: ConfigureData.java,v 1.4 2006-10-18 20:55:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,8 +163,10 @@ public class ConfigureData {
         throws FileNotFoundException, PolicyException, SSOException, IOException
     {
         PolicyManager pm = new PolicyManager(ssoToken, realmName);
+
         InputStreamReader fin = new InputStreamReader(
-            sctx.getResourceAsStream(xmlFile));
+            (sctx != null) ? sctx.getResourceAsStream(xmlFile) :
+                new FileInputStream(xmlFile));
         StringBuffer sbuf = new StringBuffer();
         char[] cbuf = new char[1024];
         int len;
@@ -228,9 +230,10 @@ public class ConfigureData {
     private String getFileContent(String fileName)
         throws IOException
     {
-        InputStreamReader fin = new InputStreamReader(
-            sctx.getResourceAsStream(baseDir + "/" + fileName));
         StringBuffer sbuf = new StringBuffer();
+        InputStreamReader fin = new InputStreamReader(
+            (sctx != null) ? sctx.getResourceAsStream(baseDir + "/" + fileName) :
+                new FileInputStream(baseDir + "/" + fileName));
         char[] cbuf = new char[1024];
         int len;
 

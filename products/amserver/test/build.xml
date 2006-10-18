@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-10-09 17:57:36 veiming Exp $
+   $Id: build.xml,v 1.5 2006-10-18 20:55:28 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -62,7 +62,9 @@
         <delete dir="${test.package.dir}" />
         <mkdir dir="${test.package.dir}/mock" />
         <mkdir dir="${test.package.dir}/classes" />
-        <mkdir dir="${test.package.dir}test/classes" />
+        <mkdir dir="${test.package.dir}/test/classes" />
+        <mkdir dir="${test.package.dir}/config/classes" />
+        <mkdir dir="${test.package.dir}/config/template/sms" />
         <mkdir dir="${test.package.dir}/lib" />
 
         <copy todir="${test.package.dir}/mock">
@@ -74,6 +76,26 @@
             <fileset dir="${sharedlib.classes.dir}" />
             <fileset dir="${amserver.classes.dir}" />
             <fileset dir="${amserver.res.i18n.dir}" />
+        </copy>
+
+        <copy todir="${test.package.dir}/config/classes">
+            <fileset dir="${amserver.config.res.dir}" />
+            <fileset dir="${amserver.built.war.dir}/xml/services" />
+            <fileset dir="${amserver.warbase.dir}/xml/template/sms">
+                <include name="AMConfig.properties" />
+            </fileset>
+            <fileset dir="${amserver.unittest.dir}/resources/config" />
+        </copy>
+
+        <copy todir="${test.package.dir}/config/template/sms">
+            <fileset dir="${amserver.config.res.dir}" />
+            <fileset dir="${amserver.warbase.dir}/xml/template/sms">
+                <include name="defaultDelegationPolicies.xml" />
+                <include name="SunAMClientData.xml" />
+            </fileset>
+            <fileset dir="${amserver.built.war.dir}/xml">
+                <include name="serverconfig.xml" />
+            </fileset>
         </copy>
 
         <copy todir="${test.package.dir}/test/classes">
