@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.2 2006-06-16 19:36:38 rarcot Exp $
+ * $Id: DirectoryManagerIF.java,v 1.3 2006-10-18 22:14:39 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,6 +113,12 @@ public interface DirectoryManagerIF extends Remote {
             String jumpTo, int timeOut, int maxResults, int scope,
             boolean allAttributes, String[] attrNames)
             throws AMRemoteException, SSOException, RemoteException;
+
+    public Map search3(String token, String entryDN, String searchFilter,
+            List sortKeys, int startIndex, int beforeCount, int afterCount,
+            String jumpTo, int timeOut, int maxResults, int scope,
+            boolean allAttributes, Set attrNamesSet) throws AMRemoteException,
+            SSOException, RemoteException;
 
     public void setAttributes(String token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -252,6 +258,11 @@ public interface DirectoryManagerIF extends Remote {
     public void setAttributes_idrepo(String token, String type, String name,
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN)
             throws RemoteException, IdRepoException, SSOException;
+
+    public void setAttributes2_idrepo(String token, String type, String name,
+            Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
+            boolean isString) throws RemoteException, IdRepoException,
+            SSOException;
 
     public Set getAssignedServices_idrepo(String token, String type,
             String name, Map mapOfServiceNamesAndOCs, String amOrgName,
