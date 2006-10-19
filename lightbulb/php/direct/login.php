@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: login.php,v 1.1 2006-10-19 22:03:47 superpat7 Exp $
+ * $Id: login.php,v 1.2 2006-10-19 22:29:58 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,6 @@
     else
     {
         setUserId($userid);
-        setUserName($username);
 
         header("Location: " . $_POST["goto"]);
 
