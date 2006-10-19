@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: prompt.php,v 1.2 2006-10-19 23:07:21 superpat7 Exp $
+ * $Id: prompt.php,v 1.3 2006-10-19 23:18:47 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,11 +35,11 @@
             Password:
             <input type="password" name="password">
             <br />
-            <input type="hidden" name="goto" value="<?php echo $_GET["goto"]?>">
+            <input type="hidden" name="goto" value="<?php echo htmlspecialchars($_GET["goto"])?>">
             <input type="submit" Value="Login">
         </form>
 <?php if ( $_GET["showIDPLogin"] != "false" ) { ?>
-        <a href="http://patlinux.red.iplanet.com/lightbulb/spSSOInit.php?metaAlias=/sp&idpEntityID=http://amfmdemo.example.com&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=<?php echo $_GET["goto"]?>">
+        <a href="http://patlinux.red.iplanet.com/lightbulb/spSSOInit.php?metaAlias=/sp&idpEntityID=http://amfmdemo.example.com&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=<?php echo htmlspecialchars($_GET["goto"])?>">
             Login via IDP
         </a>
 <?php } ?>
