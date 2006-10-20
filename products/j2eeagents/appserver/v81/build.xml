@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-29 00:13:26 huacui Exp $
+   $Id: build.xml,v 1.2 2006-10-20 19:09:46 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,7 +26,6 @@
 <project name="open-source-j2ee-agents-appserver-v81" default="build">
                 
     <description>Open Web Single Sign-On AppServer 8.1 J2EE Agent</description>
-
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
         <condition>
@@ -37,71 +36,71 @@
         </condition>
     </fail>
 
-    <property name="appserver.v81.src.dir" location="${containername}/${containerversion}/source"/>
+    <property name="j2eeagents.appserver.v81.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
 
     <target name="build">
-        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+        <javac destdir="${j2eeagents.container.classes.dir}" source="1.4" target="1.4"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${appserver.v81.src.dir}"/>
+            <src path="${j2eeagents.appserver.v81.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
 
-        <copy todir="${classes.dir}">
-            <fileset dir="${containername}/${containerversion}">
+        <copy todir="${j2eeagents.container.classes.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}">
                 <include name=".version"/>
             </fileset>
         </copy>
 
-        <jar destfile="${archive.dir}/agent.jar" basedir="${classes.dir}"/>
-        <copy todir="${lib.dir}">
-            <fileset dir="${extlib.dir}">
+        <jar destfile="${j2eeagents.container.archive.dir}/agent.jar" basedir="${j2eeagents.container.classes.dir}"/>
+        <copy todir="${j2eeagents.container.lib.dir}">
+            <fileset dir="${j2eeagents.container.extlib.dir}">
                 <include name="**/*.jar"/>
             </fileset>
         </copy>
 
-        <copy todir="${j2ee_agent.config.dir}">
-            <fileset dir="${containername}/${containerversion}/config">
+        <copy todir="${container.j2ee_agent.config.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/config">
                 <include name="AMAgent.template"/>
                 <include name="AMToolsConfig.properties"/>
                 <include name="AMAgentLogConfig.properties"/>
             </fileset>
-            <fileset dir="${containername}/${containerversion}/xml">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/xml">
                 <include name="configure.xml"/>
             </fileset>
         </copy>
 
-        <copy todir="${j2ee_agent.locale.dir}">
-            <fileset dir="${containername}/${containerversion}/resources">
+        <copy todir="${container.j2ee_agent.locale.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/resources">
                 <include name="as81Tools.properties"/>
             </fileset>
         </copy>
 
-        <copy todir="${j2ee_agent.etc.dir}">
-            <fileset dir="${containername}/${containerversion}/etc">
+        <copy todir="${container.j2ee_agent.etc.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/etc">
                 <include name="agentapp.war"/>
             </fileset>
         </copy>
 
-        <copy todir="${j2ee_agent.lib.dir}">
-            <fileset dir="${containername}/${containerversion}/extlib">
+        <copy todir="${container.j2ee_agent.lib.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/extlib">
                 <include name="amclientsdk.jar"/>
                 <include name="opensso-installtools-launcher.jar"/>
                 <include name="opensso-installtools.jar"/>
                 <include name="jdk_logging.jar"/>
             </fileset>
-            <fileset dir="${archive.dir}">
+            <fileset dir="${j2eeagents.container.archive.dir}">
                 <include name="agent.jar"/>
             </fileset>
         </copy>
 
-        <copy todir="${j2ee_agent.sampleapp.dir}">
-            <fileset dir="${containername}/${containerversion}/sampleapp">
+        <copy todir="${container.j2ee_agent.sampleapp.dir}">
+            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/sampleapp">
                 <include name="**/*"/>
             </fileset>
         </copy>
       
-        <zip destfile="${dist.dir}/${containername}_${containerversion}_agent.zip"
-             basedir="${scratch.dir}"
+        <zip destfile="${j2eeagents.container.dist.dir}/${containername}_${containerversion}_agent.zip"
+             basedir="${j2eeagents.container.scratch.dir}"
         /> 
 
     </target>

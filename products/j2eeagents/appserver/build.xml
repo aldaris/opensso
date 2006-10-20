@@ -18,14 +18,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-09-29 00:08:08 huacui Exp $
+   $Id: build.xml,v 1.2 2006-10-20 19:08:07 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project name="open-source-j2ee-agents-appserver" default="build">
                 
-    <description>Open Web Single Sign-On AppServer J2EE Agent</description>
+    <description>Open Web Single Sign-On J2EE Agent For Sun Appserver</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
@@ -37,29 +37,26 @@
         </condition>
     </fail>
 
+    <property name="j2eeagents.appserver.src.dir" location="${j2eeagents.basedir}/appserver/common/source"/>
 
-    <!-- global environment -->
-    <!-- top level directory structure -->
-    <property name="appserver.src.dir" location="${containername}/common/source"/>
-
-    <target name="build">
-        <javac destdir="${classes.dir}" source="1.4" target="1.4"
+    <target name="compile">
+        <javac destdir="${j2eeagents.container.classes.dir}" source="1.4" target="1.4"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${appserver.src.dir}"/>
+            <src path="${j2eeagents.appserver.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
     </target>
 
     <target name="scratch">
-        <copy todir="${j2ee_agent.locale.dir}">
-            <fileset dir="${containername}/common/resources">
+        <copy todir="${container.j2ee_agent.locale.dir}">
+            <fileset dir="${j2eeagents.basedir}/appserver/common/resources">
                 <include name="**/*.properties"/>
             </fileset>
         </copy>
     </target>
 
-    <target name="v81" depends="build, scratch">
-        <ant antfile="${containername}/${containerversion}/build.xml" inheritRefs="true"/>
+    <target name="build" depends="compile, scratch">
+        <ant antfile="${j2eeagents.basedir}/${containername}/${containerversion}/build.xml" inheritRefs="true"/>
     </target>
 
 </project>

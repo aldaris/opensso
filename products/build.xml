@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-10-12 06:24:40 veiming Exp $
+   $Id: build.xml,v 1.3 2006-10-20 19:00:11 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,6 +29,7 @@
     <import file="products.xml" />
     <import file="amserver/amserver.xml" />
     <import file="installtools/installtools.xml" />
+    <import file="j2eeagents/j2eeagents.xml" />
 
     <property name="diff.dir" location="${products.basedir}/diffs" />
     <property name="classes.dir" location="${products.basedir}/amserver/built/classes" />
@@ -55,6 +56,8 @@
         <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
 
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
+        <mkdir dir="${prd.nightly.dist.dir}/j2eeagents/${nightly.date}" />
+        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
     </target>
 
     <target name="clean">
@@ -62,6 +65,8 @@
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true"
             target="clean" />
     </target>
 
