@@ -3,7 +3,8 @@ v0.1 of CRT UI
 
 General concept :
 
-1) Display CRT form (http://https://opensso.dev.java.net/public/use/builds/crtx.html) .
+1) Display CRT form 
+   (http://https://opensso.dev.java.net/public/use/builds/crtfinal.html) .
    Issue# must be filled in.
 
 2) CRT created as a timestamped attachment to the issue entered.
@@ -31,13 +32,10 @@ TODOs:
    Need to add a "Wait...updating issue" message.
 
 3) Misc links need  (migration, install help) need to be moved elsewhere
-  so tha the popup doesnt contain teh entire UI. 
+  so tha tthe popup doesnt contain teh entire UI. 
 
-4) Problem with the "Goto issue" link  
-
-5) Formalize process. Viz :
-   a) How CRTs are approved - is the "approver" form okay?
-   b) Setup a CRT approver's alias?
+4) Provide backup facility for CRTs to be submitted without this tool -
+  in case the tool breaks as a result of java.net issue tracker changes.
 
 
 Design :
@@ -75,8 +73,12 @@ Design :
    updated as follows :
      - remove newlines from crtfinal.html so that it is a single line.
      - escape embedded single quotes : "'" to "\'"
-     - change the "approve" form from display:none to display:inline.
      - update the crttemplate variable in crt.js.
+     - If a new element is added, 
+       - make sure it is is tag swappable.
+       - Change crtn array in aggSubmit() function for a human readable 
+         form of the element.
+ 
    
 --
 
