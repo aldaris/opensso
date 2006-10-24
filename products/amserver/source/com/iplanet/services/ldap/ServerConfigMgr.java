@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.3 2006-08-25 21:19:52 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.4 2006-10-24 19:40:54 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.iplanet.services.ldap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,15 +39,11 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.login.LoginException;
 
-import netscape.ldap.util.DN;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.services.util.XMLException;
 import com.iplanet.ums.Guid;
 import com.iplanet.ums.IUMSConstants;
@@ -56,6 +53,8 @@ import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSSchema;
 
 /**
@@ -93,6 +92,8 @@ public class ServerConfigMgr {
     private static final String ENCRYPT = "--encrypt";
 
     private static final String S_ENCRYPT = "-e";
+    
+    private static final String RESOURCE_BUNDLE_NAME = "DSConfig";
 
     private static final int MIN_PASSWORD_LEN = 8;
 
@@ -108,8 +109,8 @@ public class ServerConfigMgr {
 
     private Node defaultServerGroup = null;
 
-    private static ResourceBundle i18n = ResourceBundle
-            .getBundle(IUMSConstants.UMS_PKG);
+    private static ResourceBundle i18n = ResourceBundle.getBundle(
+            RESOURCE_BUNDLE_NAME);
 
     private static Debug debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
 
@@ -218,121 +219,45 @@ public class ServerConfigMgr {
         // Encrypt the password and print it out
         if (args[0].equals(S_ENCRYPT) || args[0].equals(ENCRYPT)) {
             String password = null;
-            if (args.length > 1) {
-                password = args[1];
-            } else {
+            if (args.length > 1) {             
                 // prompt for the password
-                System.out
-                        .print(i18n.getString("dscfg-enter-encrypt-password"));
-                password = readPassword();
+                try {
+                    password = readPasswordFromFile(args[1]);
+                } catch (FileNotFoundException e) {
+                    Object messageArgs[] = { args[1] };
+                    System.err.println(MessageFormat.format(i18n.getString(
+                            "dscfg-passwd-file-not-found"), messageArgs));
+                    System.exit(1);
+                } catch (IOException ioe) {
+                    Object messageArgs[] = { args[1] };
+                    System.err.println(MessageFormat.format(i18n.getString(
+                            "dscfg-passwd-file-not-found"), messageArgs));
+                    System.exit(1);
+                }
                 if ((password == null) || (password.length() == 0)) {
-                    System.err.println(i18n.getString("dscfg-null-password"));
+                    Object messageArgs[] = { args[1] };
+                    System.err.println(MessageFormat.format(i18n.getString(
+                            "dscfg-null-password"), messageArgs));
                     System.err.println(i18n.getString("dscfg-usage"));
                     System.exit(1);
                 }
-            }
-
-            // output the encrypted password
-            System.out.println((String) AccessController
-                    .doPrivileged(new EncodeAction(password)));
-            System.exit(0);
-        }
-
-        // Get the user type for which the password is being changed
-        boolean adminPassword = false, proxyPassword = false;
-        if (args[0].equals(S_ADMIN) || args[0].equals(ADMIN)) {
-            adminPassword = true;
-        } else {
-            proxyPassword = true;
-        }
-
-        // Check if the passwords are present on the command line
-        String oldPassword = null;
-        String newPassword = null;
-        // Parse the input arguments, if any
-        for (int i = 1; i < args.length; i++) {
-            if (args[i].equals(OLD) || args[i].equals(S_OLD)) {
-                oldPassword = args[++i];
-            } else if (args[i].equals(NEW) || args[i].equals(S_NEW)) {
-                newPassword = args[++i];
+                // output the encrypted password
+                System.out.println((String) AccessController
+                        .doPrivileged(new EncodeAction(password)));
+                System.exit(0);
             } else {
-                String[] objs = { args[i] };
-                System.err.println(MessageFormat.format(
-                    i18n.getString("dscfg-invalid-option"), (Object[])objs));
+                Object messageArgs[] = { args[0] };
+                System.err.println(MessageFormat.format(i18n.getString(
+                        "dscfg-incorrect-usage"), messageArgs));
                 System.err.println(i18n.getString("dscfg-usage"));
-                System.exit(1);
+                System.exit(1);                           
             }
-        }
-
-        // if passwords are null, prompt for them
-        if ((oldPassword == null) || (newPassword == null)) {
-            System.out.print(i18n.getString("dscfg-enter-old-password"));
-            oldPassword = readPassword();
-
-            // Get the password twice and check it
-            String objs[] = { Integer.toString(MIN_PASSWORD_LEN) };
-            System.out.print(MessageFormat.format(
-                i18n.getString("dscfg-enter-new-password"), (Object[])objs));
-            String newPassword1 = readPassword();
-            System.out.print(i18n.getString("dscfg-enter-new-password-again"));
-            String newPassword2 = readPassword();
-
-            // Check the entered new passwords
-            checkPassword(oldPassword, newPassword1);
-            checkPassword(oldPassword, newPassword2);
-
-            // Check if the entered new password are the same
-            if (newPassword1.equals(newPassword2)) {
-                newPassword = newPassword1;
-            } else {
-                System.err.println(i18n
-                        .getString("dscfg-new-passwords-donot-match"));
-                System.exit(1);
-            }
-        } else {
-            checkPassword(oldPassword, newPassword);
-        }
-
-        // Execute the command
-        try {
-            ServerConfigMgr scm = new ServerConfigMgr();
-
-            // Check if admin DN and proxy DN are the same
-            DN adminDN = new DN(scm.getUserDN(DSConfigMgr.VAL_AUTH_ADMIN));
-            DN proxyDN = new DN(scm.getUserDN(DSConfigMgr.VAL_AUTH_PROXY));
-            if (adminDN.equals(proxyDN)) {
-                // must change both of them
-                adminPassword = true;
-                proxyPassword = true;
-            }
-
-            // Change admin Password
-            if (adminPassword) {
-                if (debug.messageEnabled()) {
-                    debug.message("Setting the admin password");
-                }
-                // Change the password
-                scm.setAdminUserPassword(oldPassword, newPassword);
-            }
-
-            // Change admin Password
-            if (proxyPassword) {
-                if (debug.messageEnabled()) {
-                    debug.message("Setting the proxy password");
-                }
-                // Change the password
-                scm.setProxyUserPassword(oldPassword, newPassword);
-            }
-
-            // Commit the changes to file
-            if (debug.messageEnabled()) {
-                debug.message("Updating serverconfig.xml");
-            }
-            scm.save();
-            System.out.println(i18n.getString("dscfg-passwd-success"));
-        } catch (Exception e) {
-            debug.error("Exception while changing password", e);
-            System.err.println(e.getMessage());
+        } else {            
+            Object messageArgs[] = { args[0] };
+            System.err.println(MessageFormat.format(i18n.getString(
+                    "dscfg-option_not_supported"), messageArgs));
+            System.err.println(i18n.getString("dscfg-usage"));
+            System.exit(1);            
         }
     }
 
@@ -436,6 +361,30 @@ public class ServerConfigMgr {
     // Private methods
     // ----------------------------------------------------------------------
 
+    private static String readPasswordFromFile(String fileName) 
+        throws FileNotFoundException, IOException 
+    {        
+        BufferedReader br = null;
+        String lineData = null;
+        try {
+            FileReader fr = new FileReader(fileName);
+            br = new BufferedReader(fr);
+            
+            // Password should be in the first line.                         
+            lineData = br.readLine();
+            
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ie) {
+                    // Ignore
+                }
+            }
+        }        
+        return lineData;
+    }
+    
     /**
      * Returns the user node given the user type
      */
