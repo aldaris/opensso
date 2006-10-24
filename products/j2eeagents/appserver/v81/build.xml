@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-10-20 19:09:46 huacui Exp $
+   $Id: build.xml,v 1.3 2006-10-24 06:49:43 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,9 +99,11 @@
             </fileset>
         </copy>
       
-        <zip destfile="${j2eeagents.container.dist.dir}/${containername}_${containerversion}_agent.zip"
+        <zip destfile="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent.zip"
              basedir="${j2eeagents.container.scratch.dir}"
         /> 
+        <checksum file="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent.zip"
+            algorithm="SHA" fileext=".sha" />
 
     </target>
 

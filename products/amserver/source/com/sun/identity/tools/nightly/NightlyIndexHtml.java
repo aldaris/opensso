@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NightlyIndexHtml.java,v 1.3 2006-10-09 17:57:35 veiming Exp $
+ * $Id: NightlyIndexHtml.java,v 1.4 2006-10-24 06:49:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,6 @@ import java.text.MessageFormat;
  * Nightly Preparation Implementation.
  */
 public class NightlyIndexHtml {
-    private final static String INDEX_URL =
-        "http://download.java.net/general/opensso/nightly/index.html";
     private final static String TEMPLATE =
         "\n&raquo;&nbsp;<a href=\"{0}\">{0}</a><br />";
     private final static String NEW_ENTRY = "<!-- new entry -->";
@@ -50,10 +48,12 @@ public class NightlyIndexHtml {
     private NightlyIndexHtml() {
     }
     
-    private static void create(String baseDir, String timestamp)
-        throws IOException, MalformedURLException
-    {
-        URL url = new URL(INDEX_URL);
+    private static void create(
+        String baseDir,
+        String timestamp,
+        String indexURL
+    ) throws IOException, MalformedURLException {
+        URL url = new URL(indexURL);
         URLConnection conn = url.openConnection();
         DataInputStream dis = new DataInputStream(conn.getInputStream());
         StringBuffer buff = new StringBuffer();
@@ -94,7 +94,7 @@ public class NightlyIndexHtml {
 
     public static void main(String[] args) {
         try {
-            create(args[0], args[1]);
+            create(args[0], args[1], args[2]);
         } catch (IOException e) {
             e.printStackTrace();
         }

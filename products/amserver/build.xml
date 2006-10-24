@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.29 2006-10-18 21:22:49 veiming Exp $
+   $Id: build.xml,v 1.30 2006-10-24 06:49:41 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -270,7 +270,6 @@
         <antcall target="war" />
 
         <tstamp>
-            <format property="nightly.date" pattern="yyyyMMdd" offset="-1" unit="day"/>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
@@ -280,6 +279,7 @@
             <classpath refid="build.class.path"/>
             <arg value="${amserver.dist.dir}" />
             <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/amserver/index.html" />
         </java>
 
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"

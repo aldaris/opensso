@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.1 2006-10-20 19:04:38 huacui Exp $
+   $Id: build_agent.xml,v 1.2 2006-10-24 06:49:42 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,7 +27,6 @@
                 
     <description>Open Web Single Sign-On J2EE Agents</description>
 
-    <!-- global environment -->
     <!-- top level directory structure -->
     <property name="j2eeagents.container.extlib.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/extlib"/>
    
@@ -36,7 +35,6 @@
     <property name="j2eeagents.container.classes.dir" location="${j2eeagents.container.built.dir}/classes"/>   
     <property name="j2eeagents.container.lib.dir" location="${j2eeagents.container.built.dir}/lib"/> 
     <property name="j2eeagents.container.archive.dir" location="${j2eeagents.container.built.dir}/archive"/>   
-    <property name="j2eeagents.container.dist.dir" location="${j2eeagents.container.built.dir}/dist"/>   
     <property name="j2eeagents.container.scratch.dir" location="${j2eeagents.container.built.dir}/scratch"/>   
     <property name="container.j2ee_agents.dir" location="${j2eeagents.container.scratch.dir}/j2ee_agents"/>   
     <property name="container.j2ee_agent.dir" location="${container.j2ee_agents.dir}/${containername}_${containerversion}_agent"/>   
@@ -74,7 +72,6 @@
         <mkdir dir="${j2eeagents.container.classes.dir}"/>
         <mkdir dir="${j2eeagents.container.lib.dir}"/>
         <mkdir dir="${j2eeagents.container.archive.dir}"/>
-        <mkdir dir="${j2eeagents.container.dist.dir}"/>
         <mkdir dir="${j2eeagents.container.scratch.dir}"/>
         <mkdir dir="${container.j2ee_agents.dir}"/>
         <mkdir dir="${container.j2ee_agent.dir}"/>
@@ -125,7 +122,6 @@
         <delete dir="${container.j2ee_agent.dir}"/>
         <delete dir="${container.j2ee_agents.dir}"/>
         <delete dir="${j2eeagents.container.scratch.dir}"/>
-        <delete dir="${j2eeagents.container.dist.dir}"/>
         <delete dir="${j2eeagents.container.archive.dir}"/>
         <delete dir="${j2eeagents.container.lib.dir}"/>
         <delete dir="${j2eeagents.container.classes.dir}"/>
