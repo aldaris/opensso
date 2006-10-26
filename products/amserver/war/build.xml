@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2006-10-18 05:51:08 veiming Exp $
+   $Id: build.xml,v 1.8 2006-10-26 21:40:39 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -102,6 +102,7 @@
                 <include name="isAlive.jsp" />
                 <include name="Debug.jsp" />
                 <include name="amadm.jsp" />
+                <include name="encode.jsp" />
             </zipfileset>
             <zipfileset dir="${war.www.dir}">
                 <exclude name="server" />
