@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.8 2006-08-25 21:20:52 veiming Exp $
+ * $Id: LDAPv3EventService.java,v 1.9 2006-10-26 20:52:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -770,8 +770,6 @@ public class LDAPv3EventService implements Runnable {
         LDAPv3Repo myldapv3 = request.getOwner();
         myldapv3.objectChanged(dn, changeType);
         el.objectChanged(dn, changeType, configParams);
-
-        debugger.error("exit dispatchEvent. configParams=" + configParams);
     }
 
     /**

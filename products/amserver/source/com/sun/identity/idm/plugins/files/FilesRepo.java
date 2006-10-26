@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.10 2006-10-13 21:31:07 bigfatrat Exp $
+ * $Id: FilesRepo.java,v 1.11 2006-10-26 20:52:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,6 +117,8 @@ public class FilesRepo extends IdRepo {
 
     // Status attribute
     private String statusAttribute = "inetUserStatus";
+    private String statusActive = "Active";
+    private String statusInactive = "Inactive";
 
     // Role membership attribute
     private String roleMembershipAttribute = "nsRoleDN";
@@ -1108,8 +1110,31 @@ public class FilesRepo extends IdRepo {
         } else {
             Iterator it = activeVals.iterator();
             String active = (String) it.next();
-            return (active.equalsIgnoreCase("active") ? true : false);
+            return (active.equalsIgnoreCase(statusActive) ? true : false);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see com.sun.identity.idm.IdRepo#setActiveStatus(
+        com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
+        java.lang.String, boolean)
+     */
+    public void setActiveStatus(SSOToken token, IdType type,
+        String name, boolean active)
+        throws IdRepoException, SSOException {
+        if (initializationException != null) {
+            debug.error("FilesRepo: throwing initialization exception");
+            throw (initializationException);
+        }
+        Map attrs = new HashMap();
+        Set vals = new HashSet();
+        if (active) {
+            vals.add(statusActive);
+        } else {
+            vals.add(statusInactive);
+        }
+        attrs.put(statusAttribute, vals);
+        setAttributes(token, type, name, attrs, false);
     }
 
     private static void loadSupportedOps() {

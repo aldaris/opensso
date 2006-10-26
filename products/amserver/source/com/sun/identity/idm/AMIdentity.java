@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.14 2006-08-25 21:20:45 veiming Exp $
+ * $Id: AMIdentity.java,v 1.15 2006-10-26 20:52:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,6 +227,26 @@ public final class AMIdentity {
     public boolean isActive() throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
         return idServices.isActive(token, type, name, orgName, univDN);
+    }
+
+    /**
+     * If there is a status attribute configured, then set its status to
+     * true or activated state if the parameter active is true.
+     * This method is only valid for AMIdentity objects of type User and Agent.
+     *
+     * @param active The state value to assign to status attribute. The actual
+     * value assigned to the status attribute will depend on what is configured
+     * for that particular plugin.  If active is true, the status will be
+     * assigned the value corresponding to activated.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * iPlanet-PUBLIC-METHOD
+     */
+    public void setActiveStatus(boolean active)
+        throws IdRepoException, SSOException {
+        IdServices idServices =
+            IdServicesFactory.getDataStoreServices();
+        idServices.setActiveStatus(token, type, name, orgName, univDN, active);
     }
 
     /**
@@ -680,46 +700,48 @@ public final class AMIdentity {
      *             If user's single sign on token is invalid.
      *             iPlanet-PUBLIC-METHOD
      */
-    public Map getServiceAttributes(String serviceName) throws IdRepoException,
-            SSOException {
-        Set attrNames = Collections.EMPTY_SET;
+    public Map getServiceAttributes(String serviceName)
+        throws IdRepoException, SSOException {
+        Set attrNames = getServiceAttributesName(serviceName);
 
-        try {
-            // Get attribute names, so plugin knows what attributes to return
-            ServiceSchemaManager ssm = new ServiceSchemaManager(
-                serviceName, token);
-            ServiceSchema uss = ssm.getSchema(type.getName());
-            if (uss != null) {
-                attrNames = uss.getAttributeSchemaNames();
-            }
-
-            // If the identity type is not of role, filteredrole or
-            // realm, need to add dynamic attributes also
-            if (!(type.equals(IdType.ROLE) || type.equals(IdType.REALM) ||
-                type.equals(IdType.FILTEREDROLE))) {
-                uss = ssm.getDynamicSchema();
-                if (uss != null) {
-                    if (attrNames == Collections.EMPTY_SET) {
-                        attrNames = uss.getAttributeSchemaNames();
-                    } else {
-                        attrNames.addAll(uss.getAttributeSchemaNames());
-                    }
-                }
-            } else {
-                // Add COS priority attribute
-                attrNames.add(COS_PRIORITY);
-           } 
-        } catch (SMSException smse) {
-            if (debug.messageEnabled()) {
-                debug.message("AMIdentity.getServiceAttributes: Caught " +
-                    "SM exception", smse);
-            }
-        }
-
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        IdServices idServices =
+            IdServicesFactory.getDataStoreServices();
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.getServiceAttributes: attrNames="
+                + attrNames + ";  orgName=" + orgName + ";  univDN=" + univDN);
+       }
         return idServices.getServiceAttributes(token, type, name, serviceName,
-                attrNames, orgName, univDN);
+            attrNames, orgName, univDN);
     }
+
+
+    /**
+     * Returns attributes related to a service, if the service is assigned
+     * to the identity.
+     *
+     * This method is only valid for AMIdentity object of type User.
+     *
+     * @param serviceName Name of the service.
+     * @return Map of attribute-values.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * iPlanet-PUBLIC-METHOD
+     */
+    public Map getServiceAttributesAscending(String serviceName)
+        throws IdRepoException, SSOException {
+        Set attrNames = getServiceAttributesName(serviceName);
+
+        IdServices idServices =
+            IdServicesFactory.getDataStoreServices();
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.getServiceAttributesAscending: "
+                + "attrNames=" + attrNames + ";  orgName=" + orgName
+                + ";  univDN=" + univDN);
+        }
+        return idServices.getServiceAttributesAscending(token, type, name,
+            serviceName, attrNames, orgName, univDN);
+    }
+
 
     /**
      * Set attributes related to a specific service. The assumption is that the
@@ -797,6 +819,34 @@ public final class AMIdentity {
         idServices.modifyService(token, type, name, serviceName, stype,
             attrMap, orgName, univDN);
     }
+
+
+    /**
+     * Removes attributes value related to a specific service by
+     * setting it to empty.
+     * The assumption is that the service is already assigned to
+     * the identity. The attributes for the service are validated
+     * against the service schema.
+     *
+     * This method is only valid for <AMIdentity> object of type User.
+     *
+     * @param serviceName Name of the service.
+     * @param attrNames Set of attributes name.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * iPlanet-PUBLIC-METHOD
+     */
+    public void removeServiceAttributes(String serviceName, Set attrNames)
+        throws IdRepoException, SSOException {
+        Map attrMap = new HashMap(attrNames.size() *2);
+        Iterator it = attrNames.iterator();
+        while (it.hasNext()) {
+            String attrName = (String) it.next();
+            attrMap.put(attrName, Collections.EMPTY_SET);
+        }
+        modifyService(serviceName, attrMap);
+    }
+
 
     // MEMBERSHIP RELATED APIS
     /**
@@ -1096,7 +1146,7 @@ public final class AMIdentity {
      * Returns String representation of the <code>AMIdentity</code>
      * object. It returns universal identifier, orgname, type, etc.
      *
-     * @return String representation of the <code>AMIdentity</code> object
+     * @return String representation of the <code>ServiceConfig</code> object.
      */
     public String toString() {
         StringBuffer sb = new StringBuffer(100);
@@ -1181,6 +1231,50 @@ public final class AMIdentity {
             }
         }
         return (schemaTypeFlg);
+    }
+
+    private Set getServiceAttributesName(String serviceName)
+        throws IdRepoException, SSOException {
+        Set attrNames = Collections.EMPTY_SET;
+
+        try {
+            // Get attribute names for USER type only, so plugin knows
+            // what attributes to remove.
+            attrNames = new HashSet();
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                serviceName, token);
+            ServiceSchema uss = ssm.getSchema(type.getName());
+
+            if (uss != null) {
+                attrNames = uss.getAttributeSchemaNames();
+            }
+            // If the identity type is not of role, filteredrole or
+            // realm, need to add dynamic attributes also
+            if (!(type.equals(IdType.ROLE) || type.equals(IdType.REALM) ||
+                type.equals(IdType.FILTEREDROLE))) {
+                uss = ssm.getDynamicSchema();
+                if (uss != null) {
+                    if (attrNames == Collections.EMPTY_SET) {
+                        attrNames = uss.getAttributeSchemaNames();
+                    } else {
+                        attrNames.addAll(uss.getAttributeSchemaNames());
+                    }
+                }
+            } else {
+                // Add COS priority attribute
+                attrNames.add(COS_PRIORITY);
+            }
+        } catch (SMSException smse) {
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "AMIdentity.getServiceAttributes: Caught SM exception",
+                    smse);
+            }
+            // just returned whatever we find or empty set 
+            // if services is not found.
+        }
+
+        return attrNames;
     }
 
     private static Debug debug = Debug.getInstance("amIdm");

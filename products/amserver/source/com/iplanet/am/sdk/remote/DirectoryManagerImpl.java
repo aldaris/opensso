@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.6 2006-08-28 18:50:40 veiming Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.7 2006-10-26 20:51:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -152,7 +152,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.createAMTemplate(ssoToken, entryDN, objectType,
                 serviceName, attributes, priority);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.createAMTemplate" + e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.createAMTemplate."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
         
@@ -167,7 +170,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.createEntry(ssoToken, entryName, objectType, parentDN,
                 attributes);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.createEntry" + e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.createEntry."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
         
@@ -187,7 +193,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAMTemplateDN(ssoToken, entryDN, objectType,
                 serviceName, type);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.getAMTemplateDN", e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAMTemplateDN."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
         
@@ -201,7 +210,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAttributes(ssoToken, entryDN,
                 ignoreCompliance, byteValues, profileType);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.getAttributes3" + e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributes3."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
     }
@@ -212,7 +224,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, profileType);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.getAttributes1" + e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributes1."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
         
@@ -226,7 +241,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                 profileType);
         } catch (AMException e) {
-            debug.error("DirectoryManagerImpl.getAttributes2" + e);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributes2."
+                    + " Caught Exception: " + e);
+            }
             throw convertException(e);
         }
         
@@ -240,7 +258,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAttributesByteValues(ssoToken, entryDN,
                 profileType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributesByteValues1."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -254,7 +275,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAttributesByteValues(ssoToken, entryDN,
                 attrNames, profileType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributesByteValues2."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -280,7 +304,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getDCTreeAttributes(ssoToken, entryDN, attrNames,
                 byteValues, objectType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getDCTreeAttributes."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -291,7 +318,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         try {
             return complianceServices.getDeletedObjectFilter(objecttype);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getDeletedObjectFilter."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -305,7 +335,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getExternalAttributes(ssoToken, entryDN,
                 attrNames, profileType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getExternalAttributes."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -324,7 +357,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             }
             return list;
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getGroupFilterAndScope."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
     }
@@ -335,7 +371,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getMembers(ssoToken, entryDN, objectType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getMembers."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -356,7 +395,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getObjectType(ssoToken, dn);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getObjectType."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -368,7 +410,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getOrganizationDN(ssoToken, entryDN);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getOrganizationDN."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -381,7 +426,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.verifyAndGetOrgDN(ssoToken, entryDN, childDN);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.verifyAndGetOrgDN."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -393,7 +441,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dcTreeServices.getOrganizationDN(ssoToken, domain);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getOrgDNFromDomain."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -409,7 +460,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             // SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getRegisteredServiceNames(null, entryDN);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getRegisteredServiceNames."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -427,7 +481,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getTopLevelContainers(ssoToken);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getTopLevelContainers."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -441,7 +498,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return complianceServices.isAncestorOrgDeleted(ssoToken, dn,
                 profileType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.isAncestorOrgDeleted."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -455,7 +515,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.modifyMemberShip(ssoToken, members, target, type,
                 operation);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.modifyMemberShip."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -467,7 +530,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             dsServices.registerService(ssoToken, orgDN, serviceName);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.registerService."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -479,7 +545,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             dsServices.removeAdminRole(ssoToken, dn, recursive);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.removeAdminRole."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -493,7 +562,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.removeEntry(ssoToken, entryDN, objectType, recursive,
                 softDelete);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.removeEntry."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -507,7 +579,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.renameEntry(ssoToken, objectType, entryDN,
                 newName, deleteOldName);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.renameEntry."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -521,7 +596,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.search(ssoToken, entryDN, searchFilter,
                 searchScope);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.search1."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -582,7 +660,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                 Integer.toString(results.getErrorCode()));
             return (answer);
         } catch (AMException amex) {
-            debug.error("DMI::search(with SearchControl):  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DMI::search(with SearchControl):  entryDN="
+                    + entryDN + "the exception is: " +  amex);
+            }
             throw convertException(amex);
         }
     }
@@ -645,7 +726,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
                 Integer.toString(results.getErrorCode()));
             return (answer);
         } catch (AMException amex) {
-            debug.error("DMI::search(with SearchControl):  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DMI::search(with SearchControl3): entryDN="
+                    + entryDN + "the exception is: " +  amex);
+            }
             throw convertException(amex);
         }
     }
@@ -658,7 +742,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.setAttributes(ssoToken, entryDN, objectType,
                 stringAttributes, byteAttributes, isAdd);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.setAttributes."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
     }
@@ -669,7 +756,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             dsServices.setGroupFilter(ssoToken, entryDN, filter);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.setGroupFilter."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -684,7 +774,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.unRegisterService(ssoToken, entryDN, objectType,
                 serviceName, type);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.unRegisterService."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -698,7 +791,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             dsServices.updateUserAttribute(ssoToken, members, staticGroupDN,
                 toAdd);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.updateUserAttribute."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -710,7 +806,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             SSOToken ssoToken = tm.createSSOToken(token);
             complianceServices.verifyAndDeleteObject(ssoToken, dn);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.verifyAndDeleteObject."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
         
@@ -750,7 +849,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                 ignoreCompliance, byteValues, profileType);
         } catch (AMException amex) {
-            debug.error("Caught Exception:  " + amex);
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.getAttributes4."
+                    + " Caught Exception: " + amex);
+            }
             throw convertException(amex);
         }
     }
@@ -935,6 +1037,16 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return idServices.getServiceAttributes(stoken, idtype, name,
             serviceName, attrNames, amOrgName, amsdkDN);
     }
+
+    public Map getServiceAttributesAscending_idrepo(String token, String type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws RemoteException, IdRepoException,
+            SSOException {
+        SSOToken stoken = tm.createSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        return idServices.getServiceAttributesAscending(stoken, idtype,
+            name, serviceName, attrNames, amOrgName, amsdkDN);
+    }
     
     public Set getSupportedOperations_idrepo(String token, String type,
         String amOrgName) throws RemoteException, IdRepoException,
@@ -988,7 +1100,17 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return idServices.isActive(stoken, idtype, name, amOrgName, amsdkDN);
         
     }
-    
+
+    public void setActiveStatus_idrepo(String token, String type, String name,
+            String amOrgName, String amsdkDN, boolean active)
+            throws RemoteException, IdRepoException, SSOException {
+        SSOToken stoken = tm.createSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        idServices.setActiveStatus(
+            stoken, idtype, name, amOrgName, amsdkDN, active);
+
+    }
+
     public void modifyMemberShip_idrepo(String token, String type, String name,
         Set members, String membersType, int operation, String amOrgName)
         throws RemoteException, IdRepoException, SSOException {

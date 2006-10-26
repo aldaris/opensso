@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.9 2006-08-25 21:19:20 veiming Exp $
+ * $Id: AMSDKRepo.java,v 1.10 2006-10-26 20:51:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
+import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
@@ -98,6 +100,8 @@ public class AMSDKRepo extends IdRepo {
     private static SSOToken adminToken = null;
 
     private static AMStoreConnection sc = null;
+
+    protected String amAuthLDAP = "amAuthLDAP";
 
     public AMSDKRepo() {
         loadSupportedOps();
@@ -594,13 +598,19 @@ public class AMSDKRepo extends IdRepo {
         }
     }
 
-    public boolean isExists(SSOToken token, IdType type, String name) {
-
+    public boolean isExists(SSOToken token, IdType type, String name)
+            throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("AMSDKRepo: isExists called " + type + ": " + name);
         }
-
-        return true;
+        AMStoreConnection amsc = (sc == null) ?
+            new AMStoreConnection(token) : sc;
+        try {
+            String dn = getDN(type, name);
+            return amsc.isValidEntry(dn);
+        } catch (IdRepoException ide) {
+            return false;
+        }
     }
 
     public boolean isActive(SSOToken token, IdType type, String name)
@@ -616,6 +626,30 @@ public class AMSDKRepo extends IdRepo {
             return false;
         } catch (IdRepoException ide) {
             return false;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see com.sun.identity.idm.IdRepo#setActiveStatus(
+        com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
+        java.lang.String, boolean)
+     */
+    public void setActiveStatus(SSOToken token, IdType type,
+        String name, boolean active)
+        throws IdRepoException, SSOException {
+        AMStoreConnection amsc = (sc == null) ?
+            new AMStoreConnection(token) : sc;
+        try {
+            String dn = getDN(type, name);
+            AMEntity entity = amsc.getEntity(dn);
+            if (active) {
+                entity.activate();
+            } else {
+                entity.deactivate();
+            }
+        } catch (AMException ame) {
+            debug.error("AMSDKRepo.setActiveStatus: Caught AMException", ame);
+            throw IdUtils.convertAMException(ame);
         }
     }
 
@@ -1811,8 +1845,8 @@ public class AMSDKRepo extends IdRepo {
         return (true);
     }
 
-    public boolean authenticate(Callback[] credentials) throws IdRepoException,
-            com.sun.identity.authentication.spi.AuthLoginException {
+    public boolean authenticate(Callback[] credentials) throws 
+            IdRepoException, AuthLoginException {
         debug.message("AMSDKRepo: authenticate. ");
 
         // Obtain user name and password from credentials and authenticate
@@ -1879,7 +1913,8 @@ public class AMSDKRepo extends IdRepo {
     }
 
     private boolean authenticateIt(LDAPAuthUtils ldapAuthUtil, IdType type,
-            String username, String password) {
+            String username, String password) 
+        throws IdRepoException, AuthLoginException {
 
         String baseDN = null;
         String namingAttr = null;
@@ -1925,13 +1960,56 @@ public class AMSDKRepo extends IdRepo {
             }
             ldapAuthUtil.authenticateUser(userid, password);
         } catch (LDAPUtilException ldapUtilEx) {
-            if (debug.messageEnabled()) {
-                debug.message("AMSDKRepo: authenticateIt"
-                        + " LDAPUtilException: " + ldapUtilEx.getMessage());
-                debug.message("   type=" + type + "; username=" + username);
+            switch (ldapUtilEx.getLDAPResultCode()) {
+                case LDAPUtilException.NO_SUCH_OBJECT:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt. " +
+                            "The specified user does not exist. " +
+                            "username=" + username);
+                    }
+                    throw new AuthLoginException(amAuthLDAP,
+                            "NoUser", null);
+                case LDAPUtilException.INVALID_CREDENTIALS:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt." +
+                            " Invalid password. username=" + username);
+                    }
+                    String failureUserID = ldapAuthUtil.getUserId();
+                    throw new InvalidPasswordException(amAuthLDAP,
+                        "InvalidUP", null, failureUserID, null);
+                case LDAPUtilException.UNWILLING_TO_PERFORM:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt. " +
+                            "Unwilling to perform. Account inactivated." +
+                             " username" + username);
+                    }
+                    throw new AuthLoginException(amAuthLDAP,
+                        "AcctInactive", null);
+                case LDAPUtilException.INAPPROPRIATE_AUTHENTICATION:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt. " +
+                            "Inappropriate authentication. username="
+                            + username);
+                    }
+                    throw new AuthLoginException(amAuthLDAP, "InappAuth",
+                        null);
+                case LDAPUtilException.CONSTRAINT_VIOLATION:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt. " +
+                            "Exceed password retry limit. username"
+                            + username);
+                    }
+                    throw new AuthLoginException(amAuthLDAP,
+                            "ExceedRetryLimit", null);
+                default:
+                    if (debug.messageEnabled()) {
+                        debug.message("AMSDKRepo:authenticateIt. " +
+                            "default exception. username=" + username);
+                    }
+                    throw new AuthLoginException(amAuthLDAP, "LDAPex", null);
             }
-            return (false);
         }
+
         return (ldapAuthUtil.getState() == LDAPAuthUtils.SUCCESS);
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.5 2006-08-25 21:20:54 veiming Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.6 2006-10-26 20:53:25 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -360,6 +360,14 @@ public class IdRemoteServicesImpl implements IdServices {
             String serviceName, Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
+            if (debug.messageEnabled()) {
+                debug.message("IdRemoteServicesImpl.getServiceAttributes  type="
+                    + type + ";  name="  + name + ";  serviceName="
+                    + serviceName + ";  attrNames=" + attrNames
+                    + ";  amOrgName=" + amOrgName
+                    + ";  amsdkDN=" + amsdkDN);
+            }
+
             Object[] objs = { token.getTokenID().toString(), type.getName(),
                     name, serviceName, attrNames, amOrgName, amsdkDN };
             return ((Map) client.send(client.encodeMessage(
@@ -379,6 +387,56 @@ public class IdRemoteServicesImpl implements IdServices {
             throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         }
     }
+
+
+    /**
+     * Non-javadoc, non-public methods
+     * Get the service attributes of the name identity. Traverse to the global
+     * configuration if necessary until all attributes are found or reached
+     * the global area whichever occurs first.
+     *
+     * @param token is the sso token of the person performing this operation.
+     * @param type is the identity type of the name parameter.
+     * @param name is the identity we are interested in.
+     * @param serviceName is the service we are interested in
+     * @param attrNames are the name of the attributes wer are interested in.
+     * @param amOrgName is the orgname.
+     * @param amsdkDN is the amsdkDN.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
+     */
+    public Map getServiceAttributesAscending(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException {
+        try {
+            if (debug.messageEnabled()) {
+                debug.message("IdRemoteServicesImpl."
+                    + "getServiceAttributesAscending type=" + type
+                    + ";  name="  + name + ";  serviceName=" + serviceName
+                    + ";  attrNames=" + attrNames + ";  amOrgName="
+                    + amOrgName + ";  amsdkDN=" + amsdkDN);
+            }
+
+            Object[] objs = { token.getTokenID().toString(), type.getName(),
+                   name, serviceName, attrNames, amOrgName, amsdkDN};
+            return ((Map)client.send(
+                    client.encodeMessage(
+                        "getServiceAttributesAscending_idrepo", objs),
+                        token, null));
+
+        } catch (RemoteException rex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.getServiceAttributesAscending_idrepo: "
+                 + "caught exception=", rex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (Exception ex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.getServiceAttributesAscending_idrepo: "
+                 + "caught exception=", ex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        }
+    }
+
 
     public void unassignService(SSOToken token, IdType type, String name,
             String serviceName, Map attrMap, String amOrgName, String amsdkDN)
@@ -408,6 +466,13 @@ public class IdRemoteServicesImpl implements IdServices {
             String amOrgName, String amsdkDN) throws IdRepoException,
             SSOException {
         try {
+            if (getDebug().messageEnabled()) {
+                getDebug().message("IdRemoteServicesImpl.modifyService_idrepo:"
+                    + " name =" +  name + ";  type=" + type +
+                    ";  serviceName=" + serviceName + ";  stype=" + stype +
+                    ";  attrMap=" + attrMap + ";  amOrgName=" + amOrgName +
+                    ";  amsdkDN=" + amsdkDN);
+            }
             Object[] objs = { token.getTokenID().toString(), type.getName(),
                     name, serviceName, stype.getType(), attrMap, amOrgName,
                     amsdkDN };
@@ -581,9 +646,29 @@ public class IdRemoteServicesImpl implements IdServices {
     }
 
     public boolean isExists(SSOToken token, IdType type, String name,
-            String amOrgName) throws SSOException, IdRepoException {
-        // TODO Auto-generated method stub
-        return false;
+        String amOrgName) throws SSOException, IdRepoException
+    {
+        try {
+            Object[] objs = { token.getTokenID().toString(), type.getName(),
+                    name, amOrgName};
+            Boolean res =
+                ((Boolean) client
+                    .send(client.encodeMessage("isExists_idrepo", objs),
+                            token, null));
+            return res.booleanValue();
+        } catch (RemoteException rex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.isExists: caught " +
+                "exception=", rex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
+        } catch (Exception ex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.isExists: caught " +
+               "exception=", ex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        }
     }
 
     public boolean isActive(SSOToken token, IdType type, String name,
@@ -599,6 +684,31 @@ public class IdRemoteServicesImpl implements IdServices {
             return false;
         } catch (Exception ex) {
             return false;
+        }
+    }
+
+    public void setActiveStatus(SSOToken token, IdType type, String name,
+        String amOrgName, String amsdkDN, boolean active) throws SSOException,
+        IdRepoException {
+        try {
+            Object[] objs = { token.getTokenID().toString(), type.getName(),
+                    name, amOrgName, amsdkDN, new Boolean(active)};
+            client.send(
+                    client.encodeMessage("setActiveStatus_idrepo", objs),
+                    token, null);
+
+        } catch (RemoteException rex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.setActiveStatus_idrepo: " +
+                     "caught exception=", rex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (IdRepoException ide) {
+            throw (ide);
+        } catch (Exception ex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.setActiveStatus_idrepo: " +
+                     "caught exception=", ex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         }
     }
 

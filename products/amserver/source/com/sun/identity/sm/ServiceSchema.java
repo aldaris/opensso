@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.6 2006-09-12 00:47:47 goodearth Exp $
+ * $Id: ServiceSchema.java,v 1.7 2006-10-26 20:53:55 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -394,7 +394,8 @@ public class ServiceSchema {
             AttributeSchemaImpl as = ss.getAttributeSchema(attr);
             AttributeValidator av = ss.getAttributeValidator(attr);
             String anyValue = as.getAny();
-            if (anyValue != null && (anyValue.indexOf("required") > -1)) {
+            if (inherit && (anyValue != null) &&
+                (anyValue.indexOf("required") > -1)) {
                 // Inherit default values of this attribute, if
                 // required
                 attrMap = av.inheritDefaults(attrMap);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.4 2006-09-12 20:41:52 goodearth Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.5 2006-10-26 20:53:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -434,6 +434,15 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
             }
         }
         return attributes;
+    }
+
+    public void setActiveStatus(SSOToken token, IdType type, String name,
+        String amOrgName, String amsdkDN, boolean active) throws SSOException,
+        IdRepoException {
+        super.setActiveStatus(token, type, name, amOrgName, amsdkDN, active);
+        AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
+        String dn = IdUtils.getUniversalId(id).toLowerCase();
+        dirtyCache(dn);
     }
 
     public void setAttributes(SSOToken token, IdType type, String name,

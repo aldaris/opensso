@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServices.java,v 1.2 2006-06-23 00:48:06 arviranga Exp $
+ * $Id: IdServices.java,v 1.3 2006-10-26 20:52:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,10 @@ public interface IdServices {
             String amOrgName, String amsdkDN) throws SSOException,
             IdRepoException;
 
+    public void setActiveStatus (SSOToken token, IdType type, String name,
+            String amOrgName, String amsdkDN, boolean active)
+            throws SSOException, IdRepoException;
+
     public void modifyMemberShip(SSOToken token, IdType type, String name,
             Set members, IdType membersType, int operation, String amOrgName)
             throws IdRepoException, SSOException;
@@ -101,6 +105,26 @@ public interface IdServices {
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
             String serviceName, Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException;
+
+    /**
+     * Non-javadoc, non-public methods
+     * Get the service attributes of the name identity. Traverse to the global
+     * configuration if necessary until all attributes are found or reached
+     * the global area whichever occurs first.
+     *
+     * @param token is the sso token of the person performing this operation.
+     * @param type is the identity type of the name parameter.
+     * @param name is the identity we are interested in.
+     * @param serviceName is the service we are interested in
+     * @param attrNames are the name of the attributes wer are interested in.
+     * @param amOrgName is the orgname.
+     * @param amsdkDN is the amsdkDN.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
+     */
+    public Map getServiceAttributesAscending(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException;
 
     public void modifyService(SSOToken token, IdType type, String name,
             String serviceName, SchemaType stype, Map attrMap,

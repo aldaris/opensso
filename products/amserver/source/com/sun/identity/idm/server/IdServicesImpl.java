@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.8 2006-10-16 20:50:06 bigfatrat Exp $
+ * $Id: IdServicesImpl.java,v 1.9 2006-10-26 20:53:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
@@ -813,7 +814,7 @@ public class IdServicesImpl implements IdServices {
             {
                 exists = idRepo.isExists(token, type, name);
                 if (exists) {
-                    continue;
+                    break;
                 }
             }
         }
@@ -886,6 +887,79 @@ public class IdServicesImpl implements IdServices {
         }
 
         return active;
+    }
+
+    /*
+     * (non-Javadoc)
+     */
+    public void setActiveStatus(SSOToken token, IdType type, String name,
+        String amOrgName, String amsdkDN, boolean active) throws SSOException,
+        IdRepoException {
+        IdRepoException origEx = null;
+
+        // Check permission first. If allowed then proceed, else the
+        // checkPermission method throws an "402" exception.
+        checkPermission(token, amOrgName, name, null, IdOperation.EDIT, type);
+        // First get the list of plugins that support the create operation.
+        Set plugIns = getIdRepoPlugins(token, amOrgName);
+        Set configuredPluginClasses = new HashSet();
+        configuredPluginClasses = getConfiguredPlugins(token, amOrgName,
+            plugIns, IdOperation.EDIT, type);
+        if (configuredPluginClasses == null
+            || configuredPluginClasses.isEmpty()) {
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+        }
+
+        Iterator it = configuredPluginClasses.iterator();
+        int noOfSuccess = configuredPluginClasses.size();
+        IdRepo idRepo;
+        while (it.hasNext()) {
+            idRepo = (IdRepo) it.next();
+            try {
+                if (idRepo.getClass().getName()
+                    .equals(IdConstants.AMSDK_PLUGIN)
+                    && amsdkDN != null) {
+                    idRepo.setActiveStatus(token, type, amsdkDN, active);
+                } else {
+                    idRepo.setActiveStatus(token, type, name, active);
+                }
+            } catch (IdRepoUnsupportedOpException ide) {
+                if (idRepo != null && getDebug().warningEnabled()) {
+                    getDebug().warning("IdServicesImpl:setActiveStatus: "
+                            + "Unable to set attributes in the following "
+                            + "repository" + idRepo.getClass().getName()
+                            + " :: " + ide.getMessage());
+                }
+                noOfSuccess--;
+                origEx = ide;
+            } catch (IdRepoFatalException idf) {
+                // fatal ..throw it all the way up
+                getDebug().error("IsActive: Fatal Exception ", idf);
+                throw idf;
+            } catch (IdRepoException ide) {
+                if (idRepo != null && getDebug().warningEnabled()) {
+                    getDebug().warning(
+                        "Unable to setActiveStatus in the " +
+                        "following repository" + idRepo.getClass().getName() +
+                        " :: " + ide.getMessage());
+                }
+                noOfSuccess--;
+                // 220 is entry not found. this error should have lower
+                // precedence than other error because we search thru all
+                // the ds and this entry might exist in one of the other ds.
+                if (!ide.getErrorCode().equalsIgnoreCase("220") ||
+                    (origEx == null)) {
+                    origEx = ide;
+                }
+            }
+        }
+        if (noOfSuccess == 0) {
+            getDebug().error("Unable to setActiveStatus for identity "
+                    + type.getName() + "::" + name + " in any configured "
+                    + "datastore", origEx);
+            throw origEx;
+        }
+
     }
 
     /*
@@ -1544,6 +1618,176 @@ public class IdServicesImpl implements IdServices {
 
     }
 
+    /**
+     * Non-javadoc, non-public methods
+     * Get the service attributes of the name identity. Traverse to the global
+     * configuration if necessary until all attributes are found or reached
+     * the global area whichever occurs first.
+     *
+     * @param token is the sso token of the person performing this operation.
+     * @param type is the identity type of the name parameter.
+     * @param name is the identity we are interested in.
+     * @param serviceName is the service we are interested in
+     * @param attrNames are the name of the attributes wer are interested in.
+     * @param amOrgName is the orgname.
+     * @param amsdkDN is the amsdkDN.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
+     */
+    public Map getServiceAttributesAscending(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException {
+
+        Map finalResult = new HashMap();
+        Set finalAttrName = new HashSet();
+        String nextName = name;
+        String nextAmOrgName = amOrgName;
+        String nextAmsdkDN = amsdkDN;
+        IdType nextType = type;
+        Set missingAttr = new HashSet(attrNames);
+        do {
+            // name is the name of AMIdentity object. will change as we move
+            // up the tree.
+            // attrNames is missingAttr and will change as we move up the tree.
+            // amOrgname will change as we move up the tree.
+            // amsdkDN will change as we move up the tree.
+            try {
+                Map serviceResult = getServiceAttributes(token, nextType,
+                    nextName, serviceName, missingAttr, nextAmOrgName,
+                    nextAmsdkDN);
+                if (getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl."
+                        + "getServiceAttributesAscending:"
+                        + " nextType=" + nextType + "; nextName=" + nextName
+                        + "; serviceName=" + serviceName + "; missingAttr="
+                        + missingAttr + "; nextAmOrgName=" + nextAmOrgName
+                        + "; nextAmsdkDN=" + nextAmsdkDN);
+                    getDebug().message("  getServiceAttributesAscending: "
+                        + "serviceResult=" + serviceResult);
+                    getDebug().message("  getServiceAttributesAscending: "
+                        + " finalResult=" + finalResult);
+                    getDebug().message("  getServiceAttributesAscending: "
+                        + " finalAttrName=" + finalAttrName);
+                }
+                if (serviceResult != null) {
+                    Set srvNameReturned = serviceResult.keySet();
+                    // save the newly found attrs
+                    // amsdk returns emptyset when attrname is not present.
+                    Iterator nameIt = srvNameReturned.iterator();
+                    while (nameIt.hasNext()) {
+                        String attr = (String) nameIt.next();
+                        Set attrValue = (Set) serviceResult.get(attr);
+                        if (!attrValue.isEmpty()) {
+                            finalResult.put(attr, attrValue);
+                            finalAttrName.add(attr);
+                        }
+                    }
+                    if (getDebug().messageEnabled()) {
+                        getDebug().message("    getServiceAttributesAscending:"
+                           + " serviceResult=" + serviceResult);
+                        getDebug().message("    getServiceAttributesAscending:"
+                          + " finalResult=" + finalResult);
+                    }
+                }
+                if (finalAttrName.containsAll(attrNames)) {
+                    if (getDebug().messageEnabled()) {
+                        getDebug().message("exit getServiceAttributesAscending:"
+                            + " finalResult=" + finalResult);
+                    }
+                    return(finalResult);
+                }
+
+                // find the missing attributes
+                missingAttr.clear();
+                Iterator it = attrNames.iterator();
+                while (it.hasNext()) {
+                    String attrName = (String) it.next();
+                    if (!finalAttrName.contains(attrName)) {
+                        missingAttr.add(attrName);
+                    }
+                }
+            } catch (IdRepoException idrepo) {
+                if (getDebug().warningEnabled()) {
+                    getDebug().warning("  getServiceAttributesAscending: "
+                        + "idrepoerr", idrepo);
+                }
+            } catch (SSOException ssoex) {
+                if (getDebug().warningEnabled()) {
+                    getDebug().warning("  getServiceAttributesAscending: "
+                        + "ssoex", ssoex);
+                }
+            }
+
+            //  go up to the parent org
+            try {
+
+                if (nextType.equals(IdType.USER) ||
+                    nextType.equals(IdType.AGENT)) {
+                    // try the user or agent's currect realm.
+                    nextAmsdkDN = nextAmOrgName;
+                    nextType = IdType.REALM;
+                } else {
+                    OrganizationConfigManager ocm =
+                        new OrganizationConfigManager(token, nextAmOrgName);
+                    OrganizationConfigManager parentOCM =
+                        ocm.getParentOrgConfigManager();
+                    String tmpParentName = parentOCM.getOrganizationName();
+                    String parentName = DNMapper.realmNameToAMSDKName(
+                        tmpParentName);
+                    if (getDebug().messageEnabled()) {
+                        getDebug().message("  getServiceAttributesAscending: "
+                            + " tmpParentName=" + tmpParentName
+                            + " parentName=" + parentName);
+                    }
+                    nextType = IdType.REALM;
+                    if (nextAmOrgName.equalsIgnoreCase(parentName)) {
+                        // at root.
+                        nextName = null;
+                    } else {
+                        nextAmOrgName = parentName;
+                    }
+                    nextAmOrgName = parentName;
+                    nextAmsdkDN = parentName;
+                }
+            } catch (SMSException smse) {
+                if (getDebug().warningEnabled()) {
+                    getDebug().warning("  getServiceAttributesAscending: "
+                        + "smserror", smse);
+                }
+                nextName = null;
+            }
+        } while (nextName != null);
+
+        // get the rest from global.
+        if (!missingAttr.isEmpty()) {
+            try {
+                ServiceSchemaManager ssm =
+                    new ServiceSchemaManager(serviceName, token);
+                ServiceSchema schema = ssm.getDynamicSchema();
+                Map gAttrs = schema.getAttributeDefaults();
+                Iterator missingIt = missingAttr.iterator();
+                while (missingIt.hasNext()) {
+                    String missingAttrName = (String) missingIt.next();
+                    finalResult.put(missingAttrName,
+                        gAttrs.get(missingAttrName));
+                }
+            } catch (SMSException smse) {
+                if (getDebug().messageEnabled()) {
+                    getDebug().message(
+                        "IdServicesImpl(): getServiceAttributeAscending "
+                        + " Failed to get global default.", smse);
+                }
+            }
+        }
+
+        if (getDebug().messageEnabled()) {
+            getDebug().message("exit end  getServiceAttributesAscending: "
+                + " finalResult=" + finalResult);
+        }
+        return finalResult;
+    }
+
+
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
             String serviceName, Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
@@ -1986,6 +2230,13 @@ public class IdServicesImpl implements IdServices {
             Set plugins) {
         // Check and load what is in the cache.
         Set pluginClasses = new OrderedSet();
+        if (!orgExist(token, orgName)) {
+            if (debug.messageEnabled()) {
+                debug.message("IdServicesImpl.getAllConfiguredPlugins: "
+                        + " organization does not exist.");
+            }
+            return pluginClasses;
+        }
         if (ServiceManager.isConfigMigratedTo70()
                 && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
             // add the "SpecialUser plugin
@@ -2009,6 +2260,11 @@ public class IdServicesImpl implements IdServices {
                         idRepoMap.put(p, thisPlugin);
                     }
                     pluginClasses.add(thisPlugin);
+                    if (debug.messageEnabled()) {
+                        debug.message("IdServicesImpl.getAllConfiguredPlugins:"
+                           + " isConfigMigratedTo70 pluginClasses="
+                           + pluginClasses);
+                    }
                 } catch (Exception e) {
                     getDebug().error(
                         "IdServicesImpl.getAllConfiguredPlugins: "
@@ -2016,6 +2272,11 @@ public class IdServicesImpl implements IdServices {
                 }
             } else {
                 pluginClasses.add(pClass);
+                if (debug.messageEnabled()) {
+                    debug.message("IdServicesImpl.getAllConfiguredPlugins:"
+                        + " isConfigMigratedTo70 pluginClasses="
+                        + pluginClasses + " ; p=" + p);
+                }
             }
         }
 
@@ -2544,4 +2805,33 @@ public class IdServicesImpl implements IdServices {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "402", args);
         }
     }
+
+    private boolean orgExist(SSOToken token, String orgName) {
+        // see if the realm actually exists
+        boolean isExist = false;
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(token,
+                    IdConstants.REPO_SERVICE, "1.0");
+            if (scm != null) {
+                if (scm.getOrganizationConfig(orgName, null) != null) {
+                    isExist = true;
+                } else {
+                    debug.error("IdServicesImpl.orgExist organization"
+                        + " does not exist. orgName=" + orgName);
+
+                }
+            } else {
+                debug.error("IdServicesImpl.orgExist service not"
+                    + " configured for this org. orgName=" +orgName);
+           }
+        } catch (SMSException smse) {
+            getDebug().error("IdServicesImpl.orgExist: "
+                + " sms Exception: realm not found", smse);
+        } catch (SSOException ssoe) {
+            getDebug().error("IdServicesImpl.orgExist: "
+                + " SSO  Exception: realm not found", ssoe);
+        }
+        return isExist;
+    }
+
 }

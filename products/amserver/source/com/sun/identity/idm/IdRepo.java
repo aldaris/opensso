@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.3 2006-06-23 00:48:05 arviranga Exp $
+ * $Id: IdRepo.java,v 1.4 2006-10-26 20:52:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -126,6 +126,19 @@ public abstract class IdRepo {
             throws IdRepoException, SSOException {
         return false;
     }
+
+    /**
+     * Replaces attributes in the identity with the new ones.
+     * @param token
+     * @param type
+     * @param name
+     * @param active
+     * @throws IdRepoException
+     * @throws SSOException
+     */
+    public abstract void setActiveStatus(SSOToken token, IdType type,
+        String name,  boolean active)
+        throws IdRepoException, SSOException;
 
     /**
      * Returns attributes of identity.

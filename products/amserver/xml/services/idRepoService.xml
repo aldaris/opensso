@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.1 2006-08-29 07:52:33 veiming Exp $
+   $Id: idRepoService.xml,v 1.2 2006-10-26 20:49:32 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -491,6 +491,24 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                   <AttributeSchema name="sun-idrepo-ldapv3-config-active"
+                       type="single"
+                       syntax="string"
+                       i18nKey="a20173">
+                       <DefaultValues>
+                           <Value>Active</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+
+                   <AttributeSchema name="sun-idrepo-ldapv3-config-inactive"
+                       type="single"
+                       syntax="string"
+                       i18nKey="a20174">
+                       <DefaultValues>
+                           <Value>Inactive</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+
                    <AttributeSchema name="sun-idrepo-ldapv3-config-groups-search-attribute"
                         type="single"
                         syntax="string"
@@ -751,12 +769,10 @@
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
                             <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Group</Value>
                             <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>
@@ -1064,6 +1080,7 @@
                             <Value>iPlanetPreferences</Value>
                             <Value>organizationalperson</Value>
                             <Value>person</Value>
+                            <Value>sunAMAuthAccountLockout</Value>
                             <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
@@ -1089,6 +1106,7 @@
                             <Value>postalAddress</Value>
                             <Value>preferredLocale</Value>
                             <Value>sn</Value>
+                            <Value>sunAMAuthInvalidAttemptsData</Value>
                             <Value>sunIdentityMSISDNNumber</Value>
                             <Value>telephoneNumber</Value>
                             <Value>uid</Value>
@@ -1414,12 +1432,10 @@
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
                             <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Group</Value>
                             <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>
@@ -1773,6 +1789,24 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                   <AttributeSchema name="sun-idrepo-ldapv3-config-active"
+                       type="single"
+                       syntax="string"
+                       i18nKey="a20173">
+                       <DefaultValues>
+                           <Value>Active</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+
+                   <AttributeSchema name="sun-idrepo-ldapv3-config-inactive"
+                       type="single"
+                       syntax="string"
+                       i18nKey="a20174">
+                       <DefaultValues>
+                           <Value>Inactive</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+
                    <AttributeSchema name="sun-idrepo-ldapv3-config-groups-search-attribute"
                         type="single"
                         syntax="string"
@@ -2036,12 +2070,10 @@
                         i18nKey="a20385">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="choiceUSER">User</ChoiceValue>
-                            <ChoiceValue i18nKey="choiceGROUP">Group</ChoiceValue>
                             <ChoiceValue i18nKey="choiceAGENT">Agent</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
                             <Value>User</Value>
-                            <Value>Group</Value>
                             <Value>Agent</Value>
                         </DefaultValues>
                     </AttributeSchema>

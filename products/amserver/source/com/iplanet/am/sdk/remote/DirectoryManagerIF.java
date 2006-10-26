@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.3 2006-10-18 22:14:39 rarcot Exp $
+ * $Id: DirectoryManagerIF.java,v 1.4 2006-10-26 20:51:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -236,6 +236,10 @@ public interface DirectoryManagerIF extends Remote {
             String amOrgName, String amsdkDN) throws RemoteException,
             IdRepoException, SSOException;
 
+    public void setActiveStatus_idrepo(String token, String type, String name,
+            String amOrgName, String amsdkDN, boolean active)
+            throws RemoteException, IdRepoException, SSOException;
+
     public void modifyMemberShip_idrepo(String token, String type, String name,
             Set members, String membersType, int operation, String amOrgName)
             throws RemoteException, IdRepoException, SSOException;
@@ -282,6 +286,28 @@ public interface DirectoryManagerIF extends Remote {
             String name, String serviceName, Set attrNames, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
             SSOException;
+
+    /**
+     * Non-javadoc, non-public methods
+     * Get the service attributes of the name identity. Traverse to the global
+     * configuration if necessary until all attributes are found or reached
+     * the global area whichever occurs first.
+     *
+     * @param token is the sso token of the person performing this operation.
+     * @param type is the identity type of the name parameter.
+     * @param name is the identity we are interested in.
+     * @param serviceName is the service we are interested in
+     * @param attrNames are the name of the attributes wer are interested in.
+     * @param amOrgName is the orgname.
+     * @param amsdkDN is the amsdkDN.
+     * @throws RemoteException if there are problem connecting with remote site.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
+     */
+    public Map getServiceAttributesAscending_idrepo(String token, String type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN )
+    throws RemoteException, IdRepoException, SSOException;
 
     public void modifyService_idrepo(String token, String type, String name,
             String serviceName, String stype, Map attrMap, String amOrgName,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.2 2006-08-25 21:19:29 veiming Exp $
+ * $Id: RemoteServicesImpl.java,v 1.3 2006-10-26 20:51:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,25 +156,28 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return res.intValue();
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
-                getDebug().message("RemoteServicesImpl.getObjectType: " 
-                        + "caught exception=", amrex);
+                getDebug().message(
+                    "RemoteServicesImpl.getObjectType: dn=" + dn +
+                    ";  AMRemoteException caught exception=", amrex);
             }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             if (getDebug().messageEnabled()) {
-                getDebug().message("RemoteServicesImpl.getObjectType: " 
-                        + "caught exception=", rex);
+                getDebug().message(
+                    "RemoteServicesImpl.getObjectType: dn=" + dn +
+                    ";  AMRemoteException caught exception=", rex);
             }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (SSOException ssoe) {
-            getDebug().error("RemoteServicesImpl.getObjectType: caught" 
-                    + " SSOException=", ssoe);
+            getDebug().error(
+                "RemoteServicesImpl.getObjectType: dn=" + dn +
+                ";  caught SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
-                        "RemoteServicesImpl.getObjectType: caught exception=",
-                        ex);
+                    "RemoteServicesImpl.getObjectType: dn=" + dn +
+                    ";  caught exception=", ex);
             }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
@@ -215,9 +218,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Map) client.send(client.encodeMessage(
                     "getDCTreeAttributes", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getDCTreeAttributes: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getDCTreeAttributes: entryDN=" +
+                    entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -230,9 +236,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     "SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getDCTreeAttributes: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getDCTreeAttributes: entryDN="
+                    + entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -250,9 +258,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return res;
 
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes: entryDN=" +
+                    entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -264,8 +275,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes: entryDN=" +
+                    entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -282,8 +296,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             res.copy(map);
             return res;
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getAttributes: " +
-                    "caught exception=",  amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes 2: entryDN=" +
+                    entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -295,8 +313,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes2: entryDN=" +
+                    entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -316,8 +337,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Map) client.send(client.encodeMessage(
                     "getAttributesByteValues1", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getAttributesByteValues: " 
-                    + "caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributesByteValues: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getAttributesByteValues: " 
@@ -329,9 +354,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributesByteValues: caught " +
-                    "exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributesByteValues: entryDN="
+                    + entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -346,8 +373,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     "getAttributesByteValues2", objs), null));
 
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getAttributesByteValues: " 
-                    + "caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributesByteValues2: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getAttributesByteValues: " 
@@ -358,8 +389,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "caught SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getAttributesByteValues: " 
-                    + "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributesByteValues2: entryDN="
+                    + entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -397,9 +431,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             res.copy(map);
             return res;
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes 3: entryDN=" +
+                    entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -411,8 +448,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes3: entryDN=" +
+                    entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -452,9 +492,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             res.copy(map);
             return res;
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes 4: entryDN=" +
+                    entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -466,8 +509,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAttributes: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributes4: entryDN=" +
+                    entryDN + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
     }
@@ -478,9 +524,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((String) client.send(client.encodeMessage(
                     "getOrgSearchFilter", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getOrgSearchFilter: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getOrgSearchFilter: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             return ("");
         } catch (RemoteException rex) {
             getDebug().error(
@@ -488,9 +537,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             return ("");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getOrgSearchFilter: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getOrgSearchFilter: entryDN=" + entryDN +
+                    ";  caught exception=", ex);
+            }
             return ("");
         }
 
@@ -518,9 +569,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((String) client.send(client.encodeMessage(
                     "getOrganizationDN", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getOrganizationDN: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getOrganizationDN: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -532,9 +586,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "SSOException=", ssoe);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getOrganizationDN: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getOrganizationDN: entryDN=" +
+                     entryDN +  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -562,9 +618,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((String) client.send(client.encodeMessage(
                     "verifyAndGetOrgDN", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.verifyAndGetOrgDN: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.verifyAndGetOrgDN: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -576,9 +635,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "SSOException=", ssoe);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.verifyAndGetOrgDN: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.verifyAndGetOrgDN: entryDN=" +
+                     entryDN +  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -607,9 +668,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Map) client.send(client.encodeMessage(
                     "getExternalAttributes", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getExternalAttributes: caught " 
-                    + "exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getExternalAttributes: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -617,8 +681,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "exception=", rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getExternalAttributes: " 
-                    + "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getExternalAttributes: entryDN=" +
+                     entryDN +  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -647,9 +714,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             client.send(client.encodeMessage("updateUserAttribute", objs),
                     null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.updateUserAttribute: caught exception=",
-                    amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.updateUserAttr: staticGroupDN="
+                    + staticGroupDN +
+                    ";  AMRemoteException caught exception=", amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -657,9 +727,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.updateUserAttribute: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.updateUserAttribute: staticGroupDN="
+                    + staticGroupDN +  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -688,8 +760,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             client.send(client.encodeMessage("createEntry", objs), null);
 
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.createEntry: caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.createEntry: entryName="
+                    + entryName + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -697,9 +773,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.createEntry: caught " + "exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.createEntry: entryName=" +
+                     entryName+  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -730,8 +808,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     new Boolean(softDelete) };
             client.send(client.encodeMessage("removeEntry", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.removeEntry: caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.removeEntry: entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -744,9 +826,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.removeEntry: caught " + "exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.removeEntry: entryDN=" +
+                     entryDN +  ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -770,9 +854,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     new Boolean(recursive) };
             client.send(client.encodeMessage("removeAdminRole", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.removeAdminRole: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.removeAdminRole: dn="
+                    + dn + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -785,9 +872,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.removeAdminRole: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.removeAdminRole: dn=" +
+                     dn  + ";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -814,16 +903,22 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Set) client.send(client.encodeMessage("search1", objs),
                     null));
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.search: caught exception=",
-                    amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.search: entryDN" + entryDN
+                    + ";  AMRemoteException caught exception=", amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.search: caught exception=",
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug()
-                    .error("RemoteServicesImpl.search: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.search: entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
     }
@@ -895,16 +990,22 @@ public class RemoteServicesImpl implements IDirectoryServices {
             }
             return (new AMSearchResults(count, dns, errorCode, results));
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.search: caught exception=",
-                    amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.search2 : entryDN" + entryDN +
+                    ";  AMRemoteException caught exception=", amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.search: caught exception=",
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug()
-                    .error("RemoteServicesImpl.search: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.search2 : entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
     }
@@ -929,16 +1030,22 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Set) client.send(client.encodeMessage("getMembers", objs),
                     null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getMembers: caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getMembers : entryDN" + entryDN
+                    + ";  AMRemoteException caught exception=", amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
                     "RemoteServicesImpl.getMembers: caught exception=", rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getMembers: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getMembers : entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -972,8 +1079,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     objs), null));
 
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.renameEntry: caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.renameEntry : entryDN" + entryDN
+                    + ";  AMRemoteException caught exception=", amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -981,9 +1091,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.renameEntry: caught " + "exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.renameEntry : entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1010,9 +1122,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     new Boolean(isAdd) };
             client.send(client.encodeMessage("setAttributes", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.setAttributes: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.setAttributes : entryDN" +
+                    entryDN + ";  AMRemoteException caught exception=" ,
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1024,8 +1139,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.setAttributes: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.setAttributes : entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1046,8 +1164,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             list.toArray(array);
             return array;
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getGroupFilterAndScope: " 
-                    + "caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getGroupFilterAndScope : entryDN"
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getGroupFilterAndScope: " 
@@ -1059,8 +1181,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getGroupFilterAndScope: " 
-                    + "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getGroupFilterAndScope : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1081,9 +1206,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             Object[] objs = { token.getTokenID().toString(), entryDN, filter };
             client.send(client.encodeMessage("setGroupFilter", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.setGroupFilter: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.setGroupFilter : entryDN" +
+                    entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1096,6 +1224,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.setGroupFilter : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             getDebug().error(
                     "RemoteServicesImpl.setGroupFilter: caught exception=", ex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
@@ -1128,9 +1261,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             client.send(client.encodeMessage("modifyMemberShip", objs), null);
 
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.modifyMemberShip: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.modifyMemberShip : target"
+                    + target + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1138,9 +1274,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.modifyMemberShip: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.modifyMemberShip : target="
+                    + target +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1162,8 +1300,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Set) client.send(client.encodeMessage(
                     "getRegisteredServiceNames", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getRegisteredServiceNames: " 
-                    + "caught exception=", amrex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getRegisteredServiceNames : entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
+                    amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1171,9 +1313,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "exception=", rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getRegisteredServiceNames: caught "
-                            + "exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getRegisteredServiceNames : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1196,9 +1340,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     };
             client.send(client.encodeMessage("registerService", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.registerService: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.registerService : orgDN="
+                    + orgDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1211,9 +1358,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.registerService: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.registerService : orgDN="
+                    + orgDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1242,9 +1391,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     new Integer(objectType), serviceName, new Integer(type) };
             client.send(client.encodeMessage("unRegisterService", objs), null);
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.unRegisterService: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.unRegisterService : entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1252,9 +1404,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.unRegisterService: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.unRegisterService : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1281,9 +1435,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((String) client.send(client.encodeMessage(
                     "getAMTemplateDN", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAMTemplateDN: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAMTemplateDN : entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1291,9 +1448,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getAMTemplateDN: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAMTemplateDN : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1325,9 +1484,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     "createAMTemplate", objs), null));
 
         } catch (AMRemoteException amrex) {
-            getDebug().error(
-                    "RemoteServicesImpl.createAMTemplate: caught exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.createAMTemplate : entryDN="
+                    + entryDN + ";  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -1335,9 +1497,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     rex);
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.createAMTemplate: caught exception=",
-                    ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.createAMTemplate : entryDN="
+                    + entryDN +";  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 
@@ -1357,8 +1521,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     "RemoteServicesImpl.getNamingAttr: caught exception=", rex);
             return null;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getNamingAttr: caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getNamingAttribute : orgDN="
+                    + orgDN+";  caught exception=", ex);
+            }
             return null;
         }
 
@@ -1377,8 +1544,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "caught exception=", rex);
             return null;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getCreationTemplateName: " 
-                    + "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getCreationTemplateName : "
+                    + "  caught exception=", ex);
+            }
             return null;
         }
 
@@ -1394,8 +1564,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "caught exception=", rex);
             return null;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getObjectClassFromDS: " 
-                    + "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getObjectClass : "
+                    + "  caught exception=", ex);
+            }
             return null;
         }
 
@@ -1418,8 +1591,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     "caught exception=", rex);
             return Collections.EMPTY_SET;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getAttributesForSchema:" 
-                    + " caught exception=",  ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getAttributesForSchema : "
+                    + "  caught exception=", ex);
+            }
             return Collections.EMPTY_SET;
         }
 
@@ -1437,9 +1613,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                             + "exception=", rex);
             return null;
         } catch (Exception ex) {
-            getDebug().error(
-                    "RemoteServicesImpl.getSearchFilterFromTemplate: caught "
-                            + "exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getSearchFilterFromTemplate : orgDN="
+                    + orgDN+";  caught exception=", ex);
+            }
             return null;
         }
 
@@ -1452,9 +1630,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             return ((Set) client.send(client.encodeMessage(
                     "getTopLevelContainers", objs), null));
         } catch (AMRemoteException amrex) {
-            getDebug().error("RemoteServicesImpl.getTopLevelContainers: caught" 
-                    + " exception=",
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getTopLevelContainers : "
+                    + "  AMRemoteException caught exception=",
                     amrex);
+            }
             throw convertException(amrex);
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getTopLevelContainers: " 
@@ -1465,8 +1646,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     + "SSOException=", ssoe);
             throw ssoe;
         } catch (Exception ex) {
-            getDebug().error("RemoteServicesImpl.getTopLevelContainers: " +
-                    "caught exception=", ex);
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.getTopLevelContainers : "
+                    + "  caught exception=", ex);
+            }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");
         }
 

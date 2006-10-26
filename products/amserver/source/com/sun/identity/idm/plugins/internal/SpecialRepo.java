@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.7 2006-08-25 21:20:51 veiming Exp $
+ * $Id: SpecialRepo.java,v 1.8 2006-10-26 20:52:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,11 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 public class SpecialRepo extends IdRepo implements ServiceListener {
     public static final String NAME = 
         "com.sun.identity.idm.plugins.internal.SpecialRepo";
+
+    // Status attribute
+    private static final String statusAttribute = "inetUserStatus";
+    private static final String statusActive = "Active";
+    private static final String statusInactive = "Inactive";
 
     IdRepoListener repoListener = null;
 
@@ -725,11 +730,10 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                         }
                         attrs.put("userPassword", hashedVals);
                     }
-                    if ((vals = (Set) attributes.get("inetUserStatus")) != null
-                            || (vals = (Set) attributes.get("inetuserstatus")) 
-                            != null) 
-                    {
-                        attrs.put("inetUserStatus", vals);
+                    if ((vals = (Set) attributes.get(statusAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        statusAttribute)) != null) {
+                        attrs.put(statusAttribute, vals);
                     }
                     usc1.setAttributes(attrs);
                     // If password is changed for dsameuser, need to
@@ -825,15 +829,34 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
             Object[] args = { NAME, name };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "202", args);
         }
-        Set activeVals = (Set) attributes.get("inetUserStatus");
+        Set activeVals = (Set) attributes.get(statusAttribute);
         if (activeVals == null || activeVals.isEmpty()) {
             return true;
         } else {
             Iterator it = activeVals.iterator();
             String active = (String) it.next();
-            return (active.equalsIgnoreCase("active") ? true : false);
+            return (active.equalsIgnoreCase(statusActive) ? true : false);
         }
 
+    }
+
+    /* (non-Javadoc)
+     * @see com.sun.identity.idm.IdRepo#setActiveStatus(
+        com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
+        java.lang.String, boolean)
+     */
+    public void setActiveStatus(SSOToken token, IdType type,
+        String name, boolean active)
+        throws IdRepoException, SSOException {
+        Map attrs = new HashMap();
+        Set vals = new HashSet();
+        if (active) {
+            vals.add(statusActive);
+        } else {
+            vals.add(statusInactive);
+        }
+        attrs.put(statusAttribute, vals);
+        setAttributes(token, type, name, attrs, false);
     }
 
     /*
