@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2006-10-18 20:55:28 veiming Exp $
+   $Id: build.xml,v 1.6 2006-10-26 17:04:23 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -77,6 +77,16 @@
             <fileset dir="${amserver.classes.dir}" />
             <fileset dir="${amserver.res.i18n.dir}" />
         </copy>
+        <concat destfile="${test.package.dir}/classes/amSDK.properties">
+             <fileset dir="${test.package.dir}/classes">
+                <include name="Services.properties"/>
+                <include name="DSConfig.properties"/>
+                <include name="ums.properties"/>
+                <include name="sso.properties"/>
+                <include name="SMS.properties"/>
+                <include name="authentication_util.properties"/>
+             </fileset>
+        </concat>
 
         <copy todir="${test.package.dir}/config/classes">
             <fileset dir="${amserver.config.res.dir}" />
