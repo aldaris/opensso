@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #ifndef AM_WEB_H
 #define AM_WEB_H
 
@@ -67,6 +67,8 @@ AM_BEGIN_EXTERN_C
 #define REQUEST_METHOD          	"method"
 #define REQUEST_QUERY           	"query"
 #define REQUEST_URI             	"uri"
+#define REQUEST_PROTOCOL        	"protocol"
+#define REQUEST_CLF             	"clf-request"
 #define AUTH_USER_VAR           	"auth-user"
 #define AUTH_TYPE_VAR           	"auth-type"
 #define GOTO_PARAMETER          	"goto"
@@ -916,21 +918,18 @@ AM_WEB_EXPORT char * am_web_create_post_page(const char *key,
 					     const char *actionurl);
 
 /*
- * Create the html form with the javascript that submits the POST
- * with the invisible name value pairs
+ * Check whether a cookie is present.
  *
  * Parameters:
- *     key
- *         Unique key to identify POST data entry. It is used to
- *         remove post data once the page is re-posted
- *     postdata
- *         POST data entry as a browser encoded string
- *     actionurl
- *         POST destination URL
- *
+ *     cookie 
+ *			Pointer to a cookie.
+ *	   value 
+ *			Pointer to a value.
+ *     new_cookie
+ *         Pointer to a pointer to the location of the new cookie.
+ *     
  * Returns
- *     char *
- *         POST form to be resubmitted
+ *     2,1,0 or -1 as defined above
  *
  */
 AM_WEB_EXPORT int am_web_is_cookie_present(const char *cookie, 
@@ -1084,6 +1083,11 @@ AM_WEB_EXPORT boolean_t am_web_is_proxy_override_host_port_set();
  * interacting
  */
 AM_WEB_EXPORT char * am_web_get_am_revision_number();
+
+/*
+ * Method to get the value of user id param
+ */
+AM_WEB_EXPORT const char * am_web_get_user_id_param();
 
 AM_END_EXTERN_C 
 

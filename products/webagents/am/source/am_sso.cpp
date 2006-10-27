@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <stdexcept>
 #include <am_sso.h>
 #include "internal_macros.h"
@@ -534,8 +534,8 @@ am_sso_get_property(const am_sso_token_handle_t sso_token_handle,
 	    }
 	} catch(...) {
 	    Log::log(ssoHdlModule, Log::LOG_ERROR,
-		     "am_sso_get_property(): "
-		     "Unknown exception thrown.");
+		     "am_sso_get_property(): property name - %s"
+		     "-Unknown exception thrown.", property_key);
 	}
     } else {
 	retVal = 0;
@@ -630,7 +630,7 @@ am_sso_validate_token(const am_sso_token_handle_t sso_token_handle)
 	    sts = SSOTokenSvc->getSessionInfo(ServiceInfo(),
 					      ssoTokenId,
 					      cookieList,
-					      false,
+					      true,
 					      *sessionInfo, 
 					      true);
 	    if (sts == AM_SUCCESS) {

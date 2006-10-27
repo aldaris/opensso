@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 
 #include <stdexcept>
 
@@ -27,9 +27,6 @@
 #include "xml_tree.h"
 
 USING_PRIVATE_NAMESPACE
-const PolicyService::Revision PolicyService::Revision::TWENTY_OR_OLDER("20");
-const PolicyService::Revision PolicyService::Revision::THIRTY("30");
-
 namespace {
     const char requestPrefix[] = {
 	"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -276,8 +273,7 @@ PolicyService::PolicyService(const SSOToken& agentTokenArg,
 			     bool trustServerCert)
     : BaseService("PolicyService", props, cert_passwd, 
 		cert_nick_name, trustServerCert),
-      agentToken(agentTokenArg),
-      revision(Revision::TWENTY_OR_OLDER)
+      agentToken(agentTokenArg)
 {
     if (! agentToken.isValid()) {
 	throw std::invalid_argument("PolicyService() invalid SSOToken");
@@ -687,14 +683,17 @@ PolicyService::sendNotificationMsg(bool addOrRemove,
 	XMLElement element = policyTree.getRootElement();
 	std::string version;
 	std::string revisionStr;
+	    char rev[10] = {'\0'};
 
 	if(element.isNamed(POLICY_SERVICE)) {
 	    if(element.getAttributeValue(VERSION_STR, version) &&
 	       std::strcmp(version.c_str(), POLICY_SERVICE_VERSION) == 0) {
 		element.getAttributeValue(REVISION_STR, revisionStr);
-
-		// get revision of server
-		revision = Revision::getRevision(revisionStr);
+				if (!revisionStr.empty()) {
+                    strcpy(rev, revisionStr.c_str());
+                    // get revision of server
+                    PR_snprintf(rev, sizeof(rev), "%d", revision);
+                }
 
 		std::string requestId;
 		element.getSubElement(POLICY_RESPONSE, element);

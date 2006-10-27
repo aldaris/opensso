@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <cerrno>
 #include <cstdlib>
 #include <stdexcept>
@@ -483,29 +483,56 @@ void Properties::create_old_to_new_attributes_map()
 // Create a hash map of new-to-old properties
 const char* Properties::get_old_property_name(const std::string& key) const
 {
-	std::string newname;
         if (key == AM_COMMON_NAMING_URL_PROPERTY)
-	   newname = AM_COMMON_NAMING_URL_PROPERTY_OLD;
+	   return AM_COMMON_NAMING_URL_PROPERTY_OLD;
         if (key == AM_COMMON_NOTIFICATION_ENABLE_PROPERTY)
-	   newname = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD;
+	   return AM_COMMON_NOTIFICATION_ENABLE_PROPERTY_OLD;
         if (key == AM_COMMON_NOTIFICATION_URL_PROPERTY)
-	   newname = AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD;
+	    return AM_COMMON_NOTIFICATION_URL_PROPERTY_OLD;
         if (key == AM_COMMON_TRUST_SERVER_CERTS_PROPERTY)
-	   newname = AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD;
-        if (key == AM_COMMON_CERT_DB_PREFIX_PROPERTY)
-	   newname = AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
+	    return AM_COMMON_TRUST_SERVER_CERTS_PROPERTY_OLD;
+        if (key == AM_COMMON_CERT_DB_PASSWORD_PROPERTY)
+	   return AM_COMMON_CERT_DB_PASSWORD_PROPERTY_OLD;
         if (key == AM_AUTH_CERT_ALIAS_PROPERTY)
-	   newname = AM_AUTH_CERT_ALIAS_PROPERTY_OLD;
+	   return AM_AUTH_CERT_ALIAS_PROPERTY_OLD;
         if (key == AM_COMMON_LOG_LEVELS_PROPERTY)
-	   newname = AM_COMMON_LOG_LEVELS_PROPERTY_OLD;
+	   return AM_COMMON_LOG_LEVELS_PROPERTY_OLD;
         if (key == AM_COMMON_LOG_FILE_PROPERTY)
-	   newname = AM_COMMON_LOG_FILE_PROPERTY_OLD;
+	   return AM_COMMON_LOG_FILE_PROPERTY_OLD;
         if (key == AM_COMMON_SSL_CERT_DIR_PROPERTY)
-	   newname = AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD;
+	    return AM_COMMON_SSL_CERT_DIR_PROPERTY_OLD;
         if (key == AM_COMMON_CERT_DB_PREFIX_PROPERTY)
-	   newname = AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
+	    return AM_COMMON_CERT_DB_PREFIX_PROPERTY_OLD;
+        if (key == AM_COMMON_COOKIE_NAME_PROPERTY)
+	   return AM_COMMON_COOKIE_NAME_PROPERTY_OLD;
+        if (key == AM_COMMON_LOADBALANCE_PROPERTY)
+	   return AM_COMMON_LOADBALANCE_PROPERTY_OLD;
+        if (key == AM_AUTH_SERVICE_URLS_PROPERTY)
+	   return AM_AUTH_SERVICE_URLS_PROPERTY_OLD;
+        if (key == AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY)
+	   return AM_POLICY_URL_COMPARISON_CASE_IGNORE_PROPERTY_OLD;
+        if (key == AM_SSO_HASH_BUCKET_SIZE_PROPERTY)
+	   return AM_SSO_HASH_BUCKET_SIZE_PROPERTY_OLD;
+        if (key == AM_SSO_HASH_TIMEOUT_MINS_PROPERTY)
+	   return AM_SSO_HASH_TIMEOUT_MINS_PROPERTY_OLD;
+        if (key == AM_SSO_MAX_THREADS_PROPERTY)
+	   return AM_SSO_MAX_THREADS_PROPERTY_OLD;
+        if (key == AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY)
+	   return AM_SSO_CHECK_CACHE_INTERVAL_PROPERTY_OLD;
+        if (key == AM_SSO_DEFAULT_SESSION_URL)
+	   return AM_SSO_DEFAULT_SESSION_URL_OLD;
+        if (key == AM_COMMON_LOADBALANCE_PROPERTY)
+	   return AM_COMMON_LOADBALANCE_PROPERTY_OLD;
+        if (key == AM_COMMON_IGNORE_PATH_INFO)
+	   return AM_COMMON_IGNORE_PATH_INFO_OLD;
+        if (key == AM_AUTH_ORGANIZATION_NAME_PROPERTY)
+	   return AM_AUTH_ORGANIZATION_NAME_PROPERTY_OLD;
+        if (key == AM_AUTH_SERVICE_URLS_PROPERTY)
+	   return AM_AUTH_SERVICE_URLS_PROPERTY_OLD;
+		if (key == AM_POLICY_LOGIN_URL_PROPERTY)
+	   return AM_POLICY_LOGIN_URL_PROPERTY_OLD;
         
-        return newname.c_str();
+        return NULL;
 }
 
 const char* Properties::get_new_property_name(const std::string& key) const
@@ -523,12 +550,14 @@ const char* Properties::get_new_property_name(const std::string& key) const
 /* Throws std::invalid_argument if a value for key is not found. */
 const std::string& Properties::get(const std::string& key) const
 {
-    const_iterator iter = find(key);
+    char tmpProp[100] = {'\0'};
+	const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);	
+		strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);	
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -545,12 +574,14 @@ const std::string& Properties::get(const std::string& key,
 				   const std::string& defaultValue,
 				   bool terse) const
 {
-    const_iterator iter = find(key);
+    char tmpProp[100] = {'\0'};
+	const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);
+	    strcpy(tmpProp, prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	} 
     }
@@ -631,12 +662,14 @@ unsigned long Properties::getPositiveNumber(const std::string& key,
  */
 unsigned long Properties::getUnsigned(const std::string& key) const
 {
-    const_iterator iter = find(key);
+    char tmpProp[100] = {'\0'};
+	const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);	
+	    strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -654,12 +687,14 @@ unsigned long Properties::getUnsigned(const std::string& key,
 				      bool terse) const
 {
     unsigned long result;
+	char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);
+	    strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	} 
     }
@@ -718,12 +753,14 @@ long Properties::parseSigned(const std::string& key,
  */
 long Properties::getSigned(const std::string& key) const
 {
-    const_iterator iter = find(key);
+    char tmpProp[100] = {'\0'};
+	const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);	
+	    strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -740,12 +777,14 @@ long Properties::getSigned(const std::string& key, long defaultValue,
 						   bool terse) const
 {
     long result;
+	char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);
+	    strcpy(tmpProp, prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	} 
     }
@@ -808,12 +847,14 @@ bool Properties::parseBool(const std::string& key,
  */
 bool Properties::getBool(const std::string& key) const
 {
-    const_iterator iter = find(key);
+    char tmpProp[100] = {'\0'};
+	const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);	
+	    strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	    if (iter == end()) {
 		throw std::invalid_argument(key + " not found");
@@ -830,12 +871,14 @@ bool Properties::getBool(const std::string& key, bool defaultValue,
 						 bool terse) const
 {
     bool result;
+	char tmpProp[100] = {'\0'};
     const_iterator iter = find(key);
 
     if (iter == end()) {
 	const char* prop_name = get_old_property_name(key);
 	if (prop_name != NULL) {
-	    const std::string old_property_name(prop_name);
+	    strcpy(tmpProp,prop_name);
+	    const std::string old_property_name(tmpProp);
     	    iter = find(old_property_name);
 	} 
     }

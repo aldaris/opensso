@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <climits>
 #include <ctime>
 #include <string>
@@ -405,7 +405,7 @@ Service::initialize() {
 			    mPolicyEntry->namingInfo.getSessionSvcInfo(),
 			    mPolicyEntry->getSSOToken().getString(),
                             mPolicyEntry->cookies,
-			    false,
+			    true,
 			    mAppSessionInfo, false, false)) != AM_SUCCESS) {
 	string msg("Session query failed during service creation.");
 	throw InternalException(func, msg, status);
@@ -437,7 +437,7 @@ Service::initialize() {
 				  notificationURL);
     }
 
-    if(policySvc->isRevision(PolicyService::Revision::THIRTY)) {
+    if(policySvc->getRevisionNumber() >= 30) {
 	KeyValueMap advicesMap;
 	policySvc->getAdvicesList(mPolicyEntry->namingInfo.getPolicySvcInfo(),
 				  serviceName, mPolicyEntry->cookies,
@@ -1189,7 +1189,7 @@ Service::getPolicyResult(const char *userSSOToken,
     // Policy decision 'revision' tag will have a value of 30 if
     // agent is interacting with AM 7.0 else will have no value assigned
     if (am_revision_number != NULL) {
-	if(policySvc->isRevision(PolicyService::Revision::THIRTY)) {
+	if(policySvc->getRevisionNumber() >= 30) {
 	    strcpy(*am_revision_number,am_70_revision_number);
 	} else {
 	    strcpy(*am_revision_number,am_63_revision_number);
@@ -1244,7 +1244,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
    }
     
     status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), ssoTok.getString(), 
-                                          policyEntry->cookies, false, sessionInfo, false, false);
+                                          policyEntry->cookies, true, sessionInfo, false, false);
     
     if (status != AM_SUCCESS) {
         // if agent could not contact session service to validate

@@ -19,7 +19,8 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
+
 /*
  * Abstract:
  *
@@ -85,8 +86,8 @@ am_map_create(am_map_t *map_ptr);
  * Returns the number of elements in the map.
  * 
  * Parameters:
- * map_ptr
- *        The pointer to the map for which size is requested.
+ * map
+ *      The map for which size is requested.
  * 
  * Returns
  *        The size whose type is size_t.

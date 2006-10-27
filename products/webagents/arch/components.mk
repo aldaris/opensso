@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.2 2006-10-06 18:27:27 subbae Exp $
+# $Id: components.mk,v 1.3 2006-10-27 17:28:14 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -54,7 +54,6 @@ include $(USERX_ROOT)/arch/defines.mk
 APACHE_DIR = $(EXTERNAL_DIR)/apache
 APACHE_INC_DIR = $(APACHE_DIR)/include
 APACHE_LIB_DIR = $(APACHE_DIR)/lib
-
 
 ##########################################
 # LIBXML defines

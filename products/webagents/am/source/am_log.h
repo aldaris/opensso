@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 
 /*
  * Abstract:
@@ -237,9 +237,6 @@ AM_EXPORT am_status_t am_log_set_remote_info(const char *rem_log_url,
                                              const char *sso_token_id,
                                              const char *rem_log_name,
 					     const am_properties_t log_props);
-/* remote logging */
-/* Initialize logging */
-AM_EXPORT am_status_t am_log_init(const am_properties_t log_init_params);
 
 /* Instantiate a log record and initialize it with the given
  * log level and message

@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

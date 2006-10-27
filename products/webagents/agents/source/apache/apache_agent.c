@@ -19,8 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
-
+ */
 #include <limits.h>
 #include <signal.h>
 #include <errno.h>
@@ -370,10 +369,12 @@ get_request_url(request_rec *r)
     	port_num = r->server->port;
     }
     // Virtual servers set the port to 0 when listening on the default port.
-    // This creates problems, so set it to 80 in that case
+    // This creates problems, so set it back to default port
     if(port_num == 0) {
-    	port_num = 80;
-    }
+    	port_num = ap_default_port(r);
+    	am_web_log_debug("%s: Port is 0. Set to default port %u.",
+    	                  thisfunc, ap_default_port(r));
+    }    
     am_web_log_max_debug("%s: Port is %u.", thisfunc, port_num);
     sprintf(port_num_str, ":%u", port_num);
 

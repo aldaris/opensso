@@ -19,12 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- * Abstract:
- *
- * Properties map for use in AM Remote Client SDK.
- *
  */
-
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 

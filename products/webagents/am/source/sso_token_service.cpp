@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <climits>
 #include <ctime>
 #include <string>
@@ -94,8 +94,6 @@ SSOTokenService::SSOTokenService(const char *serviceName,
     mCookieName(initParams.get(AM_COMMON_COOKIE_NAME_PROPERTY, DEF_COOKIENAME)),
     mLoadBalancerEnabled(initParams.getBool(
                              AM_COMMON_LOADBALANCE_PROPERTY, true)),
-    mCookieEncoded(initParams.getBool(
-                              AM_COMMON_COOKIE_NAME_ENCODED_PROPERTY, false)),
     mSSOTokenTable(mServiceParams.getUnsigned(
                       AM_SSO_HASH_BUCKET_SIZE_PROPERTY, DEFAULT_HASH_SIZE),
 		   mServiceParams.getPositiveNumber(
@@ -418,27 +416,19 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
      * com.iplanet.am.cookie.encode.
      */
     std::string ssoTokenID = ssoTokID;
+    bool cookieEncoded = false;
     
-	if (mCookieEncoded) {
-        Log::log(mLogID, Log::LOG_DEBUG, 
-                "SSOTokenService::getSessionInfo(): "
-		"Http decoding sso token ID %s.", ssoTokID.c_str());
-        ssoTokenID = Http::decode(ssoTokID);
-	} else {
-	    bool cookieEncoded = false;
-    
-	    int pos = ssoTokID.find('%');
-	    if (pos != std::string::npos)
-		    cookieEncoded = true;
-    
-	    if (xformToken && cookieEncoded) {
-		    Log::log(mLogID, Log::LOG_DEBUG, 
-                "SSOTokenService::getSessionInfo(): "
-		    "Http decoding sso token ID %s.", ssoTokID.c_str());
-		    ssoTokenID = Http::decode(ssoTokID);
-	    }
-	}
-
+    int pos = ssoTokID.find('%');
+    if (pos != std::string::npos)
+	cookieEncoded = true;
+   
+     if (xformToken && cookieEncoded) {
+	Log::log(mLogID, Log::LOG_DEBUG, 
+				"SSOTokenService::getSessionInfo(): "
+			"Http decoding sso token ID %s.", ssoTokID.c_str());
+	ssoTokenID = Http::decode(ssoTokID);
+    }
+	
     // find entry in cache, return cache entry if no need to go to server. 
     SSOTokenEntryRefCntPtr entry;
     entry = mSSOTokenTable.find(ssoTokenID);

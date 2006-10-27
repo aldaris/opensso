@@ -19,12 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- * Abstract:
- *
- * This class manages sso tokens locally.
- *
- */ 
-
+ */
 #ifndef __SSO_TOKEN_SERVICE_H__
 #define __SSO_TOKEN_SERVICE_H__
 
@@ -101,7 +96,6 @@ private:
 
     std::string mCookieName;
     bool mLoadBalancerEnabled;
-	bool mCookieEncoded;
 
     HashTable<SSOTokenEntry> mSSOTokenTable;
     HTCleaner<SSOTokenEntry> *mHTCleaner;

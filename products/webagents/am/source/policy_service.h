@@ -19,12 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- *
- * Abstract:
- *
- * Service interface class for the DSAME Policy Service.
- */ 
-
+ */
 #ifndef POLICY_SERVICE_H
 #define POLICY_SERVICE_H
 
@@ -50,25 +45,6 @@ typedef enum policy_fetch {
 
 class PolicyService: public BaseService {
 public:
-    struct Revision {
-    private:
-	Revision();
-	Revision(const std::string &r):revision(r) {}
-	std::string revision;
-    public:
-	static const Revision &getRevision(const std::string &r) {
-	    if(THIRTY.revision == r)
-		return THIRTY;
-	    return TWENTY_OR_OLDER;
-	}
-
-	bool operator==(const Revision &rev) const {
-	    return this->revision == rev.revision;
-	}
-
-	static const Revision TWENTY_OR_OLDER;
-	static const Revision THIRTY;
-    };
     /* Throws std::invalid_argument if any argument is invalid */
     PolicyService(const SSOToken& agentToken, 
                 const Properties& props,
@@ -76,10 +52,6 @@ public:
                 const std::string &cert_nick_name,
                 bool alwaysTrustServerCert);
     virtual ~PolicyService();
-
-    bool isRevision(const Revision &rev) const {
-	return revision == rev;
-    }
 
     am_status_t getPolicyDecisions(const ServiceInfo& service,
 				      const SSOToken& userToken,
@@ -107,7 +79,7 @@ public:
 			   const Http::CookieList &cookieList,
 			   KeyValueMap &adviceMap);
 
-    const Revision &getRevision() {
+    int getRevisionNumber() {
 	return revision;
     }
 
@@ -169,7 +141,7 @@ private:
     static const BodyChunk subtreeChunk;
 
     SSOToken agentToken;
-    Revision revision;
+    int revision;
 };
 
 END_PRIVATE_NAMESPACE

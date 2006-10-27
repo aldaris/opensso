@@ -19,7 +19,7 @@
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
- */ 
+ */
 #include <ctype.h>
 #include <stdio.h>
 #if !defined(WINNT)
@@ -122,7 +122,7 @@ USING_PRIVATE_NAMESPACE
 #define DEFAULT_ENCODING			"UTF-8"
 #define LIB_PREFIX				"lib:"
 #define PROTOCOL_PREFIX				"samlp:"
-#define LIB_NAMESPACE_STRING			" xmlns:lib=\"http://projectliberty.org/schemas/core/2006/12\""
+#define LIB_NAMESPACE_STRING			" xmlns:lib=\"http://projectliberty.org/schemas/core/2002/12\""
 #define PROTOCOL_NAMESPACE_STRING		" xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\""
 #define ELEMENT_ASSERTION			"Assertion"
 #define ELEMENT_AUTHN_STATEMENT			"AuthenticationStatement"
@@ -237,6 +237,7 @@ typedef struct {
     char *domain;   // cookie domain, or NULL if no domain.
     char *path;	    // cookie path, or NULL if no path.
     char *max_age;  // max age, or NULL if no max age.
+	PRBool isSecure;  //if cookie is secure or not
 } cookie_info_t;
 
 typedef struct cookie_info_list {
@@ -249,7 +250,7 @@ typedef struct cookie_info_list {
 #define URL_INFO_INITIALIZER {NULL, 0, NULL, 0, AM_FALSE }
 
 #define COOKIE_INFO_PTR_NULL ((cookie_info_t *) NULL)
-#define COOKIE_INFO_INITIALIZER {NULL, NULL, NULL, NULL, NULL}
+#define COOKIE_INFO_INITIALIZER {NULL, NULL, NULL, NULL, NULL, AM_FALSE}
 #define COOKIE_INFO_LIST_INITIALIZER {0, COOKIE_INFO_PTR_NULL}
 
 extern "C" int decrypt_base64(const char *, char *);
@@ -271,6 +272,7 @@ typedef struct agent_info_t {
     const char *instance_name;
     const char *cookie_name;
     size_t cookie_name_len;
+	PRBool is_cookie_secure;
     const char *access_denied_url;
     PRLock *lock;
     url_info_list_t login_url_list;
@@ -337,6 +339,7 @@ static agent_info_t agent_info = {
     NULL,		    // instance_name
     NULL,		    // cookie_name
     0,			    // cookie_name_len
+	AM_FALSE,		    // is_cookie_secure
     NULL,		    // access_denied_url
     (PRLock *) NULL,	    // lock
     URL_INFO_LIST_INITIALIZER,	// login_url_list
@@ -571,7 +574,7 @@ void get_string(UINT key, char *buf, size_t buflen) {
 }
 /* On windows default strtok_r to strtok */
 #define strtok_r(s1, s2, p) strtok(s1, s2);
-#elif defined(HPUX)
+#elif defined(HPUX) || defined(AIX)
 void get_string(const char *key, char *buf, size_t buflen) {
   strncpy(buf, key, buflen);
   return;
@@ -610,12 +613,12 @@ void mbyte_to_wchar(const char * orig_str,char *new_str, int dest_len)
 #else
 void mbyte_to_wchar(const char * orig_str,char *dest_str,int dest_len)
 {
-#if defined(LINUX) || defined(HPUX)
+#if defined(LINUX) || defined(HPUX) || defined(AIX)
     char *origstr = const_cast<char *>(orig_str); 
 #else
     const char *origstr = orig_str;
 #endif
-#ifdef HPUX 
+#if defined(HPUX) || defined(AIX)
     unsigned long len = strlen(origstr);
     unsigned long size=0 ;
 #else
@@ -1417,6 +1420,14 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
 	}
     }
 
+	/* Get the is_cookie_secure flag */
+    if (AM_SUCCESS == status) {
+      parameter = AM_COMMON_COOKIE_SECURE_PROPERTY;
+      status = am_properties_get_boolean_with_default(
+            info_ptr->properties, parameter,
+            AM_FALSE, &info_ptr->is_cookie_secure);
+    }
+
      /* Get fqdn.check.enable */
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_FQDN_CHECK_ENABLE;
@@ -1577,7 +1588,6 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
     }
 
     /* Get the CDSSO URL */
-    /*
     if(AM_SUCCESS == status) {
 	int fetchCDSSOURL = AM_FALSE;
 	const char *property_str = NULL;
@@ -1608,7 +1618,7 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
 				 am_status_to_string(status));
 	    }
 	}
-    }*/
+    }
 
     /* Get the dummy redirect url */
     if (AM_SUCCESS == status) {
@@ -1839,14 +1849,13 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
      }
 
     /* Get CDSSO Enabled/Disabled */
-    /*
     if (AM_SUCCESS == status) {
        parameter = AM_WEB_CDSSO_ENABLED_PROPERTY;
        status = am_properties_get_boolean_with_default(info_ptr->properties,
                                                        parameter,
                                                        AM_FALSE,
                                                        &info_ptr->cdsso_enabled);
-    }*/
+    }
 
     /* Get Logout URLs if any */
     if (AM_SUCCESS == status) {
@@ -2149,6 +2158,7 @@ am_web_init(const char *config_file)
     am_status_t status = AM_SUCCESS;
     const Properties *properties = NULL;
 
+
     if (! initialized) {
 	// initialize log here so any error before properties file is 
 	// loaded will go to stderr. After it's loaded will go to log file.
@@ -2182,7 +2192,7 @@ am_web_init(const char *config_file)
 
 	if (AM_SUCCESS == status) {
 	    am_resource_traits_t rsrcTraits;
-#if !defined(WINNT) && !defined(HPUX)
+#if !defined(WINNT) && !defined(HPUX) && !defined(AIX)
 /* Logging locale is set as per the value defined in the properties file
    However we need to set the rest of locale behaviour so that code 
    conversion routines will work correctly. Setting LC_MESSAGE to a 
@@ -2873,6 +2883,9 @@ buildSetCookieHeader(cookie_info_t *cookie)
             resetCookieVal.append(";Path=");
             resetCookieVal.append(path);
         }
+		if (AM_TRUE == cookie->isSecure) {
+            resetCookieVal.append(";Secure");            
+        } 
         reset_header = strdup(resetCookieVal.c_str());
         
     } else  {
@@ -4254,6 +4267,7 @@ am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
     // netscape 4.79, IE 5.5, mozilla < 1.4.
     cookieInfo.max_age = NULL;
     cookieInfo.path = const_cast<char*>("/");
+	cookieInfo.isSecure = agent_info.is_cookie_secure;
 
     try {
 	std::set<std::string> *cookie_domains = agent_info.cookie_domain_list;
@@ -4706,6 +4720,12 @@ am_web_result_attr_map_set(
              }
     }
     return retVal;
+}
+
+extern "C" AM_WEB_EXPORT const char *
+am_web_get_user_id_param()
+{
+    return agent_info.user_id_param;
 }
 
 extern "C" AM_WEB_EXPORT const char *
