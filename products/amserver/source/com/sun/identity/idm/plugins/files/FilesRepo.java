@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.11 2006-10-26 20:52:44 kenwho Exp $
+ * $Id: FilesRepo.java,v 1.12 2006-10-27 17:18:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -760,8 +760,7 @@ public class FilesRepo extends IdRepo {
                         + membersType.getName());
             }
             Object[] args = { NAME };
-            throw new IdRepoException(IdRepoBundle.getString("206", args),
-                    "206", args);
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
         }
         if (type.equals(IdType.GROUP)) {
             // add the identities to the user's group membership

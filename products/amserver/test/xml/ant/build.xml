@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2006-10-18 20:55:28 veiming Exp $
+   $Id: build.xml,v 1.6 2006-10-27 17:19:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,7 +45,7 @@
         </fileset>
     </path>
 
-    <target name="all" depends="config">
+    <target name="all">
         <delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
         <delete dir="${logs.dir}" />
@@ -62,20 +62,6 @@
         </java>
 
         <antcall target="report" />
-    </target>
-
-    <target name="config">
-        <echo message="Configuring the datastore." />
-        <delete dir="${java.io.tmpdir}/openssounittest" />
-        <java classname="com.sun.identity.setup.TestInstaller" fork="true">
-            <classpath refid="build.class.path"/>
-            <classpath>
-                <pathelement path="config/classes"/>
-            </classpath>
-        </java>
-        <copy file="${java.io.tmpdir}/openssounittest/AMConfig.properties"
-            tofile="classes/AMConfig.properties"/>
-        <echo message="Datastore is configured." />
     </target>
 
     <target name="report">
