@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stat.java,v 1.2 2006-09-21 18:29:17 veiming Exp $
+ * $Id: Stat.java,v 1.1 2006-10-27 18:57:26 veiming Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.tools.diffs;

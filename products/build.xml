@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-10-24 06:49:41 veiming Exp $
+   $Id: build.xml,v 1.5 2006-10-27 18:55:08 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,15 +35,6 @@
         <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
             unit="day"/>
     </tstamp>
-
-    <property name="diff.dir" location="${products.basedir}/diffs" />
-    <property name="classes.dir" location="${products.basedir}/amserver/built/classes" />
-    <property name="src.dir" location="${products.basedir}/amserver/source" />
-
-    <!-- build class path -->
-    <path id="build.class.path">
-        <pathelement location="${classes.dir}"/>
-    </path>
 
     <target name="nightly">
         <mkdir dir="${prd.nightly.dist.dir}" />
@@ -83,13 +74,11 @@
     </target>
 
     <target name="build-diff">
-        <mkdir dir="${classes.dir}" />
-        <javac destdir="${classes.dir}" source="1.5" target="1.5">
-            <src path="${src.dir}"/>
-            <classpath refid="build.class.path"/>
+        <mkdir dir="${sharedlib.classes.dir}" />
+        <javac destdir="${sharedlib.classes.dir}" source="1.5" target="1.5">
+            <src path="${products.basedir}/shared/source"/>
             <include name="com/sun/identity/tools/diffs/*.java"/>
         </javac>
-
     </target>
 
     <target name="cvsdiff" depends="build-diff">
@@ -97,12 +86,16 @@
         <mkdir dir="${diff.dir}" />
         <cvs command="-q diff -cw" output="${diff.dir}/.diffs"/>
         <java classname="com.sun.identity.tools.diffs.Diffs">
-            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${sharedlib.classes.dir}"/>
+            </classpath>
             <arg value="${diff.dir}/.diffs"/>
         </java>
         <cvs command="-q stat" output="${diff.dir}/.stat"/>
         <java classname="com.sun.identity.tools.diffs.Stat">
-            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${sharedlib.classes.dir}"/>
+            </classpath>
             <arg value="${diff.dir}/.stat"/>
         </java>
     </target>
