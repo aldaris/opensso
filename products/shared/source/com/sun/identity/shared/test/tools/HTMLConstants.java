@@ -17,32 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileNameComparator.java,v 1.1 2006-09-06 18:25:21 veiming Exp $
+ * $Id: HTMLConstants.java,v 1.1 2006-10-27 20:30:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.test.tools;
-
-import java.io.File;
-import java.util.Comparator;
+package com.sun.identity.shared.test.tools;
 
 /**
- * Comparator to order test case.
+ * Defines a set of commonly used string.
  */
-public class FileNameComparator implements Comparator<File> {
-    /**
-     * Returns 0 if <code>f1.getPath()</code> equals <code>f2.getPath()</code>; 
-     * 1 if <code>f1.getPath()</code> is greater than <code>f2.getPath()</code>;
-     * and -1 if <code>f1.getPath()</code> is smaller than 
-     * <code>f2.getPath()</code>;
-     * 
-     * @param f1 File #1.
-     * @param f2 File #2.
-     * @return the comparison of <code>f1</code> and <code>f2</code> based on
-     *         path name.
-     */
-    public int compare(File f1, File f2) {
-        return f1.getPath().compareTo(f2.getPath());
-    }
+interface HTMLConstants {
+    String HREF = "<a href=\"{0}\">{1}</a>\n";
+    String TBL_ENTRY = "<td id=\"{0}\">{1}</td>\n";
+    String TBL_NUM_ENTRY = "<td id=\"{0}\" class=\"number\">{1}</td>\n";
+
+    String TEST_TABLE = 
+        "<tr>\n" +
+        "<th colspan=\"4\" id=\"tblTest\">{0}</th>\n</tr>\n" +
+        "<tr>\n<th id=\"tblTestTitle\">Method Name</th>\n" +
+        "<th id=\"tblTestTitle\">Status</th>\n" +
+        "<th id=\"tblTestTitle\">Time (secs)</th>\n" +
+        "<th id=\"tblTestTitle\">Exception</th>\n" +
+        "</tr>\n" +
+        "<tr>\n{1}</tr>\n";
 }

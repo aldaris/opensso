@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Suite.java,v 1.1 2006-09-06 18:25:22 veiming Exp $
+ * $Id: Suite.java,v 1.1 2006-10-27 20:30:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.test.tools;
+package com.sun.identity.shared.test.tools;
 
 import java.io.File;
 import java.io.IOException;

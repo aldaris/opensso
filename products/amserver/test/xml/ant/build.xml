@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2006-10-27 17:19:05 veiming Exp $
+   $Id: build.xml,v 1.7 2006-10-27 20:30:41 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -68,7 +68,7 @@
         <delete dir="${report.dir}" />
         <mkdir dir="${report.dir}" />
         <copy file="${template.dir}/default.css" tofile="${report.dir}/default.css" />
-        <java classname="com.sun.identity.test.tools.ReportGenerator" fork="true">
+        <java classname="com.sun.identity.shared.test.tools.ReportGenerator" fork="true">
             <arg value="${output.dir}"/>
             <arg value="${template.dir}"/>
             <arg value="${report.dir}"/>

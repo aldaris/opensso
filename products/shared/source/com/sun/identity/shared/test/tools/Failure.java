@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Failure.java,v 1.1 2006-09-06 18:25:20 veiming Exp $
+ * $Id: Failure.java,v 1.1 2006-10-27 20:30:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.test.tools;
+package com.sun.identity.shared.test.tools;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
