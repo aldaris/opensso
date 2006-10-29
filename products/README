@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2006-09-20 19:14:42 veiming Exp $
+$Id: README,v 1.2 2006-10-29 04:50:29 veiming Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ source distribution form and must be built locally before they can be used.
 The libraries needed for compiling OpenSSO sources are:
 
    - J2EE SDK version 1.5: j2ee.jar
-   - JWSDP version 2.0: jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
+   - JWSDP version 1.6: jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
      jaxrpc-api.jar, activation.jar, saaj-api.jar, saaj-impl.jar
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar
@@ -106,18 +106,19 @@ lib directory of this SDK.
 
 The libraries jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar,
 activation.jar, saaj-api.jar and saaj-impl.jar can be obtained from the JWSDP
-version 2.0 distribution.
-Follow these steps to obtain JWSDK 2.0:
+version 1.6 distribution.
+Follow these steps to obtain JWSDK 1.6:
 
-2.2.1 Open the web page:
-      http://java.sun.com/webservices/downloads/webservicespack.html
-2.2.2 Click on the Download button under JWSDP 2.0 title.
+2.2.1 Visit URL, http://java.sun.com/webservices/archive.html
+      and click on "Java Web Services Developer Pack 1.6" hyperlink
+2.2.2 Click on the Download button under "Java Web Services Developer Pack v1.6"
+      section header
 2.2.3 If you are not already logged into Sun Developer Network, you may have
       to authenticate using your Sun Developer Network username and password.
       If you do not have a Sun Developer Network account, you must create one
       by clicking on the Register Now link available on this page. 
 2.2.4 Once you have logged in, you will see the download page for Java Web
-      Services Developer Pack 2.0. Review the license agreement and select
+      Services Developer Pack 1.6. Review the license agreement and select
       the Accept choice to proceed.
 2.2 5 Depending on your choice of platform, you may choose to download any
       one of the two distribution types available.
