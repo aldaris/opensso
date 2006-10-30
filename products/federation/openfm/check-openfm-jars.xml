@@ -1,0 +1,133 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: check-openfm-jars.xml,v 1.1 2006-10-30 23:17:39 qcheng Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="Open Federation" default="all">
+
+    <description>Check the existence of external libraries</description>
+
+    <fail message="*** check library must be built from top level only ***">
+	<condition>
+            <or>
+		<not><isset property="library.dir"/></not>
+            </or>
+	</condition>
+    </fail>
+
+    <available file="${library.dir}/build.xml" type="file" 
+        property="federation.library.ws.present"/>
+    <available file="${library.classes.dir}/com/sun/liberty" type="dir" 
+        property="federation.library.built.present"/>
+    <available file="${openfm.extlib.dir}/amclientsdk.jar" type="file" 
+        property="amclientsdk.jar.present"/>
+    <available file="${openfm.extlib.dir}/opensso.jar" type="file"
+        property="opensso.jar.present"/>
+    <available file="${openfm.extlib.dir}/opensso-test.jar" type="file"
+        property="opensso.test.jar.present"/>
+    <available file="${openfm.extlib.dir}/opensso.war" type="file"
+        property="opensso.war.present"/>
+
+    <target name="check-library-jars">
+        <ant antfile="${library.dir}/build.xml" target="checklib" />
+    </target>
+
+    <target name="build-federation-library">
+	<echo message="build federation library" />
+        <fail message="*** missing federation library workspace ***">
+            <condition>
+                <not><isset property="federation.library.ws.present" /></not>
+            </condition>
+        </fail>
+<!--
+	<ant antfile="${library.dir}/build.xml" target="build" />
+-->
+        <fail message="*** please build federation library workspace first ***">
+            <condition>
+                <not><isset property="federation.library.built.present" /></not>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="build-opensso-jar" unless="opensso.jar.present" >
+	<echo message="build and copy opensso.jar" />
+	<ant antfile="${amserver.base.dir}/build.xml" target="jars" />
+	<copy file="${amserver.base.dir}/built/dist/opensso.jar"
+                    todir="${openfm.extlib.dir}"  />
+    </target>
+
+    <target name="build-amclientsdk-jar" unless="amclientsdk.jar.present" >
+	<echo message="build and copy amclientsdk.jar" />
+	<ant antfile="${amserver.base.dir}/build.xml" target="clientsdk" />
+	<copy file="${amserver.base.dir}/built/dist/amclientsdk.jar"
+                    todir="${openfm.extlib.dir}"  />
+    </target>
+
+    <target name="build-opensso-test-jar" unless="opensso.test.jar.present" >
+	<echo message="build and copy opensso-test.jar" />
+	<ant antfile="${amserver.base.dir}/build.xml" target="jars" />
+	<copy file="${amserver.base.dir}/built/dist/opensso-test.jar"
+                    todir="${openfm.extlib.dir}"  />
+    </target>
+
+    <target name="build-opensso-war" unless="opensso.war.present" >
+	<echo message="build and copy opensso.war" />
+	<ant antfile="${amserver.base.dir}/build.xml" target="war" />
+	<copy file="${amserver.base.dir}/built/dist/opensso.war"
+                    todir="${openfm.extlib.dir}"  />
+    </target>
+
+    <target name="all" depends="check-library-jars, build-amclientsdk-jar, 
+        build-opensso-jar, build-opensso-test-jar, build-opensso-war,
+        build-federation-library" >
+        <condition property="extlib.jar.exists">
+            <and>
+            <isset property="amclientsdk.jar.present" />
+            <isset property="opensso.jar.present" />
+            <isset property="opensso.test.jar.present" />
+            <isset property="opensso.war.present" />
+            </and>
+        </condition>
+    
+        <fail message="*** missing  ${openfm.extlib.dir}/amclientsdk.jar ***">
+            <condition>
+                <not><isset property="amclientsdk.jar.present" /></not>
+            </condition>
+        </fail>
+        <fail message="*** missing  ${openfm.extlib.dir}/opensso.jar ***">
+            <condition>
+                <not><isset property="opensso.jar.present" /></not>
+            </condition>
+        </fail>
+        <fail message="*** missing  ${openfm.extlib.dir}/opensso-test.jar ***">
+            <condition>
+                <not><isset property="opensso.test.jar.present" /></not>
+            </condition>
+        </fail>
+        <fail message="*** missing  ${openfm.extlib.dir}/openss-war.jar ***">
+            <condition>
+                <not><isset property="opensso.war.present" /></not>
+            </condition>
+        </fail>
+    </target>
+</project>

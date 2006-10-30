@@ -1,0 +1,88 @@
+#!/bin/sh
+
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id
+#
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+
+AM_HOME=BASEDIR/PRODUCT_DIR
+JAVA_HOME=JDK_PATH
+USING_JDK14=IAS7INSTALL
+
+JSS_HOME=JSSHOME
+NSS_HOME=NSSHOME
+NSPR_HOME=NSPRHOME
+JAXP_HOME=${AM_HOME}/lib
+JAXB_HOME=${AM_HOME}/lib
+SEC_HOME=${AM_HOME}/lib
+JSS_JAR_PATH=TAG_JSS_JAR_PATH
+JSS_SO_PATH=TAG_JSS_SO_PATH
+NSPR_SO_PATH=TAG_NSPR_SO_PATH
+NSS_SO_PATH=TAG_NSS_SO_PATH
+
+JSS_JAR=${JSS_JAR_PATH}/jss4.jar
+
+OS_ARCH=`/bin/uname -s`
+SDK_JARS=${AM_HOME}/lib/am_sdk.jar:${AM_HOME}/lib/ldapjdk.jar:${AM_HOME}/lib/am_services.jar:${AM_HOME}/lib/jaas.jar
+AM_DIRS=${AM_HOME}/lib:${AM_HOME}/locale:CONFIG_DIR
+JAXP_JARS=${JAXP_HOME}/jaxp-api.jar:${JAXP_HOME}/xalan.jar:${JAXP_HOME}/xercesImpl.jar:${JAXP_HOME}/sax.jar:${JAXP_HOME}/dom.jar
+SERVLET_JARS=${AM_HOME}/lib/servlet.jar:${AM_HOME}/lib/preference_servlet.jar
+LOGGING_JARS=${AM_HOME}/lib/am_logging.jar
+
+SEC_JARS=${SEC_HOME}/US_export_policy.jar:${SEC_HOME}/local_policy.jar:${SEC_HOME}/xmlsec.jar:${JAVA_HOME}/jre/lib/sunrsasign.jar
+
+JAXB_JARS=${JAXB_HOME}/jaxb-api.jar:${JAXB_HOME}/jaxb-impl.jar:${JAXB_HOME}/jaxb-xjc.jar:${JAXB_HOME}/jaxb-libs.jr:${JAXB_HOME}/relaxngDatatype.jar:${JAXB_HOME}/namespace.jar:${JAXB_HOME}/jax-qname.jar:${JAXB_HOME}/xsdlib.jar
+
+AM_CLASSPATH=${AM_DIRS}:${SDK_JARS}:${JSS_JAR}:${SERVLET_JARS}:${LOGGING_JARS}:${JAXP_JARS}:${JAXB_JARS}:${SEC_JARS}:${AM_HOME}/lib/mail.jar:${AM_HOME}/lib/activation.jar:HA_JDBC:${AM_HOME}/lib/commons-logging.jar:MFWK_JARS
+
+
+if [ -z "$LD_LIBRARY_PATH" ] ; then
+	LD_LIBRARY_PATH="${JSS_SO_PATH}:${NSS_SO_PATH}:${NSPR_SO_PATH}"
+else
+	LD_LIBRARY_PATH="${JSS_SO_PATH}:${NSS_SO_PATH}:${NSPR_SO_PATH}":$LD_LIBRARY_PATH
+fi
+  
+if [ "$OS_ARCH" = "Linux" ]; then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${JAVA_HOME}/jre/lib/i386/native_threads
+fi
+  
+export LD_LIBRARY_PATH
+
+if [ -z "$CLASSPATH" ]
+then
+  CLASSPATH="${AM_CLASSPATH}:${JAVA_HOME}/lib/lib.zip"
+else
+  CLASSPATH="${AM_CLASSPATH}:$CLASSPATH"
+fi
+
+JAVA_VER=`${JAVA_HOME}/bin/java -version 2>&1 | /bin/awk -F'"' '{print $2}'`
+
+case $JAVA_VER in
+1.4.*)
+  BOOTCLASSPATHOPTION=""
+  ;;
+*)
+  BOOTCLASSPATHOPTION="-Xbootclasspath/a:${JAVA_HOME}/lib/tools.jar:${JAVA_HOME}/jre/lib/rt.jar:${JAVA_HOME}/jre/lib/charsets.jar"
+  ;;
+esac
+
+${JAVA_HOME}/bin/java  -Xms64m -Xmx256m ${BOOTCLASSPATHOPTION}  -classpath ${CLASSPATH} -D"amconfig=AMCONFIG" -D"max_conn_pool=10" -D"min_conn_pool=1" -D"java.protocol.handler.pkgs=com.iplanet.services.comm" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" ${OPTIONS} com.sun.identity.saml2.meta.SAML2Meta "$@"
+

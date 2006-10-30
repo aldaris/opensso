@@ -1,0 +1,110 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: IDPCache.java,v 1.1 2006-10-30 23:16:34 qcheng Exp $
+ *
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ */
+
+
+package com.sun.identity.saml2.profile;
+
+import java.util.Hashtable;
+
+/**
+ * This class caches authn request objects and relay states
+ * based on the request id of the authn requests 
+ * It also caches idp session by session index. 
+ * TODO: Add cleanup thread to update IDP Cache if the cached
+ * objects stay in the cache longer than a certain Cache Duration.
+ */
+
+public class IDPCache {
+
+    private IDPCache() {
+    }
+
+    /**
+     * Cache saves the authn request objects.
+     * Key : request ID String
+     * Value : AuthnRequest object
+     */
+    public static Hashtable authnRequestCache = new Hashtable(); 
+
+    /**
+     * Cache saves the relay state strings.
+     * Key : request ID String
+     * Value : relay state string
+     */
+    public static Hashtable relayStateCache = new Hashtable(); 
+
+    /**
+     * Cache saves the idp sessions.
+     * key : sessionIndex (String)
+     * value :IDPSession
+     * IDP: used in SingleSignOnService and SingleLogoutService
+     *      to invalidate a specific session
+     */
+    public static Hashtable idpSessionsByIndices = new Hashtable();
+
+    /**
+     * Cache saves Responses to be used by ArtifactResolutionService.
+     * key --- artifact string (after encoding and all that)
+     * value --- Response
+     * IDP: used in SingleSignOnService and ArtifactResolutionService
+     */
+    public static Hashtable responsesByArtifacts = new Hashtable();
+
+    /**
+     * Hashtable saves the MNI request info.
+     * Key   :   requestID String
+     * Value : ManageNameIDRequestInfo object
+     */
+    public static Hashtable mniRequestHash = new Hashtable();
+
+    /**
+     * Cache saves the idp attribute mapper.
+     * Key : idp attribute mapper class name
+     * Value : idp attribute mapper object
+     */
+    public static Hashtable idpAttributeMapperCache = new Hashtable(); 
+
+    /**
+     * Cache saves the idp account mapper.
+     * Key : idp account mapper class name
+     * Value : idp account mapper object
+     */
+    public static Hashtable idpAccountMapperCache = new Hashtable();
+
+    /**
+     * Cache saves the idp authn context mapper.
+     * Key : idp authn context mapper class name
+     * Value : idp authn context mapper object
+     */
+    public static Hashtable idpAuthnContextMapperCache = new Hashtable(); 
+
+    /**
+     * Cache saves information needed after coming back from COT cookie setting.
+     * key --- cachedResID (String)
+     * value --- Response Information List (ArrayList of size 8)
+     * IDP: used in SingleSignOnService and ArtifactResolutionService
+     */
+    public static Hashtable responseCache = new Hashtable();
+
+}

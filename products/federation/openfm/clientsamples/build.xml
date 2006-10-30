@@ -1,0 +1,88 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-10-30 23:17:40 qcheng Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="openfed-client-sample" default="all">
+                
+    <description>Open Federation: Client Samples</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** client samples may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="openfm.built.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <property name="clientsamples.packages.dir" location="${openfm.built.dir}/clientsamples/package"/>
+    <property name="clientsamples.dist.dir" location="${openfm.built.dir}/clientsamples/dist"/>
+    <property name="clientsamples.packages.temp.dir" location="${openfm.built.dir}/clientsamples/.package"/>
+
+    <target name="all" depends="preparebuild">
+        <delete dir="${clientsamples.packages.dir}" />
+        <unjar src="${openfm.war.dist.dir}/openfm.war" dest="${clientsamples.packages.dir}">
+            <patternset>
+                <include name="com_sun_web_ui/css/css_ns6up.css"/>
+                <include name="com_sun_web_ui/images/other/javalogo.gif"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-sunname.gif"/>
+                <include name="com_sun_web_ui/images/masthead-background.jpg"/>
+                <include name="com_sun_web_ui/images/masthead-sun-background.jpg"/>
+                <include name="com_sun_web_ui/images/other/dot.gif"/>
+                <include name="console/images/PrimaryProductName.png"/>
+            </patternset>
+        </unjar>
+        <mkdir dir="${clientsamples.packages.dir}/WEB-INF/lib" />
+        <copy todir="${clientsamples.packages.dir}/WEB-INF/lib"
+              file="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"/>
+        <copy todir="${clientsamples.packages.dir}/WEB-INF/lib">
+            <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar,xsdlib.jar" />
+            <fileset dir="${openfm.extlib.dir}" includes="amclientsdk.jar" />
+        </copy>
+        <copy todir="${clientsamples.packages.dir}">
+            <fileset dir="${openfm.clientsamples.dir}"
+                 excludes="**/CVS build.xml" />
+        </copy>
+        <delete dir="META-INF" />
+	<mkdir dir="${clientsamples.packages.temp.dir}" />
+	<move file="${clientsamples.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
+        <war destfile="${clientsamples.dist.dir}/openfm-clientsamples.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+            <zipfileset dir="${clientsamples.packages.dir}" />
+        </war>
+	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.packages.dir}/WEB-INF/web.xml" />
+	<delete dir="${clientsamples.packages.temp.dir}" />
+        <checksum file="${clientsamples.dist.dir}/openfm-clientsamples.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${clientsamples.packages.dir}"/>
+        <mkdir dir="${clientsamples.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${clientsamples.dist.dir}"/>
+        <delete dir="${clientsamples.packages.dir}"/>
+    </target>
+
+</project>

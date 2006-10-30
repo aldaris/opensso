@@ -1,0 +1,288 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-10-30 23:13:35 qcheng Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="Open Federation Library" default="usage">
+                
+    <description>Open Federation</description>
+    <import file="../../products.xml" />
+    <import file="library.xml" />
+
+    <!-- user specific properties -->
+    <property file="${user.home}/.opensso"/>
+
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${sharedlib.classes.dir}"/>
+        <pathelement location="${library.classes.dir}"/>
+        <fileset dir="${extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${library.extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="xsd.liberty" depends="preparebuild">
+        <property name="xsd.liberty.dir" value="${library.xsd.dir}/liberty"/>
+        <property name="xsd.liberty.files" value="${xsd.liberty.dir}/lib-id-sis-pp.xsd ${xsd.liberty.dir}/lib-arch-metadata.xsd ${xsd.liberty.dir}/idff-entity-config-schema.xsd ${xsd.liberty.dir}/lib-arch-disco-svc.xsd ${xsd.liberty.dir}/lib-arch-interact-svc.xsd ${xsd.liberty.dir}/lib-arch-paos.xsd ${xsd.liberty.dir}/lib-arch-soap-binding.xsd ${xsd.liberty.dir}/lib-arch-security-fmwk.xsd ${xsd.liberty.dir}/secext.xsd ${xsd.liberty.dir}/discoentry.xsd ${xsd.liberty.dir}/ppextension.xsd ${xsd.liberty.dir}/lib-idwsf-authn-svc.xsd ${xsd.liberty.dir}/liberty-idwsf-disco-svc-v1.1.xsd ${xsd.liberty.dir}/liberty-idwsf-soap-binding-v1.1.xsd"/>
+        <java classname="com.sun.tools.xjc.Driver" 
+            maxmemory="128m" failonerror="true" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg line="-b ${xsd.liberty.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.liberty.files}"/> 
+        </java>
+    </target>
+
+    <target name="xsd.saml2" depends="preparebuild">
+        <property name="xsd.saml2.dir" value="${library.xsd.dir}/saml2"/>
+        <property name="xsd.saml2.files" value="${xsd.saml2.dir}/entity-config-schema.xsd ${xsd.saml2.dir}/saml-schema-assertion-2.0.xsd ${xsd.saml2.dir}/saml-schema-metadata-2.0.xsd  ${xsd.saml2.dir}/schema.xsd"/>
+        <java classname="com.sun.tools.xjc.Driver" 
+            maxmemory="128m" failonerror="true" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg line="-b ${xsd.saml2.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.saml2.files}"/> 
+        </java>
+    </target>
+
+    <target name="jaxb.properties">
+        <copy todir="${library.classes.dir}">
+            <fileset dir="${library.src.dir}">
+                <include name="**/jaxb.properties" />
+                <include name="**/bgm.ser" />
+            </fileset>
+       </copy>
+    </target>
+
+    <target name="compile" depends="preparebuild">
+	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+                destdir="${library.classes.dir}" source="1.5" target="1.5"
+	        debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${library.src.dir}"/>
+            <classpath refid="build.class.path"/>
+	</javac>
+    </target>
+
+    <target name="build" depends="preparebuild, xsd.liberty, xsd.saml2">
+	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+                destdir="${library.classes.dir}" source="1.5" target="1.5"
+	        debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${library.src.dir}"/>
+            <classpath refid="build.class.path"/>
+	</javac>
+
+        <antcall target="jaxb.properties" />
+
+        <antcall target="jaxrpc" />
+
+        <mkdir dir="${library.classes.dir}/com/sun/identity/log/messageid" />
+        <copy todir="${library.classes.dir}/com/sun/identity/log/messageid">
+              <fileset dir="${library.xml.dir}/log">
+                <include name="*.xml" />
+                <include name="*.dtd" />
+              </fileset>
+        </copy>
+    </target>
+
+    <target name="jaxrpc">
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${library.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${library.classes.dir}" />
+            <arg value="${library.xml.dir}/jaxrpc-assertmgr-config.xml" />
+        </java>
+        <move file="${library.classes.dir}/AssertionManagerService.wsdl" tofile="${library.classes.dir}/jaxrpc/AssertionManagerService.wsdl" />
+
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${library.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${library.classes.dir}" />
+            <arg value="${library.xml.dir}/jaxrpc-fsassertmgr-config.xml" />
+        </java>
+        <move file="${library.classes.dir}/FSAssertionManagerService.wsdl" tofile="${library.classes.dir}/jaxrpc/FSAssertionManagerService.wsdl" />
+
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${library.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${library.classes.dir}" />
+            <arg value="${library.xml.dir}/jaxrpc-securitytokenmgr-config.xml" />
+        </java>
+        <move file="${library.classes.dir}/SecurityTokenManagerService.wsdl" tofile="${library.classes.dir}/jaxrpc/SecurityTokenManagerService.wsdl" />
+
+        <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${java.home}/../lib/tools.jar"/>
+            </classpath>
+            <arg value="-classpath" />
+            <arg value="${library.classes.dir}:${extlib.dir}/jaxrpc-api.jar:${extlib.dir}/jaxrpc-impl.jar:${extlib.dir}/saaj-api.jar" />
+            <arg value="-gen:server" />
+            <arg value="-d" />
+            <arg value="${library.classes.dir}" />
+            <arg value="${library.xml.dir}/jaxrpc-libertymanager-config.xml" />
+        </java>
+        <move file="${library.classes.dir}/LibertyManagerService.wsdl" tofile="${library.classes.dir}/jaxrpc/LibertyManagerService.wsdl" />
+    </target>
+
+
+    <target name="doc" depends="preparebuild">
+        <javadoc maxmemory="512m" destdir="${library.built.apidocs.dir}" 
+            windowtitle="Open Federation API" failonerror="true">
+            <classpath refid="build.class.path"/>
+            <packageset dir="${library.src.dir}">
+                <include name="com/sun/identity/federation/**"/>
+                <include name="com/sun/identity/liberty/ws/**"/>
+                <include name="com/sun/identity/plugin/**"/>
+                <include name="com/sun/identity/saml/**"/>
+                <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/liberty/**"/>
+            </packageset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
+        </javadoc>
+    </target>
+
+    <target name="publicdoc" depends="preparebuild">
+        <javadoc maxmemory="512m" destdir="${library.built.publicapidocs.dir}"
+                 windowtitle="Public Open Federation API" failonerror="true">
+            <classpath refid="build.class.path"/>
+            <packageset dir="${library.src.dir}">
+                <include name="com/sun/identity/federation/**"/>
+                <include name="com/sun/identity/liberty/ws/**"/>
+                <include name="com/sun/identity/plugin/**"/>
+                <include name="com/sun/identity/saml/**"/>
+                <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/liberty/**"/>
+            </packageset>
+            <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
+                    path="${library.classes.dir}" />
+            <tag name="supported.all.api" description="" />
+            <tag name="supported.api" description="" />
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
+        </javadoc>
+    </target>
+
+    <target name="checklib">
+        <ant antfile="${library.basedir}/check-library-jars.xml" inheritRefs="true" />
+        <fail message="*** missing library ***">
+            <condition>
+                <isset property="extlib.jar.exists"/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="preparebuild" depends="checklib">
+        <mkdir dir="${library.built.dir}"/>
+        <mkdir dir="${library.classes.dir}"/>
+        <mkdir dir="${library.built.docs.dir}"/>
+        <mkdir dir="${library.built.apidocs.dir}"/>
+        <mkdir dir="${library.built.publicapidocs.dir}"/>
+    </target>
+
+    <target name="clean" depends="unittest-clean">
+        <delete dir="${jaxb.liberty.authnsvc}"/>
+        <delete dir="${jaxb.liberty.common}"/>
+        <delete dir="${jaxb.liberty.disco.plugins}"/>
+        <delete dir="${jaxb11.liberty.disco}"/>
+        <delete dir="${jaxb.liberty.disco}"/>
+        <delete dir="${jaxb.liberty.idpp.plugins}"/>
+        <delete dir="${jaxb.liberty.idpp}"/>
+        <delete dir="${jaxb.liberty.interaction}"/>
+        <delete dir="${jaxb.liberty.meta}"/>
+        <delete dir="${jaxb.liberty.meta.entityconfig}"/>
+        <delete dir="${jaxb.liberty.paos}"/>
+        <delete dir="${jaxb.liberty.soapbinding}"/>
+        <delete dir="${jaxb11.liberty.soapbinding}"/>
+        <delete dir="${jaxb.w3c}"/>
+        <delete dir="${jaxb.saml2}"/>
+        <delete dir="${library.built.publicapidocs.dir}"/>
+        <delete dir="${library.built.apidocs.dir}"/>
+        <delete dir="${library.built.docs.dir}"/>
+        <delete dir="${library.classes.dir}/jaxrpc"/>
+        <delete dir="${library.classes.dir}"/>
+        <delete dir="${library.built.dir}"/>
+    </target>
+
+    <target name="unittest" depends="build">
+        <ant antfile="test/build.xml" target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="unittest-clean">
+        <ant antfile="test/build.xml" inheritRefs="true" target="clean"/>
+    </target>
+
+    <target name="cvsdiff">
+        <mkdir dir="${library.built.diff.dir}" />
+        <cvs command="-q diff -cw" output="${library.built.diff.dir}/.diffs"/>
+        <java classname="com.sun.identity.tools.diffs.Diffs">
+            <classpath refid="build.class.path"/>
+            <arg value="${library.built.diff.dir}/.diffs"/>
+        </java>
+        <cvs command="-q stat" output="${library.built.diff.dir}/.stat"/>
+        <java classname="com.sun.identity.tools.diffs.Stat">
+            <classpath refid="build.class.path"/>
+            <arg value="${library.built.diff.dir}/.stat"/>
+        </java>
+    </target>
+  
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available:"/>
+        <echo message=" "/>
+        <echo message=" build      : compiles the sources"/>
+        <echo message=" unittest   : generates unit test zip file"/>
+        <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
+        <echo message=" doc        : creates javadocs"/>
+        <echo message=" clean      : deletes the generated files"/>
+        <echo message=" unittest-clean : deletes the generated unit test resources"/>
+        <echo message=" usage      : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+
+</project>

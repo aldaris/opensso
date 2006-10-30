@@ -1,0 +1,4 @@
+<project name="library">
+    <dirname property="library.basedir" file="${ant.file.library}"/>
+    <property file="${library.basedir}/library.properties"/>
+</project>

@@ -1,0 +1,123 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-10-30 23:17:44 qcheng Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="openfm-clientsdk" default="package-clientsdk">
+                
+    <description>OpenSSO Federation Client SDK</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** clientsdk may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="openfm.clientsdkbase.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <!-- properties for clientsdk -->
+    <property name="clientsdk.name" value="openfm_client_sdk"/>
+    <property name="clientsdk.version" value="${version}"/>
+    <tstamp>
+        <format property="pstamp" pattern="yyyy-MMMM-d hh:mm"/>
+    </tstamp>
+    <property name="clientsdk.stamp" 
+        value="${clientsdk.version}_${DSTAMP}${TSTAMP}"/>
+
+    <!-- clientsdk class path -->
+    <path id="build.class.path">
+        <path refid="build.class.path"/>
+    </path>
+
+    <target name="package-clientsdk" depends="preparebuild">
+        <echo message="Building clientSDK"/>
+
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${openfm.clientsdk.dist.dir}/fmclientsdk.jar">
+            <manifest>
+                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+
+<!--
+            <fileset dir="${sharedlib.classes.dir}">
+                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKClasses"/>
+            </fileset>
+-->
+            <fileset dir="${library.classes.dir}">
+                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKClasses"/>
+            </fileset>
+            <fileset dir="${openfm.classes.dir}">
+                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKClasses"/>
+            </fileset>
+            <fileset dir="${library.res.dir}">
+                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKProperties"/>
+            </fileset>
+            <fileset dir="${openfm.res.dir}">
+                <includesfile name="${openfm.clientsdkbase.dir}/ClientSDKProperties"/>
+            </fileset>
+            <manifest>
+               <attribute name="Created-On" value="${pstamp}" />
+                <section name="com.sun.identity">
+                    <attribute name="Specification-Title"
+                        value="OpenSSO Federation Client SDK"/>
+                    <attribute name="Specification-Version"
+                        value="${clientsdk.version}"/>
+                    <attribute name="Specification-Vendor"
+                        value="Sun Microsystems, Inc."/>
+                    <attribute name="Implementation-Title"
+                        value="com.sun.identity"/>
+                    <attribute name="Implementation-Version"
+                        value="${clientsdk.stamp}"/>
+                    <attribute name="Implementation-Vendor"
+                        value="Sun Microsystems, Inc."/>
+                </section>
+            </manifest>
+        </jar>
+
+        <jar destfile="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar"
+             filesetmanifest="merge">
+                <zipfileset src="${library.extlib.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
+                <zipfileset src="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"/>
+        </jar>
+
+        <copy file="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar" 
+            tofile="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"/>
+        <delete file="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar"/>
+        <checksum file="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${openfm.clientsdk.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${openfm.clientsdk.dist.dir}"/>
+    </target>
+   
+</project>

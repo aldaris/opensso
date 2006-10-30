@@ -1,0 +1,668 @@
+#!/bin/sh
+
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id
+#
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+
+# source the silent install file. The assumption is that this file
+# has been created prior to each script sourcing this utils script
+
+
+# Initialization
+
+OSTYPE=`/bin/uname -s`
+
+CP=/bin/cp
+SED=/bin/sed
+awk=/bin/awk
+LS=/bin/ls
+RM=/bin/rm
+NETSTAT=/bin/netstat
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+CAT=/usr/bin/cat
+CP="/bin/cp -p"
+gettext=/bin/gettext
+OPEN='('
+CLOSE=')'
+OMIT='\c'
+MKDIR=/bin/mkdir
+#umask ${DEF_UMASK}
+GREP=/bin/grep
+EGREP=/bin/egrep
+DEPLOY_LEVEL=10
+PKGDIR=`pwd`/..
+
+if [ "$OSTYPE" = "Linux" ]
+then
+	# nawk = awk on Linux
+	alias nawk=/bin/awk
+	ECHO="/bin/echo -e"
+	GETENT=/usr/bin/getent
+	PING="/bin/ping -c 1"
+	MA_PKGNAME=sun-identity-mobileaccess
+        PKGCHK=$ECHO
+        PKGPARAM=$ECHO
+else
+	alias nawk=/bin/nawk
+	ECHO=/bin/echo
+	GETENT=/bin/getent
+	PING=/usr/sbin/ping
+	MA_PKGNAME=SUNWamma
+        PKGCHK=/usr/sbin/pkgchk
+        PKGPARAM=/bin/pkgparam
+fi
+
+# Source the silent file and then create all common variables needed by other 
+# scripts
+if [ ! "$IS_SILENT_INSTALL_FILE" = "" ]; then
+    if [ `$ECHO "$IS_SILENT_INSTALL_FILE" | cut -b1` != "/" ]; then
+	IS_SILENT_INSTALL_FILE=`pwd`/$IS_SILENT_INSTALL_FILE
+	export IS_SILENT_INSTALL_FILE
+    fi
+    if [ -f $IS_SILENT_INSTALL_FILE ]; then
+	# only need to print warning the first time through
+	if [ X$1 = X ]; then
+	  $ECHO "Reading silent install file: $IS_SILENT_INSTALL_FILE"
+
+	fi
+        . $IS_SILENT_INSTALL_FILE
+
+        if [ $DEPLOY_LEVEL -lt 10 -a $DEPLOY_LEVEL -ne 7 ]; then
+          # verify that customer has removed the temporary settings
+          if [ "X$SERVER_HOST" = "X" ] || [ "X$SERVER_PORT" = "X" ] || [ "X$DS_HOST" = "X" ] || [ "X$ADMINPASSWD" = "X" ] || [ "X$NEW_OWNER" = "X" ] || [ "X$NEW_GROUP" = "X" ] || [ "X$COOKIE_DOMAIN" = "X" ] || [ "X$ROOT_SUFFIX" = "X" ]; then
+            $ECHO "Warning: Undefined variables exist in your silent file."
+            $ECHO "Please verify these values have been set:" 
+            $ECHO "   SERVER_NAME=$SERVER_NAME"
+            $ECHO "   SERVER_HOST=$SERVER_HOST"
+            $ECHO "   SERVER_PORT=$SERVER_PORT"
+            $ECHO "   ADMIN_PORT=$ADMIN_PORT"
+            $ECHO "   DS_HOST=$DS_HOST"
+            $ECHO "   DS_DIRMGRPASSWD=<hidden>"
+            $ECHO "   ROOT_SUFFIX=$ROOT_SUFFIX"
+            $ECHO "   ADMINPASSWD=<hidden>"
+            $ECHO "   AMLDAPUSERPASSWD=<hidden>"
+            $ECHO "   COOKIE_DOMAIN=$COOKIE_DOMAIN"
+            $ECHO "   AM_ENC_PWD=$AM_ENC_PWD"
+            $ECHO "   NEW_OWNER=$NEW_OWNER"
+            $ECHO "   NEW_GROUP=$NEW_GROUP"
+            $ECHO "   WEB_CONTAINER=$WEB_CONTAINER"
+            $ECHO "   SSL_PASSWORD=<hidden>"
+          fi
+        fi
+
+        if [ "X$CONFIG_SERVER" = "X" ]; then 
+          CONFIG_SERVER=$DS_HOST
+          CONFIG_PORT=$DS_PORT
+          CONFIG_ADMINDN="cn=dsameuser,ou=DSAME Users"
+          CONFIG_ADMINPASSWD="$ADMINPASSWD"
+        fi
+    else
+     	eval $ECHO "`$gettext 'amutils error: Silent file not found!'`"
+        exit 1
+    fi
+else
+    # Someone other than the installer might be calling this script.
+    if [ "$INSTALL_FILE_NOT_REQUIRED" != "true" ]; then
+     	eval $ECHO "`$gettext 'amutils error: Silent file not found!'`"
+	exit 1
+    fi
+fi
+##############################################################
+#
+# line manipulation routines
+#
+
+
+replace_line() {
+  file=$1
+  match=$2
+  new=$3
+
+  if [ ! -f $file-orig-$$ ]; then
+     if [ -f $file ]; then
+        $CP $file $file-orig-$$
+     fi
+  fi
+
+  sed -e "
+/$match/ {
+c\\
+$new
+}" $file > $file-tmp
+$CP $file-tmp $file
+$RM -f $file-tmp
+}
+
+append_line() {
+  file=$1
+  match=$2
+  new=$3
+
+  if [ ! -f $file-orig-$$ ]; then
+     if [ -f $file ]; then
+        $CP $file $file-orig-$$
+     fi
+  fi
+
+  sed -e "
+/$match/ {
+a\\
+$new
+}" $file > $file-tmp
+$CP $file-tmp $file
+$RM -f $file-tmp
+}
+
+append_line_by_number() {
+  file=$1
+  line=$2
+  new=$3
+
+  if [ ! -f $file-orig-$$ ]; then
+     if [ -f $file ]; then
+        $CP $file $file-orig-$$
+     fi
+  fi
+
+  sed -e "
+$line {
+a\\
+$new
+}" $file > $file-tmp
+$CP $file-tmp $file
+$RM -f $file-tmp
+}
+
+##############################################################
+#
+# Replace character with a specified new character (or string)
+#    This will replace the character everywhere it appears
+#    in the string.
+#    (useful for cleaning up strings before calling SED)
+# $1 = original string
+# $2 = character to replace
+# $3 = new character or string
+#
+replaceCharacter() {
+    NEWSTR=`$ECHO "$1" | awk -F"$2" '{
+        result = ""
+        for (i = 1; i < NF; i=i+1) { result = result $i newch }
+        result =  result $NF
+        print result
+    }' newch=$3`
+}
+
+##############################################################
+#
+# Remove space and tab, and replace comma with char passed in
+# $1 = dn
+# $2 = new char
+#
+
+NormalizeDNandReplaceComma() {
+
+    NMDN=`$ECHO "$1" | awk '{
+
+        dn = $0
+        result = ""
+        size = split(dn, rdns, ",")
+        for(i=1; i<size+1; i++) {
+            if (i>1) result = result newch
+            rdn = rdns[i]
+            size2 = split(rdn, attrs, "=")
+            for(j=1; j<size2+1; j++) {
+                if (j>1) result = result  "="
+                str = attrs[j]
+                strlen = length(str)
+                start = 1
+                end = strlen
+                for (k=1; k<strlen+1; k++) {
+                    ch = substr(str, k, 1);
+                    if (ch != " " && ch != "\t") {
+                        start = k
+                        break
+                    }
+                }
+                for(l=strlen; l>0; l--) {
+                    ch = substr(str, l, 1);
+                    if (ch != " " && ch != "\t") {
+                        end = l
+                        break
+                    }
+                }
+                result = result substr(str, start, end-start+1)
+            }
+        }
+        print result
+
+    }' newch=$2`
+
+export NMDN
+}
+
+install_user_permissions () {
+    if [ -f $PKGDIR/console.war ]; then
+        chown $NEW_OWNER:$NEW_GROUP $PKGDIR/console.war > /dev/null 2>&1
+        chmod 400 $PKGDIR/console.war > /dev/null 2>&1
+    fi
+}
+
+###############################################
+#
+# test for root user
+#
+
+check_root_user() {
+  if test `id | /usr/bin/awk '{print $1}'` != "uid=0(root)"
+  then
+    eval $ECHO "`$gettext 'You must be root user to run $0.'`"
+    exit 1
+  fi
+  create_safeword_config_dir
+}
+
+
+########################################################
+#
+# check if the Debug and Log directory exists and create 
+# if it's missing.
+#
+create_debug_log_directory() {
+    debugdir=$VAR_SUBDIR/debug
+    logdir=$VAR_SUBDIR/logs
+    if [ ! -d  $debugdir ]
+    then
+        $MKDIR -p $debugdir > /dev/null 2>&1
+    fi
+    if [ ! -d  $logdir ]
+    then
+        $MKDIR -p $logdir > /dev/null 2>&1
+    fi
+    chmod 777 $debugdir > /dev/null 2>&1
+    chmod 0700 $logdir > /dev/null 2>&1
+}
+
+####################################
+create_safeword_config_dir() {
+    safeworddir=$VAR_SUBDIR/auth/safeword
+    if [ ! -d $safeworddir ]
+    then
+	$MKDIR -p $safeworddir > /dev/null 2>&1
+    fi
+    chmod 700 $safeworddir
+}
+
+###############################################
+#
+# Check for spaces
+#
+check_for_spaces() {
+
+	str=`$ECHO "$1" | grep " "`
+	if [ $? -eq 0 ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+
+###############################################
+# This function changes the ownership of all
+# the installed files to the user and group
+# indicated.
+change_ownership()
+{
+  if [ -d $BASEDIR/$PRODUCT_DIR ]; then
+    chown -h -R $NEW_OWNER:$NEW_GROUP $BASEDIR/$PRODUCT_DIR
+  fi
+  if [ -d $ETC_SUBDIR ]; then
+    chown -R $NEW_OWNER:$NEW_GROUP $ETC_SUBDIR
+  fi
+  if [ -d $VAR_SUBDIR ]; then
+    chown -R $NEW_OWNER:$NEW_GROUP $VAR_SUBDIR
+  fi
+}
+
+###############################################
+# This function creates temporary password files
+#
+create_password_files()
+{
+if [ "$DS_DIRMGRPASSWD" != "" ] && [ "$FILE_DS_DIRMGRPASSWD" != "" ]; then
+    if [ -f $FILE_DS_DIRMGRPASSWD ]; then  
+        $RM $FILE_DS_DIRMGRPASSWD
+    fi
+    $ECHO $DS_DIRMGRPASSWD > $FILE_DS_DIRMGRPASSWD
+    chmod 700 $FILE_DS_DIRMGRPASSWD
+fi
+
+if [ "$ADMINPASSWD" != "" ] && [ "$FILE_ADMINPASSWD" != "" ]; then
+    if [ -f $FILE_ADMINPASSWD ]; then  
+        $RM $FILE_ADMINPASSWD
+    fi
+    $ECHO $ADMINPASSWD > $FILE_ADMINPASSWD
+    chmod 700 $FILE_ADMINPASSWD
+fi
+if [ "$CONFIG_ADMINPASSWD" != "" ] && [ "$FILE_CONFIG_ADMINPASSWD" != "" ]; then
+    if [ -f $FILE_CONFIG_ADMINPASSWD ]; then  
+        $RM $FILE_CONFIG_ADMINPASSWD
+    fi
+    $ECHO $CONFIG_ADMINPASSWD > $FILE_CONFIG_ADMINPASSWD
+    chmod 700 $FILE_CONFIG_ADMINPASSWD
+fi
+
+if [ "$AMLDAPUSERPASSWD" != "" ] && [ "$FILE_AMLDAPUSERPASSWD" != "" ]; then
+    if [ -f $FILE_AMLDAPUSERPASSWD ]; then  
+        $RM $FILE_AMLDAPUSERPASSWD
+    fi
+    $ECHO $AMLDAPUSERPASSWD > $FILE_AMLDAPUSERPASSWD
+    chmod 700 $FILE_AMLDAPUSERPASSWD
+fi
+
+if [ "$AS70_ADMINPASSWD" != "" ] && [ "$FILE_AS70_ADMINPASSWD" != "" ]; then    
+    if [ -f $FILE_AS70_ADMINPASSWD ]; then  
+        $RM $FILE_AS70_ADMINPASSWD
+    fi
+    
+    $ECHO AS_ADMIN_PASSWORD=$AS70_ADMINPASSWD > $FILE_AS70_ADMINPASSWD
+    chmod 700 $FILE_AS70_ADMINPASSWD
+fi
+
+if [ "$AS81_ADMINPASSWD" != "" ] && [ "$FILE_AS81_ADMINPASSWD" != "" ]; then    
+    if [ -f $FILE_AS81_ADMINPASSWD ]; then  
+        $RM $FILE_AS81_ADMINPASSWD
+    fi
+    
+    $ECHO AS_ADMIN_PASSWORD=$AS81_ADMINPASSWD > $FILE_AS81_ADMINPASSWD
+    chmod 700 $FILE_AS81_ADMINPASSWD
+fi
+
+if [ "$WS_ADMINPASSWD" != "" ] && [ "$FILE_WS_ADMINPASSWD" != "" ]; then    
+    if [ -f $FILE_WS_ADMINPASSWD ]; then  
+        $RM $FILE_WS_ADMINPASSWD
+    fi
+    
+    $ECHO wadm_password=$WS_ADMINPASSWD > $FILE_WS_ADMINPASSWD
+    chmod 700 $FILE_WS_ADMINPASSWD
+fi
+}
+
+
+###############################################
+# This function delete temporary password files
+#
+delete_password_files()
+{
+if [ -f $FILE_DS_DIRMGRPASSWD ]; then  
+    $RM $FILE_DS_DIRMGRPASSWD
+fi
+
+if [ -f $FILE_ADMINPASSWD ]; then  
+    $RM $FILE_ADMINPASSWD
+fi
+
+if [ -f $FILE_CONFIG_ADMINPASSWD ]; then  
+    $RM $FILE_CONFIG_ADMINPASSWD
+fi
+
+if [ -f $FILE_AMLDAPUSERPASSWD ]; then  
+    $RM $FILE_AMLDAPUSERPASSWD
+fi
+
+if [ -f $FILE_AS70_ADMINPASSWD ]; then  
+    $RM $FILE_AS70_ADMINPASSWD
+fi
+if [ -f $FILE_AS81_ADMINPASSWD ]; then  
+    $RM $FILE_AS81_ADMINPASSWD
+fi
+if [ -f $FILE_WS_ADMINPASSWD ]; then  
+    $RM $FILE_WS_ADMINPASSWD
+fi
+}
+
+
+#############################################
+#### Interactive script functions below. ####
+#############################################
+
+# Error Codes (Dummy Right now)
+VALID=0
+ERR_INVALID_DEPLOY_LEVEL=100
+ERR_NEED_FULL_PATH=101
+ERR_DIR_NOT_EXIST=102
+ERR_INVALID_CONTAINER=103
+ERR_NOT_FQDN=104
+ERR_HOST_NOPING=105
+ERR_INVALID_PORT=106
+ERR_PORT_INUSE=107
+ERR_PORT_NOTUSED=108
+ERR_INVALID_PROTOCOL=109
+ERR_PASSWD_IS_BLANK=110
+ERR_PASSWD_WITH_SPACES=111
+ERR_PASSWD_TOO_SHORT=112
+ERR_INVALID_DS_MODE=113
+ERR_DS_NOT_REACHABLE=114
+ERR_PASSWD_CANTBE_SAME=115
+ERR_URI_FIRST_CHAR=116
+ERR_INVALID_COOKIE_DOMAIN=117
+ERR_INVALID_JAVA_HOME=118
+ERR_INVALID_USER=119
+ERR_INVALID_GROUP=120
+
+
+##################################################################
+#
+# This function sets the given variable in the silent install file
+# Required: $1=Variable Name
+# Optional: $2=New Value
+# If $2 is provided it is used as the new value
+# else the function assumes that the current value of the
+# variable is to be used and sets it in the environment also.
+setdeployvar()
+{
+	VARNAME=$1
+	NEWVAL=$2
+
+	# Fetch the new value from the variable itself
+	if [ "$NEWVAL" = "" ]; then
+		eval NEWVAL=$`$ECHO $VARNAME`
+	else
+		# Set new value in the environment
+		eval "$VARNAME"="$NEWVAL"
+	fi
+
+	# Need to insert quotes around values with whitespace or = signs
+	$ECHO "$NEWVAL" | grep "[ 	=]" >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		replace_line $IS_SILENT_INSTALL_FILE "^${VARNAME}=" "${VARNAME}=\"${NEWVAL}\""
+	else
+		replace_line $IS_SILENT_INSTALL_FILE "^${VARNAME}=" "${VARNAME}=${NEWVAL}"
+	fi
+}
+
+###################################################################################
+#
+# This function checks if the port provided is in use or not on the host provided.
+# Return value 0 = port NOT in use
+#              not 0 = port Access Manager in use
+check_port()
+{
+	host=$1
+	port=$2
+
+	output=`telnet $host $port 2>&1 <<EOF
+quit
+EOF
+`
+	$ECHO $output | $EGREP "Connection refused|Unknown host|Name or service not known" >/dev/null 2>&1
+	return $?
+}
+
+######################################################
+#
+# This function validates the Base Directory provided
+validate_basedir()
+{
+	[ `$ECHO $1 | cut -b1` != "/" ] && return $ERR_NEED_FULL_PATH
+	[ ! -d $1 ] && return $ERR_DIR_NOT_EXIST
+	return $VALID
+}
+
+#############################
+# Validates a cookie domain
+validate_cookie_domain()
+{
+	fc=`$ECHO $1 | cut -c1`
+	[ "$fc" != "." ] && return $ERR_INVALID_COOKIE_DOMAIN
+	return $VALID
+}
+
+
+############################
+# Validates JAVA_HOME
+validate_java_home()
+{
+	[ ! -d $1 ] && return $ERR_INVALID_JAVA_HOME
+	[ ! -x $1/bin/java ] && return $ERR_INVALID_JAVA_HOME
+	return $VALID
+}
+
+
+#################################
+# Validates a User name
+validate_new_owner()
+{
+	$GETENT passwd $1 >/dev/null 2>&1
+	[ $? -ne 0 ] && return $ERR_INVALID_USER
+	return $VALID
+}
+
+#################################
+# Validates a Group name
+validate_new_group()
+{
+	$GETENT group $1 >/dev/null 2>&1
+	[ $? -ne 0 ] && return $ERR_INVALID_GROUP
+	return $VALID
+}
+
+
+ADMIN_CLI="${PKGDIR}/bin/amadmin"
+export ADMIN_CLI
+
+if [ "$OSTYPE" = "Linux" ]; then
+	if [ "$BASEDIR" = "PLATFORM_DEFAULT" ]; then
+		BASEDIR=/opt/sun
+	fi
+	PRODUCT_DIR=identity
+	IS_INSTALL_VARDIR=$RUNTIME_DIR/var
+	IS_INSTALL_ETCDIR=$RUNTIME_DIR/etc
+	TR_COMMAND=/usr/bin/tr
+else
+	if [ "$BASEDIR" = "PLATFORM_DEFAULT" ]; then
+		BASEDIR=/opt
+	fi
+	PRODUCT_DIR=SUNWam
+	IS_INSTALL_VARDIR=$RUNTIME_DIR/var
+	IS_INSTALL_ETCDIR=$RUNTIME_DIR/etc
+	TR_COMMAND=/usr/xpg4/bin/tr
+fi
+
+ETC_SUBDIR=$RUNTIME_DIR
+CONFIG_DIR=$ETC_SUBDIR/config
+VAR_SUBDIR=$IS_INSTALL_VARDIR
+
+PKGDIR=${BASEDIR}/${PRODUCT_DIR}
+export PKGDIR
+UPGRADE61to62_XML_DIR=${PKGDIR}/migration/61to62/61to62
+export UPGRADE61to62_XML_DIR
+LOCALE_DIR="${PKGDIR}/locale"
+export LOCALE_DIR
+COOKIE_DOMAIN_LIST=$COOKIE_DOMAIN
+export COOKIE_DOMAIN_LIST
+FILE_ADMINPASSWD=/tmp/sun_is62_adminpasswd
+export FILE_ADMINPASSWD
+FILE_CONFIG_ADMINPASSWD=/tmp/sun_is71_adadminpasswd
+export FILE_CONFIG_ADMINPASSWD
+FILE_AMLDAPUSERPASSWD=/tmp/sun_is62_amldapuserpasswd
+export FILE_AMLDAPUSERPASSWD
+FILE_DS_DIRMGRPASSWD=/tmp/sun_is62_dsdirmgrpasswd
+export FILE_DS_DIRMGRPASSWD
+FILE_WS_ADMINPASSWD=/tmp/sun_ws70adminpasswd
+export FILE_WS_ADMINPASSWD
+FILE_AS70_ADMINPASSWD=/tmp/sun_is62_as70adminpasswd
+export FILE_AS70_ADMINPASSWD
+FILE_AS81_ADMINPASSWD=/tmp/sun_is62_as81adminpasswd
+export FILE_AS81_ADMINPASSWD
+AVAILABLE_LOCALES="<Value>en_US</Value>"
+export AVAILABLE_LOCALES
+PRODUCTNAME="Sun Java System Access Manager 2005Q4"
+export PRODUCTNAME
+JSS_ROOTDIR=/
+export JSS_ROOTDIR
+NSS_ROOTDIR=/
+export NSS_ROOTDIR
+NSPR_ROOTDIR=/
+export NSPR_ROOTDIR
+
+if [ "$OSTYPE" = "Linux" ]; then
+	JSS_JAR_PATH=${JSS_ROOTDIR:-/}opt/sun/private/share/lib
+	JSS_SO_PATH=${JSS_ROOTDIR:-/}opt/sun/private/lib
+	NSS_SO_PATH=${NSS_ROOTDIR:-/}opt/sun/private/lib
+	NSPR_SO_PATH=${NSPR_ROOTDIR:-/}opt/sun/private/lib
+else
+	JSS_JAR_PATH=${JSS_ROOTDIR:-/}usr/share/lib/mps/secv1
+	JSS_SO_PATH=${JSS_ROOTDIR:-/}usr/lib/mps/secv1
+	NSS_SO_PATH=${NSS_ROOTDIR:-/}usr/lib/mps/secv1
+	NSPR_SO_PATH=${NSPR_ROOTDIR:-/}usr/lib/mps/secv1
+fi
+JSS_JAR_FILE=$JSS_JAR_PATH/jss4.jar
+
+export JSS_JAR_FILE
+export JSS_JAR_PATH
+export JSS_SO_PATH
+export NSS_SO_PATH
+export NSPR_SO_PATH
+MISC_JAR_PATH=${JSS_ROOTDIR:-/}usr/share/lib
+export MISC_JAR_PATH
+
+NormalizeDNandReplaceComma "$ROOT_SUFFIX" ","
+ROOT_SUFFIX="$NMDN"
+export ROOT_SUFFIX
+
+ORG_ROOT_SUFFIX=$ROOT_SUFFIX
+if [ "X$DEFAULT_ORGANIZATION" != "X" ]; then
+    ORG_ROOT_SUFFIX="$DEFAULT_ORGANIZATION,$ROOT_SUFFIX"
+fi
+
+
+# Convert Naming Attribute and Object Classes to the 
+# lower case and export
+USER_NAMING_ATTR=`$ECHO $USER_NAMING_ATTR | $TR_COMMAND '[:upper:]' '[:lower:]'`
+export USER_NAMING_ATTR
+ORG_NAMING_ATTR=`$ECHO $ORG_NAMING_ATTR | $TR_COMMAND '[:upper:]' '[:lower:]'`
+export ORG_NAMING_ATTR
+USER_OBJECT_CLASS=`$ECHO $USER_OBJECT_CLASS | $TR_COMMAND '[:upper:]' '[:lower:]'`
+export USER_OBJECT_CLASS
+ORG_OBJECT_CLASS=`$ECHO $ORG_OBJECT_CLASS | $TR_COMMAND '[:upper:]' '[:lower:]'`
+export ORG_OBJECT_CLASS

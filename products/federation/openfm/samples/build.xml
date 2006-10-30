@@ -1,0 +1,75 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2006-10-30 23:17:50 qcheng Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="openfed-sample" default="all">
+                
+    <description>Open Federation: Samples</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** samples may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="openfm.built.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <property name="samples.www.dir" location="${openfm.samples.dir}/www"/>
+    <property name="samples.packages.dir" location="${openfm.built.dir}/samples/package"/>
+    <property name="samples.packages.temp.dir" location="${openfm.built.dir}/samples/.package"/>
+    <property name="samples.dist.dir" location="${openfm.built.dir}/samples/dist"/>
+    <property name="samples.idff.dir" location="${openfm.samples.dir}/idff"/>
+
+
+    <target name="all" depends="preparebuild">
+        <delete dir="${samples.packages.dir}" />
+        <unjar src="${openfm.war.dist.dir}/openfm.war" dest="${samples.packages.dir}" />
+        <mkdir dir="${samples.packages.dir}/samples" />
+        <copy todir="${samples.packages.dir}/samples">
+            <fileset dir="${openfm.samples.dir}/war"
+                 excludes="**/CVS" />
+        </copy>
+        <delete dir="META-INF" />
+        <mkdir dir="${samples.packages.temp.dir}" />
+        <move file="${samples.packages.dir}/WEB-INF/web.xml" tofile="${samples.packages.temp.dir}/web.xml" />
+        <war destfile="${samples.dist.dir}/openfm-samples.war" webxml="${samples.packages.temp.dir}/web.xml">
+            <zipfileset dir="${samples.packages.dir}" />
+        </war>
+        <move file="${samples.packages.temp.dir}/web.xml" tofile="${samples.packages.dir}/WEB-INF/web.xml" />
+        <delete dir="${samples.packages.temp.dir}" />
+        <checksum file="${samples.dist.dir}/openfm-samples.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${samples.packages.dir}"/>
+        <mkdir dir="${samples.dist.dir}"/>
+    </target>
+                                                                                       
+    <target name="clean">
+        <delete dir="${samples.dist.dir}"/>
+        <delete dir="${samples.packages.dir}"/>
+    </target>
+
+</project>
