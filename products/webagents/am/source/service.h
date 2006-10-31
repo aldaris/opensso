@@ -127,7 +127,8 @@ class Service {
 		       const std::string &,
 		       const KeyValueMap &,
                        SessionInfo &,
-		       policy_fetch_scope_t scope);
+		       policy_fetch_scope_t scope,
+		       bool refetchPolicy);
 
     void update_policy_list(const SSOToken &,
 			    const std::vector<std::string> &,

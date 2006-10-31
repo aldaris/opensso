@@ -1014,7 +1014,7 @@ Service::getPolicyResult(const char *userSSOToken,
     
     // Log:INFO Calling update_policy to get policy info.
     update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF);
+	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
     
 
     policy_res->remote_user = NULL;
@@ -1077,7 +1077,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	  if(resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    if (uPolicyEntry->getTree(rootRes,false) == NULL) {
 	      update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	              mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF);
+	           mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
 	      Log::log(logID, Log::LOG_WARNING,
 	              "%s:Result size is %d,tree not present for %s", func,
 	              results.size(),resName.c_str());
@@ -1209,7 +1209,8 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
-		       policy_fetch_scope_t scope)
+		       policy_fetch_scope_t scope,
+		       bool refetchPolicy)
 {
     string func("Service::update_policy");
     Log::log(logID, Log::LOG_MAX_DEBUG,
@@ -1327,7 +1328,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		Log::log(logID, Log::LOG_WARNING,
 			 "Thread wokeup after successful initialization.");
 	        update_policy(ssoTok, resName, actionName,
-			      env, sessionInfo, scope);
+			      env, sessionInfo, scope, false);
 		/* by setting this to true, the policyTable.insert
 		 * will not get executed.
 		 */
@@ -1379,7 +1380,7 @@ Service::update_policy_list(const SSOToken &ssoTok,
     
     SessionInfo sessionInfo;
     for(iter = resList.begin(); iter != resList.end(); iter++) {
-	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope);
+	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope, true);
     }
     return;
 }
