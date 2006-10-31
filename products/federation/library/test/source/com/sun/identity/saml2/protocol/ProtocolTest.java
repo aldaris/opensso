@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProtocolTest.java,v 1.1 2006-10-30 23:17:12 qcheng Exp $
+ * $Id: ProtocolTest.java,v 1.2 2006-10-31 22:56:49 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,7 +173,7 @@ public class ProtocolTest extends UnitTestBase {
             .equals("2006-12-13T02:22:30Z"))
             : "Invalid NotBefore Attribute Value";
             
-            /* Uncomment this when LogoutRequest supports 
+            /* TODO Uncomment this when LogoutRequest supports 
              * this NotOnOrAfter attribute 
              */
             /*
@@ -620,8 +620,13 @@ public class ProtocolTest extends UnitTestBase {
             .equals("http://sp.sun.com/saml2/Consent"))
             : " Incorrect Consent URI";
             
+            /* TODO Uncomment this when LogoutRequest supports
+             * the NotOnOrAfter attribute
+             */
+            /*
             assert(DateUtils.toUTCDateFormat(logoutReq.getNotOnOrAfter())
             .equals("2007-12-13T02:22:30Z")) : "Invalid NotOnOrAfter Value";
+             */
             
             assert(logoutReq.getReason().equals("Session Expired"))
             : "Incorrect Reason";
