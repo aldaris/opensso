@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.1 2006-10-30 23:14:04 qcheng Exp $
+ * $Id: IFSConstants.java,v 1.2 2006-10-31 03:58:22 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1666,7 +1666,7 @@ public interface IFSConstants {
      * XPATH for Assertion Artifact 
      */
     public static final String ARTIFACT_XPATH = 
-       "/soap-env:Envelope/soap-env:Body/samlp:Request/samlp:AssertionArtifact";
+       "/Envelope/Body/Request/AssertionArtifact";
     /**
      * Affiliation id for Affiliation descriptor
      */   

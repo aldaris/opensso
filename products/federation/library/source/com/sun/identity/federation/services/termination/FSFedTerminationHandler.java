@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFedTerminationHandler.java,v 1.1 2006-10-30 23:14:36 qcheng Exp $
+ * $Id: FSFedTerminationHandler.java,v 1.2 2006-10-31 03:58:25 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -868,14 +868,10 @@ public class FSFedTerminationHandler {
                                         "invalid minor version."); 
                                 }
                             }
-                            SOAPMessage retMsg = 
-                                instSOAP.sendMessage(
+                            boolean sendStatus = 
+                                instSOAP.sendTerminationMessage(
                                     msgTermination,
                                     remoteDescriptor.getSoapEndpoint());
-                            boolean sendStatus = false;
-                            if (retMsg != null) {
-                                sendStatus = true;
-                            }
                             // Always show success page since local termination
                             // succeeded and that is what is important
                             FSServiceUtils.returnLocallyAfterOperation(

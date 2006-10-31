@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.1 2006-10-30 23:14:28 qcheng Exp $
+ * $Id: FSSSOAndFedHandler.java,v 1.2 2006-10-31 03:58:24 qcheng Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -350,7 +350,8 @@ public abstract class FSSSOAndFedHandler {
             }
         } catch(SessionException se) {
             FSUtils.debug.message("FSSSOAndFedHandler.processPreAuthnSSO: "
-                + "SSOException Occured: User does not have session ", se);
+                + "SSOException Occured: User does not have session " +
+                se.getMessage());
             authenticated = false;
         }
 

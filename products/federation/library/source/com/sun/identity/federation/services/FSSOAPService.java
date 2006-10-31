@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSOAPService.java,v 1.1 2006-10-30 23:14:24 qcheng Exp $
+ * $Id: FSSOAPService.java,v 1.2 2006-10-31 03:58:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -177,6 +177,50 @@ public class FSSOAPService {
         }
     }
     
+    /*
+     * Method to send the passed SOAPMessage to the SOAPEndpoint URL
+     * that is passed. The SOAP Message will then be sent across to the remote
+     * provider in order to perform federation termination.
+     * @param msg the <code>FSFederationTerminationNotification</code> 
+     *  SOAPMesage to be sent
+     * @param soapEndPoint the SOAPEndpoint URL of remote provider
+     * @return boolean true if successful else false
+     */
+    public boolean sendTerminationMessage(
+        SOAPMessage msg, String soapEndPoint) 
+    {
+        try {
+            FSUtils.debug.message("started in func sendTerminationMessage");
+            if(soapEndPoint == null) {
+                FSUtils.debug.error("createSOAPReceiverURL Error!");
+                String[] data =
+                    { FSUtils.bundle.getString("failCreateURLEndpoint") };
+                LogUtil.error(Level.INFO,
+                              LogUtil.FAILED_SOAP_URL_END_POINT_CREATION,
+                              data);
+                return false;
+            }
+            // Send the message to the provider using the connection.
+            ByteArrayOutputStream output  = new ByteArrayOutputStream();
+            msg.writeTo(output);
+            if (FSUtils.debug.messageEnabled()) {
+                String xmlString = output.toString(
+                    IFSConstants.DEFAULT_ENCODING);
+                FSUtils.debug.message("SENDING message: \n " + xmlString);
+                FSUtils.debug.message("URLEndpoint :" + soapEndPoint);
+            }
+            SOAPConnection con = scf.createConnection();
+            SOAPMessage  reply = con.call(msg, soapEndPoint);
+            FSUtils.debug.message("SOAP CALL COMPLETED");
+            return true;
+        } catch(Exception e){
+            if(FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("In catch of sendTerminationMessage", e);
+            }
+            return false;
+        }
+    }
+
     /*
      * Parses the SOAPMessage and return the Element
      * corresponding to the liberty message(request/response).

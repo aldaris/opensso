@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFederationTerminationNotification.java,v 1.1 2006-10-30 23:14:09 qcheng Exp $
+ * $Id: FSFederationTerminationNotification.java,v 1.2 2006-10-31 03:58:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,6 +140,7 @@ public class FSFederationTerminationNotification extends AbstractRequest {
                         respondWiths = new ArrayList();
                     }
                     respondWiths.add(XMLUtils.getElementValue((Element) child));
+                } else if (nodeName.equals(IFSConstants.SIGNATURE)) {
                 } else if (nodeName.equals(IFSConstants.PROVIDER_ID)) {
                     if (providerId != null) {
                         if (FSUtils.debug.messageEnabled()) {
@@ -331,7 +332,8 @@ public class FSFederationTerminationNotification extends AbstractRequest {
             .append(prefix)
             .append(IFSConstants.FEDERATION_TERMINATION_NOTICFICATION)
             .append(uri)
-            .append(uriSAML);
+            .append(uriSAML)
+            .append(IFSConstants.SPACE);
             
             if (minorVersion == IFSConstants.FF_11_PROTOCOL_MINOR_VERSION &&
                     id != null && !(id.length() == 0)) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutNotification.java,v 1.1 2006-10-30 23:14:10 qcheng Exp $
+ * $Id: FSLogoutNotification.java,v 1.2 2006-10-31 03:58:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,6 +147,7 @@ public class FSLogoutNotification extends AbstractRequest {
                     }
                     respondWiths.add(
                             XMLUtils.getElementValue((Element) child));
+                } else if (nodeName.equals(IFSConstants.SIGNATURE)) {
                 } else if (nodeName.equals(IFSConstants.PROVIDER_ID)) {
                     if (providerId != null) {
                         if (FSUtils.debug.messageEnabled()) {

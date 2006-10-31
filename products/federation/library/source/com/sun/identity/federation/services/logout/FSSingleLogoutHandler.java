@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.1 2006-10-30 23:14:32 qcheng Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.2 2006-10-31 03:58:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -450,6 +450,9 @@ public class FSSingleLogoutHandler {
                     (String) providerMap.get(IFSConstants.LOGOUT_RELAY_STATE);
                 logoutStatus =
                     (String) providerMap.get(IFSConstants.LOGOUT_STATUS);
+                if (logoutStatus == null || logoutStatus.length() == 0) {
+                    logoutStatus = IFSConstants.SAML_SUCCESS;
+                }
                 inResponseTo =
                     (String) providerMap.get(IFSConstants.RESPONSE_TO);
                 mngInst.removeUserProviderInfo(userID);
