@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.1 2006-10-30 23:18:10 qcheng Exp $
+ * $Id: SAML2Test.java,v 1.2 2006-10-31 21:46:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class SAML2Test extends TestBase {
     }
 
     @Test(groups = {"samlv2"}, dependsOnMethods = {"createCircleOfTrust"},
-        expectedExceptions = {SAML2MetaException.class})
+        expectedExceptions = {COTException.class})
     public void deleteCircleOfTrust()
         throws CLIException, COTException, SAML2MetaException {
         entering("deleteCircleOfTrust", null);
