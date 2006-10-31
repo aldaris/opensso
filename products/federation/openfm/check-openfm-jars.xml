@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: check-openfm-jars.xml,v 1.1 2006-10-30 23:17:39 qcheng Exp $
+   $Id: check-openfm-jars.xml,v 1.2 2006-10-31 00:19:45 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -100,6 +100,16 @@
     <target name="all" depends="check-library-jars, build-amclientsdk-jar, 
         build-opensso-jar, build-opensso-test-jar, build-opensso-war,
         build-federation-library" >
+
+        <available file="${openfm.extlib.dir}/amclientsdk.jar" type="file" 
+            property="amclientsdk.jar.present"/>
+        <available file="${openfm.extlib.dir}/opensso.jar" type="file"
+            property="opensso.jar.present"/>
+        <available file="${openfm.extlib.dir}/opensso-test.jar" type="file"
+            property="opensso.test.jar.present"/>
+        <available file="${openfm.extlib.dir}/opensso.war" type="file"
+            property="opensso.war.present"/>
+
         <condition property="extlib.jar.exists">
             <and>
             <isset property="amclientsdk.jar.present" />
