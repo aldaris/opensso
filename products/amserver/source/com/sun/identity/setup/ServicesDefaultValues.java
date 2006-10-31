@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.4 2006-10-18 20:55:27 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.5 2006-10-31 00:24:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,12 +44,12 @@ public class ServicesDefaultValues {
     private Map<String, String> defValues = new HashMap<String, String>();
     
     static {
-        preappendSlash.add("IS_PRODNAME");
-        preappendSlash.add("OLDCON_DEPLOY_URI");
-        preappendSlash.add("CONSOLE_URI");
-        preappendSlash.add("SERVER_URI");
-        trimSlash.add("CONSOLE_URI");
-        trimSlash.add("SERVER_URI");
+        preappendSlash.add(SetupConstants.CONFIG_VAR_PRODUCT_NAME);
+        preappendSlash.add(SetupConstants.CONFIG_VAR_OLD_CONSOLE_URI);
+        preappendSlash.add(SetupConstants.CONFIG_VAR_CONSOLE_URI);
+        preappendSlash.add(SetupConstants.CONFIG_VAR_SERVER_URI);
+        trimSlash.add(SetupConstants.CONFIG_VAR_CONSOLE_URI);
+        trimSlash.add(SetupConstants.CONFIG_VAR_SERVER_URI);
     }
 
     private ServicesDefaultValues() {
@@ -78,10 +78,10 @@ public class ServicesDefaultValues {
      * @param map Service attribute values.
      */
     public static void setDeployURI(String deployURI, Map<String, String> map) {
-        map.put("IS_PRODNAME", deployURI);
-        map.put("OLDCON_DEPLOY_URI", deployURI);
-        map.put("CONSOLE_URI", deployURI);
-        map.put("SERVER_URI", deployURI);
+        map.put(SetupConstants.CONFIG_VAR_PRODUCT_NAME, deployURI);
+        map.put(SetupConstants.CONFIG_VAR_OLD_CONSOLE_URI, deployURI);
+        map.put(SetupConstants.CONFIG_VAR_CONSOLE_URI, deployURI);
+        map.put(SetupConstants.CONFIG_VAR_SERVER_URI, deployURI);
     }
 
     /**
@@ -102,12 +102,14 @@ public class ServicesDefaultValues {
                 if (trimSlash.contains(key)) {
                     orig = orig.replaceAll("@" + key + "@", value.substring(1));
                 }
-            } else if (key.equals("ROOT_SUFFIX")) {
+            } else if (key.equals(SetupConstants.CONFIG_VAR_ROOT_SUFFIX)) {
                 String normalized = DNUtils.normalizeDN(value);
-                orig = orig.replaceAll("@ROOT_SUFFIX_HAT@",
+                orig = orig.replaceAll(
+                    "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX_HAT + "@",
                     normalized.replaceAll(",", "^"));
                 String rfced = (new DN(value)).toRFCString();
-                orig = orig.replaceAll("@ROOT_SUFFIX@", rfced);
+                orig = orig.replaceAll(
+                    "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX + "@", rfced);
             } else {
                 orig = orig.replaceAll("@" + key + "@", value);
             }

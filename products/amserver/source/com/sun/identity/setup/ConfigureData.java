@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.4 2006-10-18 20:55:27 veiming Exp $
+ * $Id: ConfigureData.java,v 1.5 2006-10-31 00:24:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,7 +144,8 @@ public class ConfigureData {
         Set set2 = new HashSet(4);
         set2.add(hostname);
         Map defaultValues = ServicesDefaultValues.getDefaultValues();
-        set2.add(DNToName((String)defaultValues.get("ROOT_SUFFIX")));
+        set2.add(DNToName((String)defaultValues.get(
+            SetupConstants.CONFIG_VAR_ROOT_SUFFIX)));
         map.put("sunOrganizationAliases", set2);
         ocm.setAttributes("sunIdentityRepositoryService", map);
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.9 2006-08-29 23:05:13 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.10 2006-10-31 00:24:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,16 +73,8 @@ public class AMSetupServlet extends HttpServlet {
     private static ServletContext servletCtx = null;
     private static boolean isConfiguredFlag = false;
 
-    private final static String AMC_OVERRIDE_PROPERTY = 
-        "com.sun.identity.overrideAMC";
-    private final static String DEBUG_NAME = "amSetupServlet";
-    private final static String PROPERTY_CONFIGURATOR_PLUGINS =
-        "configuratorPlugins";
-    private final static String KEY_CONFIGURATOR_PLUGINS =
-        "configurator.plugins";
     private final static String AMCONFIG = "AMConfig";
     private final static String SMS_STR = "sms";
-    private final static String AMCONFIG_PROPERTIES = "AMConfig.properties";
     private static SSOToken adminToken = null;
     
     /*
@@ -111,7 +103,8 @@ public class AMSetupServlet extends HttpServlet {
      * set to true in case of non-single war deployment.
      */
     public static void checkConfigProperties() {
-        String overrideAMC = SystemProperties.get(AMC_OVERRIDE_PROPERTY);
+        String overrideAMC = SystemProperties.get(
+            SetupConstants.AMC_OVERRIDE_PROPERTY);
         if (overrideAMC != null && overrideAMC.equalsIgnoreCase("true")) {
             try {
                 if (servletCtx != null) {
@@ -121,7 +114,7 @@ public class AMSetupServlet extends HttpServlet {
                     String configLocation = brdr.readLine();
                     frdr.close();
                     String overridingAMC =  configLocation + "/" +
-                        AMCONFIG_PROPERTIES; 
+                        SetupConstants.AMCONFIG_PROPERTIES; 
                     FileInputStream fin = new FileInputStream(overridingAMC);
                     if (fin != null) {
                         Properties oprops = new Properties();
@@ -130,20 +123,22 @@ public class AMSetupServlet extends HttpServlet {
                         reInitConfigProperties(configLocation, false);
                         isConfiguredFlag = true;
                     } else {
-                        Debug.getInstance(DEBUG_NAME).error(
+                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                             "AMSetupServlet.checkConfigProperties: " +
                             "Unable to open : " + overridingAMC);
                     }
                 } else {
-                    Debug.getInstance(DEBUG_NAME).error(
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                         "AMSetupServlet.checkConfigProperties: " +
                         "Context is null");
                 }
             } catch (FileNotFoundException fex) {
                 //nothing to do
             } catch (IOException ioex) {
-                if (Debug.getInstance(DEBUG_NAME).messageEnabled()) { 
-                    Debug.getInstance(DEBUG_NAME).message(
+                if (Debug.getInstance(
+                    SetupConstants.DEBUG_NAME).messageEnabled()
+                ) { 
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).message(
                         "AMSetupServlet.checkConfigProperties: " +
                         "Exception in reading properties", ioex);
                 }
@@ -167,10 +162,12 @@ public class AMSetupServlet extends HttpServlet {
             BufferedReader brdr = new BufferedReader(frdr);
             String base =  brdr.readLine();
             frdr.close();
-            File configFile = new File(base + "/" + AMCONFIG_PROPERTIES);
+            File configFile = new File(base + "/" + 
+                SetupConstants.AMCONFIG_PROPERTIES);
 
             Map map = ServicesDefaultValues.getDefaultValues();
-            String deployuri = (String)map.get("SERVER_URI");
+            String deployuri = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_URI);
             File smsFile = new File(base + deployuri + "/" + SMS_STR);
 
             if (configFile.exists() && smsFile.exists()) {
@@ -179,8 +176,8 @@ public class AMSetupServlet extends HttpServlet {
         } catch (FileNotFoundException fex) {
             // no action required. The server is not configured yet.
         } catch (IOException ioex) {
-            if (Debug.getInstance(DEBUG_NAME).messageEnabled()) { 
-                Debug.getInstance(DEBUG_NAME).message(
+            if (Debug.getInstance(SetupConstants.DEBUG_NAME).messageEnabled()) { 
+                Debug.getInstance(SetupConstants.DEBUG_NAME).message(
                     "AMSetupServlet.checkInitState: " +
                     "Exception in reading properties", ioex);
             }
@@ -240,32 +237,32 @@ public class AMSetupServlet extends HttpServlet {
                 LoginLogoutMapping.setProductInitialized(true);
                 return true;
             } else {      
-                Debug.getInstance(DEBUG_NAME).error(
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.processRequest: Bootstrap file is missing");
             }
         } catch (FileNotFoundException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest: " +
                 "File not found Exception occured", e);
             e.printStackTrace();
         } catch (SecurityException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         } catch (IOException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         } catch (SMSException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         } catch (PolicyException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         } catch (SSOException e) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         }
@@ -283,8 +280,9 @@ public class AMSetupServlet extends HttpServlet {
         List<ConfiguratorPlugin> plugins = new ArrayList<ConfiguratorPlugin>();
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
-                PROPERTY_CONFIGURATOR_PLUGINS);
-            String strPlugins = rb.getString(KEY_CONFIGURATOR_PLUGINS);
+                SetupConstants.PROPERTY_CONFIGURATOR_PLUGINS);
+            String strPlugins = rb.getString(
+                SetupConstants.KEY_CONFIGURATOR_PLUGINS);
 
             if (strPlugins != null) {
                 StringTokenizer st = new StringTokenizer(strPlugins);
@@ -386,7 +384,7 @@ public class AMSetupServlet extends HttpServlet {
         throws FileNotFoundException, IOException
     {
         // Read config file and initialize
-        String fileName = baseDir + "/" + AMCONFIG_PROPERTIES;
+        String fileName = baseDir + "/" + SetupConstants.AMCONFIG_PROPERTIES;
         try {
             FileInputStream FInpStr = new FileInputStream(fileName);
             if (FInpStr != null) {
@@ -395,17 +393,17 @@ public class AMSetupServlet extends HttpServlet {
                 SystemProperties.initializeProperties(oprops);
                 FInpStr.close();
             } else {
-                Debug.getInstance(DEBUG_NAME).error(
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                    "AMSetupServlet.reInitAMConfigProperties: Unable to open: " +
                         fileName);
             }
         } catch (FileNotFoundException fexp) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.reInitAMConfigProperties: " +
                 "Unable to re-initialize properties", fexp);
             throw fexp;
         } catch (IOException ioexp) {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.reInitAMConfigProperties: " +
                 "Unable to load properties", ioexp);
             throw ioexp;
@@ -436,12 +434,12 @@ public class AMSetupServlet extends HttpServlet {
                 return System.getProperty("user.home") + "/" + AMCONFIG +
                     path;
             } else {
-                Debug.getInstance(DEBUG_NAME).error(
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.getBootStrapFile: " +
                     "Cannot read the bootstrap path");
             }
         } else {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.getBootStrapFile: Context is null");
         }
         return null;
@@ -459,12 +457,12 @@ public class AMSetupServlet extends HttpServlet {
                 java.net.URL turl = servletCtx.getResource("/");
                 return turl.getPath();
             } catch (MalformedURLException mue) {
-                Debug.getInstance(DEBUG_NAME).error(
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.getAppResource: Cannot access the resource",
                     mue);
             }
         } else {
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.getAppResource: Context is null");
         }
         return null;
@@ -492,17 +490,17 @@ public class AMSetupServlet extends HttpServlet {
             configData.configure();
         } catch (SMSException e) {
             e.printStackTrace();
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
         } catch (SSOException e) {
             e.printStackTrace();
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
         } catch (IOException e) {
             e.printStackTrace();
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
         }
@@ -530,13 +528,14 @@ public class AMSetupServlet extends HttpServlet {
         String origpath = "@BASE_DIR@";
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get("BASE_DIR");
-        String deployuri = (String)map.get("SERVER_URI");
+        String deployuri = (String)map.get(
+            SetupConstants.CONFIG_VAR_SERVER_URI);
         String newpath = basedir;
         try {
             File fhm = new File(basedir + deployuri + "/" + SMS_STR);
             fhm.mkdirs();
         } catch (SecurityException e){
-            Debug.getInstance(DEBUG_NAME).error(
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.initializeConfigProperties", e);
             throw e;
         }
@@ -561,7 +560,7 @@ public class AMSetupServlet extends HttpServlet {
                 String inpStr = sbuf.toString();
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
             } catch (IOException e) {
-                Debug.getInstance(DEBUG_NAME).error(
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.initializeConfigProperties", e);
                 throw e;
             } finally {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.3 2006-08-25 21:21:22 veiming Exp $
+ * $Id: RegisterServices.java,v 1.4 2006-10-31 00:24:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,15 +46,12 @@ import java.util.StringTokenizer;
  */
 public class RegisterServices {
     
-    private static final String DEFAULT_PLATFORM_LOCALE = "en_US";
-
-    private static final String PROPERTY_FILENAME = "serviceNames";
-    private static final String SERVICE_NAMES = "serviceNames";
     private static final List<String> serviceNames = new ArrayList<String>();
 
     static {
-        ResourceBundle rb = ResourceBundle.getBundle(PROPERTY_FILENAME);
-        String names = rb.getString(SERVICE_NAMES);
+        ResourceBundle rb = ResourceBundle.getBundle(
+            SetupConstants.PROPERTY_FILENAME);
+        String names = rb.getString(SetupConstants.SERVICE_NAMES);
         StringTokenizer st = new StringTokenizer(names);
         while (st.hasMoreTokens()) {
             serviceNames.add(st.nextToken());
@@ -121,7 +118,9 @@ public class RegisterServices {
         return strXML;
     }
 
-    private static final String IDREPO_SUB_CONFIG_MARKER = "<SubConfiguration name=\"@IDREPO_DATABASE@\" id=\"@IDREPO_DATABASE@\" />";
+    private static final String IDREPO_SUB_CONFIG_MARKER = 
+        "<SubConfiguration name=\"@IDREPO_DATABASE@\" id=\"@IDREPO_DATABASE@\" />";
 
-    private static final String IDREPO_SUB_CONFIG = "<SubConfiguration name=\"files\" id=\"files\"><AttributeValuePair><Attribute name=\"sunIdRepoClass\" /><Value>com.sun.identity.idm.plugins.files.FilesRepo</Value></AttributeValuePair><AttributeValuePair><Attribute name=\"sunFilesIdRepoDirectory\" /><Value>@BASE_DIR@/@SERVER_URI@/idRepo</Value></AttributeValuePair></SubConfiguration>";
+    private static final String IDREPO_SUB_CONFIG = 
+        "<SubConfiguration name=\"files\" id=\"files\"><AttributeValuePair><Attribute name=\"sunIdRepoClass\" /><Value>com.sun.identity.idm.plugins.files.FilesRepo</Value></AttributeValuePair><AttributeValuePair><Attribute name=\"sunFilesIdRepoDirectory\" /><Value>@BASE_DIR@/@SERVER_URI@/idRepo</Value></AttributeValuePair></SubConfiguration>";
 }
