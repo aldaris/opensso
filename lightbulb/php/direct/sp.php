@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: sp.php,v 1.1 2006-10-19 22:04:57 superpat7 Exp $
+ * $Id: sp.php,v 1.2 2006-11-01 21:16:16 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,9 +69,9 @@
                 {
                     // Authenticate user and set mapping
                     $target = urlencode("mapName.php?idp=" 
-                    . $claims["NameQualifier"] . "&sp=" 
-                    . $claims["SPNameQualifier"] . "&nameId=" 
-                    . urlencode( $claims["NameID"] ) 
+                    . $nameId["NameQualifier"] . "&sp=" 
+                    . $nameId["SPNameQualifier"] . "&nameId=" 
+                    . urlencode( $nameId["NameID"] ) 
                     . "&goto=" . $RelayStateURL);
                     header("Location: prompt.php?showIDPLogin=false&goto=" . $target);
 
