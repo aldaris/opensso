@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:17:13 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-01 00:35:55 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,7 +45,7 @@
         </fileset>
     </path>
 
-    <target name="all">
+    <target name="all" depends="configure">
         <delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
         <delete dir="${logs.dir}" />
@@ -66,6 +66,25 @@
         </java>
 
         <antcall target="report" />
+    </target>
+
+    <target name="configure">
+        <exec executable="${java.home}/../bin/keytool">
+            <arg line="--genkey -keyalg rsa -alias test -dname &quot;cn=sun-unix,ou=SUN Java System Access Manager,o=Sun, c=US&quot; -keypass 11111111 -keystore keystore.jks -storepass 11111111" />
+        </exec>
+        <echo file=".storepass">11111111</echo>
+        <echo file=".keypass">11111111</echo>
+        <filter token="BASE_DIR" value="${basedir}" />
+        <copy todir="." filtering="true">
+            <fileset dir="classes">
+                <include name="FederationConfig.properties" />
+            </fileset>
+        </copy>
+        <move file="FederationConfig.properties"
+            tofile="classes/FederationConfig.properties" />
+        <replaceregexp file="classes/FederationConfig.properties"
+            match="(com\.sun\.identity\.common\.serverMode=).*"
+            replace="\1false" byline="true"/>
     </target>
 
     <target name="report">

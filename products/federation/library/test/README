@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.1 2006-10-30 23:17:01 qcheng Exp $
+   $Id: README,v 1.2 2006-11-01 00:35:55 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,23 +32,3 @@ Steps:
      - type "ant" to run all test suites; or to selectively run individually
        test suite, invoke the specific target in the ant build XML.
 
-Specific steps to run SAML 1.x autotest: 
- 1.Setup keystore 
-   Run "keytool -genkey -keyalg rsa -alias test -dname "cn=sun-unix,ou=SUN Java System Access Manager,o=Sun, c=US" -keypass 11111111 -keystore keystore.jks -storepass 11111111"
- 2.Create a new file named .storepass and put key store password to this file.
-   For this particular example, we put "11111111" to file .storepass.
- 3.Create a new file named .keypass and put key password to this file.    
-   For this particular example, we put "11111111" to file .keypass. 
- 4.Configure the following attributes in 
-   <install dir>/classes/FederationConfig.properties,
-   make sure they point to the correct location of your keystore, keypass
-   file, key store password file, and correct default cert alias. 
-   For example: 
-   com.sun.identity.saml.xmlsig.keystore=/opensso/keystore.jks
-   com.sun.identity.saml.xmlsig.storepass=/opensso/.storepass
-   com.sun.identity.saml.xmlsig.keypass=/opensso/.keypass
-   com.sun.identity.saml.xmlsig.certalias=test   
- 5.Change com.sun.identity.common.serverMode=false in 
-    <install dir>/classes/FederationConfig.properties 
- 6.Run the test
-     - type "ant" to run all test suites; 
