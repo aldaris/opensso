@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.1 2006-10-30 23:18:09 qcheng Exp $
+ * $Id: FederationPlugin.java,v 1.2 2006-11-01 05:12:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.saml.common.SAMLSiteID;
 import com.sun.identity.shared.configuration.ConfigurationFileLocator;
 import com.sun.identity.setup.ConfiguratorPlugin;
 import com.sun.identity.setup.ServicesDefaultValues;
+import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -51,6 +52,9 @@ import javax.servlet.ServletContext;
  * Does open federation post configuration task.
  */
 public class FederationPlugin implements ConfiguratorPlugin {
+
+    private static final String ATTR_KEY_SAML_SITEID = "SAML_SITEID";
+
     /**
      * Re-initialize configuration file.
      *
@@ -108,17 +112,21 @@ public class FederationPlugin implements ConfiguratorPlugin {
                 (Set) values.get("iplanet-am-saml-siteid-issuername-list");
             if (siteIDs != null && !siteIDs.isEmpty()) {
                 String siteID = (String) siteIDs.iterator().next();
-                int idPos = siteID.indexOf("=SAML_SITEID|");
+                int idPos = siteID.indexOf("=" + ATTR_KEY_SAML_SITEID + "|");
                 if (idPos != -1) {
                     Map defaults = ServicesDefaultValues.getDefaultValues();
-                    String protocol = (String)defaults.get("SERVER_PROTO");
-                    String hostname = (String)defaults.get("SERVER_HOST");
-                    String port = (String)defaults.get("SERVER_PORT");
+                    String protocol = (String)defaults.get(
+                        SetupConstants.CONFIG_VAR_SERVER_PROTO);
+                    String hostname = (String)defaults.get(
+                        SetupConstants.CONFIG_VAR_SERVER_HOST);
+                    String port = (String)defaults.get(
+                        SetupConstants.CONFIG_VAR_SERVER_PORT);
                     String encoded = SAMLSiteID.generateSourceID(
                         protocol + "://" + hostname + ":" + port); 
                     siteIDs.remove(siteID);
                     siteID = siteID.substring(0, idPos + 1) + encoded
-                        + siteID.substring(idPos + 12);
+                        + siteID.substring(idPos +
+                            ATTR_KEY_SAML_SITEID.length() +1);
                     siteIDs.add(siteID);
                     ss.setAttributeDefaults(values);
                 }
@@ -154,8 +162,10 @@ public class FederationPlugin implements ConfiguratorPlugin {
     private void setXSLFiles(ServletContext servletCtx) {
         try {
             Map values = ServicesDefaultValues.getDefaultValues();
-            String baseDir = (String)values.get("BASE_DIR");
-            String deployURI = (String)values.get("SERVER_URI");
+            String baseDir = (String)values.get(
+                SetupConstants.CONFIG_VAR_BASE_DIR);
+            String deployURI = (String)values.get(
+                SetupConstants.CONFIG_VAR_SERVER_URI);
             String dir = baseDir + "/" + deployURI + "/lib";
             File file = new File(dir);
             file.mkdirs();

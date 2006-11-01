@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.1 2006-10-31 00:24:29 veiming Exp $
+ * $Id: SetupConstants.java,v 1.2 2006-11-01 05:12:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,9 +85,29 @@ public interface SetupConstants {
     String CONFIG_VAR_CONSOLE_URI  = "CONSOLE_URI";
     
     /**
+     * Configuration Variable for server protocol.
+     */
+    String CONFIG_VAR_SERVER_PROTO = "SERVER_PROTO";
+    
+    /**
+     * Configuration Variable for server host.
+     */
+    String CONFIG_VAR_SERVER_HOST = "SERVER_HOST";
+    
+    /**
+     * Configuration Variable for server port.
+     */
+    String CONFIG_VAR_SERVER_PORT = "SERVER_PORT";
+    
+    /**
      * Configuration Variable for server deployment URI.
      */
     String CONFIG_VAR_SERVER_URI  = "SERVER_URI";
+    
+    /**
+     * Configuration Variable for installation base directory.
+     */
+    String CONFIG_VAR_BASE_DIR  = "BASE_DIR";
     
     /**
      * Configuration Variable for root suffix.
