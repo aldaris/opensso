@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2006-11-01 19:57:02 qcheng Exp $
+ * $Id: package-info.java,v 1.1 2006-11-01 19:57:03 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 /**
- * Defines Federation Account Management API.
+ * Defines common classes used by federation protocol messages.
  *
+ * @supported.api
  */
-package com.sun.identity.federation.accountmgmt;
+package com.sun.identity.federation.message.common;

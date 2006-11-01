@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountManager.java,v 1.1 2006-10-30 23:14:01 qcheng Exp $
+ * $Id: FSAccountManager.java,v 1.2 2006-11-01 19:57:02 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,6 @@ import java.util.logging.Level;
 /**
  * This class is used for storing & retrieving user account's federation
  * specific information.
- * @supported.all.api
  */
 public class FSAccountManager {
     

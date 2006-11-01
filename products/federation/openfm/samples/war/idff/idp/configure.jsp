@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.1 2006-10-30 23:17:52 qcheng Exp $
+   $Id: configure.jsp,v 1.2 2006-11-01 19:57:05 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -57,6 +57,9 @@
 
 <%
     boolean configured = false;
+    String hostedIDPEntityID = null;
+    String remoteSPEntityID = null;
+    String SAMPLE_COT_NAME = "sampleidffcot";
     if ((localAuthUrl == null) && (errorMsg == null)) {
         String proto = request.getParameter("proto");
         String host = request.getParameter("host");
@@ -129,7 +132,7 @@
                     EntityDescriptorElement descriptor =
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(metaXML);
-                    String entityID = descriptor.getProviderID();
+                    hostedIDPEntityID = entityName;
                     metaManager.createEntityDescriptor(descriptor);
 
                     EntityConfigElement extendConfigElm = (EntityConfigElement)
@@ -170,7 +173,7 @@
                     EntityDescriptorElement spDescriptor =
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(spMetaXML);
-                    String spEntityID = spDescriptor.getProviderID();
+                    remoteSPEntityID = spDescriptor.getProviderID();
                     metaManager.createEntityDescriptor(spDescriptor);
                     // [END] Swap protocol, host, port and deployment URI
                     //       to form IDP metadata XML and import it
@@ -178,12 +181,12 @@
 
                     // [START] Create Circle of Trust
                     Set<String> providers = new HashSet<String>();
-                    providers.add(entityName);
-                    providers.add(spEntityID);
+                    providers.add(hostedIDPEntityID);
+                    providers.add(remoteSPEntityID);
                     CircleOfTrustManager cotManager = 
                         new CircleOfTrustManager();
                     cotManager.createCircleOfTrust("/",
-                        new CircleOfTrustDescriptor("sampleidffcot",
+                        new CircleOfTrustDescriptor(SAMPLE_COT_NAME,
                             COTConstants.IDFF, COTConstants.ACTIVE, "", 
                             null, null, providers));
                     // [END] Create Circle of Trust
@@ -275,6 +278,12 @@
 <%
 } else {
 %>
+<p>&nbsp;</p>
+Hosted Identity Provider <%= hostedIDPEntityID %> is created.
+<p>&nbsp;</p>
+Remote Service Provider <%= remoteSPEntityID %> is created.
+<p>&nbsp;</p>
+Circle of Trust <%= SAMPLE_COT_NAME %> is created.
 <p>&nbsp;</p>
 Identity Provider is configured. Click <a href="../index.html">here</a> to return
 <%

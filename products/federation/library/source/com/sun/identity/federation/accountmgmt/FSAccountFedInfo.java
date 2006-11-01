@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountFedInfo.java,v 1.1 2006-10-30 23:14:01 qcheng Exp $
+ * $Id: FSAccountFedInfo.java,v 1.2 2006-11-01 19:57:01 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import com.sun.identity.saml.assertion.NameIdentifier;
 
 /**
  * This class handles the information of federated user account.
- * @supported.all.api
  */
 public class FSAccountFedInfo {
 

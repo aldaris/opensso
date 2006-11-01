@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.1 2006-10-30 23:15:52 qcheng Exp $
+ * $Id: package-info.java,v 1.2 2006-11-01 19:57:04 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 /**
  * SAML 1.x servlet endpoints.
  *
- * @supported.api
  */
 package com.sun.identity.saml.servlet;
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountMgmtException.java,v 1.1 2006-10-30 23:14:01 qcheng Exp $
+ * $Id: FSAccountMgmtException.java,v 1.2 2006-11-01 19:57:02 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ import com.sun.identity.federation.common.FSException;
 
 /**
  * This exception class handles Account Mangement errors.
- * @supported.all.api
  */
 public class FSAccountMgmtException extends FSException {
     /**

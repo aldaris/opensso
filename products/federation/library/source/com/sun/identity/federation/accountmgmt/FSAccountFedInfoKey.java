@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountFedInfoKey.java,v 1.1 2006-10-30 23:14:01 qcheng Exp $
+ * $Id: FSAccountFedInfoKey.java,v 1.2 2006-11-01 19:57:01 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import com.sun.identity.federation.common.FSUtils;
 
 /**
  * This class handles the user account's federation information key.
- * @supported.all.api
  */
 public class FSAccountFedInfoKey {
 
