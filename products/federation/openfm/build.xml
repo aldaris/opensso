@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:17:38 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-01 22:09:42 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -147,6 +147,13 @@
         <ant antfile="test/build.xml" inheritRefs="true" target="clean"/>
     </target>
   
+    <target name="extlib-clean">
+        <delete file="${openfm.extlib.dir}/amclientsdk.jar"/>
+        <delete file="${openfm.extlib.dir}/opensso.jar"/>
+        <delete file="${openfm.extlib.dir}/opensso-test.jar"/>
+        <delete file="${openfm.extlib.dir}/opensso.war"/>
+    </target>
+  
     <target name="samples-clean">
         <ant antfile="${openfm.samples.dir}/build.xml" inheritRefs="true"
             target="clean"/>
@@ -184,6 +191,7 @@
         <echo message=" doc                 : creates javadocs"/>
         <echo message=" clean               : deletes the generated files"/>
         <echo message=" unittest-clean      : deletes the generated unit test resources"/>
+        <echo message=" extlib-clean        : deletes the shared and amserver libraries under extlib "/>
         <echo message=" samples-clean       : deletes the generated server samples resources"/>
         <echo message=" clientsamples-clean : deletes the generated client samples resources"/>
         <echo message=" clientsdk-clean     : deletes the generated client SDK jar file"/>

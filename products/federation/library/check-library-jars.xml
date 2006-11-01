@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: check-library-jars.xml,v 1.1 2006-10-30 23:13:35 qcheng Exp $
+   $Id: check-library-jars.xml,v 1.2 2006-11-01 22:09:42 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -75,6 +75,11 @@
     <target name="build-opensso-sharedlib" 
         unless="opensso.sharedlib.jar.present">
         <echo message="build opensso shared library" />
+        <fail message="*** missing  ${extlib.dir}/j2ee.jar ***">
+            <condition>
+                <not><isset property="j2ee.jar.present" /></not>
+            </condition>
+        </fail>
         <fail message="*** missing opensso shared library workspace ***">
             <condition>
                 <not><isset property="opensso.sharedlib.ws.present" /></not>

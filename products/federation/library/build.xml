@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:13:35 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-01 22:09:42 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -253,6 +253,10 @@
         <ant antfile="test/build.xml" inheritRefs="true" target="clean"/>
     </target>
 
+    <target name="extlib-clean">
+        <delete file="${library.extlib.dir}/opensso-sharedlib.jar"/>
+    </target>
+
     <target name="cvsdiff">
         <mkdir dir="${library.built.diff.dir}" />
         <cvs command="-q diff -cw" output="${library.built.diff.dir}/.diffs"/>
@@ -271,13 +275,14 @@
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
-        <echo message=" build      : compiles the sources"/>
-        <echo message=" unittest   : generates unit test zip file"/>
-        <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
-        <echo message=" doc        : creates javadocs"/>
-        <echo message=" clean      : deletes the generated files"/>
+        <echo message=" build          : compiles the sources"/>
+        <echo message=" unittest       : generates unit test zip file"/>
+        <echo message=" publicdoc      : creates javadocs for publicly supported API"/>
+        <echo message=" doc            : creates javadocs"/>
+        <echo message=" clean          : deletes the generated files"/>
         <echo message=" unittest-clean : deletes the generated unit test resources"/>
-        <echo message=" usage      : displays this usage message"/>
+        <echo message=" extlib-clean   : deletes shared library under extlib"/>
+        <echo message=" usage          : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
         <echo message=" "/>
