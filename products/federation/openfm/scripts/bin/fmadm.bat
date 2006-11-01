@@ -1,3 +1,5 @@
+@echo off
+
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -17,10 +19,17 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fmadm.bat,v 1.1 2006-10-30 23:17:55 qcheng Exp $
+: $Id: fmadm.bat,v 1.2 2006-11-01 07:04:29 hengming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
-java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar;lib/opensso.jar:lib/opensso-sharedlib.jar -D"definitionFiles=com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager "$@"
+setlocal
+:WHILE
+if x%1==x goto WEND
+set PARAMS=%PARAMS% %1
+shift
+goto WHILE
+:WEND
 
-
+java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar;lib/opensso.jar;lib/opensso-sharedlib.jar -D"definitionFiles=com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
+endlocal

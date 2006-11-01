@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.1 2006-10-30 23:17:43 qcheng Exp $
+   $Id: index.jsp,v 1.2 2006-11-01 07:03:46 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -96,8 +96,10 @@ public void jspInit() {
             } else {
                 String remoteProvider = 
                        offering.getServiceInstance().getProviderID(); 
-		String fnSuffix = remoteProvider.replace('/','_');
-		String fileName = "/tmp/RO_" + fnSuffix;
+		String fnSuffix = remoteProvider.replace('/','_')
+                    .replace(':','_');
+		String fileName = System.getProperty("java.io.tmpdir") +
+                    "RO_" + fnSuffix;
 		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
                 pw.print(offering.toString());
                 pw.close();

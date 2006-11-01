@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.4 2006-10-31 23:25:30 hengming Exp $
+   $Id: index.html,v 1.5 2006-11-01 07:03:46 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -103,7 +103,7 @@
    AMConfig.properties and FederationConfig.properties from machine B
    configuration directory to this configuration directory.
 <br>
-6. Modify FederationConfig.properties to change property
+6. Modify AMConfig.properties to change property
 com.iplanet.am.serverMode to false
 <br>
 7. Click <a class="named" href="configure.jsp">here</a> to configure.
@@ -124,10 +124,10 @@ After you have setup your machines. Visit this
 <h3 name="enc">Enable interaction for IDPP query and modify</h3>
 On IDP machine turn on IDPP policy evaluation:<br>
 1. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a sunIdentityServerPPisQueryPolicyEvalRequired=true<br>
+fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"<br>
 
 2. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a sunIdentityServerPPisModifyPolicyEvalRequired=true<br>
+fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"<br>
 
 <br>
 Create policy for IDPP query and modify:<br>
@@ -176,9 +176,9 @@ Set up keystore:<br>
 Set up IDP machine:<br>
 1. Download or build fmadm.zip and install.<br>
 2. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w &lt;amadmin password&gt; -t Global -a sunIdentityServerDiscoProviderID=&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;<br>
+fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerDiscoProviderID=&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;"<br>
 3. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w &lt;amadmin password&gt; -t Global -a sunIdentityServerBootstrappingEncryptNIinSessionContext=true<br>
+fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"<br>
 4. Run<br>
 fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w &lt;amadmin password&gt; -t Global -a sunIdentityServerBootstrappingDiscoEntry<br>
 

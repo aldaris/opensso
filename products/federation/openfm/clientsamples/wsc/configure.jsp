@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.1 2006-10-30 23:17:41 qcheng Exp $
+   $Id: configure.jsp,v 1.2 2006-11-01 07:03:45 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -33,8 +33,7 @@
 
 <%@ page import="
 java.io.*,
-java.util.HashSet,
-java.util.Set"
+java.util.Properties"
 %>
 
 <%
@@ -66,23 +65,25 @@ java.util.Set"
                 errorMsg = configDir + " is not a valid configuration " +
                     "directory.";
             } else {
-                PrintWriter pw = null;
+                Properties props = new Properties();
+                props.setProperty("spProviderID", spProviderID);
+                props.setProperty("idpProt", idpProt);
+                props.setProperty("idpHost", idpHost);
+                props.setProperty("idpPort", idpPort);
+                props.setProperty("idpDeploymenturi", idpDeploymenturi);
+                props.setProperty("idpUserDN", idpUserDN);
+                props.setProperty("configDir", configDir);
+                FileOutputStream fo = null;
                 try {
-                    pw = new PrintWriter(new FileWriter(bootstrapFile));
-                    pw.println("spProviderID=" + spProviderID);
-                    pw.println("idpProt=" + idpProt);
-                    pw.println("idpHost=" + idpHost);
-                    pw.println("idpPort=" + idpPort);
-                    pw.println("idpDeploymenturi=" + idpDeploymenturi);
-                    pw.println("idpUserDN=" + idpUserDN);
-                    pw.println("configDir=" + configDir);
+                    fo = new FileOutputStream(bootstrapFile);
+                    props.store(fo, null);
                     configured = true;
                 }catch (IOException ioex) {
                     errorMsg = "Unable to create WSC sample property " +
                         "file. " + ioex.getMessage();
                 } finally {
-                    if (pw != null) {
-                        pw.close();
+                    if (fo != null) {
+                        fo.close();
                     }
                 }
             }
