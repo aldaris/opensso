@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:17:44 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-02 01:05:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${openfm.clientsdk.dist.dir}/fmclientsdk.jar">
+        <jar destfile="${fm.dist.dir}/fmclientsdk.jar">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -99,25 +99,25 @@
             </manifest>
         </jar>
 
-        <jar destfile="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar"
+        <jar destfile="${fm.dist.dir}/fmclientsdkcopy.jar"
              filesetmanifest="merge">
                 <zipfileset src="${library.extlib.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
-                <zipfileset src="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"/>
+                <zipfileset src="${fm.dist.dir}/fmclientsdk.jar"/>
         </jar>
 
-        <copy file="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar" 
-            tofile="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"/>
-        <delete file="${openfm.clientsdk.dist.dir}/fmclientsdkcopy.jar"/>
-        <checksum file="${openfm.clientsdk.dist.dir}/fmclientsdk.jar"
+        <copy file="${fm.dist.dir}/fmclientsdkcopy.jar" 
+            tofile="${fm.dist.dir}/fmclientsdk.jar"/>
+        <delete file="${fm.dist.dir}/fmclientsdkcopy.jar"/>
+        <checksum file="${fm.dist.dir}/fmclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${openfm.clientsdk.dist.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${openfm.clientsdk.dist.dir}"/>
+        <delete dir="${fm.dist.dir}"/>
     </target>
    
 </project>

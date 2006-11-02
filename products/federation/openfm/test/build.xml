@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:18:09 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-02 01:05:06 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,7 +38,6 @@
 
     <property name="test.package.dir" location="${openfm.built.dir}/test/package"/>
     <property name="test.classes.dir" location="${openfm.built.dir}/test/classes"/>
-    <property name="test.dist.dir" location="${openfm.built.dir}/test/dist"/>
 
 
     <target name="build" depends="preparebuild">
@@ -53,14 +52,9 @@
 
     <target name="all" depends="build">
         <delete dir="${test.package.dir}" />
-        <mkdir dir="${test.package.dir}/mock" />
         <mkdir dir="${test.package.dir}/classes" />
         <mkdir dir="${test.package.dir}test/classes" />
         <mkdir dir="${test.package.dir}/lib" />
-
-        <copy todir="${test.package.dir}/mock">
-            <fileset dir="${openfm.unittest.dir}/mock" />
-        </copy>
 
         <copy todir="${test.package.dir}/classes">
             <fileset dir="${openfm.classes.dir}" />
@@ -97,19 +91,20 @@
             <fileset dir="${openfm.unittest.dir}/www/css" />
         </copy>
 
-        <zip destfile="${test.dist.dir}/openfm-server-test.zip"
+        <zip destfile="${fm.dist.dir}/openfm-server-test.zip"
             basedir="${test.package.dir}" />
+        <checksum file="${fm.dist.dir}/openfm-server-test.zip" algorithm="SHA" fileext=".sha" /> 
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${test.package.dir}"/>
-        <mkdir dir="${test.dist.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${test.classes.dir}"/>
         <delete dir="${test.package.dir}"/>
-        <delete dir="${test.dist.dir}"/>
+        <delete dir="${fm.dist.dir}"/>
     </target>
 </project>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2006-10-27 17:18:39 veiming Exp $
+   $Id: build.xml,v 1.8 2006-11-02 01:05:02 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -116,6 +116,7 @@
 
         <zip destfile="${amserver.dist.dir}/opensso-server-test.zip"
             basedir="${test.package.dir}" />
+        <checksum file="${amserver.dist.dir}/opensso-server-test.zip" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">

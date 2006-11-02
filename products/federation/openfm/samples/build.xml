@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:17:50 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-02 01:05:06 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,13 +39,12 @@
     <property name="samples.www.dir" location="${openfm.samples.dir}/www"/>
     <property name="samples.packages.dir" location="${openfm.built.dir}/samples/package"/>
     <property name="samples.packages.temp.dir" location="${openfm.built.dir}/samples/.package"/>
-    <property name="samples.dist.dir" location="${openfm.built.dir}/samples/dist"/>
     <property name="samples.idff.dir" location="${openfm.samples.dir}/idff"/>
 
 
     <target name="all" depends="preparebuild">
         <delete dir="${samples.packages.dir}" />
-        <unjar src="${openfm.war.dist.dir}/openfm.war" dest="${samples.packages.dir}" />
+        <unjar src="${fm.dist.dir}/openfm.war" dest="${samples.packages.dir}" />
         <mkdir dir="${samples.packages.dir}/samples" />
         <copy todir="${samples.packages.dir}/samples">
             <fileset dir="${openfm.samples.dir}/war"
@@ -54,21 +53,21 @@
         <delete dir="META-INF" />
         <mkdir dir="${samples.packages.temp.dir}" />
         <move file="${samples.packages.dir}/WEB-INF/web.xml" tofile="${samples.packages.temp.dir}/web.xml" />
-        <war destfile="${samples.dist.dir}/openfm-samples.war" webxml="${samples.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/openfm-samples.war" webxml="${samples.packages.temp.dir}/web.xml">
             <zipfileset dir="${samples.packages.dir}" />
         </war>
         <move file="${samples.packages.temp.dir}/web.xml" tofile="${samples.packages.dir}/WEB-INF/web.xml" />
         <delete dir="${samples.packages.temp.dir}" />
-        <checksum file="${samples.dist.dir}/openfm-samples.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/openfm-samples.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${samples.packages.dir}"/>
-        <mkdir dir="${samples.dist.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
     </target>
                                                                                        
     <target name="clean">
-        <delete dir="${samples.dist.dir}"/>
+        <delete dir="${fm.dist.dir}"/>
         <delete dir="${samples.packages.dir}"/>
     </target>
 

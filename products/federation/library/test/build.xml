@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-10-30 23:17:01 qcheng Exp $
+   $Id: build.xml,v 1.2 2006-11-02 01:05:03 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,7 +38,6 @@
 
     <property name="test.package.dir" location="${library.built.dir}/test/package"/>
     <property name="test.classes.dir" location="${library.built.dir}/test/classes"/>
-    <property name="test.dist.dir" location="${library.built.dir}/test/dist"/>
 
     <target name="build" depends="preparebuild">
         <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
@@ -103,22 +102,22 @@ jaxb-libs.jar, jaxb-xjc.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2
             <fileset dir="${library.unittest.dir}/www/css" />
         </copy>
 
-        <zip destfile="${test.dist.dir}/openfed-library-test.zip"
+        <zip destfile="${fedlibrary.dist.dir}/openfed-library-test.zip"
             basedir="${test.package.dir}" /> 
 
-        <checksum file="${test.dist.dir}/openfed-library-test.zip"
+        <checksum file="${fedlibrary.dist.dir}/openfed-library-test.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${test.package.dir}"/>
-        <mkdir dir="${test.dist.dir}"/>
+        <mkdir dir="${fedlibrary.dist.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${test.classes.dir}"/>
         <delete dir="${test.package.dir}"/>
-        <delete dir="${test.dist.dir}"/>
+        <delete dir="${fedlibrary.dist.dir}"/>
     </target>
 </project>

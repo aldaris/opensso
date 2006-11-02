@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-11-01 22:09:42 qcheng Exp $
+   $Id: build.xml,v 1.3 2006-11-02 01:05:04 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,6 +28,7 @@
     <description>Open Federation</description>
 
     <import file="../../products.xml" />
+    <import file="../library/library.xml" />
     <import file="openfm.xml" />
 
     <!-- user specific properties -->
@@ -79,8 +80,19 @@
 
     </target>
 
+    <target name="nightly">
+        <antcall target="war" />
+        <antcall target="unittest" />
+        <antcall target="clientsdk" />
+        <antcall target="samples" />
+        <antcall target="clientsamples" />
+        <antcall target="doc" />
+        <filter token="DATE" value="${nightly.date}" />
+        <copy file="${openfm.docs.dir}/nightly.html" tofile="${openfm.dist.dir}/index.html" filtering="true" />
+    </target>
+
     <target name="war" depends="build">
-        <ant antfile="build-war.xml" inheritRefs="true"/>
+        <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
     </target>
 
     <target name="samples" depends="war">
@@ -113,7 +125,7 @@
     </target>
 
     <target name="checklib">
-        <ant antfile="check-openfm-jars.xml" target="all" inheritRefs="true"/>
+        <ant antfile="${openfm.dir}/check-openfm-jars.xml" target="all" inheritRefs="true"/>
     </target>
 
     <target name="preparebuild" depends="checklib" >
@@ -131,7 +143,7 @@
     </target>
   
     <target name="war-clean">
-        <ant antfile="build-war.xml" inheritRefs="true" target="clean"/>
+        <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true" target="clean"/>
     </target>
 
     <target name="clientsdk-clean">
@@ -140,11 +152,11 @@
     </target>
 
     <target name="unittest" depends="build">
-        <ant antfile="test/build.xml" target="all" inheritRefs="true"/>
+        <ant antfile="${openfm.unittest.dir}/build.xml" target="all" inheritRefs="true"/>
     </target>
 
     <target name="unittest-clean">
-        <ant antfile="test/build.xml" inheritRefs="true" target="clean"/>
+        <ant antfile="${openfm.unittest.dir}/build.xml" inheritRefs="true" target="clean"/>
     </target>
   
     <target name="extlib-clean">
@@ -164,25 +176,12 @@
             target="clean"/>
     </target>
 
-    <target name="cvsdiff">
-        <mkdir dir="${openfm.built.diff.dir}" />
-        <cvs command="-q diff -cw" output="${openfm.built.diff.dir}/.diffs"/>
-        <java classname="com.sun.identity.tools.diffs.Diffs">
-            <classpath refid="build.class.path"/>
-            <arg value="${openfm.built.diff.dir}/.diffs"/>
-        </java>
-        <cvs command="-q stat" output="${openfm.built.diff.dir}/.stat"/>
-        <java classname="com.sun.identity.tools.diffs.Stat">
-            <classpath refid="build.class.path"/>
-            <arg value="${openfm.built.diff.dir}/.stat"/>
-        </java>
-    </target>
- 
     <target name="usage">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
         <echo message=" build               : compiles the sources"/>
+        <echo message=" nightly             : generates nightly build binaries"/>
         <echo message=" unittest            : generates unit test zip file"/>
         <echo message=" samples             : generates server samples war file"/>
         <echo message=" clientsamples       : generates client samples war file"/>

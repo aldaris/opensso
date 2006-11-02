@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.1 2006-10-30 23:17:38 qcheng Exp $
+   $Id: build-war.xml,v 1.2 2006-11-02 01:05:04 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -70,8 +70,8 @@
             tofile="${war.cli.package.dir}/fmadm.bat" />
         <copy file="${openfm.res.dir}/FederationManagerCLI.properties"
             tofile="${war.cli.package.dir}/classes/FederationManagerCLI.properties" />
-        <zip destfile="${openfm.war.dist.dir}/fmadm.zip" basedir="${war.cli.package.dir}" />
-        <checksum file="${openfm.war.dist.dir}/fmadm.zip" algorithm="SHA" fileext=".sha" />
+        <zip destfile="${fm.dist.dir}/fmadm.zip" basedir="${war.cli.package.dir}" />
+        <checksum file="${fm.dist.dir}/fmadm.zip" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="war" depends="preparebuild">
@@ -228,24 +228,24 @@
 
         <mkdir dir="${war.packageweb.dir}" />
         <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
-        <war destfile="${openfm.war.dist.dir}/openfm.war" webxml="${war.packageweb.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/openfm.war" webxml="${war.packageweb.dir}/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
         <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />
         <delete dir="${war.packageweb.dir}" />
-        <checksum file="${openfm.war.dist.dir}/openfm.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/openfm.war" algorithm="SHA" fileext=".sha" />
 
     </target>
 
     <target name="preparebuild">
-        <mkdir dir="${openfm.war.dist.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
         <mkdir dir="${war.cli.package.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${war.cli.package.dir}" />
         <delete dir="${war.package.dir}" />
-        <delete dir="${openfm.war.dist.dir}" />
+        <delete dir="${fm.dist.dir}" />
     </target>
 
 </project>

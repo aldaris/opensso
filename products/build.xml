@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2006-10-27 18:55:08 veiming Exp $
+   $Id: build.xml,v 1.6 2006-11-02 01:05:01 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,6 +28,8 @@
     <description>Open Web Single Sign-On</description>
     <import file="products.xml" />
     <import file="amserver/amserver.xml" />
+    <import file="federation/library/library.xml" />
+    <import file="federation/openfm/openfm.xml" />
     <import file="installtools/installtools.xml" />
     <import file="j2eeagents/j2eeagents.xml" />
 
@@ -38,6 +40,14 @@
 
     <target name="nightly">
         <mkdir dir="${prd.nightly.dist.dir}" />
+        <antcall target="amserver-nightly" />
+        <antcall target="fedlibrary-nightly" />
+        <antcall target="openfm-nightly" />
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
+        <antcall target="j2ee-agents-nightly" />
+    </target>
+
+    <target name="amserver-nightly">
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="nightly" />
         <mkdir dir="${prd.nightly.dist.dir}/amserver/${nightly.date}" />
@@ -45,9 +55,57 @@
             <fileset dir="${amserver.dist.dir}"/>
         </copy>
         <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
+    </target>
 
-        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
+    <target name="fedlibrary-nightly">
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
+            todir="${library.extlib.dir}"  />
 
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="nightly" />
+        <mkdir dir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}" />
+        <copy todir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}">
+            <fileset dir="${fedlibrary.dist.dir}"/>
+        </copy>
+        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+            <classpath>
+                <pathelement location="${amserver.classes.dir}" />
+            </classpath>
+            <arg value="${prd.nightly.dist.dir}/fedlibrary" />
+            <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/fedlibrary/index.html" />
+        </java>
+        <move file="${prd.nightly.dist.dir}/fedlibrary/top.index.html" tofile="${prd.nightly.dist.dir}/fedlibrary/index.html" />
+    </target>
+
+    <target name="openfm-nightly">
+        <copy file="${amserver.dist.dir}/opensso.jar"
+            todir="${openfm.extlib.dir}"  />
+        <copy file="${amserver.dist.dir}/amclientsdk.jar"
+            todir="${openfm.extlib.dir}"  />
+        <copy file="${amserver.dist.dir}/opensso-test.jar"
+            todir="${openfm.extlib.dir}"  />
+        <copy file="${amserver.dist.dir}/opensso.war"
+            todir="${openfm.extlib.dir}"  />
+            
+        <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
+            target="nightly" />
+        <mkdir dir="${prd.nightly.dist.dir}/openfm/${nightly.date}" />
+        <copy todir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
+            <fileset dir="${fm.dist.dir}"/>
+        </copy>
+        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+            <classpath>
+                <pathelement location="${amserver.classes.dir}" />
+            </classpath>
+            <arg value="${prd.nightly.dist.dir}/openfm" />
+            <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/openfm/index.html" />
+        </java>
+        <move file="${prd.nightly.dist.dir}/openfm/top.index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
+    </target>
+
+    <target name="j2ee-agents-nightly">
         <mkdir dir="${prd.nightly.dist.dir}/j2eeagents/${nightly.date}" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="prenightly" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
@@ -67,6 +125,14 @@
         <delete dir="${prd.nightly.dir}" />
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="extlib-clean" />
+        <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
+            target="extlib-clean" />
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true"
