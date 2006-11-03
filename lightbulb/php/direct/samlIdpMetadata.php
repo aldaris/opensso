@@ -18,12 +18,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: samlIdpMetadata.php,v 1.1 2006-10-19 22:01:47 superpat7 Exp $
+ * $Id: samlIdpMetadata.php,v 1.2 2006-11-03 00:49:40 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
     $idpMetadata = array( "http://amfmdemo.example.com" => 
-      array( "idpTargetUrl"=>"http://amfmdemo.example.com:80/amserver/SSORedirect/metaAlias/idp",
+      array( "SingleSignOnUrl"=>"http://amfmdemo.example.com:80/amserver/SSORedirect/metaAlias/idp",
+             "SingleLogOutUrl"=>"http://amfmdemo.example.com:80/amserver/IDPSloRedirect/metaAlias/idp",
              "certFingerprint"=>"B0:F9:F2:BF:A0:4C:43:B0:E7:00:9A:7A:10:4E:E0:59:72:B0:BE:20" ) );
 ?>

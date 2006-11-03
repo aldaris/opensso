@@ -18,16 +18,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: logout.php,v 1.1 2006-10-19 22:05:47 superpat7 Exp $
+ * $Id: logout.php,v 1.2 2006-11-03 00:49:39 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
     require 'localUserManagement.php';
 
-    clearUserId();
+    if ( federatedLogin() )
+    {
+        header("Location: http://patlinux.red.iplanet.com/lightbulb/spSingleLogoutInit.php?binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=http://patlinux.red.iplanet.com/lightbulb/home.php");
+    }
+    else
+    {
+        clearUserId();
 
-    header("Location: home.php");
-
-    exit;
+        header("Location: home.php");
+    }
+    exit();
 ?>

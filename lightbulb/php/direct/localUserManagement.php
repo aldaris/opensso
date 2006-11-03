@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: localUserManagement.php,v 1.1 2006-10-19 22:03:37 superpat7 Exp $
+ * $Id: localUserManagement.php,v 1.2 2006-11-03 00:49:39 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,30 @@ function setUserId($userID)
 
 function getUserId()
 {
-    return $_SESSION["UserID"];
+    return $_SESSION['UserID'];
 }
 
 function clearUserId()
 {
-    unset($_SESSION["UserID"]);
+    unset($_SESSION['UserID']);
+    unset($_SESSION['SamlResponse']);
+}
+
+function setResponse($token)
+{
+    $_SESSION['SamlResponse'] = $token->saveXML();
+}
+
+function getResponse()
+{
+    $token = new DOMDocument();
+    $token->loadXML($_SESSION['SamlResponse']);
+    return $token;
+}
+
+function federatedLogin()
+{
+    return isset($_SESSION['SamlResponse']);
 }
 
 function authenticateLocalUser($userid, $password)

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: spSSOInit.php,v 1.1 2006-10-19 22:02:30 superpat7 Exp $
+ * $Id: spSSOInit.php,v 1.2 2006-11-03 00:49:40 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@
     $issuer = $spMetadata[$metaAlias]["issuer"];
     $spNameQualifier = $spMetadata[$metaAlias]["spNameQualifier"];
 
-    $idpTargetUrl = $idpMetadata[$idpEntityID]["idpTargetUrl"];
+    $idpTargetUrl = $idpMetadata[$idpEntityID]["SingleSignOnUrl"];
 
     $id = randomhex(42);
     $issueInstant = gmdate("Y-m-d\TH:i:s\Z");

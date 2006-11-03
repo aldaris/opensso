@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: saml-lib.php,v 1.1 2006-10-19 22:05:06 superpat7 Exp $
+ * $Id: saml-lib.php,v 1.2 2006-11-03 00:49:39 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,9 @@ require('samlIdpMetadata.php');
 define('SAML_ASSERT_NS', 'urn:oasis:names:tc:SAML:2.0:assertion');
 define('SAML_PROTOCOL_NS', 'urn:oasis:names:tc:SAML:2.0:protocol');
 
-function processResponse($samlResponse) {    
+define('SAMLP_STATUS_SUCCESS', 'urn:oasis:names:tc:SAML:2.0:status:Success');
+
+function processResponse($samlResponse,$validate=TRUE) {    
     try {
         $token = new DOMDocument();
         $token->loadXML(str_replace ("\r", "", $samlResponse));
@@ -37,43 +39,46 @@ function processResponse($samlResponse) {
             throw new Exception("Unable to load token");
         }
 
-        /* Validate the SAML token */
-        $objXMLSecDSig = new XMLSecurityDSig();
-        $objXMLSecDSig->idKeys[] = 'ID';
-        $objDSig = $objXMLSecDSig->locateSignature($token);
-
-        /* Must check certificate fingerprint now - validateReference removes it */        
-        if ( ! validateCertFingerprint($token) )
+        if ( $validate )
         {
-            throw new Exception("Fingerprint Validation Failed");
-        }
+            /* Validate the SAML token */
+            $objXMLSecDSig = new XMLSecurityDSig();
+            $objXMLSecDSig->idKeys[] = 'ID';
+            $objDSig = $objXMLSecDSig->locateSignature($token);
 
-        /* Canonicalize the signed info */
-        $objXMLSecDSig->canonicalizeSignedInfo();
-
-        $retVal = NULL;
-        if ($objDSig) {
-            $retVal = $objXMLSecDSig->validateReference();
-        }
-        if (! $retVal) {
-            throw new Exception("SAML Validation Failed");
-        }
-
-        $key = NULL;
-        $objKey = $objXMLSecDSig->locateKey();
-        
-        if ($objKey) {
-            if ($objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig)) {
-                /* Handle any additional key processing such as encrypted keys here */
+            /* Must check certificate fingerprint now - validateReference removes it */        
+            if ( ! validateCertFingerprint($token) )
+            {
+                throw new Exception("Fingerprint Validation Failed");
             }
-        }
-        
-        if (empty($objKey)) {
-            throw new Exception("Error loading key to handle Signature");
-        }
 
-        if (! $objXMLSecDSig->verify($objKey)) {
-            throw new Exception("Unable to validate Signature");
+            /* Canonicalize the signed info */
+            $objXMLSecDSig->canonicalizeSignedInfo();
+
+            $retVal = NULL;
+            if ($objDSig) {
+                $retVal = $objXMLSecDSig->validateReference();
+            }
+            if (! $retVal) {
+                throw new Exception("SAML Validation Failed");
+            }
+
+            $key = NULL;
+            $objKey = $objXMLSecDSig->locateKey();
+        
+            if ($objKey) {
+                if ($objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig)) {
+                    /* Handle any additional key processing such as encrypted keys here */
+                }
+            }
+        
+            if (empty($objKey)) {
+                throw new Exception("Error loading key to handle Signature");
+            }
+
+            if (! $objXMLSecDSig->verify($objKey)) {
+                throw new Exception("Unable to validate Signature");
+            }
         }
 
         return $token;
@@ -155,6 +160,50 @@ function getNameId($token) {
         }
     }
     return $nameID;
+}
+
+function getIssuer($token) {
+    if ($token instanceof DOMDocument) {
+        $xPath = new DOMXpath($token);
+        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
+        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+
+        $query = '/mysamlp:Response/mysaml:Issuer';
+        $nodelist = $xPath->query($query);
+        if ($node = $nodelist->item(0)) {
+            return $node->nodeValue;
+        }
+    }
+    return NULL;
+}
+
+function getSessionIndex($token) {
+    if ($token instanceof DOMDocument) {
+        $xPath = new DOMXpath($token);
+        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
+        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+
+        $query = '/mysamlp:Response/mysaml:Assertion/mysaml:AuthnStatement';
+        $nodelist = $xPath->query($query);
+        if ($node = $nodelist->item(0)) {
+            return $node->getAttribute('SessionIndex');
+        }
+    }
+    return NULL;
+}
+
+function getLogoutResponseStatus($token) {
+    if ($token instanceof DOMDocument) {
+        $xPath = new DOMXpath($token);
+        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+
+        $query = '/mysamlp:LogoutResponse/mysamlp:Status/mysamlp:StatusCode';
+        $nodelist = $xPath->query($query);
+        if ($node = $nodelist->item(0)) {
+            return $node->getAttribute('Value');
+        }
+    }
+    return NULL;
 }
 
 function validateCertFingerprint($token) {
