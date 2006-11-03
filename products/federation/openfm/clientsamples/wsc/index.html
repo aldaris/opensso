@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.5 2006-11-01 07:03:46 hengming Exp $
+   $Id: index.html,v 1.6 2006-11-03 00:20:11 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -96,37 +96,33 @@
 3. Create a user on IDP and a user on SP. Federate and signle sign on the users.
 <br>
 4. Deploy Open Federation client sample WAR (openfm-clientsamples.war) on
-   machine C (this machine). Machine C should be in same domain as machine B,
-   so it could share the single sign on session with machine B.
-<br>
-5. Create a configuration directoy on this machine and copy
+   machine B. If you want to deploy the war on different machine C, you need to
+   create a configuration directoy on machine C and copy
    AMConfig.properties and FederationConfig.properties from machine B
    configuration directory to this configuration directory.
 <br>
-6. Modify AMConfig.properties to change property
-com.iplanet.am.serverMode to false
+5. Click <a class="named" href="configure.jsp">here</a> to configure.
 <br>
-7. Click <a class="named" href="configure.jsp">here</a> to configure.
-<br>
-8. If you want to enable interaction for IDPP query and modify please see the
+6. If you want to enable interaction for IDPP query and modify please see the
    section "Enable interaction for IDPP query and modify"
 <br>
-9. If you want to enable name id encryption in session context of discovery
+7. If you want to enable name id encryption in session context of discovery
    bootstrap, please see the section "Enable name id encryption in session
    context of discovery bootstrap".
 <br>
 
 <h3>Demonstration</h3>
-After you have setup your machines. Visit this
-<a class="named" href="index.jsp">link</a> to try out this sample.
+After you have setup your machines, single sign on IDP and SP users then
+visit this <a class="named" href="index.jsp">link</a> to try out this sample.
 
 
 <h3 name="enc">Enable interaction for IDPP query and modify</h3>
 On IDP machine turn on IDPP policy evaluation:<br>
-1. Run<br>
+1. Download or build fmadm.zip and install.<br>
+2. Run<br>
 fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"<br>
 
-2. Run<br>
+3. Run<br>
 fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w &lt;amadmin password&gt; -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"<br>
 
 <br>
@@ -151,7 +147,7 @@ Create policy for IDPP query and modify:<br>
 <br>
 <h3 name="enc">Enable name id encryption in session context of discovery bootstrap</h3>
 Set up keystore:<br>
-1.  On IDP, SP and WSC machines, run <br>
+1.  On IDP, SP and WSC machines(if different from SP machine), run <br>
    &lt;JDK Home&gt;/bin/keytool -genkey -keyalg rsa -alias test -dname "cn=sun-unix,ou=SUN Java System Access Manager,o=Sun, c=US" -keypass 11111111 -keystore &lt;configuration dir&gt;/keystore.jks -storepass 11111111
 <br>
 2. On IDP machine, go to &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;/encode.jsp and type '11111111' and click 'Encode'.
@@ -160,12 +156,12 @@ Set up keystore:<br>
 3. On SP machine go to &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;IDP depoly uri&gt;/encode.jsp and type '11111111' and click 'Encode'.
    Save encoded value to &lt;configuration dir&gt;/.storepass and
    &lt;configuration dir&gt;/.keypass<br>
-4. On WSC machine copy &lt;configuration dir&gt;/.storepass and 
-   &lt;configuration dir&gt;/.keypass from SP to
+4. If WSC machine is different from SP machine, copy
    &lt;configuration dir&gt;/.storepass and &lt;configuration dir&gt;/.keypass
-   on WSC machine.<br>
+   from SP to &lt;configuration dir&gt;/.storepass and
+   &lt;configuration dir&gt;/.keypass to WSC machine.<br>
 
-5. On IDP, SP and WSC machines, edit &lt;configuration dir&gt;/FederationConfig.properties<br>
+5. On IDP, SP and WSC(if different from SP machine) machines, edit &lt;configuration dir&gt;/FederationConfig.properties<br>
    com.sun.identity.saml.xmlsig.keystore= &lt;configuration dir&gt;/keystore.jks<br>
    com.sun.identity.saml.xmlsig.storepass= &lt;configuration dir&gt;/.storepass<br>
    com.sun.identity.saml.xmlsig.keypass= &lt;configuration dir&gt;/.keypass<br>

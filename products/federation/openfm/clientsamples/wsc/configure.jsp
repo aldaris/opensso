@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2006-11-01 07:03:45 hengming Exp $
+   $Id: configure.jsp,v 1.3 2006-11-03 00:20:10 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -43,12 +43,10 @@ java.util.Properties"
     boolean configured = false;
     String errorMsg = null;
 
-    String spProviderID = request.getParameter("spProviderID");
     String idpProt = request.getParameter("idpProt");
     String idpHost = request.getParameter("idpHost");
     String idpPort = request.getParameter("idpPort");
     String idpDeploymenturi = request.getParameter("idpDeploymenturi");
-    String idpUserDN = request.getParameter("idpUserDN");
     String configDir = request.getParameter("configDir");
     String submit = request.getParameter("submit");
     String servletPath = request.getServletPath();
@@ -65,13 +63,25 @@ java.util.Properties"
                 errorMsg = configDir + " is not a valid configuration " +
                     "directory.";
             } else {
+                Properties fcprops = new Properties();
+                fcprops.load(new FileInputStream(fedConfig));
+                String spProt =
+                    fcprops.getProperty("com.iplanet.am.server.protocol");
+                String spHost =
+                    fcprops.getProperty("com.iplanet.am.server.host");
+                String spPort =
+                    fcprops.getProperty("com.iplanet.am.server.port");
+                String spDeployUri = fcprops.getProperty(
+                    "com.iplanet.am.services.deploymentDescriptor");
+
+                String spProviderID = spProt + "://" + spHost + ":" + spPort +
+                    spDeployUri;
                 Properties props = new Properties();
                 props.setProperty("spProviderID", spProviderID);
                 props.setProperty("idpProt", idpProt);
                 props.setProperty("idpHost", idpHost);
                 props.setProperty("idpPort", idpPort);
                 props.setProperty("idpDeploymenturi", idpDeploymenturi);
-                props.setProperty("idpUserDN", idpUserDN);
                 props.setProperty("configDir", configDir);
                 FileOutputStream fo = null;
                 try {
@@ -139,10 +149,6 @@ java.util.Properties"
 
 
     <tr>
-    <td>SP Provider ID (eg. http://www.sp1.com):</td>
-    <td><input name="spProviderID" type="text" size="40" value="<%= spProviderID == null ? "" : spProviderID %>" /></td>
-    </tr>
-    <tr>
     <td>IDP Protocol:</td>
     <td><input name="idpProt" type="text" size="6" value="<%= idpProt == null ? "" : idpProt %>" /></td>
     </tr>
@@ -159,16 +165,6 @@ java.util.Properties"
     <td><input name="idpDeploymenturi" type="text" size="15" value="<%= idpDeploymenturi == null ? "" : idpDeploymenturi %>" /></td>
     </tr>
     <tr>
-    <tr>
-    <td>IDP User DN (IDP user whose personal profile resource 
-       offering is to</td>
-    <td><input name="idpUserDN" type="text" size="50" value="<%= idpUserDN == null ? "" : idpUserDN %>" /></td>
-    </tr>
-    <tr>
-    <td>be created. For example id=idp,ou=user,dc=opensso,dc=java,dc=net):</t
-    <td></td>
-    </tr>
-
     <tr>
     <td>Configuration Directory:</td>
     <td><input name="configDir" type="text" size="15" value="<%= configDir == null ? "" : configDir %>" /></td>

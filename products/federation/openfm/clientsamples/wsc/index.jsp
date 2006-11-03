@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.2 2006-11-01 07:03:46 hengming Exp $
+   $Id: index.jsp,v 1.3 2006-11-03 00:20:11 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,6 +39,15 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
 <html xmlns="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     <head><title>Discovery Service Boot Strapping</title></head>
+    <script language="javascript">
+        function checkForm() {
+            if (document.discomodify.idpUserDN.value == '') {
+                alert("IDP User DN is required.");
+                return false;
+            }
+            return true;
+        }
+    </script>
     <body bgcolor="white">
 	<h1>Discovery Service Boot Strapping Resource Offering</h1>
 <%!
@@ -57,6 +66,7 @@ public void jspInit() {
             fin = new FileInputStream(configDir + "/AMConfig.properties");
             props = new Properties();
             props.load(fin);
+            props.setProperty("com.iplanet.am.serverMode", "false");
             SystemProperties.initializeProperties(props);
             fin.close();
 
@@ -111,7 +121,10 @@ public void jspInit() {
 <input type="submit" name="Submit" value="Send Discovery Lookup" />
 </form>
 <p>
-<form method="GET" action="discovery-modify.jsp">
+<form method="GET" name="discomodify" action="discovery-modify.jsp" onSubmit="return checkForm();">
+IDP User DN (IDP user whose has single-sign-on. For example id=idpuser,ou=user,dc=opensso,dc=java,dc=net):
+<input name="idpUserDN" type="text" size="50" value=""/>
+<br><br>
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='discoveryResourceOffering' value='<%= fileName %>'>
 <input type="submit" name="Submit" value="Add PP Resource Offering" />

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-modify.jsp,v 1.1 2006-10-30 23:17:41 qcheng Exp $
+   $Id: discovery-modify.jsp,v 1.2 2006-11-03 00:20:10 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -52,6 +52,8 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
         if (entryID == null) {
             entryID= "";
         }
+
+        String idpUserDN = request.getParameter("idpUserDN");
         
         // The following three values need to be changed to register a personal 
         // profile resource offering for a user.
@@ -75,8 +77,6 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
             if (!idpDeploymenturi.startsWith("/")) {
                 idpDeploymenturi = "/" + idpDeploymenturi;
             }
-            String idpUserDN = props.getProperty("idpUserDN");
-
 
             String ppProviderID = idpProt + "://" + idpHost + ":" + idpPort +
                 idpDeploymenturi + "/Liberty/idpp";
