@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationResponse.java,v 1.1 2006-10-30 23:14:11 qcheng Exp $
+ * $Id: FSNameRegistrationResponse.java,v 1.2 2006-11-03 00:27:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,6 +274,7 @@ public class FSNameRegistrationResponse extends AbstractResponse {
                         throw new FSMsgException("moreElement",null);
                     }
                     status = new Status((Element) child);
+                } else if (childName.equals(IFSConstants.SIGNATURE)) {
                 } else if (childName.equals("ProviderID")) {
                     if (providerId != null) {
                         FSUtils.debug.error("FSNameRegistrationResponse:" +

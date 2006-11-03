@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationRequest.java,v 1.1 2006-10-30 23:14:11 qcheng Exp $
+ * $Id: FSNameRegistrationRequest.java,v 1.2 2006-11-03 00:27:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,6 +250,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
                     }
                     respondWiths.add(
                     XMLUtils.getElementValue((Element) child));
+                } else if (nodeName.equals(IFSConstants.SIGNATURE)) {
                 } else if (nodeName.equals("ProviderID")) {
                     if (providerId != null) {
                         if (FSUtils.debug.messageEnabled()) {
