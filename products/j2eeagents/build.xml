@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2006-10-24 06:49:42 veiming Exp $
+   $Id: build.xml,v 1.4 2006-11-04 00:52:33 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -43,6 +43,7 @@
 
     <target name="preparebuild">
         <mkdir dir="${j2eeagents.built.dir}"/>
+        <mkdir dir="${j2eeagents.dist.dir}"/>
     </target>
 
     <target name="clean_appserver_v81">
@@ -57,7 +58,6 @@
     </target>
 
     <target name="all">
-        <mkdir dir="${j2eeagents.dist.dir}"/>
         <antcall target="appserver_v81" />
     </target>
 
