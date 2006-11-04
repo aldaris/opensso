@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.3 2006-08-25 21:20:47 veiming Exp $
+ * $Id: IdRepoListener.java,v 1.4 2006-11-04 00:08:25 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,7 @@ public final class IdRepoListener {
 
             if (dirtyCache) {
                 ((IdCachedServices) idServices).dirtyCache(changed[i],
-                        AMEvent.OBJECT_CHANGED, false, false,
+                        type, false, false,
                         Collections.EMPTY_SET);
             }
 

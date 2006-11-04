@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.10 2006-10-26 20:51:04 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.11 2006-11-04 00:07:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,8 +117,9 @@ public class AMSDKRepo extends IdRepo {
     public int addListener(SSOToken token, IdRepoListener listnr)
             throws IdRepoException, SSOException {
         // TODO Auto-generated method stub
-        // listnr.setConfigMap(configMap);
-        listeners.add(listnr);
+        synchronized (listeners) {
+            listeners.add(listnr);
+        }
         myListener = listnr;
         return 0;
     }
@@ -129,7 +130,9 @@ public class AMSDKRepo extends IdRepo {
      * @see com.sun.identity.idm.IdRepo#removeListener()
      */
     public void removeListener() {
-        listeners.remove(myListener);
+        synchronized (listeners) {
+            listeners.remove(myListener);
+        }
     }
 
     /*
@@ -1461,20 +1464,23 @@ public class AMSDKRepo extends IdRepo {
 
     public static void notifyObjectChangedEvent(String normalizedDN,
             int eventType) {
-        Iterator it = listeners.iterator();
-        while (it.hasNext()) {
-            IdRepoListener l = (IdRepoListener) it.next();
-            Map configMap = l.getConfigMap();
-            l.objectChanged(normalizedDN, eventType, configMap);
+        synchronized (listeners) {
+            Iterator it = listeners.iterator();
+            while (it.hasNext()) {
+                IdRepoListener l = (IdRepoListener) it.next();
+                Map configMap = l.getConfigMap();
+                l.objectChanged(normalizedDN, eventType, configMap);
+            }
         }
     }
 
     public static void notifyAllObjectsChangedEvent() {
-        Iterator it = listeners.iterator();
-        while (it.hasNext()) {
-            IdRepoListener l = (IdRepoListener) it.next();
-            l.allObjectsChanged();
-            break; // Why break here?
+        synchronized (listeners) {
+            Iterator it = listeners.iterator();
+            while (it.hasNext()) {
+               IdRepoListener l = (IdRepoListener) it.next();
+                l.allObjectsChanged();
+            }
         }
     }
 

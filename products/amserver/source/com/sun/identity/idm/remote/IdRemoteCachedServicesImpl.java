@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.5 2006-10-26 20:53:25 kenwho Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.6 2006-11-04 00:08:25 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.common.IdCacheBlock;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.sm.ServiceManager;
 
 import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMHashMap;
@@ -227,6 +228,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         IdCacheBlock cb;
         String originalDN = dn;
         dn = DNUtils.normalizeDN(dn);
+        String cachedID = getCacheId(dn);
         switch (eventType) {
         case AMEvent.OBJECT_ADDED:
             cb = getFromCache(dn);
@@ -234,27 +236,27 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 cb.setExists(true);
             }
             if (cosType) { // A cos type event remove all affected attributes
-                removeCachedAttributes(dn, attrNames);
+                removeCachedAttributes(cachedID, attrNames);
             }
             break;
         case AMEvent.OBJECT_REMOVED:
-            cb = (IdCacheBlock) idRepoCache.remove(dn);
+            cb = (IdCacheBlock) idRepoCache.remove(cachedID);
             if (cb != null) {
                 cb.clear(); // Clear anyway & help the GC process
             }
             if (cosType) {
-                removeCachedAttributes(dn, attrNames);
+                removeCachedAttributes(cachedID, attrNames);
             }
             break;
         case AMEvent.OBJECT_RENAMED:
             // Better to remove the renamed entry, or else it will be just
             // hanging in the cache, until LRU kicks in.
-            cb = (IdCacheBlock) idRepoCache.remove(dn);
+            cb = (IdCacheBlock) idRepoCache.remove(cachedID);
             if (cb != null) {
                 cb.clear(); // Clear anyway & help the GC process
             }
             if (cosType) {
-                removeCachedAttributes(dn, attrNames);
+                removeCachedAttributes(cachedID, attrNames);
             }
             break;
         case AMEvent.OBJECT_CHANGED:
@@ -263,9 +265,9 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 cb.clear(); // Just clear the entry. Don't remove.
             }
             if (cosType) {
-                removeCachedAttributes(dn, attrNames);
+                removeCachedAttributes(cachedID, attrNames);
             } else if (aciChange) { // Clear all affected entries
-                clearCachedEntries(dn);
+                clearCachedEntries(cachedID);
             }
             break;
         }
@@ -274,8 +276,8 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                     + "dirtied because of Event Notification. Parameters - "
                     + "eventType: " + eventType + ", cosType: "
                     + cosType + ", aciChange: " + aciChange
-                    + ", fullDN: " + originalDN + "; rfcDN ="
-                    + dn);
+                    + ", fullDN: " + originalDN + "; rfcDN =" + dn
+                    + "; cachedID=" + cachedID);
         }   
     }
 
@@ -505,7 +507,11 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         throws IdRepoException, SSOException {
 
         IdSearchResults answer = new IdSearchResults(type, orgName);
-        if (pattern.indexOf('*') == -1) {
+        // in legacy mode we must do search in order
+        // to get the AMSDKDN component added to AMIdentity's uvid.
+        // otherwise unix and anonymous login will fail.
+        if ((pattern.indexOf('*') == -1) &&
+            ServiceManager.isRealmEnabled()) {
             // First check if the specific identity is in cache.
             // If yes, get Attributes from cache.
             // If not search in server.
@@ -554,7 +560,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
     private IdCacheBlock getFromCache(String dn) {
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
         if ((cb == null)) {
-            int ind = dn.indexOf(",amsdkdn=");
+            int ind = dn.toLowerCase().indexOf(",amsdkdn=");
             if (ind > -1) {
                 String tmp = dn.substring(0, ind);
                 // TODO: Should return entries which might have amsdkDN but
@@ -565,4 +571,15 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
         return cb;
     }
+
+    // strip away amsdkdn from dn.
+    private String getCacheId(String dn) {
+        String cachedId = dn;
+        int ind = dn.toLowerCase().indexOf(",amsdkdn=");
+        if (ind > -1) {
+             cachedId = dn.substring(0, ind);
+        }
+        return cachedId;
+    }
+
 }

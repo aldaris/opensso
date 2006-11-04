@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.9 2006-10-26 20:53:26 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.10 2006-11-04 00:08:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2816,13 +2816,16 @@ public class IdServicesImpl implements IdServices {
                 if (scm.getOrganizationConfig(orgName, null) != null) {
                     isExist = true;
                 } else {
-                    debug.error("IdServicesImpl.orgExist organization"
-                        + " does not exist. orgName=" + orgName);
-
+                    if (debug.messageEnabled()) {
+                        debug.message("IdServicesImpl.orgExist organization"
+                            + " does not exist. orgName=" + orgName);
+                    }
                 }
             } else {
-                debug.error("IdServicesImpl.orgExist service not"
-                    + " configured for this org. orgName=" +orgName);
+                if (debug.messageEnabled()) {
+                    debug.message("IdServicesImpl.orgExist service not"
+                        + " configured for this org. orgName=" +orgName);
+                }
            }
         } catch (SMSException smse) {
             getDebug().error("IdServicesImpl.orgExist: "
