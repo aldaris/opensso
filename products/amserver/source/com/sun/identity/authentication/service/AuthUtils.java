@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.7 2006-08-25 21:20:29 veiming Exp $
+ * $Id: AuthUtils.java,v 1.8 2006-11-06 20:24:32 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2934,6 +2934,9 @@ public class AuthUtils {
         // try to get the host name if org or domain Param is null
         try {
             orgName = IdUtils.getOrganization(token,orgParam);
+            if ((orgName != null) && (orgName.length() != 0)) {
+                orgName = orgName.toLowerCase();
+            }
         } catch (Exception oe) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Could not get orgName : ",oe);
