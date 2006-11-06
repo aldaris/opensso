@@ -454,7 +454,8 @@ alert("WR RESP:"+resp);
     resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace(fixissue1, fixissue2);
-    document.write(resp);
+    //document.write(resp);
+    document.write("<html><body> HELLO </body></html>");
     document.close();
 alert("WR RESP close");
 }
