@@ -448,9 +448,10 @@ function writeResponse( resp)
     //resp = resp.replace('/@import "/g','@import "https://opensso.dev.java.net');
     resp = resp.replace('@import "/','@import "https://opensso.dev.java.net/');
     resp = resp.replace('@import "/','@import "https://opensso.dev.java.net/');
-    //resp = resp.replace('UTF-8', 'iso-8859-1');
+    resp = resp.replace('UTF-8', 'iso-8859-1');
     //resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace(fixissue1, fixissue2);
+alert("WR : "+resp);
     document.write(resp);
     //document.write("<html><body> HELLO </body></html>");
     document.close();
