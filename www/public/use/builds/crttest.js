@@ -449,12 +449,14 @@ alert("SENDING REQ DONE");
 // are replaced with absolute paths.
 function writeResponse( resp)
 {
+alert("WR RESP:"+resp);
     resp = resp.replace('/@import "/g','@import "https://opensso.dev.java.net');
     resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace(fixissue1, fixissue2);
     document.write(resp);
     document.close();
+alert("WR RESP close");
 }
 
 // Callback for async ajax requests.
