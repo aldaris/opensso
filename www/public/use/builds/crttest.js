@@ -102,12 +102,10 @@ var uhttp_request;
 function getUser(usereq)
 {
     var var1 = document.getElementById('login');
-alert("getUser.."+var1);
     if (var1 != null) {
         var str = var1.innerHTML;
         //userid = var1.childNodes[1].childNodes[1].innerHTML;
         var st1 = str.indexOf('class="username"');
-alert("getUser..22.."+st1);
         if (st1 == -1) { // IE
            st1 = str.indexOf('class=username');
            if (st1 == -1) {
@@ -436,9 +434,7 @@ function ajax_upload() {
 	    http_request.setRequestHeader("Content-type", "multipart/form-data; boundary=" + boundaryString);
 	    http_request.setRequestHeader("Connection", "close");
 	    http_request.setRequestHeader("Content-length", requestbody.length);
-alert("SENDING REQ");
 	    http_request.send(requestbody);
-alert("SENDING REQ DONE");
         } catch(e) {
             alert("Problem creating CRT:"+e);
         }
@@ -452,19 +448,16 @@ function writeResponse( resp)
     //resp = resp.replace('/@import "/g','@import "https://opensso.dev.java.net');
     resp = resp.replace('@import "/','@import "https://opensso.dev.java.net/');
     resp = resp.replace('@import "/','@import "https://opensso.dev.java.net/');
-alert("WR RESP:"+resp);
     //resp = resp.replace('UTF-8', 'iso-8859-1');
     //resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace(fixissue1, fixissue2);
     document.write(resp);
     //document.write("<html><body> HELLO </body></html>");
     document.close();
-alert("WR RESP close");
 }
 
 // Callback for async ajax requests.
 function requestdone() {
-alert("done:"+http_request.readyState);
     if (http_request.readyState == 4) {
         if (http_request.status == 200) {
             result = http_request.responseText;
