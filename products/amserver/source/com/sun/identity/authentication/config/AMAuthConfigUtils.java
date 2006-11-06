@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthConfigUtils.java,v 1.3 2006-08-25 21:20:10 veiming Exp $
+ * $Id: AMAuthConfigUtils.java,v 1.4 2006-11-06 20:24:03 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -482,6 +482,9 @@ public class AMAuthConfigUtils {
      */
     public static Set getAllNamedConfig(String orgName, SSOToken token)
             throws SMSException, SSOException {
+        if ((orgName != null) && (orgName.length() != 0)) {
+            orgName = orgName.toLowerCase();
+        }
         if (debug.messageEnabled()) {
             debug.message("getAllNamedConfig org=" + orgName);
         }

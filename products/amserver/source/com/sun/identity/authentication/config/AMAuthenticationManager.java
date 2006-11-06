@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationManager.java,v 1.3 2006-08-25 21:20:11 veiming Exp $
+ * $Id: AMAuthenticationManager.java,v 1.4 2006-11-06 20:24:03 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,6 +102,9 @@ public class AMAuthenticationManager {
             SMSEntry.validateToken(token);
             this.token = token;
             this.realm = com.sun.identity.sm.DNMapper.orgNameToDN(org);
+            if ((this.realm != null) && ((this.realm).length() != 0)) {
+                this.realm = (this.realm).toLowerCase();
+            }
             orgServiceConfig = getOrgServiceConfig();
             if (orgServiceConfig == null) {
                 throw new AMConfigurationException(bundleName, "badRealm",
