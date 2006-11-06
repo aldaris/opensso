@@ -436,7 +436,9 @@ function ajax_upload() {
 	    http_request.setRequestHeader("Content-type", "multipart/form-data; boundary=" + boundaryString);
 	    http_request.setRequestHeader("Connection", "close");
 	    http_request.setRequestHeader("Content-length", requestbody.length);
+alert("SENDING REQ");
 	    http_request.send(requestbody);
+alert("SENDING REQ DONE");
         } catch(e) {
             alert("Problem creating CRT:"+e);
         }
@@ -457,6 +459,7 @@ function writeResponse( resp)
 
 // Callback for async ajax requests.
 function requestdone() {
+alert("done:"+http_request.readyState);
     if (http_request.readyState == 4) {
         if (http_request.status == 200) {
             result = http_request.responseText;
