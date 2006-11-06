@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2006-10-29 04:50:29 veiming Exp $
+$Id: README,v 1.3 2006-11-06 05:22:46 qcheng Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -29,8 +29,10 @@ Copyright 2006 Sun Microsystems Inc. All Rights Reserved
     %% 1. Build requirements
     %% 2. Library dependencies
         %% 2.1 Obtaining j2ee.jar and mail.jar
-        %% 2.2 Obtaining jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
-               jaxrpc-api.jar, activation.jar, saaj-api.jar and saaj-impl.jar
+        %% 2.2 Obtaining jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
+               jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
+               activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
+               xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
@@ -65,11 +67,14 @@ the library vendor or distributor. Some of these libraries are available in
 source distribution form and must be built locally before they can be used. 
 The libraries needed for compiling OpenSSO sources are:
 
-   - J2EE SDK version 1.5: j2ee.jar
-   - JWSDP version 1.6: jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
-     jaxrpc-api.jar, activation.jar, saaj-api.jar, saaj-impl.jar
+   - Java EE 5 SDK: j2ee.jar, mail.jar
+   - JWSDP version 1.6: jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
+     jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
+     activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
+     xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
-   - SleepyCat Berkeley DB version 4.2.52: db.jar
+   - SleepyCat Berkeley DB version 4.2.52: db.jar 
+   - TestNG version 5.1 : testng-5.1-jdk15.jar
 
 Once these libraries are available, they should be placed under the extlib
 directory of the workspace. Any library placed in this directory is 
@@ -89,24 +94,31 @@ conditions.
 
 %% 2.1 Obtaining j2ee.jar and mail.jar
 
-The j2ee.jar and mail.jar library can be obtained from J2EE SDK version 1.5.
+The j2ee.jar and mail.jar library can be obtained from Java EE 5 SDK.
 Follow these steps to obtain the J2EE SDK:
 
 2.1.1 Open the web page: http://java.sun.com/javaee/downloads/index.jsp
 2.1.2 Depending on your choice of platform, you may choose to download any
-      one of the three distribution types available.
+      one of the three distribution types available under Java EE 5 SDK
+      Update 1.
 2.1.3 Extract or extract and install the downloaded file as necessary to
       have the SDK available on your system.
 
-Once the J2EE SDK is installed, you can get the j2ee.jar and mail.jar from the
-lib directory of this SDK. 
+Once the J2EE SDK is installed, you can get the javaee.jar and mail.jar from 
+the lib directory of this SDK. You must rename javaee.jar to j2ee.jar when 
+copying it to the extlib directory.
+ 
 
-%% 2.2 Obtaining jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar,
-       jaxrpc-api.jar, activation.jar and saaj-api.jar
+%% 2.2 Obtaining jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
+       jaxb-xjc.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, 
+       activation.jar, saaj-api.jar, saaj-impl.jar, relaxngDatatype.jar,
+       xmlsec.jar, xsdlib.jar, FastInfoset.jar, jsr173_api.jar
 
-The libraries jaxb-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar,
-activation.jar, saaj-api.jar and saaj-impl.jar can be obtained from the JWSDP
-version 1.6 distribution.
+The libraries jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, jaxb-xjc.jar, 
+jaxrpc-impl.jar, jaxrpc-spi.jar, jaxrpc-api.jar, activation.jar, saaj-api.jar, 
+saaj-impl.jar, relaxngDatatype.jar, xmlsec.jar, xsdlib.jar, FastInfoset.jar, 
+jsr173_api.jar can be obtained from the JWSDP version 1.6 distribution.
+
 Follow these steps to obtain JWSDK 1.6:
 
 2.2.1 Visit URL, http://java.sun.com/webservices/archive.html
@@ -125,13 +137,23 @@ Follow these steps to obtain JWSDK 1.6:
 2.2.6 Install the downloaded file in order to have the JWSDP available on
       your system.
 
-Once the JWSDP distribution is installed on your system, the jaxb-api.jar
-library can be obtained from the <jwsdp-install-dir>/jaxb/lib. The
-jaxrpc-impl.jar, jaxrpc-spi.jar and jaxrpc-api.jar library can be obtained
-from <jwsdp-install-dir>/jaxrpc/lib directory. The activation.jar library
-can be obtained from <jwsdp-install-dir>/jwsdp-shared/lib directory. Also,
-the saaj-api.jar and saaj-impl.jar library can be obtained from
-<jwsdp-install-dir>/saaj/lib directory.
+Once the JWSDP distribution is installed on your system, copy jars from
+corresponding directories:
+    - jaxb-api.jar        : <jwsdp-install-dir>/jaxb/lib
+    - jaxb-impl.jar       : <jwsdp-install-dir>/jaxb/lib
+    - jaxb-libs.jar       : <jwsdp-install-dir>/jaxb/lib
+    - jaxb-xjc.jar        : <jwsdp-install-dir>/jaxb/lib
+    - jaxrpc-impl.jar     : <jwsdp-install-dir>/jaxrpc/lib
+    - jaxrpc-spi.jar      : <jwsdp-install-dir>/jaxrpc/lib 
+    - jaxrpc-api.jar      : <jwsdp-install-dir>/jaxrpc/lib 
+    - activation.jar      : <jwsdp-install-dir>/jwsdp-shared/lib
+    - relaxngDatatype.jar : <jwsdp-install-dir>/jwsdp-shared/lib
+    - xmlsec.jar          : <jwsdp-install-dir>/jwsdp-shared/lib 
+    - xsdlib.jar          : <jwsdp-install-dir>/jwsdp-shared/lib
+    - saaj-api.jar        : <jwsdp-install-dir>/saaj/lib
+    - saaj-impl.jar       : <jwsdp-install-dir>/saaj/lib
+    - FastInfoset.jar     : <jwsdp-install-dir>/fastinfoset/lib
+    - jsr173_api.jar      : <jwsdp-install-dir>/sjsxp/lib
 
 %% 2.3 Obtaining ldapjdk.jar
 
@@ -161,6 +183,7 @@ project. Follow these steps to obtain ldapjdk 4.17:
           JAVAC=$(JDKBIN)javac -O -classpath "$(JAVACLASSPATH)" -source 1.3
       Since this variable is defined in three places, you will have to
       change all three to ensure that all build paths are covered.
+      Also, set MOZ_SRC environment variable to "<install_dir>/mozilla".
 2.3.7 Compile the sources using the following command:
           gmake -f ldap.mk JAVA_VERSION=1.5
       You should replace the JAVA_VERSION to the appropriate value as 
@@ -179,15 +202,9 @@ The Sleepycat library db.jar is not distributed in the binary form. However,
 this can be built using the source distribution provided by Sleepycat 
 Software. Follow these steps to obtain the db.jar library:
 
-2.4.1 Open the web page: http://www.sleepycat.com/download/index.shtml
-2.4.2 Under "Select a Product" form, choose "Berkeley DB". Following that,
-      select version 4.2.52 from the drop-down menu for version number.
-      Once the product and version is selected, select the appropriate
-      format using the "Select a Package" drop-down menu. The choice of
-      strong encryption support is not necessary and thus the corresponding
-      choice box can be left unchecked. Once this process is complete, 
-      click on the link "db-4.2.52.N.C.tar.gz" on this page to download
-      the source distribution of Berkeley DB.
+2.4.1 Open the web page: http://www.oracle.com/technology/software/products/berkeley-db/db/index.html 
+2.4.2 Under "4.x Releases", click "Berkeley DB 4.2.52 NC.tar.gz" link under 
+      4.2.52, this will download the source distribution of Berkeley DB.
 2.4.3 Extract the sources in a convenient location. 
 2.4.4 To build the entire distribution follow the instructions provided in
       the docs/index.html by opening that file in a browser and clicking 
