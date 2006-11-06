@@ -102,10 +102,12 @@ var uhttp_request;
 function getUser(usereq)
 {
     var var1 = document.getElementById('login');
+alert("getUser.."+var1);
     if (var1 != null) {
         var str = var1.innerHTML;
         //userid = var1.childNodes[1].childNodes[1].innerHTML;
         var st1 = str.indexOf('class="username"');
+alert("getUser..22.."+st1);
         if (st1 == -1) { // IE
            st1 = str.indexOf('class=username');
            if (st1 == -1) {
