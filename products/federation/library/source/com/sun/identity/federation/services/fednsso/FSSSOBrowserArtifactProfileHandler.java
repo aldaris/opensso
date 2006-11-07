@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.1 2006-10-30 23:14:29 qcheng Exp $
+ * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.2 2006-11-07 00:51:45 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -309,11 +309,11 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                 String[] data = { respPrefix , retResponse.toString() };
                 LogUtil.access(Level.FINER,LogUtil.CREATE_SAML_RESPONSE,data);
             } else {
-                String[] data = { respPrefix
-                        , FSUtils.bundle.getString("responseID")
-                        , retResponse.getResponseID()
-                        , FSUtils.bundle.getString("inResponseTo")
-                        , retResponse.getInResponseTo()};
+                String[] data = { respPrefix,
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        retResponse.getResponseID() + "," + 
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
+                        retResponse.getInResponseTo()};
                 LogUtil.access(Level.INFO,LogUtil.CREATE_SAML_RESPONSE,data);
             }
             return retResponse;
@@ -345,9 +345,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                 LogUtil.access(Level.FINER,LogUtil.CREATE_SAML_RESPONSE,data);
             } else {
                 String[] data = { respPrefix,
-                    FSUtils.bundle.getString("responseID"),
-                    retResponse.getResponseID(),
-                    FSUtils.bundle.getString("inResponseTo"),
+                    FSUtils.bundle.getString("responseID") + "=" +
+                    retResponse.getResponseID() + "," +
+                    FSUtils.bundle.getString("inResponseTo") + "=" +
                     retResponse.getInResponseTo()};
                 LogUtil.access(Level.INFO,LogUtil.CREATE_SAML_RESPONSE,data);
             }
@@ -405,9 +405,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                                             data);
                         } else {
                             String[] data = { respPrefix,
-                                FSUtils.bundle.getString("responseID"),
-                                retResponse.getResponseID(),
-                                FSUtils.bundle.getString("inResponseTo"),
+                                FSUtils.bundle.getString("responseID") + "=" +
+                                retResponse.getResponseID() + "," +
+                                FSUtils.bundle.getString("inResponseTo") + "=" +
                                 retResponse.getInResponseTo()};
                             LogUtil.access(
                                 Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
@@ -595,9 +595,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                             Level.FINER,LogUtil.CREATE_SAML_RESPONSE,data);
                     } else {
                         String[] data = { respPrefix,
-                                FSUtils.bundle.getString("responseID"),
-                                retResponse.getResponseID(),
-                                FSUtils.bundle.getString("inResponseTo"),
+                                FSUtils.bundle.getString("responseID") + "=" +
+                                retResponse.getResponseID() + "," +
+                                FSUtils.bundle.getString("inResponseTo") + "=" +
                                 retResponse.getInResponseTo()};
                         LogUtil.access(
                             Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
@@ -668,9 +668,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                 LogUtil.access(Level.FINER,LogUtil.CREATE_SAML_RESPONSE,data);
             } else {
                 String[] data = { respPrefix,
-                        FSUtils.bundle.getString("responseID"),
-                        retResponse.getResponseID(),
-                        FSUtils.bundle.getString("inResponseTo"),
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        retResponse.getResponseID() + "," +
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
                         retResponse.getInResponseTo()};
                 LogUtil.access(
                     Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
@@ -708,9 +708,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                         Level.FINER,LogUtil.CREATE_SAML_RESPONSE, data);
                 } else {
                     String[] data = { respPrefix,
-                        FSUtils.bundle.getString("responseID"),
-                        retResponse.getResponseID(),
-                        FSUtils.bundle.getString("inResponseTo"),
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        retResponse.getResponseID() + "," +
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
                         retResponse.getInResponseTo()};
                     LogUtil.access(
                         Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
@@ -735,9 +735,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                         Level.FINER,LogUtil.CREATE_SAML_RESPONSE,data);
                 } else {
                     String[] data = { respPrefix,
-                        FSUtils.bundle.getString("responseID"),
-                        retResponse.getResponseID(),
-                        FSUtils.bundle.getString("inResponseTo"),
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        retResponse.getResponseID() + "," +
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
                         retResponse.getInResponseTo()};
                     LogUtil.access(
                         Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
@@ -763,9 +763,9 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
             LogUtil.access(Level.FINER,LogUtil.CREATE_SAML_RESPONSE, data);
         } else {
             String[] data = { respPrefix,
-                        FSUtils.bundle.getString("responseID"),
-                        retResponse.getResponseID(),
-                        FSUtils.bundle.getString("inResponseTo"),
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        retResponse.getResponseID() + "," +
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
                         retResponse.getInResponseTo()};
             LogUtil.access(Level.INFO, LogUtil.CREATE_SAML_RESPONSE,data);
         }
