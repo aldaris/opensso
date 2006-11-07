@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: IDFFLogMessageIDs.xml,v 1.1 2006-10-30 23:17:27 qcheng Exp $
+   $Id: IDFFLogMessageIDs.xml,v 1.2 2006-11-07 00:51:04 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -246,10 +246,11 @@
         <actions />
     </logmessage>
     <logmessage name="CREATE_SAML_RESPONSE" id="34"
-        loglevel="LL_FINER"
+        loglevel="LL_INFO"
         description="Created SAML Response">
         <datainfo>
-            <item>saml response</item>
+            <item>sending saml response to remote server's IP address</item>
+            <item>saml response or response ID and InResponseTo ID</item>
         </datainfo>
         <triggers>
             <item>Created SAML Response</item>
