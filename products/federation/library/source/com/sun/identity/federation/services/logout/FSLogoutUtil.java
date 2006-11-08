@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.1 2006-10-30 23:14:31 qcheng Exp $
+ * $Id: FSLogoutUtil.java,v 1.2 2006-11-08 01:04:45 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,9 @@ public class FSLogoutUtil {
         invalidateActiveSessionIds(sessionObjList, request, response);
 
         FSSession session = null;
-        if (sessionIndex != null && sessionObjList.size() == 1) {
+        if (sessionIndex != null && 
+            (sessionObjList != null && sessionObjList.size() == 1))
+        {
            session = (FSSession)sessionObjList.elementAt(0);
         }
         // clean FSSession map
