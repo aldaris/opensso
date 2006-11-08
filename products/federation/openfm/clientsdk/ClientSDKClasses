@@ -164,6 +164,7 @@ com/sun/identity/liberty/ws/security/SecurityTokenManagerIF_setCertificate_Reque
 com/sun/identity/liberty/ws/security/SecurityTokenManagerIF_setCertificate_ResponseStruct.class
 com/sun/identity/liberty/ws/security/SecurityTokenManagerIF_setCertificate_ResponseStruct_SOAPSerializer.class
 com/sun/identity/liberty/ws/security/SecurityTokenManagerIF_Tie.class
+com/sun/identity/liberty/ws/security/SecurityTokenManagerImpl.class
 com/sun/identity/liberty/ws/security/SecurityUtils.class
 com/sun/identity/liberty/ws/security/SessionContext.class
 com/sun/identity/liberty/ws/security/SessionContextStatement.class

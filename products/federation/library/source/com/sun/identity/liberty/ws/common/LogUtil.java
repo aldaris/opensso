@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.1 2006-10-30 23:14:46 qcheng Exp $
+ * $Id: LogUtil.java,v 1.2 2006-11-08 21:13:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.plugin.log.LogException;
 import com.sun.identity.plugin.log.Logger;
 import com.sun.identity.plugin.log.LogManager;
+import com.sun.identity.shared.Constants;
 
 /**
  * The <code>LogUtil</code> class defines methods which are used by
@@ -168,18 +169,16 @@ public class LogUtil {
     private static boolean logStatus = false;
 
     static {
-        try {
-            logger = LogManager.getLogger(LIBERTY_LOG);
-        } catch (LogException le) {
-            debug.error("LogUtil.static:", le);
-        }
+        String status = SystemPropertiesManager.get(Constants.AM_LOGSTATUS,
+            "INACTIVE");
 
-        String status = SystemPropertiesManager.get("com.iplanet.am.logstatus");
-        if (status == null) {
-            status = "INACTIVE";
-        }
         if (status.equalsIgnoreCase("ACTIVE")) {
             logStatus = true;
+            try {
+                logger = LogManager.getLogger(LIBERTY_LOG);
+            } catch (LogException le) {
+                debug.error("LogUtil.static:", le);
+            }
         }
     }
 

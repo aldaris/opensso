@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.3 2006-11-03 00:20:11 hengming Exp $
+   $Id: index.jsp,v 1.4 2006-11-08 21:12:26 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -34,6 +34,7 @@ com.sun.identity.liberty.ws.security.SecurityAssertion,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.saml.common.*,
+com.sun.identity.shared.Constants,
 com.sun.liberty.jaxrpc.LibertyManagerClient"
 %>
 
@@ -66,7 +67,9 @@ public void jspInit() {
             fin = new FileInputStream(configDir + "/AMConfig.properties");
             props = new Properties();
             props.load(fin);
-            props.setProperty("com.iplanet.am.serverMode", "false");
+            props.setProperty(Constants.SERVER_MODE, "false");
+            props.setProperty("com.sun.identity.sm.sms_object_class_name",
+                "com.sun.identity.sm.jaxrpc.SMSJAXRPCObject");
             SystemProperties.initializeProperties(props);
             fin.close();
 
@@ -74,6 +77,7 @@ public void jspInit() {
                 "/FederationConfig.properties");
             props = new Properties();
             props.load(fin);
+            props.setProperty(Constants.AM_LOGSTATUS, "INACTIVE");
             SystemConfigurationUtil.initializeProperties(props);
             fin.close();
         }
