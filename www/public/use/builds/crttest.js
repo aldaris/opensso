@@ -313,8 +313,6 @@ crtn['component'] ='Component';
    // the if for future inclution of other buttons.
 
    if (clickedBtn == '2' ) {
-document.write(ttt);
-return;
         var approveFormStrFrom = 'CRTApproveForm style="display:none"';
         var approveFormStrTo = 'CRTApproveForm style="display:inline"';
         crtt = crtt.replace(approveFormStrFrom, approveFormStrTo);
@@ -454,9 +452,10 @@ function writeResponse( resp)
     resp = resp.replace('UTF-8', 'iso-8859-1');
     //resp = resp.replace('UTF-8', 'iso-8859-1');
     resp = resp.replace(fixissue1, fixissue2);
-alert("WR : "+resp);
-    //document.write(resp);
-    document.write(ttt);
+    resp = resp.replace('counter.js', 'counterRYA.js');
+    resp = resp.replace('urchin.js', 'urchinRYA.js');
+    resp = resp.replace('s_code_remote.txt', 's_code_remoteRYA.txt');
+    document.write(resp);
     //document.write("<html><body> HELLO </body></html>");
     document.close();
 }
