@@ -313,6 +313,8 @@ crtn['component'] ='Component';
    // the if for future inclution of other buttons.
 
    if (clickedBtn == '2' ) {
+document.write(ttt);
+return;
         var approveFormStrFrom = 'CRTApproveForm style="display:none"';
         var approveFormStrTo = 'CRTApproveForm style="display:inline"';
         crtt = crtt.replace(approveFormStrFrom, approveFormStrTo);
