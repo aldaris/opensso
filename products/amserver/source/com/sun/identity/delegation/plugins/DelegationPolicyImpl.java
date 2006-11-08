@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.2 2006-09-05 16:23:33 arviranga Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.3 2006-11-08 00:47:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,7 @@ public class DelegationPolicyImpl implements DelegationInterface,
     private static final String DELEGATION_SUBJECT = "delegation-subject";
     private static final String POLICY_SUBJECT = "AMIdentitySubject";
     private static final String AUTHN_USERS_ID = 
-        "id=All Authenticated Users,ou=role" +
+        "id=All Authenticated Users,ou=role," +
         com.sun.identity.sm.ServiceManager.getBaseDN();
     private static final String DELEGATION_AUTHN_USERS = "AuthenticatedUsers";
     private static final String AUTHENTICATED_USERS_SUBJECT = 
