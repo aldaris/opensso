@@ -144,11 +144,13 @@ function setBusy()
     document.body.style.cursor = "wait";
     document.getElementById('reqstatus').innerHTML = 
      "Please Wait : your request is being processed..." ;
+    alert("BUSY:"+document.getElementById('reqstatus').innerHTML);
 }
 function unsetBusy()
 {
     document.body.style.cursor = "default";
     document.getElementById('reqstatus').innerHTML = 
+    alert("unsetBUSY:"+document.getElementById('reqstatus').innerHTML);
      "" ;
 }
 
