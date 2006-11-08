@@ -138,6 +138,19 @@ function getUser(usereq)
     }
         
 }
+// Feedback to user when AJAX req is in progress.
+function setBusy()
+{
+    document.body.style.cursor = "wait";
+    document.getElementById('reqstatus').innerHTML = 
+     "Please Wait : your request is being processed..." ;
+}
+function unsetBusy()
+{
+    document.body.style.cursor = "default";
+    document.getElementById('reqstatus').innerHTML = 
+     "" ;
+}
 
 // Validates issueid.
 function isValidIssueId(id, writemsg)
@@ -312,6 +325,7 @@ crtn['component'] ='Component';
    // the if for future inclution of other buttons.
 
    if (clickedBtn == '2' ) {
+        setBusy();
         var approveFormStrFrom = 'CRTApproveForm style="display:none"';
         var approveFormStrTo = 'CRTApproveForm style="display:inline"';
         crtt = crtt.replace(approveFormStrFrom, approveFormStrTo);
@@ -321,6 +335,7 @@ crtn['component'] ='Component';
 	myid = crtFrm.elements['id'].value;
         if (!isValidIssueId(myid, false)) {
             alert ("Error : Issue#"+myid+" does not exist.");
+            unsetBusy();
             return;
         }
 	mydescription = "CRT_submittal:"+myid;
@@ -459,6 +474,7 @@ function writeResponse( resp)
 // Callback for async ajax requests.
 function requestdone() {
     if (http_request.readyState == 4) {
+        unsetBusy();
         if (http_request.status == 200) {
             result = http_request.responseText;
             writeResponse(result);
