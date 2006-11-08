@@ -16,15 +16,6 @@
             </tbody>
         </table> 
         <hr color="#cccccc" noshade="noshade" size="1">
-        <div CRTApproveForm style="display:none">
-            <fieldset>
-              <legend>Approval</legend>
-                <form name="approve" id="approve" onSubmit="approveSubmit();return false;"><a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById('approve').userid)">UserId:</a><input name="userid" type="text">Check if Approved:<input name="approval" type="checkbox">Brief comment :<input name="comment" type="text"><input name="Submit" type="Submit" value="Submit" >
-                </form>
-             </fieldset>
-             <p><a>*Form View</a>&nbsp;|&nbsp;
-             <a onClick="showStuff('crttext');hideStuff('crtform');" href="#">Text View</a>
-        </div>
       <div id="crtform" style="display:inline">
         <form name="CRT" id="CRT" onSubmit="aggSubmit();return false;" >
           <div class="secHdrTxt"><b>General</b></div> <br>  
@@ -217,8 +208,19 @@
         </form>
       </div>
       <div id="crttext" style="display:none"> <p><a onClick="hideStuff('crttext');showStuff('crtform');" href="#">Form View</a>&nbsp;|&nbsp;*Text View <br><br><textarea id="crttexttb" cols=80 rows=100>CRTTEXTDATA</textarea>
-          <div id="sizespan"></div> 
+          <div id="reqstatus"></div> 
           <hr> <div id="myspan"> </div>
-        <script> getUser(true); if (userid == null || userid.length == 0 || userid == 'Login') alert("You must Login first."); else { setupUser('CRT', 'submitter'); setupUser('approve', 'userid');} </script> 
+      </div>
+      <div id="reqstatus"></div> 
+      <div CRTApproveForm style="display:none">
+            <fieldset>
+              <legend>Approval</legend>
+                <form name="approve" id="approve" onSubmit="approveSubmit();return false;"><a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById('approve').userid)">UserId:</a><input name="userid" type="text">Check if Approved:<input name="approval" type="checkbox">Brief comment :<input name="comment" type="text"><input name="Submit" type="Submit" value="Submit" >
+                </form>
+             </fieldset>
+             <p><a>*Form View</a>&nbsp;|&nbsp;
+             <a onClick="showStuff('crttext');hideStuff('crtform');" href="#">Text View</a>
+      </div>
+      <script> getUser(true); if (userid == null || userid.length == 0 || userid == 'Login') alert("You must Login first."); else { setupUser('CRT', 'submitter'); setupUser('approve', 'userid');} </script> 
     </body>
 </html>
