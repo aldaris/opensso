@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.9 2006-08-25 21:21:27 veiming Exp $
+ * $Id: SMSEntry.java,v 1.10 2006-11-08 21:10:55 hengming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,11 +178,16 @@ public class SMSEntry implements Cloneable {
         if (adminUser != null && adminUser.length() != 0) {
             specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
         }
-        // Add adminDN to the specialUserSet
-        adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
-        if (adminUser != null && adminUser.length() != 0) {
-            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
+
+        if (WebtopNaming.isServerMode()) {
+            // Add adminDN to the specialUserSet
+            adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
+            if (adminUser != null && adminUser.length() != 0) {
+                specialUserSet.add(new DN(adminUser).toRFCString()
+                    .toLowerCase());
+            }
         }
+
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: Special User Set: " + specialUserSet);
         }
