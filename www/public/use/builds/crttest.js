@@ -144,14 +144,11 @@ function setBusy()
     document.body.style.cursor = "wait";
     document.getElementById('reqstatus').innerHTML = 
      "<b>Please Wait : your request is being processed...</b>" ;
-    alert("BUSY:"+document.getElementById('reqstatus').innerHTML);
 }
 function unsetBusy()
 {
     document.body.style.cursor = "default";
-    document.getElementById('reqstatus').innerHTML = 
-    alert("unsetBUSY:"+document.getElementById('reqstatus').innerHTML);
-     "" ;
+    document.getElementById('reqstatus').innerHTML = "" ;
 }
 
 // Validates issueid.
@@ -219,7 +216,7 @@ var mandatorygrp=new Array(37);
 var mandatorycnt=new Array(37);
 crtn['submitter'] ='Submitter'; mandatory['submitter'] = 'y';
 crtn['id'] ='Issue#'; mandatory['id'] = 'y';
-crtn['component'] ='Component';
+crtn['component'] ='Component(s) changed';
 crtn['project'] ='Project';
 crtn['workspaces'] ='Workspaces Affected';
 crtn['descr'] ='Short description of the problem';
@@ -234,6 +231,7 @@ crtn['changepolicy'] ='Policy Changed'; mandatorygrp['changepolicy'] = 'componen
 crtn['changeidrepo'] ='IDRepo Changed'; mandatorygrp['changeidrepo'] = 'component';
 crtn['changeauthn'] ='Authentication Changed'; mandatorygrp['changeauthn'] = 'component';
 crtn['changefed'] ='Federation Changed'; mandatorygrp['changefed'] = 'component';
+crtn['changeinstall'] ='Installation Changed'; mandatorygrp['changeinstall'] = 'component';
 crtn['changesession'] ='Session Changed'; mandatorygrp['changesession'] = 'component';
 crtn['changemigration'] ='Migration Changed'; mandatorygrp['changemigration'] = 'component';
 crtn['changeupgrade'] ='Upgrade Changed'; mandatorygrp['changeupgrade'] = 'component';
@@ -264,7 +262,6 @@ crtn['codereviewer'] ='Code reviewer'; mandatory['codereviewer'] = 'y';
 crtn['diffs'] ='File Diffs'; mandatory['diffs'] = 'y';
 crtn['submit'] ='Submit';
 crtn['reset'] ='Reset';
-crtn['component'] ='Component';
 
 mandatorycnt['component'] = 0;
 errfields = '';
@@ -309,9 +306,9 @@ errfields = '';
             }
             
             var prt = crtn[elm.name];
-            if (mandatory[elm.name == 'y') 
+            if (mandatory[elm.name] == 'y') 
                 if (eval == null || eval.length == 0)
-                   errfields = errfields + ' '+ elem.name;
+                   errfields = errfields + ' '+ crtn[elm.name] + ',';
             if (mandatorygrp[elm.name] != null )
                 if (eval != null && eval.length !=0 && eval != 'no' )
                    mandatorycnt[mandatorygrp[elm.name] ] = 1;
@@ -327,9 +324,9 @@ errfields = '';
             if (prt == null)
                prt = elm.name;
             var val = elm.value;
-            if (mandatory[elm.name == 'y') 
+            if (mandatory[elm.name] == 'y') 
                 if (val == null || val.length == 0)
-                   errfields = errfields + ' '+ elem.name;
+                   errfields = errfields + ' '+ crtn[elm.name] + ',';
             if (val == '')
                 val = '*Not Specified*'
             data = data + '\n' + prt + '\n--------------------\n'+val + '\n';
@@ -339,7 +336,7 @@ errfields = '';
        }
    }
    if (mandatorycnt['component'] == 0)
-       errfields = errfields + ' '+ " components changed";
+       errfields = errfields + ' '+ crtn['component'];
 
    // Current implementation uses a single submit button. Retaining
    // the if for future inclution of other buttons.
