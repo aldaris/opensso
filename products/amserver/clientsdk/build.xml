@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2006-10-20 18:24:06 veiming Exp $
+   $Id: build.xml,v 1.7 2006-11-09 20:15:17 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -60,7 +60,7 @@
             <fileset dir="${sharedlib.classes.dir}">
                 <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
-            <fileset dir="${amserver.res.i18n.dir}">
+            <fileset dir="${amserver.built.res.dir}">
                 <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKProperties"/>
             </fileset>
             <manifest>
