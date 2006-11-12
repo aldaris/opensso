@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Authenticator.java,v 1.3 2006-08-25 21:20:35 veiming Exp $
+ * $Id: Authenticator.java,v 1.4 2006-11-12 08:46:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,11 @@ class Authenticator {
     private static final String LOGIN_STATUS = "iplanet-am-user-login-status";
     private static final String ACCOUNT_LIFE = "iplanet-am-user-account-life";
     private static final String STRING_ACTIVE = "active";
+    
+    private static final String DEFINED_AUTH_MODULE =
+        "com.sun.identity.amadmin.authModule";
+    private static final String LDAP_AUTH_MODULE = "LDAP";
+    private static final String FLATFILE_AUTH_MODULE = "DataStore";
 
     private static Set<String> ACTIVE_STATE_ATTRIBUTES = new HashSet<String>(4);
     private static Authenticator instance = new Authenticator();
@@ -98,7 +103,34 @@ class Authenticator {
         String bindUser,
         String bindPwd
     ) throws CLIException {
-        AuthContext lc = getAuthContext(mgr);
+        AuthContext lc = null;
+        String authModule = SystemProperties.get(DEFINED_AUTH_MODULE);
+
+        if (authModule != null) {
+            lc = sessionBasedLoginInternal(mgr, bindUser, bindPwd, authModule);
+        } else {
+            /*
+             * try LDAP and then DataStore
+             */
+            try {
+                lc = sessionBasedLoginInternal(mgr, bindUser, bindPwd,
+                    LDAP_AUTH_MODULE);
+            } catch (CLIException e) {
+                lc = sessionBasedLoginInternal(mgr, bindUser, bindPwd,
+                    FLATFILE_AUTH_MODULE);
+            }
+        }
+        return lc;
+    }
+    
+    
+    private AuthContext sessionBasedLoginInternal(
+        CommandManager mgr,
+        String bindUser,
+        String bindPwd,
+        String authModule
+    ) throws CLIException {
+        AuthContext lc = getAuthContext(mgr, authModule);
         processCallback(mgr, lc, bindUser, bindPwd);
 
         try {
@@ -220,16 +252,15 @@ class Authenticator {
         return authContext;
     }
 
-    private AuthContext getAuthContext(CommandManager mgr)
+    private AuthContext getAuthContext(CommandManager mgr, String moduleName)
         throws CLIException
     {
-        ResourceBundle rb = mgr.getResourceBundle();
         try {
             AuthContext lc = new AuthContext("/");
-            lc.login(AuthContext.IndexType.MODULE_INSTANCE, "LDAP");
+            lc.login(AuthContext.IndexType.MODULE_INSTANCE, moduleName);
             return lc;
         } catch (LoginException le) {
-            le.printStackTrace();
+            ResourceBundle rb = mgr.getResourceBundle();
             throw new CLIException(rb.getString("exception-LDAP-login-failed"),
                 ExitCodes.SESSION_BASED_LOGIN_FAILED);
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentity.java,v 1.1 2006-05-31 21:49:49 veiming Exp $
+ * $Id: CreateIdentity.java,v 1.2 2006-11-12 08:46:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -61,10 +62,14 @@ public class CreateIdentity extends IdentityCommand {
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String idName = getStringOptionValue(ARGUMENT_ID_NAME);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
-        String dataFile = getStringOptionValue(IArgument.DATA_FILE);
-        Map attributeValues = (dataFile != null) ?
-            AttributeValues.parse(getCommandManager(), dataFile) : 
-            Collections.EMPTY_MAP;
+        String datafile = getStringOptionValue(IArgument.DATA_FILE);
+        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        Map attributeValues = Collections.EMPTY_MAP;
+        
+        if ((datafile != null) || (attrValues != null)) {
+            attributeValues = AttributeValues.parse(getCommandManager(),
+                datafile, attrValues);        
+        }
 
         String[] params = {realm, type, idName};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_CREATE_IDENTITY",

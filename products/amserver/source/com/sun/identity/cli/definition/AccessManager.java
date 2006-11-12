@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.5 2006-09-26 20:27:29 veiming Exp $
+ * $Id: AccessManager.java,v 1.6 2006-11-12 08:46:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -924,7 +924,8 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "datafile|D|s|Name of file that contains the attribute values."},
+            "attributevalues|a|m|Attribute values e.g. sunIdentityServerDeviceStatus=Active.",
+            "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "create-identity-succeed=Identity, {2} of type {1} is created in realm, {0}.",
             "multi-identity-failed=Multiple identities of name, {2} of type {1} in realm, {0} found.",

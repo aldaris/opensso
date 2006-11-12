@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2006-10-26 21:40:39 veiming Exp $
+   $Id: build.xml,v 1.9 2006-11-12 08:46:32 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,8 +41,13 @@
     <property name="war.built.dir" location="${amserver.built.war.dir}"/>
     <property name="war.xml.dir" location="${amserver.warbase.dir}/xml"/>
     <property name="war.www.dir" location="${amserver.warbase.dir}/www"/>
+    <property name="amserver.cli.package.dir" location="${amserver.built.war.dir}/cli/package"/>
 
     <target name="all" depends="preparebuild">
+        <antcall target="cli" />
+    </target>
+
+    <target name="war">
         <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
@@ -60,7 +65,6 @@
                 <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.www.dir}/authentication/UI/login_images" prefix="login_images" />
-            <zipfileset dir="${amserver.www.dir}/authentication/UI/js" prefix="js" />
             <zipfileset dir="${amserver.www.dir}/authentication/UI/js" prefix="js" />
             <zipfileset dir="${lockhart.dir}/js" prefix="js">
                 <include name="browserVersion.js" />
@@ -109,9 +113,6 @@
                 <exclude name="client" />
             </zipfileset>
             <zipfileset dir="${amserver.dtd.xml.dir}" prefix="WEB-INF" />
-            <zipfileset dir="${war.xml.dir}" prefix="WEB-INF">
-                <include name="jaxrpc-ri-runtime.xml" />
-            </zipfileset>
             <zipfileset dir="${amserver.classes.dir}/jaxrpc" prefix="WEB-INF/wsdl">
                 <include name="IdentityManagementServices.wsdl" />
             </zipfileset>
@@ -163,13 +164,45 @@
         <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
     </target>
 
+    <target name="cli" depends="war" >
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+        <echo file="${amserver.cli.package.dir}/.manifest"
+            message="version=${openfm.version}, ${touch.time}" />
+        <copy file="${amserver.basedir}/license.txt" todir="${amserver.cli.package.dir}" />
+        <copy file="${amserver.script.dir}/bin/README.amadm" tofile="${amserver.cli.package.dir}/README" />
+                                                                               
+        <copy todir="${amserver.cli.package.dir}/classes">
+            <fileset dir="${amserver.built.res.dir}">
+                <exclude name="*.xml" />
+            </fileset>
+            <fileset dir="${amserver.classes.dir}" />
+            <fileset dir="${sharedlib.classes.dir}" />
+        </copy>
+        <copy todir="${amserver.cli.package.dir}/lib">
+            <fileset dir="${extlib.dir}" includes="ldapjdk.jar,mail.jar,j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar" />
+        </copy>
+        <copy file="${amserver.script.dir}/bin/amadm"
+            tofile="${amserver.cli.package.dir}/amadm" />
+        <copy file="${amserver.script.dir}/bin/amadm.bat"
+            tofile="${amserver.cli.package.dir}/amadm.bat" />
+        <copy file="${amserver.res.i18n.dir}/AccessManagerCLI.properties"
+            tofile="${amserver.cli.package.dir}/classes/AccessManagerCLI.properties" />
+        <zip destfile="${amserver.dist.dir}/amadm.zip" basedir="${amserver.cli.package.dir}" />
+        <checksum file="${amserver.dist.dir}/amadm.zip" algorithm="SHA" fileext=".sha" />
+    </target>
+
+
     <target name="preparebuild">
         <mkdir dir="${amserver.built.war.dir}"/>
+        <mkdir dir="${amserver.cli.package.dir}"/>
         <mkdir dir="${amserver.dist.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${amserver.built.war.dir}"/>
+        <delete dir="${amserver.cli.package.dir}"/>
         <delete file="${amserver.dist.dir}/opensso.war" />
         <delete file="${amserver.dist.dir}/opensso.war.sha" />
     </target>
