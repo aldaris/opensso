@@ -21,7 +21,7 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.3 2006-10-06 18:27:31 subbae Exp $
+# $Id: README.txt,v 1.4 2006-11-13 20:12:33 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -152,41 +152,34 @@ into extlib directory
 %% 3. Building the workspace
 
 3.1 cd <opensso_webagent>
-3.2 make <options>
-      <options> are:
-     - BUILD_DEBUG=optimize : compiles the sources in optimize mode.
-     - BUILD_DEBUG=full    : compiles the sources in full debug mode.
-     - BUILD_AGENT=agent_name**    : agent to be built.
-     - clean      : deletes the generated files
+3.2 ant <agent-name>
 
-agent_name** : Currently supported agents are
-
-     - apache
-
-
-Examples:
+** Execute ant usage to get information about all the supported options.
+** Make sure gmake is in the system PATH.
 
 Building Apache agent:
 
-     - make BUILD_DEBUG=optimize BUILD_AGENT=apache
-
+     - ant apache : builds Apache agent. C code compiled in optimized mode.
+     - ant apache -Dbuild.debug=full     : builds Apache agent. C code compiled in debug mode.
+     - ant apache -Dbuild.debug=optimize : builds Apache agent. C code compiled in optimized mode.
+     - ant all    : builds all agents. C code compiled in optimized mode.
 
 3.3 Creation of build output directories such as
-        <opensso_webagent>\built
-        <opensso_webagent>\bin
-        <opensso_webagent>\drop
-        <opensso_webagent>\include
-        <opensso_webagent>\samples
-        <opensso_webagent>\dist
+        <opensso_webagent>/built
+        <opensso_webagent>/built/dist
+        <opensso_webagent>/bin
+        <opensso_webagent>/drop
+        <opensso_webagent>/include
+        <opensso_webagent>/samples
 
 3.4 Build output
 
-Build generates agent installation bits either in .gz or .zip format,
-based on the OS platform, in the dist/ directory. The agent installer archive
-name is in this format: <agent_name>_<OS>_agent.zip)
+Build generates agent installation bits either in .zip format,
+in the built/dist/ directory. The agent installer archive
+name is in this format: <agent_name>_<OS>_agent.zip.
 
-    - <agent_name> : This is the name given in the make BUILD_AGENT command line option.
-    - <OS> : SunOS, Linux, WINNT
+    - <agent_name> : apache
+    - <OS> : SunOS, Linux, WINNT, SunOS_x86
 
-Example: apache_WINNTS_agent.zip
+Example: apache_2.0.x_WINNT_agent.zip
 

@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.5 2006-10-06 18:27:30 subbae Exp $
+# $Id: INSTALL.txt,v 1.6 2006-11-13 20:12:32 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -44,7 +44,7 @@ Installation does the following:
 
 %% 1.1 Steps
 
-1.1.1 Extract  apache_SunOS_agent.tar.gz installation bits.
+1.1.1 Extract  apache_2.0.x_SunOS_x86_agent.zip installation bits.
 1.1.2 Goto web_agents/apache_agent/bin
 1.1.3 Execute agentadmin --install
 1.1.4 Accept the license agreement terms
@@ -66,13 +66,13 @@ Installation does the following:
 
 Here is the sample of the above steps:
 
-[/opt]> gunzip apache_SunOS_agent.tar.gz
+[/opt]> unzip apache_2.0.x_SunOS_x86_agent.zip
 
-[/opt]> tar xvf /tmp/apache_SunOS_agent.tar
 x web_agents
 x web_agents/apache_agent
 x web_agents/apache_agent/bin
 x web_agents/apache_agent/bin/crypt_util
+x web_agents/apache_agent/bin/certutil
 x web_agents/apache_agent/bin/agentadmin
 x web_agents/apache_agent/bin/agentadmin.bat
 x web_agents/apache_agent/etc
@@ -96,6 +96,8 @@ x web_agents/apache_agent/license.txt
 x web_agents/apache_agent/README
 
 [/opt]> cd web_agents/apache_agent/bin/
+
+[/opt]> chmod +x agentadmin crypt_util certutil
 
 [/opt/web_agents/apache_agent/bin/]> ./agentadmin --install
 

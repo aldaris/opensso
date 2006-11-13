@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.3 2006-10-27 17:28:14 subbae Exp $
+# $Id: components.mk,v 1.4 2006-11-13 20:12:30 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #

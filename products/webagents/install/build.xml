@@ -1,52 +1,197 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="jar" name="INSTALL">
-    <property name="webagents.home.dir" location="../"/>
-    <property name="extlib.dir" location="${webagents.home.dir}/extlib"/>
-    <property name="built.dir" location="${webagents.home.dir}/built"/>
-    <property name="dist.dir" location="${webagents.home.dir}/dist"/>
-    <property name="classes.dir" location="${webagents.home.dir}/built/classes"/>
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
 
-    <path id="project.classpath">
-        <pathelement location="$(built.dir}/classes.dir"/>
-    </path>
-    <target name="init">
-        <mkdir dir="${built.dir}"/>
-        <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${classes.dir}"/>
-    </target>
-    <target name="clean">
-        <delete dir="${built.dir}"/>
-        <delete dir="${dist.dir}"/>
-    </target>
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
 
-    <path id="compile.classpath">
-        <fileset dir="${extlib.dir}">
-          <include name="opensso-installtools.jar"/>
-        </fileset>
-    </path>
-    <target depends="init" name="common">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac destdir="${classes.dir}">
-            <src path="common/source"/>
-            <classpath refid="compile.classpath"/>
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.2 2006-11-13 20:12:33 subbae Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="open-source-web-agents-webserver" default="build">
+                
+    <description>Open Web Single Sign-On Web Agent Install</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** Install may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="containername"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <condition property="build.os" value="Linux">
+        <os name="linux"/>
+    </condition>
+
+    <condition property="build.os" value="SunOS">
+        <and>
+            <os name="sunos"/>
+            <and>
+                <os arch="sparc"/>
+            </and>
+        </and>
+    </condition>
+
+    <condition property="build.os" value="SunOS_x86">
+        <and>
+            <os name="sunos"/>
+            <and>
+                <os arch="x86"/>
+            </and>
+        </and>
+    </condition>
+
+    <condition property="build.os" value="WINNT">
+        <os family="windows"/>
+    </condition>
+
+
+    <property name="webagents.install.src.dir" 
+        location="${webagents.install.dir}/common/source"/>
+
+    <target name="compile">
+        <javac destdir="${webagents.container.classes.dir}" 
+               source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${webagents.install.src.dir}"/>
+            <classpath refid="build.class.path"/>
         </javac>
     </target>
-    <target depends="common" name="${agent_name}">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac destdir="${classes.dir}">
-            <src path="${agent_name}/source"/>
-            <classpath refid="compile.classpath"/>
-        </javac>
-    </target>
-    <target depends="common,${agent_name}" name="jar">
-        <copy todir="${classes.dir}">
-            <fileset dir="${agent_name}">
-                <include name=".version"/>
+
+    <target name="scratch">
+        <copy todir="${container.web_agent.locale.dir}">
+            <fileset dir="${webagents.install.dir}/resources">
+                <include name="amToolsMessages.properties"/>
             </fileset>
         </copy>
 
-        <jar jarfile="${dist.dir}/${agent_name}-install.jar" >
-            <fileset dir="${classes.dir}" includes="**" />
-        </jar>
+        <copy todir="${container.web_agent.config.dir}">
+            <fileset dir="${webagents.install.dir}/resources">
+                <include name="AMToolsConfig.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy common c binary files and libraries-->
+        <antcall target="copy-${build.os}-files"/>
+
     </target>
+
+    <target name="copy-Linux-files">
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.install.dir}/scripts">
+                    <include name="agentadmin"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.am.src.dir}">
+                    <include name="crypt_util"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/Linux/nss/bin">
+                    <include name="certutil"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-SunOS-files">
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.install.dir}/scripts">
+                    <include name="agentadmin"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.am.src.dir}">
+                    <include name="crypt_util"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS/nss/bin">
+                    <include name="certutil"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-SunOS_x86-files">
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.install.dir}/scripts">
+                    <include name="agentadmin"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.am.src.dir}">
+                    <include name="crypt_util"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS_i86pc/nss/bin">
+                    <include name="certutil"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-WINNT-files">
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.install.dir}/scripts">
+                    <include name="agentadmin.bat"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.am.src.dir}">
+                    <include name="cryptit.exe"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nss/bin">
+                    <include name="certutil.exe"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nss/lib">
+                    <include name="nss3.lib"/>
+                    <include name="nss3.dll"/>
+                    <include name="ssl3.lib"/>
+                    <include name="ssl3.dll"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nspr/lib">
+                    <include name="libnspr4.lib"/>
+                    <include name="libnspr4.dll"/>
+                    <include name="libplc4.lib"/>
+                    <include name="libplc4.dll"/>
+                    <include name="libplds4.lib"/>
+                    <include name="libplds4.dll"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/libxml2/lib">
+                    <include name="libxml2.lib"/>
+                    <include name="libxml2.dll"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build" depends="compile, scratch">
+        <ant antfile="${webagents.install.dir}/${containername}/build.xml" 
+            inheritRefs="true"/>
+    </target>
+
 </project>

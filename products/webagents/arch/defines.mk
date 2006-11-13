@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.2 2006-10-06 18:27:27 subbae Exp $
+# $Id: defines.mk,v 1.3 2006-11-13 20:12:30 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -65,7 +65,6 @@ ARFLAGS := -ru
 
 SRC_DIR := $(USERX_ROOT)
 BUILT_DIR := $(USERX_ROOT)/built
-DIST_DIR := $(USERX_ROOT)/dist
 DEST_DIR := $(BUILT_DIR)
 DEST_BIN_DIR := $(DEST_DIR)/bin
 DEST_CLASS_DIR := $(DEST_DIR)/classes
@@ -91,15 +90,6 @@ ifeq ($(MC_ARCH), i86pc)
 EXTERNAL_DIR := $(USERX_ROOT)/extlib/$(OS_ARCH)_$(MC_ARCH)
 endif
 
-INSTALL_DIR := $(BUILT_DIR)/web_agents
-INSTALL_AGENT_DIR := $(INSTALL_DIR)/$(BUILD_AGENT)_agent
-INSTALL_BIN := $(INSTALL_AGENT_DIR)/bin
-INSTALL_CONF := $(INSTALL_AGENT_DIR)/config
-INSTALL_LIB := $(INSTALL_AGENT_DIR)/lib
-INSTALL_JCE := $(INSTALL_AGENT_DIR)/jce
-INSTALL_JSSE := $(INSTALL_AGENT_DIR)/jsse
-INSTALL_LOCALE := $(INSTALL_AGENT_DIR)/locale
-INSTALL_ETC := $(INSTALL_AGENT_DIR)/etc
 #
 # Crypt Util Executable
 #
