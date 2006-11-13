@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2006-11-02 01:05:01 veiming Exp $
+   $Id: build.xml,v 1.7 2006-11-13 20:20:30 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,6 +32,7 @@
     <import file="federation/openfm/openfm.xml" />
     <import file="installtools/installtools.xml" />
     <import file="j2eeagents/j2eeagents.xml" />
+    <import file="webagents/webagents.xml" />
 
     <tstamp>
         <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
@@ -45,6 +46,7 @@
         <antcall target="openfm-nightly" />
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
         <antcall target="j2ee-agents-nightly" />
+        <antcall target="web-agents-nightly" />
     </target>
 
     <target name="amserver-nightly">
@@ -121,6 +123,22 @@
         <move file="${prd.nightly.dist.dir}/j2eeagents/top.index.html" tofile="${prd.nightly.dist.dir}/j2eeagents/index.html" />
     </target>
 
+    <target name="web-agents-nightly">
+        <mkdir dir="${prd.nightly.dist.dir}/webagents/${nightly.date}" />
+        <ant antfile="${webagents.basedir}/build.xml" inheritRefs="true" target="prenightly" />
+        <ant antfile="${webagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
+        <ant antfile="${webagents.basedir}/build.xml" inheritRefs="true" target="postnightly" />
+        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+            <classpath>
+                <pathelement location="${amserver.classes.dir}" />
+            </classpath>
+            <arg value="${prd.nightly.dist.dir}/webagents" />
+            <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/webagents/index.html" />
+        </java>
+        <move file="${prd.nightly.dist.dir}/webagents/top.index.html" tofile="${prd.nightly.dist.dir}/webagents/index.html" />
+    </target>
+
     <target name="clean">
         <delete dir="${prd.nightly.dir}" />
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
@@ -136,6 +154,8 @@
         <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${webagents.basedir}/build.xml" inheritRefs="true"
             target="clean" />
     </target>
 
