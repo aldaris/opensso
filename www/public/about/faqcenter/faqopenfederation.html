@@ -59,7 +59,7 @@
 
 <p>There are two samples included in the WAR generated from the <i>openfm</i> branch source code:</p>
 <ol>
-<li>The Liberty ID-FF sample demonstrates the interactions involved when federating one user between two instances of the Open Federation server.</li>
+<li>The Liberty ID-FF sample demonstrates the interactions involved when federating one user between two instances of Open Federation.</li>
 <p></p>
 <li>The Liberty ID-WSF sample demonstrates the interactions between a web service client (WSC) and a web service provider (WSP). Specifically, it demonstrates how to query and modify the discovery service, and how to query and modify the Personal Profile service. Additionally, policy driven interactions can be configured to access Personal Profile service attributes using this sample.</li>
 </ol></p></td></tr>
@@ -94,7 +94,7 @@
 </ul>
 <p></p>
 <a name="setupIDFFsample"></a><b>How do you set up the Liberty ID-FF sample?</b>
-<p></p>To set up the Liberty ID-FF sample, you need access to two running instances of the Open Federation server. You will configure an instance of the <code>openfm-samples.war</code> on each. <code>openfm-samples.war</code> contains the Open Federation server and the Liberty ID-FF sample.
+<p></p>To set up the Liberty ID-FF sample, you need access to two running instances of Open Federation. You will configure an instance of the <code>openfm-samples.war</code> on each. <code>openfm-samples.war</code> contains  Open Federation and the Liberty ID-FF sample.
 <p></p>
 <ul>
 <li><i>machine-IDP</i> will be configured as the identity provider.</li>
@@ -314,7 +314,7 @@ Additionally, a circle of trust named <code>sampleidffcot</code> has been create
 </ol></p>																	   									   
 
 <p><b><a name="runIDFFsample"></a> How do you run the Liberty ID-FF sample?</b></p>
-Assuming you have completed the procedure documented in <a href="#setupIDFFsample">How do you set up the Liberty ID-FF sample?</a>, you have two deployed instances of the Open Federation server. On each is deployed an instance of the sample WAR. The following procedure describes how to federate the user accounts that had been created previously.
+Assuming you have completed the procedure documented in <a href="#setupIDFFsample">How do you set up the Liberty ID-FF sample?</a>, you have two deployed instances of Open Federation. On each is deployed an instance of the sample WAR. The following procedure describes how to federate the user accounts that had been created previously.
 <p></p>
 <ol>
 <li>Access the OpenSSO login page on <i>machine-SP</i> at:
@@ -398,7 +398,7 @@ Assuming successful single sign-on, a user token will be created on <i>machine-S
 
 <b><a name="setupIDWSFsample"></a> How do you setup the Liberty ID-WSF sample?</b></p>
 
-<p>To setup the Liberty ID-WSF sample, you need access to two instances of the Open Federation server and one instance of Open Federation client instance. 
+<p>To setup the Liberty ID-WSF sample, you need access to two instances of Open Federation and one instance of Open Federation client instance. 
 <P></P>
 <ul>
 <li><i>machine-A</i> will be configured as the identity provider, discovery service, and Personal Profile service.</li>
@@ -1053,7 +1053,7 @@ If not set the value correctly and proceed.
 
 <tr><td><p><b>Q:<b><a name="setupsaml1"></a> How do you setup single sign-on using SAML 1.x and the <code>fmadm</code> command line interface?</b></b></p>
 
-<p>To accomplish single sign-on using SAML 1.x, follow this procedure on the Open Federation server instances that serve as the SAML producer and the SAML consumer.</p>
+<p>To accomplish single sign-on using SAML 1.x, follow this procedure on the instances of Open Federation that will serve as the SAML producer and the SAML consumer.</p>
 
 <ol>
 <li>Run the following command on the remote site to get the site ID:
@@ -1164,7 +1164,7 @@ You will be redirected to the target site without authentication.
 
 <tr><td><p><b>Q:<b><a name="setupFFSSO"></a> How do you set up single sign-on using the Liberty ID-FF and the <code>fmadm</code> command line interface?</b></b></p>
 
-<p>To set up single sign-on using the Liberty ID-FF and the fmadm command line interface, repeat the following procedure on both the identity provider instance and the service provider instance of the Open Federation server.
+<p>To set up single sign-on using the Liberty ID-FF and the fmadm command line interface, repeat the following procedure on both the identity provider instance and the service provider instance of Open Federation.
 <p></p>
 <ol>
 <li>Run the following command to create a circle of trust.
@@ -1311,7 +1311,7 @@ The value of <i>cot_name</i> is the name of the circle of trust created in the f
 
 <tr><td><p><b>Q:<b><a name="setupsaml2"></a> How do you setup single sign-on using SAML v2 and the <code>fmadm</code> command line interface?</b></b></p>
 
-<p>To accomplish single sign-on using SAML v2, follow this procedure on both Open Federation servers that serve as the instances for the identity provider and service provider.</p>
+<p>To accomplish single sign-on using SAML v2, follow this procedure on the instances of Open Federation that will serve as the identity provider and the service provider.</p>
 
 <HR>
 <p><H3><FONT FACE="Times New Roman, serif">BEFORE YOU BEGIN</FONT></H3></P>
