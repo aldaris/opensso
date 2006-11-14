@@ -17,19 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.1 2006-08-04 21:07:00 veiming Exp $
+ * $Id: Main.java,v 1.2 2006-11-14 21:46:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.samples.setup;
 
+import com.sun.identity.security.EncodeAction;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,31 +53,51 @@ public class Main {
         "war/WEB-INF/classes/AMConfig.properties";
     private static final String CLASSES_AMCONFIG_PROPERTIES =
         "classes/AMConfig.properties";
+    private static final String TAG_DEBUG_DIR = "DEBUG_DIR";
+    private static final String TAG_APPLICATION_PASSWD =
+        "ENCODED_APPLICATION_PASSWORD";
     private static final String TAG_NAMING_URL = "NAMING_URL";
+    private static final String TAG_NOTIFICATION_URL = "NOTIFICATION_URL";
     private static final String TAG_SERVER_PROTOCOL = "SERVER_PROTOCOL";
     private static final String TAG_SERVER_HOST = "SERVER_HOST";
     private static final String TAG_SERVER_PORT = "SERVER_PORT";
     private static final String TAG_DEPLOY_URI = "DEPLOY_URI";
+    private static final String TAG_CLIENT_ENC_KEY = "ENCRYPTION_KEY_LOCAL";
+    private static final String TAG_CLIENT_PROTOCOL = "CLIENT_PROTOCOL";
+    private static final String TAG_CLIENT_HOST = "CLIENT_HOST";
+    private static final String TAG_CLIENT_PORT = "CLIENT_PORT";
+    private static final String TAG_CLIENT_DEPLOY_URI = "CLIENT_DEPLOY_URI";
     private static final String TRUST_ALL_CERTS =
         "com.iplanet.am.jssproxy.trustAllServerCerts=true\n";
+    private static final String CLIENT_ENC_KEY =
+        "com.sun.identity.client.encryptionKey";
+    private static final String AM_ENC_KEY = "am.encryption.pwd";
+    private static final String NOTIFICATION_SERVLET = "notificationservice";
 
     private static List<String> questions = new ArrayList<String>();
+    private static List<String> clientQuestions = new ArrayList<String>();
 
     static {
-        questions.add("DEBUG_DIR");
-        questions.add("APPLICATION_PASSWD");
-        questions.add("SERVER_PROTOCOL");
-        questions.add("SERVER_HOST");
-        questions.add("SERVER_PORT");
-        questions.add("DEPLOY_URI");
-        questions.add("NAMING_URL");
+        questions.add(TAG_DEBUG_DIR);
+        questions.add(TAG_APPLICATION_PASSWD);
+        questions.add(TAG_SERVER_PROTOCOL);
+        questions.add(TAG_SERVER_HOST);
+        questions.add(TAG_SERVER_PORT);
+        questions.add(TAG_DEPLOY_URI);
+        questions.add(TAG_NAMING_URL);
+
+        clientQuestions.add(TAG_CLIENT_PROTOCOL);
+        clientQuestions.add(TAG_CLIENT_HOST);
+        clientQuestions.add(TAG_CLIENT_PORT);
+        clientQuestions.add(TAG_CLIENT_DEPLOY_URI);
     }
     
     public Main()
         throws IOException, MissingResourceException
     {
         getDefaultValues();
-        promptForAnswers();
+        promptForServerAnswers();
+        promptForClientAnswers();
         createPropertiesFile();
     }
 
@@ -93,9 +115,40 @@ public class Main {
                 properties.put(key, value);
             }
         }
+
+        System.setProperty(CLIENT_ENC_KEY, properties.get(TAG_CLIENT_ENC_KEY));
+        System.setProperty(AM_ENC_KEY, properties.get(TAG_CLIENT_ENC_KEY));
     }
 
-    private void promptForAnswers()
+    private void promptForClientAnswers()
+        throws IOException
+    {
+        System.out.println();
+        System.out.println(labels.get("CLIENT_Q"));
+        System.out.println();
+        Map<String, String> tracker = new HashMap<String, String>();
+
+        for (String q : clientQuestions) {
+            String value = "";
+            while (value.length() == 0) {
+                String label = labels.get(q);
+                System.out.print(label + ": ");
+                value = (new BufferedReader(
+                    new InputStreamReader(System.in))).readLine();
+                value = value.trim();
+            }
+            tracker.put(q, value);
+        }
+        properties.put(TAG_NOTIFICATION_URL, 
+            tracker.get(TAG_CLIENT_PROTOCOL) + "://" +
+            tracker.get(TAG_CLIENT_HOST) + ":" +
+            tracker.get(TAG_CLIENT_PORT) + "/" +
+            tracker.get(TAG_CLIENT_DEPLOY_URI) + "/" +
+            NOTIFICATION_SERVLET);
+        System.out.println(labels.get("CLIENT_NOTES"));
+    }
+
+    private void promptForServerAnswers()
         throws IOException
     {
         for (String q : questions) {
@@ -107,6 +160,11 @@ public class Main {
                         properties.get(TAG_SERVER_HOST) + ":" + 
                         properties.get(TAG_SERVER_PORT) + "/" +
                         properties.get(TAG_DEPLOY_URI) + "/namingservice";
+                } else if (q.equals(TAG_NOTIFICATION_URL)) {
+                    defaultValue = properties.get(TAG_SERVER_PROTOCOL) + "://" +
+                        properties.get(TAG_SERVER_HOST) + ":" + 
+                        properties.get(TAG_SERVER_PORT) + "/" +
+                        properties.get(TAG_DEPLOY_URI) + "/notificationservice";
                 }
 
                 String label = labels.get(q);
@@ -126,7 +184,12 @@ public class Main {
                 }
             }
 
-            properties.put(q, value);
+            if (q.equals(TAG_APPLICATION_PASSWD)) {
+                properties.put(q, (String) AccessController.doPrivileged(
+                    new EncodeAction(value)));
+            } else {
+                properties.put(q, value);
+            }
         }
     }
 

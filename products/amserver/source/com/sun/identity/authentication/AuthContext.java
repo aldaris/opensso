@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.2 2006-08-25 21:20:06 veiming Exp $
+ * $Id: AuthContext.java,v 1.3 2006-11-14 21:46:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -988,7 +988,6 @@ public class AuthContext extends Object implements java.io.Serializable {
                 return (SSOTokenManager.getInstance().createSSOToken(
                     ssoTokenID));
             } catch (SSOException ssoe) {
-                ssoe.printStackTrace();
                 throw new L10NMessageImpl(
                     amAuthContext, "createSSOTokenError", null);
             }

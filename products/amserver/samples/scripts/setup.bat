@@ -1,1 +1,1 @@
-java -cp classes com.sun.identity.samples.setup.Main
+java -cp classes;lib/amclientsdk.jar com.sun.identity.samples.setup.Main
