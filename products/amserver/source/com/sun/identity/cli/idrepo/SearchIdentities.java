@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.1 2006-05-31 21:49:53 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.2 2006-11-16 22:15:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,18 +82,18 @@ public class SearchIdentities extends IdentityCommand {
             Set results = isr.getSearchResults();
 
             if ((results != null) && !results.isEmpty()) {
-                IdSearchResults specialUsersResults =
-                    amir.getSpecialIdentities(idType);
-                Set specialUsers = specialUsersResults.getSearchResults();
+                if (idType.equals(IdType.USER)) {
+                    IdSearchResults specialUsersResults =
+                        amir.getSpecialIdentities(IdType.USER);
+                    results.removeAll(specialUsersResults.getSearchResults());
+                }
 
                 for (Iterator i = results.iterator(); i.hasNext(); ) {
                     AMIdentity amid = (AMIdentity)i.next();
-                    if (!specialUsers.contains(amid)) {
-                        String[] args = {amid.getName(), amid.getUniversalId()};
-                        outputWriter.printlnMessage(MessageFormat.format(
-                          getResourceString("format-search-identities-results"),
-                            (Object[])args));
-                    }
+                    String[] args = {amid.getName(), amid.getUniversalId()};
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("format-search-identities-results"),
+                        (Object[])args));
                 }
             }
 
