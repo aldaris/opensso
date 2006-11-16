@@ -1,4 +1,4 @@
-<!--
+<%--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,20 +18,35 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README.amadm,v 1.2 2006-11-16 04:31:06 veiming Exp $
+   $Id: index.jsp,v 1.1 2006-11-16 04:31:11 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
--->
+--%>
 
-OpenSSO - amadm CLI 
+<%@page contentType="text/html"%>
+<%@page pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@taglib uri="http://www.sun.com/web/ui" prefix="ui" %>
 
-Steps:
- 1. Install OpenSSO server
-     - deploy the opensso.war and configure it
- 2. Setup the CLI
-     - unzip amserver/built/dist/amadm.zip to a directory
-       in the same machine where opensso.war is deployed.
-     - copy the AMConfig.properties that was
-       generated in Step One to the "classes" directory
- 3. Run the CLI 
-     - type "amadm" or "amadm.bat" to run the CLI. 
+<f:view>
+<f:loadBundle var="common" basename="jsfConsole" />
+
+<ui:html>
+    <ui:head title="#{common['product.title']}">
+    <ui:link url="/theme/com/sun/web/ui/suntheme/images/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    </ui:head>
+
+    <ui:page>
+        <ui:body styleClass="DefBdy">
+            <jsp:include page="masthead.jsp"/>
+            <ui:form id="form1">
+            <ui:contentPageTitle id="indexPageTitle" title="TestApp Home Page">
+            <f:verbatim><br/></f:verbatim>
+            </ui:contentPageTitle>                        
+            </ui:form>
+        </ui:body> 
+    </ui:page>
+</ui:html>
+</f:view>
+
