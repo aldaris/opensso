@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2006-11-12 08:46:32 veiming Exp $
+   $Id: build.xml,v 1.10 2006-11-18 05:06:35 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,7 +58,9 @@
             <lib dir="${jatolib.dir}">
                 <include name="jato.jar" />
             </lib>
-            <classes dir="${amserver.built.dir}/classes" />
+            <classes dir="${amserver.built.dir}/classes">
+                <exclude name="com/sun/identity/console/**" />
+            </classes>
             <classes dir="${sharedlib.classes.dir}" />
 
             <zipfileset dir="${amserver.www.dir}/authentication/UI">
