@@ -1334,7 +1334,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create the Identity Provider metadata file.<p></p>
-<code>fmadm create-metadata-template -e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -s <i>idp_meta_alias</i></code></li>
+<code>fmadm create-metadata-template -e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>idp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1434,7 +1434,7 @@ After setting up the keystore, import the applicable signing and encryption cert
 <code>fmadm create-metadata-template -e <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
 <P></P>
 <li>Run the following command on the identity provider machine to regenerate the identity provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>fmadm create-metadata-template -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -s <i>metaAlias</i> -a <i>idp_certalias</i> -r <i>idp_enc_alias</i></code></li>
+<code>fmadm create-metadata-template -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -s <i>metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
 <P></P>
 <li>Modify the values of the following attributes in the appropriate file to enable signing and encryption.
 <p></p>
