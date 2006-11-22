@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.5 2006-10-31 00:24:29 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.6 2006-11-22 01:00:05 ak138937 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,10 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.common.DNUtils;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.util.Crypt;
+import com.iplanet.services.util.Hash;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +36,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
 import netscape.ldap.util.DN;
 
 /**
@@ -42,6 +50,7 @@ public class ServicesDefaultValues {
     private static Set preappendSlash = new HashSet();
     private static Set trimSlash = new HashSet();
     private Map<String, String> defValues = new HashMap<String, String>();
+    private static java.util.Locale locale = null;
     
     static {
         preappendSlash.add(SetupConstants.CONFIG_VAR_PRODUCT_NAME);
@@ -60,6 +69,329 @@ public class ServicesDefaultValues {
             String key = e.nextElement();
             defValues.put(key, bundle.getString(key));
         }
+    }
+
+    /**
+     * This method validates the form fields and populates the
+     * map with valid values.
+     *
+     * @param request is the Servlet Request.
+     */
+    public static void setServiceConfigValues(
+        HttpServletRequest request
+    ) {
+        Enumeration requestEnum = request.getParameterNames();
+        setLocale(request);
+        Map map = instance.defValues;
+        while (requestEnum.hasMoreElements()) {
+            String key = (String)requestEnum.nextElement();
+            map.put(key, ((String)request.getParameter(key)).trim());
+        } // while
+        String base = (String)map.get(
+            SetupConstants.CONFIG_VAR_BASE_DIR);
+        base = base.replace('\\', '/');
+        map.put(SetupConstants.CONFIG_VAR_BASE_DIR, base);
+
+        if (!isEncryptionKeyValid()){
+            throw new ConfiguratorException("configurator.encryptkey",
+                null, locale);
+        }
+        validatePassword();
+        if (!isServiceURLValid()) {
+            throw new ConfiguratorException("configurator.invalidhostname",
+                null, locale);
+        }
+
+        String cookieDomain = (String)map.get(
+            SetupConstants.CONFIG_VAR_COOKIE_DOMAIN);
+        if (!isCookieDomainValid(cookieDomain)) { 
+            throw new ConfiguratorException("configurator.invalidcookiedomain", 
+                null, locale); 
+        }
+
+        String hostname = (String)map.get(
+            SetupConstants.CONFIG_VAR_SERVER_HOST);
+        map.put(SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, 
+            getCookieDomain(cookieDomain, hostname));
+        setPlatformLocale();
+        AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+        dsConfig.setDSValues();
+
+        if (((String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE))
+            .equals("dirServer")) {
+            //try to connect to the DS with the supplied host/port
+            if (!dsConfig.isDServerUp()) {
+                dsConfig = null;
+                 throw new ConfiguratorException(
+                     "configurator.dsconnnectfailure", null, locale);
+            }
+            if ((!DN.isDN((String) map.get(
+                SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
+                    (!dsConfig.connectDSwithDN())
+            ) {
+                dsConfig = null;
+                throw new ConfiguratorException("configurator.invalidsuffix",
+                    null, locale);
+            }
+            String dbName = dsConfig.getDBName();
+            if ((dbName != null) && (dbName.length() > 0)) {
+                map.put(SetupConstants.DB_NAME, dbName);
+            }
+            map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
+            dsConfig = null;
+        }
+    }
+
+    /**
+     * Set the platform locale.
+     */
+    private static void setPlatformLocale() {
+        Map map = instance.defValues;
+        String locale = (String)map.get(
+            SetupConstants.CONFIG_VAR_PLATFORM_LOCALE);
+        if (locale == null) {
+            map.put(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
+                SetupConstants.DEFAULT_PLATFORM_LOCALE);
+        }
+    }
+
+   /**
+     * Validates serverURL.
+     *
+     * @return <code>true</code> if service URL is valid.
+     */
+    private static boolean isServiceURLValid() {
+        String protocol = "http";
+        String port = "80";
+        String hostName;
+        Map map = instance.defValues;
+        String hostURL = (String)map.get(SetupConstants.CONFIG_VAR_SERVER_URL);
+        boolean valid = (hostURL != null) && (hostURL.length() > 0);
+        try {
+            if (valid) {
+                if ((hostURL.indexOf("http", 0) == -1) &&
+                    (hostURL.indexOf("https", 0) == -1)) {
+                    int idx = hostURL.lastIndexOf(":");
+                    if ((idx != -1)) {
+                        port = hostURL.substring(idx + 1);
+                        hostName = hostURL.substring(0, idx);
+                    } else {
+                        hostName = hostURL;
+                    }
+                    if (port.equals("443")) {
+                        protocol = "https";
+                    }
+                } else {
+                    URL serverURL = new URL(hostURL);
+                    int intPort = serverURL.getPort();
+                    protocol = serverURL.getProtocol();
+                    if (intPort < 0) {
+                        if (protocol.equalsIgnoreCase("https")) {
+                            port = "443";
+                        }
+                    } else {
+                        port = Integer.toString(intPort);
+                    }
+                    hostName = serverURL.getHost();
+                }
+                if (isHostnameValid(hostName)) {
+                    map.put(SetupConstants.CONFIG_VAR_SERVER_HOST, hostName);
+                    map.put(SetupConstants.CONFIG_VAR_SERVER_PROTO, protocol);
+                    map.put(SetupConstants.CONFIG_VAR_SERVER_PORT, port);
+                    map.put(SetupConstants.CONFIG_VAR_SERVER_URL, 
+                        protocol + "://" + hostName + ":" + port);
+                    String deployuri = (String)map.get(
+                        SetupConstants.CONFIG_VAR_SERVER_URI);
+                    map.put(SetupConstants.CONFIG_VAR_SUCCESS_REDIRECT_URL, 
+                        protocol + "://" + hostName + ":" + port + 
+                            deployuri + "/base/AMAdminFrame");
+
+                } else {
+                    valid = false;
+                }
+            }
+        } catch (MalformedURLException mue){
+           valid = false;
+        }
+        return valid;
+    }
+
+    /*
+     * valid: localhost (no period)
+     * valid: abc.sun.com (two periods)
+     *
+     * @param hostname is the user specified host name.
+     * @return <code>true</code> if syntax for host is correct.
+     */
+    private static boolean isHostnameValid(String hostname) {
+        boolean valid = (hostname != null) && (hostname.length() > 0);
+        if (valid) {
+            int idx = hostname.lastIndexOf(".");
+            if ((idx != -1) && (idx != (hostname.length() -1))) {
+                int idx1 = hostname.lastIndexOf(".", idx-1);
+                valid = (idx1 != -1) && (idx1 < (idx -1));
+            }
+        }
+        return valid;
+    }
+
+    /**
+     * Validates if cookie Domain is syntactically correct.
+     *
+     * @param cookieDomain is the user specified cookie domain.
+     * @return <code>true</code> if syntax for cookie domain is correct.
+     */
+    private static boolean isCookieDomainValid(String cookieDomain) {
+        boolean valid = (cookieDomain == null) || (cookieDomain.length() == 0);
+
+        if (!valid) {
+            int idx1 = cookieDomain.lastIndexOf(".");
+
+            // need to have a period and cannot be the last char.
+            valid = (idx1 == -1) || (idx1 != (cookieDomain.length() -1));
+
+            if (valid) {
+                int idx2 = cookieDomain.lastIndexOf(".", idx1-1);
+                /*
+                 * need to be have a period before the last one e.g.
+                 * .sun.com and cannot be ..com
+                 */
+                valid = (idx2 != -1) && (idx2 < (idx1 -1));
+            }
+        }
+        return valid;
+    }
+
+    /**
+     * Returns the cookie Domain based on the hostname.
+     *
+     * @param cookieDomain is the user specified cookie domain.
+     * @param hostname is the host for which the cookie domain is set.
+     * @return cookieDomain containing the valid cookie domain for
+     *         the specified hostname.
+     */
+    private static String getCookieDomain(
+        String cookieDomain,
+        String hostname
+    ) {
+        int idx = hostname.lastIndexOf(".");
+        if ((idx == -1) || (idx == (hostname.length() -1)) ||
+            isIPAddress(hostname)
+        ) {
+            cookieDomain = "";
+        } else if ((cookieDomain == null) || (cookieDomain.length() == 0)) {
+            // try to determine the cookie domain if it is not set
+            String topLevelDomain = hostname.substring(idx+1);
+            int idx2 = hostname.lastIndexOf(".", idx-1);
+
+            if ((idx2 != -1) && (idx2 < (idx -1))) {
+                cookieDomain = hostname.substring(idx2);
+            }
+        }
+        return cookieDomain;
+    }
+
+    /**
+     * Validates if the hostname is IP address.
+     *
+     * @param hostname is the user specified hostname.
+     * @return <code>true</code> if hostname is an IP Address.
+     */
+    private static boolean isIPAddress(String hostname) {
+        StringTokenizer st = new StringTokenizer(hostname, ".");
+        boolean isIPAddr = (st.countTokens() == 4);
+        if (isIPAddr) {
+            while (st.hasMoreTokens()) {
+                String token = st.nextToken();
+                try {
+                    int node = Integer.parseInt(token);
+                    isIPAddr = (node >= 0) && (node < 256);
+                } catch (NumberFormatException e) {
+                    isIPAddr = false;
+                }
+            }
+        }
+        return isIPAddr;
+    }
+
+    /**
+     * Validates the encryption key.
+     *
+     * @return <code>true</code> if ecryption key is valid.
+     */
+    private static boolean isEncryptionKeyValid() {
+        Map map = instance.defValues;
+        String ekey = ((String)map.get(
+            SetupConstants.CONFIG_VAR_ENCRYPTION_KEY));
+        if (ekey == null) {
+            ekey = AMSetupServlet.getRandomString().trim();
+            map.put(SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, ekey);
+        }
+        return ((ekey != null) && (ekey.length() > 10)) ? true : false;
+    }
+
+    /**
+     * Validates Admin passwords.
+     *
+     */
+    private static void validatePassword() {
+        Map map = instance.defValues;
+        String adminPwd = ((String)map.get(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD)).trim();
+        String confirmAdminPwd = ((String)map.get(
+            SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD)).trim();
+
+        if (isPasswordValid(adminPwd, confirmAdminPwd)) {
+            SystemProperties.initializeProperties(
+                SetupConstants.ENC_PWD_PROPERTY, (((String) map.get(
+                    SetupConstants.CONFIG_VAR_ENCRYPTION_KEY)).trim()));
+            map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
+        }
+
+        if (((String)map.get(
+            SetupConstants.CONFIG_VAR_DATA_STORE)).equals(
+                SetupConstants.SMS_DS_DATASTORE)) {
+            adminPwd = ((String)map.get(
+                SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
+            confirmAdminPwd = ((String)map.get(
+                SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD)).trim();
+            if (isPasswordValid(adminPwd, confirmAdminPwd)) {
+                map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
+                map.remove(SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD);
+            }
+        }
+        String encryptAdminPwd = Crypt.encrypt(adminPwd);
+        String ldapUserPwd = ((String)map.get(
+            SetupConstants.LDAP_USER_PWD)).trim();
+        map.put(SetupConstants.ENCRYPTED_LDAP_USER_PWD, 
+            (String)Crypt.encrypt(ldapUserPwd));
+        map.put(SetupConstants.HASH_LDAP_USER_PWD, 
+            (String)Hash.hash(ldapUserPwd));
+        map.put(SetupConstants.ENCRYPTED_ADMIN_PWD, encryptAdminPwd);
+        map.put(SetupConstants.ENCRYPTED_AD_ADMIN_PWD, encryptAdminPwd);
+        map.remove(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD);
+    }
+
+
+    /*
+     * valid: password greater than 8 characters
+     * valid: password and confirm passwords match
+     *
+     * @param pwd  is the Admin password.
+     * @param cPwd is the confirm Admin password.
+     * @return <code>true</code> if password is valid.
+     */
+    private static boolean isPasswordValid(String pwd, String cPwd) {
+        if ((pwd != null) && (pwd.length() > 7)) {
+            if (!pwd.equals(cPwd)) {
+                 throw new ConfiguratorException("configurator.nopasswdmatch",
+                     null, locale);
+            }
+        } else {
+             throw new ConfiguratorException("configurator.passwdlength",
+                 null, locale);
+        }
+        return true;
     }
 
     /**
@@ -116,4 +448,9 @@ public class ServicesDefaultValues {
         }
         return orig;
     }
+
+    private static void setLocale (HttpServletRequest request) {
+        locale = (java.util.Locale)request.getAttribute("LOCALE");
+    }
+
 }

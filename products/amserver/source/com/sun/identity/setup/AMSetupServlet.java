@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.10 2006-10-31 00:24:28 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.11 2006-11-22 00:59:05 ak138937 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,29 +31,46 @@ import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.OrganizationConfigManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.security.AccessController;
+import java.security.SecureRandom;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -193,7 +210,7 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     /**
-     * The main enrty point for configuring Access Manager. The parameters
+     * The main entry point for configuring Access Manager. The parameters
      * are passed from configurator page.
      *
      * @param request Servlet request.
@@ -204,25 +221,52 @@ public class AMSetupServlet extends HttpServlet {
         HttpServletRequest request, 
         HttpServletResponse response
     ) {
-        setServiceDefaultValues(request);
+        ServicesDefaultValues.setServiceConfigValues(request);
         Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get("BASE_DIR");
+        String basedir = (String)map.get(
+            SetupConstants.CONFIG_VAR_BASE_DIR);
         String bootstrap = getBootStrapFile();
 
         try {
             if (bootstrap != null) {
+                File btsFile = new File(bootstrap);
+                if (!btsFile.getParentFile().exists()) {
+                    btsFile.getParentFile().mkdirs();
+                }
                 FileWriter bfout = new FileWriter(bootstrap);
                 bfout.write(basedir+"\n");
                 bfout.close();
 
                 initializeConfigProperties();
                 reInitConfigProperties();
-                SSOToken adminSSOToken = getAdminSSOToken();
-                
-                RegisterServices regService = new RegisterServices();
-                regService.registers(adminSSOToken);
-                processDataRequests("WEB-INF/template/sms");
+                boolean isDITLoaded = ((String)map.get(
+                    SetupConstants.DIT_LOADED)).equals("true");
+                boolean isDSServer = ((String)map.get(
+                    SetupConstants.CONFIG_VAR_DATA_STORE)).equals("dirServer");
+                if (isDSServer && !isDITLoaded) {
+                    if (((String)map.get(SetupConstants.CONFIG_VAR_DS_UM_SCHEMA))
+                        .equals("sdkSchema")){
+                        writeSchemaFiles(basedir, true);
+                    } else {
+                        writeSchemaFiles(basedir, false);
+                    }
+                }
 
+                String hostname = (String)map.get(
+                    SetupConstants.CONFIG_VAR_SERVER_HOST);
+                String serverURL = (String)map.get(
+                    SetupConstants.CONFIG_VAR_SERVER_URL);
+                SSOToken adminSSOToken = getAdminSSOToken();
+                if (!isDITLoaded) {
+                    RegisterServices regService = new RegisterServices();
+                    regService.registers(adminSSOToken);
+                    processDataRequests("WEB-INF/template/sms");
+                } else {
+                    if (isDSServer) {
+                       //Update the platform server list
+                       updatePlatformServerList(serverURL, hostname);
+                    }
+                }
                 handlePostPlugins(adminSSOToken);
 
                 reInitConfigProperties();
@@ -233,7 +277,18 @@ public class AMSetupServlet extends HttpServlet {
                 svcMgr.clearCache();
                 LoginLogoutMapping lmp = new LoginLogoutMapping();
                 lmp.initializeAuth(servletCtx);
-                AMSetupServlet.setConfigured();
+                String deployuri = (String)map.get(
+                    SetupConstants.CONFIG_VAR_SERVER_URI);
+                /*
+                 * requiring the keystore.jks file in OpenSSO workspace. The
+                 * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
+                 * integration that we had done.
+                 * TODO: Uncomment these two line after we have fixed all 
+                 *       related issue in OpenSSO workspace.
+                 */
+                //createPasswordFiles(basedir, deployuri);
+                //createIdentitiesForWSSecurity(serverURL, deployuri);
+                setConfigured();
                 LoginLogoutMapping.setProductInitialized(true);
                 return true;
             } else {      
@@ -304,58 +359,11 @@ public class AMSetupServlet extends HttpServlet {
         return plugins;
     }
 
-    private static void setServiceDefaultValues(HttpServletRequest request) {
-        String portnumstr = request.getParameter("portnum");
-        String hostname = request.getParameter("hostname");
-        int portnum = Integer.parseInt(portnumstr);
-        String protocol = request.getParameter("protocol");
-        String deployuri = request.getParameter("deployuri");
-        String basedir = request.getParameter("basedir");
-        String cookieDomain = request.getParameter("cookieDomain");
-        String adminPwd = request.getParameter("adminPwd").trim();
-        String platformLocale = request.getParameter("locale");
- 
-        if (!isHostnameValid(hostname)) {
-            throw new RuntimeException("Invalid host name.");
-        }
-        if (!isCookieDomainValid(cookieDomain)) {
-            throw new RuntimeException("Invalid Cookie Domain.");
-        }
-        
-        getCookieDomain(cookieDomain, hostname);
-        String encryptAdminPwd = Crypt.encrypt(adminPwd);
-        String hashAdminPwd = Hash.hash(adminPwd);
-        
-        Map map = ServicesDefaultValues.getDefaultValues();
-        ServicesDefaultValues.setDeployURI(deployuri, map);
-
-        String port = Integer.toString(portnum);
-        map.put("SERVER_PROTO", protocol);
-        map.put("SERVER_HOST", hostname);
-        map.put("SERVER_PORT", port);
-        
-        map.put("IS_INSTALL_VARDIR", basedir);
-        map.put("BASE_DIR", basedir);
-        map.put("COOKIE_DOMAIN", cookieDomain);
-        map.put("SUCCESS_REDIRECT_URL", protocol + "://" + hostname + ":" + 
-            port + deployuri + "/base/AMAdminFrame");
-
-        map.put("HASHADMINPASSWD", hashAdminPwd);
-        map.put("HASHLDAPUSERPASSWD", hashAdminPwd);
-        map.put("ENCADMINPASSWD", encryptAdminPwd);
-        map.put("OUTPUT_DIR", basedir + "/" + deployuri);
-        
-        if (platformLocale != null) {
-            map.put("PLATFORM_LOCALE", platformLocale);
-            map.put("CURRENT_PLATFORM_LOCALE", platformLocale);
-            map.put("AVAILABLE_LOCALES", platformLocale);
-        }
-    }
-
     private static void reInitConfigProperties() 
         throws FileNotFoundException, IOException {
         Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get("BASE_DIR");
+        String basedir = (String)map.get(
+            SetupConstants.CONFIG_VAR_BASE_DIR);
         reInitConfigProperties(basedir, true);
     }
 
@@ -427,12 +435,36 @@ public class AMSetupServlet extends HttpServlet {
                     if (idx2 != -1 ) {
                         Map map = ServicesDefaultValues.getDefaultValues();
                         String deployuri= path.substring(idx2, idx1);
+                        int idx3 = deployuri.indexOf(".");
+                        if (idx3 != -1) {
+                            deployuri = deployuri.substring(0, idx3);
+                        }
                         ServicesDefaultValues.setDeployURI(deployuri, map);
                     }
                 }
-                path = path.replaceAll("/", "_");
-                return System.getProperty("user.home") + "/" + AMCONFIG +
-                    path;
+                String realPath = servletCtx.getRealPath("/");
+                if ((realPath != null) && (realPath.length() > 0)) {
+                    realPath = realPath.replace('\\', '/');
+                    int idx = realPath.indexOf(":");
+                    if (idx != -1) {
+                        realPath = realPath.substring(idx + 1);
+                    }
+                    path = realPath.replaceAll("/", "_");
+                } else {
+                    path = path.replaceAll("/", "_");
+                }
+                String bootFile = servletCtx.getInitParameter(
+                    SetupConstants.BOOTSTRAP_FILE_PREFIX);
+                if ((bootFile != null) && (bootFile.length() > 0)) {
+                    bootFile = bootFile + "/" + 
+                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" + 
+                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+                } else {
+                    bootFile = System.getProperty("user.home") + "/" +
+                         SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" + 
+                         SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+                }
+                return bootFile;
             } else {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.getBootStrapFile: " +
@@ -484,7 +516,8 @@ public class AMSetupServlet extends HttpServlet {
         SSOToken ssoToken = getAdminSSOToken();
         try {
             Map map = ServicesDefaultValues.getDefaultValues();
-            String hostname = (String)map.get("SERVER_HOST");
+            String hostname = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_HOST);
             ConfigureData configData = new ConfigureData(
                 xmlBaseDir, servletCtx, hostname, ssoToken);
             configData.configure();
@@ -527,7 +560,8 @@ public class AMSetupServlet extends HttpServlet {
 
         String origpath = "@BASE_DIR@";
         Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get("BASE_DIR");
+        String basedir = (String)map.get(
+            SetupConstants.CONFIG_VAR_BASE_DIR);
         String deployuri = (String)map.get(
             SetupConstants.CONFIG_VAR_SERVER_URI);
         String newpath = basedir;
@@ -550,11 +584,26 @@ public class AMSetupServlet extends HttpServlet {
             while ((len = fin.read(cbuf)) > 0) {
                 sbuf.append(cbuf, 0, len);
             }
-            FileWriter fout = null;
-            
+
             int idx = file.lastIndexOf("/");
             String absFile = (idx != -1) ? file.substring(idx+1) : file;
-            
+
+            if (absFile.equalsIgnoreCase(
+                SetupConstants.AMCONFIG_PROPERTIES)) {
+                if (((String)map.get(
+                    SetupConstants.CONFIG_VAR_DATA_STORE)).equals("dirServer")) {
+                    int idx1 = sbuf.indexOf(
+                        SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS);
+                    if (idx1 != -1) {
+                       sbuf.replace(idx1, idx1 + 
+                          (SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS)
+                              .length(), 
+                                  SetupConstants.CONFIG_VAR_DS_DATASTORE_CLASS);
+                    }
+                }
+            }
+            FileWriter fout = null;
+
             try {
                 fout = new FileWriter(basedir + "/" + absFile);
                 String inpStr = sbuf.toString();
@@ -582,6 +631,56 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Returns secure random string.
+     *
+     * @return secure random string.
+     */
+    public static String getRandomString() {
+        String randomStr = null;
+        try {
+            byte [] bytes = new byte[24];
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.nextBytes(bytes);
+            randomStr = Base64.encode(bytes).trim();
+        } catch (Exception e) {
+            randomStr = null;
+            Debug.getInstance(SetupConstants.DEBUG_NAME).message(
+                "AMSetupServlet.getRandomString:" +
+                "Exception in generating encryption key.", e);
+            e.printStackTrace();
+        }
+        return (randomStr != null) ? randomStr : 
+            SetupConstants.CONFIG_VAR_DEFAULT_SHARED_KEY;
+    }
+
+
+    /**
+     * Get schema file names.
+     *
+     * @param sdkSchema Type of schema files names to return. 
+     * @throws MissingResourceException if the bundle cannot be found
+     */
+
+    private static List<String> getSchemaFiles(boolean sdkSchema)
+        throws MissingResourceException
+    {
+        List<String> fileNames = new ArrayList();
+        ResourceBundle rb = ResourceBundle.getBundle(
+            SetupConstants.SCHEMA_PROPERTY_FILENAME);
+        String strFiles; 
+        if (sdkSchema) {
+            strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
+        } else {
+            strFiles = rb.getString(SetupConstants.SMS_PROPERTY_FILENAME);
+        }
+        StringTokenizer st = new StringTokenizer(strFiles);
+        while (st.hasMoreTokens()) {
+            fileNames.add(st.nextToken());
+        }
+        return fileNames;
+    }
+
     private static List<String> getTagSwapConfigFiles()
         throws MissingResourceException
     {
@@ -595,45 +694,6 @@ public class AMSetupServlet extends HttpServlet {
         return fileNames;
     }
 
-    private static String getCookieDomain(String cookieDomain, String hostname){
-        int idx = hostname.lastIndexOf(".");
-        
-        if ((idx == -1) || (idx == (hostname.length() -1)) ||
-            isIPAddress(hostname)
-        ) {
-            cookieDomain = "";
-        } else if ((cookieDomain == null) || (cookieDomain.length() == 0)) {
-            // try to determine the cookie domain if it is not set
-            String topLevelDomain = hostname.substring(idx+1);
-            int idx2 = hostname.lastIndexOf(".", idx-1);
-            
-            if ((idx2 != -1) && (idx2 < (idx -1))) {
-                cookieDomain = hostname.substring(idx2);
-            }
-        }
-        return cookieDomain;
-    }
-
-    private static boolean isCookieDomainValid(String cookieDomain) {
-        boolean valid = (cookieDomain == null) || (cookieDomain.length() == 0);
-        
-        if (!valid) {
-            int idx1 = cookieDomain.lastIndexOf(".");
-
-            // need to have a period and cannot be the last char.
-            valid = (idx1 == -1) || (idx1 != (cookieDomain.length() -1));
-
-            if (valid) {
-                int idx2 = cookieDomain.lastIndexOf(".", idx1-1);
-                /*
-                 * need to be have a period before the last one e.g.
-                 * .iplanet.com and cannot be ..com
-                 */
-                valid = (idx2 != -1) && (idx2 < (idx1 -1));
-            }
-        }
-        return valid;
-    }
 
     private static boolean isIPAddress(String hostname) {
         StringTokenizer st = new StringTokenizer(hostname, ".");
@@ -652,19 +712,300 @@ public class AMSetupServlet extends HttpServlet {
         return isIPAddr;
     }
 
-    /*
-     * valid: localhost (no period)
-     * valid: abc.sun.com (two periods)
+    /**
+     * Tag swaps strings in schema files.
+     *
+     * @param basedir the configuration base directory.
+     * @param sdkSchema the type of schema to load. 
+     * @throws IOException if data files cannot be written.
      */
-    private static boolean isHostnameValid(String hostname) {
-        boolean valid = (hostname != null) && (hostname.length() > 0);
-        if (valid) {
-            int idx = hostname.lastIndexOf(".");
-            if ((idx != -1) && (idx != (hostname.length() -1))) {
-                int idx1 = hostname.lastIndexOf(".", idx-1);
-                valid = (idx1 != -1) && (idx1 < (idx -1));
+    private static void writeSchemaFiles(
+        String basedir,
+        boolean sdkSchema
+    )   throws IOException
+    {
+        List<String> schemaFiles = getSchemaFiles(sdkSchema);
+        for (String file : schemaFiles) {
+            InputStreamReader fin = new InputStreamReader(
+                servletCtx.getResourceAsStream(file));
+
+            StringBuffer sbuf = new StringBuffer();
+            char[] cbuf = new char[1024];
+            int len;
+            while ((len = fin.read(cbuf)) > 0) {
+                sbuf.append(cbuf, 0, len);
+            }
+            FileWriter fout = null;
+            try {
+                int idx = file.lastIndexOf("/");
+                String absFile = (idx != -1) ? file.substring(idx+1) : file;
+                fout = new FileWriter(basedir + "/" + absFile);
+                String inpStr = sbuf.toString();
+                fout.write(ServicesDefaultValues.tagSwap(inpStr));
+            } catch (IOException ioex) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupDSConfig.writeSchemaFiles: " +
+                    "Exception in writing schema files:" , ioex);
+                throw ioex;
+            } finally {
+                if (fin != null) {
+                    try {
+                        fin.close();
+                    } catch (Exception ex) {
+                        //No handling requried
+                    }
+                }
+                if (fout != null) {
+                    try {
+                        fout.close();
+                    } catch (Exception ex) {
+                        //No handling requried
+                    }
+                }
             }
         }
-        return valid;
+        AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+        dsConfig.loadSchemaFiles(schemaFiles);
     }
+
+    /**
+     * Create the storepass and keypass files
+     *
+     * @param basedir the configuration base directory.
+     * @param deployuri the deployment URI. 
+     * @throws IOException if password files cannot be written.
+     */
+    private static void createPasswordFiles(
+        String basedir, 
+        String deployuri 
+    ) throws IOException
+    {
+        String pwd = Crypt.encrypt("secret");
+        String location = basedir + deployuri + "/" ;
+        writeContent(location + ".keypass", pwd);
+        writeContent(location + ".storepass", pwd);
+
+        InputStream in = servletCtx.getResourceAsStream(
+                "/WEB-INF/template/sms/keystore.jks");
+        byte[] b = new byte[2007];
+        in.read(b);
+        in.close();
+        FileOutputStream fos = new FileOutputStream(location + "keystore.jks");
+        fos.write(b);
+        fos.flush();
+        fos.close();
+    }
+
+    /**
+     * Helper method to create the storepass and keypass files
+     *
+     * @param fName is the name of the file to create.
+     * @param content is the password to write in the file.
+     */
+    private static void writeContent(String fName, String content)
+        throws IOException
+    {
+        FileWriter fout = null;
+        try {
+            fout = new FileWriter(new File(fName));
+            fout.write(content);
+        } catch (IOException ioex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.writeContent: " +
+                "Exception in creating password files:" , ioex);
+            throw ioex;
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close();
+                } catch (Exception ex) {
+                    //No handling requried
+                }
+            }
+        }
+    }
+
+       /**
+     * Update platform server list and Organization alias
+     */
+    private static void updatePlatformServerList(
+        String serverURL,
+        String hostName
+    ) throws SMSException, SSOException 
+    {
+        SSOToken token = getAdminSSOToken();
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            "iPlanetAMPlatformService", token);
+        ServiceSchema ss = ssm.getGlobalSchema();
+        AttributeSchema as = ss.getAttributeSchema(
+            "iplanet-am-platform-server-list");
+        Set values = as.getDefaultValues();
+        int instanceNumber, maxNumber = 1;
+        // Iterate through the values to find the max. instance names
+        for (Iterator items = values.iterator(); items.hasNext();) {
+            String item = (String) items.next();
+            int index1 = item.indexOf('|');
+            if (index1 == -1) {
+                continue;
+            }
+            int index2 = item.indexOf('|', index1 + 1);
+            if (index2 == -1) {
+                item = item.substring(index1 + 1);
+            } else {
+                item = item.substring(index1 + 1, index2);
+            }
+            try {
+                int n = Integer.parseInt(item);
+                if (n > maxNumber) {
+                    maxNumber = n;
+                }
+            } catch (NumberFormatException nfe) {
+                // Ignore and continue
+            }
+        }
+        String instanceName = Integer.toString(maxNumber + 1);
+        if (instanceName.length() == 1) {
+            instanceName = "0" + instanceName;
+        }
+        values.add(serverURL + "|" + instanceName);
+        as.setDefaultValues(values);
+
+        // Update Organization Aliases
+        OrganizationConfigManager ocm =
+            new OrganizationConfigManager(token, "/");
+        values = new HashSet();
+        values.add(hostName);
+        ocm.addAttributeValues("sunIdentityRepositoryService",
+            "sunOrganizationAliases", values);
+    }
+
+    /**
+     * Creates Identities for WS Security
+     *
+     * @param serverURL URL at which Access Manager is configured.
+     */
+    private static void createIdentitiesForWSSecurity(
+        String serverURL,
+        String deployuri
+    ) throws IdRepoException, SSOException
+    {
+        SSOToken token = getAdminSSOToken();
+        AMIdentityRepository idrepo = new AMIdentityRepository(token, "/");
+        createUser(idrepo, "jsmith", "John", "Smith");
+        createUser(idrepo, "jondoe", "Jon", "Doe");
+        HashSet config = new HashSet();
+
+        // Add WSC configuration
+        config.add("SecurityMech=urn:sun:wss:security:null:UserNameToken");
+        config.add("UserCredential=UserName:testuser|UserPassword:test");
+        config.add("useDefaultStore=true");
+        config.add("isResponseSign=true");
+        createAgent(idrepo, "wsc", "WSC", "", config);
+
+        // Add WSC configuration
+        createAgent(idrepo, "wsp", "WSP", "", config);
+
+        // Add UsernameToken profile
+        createAgent(idrepo, "UserNameToken", "WSP",
+            "WS-I BSP UserName Token Profile Configuration", config);
+
+        // Add SAML-HolderOfKey
+        config.remove("SecurityMech=urn:sun:wss:security:null:UserNameToken");
+        config.remove("UserCredential=UserName:testuser|UserPassword:test");
+        config.add("SecurityMech=urn:sun:wss:security:null:SAMLToken-HK");
+        createAgent(idrepo, "SAML-HolderOfKey", "WSP",
+            "WS-I BSP SAML Holder Of Key Profile Configuration", config);
+
+        // Add SAML-SenderVouches
+        config.remove("SecurityMech=urn:sun:wss:security:null:SAMLToken-HK");
+        config.add("SecurityMech=urn:sun:wss:security:null:SAMLToken-SV");
+        createAgent(idrepo, "SAML-SenderVouches", "WSP",
+            "WS-I BSP SAML Sender Vouches Token Profile Configuration", config);
+
+        // Add X509Token
+        config.remove("SecurityMech=urn:sun:wss:security:null:SAMLToken-SV");
+        config.add("SecurityMech=urn:sun:wss:security:null:X509Token");
+        createAgent(idrepo, "X509Token", "WSP",
+            "WS-I BSP X509 Token Profile Configuration", config);
+
+        // Add LibertyX509Token
+        config.add("TrustAuthority=LocalDisco");
+        config.add("WSPEndpoint=http://wsp.com");
+        config.remove("SecurityMech=urn:sun:wss:security:null:X509Token");
+        config.add("SecurityMech=urn:liberty:security:2005-02:null:X509");
+        createAgent(idrepo, "LibertyX509Token", "WSP",
+            "Liberty X509 Token Profile Configuration", config);
+
+        // Add LibertyBearerToken
+        config.remove("SecurityMech=urn:liberty:security:2005-02:null:X509");
+        config.add("SecurityMech=urn:liberty:security:2005-02:null:Bearer");
+        createAgent(idrepo, "LibertyBearerToken", "WSP",
+            "Liberty SAML Bearer Token Profile Configuration", config);
+
+        // Add LibertySAMLToken
+        config.remove("SecurityMech=urn:liberty:security:2005-02:null:Bearer");
+        config.add("SecurityMech=urn:liberty:security:2005-02:null:SAML");
+        createAgent(idrepo, "LibertySAMLToken", "WSP",
+            "Liberty SAML Token Profile Configuration", config);
+
+        // Add local discovery service
+        config.clear();
+        config.add("Name=LocalDisco");
+        config.add("Type=Discovery");
+        config.add("Endpoint=" + serverURL + deployuri + "/Liberty/disco");
+        createAgent(idrepo, "LocalDisco", "Discovery",
+            "Local Liberty Discovery Service Configuration", config);
+    }
+
+    private static void createUser(
+        AMIdentityRepository idrepo,
+        String uid,
+        String gn,
+        String sn
+    ) throws IdRepoException, SSOException 
+    {
+        Map attributes = new HashMap();
+        Set values = new HashSet();
+        values.add(uid);
+        attributes.put("uid", values);
+        values = new HashSet();
+        values.add(gn);
+        attributes.put("givenname", values);
+        values = new HashSet();
+        values.add(sn);
+        attributes.put("sn", values);
+        values = new HashSet();
+        values.add(gn + " " + sn);
+        attributes.put("cn", values);
+        values = new HashSet();
+        values.add(uid);
+        attributes.put("userPassword", values);
+        AMIdentity id = idrepo.createIdentity(IdType.USER, uid, attributes);
+        id.assignService("sunIdentityServerDiscoveryService",
+            Collections.EMPTY_MAP);
+    }
+
+
+    private static void createAgent(
+        AMIdentityRepository idrepo,
+        String name,
+        String type,
+        String desc,
+        Set config
+    ) throws IdRepoException, SSOException 
+    {
+        Map attributes = new HashMap();
+        Set values = new HashSet();
+        values.add(name+type);
+        attributes.put("uid", values);
+        values = new HashSet();
+        values.add(name);
+        attributes.put("userpassword", values);
+        values = new HashSet();
+        values.add(desc);
+        attributes.put("description", values);
+        attributes.put("sunIdentityServerDeviceKeyValue", config);
+        idrepo.createIdentity(IdType.AGENT, name+type, attributes);
+    }
+
 }

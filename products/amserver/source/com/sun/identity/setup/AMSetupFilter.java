@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.1 2006-07-17 18:11:23 veiming Exp $
+ * $Id: AMSetupFilter.java,v 1.2 2006-11-22 01:01:24 ak138937 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public final class AMSetupFilter implements Filter {
     {
         HttpServletRequest  httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response ;
-
+        try {
             //Check to see if AM is configured 
             if (AMSetupServlet.isConfigured()) {
                 filterChain.doFilter(httpRequest, httpResponse);
@@ -85,6 +85,9 @@ public final class AMSetupFilter implements Filter {
                     markPassthrough();
                 }
             }
+        } catch(Exception ex) {
+            throw new ServletException("AMSetupFilter.doFilter", ex);
+        }
     }
 
     /**
@@ -119,6 +122,11 @@ public final class AMSetupFilter implements Filter {
         servletCtx = filterConfig.getServletContext();
         initialized = AMSetupServlet.checkInitState(servletCtx); 
         LoginLogoutMapping.setProductInitialized(initialized);
+         if (!initialized) {
+            //Set the encryption Key
+            servletCtx.setAttribute("am.enc.pwd",
+                AMSetupServlet.getRandomString());
+        }
     }
     
     /**
