@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2006-11-18 05:06:35 veiming Exp $
+   $Id: build.xml,v 1.11 2006-11-22 01:15:47 ak138937 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,6 +99,7 @@
             </zipfileset>
             <zipfileset dir="${war.xml.dir}" prefix="WEB-INF">
                 <include name="jaxrpc-ri-runtime.xml" />
+                <include name="configurator.tld" />
             </zipfileset>
             <zipfileset dir="${amserver.built.res.dir}" prefix="WEB-INF/classes">
                 <include name="*.properties" />
@@ -125,6 +126,14 @@
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/classes">
                 <include name="AMConfig.properties" />
             </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
+                <include name="am_sm_ds_schema.ldif" />
+                <include name="ds_remote_schema.ldif" />
+                <include name="index.ldif" />
+                <include name="install.ldif" />
+                <include name="plugin.ldif" />
+                <include name="sunone_schema2.ldif" />
+            </zipfileset>
             <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF">
                 <include name="cc.tld" />
             </zipfileset>
@@ -137,19 +146,19 @@
                 <exclude name="html/*" />
             </zipfileset>
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/authentication" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/base" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/css" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/delegation" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/dm" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/idm" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/images" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/js" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/policy" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/realm" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/service" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/session" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/user" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/authentication" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/base" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/css" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/delegation" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/dm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/idm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/images" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/js" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/policy" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/realm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/service" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/session" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/user" />
             <zipfileset dir="${lockhart.dir}/css" prefix="css">
                 <exclude name="css_generic.css" />
             </zipfileset>

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.1 2006-08-29 07:52:31 veiming Exp $
+    $Id: amLogging.xml,v 1.2 2006-11-22 01:12:30 ak138937 Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,7 +65,7 @@
 		    syntax="string"
 		    i18nKey="a104">
 		    <DefaultValues>
-			<Value>@IS_INSTALL_VARDIR@/@IS_PRODNAME@/@LOG_DIR@/</Value>
+			<Value>@BASE_DIR@/@SERVER_URI@/@LOG_DIR@/</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 		<AttributeSchema name="iplanet-am-logging-type"
@@ -93,7 +93,7 @@
                     syntax="string"
                     i18nKey="">
                     <DefaultValues>
-			<Value>@CONFIG_DIR@/Logger.jks</Value>
+			<Value>@BASE_DIR@/@SERVER_URI@/Logger.jks</Value>
                     </DefaultValues>
                 </AttributeSchema> 		
 		<AttributeSchema name="iplanet-am-logging-db-user"
