@@ -17,14 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2005-12-08 01:16:19 veiming Exp $
+ * $Id: package-info.java,v 1.3 2006-11-28 22:44:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 /**
  * This package contains classes that represent SSOProvider 
- *
- * @supported.api
  */
 package com.iplanet.sso.providers.dpro;

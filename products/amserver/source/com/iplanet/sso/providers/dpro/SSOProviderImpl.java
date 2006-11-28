@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.4 2006-08-25 21:20:01 veiming Exp $
+ * $Id: SSOProviderImpl.java,v 1.5 2006-11-28 22:44:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,6 @@ import javax.servlet.http.HttpServletRequest;
  * This <code>final</code> class <code>SSOProviderImpl</code> implements 
  * <code>SSOProvider</code> interface and provides implemtation of the methods 
  * to create , destroy , check the validity of a single sign on token .
- *
- * @supported.api
  */
 public final class SSOProviderImpl implements SSOProvider {
 

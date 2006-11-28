@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenImpl.java,v 1.2 2006-08-25 21:20:01 veiming Exp $
+ * $Id: SSOTokenImpl.java,v 1.3 2006-11-28 22:44:05 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.dpro.session.SessionListener;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
+import com.iplanet.sso.SSOTokenListener;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.shared.Constants;
@@ -137,9 +138,8 @@ class SSOTokenImpl implements SSOToken {
      * Returns the principal name of the SSOToken
      * 
      * @return The Principal name
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the Principal.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the Principal.
      */
     public java.security.Principal getPrincipal() throws SSOException {
         try {
@@ -159,12 +159,10 @@ class SSOTokenImpl implements SSOToken {
      * Returns the authentication method used for the authentication.
      * 
      * @return The authentication method.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the authentication method.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the authentication method.
      */
-
-    public java.lang.String getAuthType() throws SSOException {
+    public String getAuthType() throws SSOException {
         try {
             if (ldapConnect == true) {
                 return ("LDAP");
@@ -191,11 +189,9 @@ class SSOTokenImpl implements SSOToken {
      * for authentication.
      * 
      * @return The authentication level.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the authentication level.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the authentication level.
      */
-
     public int getAuthLevel() throws SSOException {
         checkTokenType("getAuthLevel");
         try {
@@ -211,19 +207,18 @@ class SSOTokenImpl implements SSOToken {
      * Returns the IP Address of the client(browser) which sent the request.
      * 
      * @return The IP Address of the client
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the IP Address of the client.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the IP Address of the client.
      */
-    public java.net.InetAddress getIPAddress() throws SSOException {
+    public InetAddress getIPAddress() throws SSOException {
         try {
             if (ldapConnect == true) {
                 return InetAddress.getLocalHost();
             }
             String host = SSOSession.getProperty("Host");
-            if (host == null || host.length() == 0) {
+            if ((host == null) || (host.length() == 0)) {
                 throw new SSOException(SSOProviderBundle.rbName,
-                        "ipaddressnull", null);
+                    "ipaddressnull", null);
             }
             return InetAddress.getByName(host);
         } catch (Exception e) {
@@ -236,19 +231,18 @@ class SSOTokenImpl implements SSOToken {
      * Returns the host name of the client(browser) which sent the request.
      * 
      * @return The host name of the client
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the host name of the client.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the host name of the client.
      */
-    public java.lang.String getHostName() throws SSOException {
+    public String getHostName() throws SSOException {
         try {
             if (ldapConnect == true) {
                 return (InetAddress.getLocalHost()).getHostName();
             }
             String hostName = SSOSession.getProperty("HostName");
-            if (hostName == null || hostName.length() == 0) {
+            if ((hostName == null) || (hostName.length() == 0)) {
                 throw new SSOException(SSOProviderBundle.rbName, "hostnull",
-                        null);
+                    null);
             }
             return hostName;
         } catch (Exception e) {
@@ -279,9 +273,8 @@ class SSOTokenImpl implements SSOToken {
      * Returns the maximum session time in minutes.
      * 
      * @return The maximum session time.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the maximum session time.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the maximum session time.
      */
     public long getMaxSessionTime() throws SSOException {
         checkTokenType("getMaxSessionTime");
@@ -297,9 +290,8 @@ class SSOTokenImpl implements SSOToken {
      * Returns the session idle time in seconds.
      * 
      * @return The session idle time.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the idle time.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the idle time.
      */
     public long getIdleTime() throws SSOException {
         checkTokenType("getIdleTime");
@@ -315,9 +307,8 @@ class SSOTokenImpl implements SSOToken {
      * Returns the maximum session idle time in minutes.
      * 
      * @return The maximum session idle time.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the maximum idle time.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the maximum idle time.
      */
     public long getMaxIdleTime() throws SSOException {
         checkTokenType("getMaxIdleTime");
@@ -351,12 +342,11 @@ class SSOTokenImpl implements SSOToken {
      *            The property name.
      * @param value
      *            The property value.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in setting the property name and value.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in setting the property name and value.
      */
-    public void setProperty(java.lang.String name, java.lang.String value)
-            throws SSOException {
+    public void setProperty(String name, String value)
+        throws SSOException {
         if (ldapConnect == true) {
             ldapTokenProperty.put(name, value);
             return;
@@ -371,16 +361,15 @@ class SSOTokenImpl implements SSOToken {
     }
 
     /**
-     * Gets the property stored in this token.
+     * Returns the property stored in this token.
      * 
      * @param name
      *            The property name.
      * @return The property value in String format.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in getting the property value.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the property value.
      */
-    public java.lang.String getProperty(java.lang.String name)
+    public String getProperty(String name)
             throws SSOException {
 
         String property = null;
@@ -388,7 +377,7 @@ class SSOTokenImpl implements SSOToken {
             property = ssoToken.getProperty(name);
         }
         if (property == null) {
-            if (ldapConnect == true) {
+            if (ldapConnect) {
                 property = ((String) ldapTokenProperty.get(name));
             } else {
                 try {
@@ -407,33 +396,29 @@ class SSOTokenImpl implements SSOToken {
      * 
      * @param listener
      *            A reference to a SSOTokenListener object.
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not VALID or if
-     *                there are errors in adding the sso token listener.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in adding the sso token listener.
      */
-    public void addSSOTokenListener(com.iplanet.sso.SSOTokenListener listener)
-            throws SSOException {
-        if (ldapConnect == true) {
-            // no-op
-            return;
-        }
-        try {
-            SessionListener ssoListener = new SSOSessionListener(listener);
-            SSOSession.addSessionListener(ssoListener);
-        } catch (Exception e) {
-            SSOProviderImpl.debug.error("Couldn't add listener to the token"
+    public void addSSOTokenListener(SSOTokenListener listener)
+        throws SSOException {
+        if (!ldapConnect) {
+            try {
+                SessionListener ssoListener = new SSOSessionListener(listener);
+                SSOSession.addSessionListener(ssoListener);
+            } catch (Exception e) {
+                SSOProviderImpl.debug.error("Couldn't add listener to the token"
                     + getTokenID().toString());
-            throw new SSOException(e);
+                throw new SSOException(e);
+            }
         }
     }
 
     /**
-     * Returns true if the SSOToken is valid, false otherwise
+     * Returns true if the SSOToken is valid.
      * 
-     * @return true or false
+     * @return true if the SSOToken is valid.
      * @deprecated THIS METHOD WILL BE REMOVED ON 3/15/01. INSTEAD USE
      *             SSOTokenManager.getInstance().isValidToken(SSOToken)
-     * 
      */
     public boolean isValid() {
         try {
@@ -441,11 +426,7 @@ class SSOTokenImpl implements SSOToken {
                 return true;
             }
             int state = SSOSession.getState(true);
-            if (state == Session.VALID || state == Session.INACTIVE) {
-                return true;
-            } else {
-                return false;
-            }
+            return (state == Session.VALID) || (state == Session.INACTIVE);
         } catch (Exception e) {
             return false;
         }
@@ -454,14 +435,13 @@ class SSOTokenImpl implements SSOToken {
     /**
      * Checks if the SSOTOken is valid
      * 
-     * @exception A
-     *                SSOException is thrown if the SSOToken is not valid
+     * @throws SSOException is thrown if the SSOToken is not valid
      * @deprecated THIS METHOD WILL BE REMOVED ON 3/15/01. INSTEAD USE
      *             SSOTokenManager.getInstance().validateToken(SSOToken)
      */
     public void validate() throws SSOException {
         try {
-            if (ldapConnect == true) {
+            if (ldapConnect) {
                 return;
             }
             int state = SSOSession.getState(true);
@@ -477,19 +457,18 @@ class SSOTokenImpl implements SSOToken {
     }
 
     /**
-     * this method returns true if the token is for ldap connection, false
-     * otherwise
-     * 
-     * @return boolean
+     * Returns true if the token is for ldap connection.
+     *
+     * @return true if the token is for ldap connection.
      */
     public boolean isLdapConnection() {
         return ldapConnect;
     }
 
     /**
-     * This method sets the value of ldapConnect. It is used to destroy this
-     * token.
-     * 
+     * Sets the value of ldapConnect. It is used to destroy this token.
+     *
+     * @param status LDAP Connection status.
      */
     protected void setStatus(boolean status) {
         ldapConnect = status;
@@ -498,7 +477,7 @@ class SSOTokenImpl implements SSOToken {
     /**
      * Returns the encoded URL , rewritten to include the session id.
      * 
-     * @param url ,
+     * @param url 
      *            the URL to be encoded
      * @return the encoded URL if cookies are not supported or the url if
      *         cookies are supported.
@@ -512,8 +491,7 @@ class SSOTokenImpl implements SSOToken {
      * Check if the token is created by direct ldap connection. If yes then
      * throw unsupported exception
      * 
-     * @param str,
-     *            the name of the method calling this check.
+     * @param methodName Name of the method calling this check.
      */
     public void checkTokenType(String methodName) {
         if (ldapConnect == true) {
@@ -526,12 +504,11 @@ class SSOTokenImpl implements SSOToken {
     }
 
     /**
-     * Returns the Session Object
+     * Returns the Session Object.
      * 
-     * @return SSOSession The session object
+     * @return Session object.
      */
     Session getSession() {
         return SSOSession;
     }
-
 }
