@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.2 2006-09-07 00:41:20 veiming Exp $
+ * $Id: Constants.java,v 1.3 2006-11-29 05:36:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,11 +212,6 @@ public interface Constants {
      * Property string for locale.
      */
     String AM_LOCALE = "com.iplanet.am.locale";
-
-    /**
-     * Property string for JDK path.
-     */
-    String AM_JDK_PATH = "com.iplanet.am.jdk.path";
 
     /**
      * Property string for log status.
