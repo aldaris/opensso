@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.1 2006-11-16 04:31:07 veiming Exp $
+ * $Id: AMAdminConstants.java,v 1.2 2006-11-30 00:44:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,4 +47,30 @@ public interface AMAdminConstants {
      * Logout URL
      */
     String URL_LOGOUT = "/UI/Logout";
+
+    /**
+     * Read permission.
+     */
+    String PERMISSION_READ = "READ";
+
+    /**
+     * Write permission.
+     */
+    String PERMISSION_MODIFY = "MODIFY";
+
+    /**
+     * Delegation permission.
+     */
+    String PERMISSION_DELEGATE = "DELEGATE";
+
+    /**
+     * Adminstration Console service name.
+     */
+    String ADMIN_CONSOLE_SERVICE = "iPlanetAMAdminConsoleService";
+
+    /**
+     * Federation Managemenet Enable Attribute Name. This attribute is found in
+     * Administration Console Service.
+     */
+    String CONSOLE_FED_ENABLED_ATTR ="iplanet-am-admin-console-liberty-enabled";
 }

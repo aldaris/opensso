@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jsf.xml,v 1.1 2006-11-16 04:31:10 veiming Exp $
+   $Id: build-jsf.xml,v 1.2 2006-11-30 00:44:46 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -111,6 +111,7 @@
             <zipfileset dir="${amserver.dtd.xml.dir}" prefix="WEB-INF" />
             <zipfileset dir="${war.xml.dir}" prefix="WEB-INF">
                 <include name="jaxrpc-ri-runtime.xml" />
+                <include name="configurator.tld" />
             </zipfileset>
             <zipfileset dir="${amserver.classes.dir}/jaxrpc" prefix="WEB-INF/wsdl">
                 <include name="IdentityManagementServices.wsdl" />
@@ -122,6 +123,15 @@
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/classes">
                 <include name="AMConfig.properties" />
             </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
+                <include name="am_sm_ds_schema.ldif" />
+                <include name="ds_remote_schema.ldif" />
+                <include name="index.ldif" />
+                <include name="install.ldif" />
+                <include name="plugin.ldif" />
+                <include name="sunone_schema2.ldif" />
+            </zipfileset>
+
             <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF">
                 <include name="cc.tld" />
             </zipfileset>

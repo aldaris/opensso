@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminUtils.java,v 1.1 2006-11-16 04:31:07 veiming Exp $
+ * $Id: AMAdminUtils.java,v 1.2 2006-11-30 00:44:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,5 +85,4 @@ public class AMAdminUtils {
         }
         return (value == null) ? Collections.EMPTY_SET : value;
     }
-
 }

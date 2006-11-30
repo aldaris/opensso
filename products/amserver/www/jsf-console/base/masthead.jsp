@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
    
-   $Id: masthead.jsp,v 1.1 2006-11-16 04:31:11 veiming Exp $
+   $Id: masthead.jsp,v 1.2 2006-11-30 00:44:48 veiming Exp $
    
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -64,5 +64,8 @@
             action="#{common['logout.link']}" />
     </f:facet>
 </ui:masthead>
+<ui:form id="form">
+    <ui:tabSet binding="#{tabbean.tabSet}" selected="realm" />
+</ui:form>
 </jsp:root>
 

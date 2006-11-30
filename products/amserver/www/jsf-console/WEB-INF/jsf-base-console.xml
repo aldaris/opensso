@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
     
-   $Id: jsf-base-console.xml,v 1.1 2006-11-16 04:31:10 veiming Exp $
+   $Id: jsf-base-console.xml,v 1.2 2006-11-30 00:44:47 veiming Exp $
     
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,6 +32,12 @@
         <description>Base backing bean</description>
         <managed-bean-name>basebean</managed-bean-name>
         <managed-bean-class>com.sun.identity.console.base.AMBeanBase</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <description>Tab backing bean</description>
+        <managed-bean-name>tabbean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.console.base.TabBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 </faces-config>

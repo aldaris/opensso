@@ -1,0 +1,50 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+  
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+  
+   $Id: ConsoleConfiguration.xml,v 1.1 2006-11-30 00:44:47 veiming Exp $
+  
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<consoleconfig>
+<tabs>
+    <tab id="realm" 
+	url="../realm/RMRealm"
+	label="#{common['tab.realm.label']}"
+        tooltip="#{common['tab.realm.tooltip']}"
+	permissions="sunAMRealmService,sunIdentityRepositoryService,iPlanetAMPolicyService" />
+
+    <tab id="services"
+	url="../service/SCConfig"
+	label="#{common['tab.configuration.label']}"
+	tooltip="#{common['tab.configuration.tooltip']}"
+	permissions="iPlanetAMAuth,iPlanetAMPasswordResetService,iPlanetG11NSettings,iPlanetAMAdminConsoleService,iPlanetAMClientDetection,iPlanetAMLoggingService,iPlanetAMNamingService,iPlanetAMPlatformService,iPlanetAMSessionService,iPlanetAMPolicy" 
+	accesslevel="globalconfig"/>
+
+    <tab id="session"
+	url="../session/SMProfile"
+	label="#{common['tab.session.label']}"
+	tooltip="#{common['tab.session.tooltip']}"
+	permissions="iPlanetAMSessionService" 
+	accesslevel="globalconfig"/>
+</tabs>
+
+</consoleconfig>
+
