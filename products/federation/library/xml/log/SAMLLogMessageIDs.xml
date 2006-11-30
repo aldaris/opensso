@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAMLLogMessageIDs.xml,v 1.1 2006-10-30 23:17:27 qcheng Exp $
+   $Id: SAMLLogMessageIDs.xml,v 1.2 2006-11-30 02:29:51 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -468,7 +468,7 @@
         </triggers>
         <actions/>
     </logmessage>
-    <logmessage name="SOAP_FAULT_ERROR" id="32"
+    <logmessage name="SOAP_FAULT_ERROR" id="34"
         loglevel="LL_INFO"
         description="Failed to build SOAP fault response body">
         <datainfo>
