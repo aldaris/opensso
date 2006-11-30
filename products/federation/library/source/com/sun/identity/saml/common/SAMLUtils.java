@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.1 2006-10-30 23:15:43 qcheng Exp $
+ * $Id: SAMLUtils.java,v 1.2 2006-11-30 02:32:17 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -964,8 +964,8 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         // check Recipient == this server's POST profile URL(requestURL)
         String recipient = response.getRecipient();
         if ((recipient == null) || (recipient.length() == 0) ||
-        ((!recipient.equals(requestUrl)) &&
-        (!recipient.equals(getLBURL(requestUrl, request))))) {
+        ((!equalURL(recipient, requestUrl)) &&
+        (!equalURL(recipient,getLBURL(requestUrl, request))))) {
             debug.error("verifyResponse : Incorrect Recipient.");
             return false;
         }
@@ -1646,5 +1646,40 @@ public class SAMLUtils  extends SAMLUtilsCommon {
                 }
             }
         } 
+    }
+
+    /**
+     * Compares two URLs to see if they are equal. Two URLs are equal if
+     * they have same protocol, host, port and path (case ignored).
+     * Note : the method is provided to avoid URL.equals() call which requires
+     * name lookup. Name lookup is a blocking operation and very expensive
+     * if the hostname could not be resolved.
+     *
+     * @return true if the URLs are equal, false otherwise.
+     */
+    private static boolean equalURL(String url1, String url2) {
+        try {
+            URL u1 = new URL(url1);
+            URL u2 = new URL(url2);
+            int port1 = u1.getPort();
+            if (port1 == -1) {
+                port1 = u1.getDefaultPort();
+            }
+            int port2 = u2.getPort();
+            if (port2 == -1) {
+                port2 = u2.getDefaultPort();
+            }
+            if ((u1.getProtocol().equalsIgnoreCase(u2.getProtocol())) &&
+                (u1.getHost().equalsIgnoreCase(u2.getHost())) &&
+                (port1 == port2) &&
+                (u1.getPath().equalsIgnoreCase(u2.getPath()))) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (MalformedURLException m) {
+            debug.message("Error in SAMLUtils.equalURL", m);
+            return false;
+        }
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.1 2006-10-30 23:15:43 qcheng Exp $
+ * $Id: SAMLServiceManager.java,v 1.2 2006-11-30 02:32:19 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,10 @@ import com.sun.identity.plugin.datastore.DataStoreProviderManager;
 import com.sun.identity.saml.plugins.AccountMapper;
 import com.sun.identity.saml.plugins.ActionMapper;
 import com.sun.identity.saml.plugins.AttributeMapper;
+import com.sun.identity.saml.plugins.DefaultNameIdentifierMapper;
 import com.sun.identity.saml.plugins.DefaultAttributeMapper;
 import com.sun.identity.saml.plugins.DefaultPartnerAccountMapper;
+import com.sun.identity.saml.plugins.NameIdentifierMapper;
 import com.sun.identity.saml.plugins.PartnerSiteAttributeMapper;
 import com.sun.identity.saml.plugins.PartnerAccountMapper;
 import com.sun.identity.saml.plugins.SiteAttributeMapper;
@@ -172,6 +174,7 @@ public class SAMLServiceManager implements ConfigurationListener {
         private PartnerAccountMapper partnerAcctMapper = null;
         private SiteAttributeMapper _siteAttributeMapper = null;
         private PartnerSiteAttributeMapper _partnerSiteAttributeMapper = null;
+        private NameIdentifierMapper nameIdentifierMapper = null;
         private AttributeMapper attributeMapper = null;
         private ActionMapper actionMapper = null;
         private String _issuer = null;
@@ -196,6 +199,8 @@ public class SAMLServiceManager implements ConfigurationListener {
          *      instance
          * @param partnerSiteAttributeMapper
          *      <code>PartnerSiteAttributeMapper</code> plugin instance
+         * @param nameIdentifierMapper <code>NameIdentifierMapper</code> plugin 
+         *        instance
          * @param attrMapper <code>AttributeMapper</code> plugin instance
          * @param actionMapper <code>ActionMapper</code> plugin instance
          * @param issuer String which is the issuer of the site
@@ -210,6 +215,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                          PartnerAccountMapper partnerAccountMapper,
                          SiteAttributeMapper siteAttributeMapper, 
                          PartnerSiteAttributeMapper partnerSiteAttributeMapper,
+                         NameIdentifierMapper nameIdentifierMapper,
                          AttributeMapper attrMapper, ActionMapper actionMapper,
                         String issuer, Set origHostSet, String version) 
         {
@@ -224,6 +230,7 @@ public class SAMLServiceManager implements ConfigurationListener {
             partnerAcctMapper = partnerAccountMapper; 
             _siteAttributeMapper = siteAttributeMapper;
             _partnerSiteAttributeMapper = partnerSiteAttributeMapper;
+            this.nameIdentifierMapper = nameIdentifierMapper;
             attributeMapper = attrMapper;
             this.actionMapper = actionMapper;
             _issuer = issuer; 
@@ -327,6 +334,15 @@ public class SAMLServiceManager implements ConfigurationListener {
                 SAMLUtils.debug.message("partnerSiteMapper is null");
             }
             return _partnerSiteAttributeMapper;
+        }
+
+        /**
+         * Returns <code>NameIdentifierMapper</code> instance.
+         *
+         * @return the <code>NameIdentifierMapper</code> instance.
+         */
+        public NameIdentifierMapper getNameIdentifierMapper() {
+            return nameIdentifierMapper;
         }
 
         /**
@@ -798,6 +814,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                         SiteAttributeMapper _siteAttributeMapper = null;
                         PartnerSiteAttributeMapper _partnerSiteAttributeMapper
                             = null;
+                        NameIdentifierMapper niMapper = null;
                         AttributeMapper attrMapper = null;
                         ActionMapper actionMapper = null;
                         String _issuer = null;
@@ -979,6 +996,16 @@ public class SAMLServiceManager implements ConfigurationListener {
                                     _partnerSiteAttributeMapper= null;
                                 }
                             } else if (key.equalsIgnoreCase(
+                                SAMLConstants.NAMEIDENTIFIERMAPPER)) {
+                                try {
+                                    niMapper = (NameIdentifierMapper)
+                                         Class.forName(element.substring(
+                                         nextpos)).newInstance();
+                                } catch (Exception ex) {
+                                    SAMLUtils.debug.error("SAMLServiceManager:",
+                                        ex);
+                                }
+                            } else if (key.equalsIgnoreCase(
                                         SAMLConstants.ATTRIBUTEMAPPER)) {
                                 try {
                                     attrMapper = (AttributeMapper) Class.
@@ -1127,9 +1154,9 @@ public class SAMLServiceManager implements ConfigurationListener {
                                    _user, basic_auth_user, basic_auth_passwd,
                                     _certAlias, _accountMapper,
                                    _partnerAccountMapper, _siteAttributeMapper,
-                                   _partnerSiteAttributeMapper, attrMapper,
-                                   actionMapper, _issuer, origHostSet,
-                                   preferVersion);
+                                   _partnerSiteAttributeMapper, niMapper,
+                                   attrMapper,actionMapper, _issuer, 
+                                   origHostSet,preferVersion);
                             _Soaps.put(_destID, server); 
                             if(_issuer != null) {
                                _Soaps.put(_issuer, server);

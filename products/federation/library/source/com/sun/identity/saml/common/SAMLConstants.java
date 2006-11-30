@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.1 2006-10-30 23:15:41 qcheng Exp $
+ * $Id: SAMLConstants.java,v 1.2 2006-11-30 02:32:15 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -681,6 +681,18 @@ public final class SAMLConstants
      */
     public static final String PARTNERSITEATTRIBUTEMAPPER =
                                 "partnersiteattributemapper";
+
+
+    /**
+     * A SAML service attribute parameter that specifies the class with the
+     * path where the nameIdentifierMapper is located. Applications can develop
+     * a nameIdentifierMapper to obtain a name identifier to be included in the
+     * assertion during SSO. If no nameIdentifierMapper is found, then a
+     * default implementation will be used.
+     *
+     * @supported.api
+     */
+    public static final String NAMEIDENTIFIERMAPPER = "nameidentifiermapper";
 
     /**
      * A SAML service attribute parameter that lists the IP addresses and/or

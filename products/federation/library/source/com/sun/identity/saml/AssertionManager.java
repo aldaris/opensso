@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.1 2006-10-30 23:15:31 qcheng Exp $
+ * $Id: AssertionManager.java,v 1.2 2006-11-30 02:32:13 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -588,8 +588,6 @@ public final class AssertionManager {
         validateNumberOfAssertions(idEntryMap);
         String authMethod = null;
         Date authInstant = null;
-        String nameQualifier = null;
-        String name = null;
         Object token = null;
         String clientIP = null;
         try {
@@ -606,14 +604,8 @@ public final class AssertionManager {
                 authInstant = new Date();
             } else {
                 authInstant = DateUtils.stringToDate(authSSOInstant);
-	    }                
+            }                
 
-            // get the nameQualifier of the NameIdentifier
-            nameQualifier = XMLUtils.escapeSpecialCharacters(
-                (String) sessionProvider.getProperty(token,"Organization")[0]);
-            // get the name of the NameIdentifier
-            name =  XMLUtils.escapeSpecialCharacters(
-                sessionProvider.getPrincipalName(token));
             try {
                 InetAddress clientIPAddress =
                     InetAddress.getByName(sessionProvider.getProperty(
@@ -634,7 +626,29 @@ public final class AssertionManager {
             return null;
         }
 
-        NameIdentifier ni = new NameIdentifier(name, nameQualifier);
+        Map partnerURLs =
+            (Map) SAMLServiceManager.getAttribute(SAMLConstants.PARTNER_URLS);
+        SAMLServiceManager.SOAPEntry partnerEntry =
+            (SAMLServiceManager.SOAPEntry)partnerURLs.get(destID);
+
+        NameIdentifierMapper niMapper = null;
+        if (partnerEntry != null) {
+            niMapper = partnerEntry.getNameIdentifierMapper();
+        }
+        if (niMapper == null) {
+            niMapper = new DefaultNameIdentifierMapper();
+        }
+
+        String srcID =
+            (String)SAMLServiceManager.getAttribute(SAMLConstants.SITE_ID);
+
+        NameIdentifier ni = niMapper.getNameIdentifier(token, srcID, destID);
+        if (ni == null) {
+            SAMLUtils.debug.error("AssertionManager.createAssertion(id): " +
+                                  "name identifier is null.");
+            return null;
+        }
+
         SubjectConfirmation subConfirmation = null;
         String artString = null;
         if ((confirmationMethod != null) && (confirmationMethod.length() > 0)) {
@@ -864,7 +878,7 @@ public final class AssertionManager {
         long timeout = 0;
 
         ArtEntry artEntry = (ArtEntry) artEntryMap.get(artString);
-	if (artEntry == null) {
+        if (artEntry == null) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
                     + "stid): no Assertion found corresponding to artifact.");
@@ -872,17 +886,17 @@ public final class AssertionManager {
             throw new SAMLException(
                     SAMLUtils.bundle.getString("noMatchingAssertion"));
         }
-	aIDString = (String) artEntry.getAssertionID();
-	if (aIDString == null) {
-	    if (SAMLUtils.debug.messageEnabled()) {
-		SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
-		    + "stid): no AssertionID found corresponding to artifact.");
-	    }
-	    throw new SAMLException(
-		SAMLUtils.bundle.getString("noMatchingAssertion"));
-	}
+        aIDString = (String) artEntry.getAssertionID();
+        if (aIDString == null) {
+            if (SAMLUtils.debug.messageEnabled()) {
+                SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
+                + "stid): no AssertionID found corresponding to artifact.");
+            }
+            throw new SAMLException(
+                SAMLUtils.bundle.getString("noMatchingAssertion"));
+        }
 
-	timeout = artEntry.getExpireTime();
+        timeout = artEntry.getExpireTime();
         if (System.currentTimeMillis() > timeout) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAssertion(art, "
@@ -893,15 +907,15 @@ public final class AssertionManager {
         }
 
         Entry entry = null;
-	entry = (Entry) idEntryMap.get(aIDString);
-	if (entry == null) {
-	    if (SAMLUtils.debug.messageEnabled()) {
-		SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
-		    + "stid): no Entry found corresponding to artifact.");
-	    }
-	    throw new SAMLException(
-		SAMLUtils.bundle.getString("noMatchingAssertion"));
-	}
+        entry = (Entry) idEntryMap.get(aIDString);
+        if (entry == null) {
+            if (SAMLUtils.debug.messageEnabled()) {
+                SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
+                   + "stid): no Entry found corresponding to artifact.");
+            }
+            throw new SAMLException(
+                SAMLUtils.bundle.getString("noMatchingAssertion"));
+        }
 
         if (destCheckFlag) {
             // check the destination id

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLAwareServlet.java,v 1.1 2006-10-30 23:15:51 qcheng Exp $
+ * $Id: SAMLAwareServlet.java,v 1.2 2006-11-30 02:32:21 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,7 +274,7 @@ public class SAMLAwareServlet extends HttpServlet {
                 sb.append("&").append(artifactName).append("=").append(samltmp);
             }
             String redirecto = thisSite.getSAMLUrl() + "?" + targetName + "=" +
-            target + sb.toString();
+            URLEncDec.encode(target) + sb.toString();
             response.setStatus(response.SC_MOVED_TEMPORARILY);
             response.setHeader("Location", redirecto);
             String[] data = {SAMLUtils.bundle.getString("redirectTo"), 
