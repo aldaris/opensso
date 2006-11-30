@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationListener.java,v 1.1 2006-10-30 23:15:26 qcheng Exp $
+ * $Id: ConfigurationListener.java,v 1.2 2006-11-30 05:47:37 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ package com.sun.identity.plugin.configuration;
  * by applications in order to receive component data change notifications.
  * The method <code>configChanged()</code> is invoked
  * when the component configuration data has been changed.
+ *
+ * @supported.all.api
  */
 
 public interface ConfigurationListener {  

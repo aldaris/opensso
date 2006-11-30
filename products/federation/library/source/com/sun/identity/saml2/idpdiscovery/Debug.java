@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.1 2006-10-30 23:16:17 qcheng Exp $
+ * $Id: Debug.java,v 1.2 2006-11-30 05:47:39 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ package com.sun.identity.saml2.idpdiscovery;
 import java.io.*;
 import java.util.*;
 import java.text.*;
-
-/* iPlanet-PUBLIC-CLASS */
 
 // NOTE: Since JVM specs guarantee atomic access/updates to int variables
 // (actually all variables except double and long), the design consciously

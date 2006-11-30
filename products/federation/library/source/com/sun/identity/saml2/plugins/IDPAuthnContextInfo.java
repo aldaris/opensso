@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthnContextInfo.java,v 1.1 2006-10-30 23:16:32 qcheng Exp $
+ * $Id: IDPAuthnContextInfo.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,12 @@ import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.common.SAML2Exception;
 import java.util.Set;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /** 
  * The class <code>IDPAuthnContextInfo</code> consists of the mapping 
  * between <code>AuthnContextClassRef</code> and the actual 
  * authentication mechanism at the Identity Provider. 
+ *
+ * @supported.all.api
  */ 
 
 public class IDPAuthnContextInfo {

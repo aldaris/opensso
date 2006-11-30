@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSException.java,v 1.1 2006-10-30 23:14:03 qcheng Exp $
+ * $Id: FSException.java,v 1.2 2006-11-30 05:47:32 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -278,7 +278,6 @@ public class FSException extends L10NMessageImpl {
      * includes embedded exceptions.
      *
      * @return a formatted <code>FSException</code> exception message.
-     * iPlanet-PUBLIC-METHOD
      */
     public String toString() {
         

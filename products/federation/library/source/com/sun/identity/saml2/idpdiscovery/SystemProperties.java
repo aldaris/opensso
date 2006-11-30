@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.1 2006-10-30 23:16:18 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.2 2006-11-30 05:47:39 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,6 @@ import java.util.Properties;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /** This class provides functionality that allows single-point-of-access
  * to all related system properties.

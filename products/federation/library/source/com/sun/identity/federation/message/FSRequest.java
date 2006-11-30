@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRequest.java,v 1.1 2006-10-30 23:14:11 qcheng Exp $
+ * $Id: FSRequest.java,v 1.2 2006-11-30 05:47:33 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,6 @@ import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.shared.xml.XMLUtils;
 
-/* iPlanet-PUBLIC-CLASS */
 /**
  * This class represents a Liberty <code>Request</code>.
  * It extends from the abstract base class <code>AbstractRequest</code>.

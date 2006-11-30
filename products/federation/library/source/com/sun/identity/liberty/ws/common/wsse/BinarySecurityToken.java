@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.1 2006-10-30 23:14:47 qcheng Exp $
+ * $Id: BinarySecurityToken.java,v 1.2 2006-11-30 05:47:35 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,16 +84,10 @@ public class BinarySecurityToken {
     private static Debug debug = Debug.getInstance("libBinarySecurityToken");
 
     // constants for WSS namespace & tag
-    /**
-     * iPlanet-PUBLIC-STATIC
-     */ 
     private static final String WSSE_NS = 
         "http://schemas.xmlsoap.org/ws/2003/06/secext";
     private static final String WSU_NS = 
         "http://schemas.xmlsoap.org/ws/2003/06/utility";
-    /**
-     * iPlanet-PUBLIC-STATIC
-     */ 
     private static final String WSSE = "wsse";
     private static final String WSU = "wsu";
     private static final String BINARY_SECURITY_TOKEN = "BinarySecurityToken";

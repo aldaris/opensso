@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyProvider.java,v 1.1 2006-10-30 23:15:53 qcheng Exp $
+ * $Id: KeyProvider.java,v 1.2 2006-11-30 05:47:38 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.lang.*;
-/* iPlanet-PUBLIC-CLASS */
+
 /**
  * The class <code>KeyProvider</code> is an interface
  * that is implemented to retrieve X509Certificates and Private Keys from

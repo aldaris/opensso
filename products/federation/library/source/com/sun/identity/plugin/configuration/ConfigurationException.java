@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationException.java,v 1.1 2006-10-30 23:15:26 qcheng Exp $
+ * $Id: ConfigurationException.java,v 1.2 2006-11-30 05:47:36 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import com.sun.identity.shared.locale.L10NMessageImpl;
 /**
  * An <code>ConfigurationException</code> is thrown when there are
  * errors related to service configuration operations. 
+ * 
+ * @supported.all.api
  */
 public class ConfigurationException extends L10NMessageImpl {   
 

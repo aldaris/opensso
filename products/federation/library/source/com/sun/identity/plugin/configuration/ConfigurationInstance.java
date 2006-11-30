@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstance.java,v 1.1 2006-10-30 23:15:26 qcheng Exp $
+ * $Id: ConfigurationInstance.java,v 1.2 2006-11-30 05:47:36 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.Set;
 /**
  * <code>ConfigurationInstance</code> is the interface that provides the
  * operations on service configuration. 
+ *
+ * @supported.all.api
  */
 public interface ConfigurationInstance {
 

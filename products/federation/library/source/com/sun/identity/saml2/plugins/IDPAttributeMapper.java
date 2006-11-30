@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAttributeMapper.java,v 1.1 2006-10-30 23:16:31 qcheng Exp $
+ * $Id: IDPAttributeMapper.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ package com.sun.identity.saml2.plugins;
 import com.sun.identity.saml2.common.SAML2Exception;
 
 
-/* iPlanet-PUBLIC-CLASS */
-
 /**
  * This interface <code>IDPAttributeMapper</code> is used to map the 
  * authenticated user configured attributes to SAML <code>Attribute</code>s
@@ -39,6 +37,8 @@ import com.sun.identity.saml2.common.SAML2Exception;
  * attributes or the attributes that are available through the Single
  * Sign On Token and returns the SAML <code>Attribute</code>s.
  * @see com.sun.identity.saml2.plugins.SPAttributeMapper
+ *
+ * @supported.all.api
  */
 
 public interface IDPAttributeMapper {

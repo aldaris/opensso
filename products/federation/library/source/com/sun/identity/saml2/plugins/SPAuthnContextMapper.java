@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAuthnContextMapper.java,v 1.1 2006-10-30 23:16:33 qcheng Exp $
+ * $Id: SPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:42 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,6 @@ import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.common.SAML2Exception;
 import java.util.Map;
 
-/* iPlanet-PUBLIC-CLASS */ 
-
 /**
  * The interface <code>SPAuthnContextMapper.java</code> determines
  * the Authentication Context to be set in the Authentication Request
@@ -40,6 +38,8 @@ import java.util.Map;
  * The implementation of this interface will be used to create 
  * <code>RequestedAuthnContext</code> to set in the <code>AuthnRequest</code>
  * and the Authentication Level of an Authentication Context.
+ *
+ * @supported.all.api
  */
 
 public interface SPAuthnContextMapper {

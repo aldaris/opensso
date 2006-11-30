@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureException.java,v 1.1 2006-10-30 23:15:54 qcheng Exp $
+ * $Id: XMLSignatureException.java,v 1.2 2006-11-30 05:47:39 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ package com.sun.identity.saml.xmlsig;
 import com.sun.identity.saml.common.SAMLException;
 /**
  * This class represents a SAML XML Signature exception.
- * @supported.all.api
  */
 public class XMLSignatureException extends SAMLException {
 

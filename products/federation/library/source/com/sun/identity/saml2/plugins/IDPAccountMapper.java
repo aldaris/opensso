@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAccountMapper.java,v 1.1 2006-10-30 23:16:31 qcheng Exp $
+ * $Id: IDPAccountMapper.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,6 @@
 package com.sun.identity.saml2.plugins;
 
 import com.sun.identity.saml2.common.SAML2Exception;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The interface <code>IDPAccountMapper</code> is used to map the
@@ -45,6 +43,8 @@ import com.sun.identity.saml2.common.SAML2Exception;
  * deployment of the SAMLv2 plugin for example the <code>AccessManger</code>
  * platform or the <code>FederationManager</code> platform.
  * @see com.sun.identity.saml2.plugins.SPAccountMapper
+ *
+ * @supported.all.api
  */
 public interface IDPAccountMapper {
 

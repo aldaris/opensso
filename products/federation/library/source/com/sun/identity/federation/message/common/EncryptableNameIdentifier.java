@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptableNameIdentifier.java,v 1.1 2006-10-30 23:14:13 qcheng Exp $
+ * $Id: EncryptableNameIdentifier.java,v 1.2 2006-11-30 05:47:34 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,6 @@ import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.shared.xml.XMLUtils;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class contains methods for encrypting the  <code>NameIdentifier</code> 

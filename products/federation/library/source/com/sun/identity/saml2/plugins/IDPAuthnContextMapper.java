@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAuthnContextMapper.java,v 1.1 2006-10-30 23:16:32 qcheng Exp $
+ * $Id: IDPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:41 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,6 @@ package com.sun.identity.saml2.plugins;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /** 
  * The interface <code>IDPAuthnContextMapper</code> creates an
  * <code>IDPAuthnContextInfo<code> based on the RequestAuthnContext from
@@ -37,6 +35,8 @@ import com.sun.identity.saml2.protocol.AuthnRequest;
  * configuration at the IDP entity config.
  * The implementation of this class will be used by the IDP to find out
  * the authentication mechaism and set the AuthnContext in the Assertion.
+ *
+ * @supported.all.api
  */ 
 
 public interface IDPAuthnContextMapper {

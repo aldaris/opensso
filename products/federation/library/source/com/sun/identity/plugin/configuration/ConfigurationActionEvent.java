@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationActionEvent.java,v 1.1 2006-10-30 23:15:26 qcheng Exp $
+ * $Id: ConfigurationActionEvent.java,v 1.2 2006-11-30 05:47:36 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,8 @@ package com.sun.identity.plugin.configuration;
 /**
  * The <code>ConfigurationActionEvent</code> class represents 
  * Configuration event.
+ *
+ * @supported.all.api
  */
 public interface ConfigurationActionEvent {
     /**

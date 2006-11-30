@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionException.java,v 1.1 2006-10-30 23:16:57 qcheng Exp $
+ * $Id: EncryptionException.java,v 1.2 2006-11-30 05:47:44 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,7 +191,6 @@ public class EncryptionException extends L10NMessageImpl {
      *
      * @param message
      * Detailed message for this exception.
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public EncryptionException(String message) {
         super(message);
@@ -204,7 +203,6 @@ public class EncryptionException extends L10NMessageImpl {
      *
      * @param message  Detailed message for this exception.
      * @param rootCause  An embedded exception
-     * iPlanet-PUBLIC-CONSTRUCTOR
      */
     public EncryptionException(Throwable rootCause, String message) {
         super(message);
@@ -220,7 +218,6 @@ public class EncryptionException extends L10NMessageImpl {
      * Returns the embedded exception.
      *
      * @return the embedded exception.
-     * iPlanet-PUBLIC-METHOD
      */
     public Throwable getRootCause() {
         return rootCause;
@@ -233,7 +230,6 @@ public class EncryptionException extends L10NMessageImpl {
      *
      * @return The out parameter passed in.
      * @see java.io.PrintWriter
-     * iPlanet-PUBLIC-METHOD
      */
     public PrintWriter log(PrintWriter out) {
         return log(this, out);
@@ -247,7 +243,6 @@ public class EncryptionException extends L10NMessageImpl {
      *
      * @return The out parameter passed in.
      * @see java.io.PrintWriter
-     * iPlanet-PUBLIC-STATIC
      */
     static public PrintWriter log(Throwable xcpt, PrintWriter out) {
         
@@ -265,7 +260,6 @@ public class EncryptionException extends L10NMessageImpl {
      * includes embedded exceptions.
      *
      * @return a formatted <code>EncryptionException</code> exception message.
-     * iPlanet-PUBLIC-METHOD
      */
     public String toString() {
         
@@ -291,7 +285,6 @@ public class EncryptionException extends L10NMessageImpl {
      * Prints this exception's stack trace to <tt>System.err</tt>.
      * If this exception has a root exception; the stack trace of the
      * root exception is printed to <tt>System.err</tt> instead.
-     * iPlanet-PUBLIC-METHOD
      */
     public void printStackTrace() {
         printStackTrace( System.err );
@@ -302,7 +295,6 @@ public class EncryptionException extends L10NMessageImpl {
      * If this exception has a root exception, the stack trace of the
      * root exception is printed to the print stream instead.
      * @param ps The non-null print stream to which to print.
-     * iPlanet-PUBLIC-METHOD
      */
     public void printStackTrace(java.io.PrintStream ps) {
         if ( rootCause != null ) {
@@ -323,7 +315,6 @@ public class EncryptionException extends L10NMessageImpl {
      * If this exception has a root exception; the stack trace of the
      * root exception is printed to the print writer instead.
      * @param pw The non-null print writer to which to print.
-     * iPlanet-PUBLIC-METHOD
      */
     public void printStackTrace(java.io.PrintWriter pw) {
         if ( rootCause != null ) {

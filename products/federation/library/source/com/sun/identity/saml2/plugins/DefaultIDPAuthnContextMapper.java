@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthnContextMapper.java,v 1.1 2006-10-30 23:16:30 qcheng Exp $
+ * $Id: DefaultIDPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:40 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /** 
  * This class is an out of the box default implementation of interface

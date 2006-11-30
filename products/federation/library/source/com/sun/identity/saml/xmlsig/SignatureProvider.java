@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SignatureProvider.java,v 1.1 2006-10-30 23:15:54 qcheng Exp $
+ * $Id: SignatureProvider.java,v 1.2 2006-11-30 05:47:38 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.saml.xmlsig;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.*;
-/* iPlanet-PUBLIC-CLASS */
+
 /**
  * This is an interface to be implemented to sign and verify XML signature.
  */
