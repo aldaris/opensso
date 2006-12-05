@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIRedirect.jsp,v 1.1 2006-10-30 23:17:21 qcheng Exp $
+   $Id: idpMNIRedirect.jsp,v 1.2 2006-12-05 21:55:51 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -43,7 +43,7 @@
 <head>
 <title>SAMLv2 IDP ManageNameIDRequest Process JSP with HttpRedirect binding</title>
 </head>
-
+<body bgcolor="#FFFFFF" text="#000000">
 <%
     try {
         HashMap paramsMap = new HashMap();

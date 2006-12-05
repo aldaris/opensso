@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.1 2006-10-30 23:16:37 qcheng Exp $
+ * $Id: SPCache.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,9 +27,11 @@ package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.Constants;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Set;
 import netscape.ldap.util.DN;
 
 
@@ -89,7 +91,8 @@ public class SPCache {
      * SP: used to correlate LogoutRequest ID and inResponseTo in LogoutResponse
      * element : request ID (String)
      */
-    public static HashSet logoutRequestIDs = new HashSet();
+    public static Set logoutRequestIDs =
+         Collections.synchronizedSet(new HashSet());
 
     /**
      * Hashtable saves response info for local auth.

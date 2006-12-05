@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheCleanUpThread.java,v 1.1 2006-10-30 23:16:33 qcheng Exp $
+ * $Id: CacheCleanUpThread.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,7 @@ public class CacheCleanUpThread extends Thread {
             cleanup(SPCache.requestHash, now);
             cleanup(SPCache.responseHash, now);
             cleanup(SPCache.mniRequestHash, now);
+            cleanup(IDPCache.authnRequestCache, now);
 
             nextRun = System.currentTimeMillis() +
                                 (interval.intValue()) * 1000;
@@ -93,15 +94,16 @@ public class CacheCleanUpThread extends Thread {
     }
 
     private void cleanup(Hashtable hashtable, long now) {
-        Iterator iter = hashtable.keySet().iterator();
-        long delay = interval.intValue() * 1000;
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
-            long time =  ((CacheObject) hashtable.get(key)).getTime();
-            if ((time + delay) < now) {
-                iter.remove();
+        synchronized (hashtable) {
+            Iterator iter = hashtable.keySet().iterator();
+            long delay = interval.intValue() * 1000;
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                long time = ((CacheObject) hashtable.get(key)).getTime();
+                if ((time + delay) < now) {
+                    iter.remove();
+                }
             }
-        }
-    }
+       }
+   }
 }
-

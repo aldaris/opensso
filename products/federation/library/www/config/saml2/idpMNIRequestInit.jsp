@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIRequestInit.jsp,v 1.1 2006-10-30 23:17:21 qcheng Exp $
+   $Id: idpMNIRequestInit.jsp,v 1.2 2006-12-05 21:55:51 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -49,10 +49,10 @@
 --%>
 <html>
 
-<body bgcolor="#FFFFFF" text="#000000">
 <head>
 <title>SAMLv2 IDP ManageNameIDRequest Initiation JSP</title>
 </head>
+<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retreive the Request Query Parameters

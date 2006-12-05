@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAttributeMapper.java,v 1.1 2006-10-30 23:16:30 qcheng Exp $
+ * $Id: DefaultIDPAttributeMapper.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
@@ -119,7 +120,6 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                 valueMap = dsProvider.getAttributes(
                      SessionManager.getProvider().getPrincipalName(session),
                      localAttributes); 
-
             } catch (DataStoreProviderException dse) {
                 if(debug.warningEnabled()) {
                    debug.warning("DefaultIDPAttributeMapper.getAttributes: "+
@@ -130,7 +130,6 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
 
             Iterator iter = configMap.keySet().iterator();
             while(iter.hasNext()) {
-
                 String samlAttribute = (String)iter.next();
                 String localAttribute = (String)configMap.get(samlAttribute);
                 String[] localAttributeValues = null;
@@ -144,14 +143,15 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                       }
                       localAttributeValues = SessionManager.
                           getProvider().getProperty(session, localAttribute);
-                      if (localAttributeValues != null &&
+                        if (localAttributeValues != null &&
                           localAttributeValues.length == 0) {
                           localAttributeValues = null;
                       }
                    } else {
-                      localAttributeValues = (String[])values.toArray();
+                      localAttributeValues = (String[])
+                          values.toArray(new String[values.size()]);
                    }
-                }
+                } 
 
                 if(localAttributeValues == null) {
                    if(debug.messageEnabled()) {
@@ -164,9 +164,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
                 attributes.add(
                     getSAMLAttribute(samlAttribute, localAttributeValues));
             }
-
-            return attributes;
-            
+            return attributes;      
         } catch (SAML2Exception sme) {
             debug.error("DefaultIDPAttribute.getAttributes: " +
             "SAML Exception", sme);
@@ -183,7 +181,7 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
     /**
      * Returns the SAML <code>Attribute</code> object.
      * @param name attribute name.
-     * @param value attribute value.
+     * @param values attribute values.
      * @exception SAML2Exception if any failure.
      */
     protected Attribute getSAMLAttribute(String name, String[] values)
@@ -201,12 +199,11 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
          if(values != null) {
             List list = new ArrayList();
             for (int i=0; i<values.length; i++) {
-                list.add(values[i]);
+                list.add(XMLUtils.escapeSpecialCharacters(
+                    values[i]));
             }
             attribute.setAttributeValueString(list);
          }
          return attribute;
     }
-
-
 }

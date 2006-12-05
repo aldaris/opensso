@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheObject.java,v 1.1 2006-10-30 23:16:34 qcheng Exp $
+ * $Id: CacheObject.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,8 +33,21 @@ package com.sun.identity.saml2.profile;
 public class CacheObject {
 
     protected long time = 0;
+    private Object obj = null;
+ 
+    public CacheObject() {
+    }
+
+    public CacheObject(Object object) {
+        obj = object;
+        time = System.currentTimeMillis();
+    }
 
     public long getTime() {
         return time;
+    }
+ 
+    public Object getObject() {
+        return obj;
     }
 }

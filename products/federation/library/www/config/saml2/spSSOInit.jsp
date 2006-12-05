@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.1 2006-10-30 23:17:23 qcheng Exp $
+   $Id: spSSOInit.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -132,10 +132,10 @@
 --%>
 <html>
 
-<body bgcolor="#FFFFFF" text="#000000">
 <head>
 <title>SAMLv2 Service Provider SSO</title>
 </head>
+<body bgcolor="#FFFFFF" text="#000000">
 <%
     // Retreive the Request Query Parameters
     // metaAlias and idpEntiyID are the required query parameters

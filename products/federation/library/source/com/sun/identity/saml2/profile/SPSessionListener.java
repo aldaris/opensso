@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSessionListener.java,v 1.1 2006-10-30 23:16:38 qcheng Exp $
+ * $Id: SPSessionListener.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,21 +82,20 @@ public class SPSessionListener implements SessionListener {
         if (fedSessionList == null) {
             return;
         }
-        List newList = null; 
-        Iterator iter = fedSessionList.iterator();
-        while (iter.hasNext()) {
-            SPFedSession temp = (SPFedSession) iter.next();
-            if (!temp.spTokenID.equals(sessionID)) {
-                if (newList == null) {
-                    newList = new ArrayList();
-                }
-                newList.add(temp);
+   
+        synchronized (fedSessionList) {
+            Iterator iter = fedSessionList.iterator();
+            while (iter.hasNext()) {
+                SPFedSession temp = (SPFedSession) iter.next();
+                if (temp.spTokenID.equals(sessionID)) {
+                    iter.remove();
+                } 
             }
-        }
-        if (newList != null) {
-            SPCache.fedSessionListsByNameIDInfoKey.put(
-                infoKeyString, newList);
-        }
+            if (fedSessionList.isEmpty()) {
+                SPCache.fedSessionListsByNameIDInfoKey.remove(
+                    infoKeyString);
+            }
+        }    
     }
 }
 

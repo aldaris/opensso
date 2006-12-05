@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.1 2006-10-30 23:16:14 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.2 2006-12-05 21:56:15 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -839,4 +839,11 @@ public interface SAML2Constants {
 
     // IDP response info ID
     public static final String RES_INFO_ID = "resInfoID";
+    
+    // Delimiter for values of multi-valued property set in SSO token
+    public static final char DELIMITER = '|';
+
+    // Escape string for the <code>DELIMITER</code> contained in the values
+    // of multi-valued property set in SSO token
+    public static final String ESCAPE_DELIMITER = "&#124;";
 }

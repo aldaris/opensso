@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.1 2006-10-30 23:16:30 qcheng Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,7 +228,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
            return null;
         }
         
-        String autoFedAttributeValue = null;
+        Set autoFedAttributeValue = null;
         Iterator iter = attributeStatements.iterator();
 
         while(iter.hasNext()) {
@@ -237,13 +237,13 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
            autoFedAttributeValue = 
               getAttribute(statement, autoFedAttribute, realm, entityID);
            if(autoFedAttributeValue != null && 
-                 autoFedAttributeValue.length() > 0) {
+              !autoFedAttributeValue.isEmpty()) {
               break;
            }
         }
 
         if(autoFedAttributeValue == null ||
-                autoFedAttributeValue.length() == 0) {
+           autoFedAttributeValue.isEmpty()) {
            if(debug.messageEnabled()) {
               debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
               "Auto federation attribute is not specified in the assertion.");
@@ -274,9 +274,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
 
         try {
             Map map = new HashMap();
-            Set set = new HashSet();
-            set.add(autoFedAttributeValue);
-            map.put(autoFedMapAttribute, set);
+            map.put(autoFedMapAttribute, autoFedAttributeValue);
 
             if(debug.messageEnabled()) {
                debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
@@ -296,7 +294,9 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
                             "creation or ignore profile enabled : uid=" 
                             + autoFedAttributeValue); 
                     }
-                    return autoFedAttributeValue;
+                    // return the first value as uid
+                    return (String) autoFedAttributeValue.
+                           iterator().next();
                 }
             } 
         } catch (DataStoreProviderException dse) {
@@ -323,7 +323,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
     /**
      * Returns the attribute name.
      */
-    private String getAttribute(
+    private Set getAttribute(
                 AttributeStatement statement,
                 String attributeName,
                 String realm,
@@ -369,11 +369,10 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
             if(values == null || values.size() == 0) {
                return null;
             }
-          
-            return (String)values.iterator().next();
-            
+            Set set = new HashSet();
+            set.addAll(values); 
+            return set; 
         }
         return null;
     }
-
 }

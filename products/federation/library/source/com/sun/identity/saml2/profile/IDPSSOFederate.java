@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.1 2006-10-30 23:16:35 qcheng Exp $
+ * $Id: IDPSSOFederate.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -287,7 +287,10 @@ public class IDPSSOFederate {
 
                 // save the AuthnRequest in the IDPCache so that it can be
                 // retrieved later when the user successfully authenticates
-                IDPCache.authnRequestCache.put(reqID, authnReq);
+                synchronized (IDPCache.authnRequestCache) { 
+                    IDPCache.authnRequestCache.put(reqID,
+                        new CacheObject(authnReq));
+                }
     
                 // save the relay state in the IDPCache so that it can be
                 // retrieved later when the user successfully authenticates
@@ -319,7 +322,13 @@ public class IDPSSOFederate {
         } else {
             // the second visit, the user has already authenticated
             // retrieve the cache authn request and relay state
-            authnReq = (AuthnRequest)IDPCache.authnRequestCache.remove(reqID);
+            CacheObject cacheObj = null;
+            synchronized (IDPCache.authnRequestCache) {
+                cacheObj =(CacheObject)IDPCache.authnRequestCache.remove(reqID);
+            }
+            if (cacheObj != null) {
+                authnReq = (AuthnRequest)cacheObj.getObject();
+            }
             relayState = (String)IDPCache.relayStateCache.remove(reqID);
             if (authnReq == null) {
                 SAML2Utils.debug.error(classMethod +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.1 2006-10-30 23:16:38 qcheng Exp $
+ * $Id: SPSSOFederate.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -289,8 +289,9 @@ public class SPSSOFederate {
                 new AuthnRequestInfo(request,response,realm,spEntityID,
                                      idpEntityID,authnRequest,relayState,
                                      paramsMap);
-            SPCache.requestHash.put(authnRequest.getID(),reqInfo);
-            
+            synchronized(SPCache.requestHash) {             
+                SPCache.requestHash.put(authnRequest.getID(),reqInfo);
+            } 
         } catch (IOException ioe) {
             SAML2Utils.debug.error("SPSSOFederate: Exception :",ioe);
             throw new SAML2Exception(

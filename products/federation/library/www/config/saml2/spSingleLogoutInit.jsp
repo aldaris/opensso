@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.1 2006-10-30 23:17:23 qcheng Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -56,10 +56,10 @@
 --%>
 <html>
 
-<body bgcolor="#FFFFFF" text="#000000">
 <head>
     <title>SAMLv2 Single Logout Initiation at SP</title>
 </head>
+<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retrieves the Request Query Parameters

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.1 2006-10-30 23:16:38 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.2 2006-12-05 21:56:18 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,8 +181,11 @@ public class SPSingleLogout {
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("errorInfoKeyString"));
             }
-            debug.message("tokenID : " + tokenID);
-            debug.message("infoKeyString : " + infoKeyString);
+            if (debug.messageEnabled()) {
+                debug.message("tokenID : " + tokenID);
+                debug.message("infoKeyString : " + infoKeyString);
+            }
+
             // local log out
             sessionProvider.invalidateSession(
                 session, request, response);
@@ -239,19 +242,21 @@ public class SPSingleLogout {
         List list =
             (List)SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
         if (list != null) {
-            ListIterator iter = list.listIterator();
-            while (iter.hasNext()) {
-                fedSession = (SPFedSession)iter.next();
-                if (tokenID.equals(fedSession.spTokenID)) {
-                    iter.remove();
-                    if (list.size() == 0) {
-                        SPCache.fedSessionListsByNameIDInfoKey.
-                            remove(infoKeyString);
+            synchronized (list) {
+                ListIterator iter = list.listIterator();
+                while (iter.hasNext()) {
+                    fedSession = (SPFedSession)iter.next();
+                    if (tokenID.equals(fedSession.spTokenID)) {
+                        iter.remove();
+                        if (list.size() == 0) {
+                            SPCache.fedSessionListsByNameIDInfoKey.
+                                remove(infoKeyString);
+                        }
+                        break;
                     }
-                    break;
+                    fedSession = null;
                 }
-                fedSession = null;
-            }
+           }   
         }
         NameIDInfoKey nameIdInfoKey = NameIDInfoKey.parse(infoKeyString);
 
@@ -682,31 +687,38 @@ public class SPSingleLogout {
                 if (numSI == 0) {
                     // logout all fed sessions for this user
                     // between this SP and the IDP
-                    Iterator iter = list.listIterator();
-                    while (iter.hasNext()) {
-                        SPFedSession fedSession = (SPFedSession) iter.next();
-                        Object token = null;
+                    List tokenIDsToBeDestroyed = new ArrayList();
+                    synchronized (list) {
+                        Iterator iter = list.listIterator();
+                        while (iter.hasNext()) {
+                            SPFedSession fedSession =(SPFedSession) iter.next();
+                            tokenIDsToBeDestroyed.add(fedSession.spTokenID);
+                            iter.remove();
+                        }
+                    }
+                    
+                    for (Iterator iter = tokenIDsToBeDestroyed.listIterator();
+                        iter.hasNext();) {                          
+                        String tokenID =(String) iter.next();
+                        Object token = null; 
                         try {
-                            token = 
-                                sessionProvider.getSession(fedSession.spTokenID);
+                            token = sessionProvider.getSession(tokenID);
                         } catch (SessionException se) {
                             debug.error(method
                                 + "Could not create session from token ID = " +
-                                fedSession.spTokenID);
-                            continue;
+                                tokenID);
+                            continue;    
                         }
                         if (debug.messageEnabled()) {
                             debug.message(method
-                                + "destroy token " + fedSession.spTokenID);
+                                + "destroy token " + tokenID);
                         }
                         sessionProvider.invalidateSession(token, request,
-                                                         response);
-                        iter.remove();
+                            response);
                     }
-
                     if (foundPeer) {
                         boolean peerError = false;
-                        for(iter = remoteServiceURLs.iterator();
+                        for(Iterator iter = remoteServiceURLs.iterator();
                             iter.hasNext();) {
 
                             String remoteLogoutURL = ((String)iter.next()) +
@@ -734,40 +746,43 @@ public class SPSingleLogout {
                     List siNotFound = new ArrayList();
                     for (int i = 0; i < numSI; i++) {
                         sessionIndex = (String)siList.get(i);
-                        boolean found = false;
-                        Iterator iter = list.listIterator();
-                        while (iter.hasNext()) {
-                            SPFedSession fedSession = 
+                       
+                        String tokenIDToBeDestroyed = null;
+                        synchronized (list) {
+                            Iterator iter = list.listIterator();
+                            while (iter.hasNext()) {
+                                SPFedSession fedSession = 
                                     (SPFedSession) iter.next();
-                            if (sessionIndex
+                                if (sessionIndex
                                           .equals(fedSession.idpSessionIndex)) {
-                                if (debug.messageEnabled()) {
-                                    debug.message(method + " found si + " +
-                                                  sessionIndex);
+                                    if (debug.messageEnabled()) {
+                                        debug.message(method + " found si + " +
+                                            sessionIndex);
+                                    }
+                                    tokenIDToBeDestroyed = fedSession.spTokenID;
+                                    iter.remove();
+                                    break;
                                 }
-                                found = true;
-                                Object token = null;
-                                try {
-                                    token = sessionProvider.getSession(
-                                        fedSession.spTokenID);
-                                } catch (SessionException se) {
-                                    debug.error(method + "Could not create " +
-                                        "session from token ID = " +
-                                        fedSession.spTokenID);
-                                    continue;
-                                }
-                                if (debug.messageEnabled()) {
-                                    debug.message(method 
-                                         + "destroy token (2) " 
-                                         + fedSession.spTokenID);
-                                }
-                                sessionProvider.invalidateSession(
-                                    token, request, response);
-                                iter.remove();
-                                break;
-                            }
+                            }   
                         }
-                        if (!found) {
+                        
+                        if (tokenIDToBeDestroyed != null) {      
+                            try {
+                                 Object token = sessionProvider.getSession(
+                                        tokenIDToBeDestroyed);
+                                 if (debug.messageEnabled()) {
+                                     debug.message(method 
+                                         + "destroy token (2) " 
+                                         + tokenIDToBeDestroyed);
+                                 }
+                                 sessionProvider.invalidateSession(
+                                    token, request, response);
+                            } catch (SessionException se) {
+                                debug.error(method + "Could not create " +
+                                    "session from token ID = " +
+                                    tokenIDToBeDestroyed);
+                            }
+                        } else {
                             siNotFound.add(sessionIndex);
                         }
                     }

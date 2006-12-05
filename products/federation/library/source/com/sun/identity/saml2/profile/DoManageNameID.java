@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.1 2006-10-30 23:16:34 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -575,7 +575,9 @@ public class DoManageNameID {
         paramsMap.put(SAML2Constants.SESSION, session);
 
         if (hostEntityRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-            SPCache.mniRequestHash.put(mniRequest.getID(), reqInfo);
+            synchronized (SPCache.mniRequestHash) {
+                SPCache.mniRequestHash.put(mniRequest.getID(), reqInfo);
+            }
         } else {
             IDPCache.mniRequestHash.put(mniRequest.getID(), reqInfo);
         }
@@ -1269,8 +1271,10 @@ public class DoManageNameID {
         String requestID, String hostRole) {
         ManageNameIDRequestInfo reqInfo = null;
         if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-            reqInfo = (ManageNameIDRequestInfo)
-                          SPCache.mniRequestHash.remove(requestID);
+            synchronized (SPCache.mniRequestHash) {
+                reqInfo = (ManageNameIDRequestInfo)
+                    SPCache.mniRequestHash.remove(requestID);
+            }
         } else if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
             reqInfo = (ManageNameIDRequestInfo)
                           IDPCache.mniRequestHash.remove(requestID);

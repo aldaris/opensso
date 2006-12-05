@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.1 2006-10-30 23:16:37 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -172,7 +172,9 @@ public class SPACSUtils {
                 SAML2Utils.debug.message("SPACSUtils.getResponseFromGet: resID="
                         + resID);
             }
-            respInfo = (ResponseInfo) SPCache.responseHash.remove(resID);
+            synchronized (SPCache.responseHash) {
+                respInfo = (ResponseInfo) SPCache.responseHash.remove(resID);
+            }
             if (respInfo == null) {
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message("SPACSUtils.getResponseFromGet: "
@@ -1059,23 +1061,38 @@ public class SPACSUtils {
         List fedSessions = (List)
             SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
         if (fedSessions == null) {
-            fedSessions = new ArrayList();
-            fedSessions.add(new SPFedSession(sessionIndex, tokenID, info));
-        } else {
-            Iterator iter = fedSessions.iterator();
-            boolean found = false;
-            while (iter.hasNext()) {
-                SPFedSession temp = (SPFedSession) iter.next();
-                if (temp.idpSessionIndex.equals(sessionIndex)) {
-                    temp.spTokenID = tokenID;
-                    found = true;
-                    break;
+            synchronized (SPCache.fedSessionListsByNameIDInfoKey) {
+                fedSessions = (List)
+                SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
+                if (fedSessions == null) {
+                    fedSessions = new ArrayList();
                 }
+            }  
+            synchronized (fedSessions) {
+                fedSessions.add(new SPFedSession(sessionIndex, tokenID,
+                    info));
+                SPCache.fedSessionListsByNameIDInfoKey.put(
+                    infoKeyString, fedSessions);
             }
-            if (!found) {
-                fedSessions.add(
-                    new SPFedSession(sessionIndex, tokenID, info));
-            }
+        } else {
+            synchronized (fedSessions) {
+                Iterator iter = fedSessions.iterator();
+                boolean found = false;
+                while (iter.hasNext()) {
+                    SPFedSession temp = (SPFedSession) iter.next();
+                    if (temp.idpSessionIndex.equals(sessionIndex)) {
+                        temp.spTokenID = tokenID;
+                        found = true;
+                        break;
+                    }
+                }    
+                if (!found) {
+                    fedSessions.add(
+                        new SPFedSession(sessionIndex, tokenID, info));
+                    SPCache.fedSessionListsByNameIDInfoKey.put(
+                        infoKeyString, fedSessions);
+                }
+           }    
         }
         SPCache.fedSessionListsByNameIDInfoKey.put(infoKeyString,
                                                    fedSessions);
@@ -1106,7 +1123,9 @@ public class SPACSUtils {
                 Set attrValues = (Set)entry.getValue();
                 if(attrValues != null && !attrValues.isEmpty()) {
                    sessionProvider.setProperty(
-                       session, attrName, (String[])attrValues.toArray());
+                       session, attrName,
+                       (String[]) attrValues.toArray(
+                       new String[attrValues.size()]));
                    if (SAML2Utils.debug.messageEnabled()) {
                        SAML2Utils.debug.message(
                            "SPACSUtils.setAttrMapInSessioin: AttrMap:" +
@@ -1213,7 +1232,10 @@ public class SPACSUtils {
                         + orgName;
             }
         }
-        SPCache.responseHash.put(respInfo.getResponse().getID(), respInfo);
+        synchronized (SPCache.responseHash) {
+           SPCache.responseHash.put(respInfo.getResponse().getID(), 
+               respInfo);
+        }   
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message("SPACSUtils:prepareForLocalLogin: " +
                 "localLoginUrl = " + localLoginUrl);
