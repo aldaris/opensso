@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.5 2006-08-28 18:50:41 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.6 2006-12-06 18:17:15 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@
 package com.sun.identity.log.s1is;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
@@ -154,6 +155,7 @@ public class LogConfigReader implements ServiceListener{
         Set set;
         Iterator it;
         String tempBuffer;
+        boolean fileBackend = false;
         // processing logging attributes.
         try {
             logAttributes = smsLogSchema.getAttributeDefaults();
@@ -165,6 +167,7 @@ public class LogConfigReader implements ServiceListener{
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
+                fileBackend = value.equals("File");
             }
         } catch (Exception e) {
             debug.error("LogConfigReader: Could not read Backend ", e);
@@ -392,6 +395,21 @@ public class LogConfigReader implements ServiceListener{
         }   catch (Exception e) {
             debug.error("LogConfigReader: Could not read authz class", e);
         }
+        /*
+         *  log location subdirectory
+         *  is specified in AMConfig.properties.  read it here and append
+         *  to log location, so only have to deal with it here.
+         */
+        String locSubdir = null;
+        if (fileBackend) {
+            locSubdir = SystemProperties.get(LogConstants.LOG_LOCATION_SUBDIR);
+            if ((locSubdir != null) &&
+                (locSubdir.trim().length() > 0) &&
+                (!locSubdir.endsWith(File.separator)))
+            {
+                locSubdir += File.separator;
+            }
+        }
         // log location
         try {
             key = LogConstants.LOG_LOCATION;
@@ -400,6 +418,14 @@ public class LogConfigReader implements ServiceListener{
                 debug.warning("LogConfigReader: LogLocation string is null");
             } else {
                 value = value.replace('\\','/');
+                if ((locSubdir != null) && (locSubdir.trim().length() > 0))
+                {
+                    if (!value.endsWith(File.separator)) {
+                        value += File.separator;
+                    }
+                    // locSubdir already ensured trailing slash, above
+                    value += locSubdir;
+                }
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
