@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.4 2006-04-14 09:05:21 veiming Exp $
+ * $Id: LogConstants.java,v 1.5 2006-12-06 16:53:40 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,6 +341,12 @@ public class LogConstants {
      */
     public static final String LOG_STATUS =
         "com.iplanet.am.logstatus";
+
+    /**
+     * Property defining Logging subdirectory.
+     */
+    public static final String LOG_LOCATION_SUBDIR =
+        "com.sun.identity.log.logSubdir";
 
     public static final String LOG_READ = "READ";
     
