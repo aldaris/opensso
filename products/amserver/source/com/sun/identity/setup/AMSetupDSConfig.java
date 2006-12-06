@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.1 2006-11-22 00:56:36 ak138937 Exp $
+ * $Id: AMSetupDSConfig.java,v 1.2 2006-12-06 23:45:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,7 +138,7 @@ public class AMSetupDSConfig {
      */
     public String getDBName() { 
         String baseDN = "cn=mapping tree,cn=config";
-        String filter = "cn=" + suffix;
+        String filter = "cn=" + "\"" + suffix + "\"";
         String[] attrs = { "nsslapd-backend" };
         LDAPSearchResults results = null;
         String dBName = null;
@@ -236,7 +236,7 @@ public class AMSetupDSConfig {
      * @return <code>true</code> if specified suffix exists. 
      */
     public boolean connectDSwithDN() {
-        String filter = "cn=" + suffix;
+        String filter = "cn=" + "\"" + suffix + "\"";
         String[] attrs = { "" };
         LDAPSearchResults results = null;
         boolean isValidSuffix = true;
@@ -259,7 +259,7 @@ public class AMSetupDSConfig {
     public String isDITLoaded() {
         String baseDN = "ou=services," + suffix;
         String filter = "ou=DAI";
-        String[] attrs = { "" };
+        String[] attrs = { "dn" };
         LDAPSearchResults results = null;
         String isLoaded = "false";
         try {
