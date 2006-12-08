@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.6 2006-09-20 23:23:40 bigfatrat Exp $
+ * $Id: RemoteHandler.java,v 1.7 2006-12-08 01:37:10 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -185,7 +185,7 @@ public class RemoteHandler extends Handler {
             Debug.message("RemoteHandler.flush(): sending buffered records");
         }
 
-	String thisAMException = null;
+        String thisAMException = null;
         try {
             Iterator sidIter = reqSetMap.keySet().iterator();
             while (sidIter.hasNext()) {
@@ -297,8 +297,18 @@ public class RemoteHandler extends Handler {
         interval *=1000;
         if(bufferTimer == null){
             bufferTimer = TimerFactory.getTimer();
-            bufferTimer.scheduleAtFixedRate(
-                new TimeBufferingTask(), interval, interval);
+            try {
+                bufferTimer.scheduleAtFixedRate(
+                    new TimeBufferingTask(), interval, interval);
+            } catch (IllegalArgumentException e) {
+                Debug.error (logName + ":RemoteHandler:BuffTimeArg: " +
+                    e.getMessage());
+            } catch (IllegalStateException e) {
+                if (Debug.messageEnabled()) {
+                    Debug.message (logName + ":RemoteHandler:BuffTimeState: "
+                        + e.getMessage());
+                }
+            }
             if (Debug.messageEnabled()) {
                 Debug.message("RemoteHandler: Time Buffering Thread Started");
             }
@@ -308,6 +318,7 @@ public class RemoteHandler extends Handler {
     private void stopBufferTimer() {
         if(bufferTimer != null) {
             bufferTimer.cancel();
+            bufferTimer = null;
             if (Debug.messageEnabled()) {
                 Debug.message("RemoteHandler: Buffer Timer Stopped");
             }

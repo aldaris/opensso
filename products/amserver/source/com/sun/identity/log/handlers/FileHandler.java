@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.5 2006-07-31 20:34:31 bigfatrat Exp $
+ * $Id: FileHandler.java,v 1.6 2006-12-08 01:37:09 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
@@ -71,10 +75,14 @@ public class FileHandler extends java.util.logging.Handler {
     private int count; // count represent number of history files
     private int maxFileSize;
     private String location;
+    private Formatter formatter;
+    private static SimpleDateFormat simpleDateFormat =
+        new SimpleDateFormat("HHmmss.ddMMyyyy");
+    private Date date;
+    private String currentFileName;
     private String fileName;
-    private int recCount = 0;
     private int recCountLimit;
-    private String recordBuffer[];
+    private ArrayList recordBuffer;
     private Timer bufferTimer;
     private boolean timeBufferingEnabled = false;
     private static String headerString = null;
@@ -141,7 +149,8 @@ public class FileHandler extends java.util.logging.Handler {
      * StreamHandler.
      */
     private void setOutputStream(OutputStream out) throws SecurityException,
-    UnsupportedEncodingException {
+        UnsupportedEncodingException
+    {
         if (out == null) {
             if (Debug.warningEnabled()) {
                 Debug.warning(fileName + ":FileHandler: OutputStream is null");
@@ -177,7 +186,8 @@ public class FileHandler extends java.util.logging.Handler {
      *           not supported.
      */
     public void setEncoding(String encoding) throws SecurityException,
-    UnsupportedEncodingException {
+        UnsupportedEncodingException
+    {
         super.setEncoding(encoding);
         if (output == null) {
             return;
@@ -196,8 +206,8 @@ public class FileHandler extends java.util.logging.Handler {
      * and setting the private variables count, maxFileSize etc.
      */
     private void configure() 
-    throws NullLocationException, FormatterInitException {
-        
+        throws NullLocationException, FormatterInitException
+    {
         String bufferSize = lmanager.getProperty(LogConstants.BUFFER_SIZE);
         if (bufferSize != null && bufferSize.length() > 0) {
             try {
@@ -250,6 +260,14 @@ public class FileHandler extends java.util.logging.Handler {
         }
         if (!location.endsWith(File.separator)) {
             location += File.separator;
+        }
+        String strFormatter = lmanager.getProperty(LogConstants.ELF_FORMATTER);
+        try {
+            Class clz = Class.forName(strFormatter);
+            formatter = (Formatter) clz.newInstance();
+        } catch (Exception e) {
+            throw new FormatterInitException(
+                "Unable to initialize Formatter Class" + e);
         }
     }
     
@@ -310,7 +328,7 @@ public class FileHandler extends java.util.logging.Handler {
             Debug.error(fileName + ":FileHandler: Location not specified", nle);
         } catch (FormatterInitException fie) {
             Debug.error(fileName + 
-                ":FileHandler: couldnot instantiate Formatter", fie);
+                ":FileHandler: could not instantiate Formatter", fie);
         }
         fileName = location + fileName;
         Logger logger = (Logger)Logger.getLogger(this.fileName);
@@ -324,7 +342,7 @@ public class FileHandler extends java.util.logging.Handler {
         }
         logger.setCurrentFile(this.fileName);
         
-        recordBuffer = new String[recCountLimit];
+        recordBuffer = new ArrayList();
         
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
@@ -375,12 +393,13 @@ public class FileHandler extends java.util.logging.Handler {
             return;
         }
         String message = getFormatter().format(lrecord);
-        recordBuffer[recCount] = message;
-        this.recCount++;
-        if (this.recCount >= recCountLimit) {
+        synchronized(recordBuffer) {
+            recordBuffer.add(message);
+        }
+        if (recordBuffer.size() >= recCountLimit) {
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + ":FileHandler.publish(): got " + 
-                        recCount + " records, writing all");
+                        recordBuffer.size() + " records, writing all");
             }
             flush();
         }
@@ -396,7 +415,7 @@ public class FileHandler extends java.util.logging.Handler {
      * Flush any buffered messages.
      */
     public synchronized void flush() {
-        if (recCount <= 0) {
+        if (recordBuffer.size() <= 0) {
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + 
                     ":FileHandler.flush: no records in buffer to write");
@@ -405,37 +424,42 @@ public class FileHandler extends java.util.logging.Handler {
         }
         if (writer == null) {
             Debug.error(fileName + ":FileHandler: Writer is null");
-            this.recCount = 0;
+            synchronized(recordBuffer) {
+                recordBuffer.clear();
+            }
             return;
         }
         if (Debug.messageEnabled()) {
             Debug.message(fileName + ":FileHandler.flush: writing " +
-                            "buffered records");
+                            "buffered records (" +
+                            recordBuffer.size() + " records)");
         }
-        for (int i=0; i < recCount; ++i) {
-            String message = recordBuffer[i];
-            if ((message.length() > 0 ) && 
-                (meteredStream.written + message.length()) >= maxFileSize) 
-            {
-                if (Debug.messageEnabled()) {
-                    Debug.message(fileName + 
-                        ":FileHandler: Rotation condition reached");
+        synchronized(recordBuffer) {
+            int rbsz = recordBuffer.size();
+            for (int i=0; i < rbsz; ++i) {
+                String message = (String)recordBuffer.remove(0);
+                if ((message.length() > 0 ) &&
+                    ((meteredStream.written + message.length()) >= maxFileSize))
+                {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(fileName +
+                            ":FileHandler: Rotation condition reached");
+                    }
+                    rotate();
                 }
-                rotate();
-            }
-            try {
-                if (!headerWritten) {
-                    writer.write(getHeaderString());
-                    headerWritten = true;
+                try {
+                    if (!headerWritten) {
+                        writer.write(getHeaderString());
+                        headerWritten = true;
+                    }
+                    writer.write(message);
+                } catch (IOException ex) {
+                    Debug.error(fileName +
+                        ":FileHandler: could not write to file: ", ex);
                 }
-                writer.write(message);
-            } catch (IOException ex) {
-                Debug.error(fileName + ":FileHandler: couldnot write " +
-                                "to file", ex);
+                cleanup();
             }
-            cleanup();
         }
-        this.recCount = 0;
     }
     
     private void rotate() {
@@ -543,8 +567,18 @@ public class FileHandler extends java.util.logging.Handler {
         interval *=1000;
         if(bufferTimer == null){
             bufferTimer = TimerFactory.getTimer();
-            bufferTimer.scheduleAtFixedRate(
-                new TimeBufferingTask(), interval, interval);
+            try {
+                bufferTimer.scheduleAtFixedRate(
+                    new TimeBufferingTask(), interval, interval);
+            } catch (IllegalArgumentException e) {
+                Debug.error (fileName + ":FileHandler:BuffTimeArg: " +
+                    e.getMessage());
+            } catch (IllegalStateException e) {
+                if (Debug.messageEnabled()) {
+                    Debug.message (fileName + ":FileHandler:BuffTimeState: " +
+                        e.getMessage());
+                }
+            }
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + 
                     ":FileHandler: Time Buffering Thread Started");
@@ -555,6 +589,7 @@ public class FileHandler extends java.util.logging.Handler {
     private void stopBufferTimer() {
         if(bufferTimer != null) {
             bufferTimer.cancel();
+            bufferTimer = null;
             if (Debug.messageEnabled()) {
                 Debug.message(fileName + ":FileHandler: Buffer Timer Stopped");
             }
