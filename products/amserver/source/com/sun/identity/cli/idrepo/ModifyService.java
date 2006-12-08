@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModifyService.java,v 1.1 2006-05-31 21:49:53 veiming Exp $
+ * $Id: ModifyService.java,v 1.2 2006-12-08 21:02:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class ModifyService extends IdentityCommand {
         String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         IdType idType = convert2IdType(type);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
 
         if ((datafile == null) && (attrValues == null)) {
             throw new CLIException(

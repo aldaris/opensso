@@ -17,18 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.2 2006-09-21 18:29:12 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.3 2006-12-08 21:02:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
-import com.sun.identity.cli.annotation.DefinitionClassInfo;
-import com.sun.identity.cli.annotation.Macro;
-import com.sun.identity.cli.annotation.SubCommandInfo;
-import com.sun.identity.cli.tools.CLIDefinitionGenerator;
-import java.lang.reflect.Field;
+import com.sun.identity.cli.stubs.ICLIStub;
+import com.sun.identity.cli.stubs.SubCommandStub;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +36,7 @@ import java.util.ResourceBundle;
  */
 public abstract class CLIDefinitionBase implements IDefinition {
     private String version;
-    private List<SubCommand> subCommands = new ArrayList<SubCommand>();
+    private List subCommands = new ArrayList();
     private String definitionClass;
     protected ResourceBundle rb;
 
@@ -51,90 +48,38 @@ public abstract class CLIDefinitionBase implements IDefinition {
     public CLIDefinitionBase(String definitionClass)
         throws CLIException {
         this.definitionClass = definitionClass;
-        Class defClass = getDefinitionClass();
-        getProductName(defClass);
-        getCommands(defClass);
+        ICLIStub defObject = getDefinitionObject();
+        rb = ResourceBundle.getBundle(defObject.getResourceBundleName());
+        version = defObject.getVersion();
+        getCommands(defObject);
     }
-
-    private Class getDefinitionClass()
+    
+    private ICLIStub getDefinitionObject()
         throws CLIException {
         try {
-            return Class.forName(definitionClass);
+            Class clazz = Class.forName(definitionClass);
+            return (ICLIStub)clazz.newInstance();
         } catch (ClassNotFoundException e) {
             throw new CLIException(e, ExitCodes.MISSING_DEFINITION_CLASS);
+        } catch (IllegalAccessException e) {
+            throw new CLIException(e, ExitCodes.INSTANTIATION_DEFINITION_CLASS);
+        } catch (InstantiationException e) {
+            throw new CLIException(e, ExitCodes.INSTANTIATION_DEFINITION_CLASS);
         }
+
     }
 
-    private void getProductName(Class clazz) 
-        throws CLIException {
-        try {
-            Field pdtField = clazz.getDeclaredField(
-                CLIConstants.FLD_PRODUCT_NAME);
-
-            if (pdtField != null) {
-                DefinitionClassInfo classInfo = pdtField.getAnnotation(
-                    DefinitionClassInfo.class);
-
-                rb = ResourceBundle.getBundle(classInfo.resourceBundle());
-                version = classInfo.version();
-            } else {
-                throw new CLIException("Incorrect Definiton, class" +
-                    definitionClass + " missing product field",
-                    ExitCodes.INCORRECT_DEFINITION_CLASS);
-
-            }
-        } catch (NoSuchFieldException e) {
-            throw new CLIException(e,
-                ExitCodes.INCORRECT_DEFINITION_CLASS);
-        }
-    }
-
-    private void getCommands(Class clazz) 
+    private void getCommands(ICLIStub defObject) 
         throws CLIException 
     {
-        Field[] fields = clazz.getDeclaredFields();
-
-        for (Field fld : fields) {
-            SubCommandInfo info = fld.getAnnotation(SubCommandInfo.class);
-
-            if (info != null) {
-                if ((info.implClassName() == null) ||
-                    (info.description() == null)
-                ) {
-                    throw new CLIException("Incorrect Definiton, class" +
-                        definitionClass + " missing product field",
-                        ExitCodes.INCORRECT_DEFINITION_CLASS);
-                }
-
-                List<String> mandatoryOptions = CLIDefinitionGenerator.toList(
-                    info.mandatoryOptions());
-                List<String> optionalOptions = CLIDefinitionGenerator.toList(
-                    info.optionalOptions());
-                List<String> optionAliases = CLIDefinitionGenerator.toList(
-                    info.optionAliases());
-
-                if ((info.macro() != null) && (info.macro().length() > 0)) {
-                    try {
-                        Field fldMarco = clazz.getDeclaredField(info.macro());
-                        Macro macroInfo =(Macro)fldMarco.getAnnotation(
-                            Macro.class);
-                        CLIDefinitionGenerator.appendToList(mandatoryOptions,
-                            macroInfo.mandatoryOptions());
-                        CLIDefinitionGenerator.appendToList(optionalOptions,
-                            macroInfo.optionalOptions());
-                        CLIDefinitionGenerator.appendToList(optionAliases,
-                            macroInfo.optionAliases());
-                    } catch (NoSuchFieldException e) {
-                        throw new CLIException(e,
-                            ExitCodes.INCORRECT_DEFINITION_CLASS);
-                    }
-                }
-
-                String subcmdName = fld.getName().replace('_', '-');
-                subCommands.add(new SubCommand(
-                    this, rb, subcmdName, mandatoryOptions, optionalOptions,
-                    optionAliases, info.implClassName()));
-            }
+        List subCommandStubs = defObject.getSubCommandStubs();
+        for (Iterator i = subCommandStubs.iterator(); i.hasNext(); ) {
+            SubCommandStub stub = (SubCommandStub)i.next();
+            String subcmdName = stub.name;
+            subcmdName = subcmdName.replace('_', '-');
+            subCommands.add(new SubCommand(
+                this, rb, subcmdName, stub.mandatoryOptions, 
+                stub.optionalOptions, stub.aliasOptions, stub.implClassName));
         }
     }
 

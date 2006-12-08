@@ -17,35 +17,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugProviderImpl.java,v 1.2 2006-12-08 21:02:41 veiming Exp $
+ * $Id: ICLIStub.java,v 1.1 2006-12-08 21:02:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.shared.debug.impl;
+package com.sun.identity.cli.stubs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.sun.identity.shared.debug.IDebug;
-import com.sun.identity.shared.debug.IDebugProvider;
+import java.util.List;
 
 /**
- * Default debug provider implementation.
+ * This interface defines the methods that are required for CLI
+ * Definition Stub which is created to move away from Java annotations.
+ * As we need to support JDK 1.4
  */
-public class DebugProviderImpl implements IDebugProvider {
-    private Map debugMap = new HashMap();
-    
-    public synchronized IDebug getInstance(String debugName) {
-        IDebug debug = (IDebug)getDebugMap().get(debugName);
-        if (debug == null) {
-            debug = new DebugImpl(debugName);
-            getDebugMap().put(debugName, debug);
-        }
-        return debug;
-    }
+public interface ICLIStub {
+    /**
+     * Returns resource bundle name.
+     *
+     * @return resource bundle name.
+     */
+    String getResourceBundleName();
 
-    private Map getDebugMap() {
-        return debugMap;
-    }
+    /**
+     * Returns version string.
+     *
+     * @return version string.
+     */
+    String getVersion();
+
+    /**
+     * Returns a list of <code>SubCommandStub</code> objects.
+     *
+     * @return a list of <code>SubCommandStub</code> objects.
+     */
+    List getSubCommandStubs();
 }

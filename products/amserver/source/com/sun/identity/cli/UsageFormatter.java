@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UsageFormatter.java,v 1.1 2006-05-31 21:49:47 veiming Exp $
+ * $Id: UsageFormatter.java,v 1.2 2006-12-08 21:02:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,8 @@ import java.util.TreeSet;
  */
 public class UsageFormatter {
     private static UsageFormatter instance = new UsageFormatter();
-    private static List<String> globalOptions = new ArrayList<String>();
-    private static List<String> globalArgs = new ArrayList<String>();
+    private static List globalOptions = new ArrayList();
+    private static List globalArgs = new ArrayList();
     private static int MAX_USAGE_LEN = 75;
 
     static {
@@ -119,11 +119,12 @@ public class UsageFormatter {
         buff.append(rb.getString("USAGE_SUBCOMMAND_TITLE"));
         buff.append("\n");
 
-        List<IDefinition> defObjects = mgr.getDefinitionObjects();
-        Map<String, String> mapCmds = new HashMap<String, String>();
-        Set<String> orderCmds = new TreeSet<String>();
+        List defObjects = mgr.getDefinitionObjects();
+        Map mapCmds = new HashMap();
+        Set orderCmds = new TreeSet();
 
-        for (IDefinition def : defObjects) {
+        for (Iterator i = defObjects.iterator(); i.hasNext(); ) {
+            IDefinition def = (IDefinition)i.next();
             for (Iterator j = def.getSubCommands().iterator(); j.hasNext(); ) {
                 SubCommand cmd = (SubCommand)j.next();
                 String name = cmd.getName();

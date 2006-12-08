@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TabBean.java,v 1.1 2006-11-30 00:44:42 veiming Exp $
+ * $Id: TabBean.java,v 1.2 2006-12-08 21:02:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -184,7 +185,7 @@ public class TabBean {
         private Set permissions;
         private boolean delegateUI;
         private Class controller;
-        private List<TabEntry> children = new ArrayList<TabEntry>();
+        private List children = new ArrayList();
 
         private TabEntry(TabBean bean, Node root)
             throws ConsoleException {
@@ -312,7 +313,8 @@ public class TabBean {
                 tab.setToolTip(bean.resolveTabLabel(tooltip));
                 tab.setUrl(url);
 
-                for (TabEntry te : children) {
+                for (Iterator i = children.iterator(); i.hasNext(); ) {
+                    TabEntry te = (TabEntry)i.next();
                     Tab childTab = te.getTabComponent(model, realmName);
                     if (childTab != null) {
                         tab.getChildren().add(childTab);

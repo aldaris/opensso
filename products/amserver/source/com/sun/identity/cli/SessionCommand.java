@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.1 2006-05-31 21:49:46 veiming Exp $
+ * $Id: SessionCommand.java,v 1.2 2006-12-08 21:02:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class SessionCommand extends AuthenticatedCommand {
     private void promptForInvalidation(IOutput ouputWriter, List sessionList)
         throws CLIException
     {
-        List<String> snList = new ArrayList<String>(sessionList.size());
+        List snList = new ArrayList(sessionList.size());
         ouputWriter.printlnMessage(getResourceString("session-to-invalidate"));
         ouputWriter.printlnMessage(getResourceString("session-cr-to-exit"));
 
@@ -247,11 +247,11 @@ public class SessionCommand extends AuthenticatedCommand {
         return str;
     }
 
-    private List<SessionData> getSessionList(String name, String pattern)
+    private List getSessionList(String name, String pattern)
         throws CLIException
     {
         IOutput output = getOutputWriter();
-        List<SessionData> list = new ArrayList<SessionData>();
+        List list = new ArrayList();
                                                                                 
         try {
             String currentSessionHandler = curSession.getProperty(

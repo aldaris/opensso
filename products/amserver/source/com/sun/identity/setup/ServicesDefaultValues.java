@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.6 2006-11-22 01:00:05 ak138937 Exp $
+ * $Id: ServicesDefaultValues.java,v 1.7 2006-12-08 21:02:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,10 +25,9 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.encode.Hash;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
-import com.iplanet.services.util.Hash;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ public class ServicesDefaultValues {
     private static ServicesDefaultValues instance = new ServicesDefaultValues();
     private static Set preappendSlash = new HashSet();
     private static Set trimSlash = new HashSet();
-    private Map<String, String> defValues = new HashMap<String, String>();
+    private Map defValues = new HashMap();
     private static java.util.Locale locale = null;
     
     static {
@@ -64,9 +63,9 @@ public class ServicesDefaultValues {
     private ServicesDefaultValues() {
         ResourceBundle bundle = ResourceBundle.getBundle(
             "serviceDefaultValues");
-        Enumeration<String> e = bundle.getKeys();
+        Enumeration e = bundle.getKeys();
         while (e.hasMoreElements()) {
-            String key = e.nextElement();
+            String key = (String)e.nextElement();
             defValues.put(key, bundle.getString(key));
         }
     }
@@ -399,7 +398,7 @@ public class ServicesDefaultValues {
      *
      * @return the map of default attribute name to its value.
      */
-    public static Map<String, String> getDefaultValues() {
+    public static Map getDefaultValues() {
         return instance.defValues;
     }
     
@@ -409,7 +408,7 @@ public class ServicesDefaultValues {
      * @param deployURI Deploy URI.
      * @param map Service attribute values.
      */
-    public static void setDeployURI(String deployURI, Map<String, String> map) {
+    public static void setDeployURI(String deployURI, Map map) {
         map.put(SetupConstants.CONFIG_VAR_PRODUCT_NAME, deployURI);
         map.put(SetupConstants.CONFIG_VAR_OLD_CONSOLE_URI, deployURI);
         map.put(SetupConstants.CONFIG_VAR_CONSOLE_URI, deployURI);

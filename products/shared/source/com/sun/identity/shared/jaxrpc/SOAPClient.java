@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.1 2006-08-25 21:21:50 veiming Exp $
+ * $Id: SOAPClient.java,v 1.2 2006-12-08 21:02:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -789,7 +789,7 @@ public class SOAPClient {
                     Class[] params = {Integer.TYPE, String.class};
                     Constructor ctr = clazz.getConstructor(params);
                     int intCode = Integer.parseInt(exceptionCode);
-                    Object[] objs = {intCode, exceptionMessage};
+                    Object[] objs = {new Integer(intCode), exceptionMessage};
                     exception = (Exception)ctr.newInstance(objs);
                 } catch (NumberFormatException e) {
                     // ignore
@@ -819,7 +819,7 @@ public class SOAPClient {
                     Class[] params = {Integer.TYPE, String.class};
                     Constructor ctr = clazz.getConstructor(params);
                     int intCode = Integer.parseInt(smsExceptionCode);
-                    Object[] objs = {intCode, null};
+                    Object[] objs = {new Integer(intCode), null};
                     exception = (Exception)ctr.newInstance(objs);
                 } catch (NoSuchMethodException e) {
                     // ignore

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertPath.java,v 1.3 2006-08-25 21:21:16 veiming Exp $
+ * $Id: AMCertPath.java,v 1.4 2006-12-08 21:02:34 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,7 +142,7 @@ public class AMCertPath {
                   "com.sun.identity.security.keystore.AMX509TrustManager");
             Object trustMgr = (Object) trustMgrClass.newInstance();
             Method method = trustMgrClass.getMethod(
-                "getKeyStore", (Class)null);
+                "getKeyStore", null);
             KeyStore keystore = (KeyStore) method.invoke(
                 trustMgr, (Object[])null);
             PKIXParameters pkixparams= new PKIXParameters(keystore);

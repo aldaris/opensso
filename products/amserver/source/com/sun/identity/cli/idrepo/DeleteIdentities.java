@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.1 2006-05-31 21:49:50 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.2 2006-12-08 21:02:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class DeleteIdentities extends IdentityCommand {
             AMIdentityRepository amir = new AMIdentityRepository(
                 adminSSOToken, realm);
             IdType idType = convert2IdType(type);
-            Set<AMIdentity> setDelete = new HashSet<AMIdentity>();
+            Set setDelete = new HashSet();
 
             for (Iterator i = idNames.iterator(); i.hasNext(); ) {
                 String idName = (String)i.next();

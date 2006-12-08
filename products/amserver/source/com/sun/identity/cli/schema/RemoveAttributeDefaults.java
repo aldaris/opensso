@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAttributeDefaults.java,v 1.1 2006-05-31 21:50:04 veiming Exp $
+ * $Id: RemoveAttributeDefaults.java,v 1.2 2006-12-08 21:02:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class RemoveAttributeDefaults extends SchemaCommand {
         String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
 
-        Set<String> attributeNames = new HashSet<String>();
+        Set attributeNames = new HashSet();
         attributeNames.addAll(rc.getOption(IArgument.ATTRIBUTE_NAMES));
         ServiceSchema ss = getServiceSchema();
         IOutput outputWriter = getOutputWriter();

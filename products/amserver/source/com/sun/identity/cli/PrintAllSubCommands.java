@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrintAllSubCommands.java,v 1.1 2006-05-31 21:49:45 veiming Exp $
+ * $Id: PrintAllSubCommands.java,v 1.2 2006-12-08 21:02:19 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,13 +43,13 @@ public class PrintAllSubCommands extends CLICommandBase {
         super.handleRequest(rc);
         UsageFormatter uf = UsageFormatter.getInstance();
         CommandManager mgr = rc.getCommandManager();
-        List<IDefinition> definitions = mgr.getDefinitionObjects();
+        List definitions = mgr.getDefinitionObjects();
 
-        for (IDefinition def: definitions ) {
-            List<SubCommand> subcmds = def.getSubCommands();
-
-            for (SubCommand subcmd: subcmds) {
-                uf.format(mgr, subcmd);
+        for (Iterator i = definitions.iterator(); i.hasNext(); ) {
+            IDefinition def = (IDefinition)i.next();
+            List subcmds = def.getSubCommands();
+            for (Iterator it = subcmds.iterator(); it.hasNext(); ) {
+                uf.format(mgr, (SubCommand)it.next());
             }
         }
     }

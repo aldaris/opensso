@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributeDefaults.java,v 1.1 2006-05-31 21:50:01 veiming Exp $
+ * $Id: GetAttributeDefaults.java,v 1.2 2006-12-08 21:02:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,9 +86,9 @@ public class GetAttributeDefaults extends SchemaCommand {
     }
 
     private void retainValues(RequestContext rc, Map attrValues) {
-        List<String> attrNames = rc.getOption(IArgument.ATTRIBUTE_NAMES);
+        List attrNames = rc.getOption(IArgument.ATTRIBUTE_NAMES);
         if ((attrNames != null) && !attrNames.isEmpty()) {
-            Set<String> attributeNames = new HashSet<String>();
+            Set attributeNames = new HashSet();
             attributeNames.addAll(attrNames);
 
             for (Iterator i = attrValues.keySet().iterator(); i.hasNext();){
@@ -114,9 +114,9 @@ public class GetAttributeDefaults extends SchemaCommand {
         }
     }
 
-    private Set<String> maskPasswordField(Set pwdValues) {
+    private Set maskPasswordField(Set pwdValues) {
         int size = pwdValues.size();
-        Set<String> masked = new HashSet<String>(size *2);
+        Set masked = new HashSet(size *2);
         for (int i = 0; i < size; i++) {
             masked.add("********");
         }

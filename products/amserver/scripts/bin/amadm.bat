@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amadm.bat,v 1.1 2006-11-12 08:45:14 veiming Exp $
+: $Id: amadm.bat,v 1.2 2006-12-08 21:02:14 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -31,5 +31,5 @@ shift
 goto WHILE
 :WEND
 
-java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar -D"com.iplanet.am.serverMode=false" -D"definitionFiles=com.sun.identity.cli.AccessManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
+java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar  -D"definitionFiles=com.sun.identity.cli.AccessManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
 endlocal

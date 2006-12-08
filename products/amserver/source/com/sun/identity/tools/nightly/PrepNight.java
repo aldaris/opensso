@@ -17,18 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrepNight.java,v 1.2 2006-07-26 06:30:38 veiming Exp $
+ * $Id: PrepNight.java,v 1.3 2006-12-08 21:02:36 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.tools.nightly;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -51,11 +51,12 @@ public class PrepNight {
     private static void createIndexHTML(String baseDir)
         throws IOException
     {
-        Set<String> fileNames = getFileContent(baseDir);
+        Set fileNames = getFileContent(baseDir);
         StringBuffer buff = new StringBuffer();
         buff.append(HEADER);
 
-        for (String name : fileNames) {
+        for (Iterator i = fileNames.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
             Object[] param = {name};
             buff.append(MessageFormat.format(TEMPLATE, param))
                 .append("<br />");
@@ -65,10 +66,10 @@ public class PrepNight {
         writeToFile(baseDir + "/index.html", buff.toString());
     }
 
-    private static Set<String> getFileContent(String baseDir)
+    private static Set getFileContent(String baseDir)
         throws IOException
     {
-        Set<String> binaries = new TreeSet<String>();
+        Set binaries = new TreeSet();
         File dir = new File(baseDir);
         String[] files = dir.list();
         for (int i = 0; i < files.length; i++) {

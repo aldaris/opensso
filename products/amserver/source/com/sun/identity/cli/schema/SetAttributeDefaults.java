@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeDefaults.java,v 1.1 2006-05-31 21:50:05 veiming Exp $
+ * $Id: SetAttributeDefaults.java,v 1.2 2006-12-08 21:02:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class SetAttributeDefaults extends SchemaCommand {
         String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
 
         if ((datafile == null) && (attrValues == null)) {
             throw new CLIException(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.1 2006-08-25 21:21:45 veiming Exp $
+ * $Id: Debug.java,v 1.2 2006-12-08 21:02:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,7 @@ public class Debug {
      * debugMap is a container of all active Debug objects. Log file name is the
      * key and Debug is the value of this map.
      */
-    private static Map<String, Debug> debugMap = new HashMap<String, Debug>();
+    private static Map debugMap = new HashMap();
 
     /**
      * serviceInitialized indicates if the service is already initialized.
@@ -188,7 +188,7 @@ public class Debug {
      * @return a Debug instance corresponding to the specified debug name.
      */
     public static synchronized Debug getInstance(String debugName) {
-        Debug debug = getDebugMap().get(debugName);
+        Debug debug = (Debug)getDebugMap().get(debugName);
         if (debug == null) {
             debug = new Debug(getDebugProvider().getInstance(debugName));
             getDebugMap().put(debugName, debug);
@@ -216,7 +216,7 @@ public class Debug {
      * 
      * @return the <code>Map</code> of all Debug instances
      */
-    private static Map<String, Debug> getDebugMap() {
+    private static Map getDebugMap() {
         return debugMap;
     }
 

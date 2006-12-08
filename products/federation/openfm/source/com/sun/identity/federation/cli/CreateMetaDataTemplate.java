@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.1 2006-10-30 23:17:59 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.2 2006-12-08 21:02:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -207,10 +207,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         Writer pw = null;
         try {
-            pw = (metadata != null) && (metadata.length() > 0) ?
-                new PrintWriter(new FileWriter(metadata)) :
-                new StringWriter();
-            
+            if ((metadata != null) && (metadata.length() > 0)) {
+                pw = new PrintWriter(new FileWriter(metadata));
+            } else {
+                pw = new StringWriter();
+            }
             pw.write(
                     "<EntityDescriptor\n" +
                     "    xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"\n" +
@@ -412,9 +413,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            pw = ((extendedData != null) && (extendedData.length() > 0)) ?
-                new PrintWriter(new FileWriter(extendedData)) :
-                new StringWriter();
+            if ((extendedData != null) && (extendedData.length() > 0)) {
+                pw = new PrintWriter(new FileWriter(extendedData));
+            } else {
+                pw = new StringWriter();
+            }
             
             pw.write(
                     "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
@@ -635,10 +638,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            pw = ((extendedData != null) && (extendedData.length() > 0)) ?
-                new PrintWriter(new FileWriter(extendedData)) :
-                new StringWriter();
-            
+            if ((extendedData != null) && (extendedData.length() > 0)) {
+                pw = new PrintWriter(new FileWriter(extendedData));
+            } else {
+                pw = new StringWriter();
+            }
             pw.write(
                     "<EntityConfig xmlns=\"urn:sun:fm:ID-FF:entityconfig\"\n" +
                     "    hosted=\"1\"\n" +
@@ -902,10 +906,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         Writer pw = null;
         try {
-            pw = ((metadata != null) && (metadata.length() > 0)) ?
-                new PrintWriter(new FileWriter(metadata)) :
-                new StringWriter();
-            
+            if ((metadata != null) && (metadata.length() > 0)) {
+                pw = new PrintWriter(new FileWriter(metadata));
+            } else {
+                pw = new StringWriter();
+            }
             pw.write(
                     "<EntityDescriptor\n" +
                     "    xmlns=\"urn:liberty:metadata:2003-08\"\n" +

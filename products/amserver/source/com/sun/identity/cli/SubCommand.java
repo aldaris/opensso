@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.3 2006-09-21 18:29:12 veiming Exp $
+ * $Id: SubCommand.java,v 1.4 2006-12-08 21:02:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,20 +46,18 @@ public class SubCommand {
     private ResourceBundle rb;
     private String name;
     private String implClassName;
-    private Map<String, List<String>> optionAliases = 
-        new HashMap<String, List<String>>();
-    private Set<String> setOptionAliases = new HashSet<String>();
-    private List<String> mandatoryOptions = new ArrayList<String>();
-    private List<String> optionalOptions = new ArrayList<String>();
-    private Map<String, String> optionNameToShortName = 
-        new HashMap<String, String>();
-    private Set<String> unaryOptionNames = new HashSet<String>();
-    private Set<String> singleOptionNames = new HashSet<String>();
+    private Map optionAliases = new HashMap();
+    private Set setOptionAliases = new HashSet();
+    private List mandatoryOptions = new ArrayList();
+    private List optionalOptions = new ArrayList();
+    private Map optionNameToShortName = new HashMap();
+    private Set unaryOptionNames = new HashSet();
+    private Set singleOptionNames = new HashSet();
 
-    private static Set<String> reservedLongOptionNames = new HashSet<String>();
-    private static Set<String> reservedShortOptionNames = new HashSet<String>();
-    private static Map<String, String> mapLongToShortOptionName = 
-        new HashMap<String, String>();
+    private static Set reservedLongOptionNames = new HashSet();
+    private static Set reservedShortOptionNames = new HashSet();
+    private static Map mapLongToShortOptionName = 
+        new HashMap();
 
     static {
         try {
@@ -154,9 +152,9 @@ public class SubCommand {
         IDefinition definition,
         ResourceBundle rb,
         String name,
-        List<String> mandatoryOptions,
-        List<String> optionalOptions,
-        List<String> optionAliases,
+        List mandatoryOptions,
+        List optionalOptions,
+        List optionAliases,
         String implClassName
     ) throws CLIException {
         this.definition = definition;
@@ -165,7 +163,7 @@ public class SubCommand {
         this.implClassName = implClassName;
 
         //this is use to clean duplicate short options.
-        Set<String> shortOptions = new HashSet<String>();
+        Set shortOptions = new HashSet();
 
         parseOptions(mandatoryOptions, this.mandatoryOptions, shortOptions);
         parseOptions(optionalOptions, this.optionalOptions, shortOptions);
@@ -205,7 +203,7 @@ public class SubCommand {
      *
      * @return list of mandatory argument/options.
      */
-    public List<String> getMandatoryOptions() {
+    public List getMandatoryOptions() {
         return mandatoryOptions;
     }
 
@@ -215,8 +213,8 @@ public class SubCommand {
      * @param name Full name of argument/option.
      * @return get option aliases. Returns null of there are no aliases.
      */
-    public List<String> getOptionAliases(String name) {
-        return optionAliases.get(name);
+    public List getOptionAliases(String name) {
+        return (List)optionAliases.get(name);
     }
 
     /**
@@ -225,12 +223,12 @@ public class SubCommand {
      * @param name Full name of argument/option.
      * @return option aliases group.
      */
-    public Set<String> getOptionAliasesGroup(String fullName) {
-        Set<String> group = null;
+    public Set getOptionAliasesGroup(String fullName) {
+        Set group = null;
         for (Iterator i = optionAliases.keySet().iterator();
             i.hasNext() && (group == null); ) {
             String opt = (String)i.next();
-            List<String> list = getOptionAliases(opt);
+            List list = getOptionAliases(opt);
 
             if (list != null) {
                 for (Iterator j = list.iterator();
@@ -238,7 +236,7 @@ public class SubCommand {
                 ) {
                     String name = (String)j.next();
                     if (name.equals(fullName)) {
-                        group = new HashSet<String>();
+                        group = new HashSet();
                         group.addAll(list);
                         group.add(opt);
                     }
@@ -298,7 +296,7 @@ public class SubCommand {
      * @return <code>true</code> if the given options are valid.
      */
     public boolean validateOptions(
-        Map<String, List<String>> options,
+        Map options,
         SSOToken ssoToken
     ) {
         boolean valid = true;
@@ -308,7 +306,7 @@ public class SubCommand {
         ) {
             String opt = (String)i.next();
             valid = validateAliasOptions(
-                opt, optionAliases.get(opt), options);
+                opt, (List)optionAliases.get(opt), options);
         }
 
         for (Iterator i = mandatoryOptions.iterator(); i.hasNext() && valid; ) {
@@ -368,10 +366,10 @@ public class SubCommand {
 
     private boolean validateAliasOptions(
         String opt,
-        List<String> aliases,
+        List aliases,
         Map options
     ) {
-        Set<String> set = new HashSet<String>();
+        Set set = new HashSet();
         set.add(opt);
         set.addAll(aliases);
         boolean existed = false;
@@ -402,7 +400,7 @@ public class SubCommand {
             i.hasNext() && (longName == null); 
         ) {
             String opt = (String)i.next();
-            String val = optionNameToShortName.get(opt);
+            String val = (String)optionNameToShortName.get(opt);
             if (val.equals(name)) {
                 longName = opt;
             }
@@ -418,7 +416,7 @@ public class SubCommand {
      *         Returns null if short name is not found.
      */
     public String getShortOptionName(String name) {
-        return optionNameToShortName.get(name);
+        return (String)optionNameToShortName.get(name);
     }
 
     /**
@@ -456,12 +454,13 @@ public class SubCommand {
     }
 
     private void parseOptions(
-        List<String> strOpt,
-        List<String> options,
-        Set<String> shortOptions)
+        List strOpt,
+        List options,
+        Set shortOptions)
         throws CLIException
     {
-        for (String token : strOpt) {
+        for (Iterator i = strOpt.iterator(); i.hasNext(); ) {
+            String token = (String)i.next();
             StringTokenizer t = new StringTokenizer(token, "|");
             String name = t.nextToken();
             String shortName = t.nextToken();
@@ -512,13 +511,14 @@ public class SubCommand {
         }
     }
 
-    private void parseAliases(List<String> aliases) {
-        for (String al : aliases) {
+    private void parseAliases(List aliases) {
+        for (Iterator i = aliases.iterator(); i.hasNext(); ) {
+            String al = (String)i.next();
             StringTokenizer t = new StringTokenizer(al, "|");
             String head = t.nextToken();
             String alias = t.nextToken();
 
-            List<String> array = new ArrayList<String>();
+            List array = new ArrayList();
             array.add(alias);
             setOptionAliases.add(alias);
             while (t.hasMoreTokens()) {

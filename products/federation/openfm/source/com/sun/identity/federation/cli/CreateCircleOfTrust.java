@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCircleOfTrust.java,v 1.1 2006-10-30 23:17:59 qcheng Exp $
+ * $Id: CreateCircleOfTrust.java,v 1.2 2006-12-08 21:02:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,7 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
     private String realm;
     private String cot;
     private String spec;
-    private List<String> trustedProviders;
+    private List trustedProviders;
     private String prefix;
     
     /**
@@ -69,10 +69,9 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
         prefix = getStringOptionValue(ARGUMENT_PREFIX);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
-        trustedProviders = (List<String>)rc.getOption(
-                ARGUMENT_TRUSTED_PROVIDERS);
+        trustedProviders = (List)rc.getOption(ARGUMENT_TRUSTED_PROVIDERS);
         
-        Set<String> providers = new HashSet<String>();
+        Set providers = new HashSet();
         if (trustedProviders != null) {
             providers.addAll(trustedProviders);
         }

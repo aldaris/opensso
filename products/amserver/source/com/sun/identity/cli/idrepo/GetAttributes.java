@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.1 2006-05-31 21:49:51 veiming Exp $
+ * $Id: GetAttributes.java,v 1.2 2006-12-08 21:02:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class GetAttributes extends IdentityCommand {
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String idName = getStringOptionValue(ARGUMENT_ID_NAME);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
-        List<String> attributeNames = rc.getOption(IArgument.ATTRIBUTE_NAMES);
+        List attributeNames = rc.getOption(IArgument.ATTRIBUTE_NAMES);
         IdType idType = convert2IdType(type);
         String[] params = {realm, type, idName};
 
@@ -78,7 +78,7 @@ public class GetAttributes extends IdentityCommand {
             Map values = null;
 
             if ((attributeNames != null) && !attributeNames.isEmpty()) {
-                Set<String> attrNames = new HashSet<String>();
+                Set attrNames = new HashSet();
                 attrNames.addAll(attributeNames);
                 values = amid.getAttributes(attrNames);
             } else {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveSubSchema.java,v 1.2 2006-09-20 23:59:57 veiming Exp $
+ * $Id: RemoveSubSchema.java,v 1.3 2006-12-08 21:02:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class RemoveSubSchema extends SchemaCommand {
         String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         String schemaType = getStringOptionValue(IArgument.SCHEMA_TYPE);
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
-        List<String> schemaNames = rc.getOption(ARGUMENT_SCHEMA_NAMES);
+        List schemaNames = rc.getOption(ARGUMENT_SCHEMA_NAMES);
 
         IOutput outputWriter = getOutputWriter();
         

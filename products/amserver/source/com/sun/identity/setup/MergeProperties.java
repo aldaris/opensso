@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MergeProperties.java,v 1.3 2006-08-28 18:50:42 veiming Exp $
+ * $Id: MergeProperties.java,v 1.4 2006-12-08 21:02:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -44,18 +45,19 @@ public class MergeProperties {
         throws IOException
     {
         StringBuffer buff = new StringBuffer();
-        Map<String, String> p1 = getProperties(origProp);
-        Map<String, String> p2 = getProperties(prependProp);
-        Set<String> p1Keys = p1.keySet();
-        Set<String> p2Keys = p2.keySet();
+        Map p1 = getProperties(origProp);
+        Map p2 = getProperties(prependProp);
+        Set p1Keys = (Set)p1.keySet();
+        Set p2Keys = (Set)p2.keySet();
 
-        for (String key : p1Keys) {
-            String val = p1.get(key).trim();
+        for (Iterator i = p1Keys.iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            String val = ((String)p1.get(key)).trim();
             if (p2Keys.contains(key)) {
                 if (val.length() == 0) {
-                    val = p2.get(key).trim();
+                    val = ((String)p2.get(key)).trim();
                 } else {
-                    val += " " + p2.get(key).trim();
+                    val += " " + ((String)p2.get(key)).trim();
                 }
             }
             buff.append(key)
@@ -64,8 +66,9 @@ public class MergeProperties {
                 .append("\n");
         }
 
-        for (String key : p2Keys) {
-            String val = p2.get(key);
+        for (Iterator i = p2Keys.iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            String val = (String)p2.get(key);
             if (!p1Keys.contains(key)) {
                 buff.append(key)
                     .append("=")
@@ -77,11 +80,11 @@ public class MergeProperties {
         writeToFile(outfile, buff.toString());
     }
 
-    private Map<String, String> getProperties(String propertyName) {
-        Map<String, String> results = new HashMap<String, String>();
+    private Map getProperties(String propertyName) {
+        Map results = new HashMap();
         ResourceBundle res = ResourceBundle.getBundle(propertyName);
-        for (Enumeration<String> e = res.getKeys(); e.hasMoreElements(); ) {
-            String key = e.nextElement();
+        for (Enumeration e = res.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
             results.put(key, res.getString(key));
         }
         return results;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeValues.java,v 1.1 2006-05-31 21:49:54 veiming Exp $
+ * $Id: SetAttributeValues.java,v 1.2 2006-12-08 21:02:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class SetAttributeValues extends IdentityCommand {
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
         IdType idType = convert2IdType(type);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
 
         if ((datafile == null) && (attrValues == null)) {
             throw new CLIException(

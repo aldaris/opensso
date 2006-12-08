@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CaseInsensitiveHashSet.java,v 1.2 2006-06-23 00:47:44 arviranga Exp $
+ * $Id: CaseInsensitiveHashSet.java,v 1.3 2006-12-08 21:02:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
-import java.util.HashSet;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**

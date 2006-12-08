@@ -17,23 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.2 2006-12-06 23:45:03 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.3 2006-12-08 21:02:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
-import java.util.Enumeration;
-import java.util.ArrayList;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSSchema;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.io.File;
 import java.io.IOException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPConnection;
@@ -50,10 +47,6 @@ import netscape.ldap.util.LDIFContent;
 import netscape.ldap.util.LDIFModifyContent;
 import netscape.ldap.util.LDIFRecord;
 import netscape.ldap.util.RDN;
-
-import com.iplanet.am.util.Debug;
-import com.sun.identity.sm.SMSSchema;
-
 
 /**
  * This class does Directory Server related tasks for 
@@ -373,8 +366,9 @@ public class AMSetupDSConfig {
      *
      * @param schemaFiles Array of schema files to load.
      */
-    public void loadSchemaFiles(List<String> schemaFiles) {
-        for (String file :  schemaFiles) {
+    public void loadSchemaFiles(List schemaFiles) {
+        for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
+            String file = (String)i.next();
             int idx = file.lastIndexOf("/");
             String schemaFile = (idx != -1) ? file.substring(idx+1) : file;
             createSchemaFromLDIF(basedir + "/" + schemaFile);

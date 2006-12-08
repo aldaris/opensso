@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.3 2006-08-15 19:32:57 veiming Exp $
+ * $Id: AccessManager.java,v 1.4 2006-12-08 21:02:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.cli;
  */
 public class AccessManager extends CLIDefinitionBase {
     private static String DEFINITION_CLASS =
-        "com.sun.identity.cli.definition.AccessManager";
+        "com.sun.identity.cli.stubs.AccessManagerCLI";
 
     /**
      * Constructs an instance of this class.

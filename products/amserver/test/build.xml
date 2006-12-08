@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2006-11-02 01:05:02 veiming Exp $
+   $Id: build.xml,v 1.9 2006-12-08 21:02:36 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -56,6 +56,23 @@
             <arg value="${test.classes.dir}"/>
             <arg value="com.sun.identity.cli.definition.MockCLI"/>
         </java>
+        <java classname="com.sun.identity.cli.tools.DefinitionStubCreator">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${test.classes.dir}"/>
+            </classpath>
+            <arg value="com.sun.identity.cli.definition.MockCLI"/>
+            <arg value="${amserver.unittest.dir}/source/com/sun/identity/cli/stubs/MockCLI.java"/>
+            <arg value="com.sun.identity.cli.stubs"/>
+        </java>
+        <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
+               debug="on" debuglevel="lines,vars,source">
+            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:deprecation"/>
+            <src path="${amserver.unittest.dir}/source/com/sun/identity/cli/stubs"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
     </target>
 
     <target name="all" depends="build">

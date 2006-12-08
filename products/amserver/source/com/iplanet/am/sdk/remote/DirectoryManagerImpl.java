@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.8 2006-12-08 02:39:29 veiming Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.9 2006-12-08 21:02:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.SchemaType;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -1604,13 +1605,22 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
 
         SSOToken stoken = null;
-        String agentSSOTokenID = token.substring(index +1);
+        String agentTokenStr = token.substring(index +1);
         String tokenStr = token.substring(0,index);
         final String ftoken = tokenStr;
         
         try {
-            SSOToken agentSSOToken = tm.createSSOToken(agentSSOTokenID);
-            stoken = (SSOToken)RestrictedTokenContext.doUsing(agentSSOToken,
+            /*
+             * for 7.0 patch-4 agent, IP address maybe send back to server.
+             * this is a very simple check for IP Address
+             */
+            Object context = null;
+            if (agentTokenStr.indexOf('.') != -1) {
+                context = InetAddress.getByName(agentTokenStr);
+            } else {
+                context = tm.createSSOToken(agentTokenStr);
+            } 
+            stoken = (SSOToken)RestrictedTokenContext.doUsing(context,
                 new RestrictedTokenAction() {
                     public Object run() throws Exception {
                         return tm.createSSOToken(ftoken);

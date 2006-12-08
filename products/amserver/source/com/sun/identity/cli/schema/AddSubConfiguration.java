@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubConfiguration.java,v 1.1 2006-05-31 21:50:00 veiming Exp $
+ * $Id: AddSubConfiguration.java,v 1.2 2006-12-08 21:02:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class AddSubConfiguration extends SchemaCommand {
         String subConfigId = getStringOptionValue(
             IArgument.SUB_CONFIGURATION_ID);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
 
         if ((datafile == null) && (attrValues == null)) {
             throw new CLIException(

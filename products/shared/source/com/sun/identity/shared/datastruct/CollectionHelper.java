@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CollectionHelper.java,v 1.1 2006-08-25 21:21:44 veiming Exp $
+ * $Id: CollectionHelper.java,v 1.2 2006-12-08 21:02:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,11 +45,11 @@ public class CollectionHelper {
      * @param name Key of the map entry.
      * @return String from a map of string of set of string
      */
-    public static String getMapAttr(Map<String, Set<String>> map, String name) {
+    public static String getMapAttr(Map map, String name) {
         String retVal = null;
-        Set<String> s = map.get(name);
+        Set s = (Set)map.get(name);
         return ((s != null) && !s.isEmpty()) ?
-            s.iterator().next().trim() : null;
+            ((String)s.iterator().next()).trim() : null;
     }
 
     /**
@@ -60,11 +60,7 @@ public class CollectionHelper {
      * @param defaultValue Default value if the string is not found.
      * @return String from a map of string of set of string
      */
-    public static String getMapAttr(
-        Map<String, Set<String>> map, 
-        String name,
-        String defaultValue
-    ) {
+    public static String getMapAttr(Map map, String name, String defaultValue) {
         String str = getMapAttr(map, name);
         return ((str != null) && (str.length() > 0)) ? str : defaultValue;
     }
@@ -80,7 +76,7 @@ public class CollectionHelper {
      * @throws NumberFormatException if the result is not an integer.
      */
     public static int getIntMapAttr(
-        Map<String, Set<String>> map, 
+        Map map, 
         String name,
         String defaultValue,
         Debug debug
@@ -104,7 +100,7 @@ public class CollectionHelper {
      * @throws NumberFormatException if the result is not an integer.
      */
     public static int getIntMapAttr(
-        Map<String, Set<String>> map,
+        Map map,
         String name,
         int defaultValue,
         Debug debug

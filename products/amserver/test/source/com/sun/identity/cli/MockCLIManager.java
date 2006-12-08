@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MockCLIManager.java,v 1.1 2006-09-21 00:00:01 veiming Exp $
+ * $Id: MockCLIManager.java,v 1.2 2006-12-08 21:02:37 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ package com.sun.identity.cli;
  */
 public class MockCLIManager extends CLIDefinitionBase {
     private static String DEFINITION_CLASS =
-        "com.sun.identity.cli.definition.MockCLI";
+        "com.sun.identity.cli.stubs.MockCLI";
 
     /**
      * Constructs an instance of this class.

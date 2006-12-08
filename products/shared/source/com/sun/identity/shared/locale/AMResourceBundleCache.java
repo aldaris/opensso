@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMResourceBundleCache.java,v 1.1 2006-08-25 21:21:51 veiming Exp $
+ * $Id: AMResourceBundleCache.java,v 1.2 2006-12-08 21:02:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,7 @@ import java.util.ResourceBundle;
 public class AMResourceBundleCache {
     private static AMResourceBundleCache instance;
 
-    private Map<String, Map<Locale, ResourceBundle>> mapBundles = 
-        new HashMap<String, Map<Locale, ResourceBundle>>(30);
+    private Map mapBundles = new HashMap(30);
 
     private Debug debug = null;
 
@@ -67,10 +66,10 @@ public class AMResourceBundleCache {
      */
     public ResourceBundle getResBundle(String name, Locale locale) {
         ResourceBundle resBundle = null;
-        Map<Locale, ResourceBundle> map = mapBundles.get(name);
+        Map map = (Map)mapBundles.get(name);
 
         if (map != null) {
-            resBundle = map.get(locale);
+            resBundle = (ResourceBundle)map.get(locale);
         }
         if (resBundle == null) {
             try {
@@ -81,7 +80,7 @@ public class AMResourceBundleCache {
 
             synchronized (mapBundles) {
                 if (map == null) {
-                    map = new HashMap<Locale, ResourceBundle>(5);
+                    map = new HashMap(5);
                     mapBundles.put(name, map);
                 }
                 map.put(locale, resBundle);

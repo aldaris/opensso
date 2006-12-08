@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.1 2006-08-25 21:22:00 veiming Exp $
+ * $Id: XMLUtils.java,v 1.2 2006-12-08 21:02:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ import org.xml.sax.SAXParseException;
  */
 public class XMLUtils {
     private static final Map EMPTY_MAP = Collections
-            .unmodifiableMap(new HashMap<Object, Object>());
+            .unmodifiableMap(new HashMap());
 
     // property to see if XML document validating is needed. The validating
     // is turned on only if the value for com.iplanet.am.util.xml.validating
@@ -205,7 +205,7 @@ public class XMLUtils {
             return null;
         }
 
-        Set<String> set = new HashSet<String>();
+        Set set = new HashSet();
         for (int l = 0; l < numAttributes; l++) {
             // get next attribute
             Node attr = attributes.item(l);
@@ -231,7 +231,7 @@ public class XMLUtils {
     public static Map parseAttributeValuePairTags(Node parentNode) {
 
         NodeList avList = parentNode.getChildNodes();
-        Map<String, Set<String>> map = null;
+        Map map = null;
         int numAVPairs = avList.getLength();
         
         if (numAVPairs <= 0) {
@@ -254,7 +254,7 @@ public class XMLUtils {
                 continue;
             }
             String key = null;
-            Set<String> values = null;
+            Set values = null;
             // Since Attribute tag is always the first leaf node as per the
             // DTD,and
             // values can one or more, Attribute tag can be parsed first and
@@ -282,7 +282,7 @@ public class XMLUtils {
                     continue;
                 }
                 if (values == null) {
-                    values = new HashSet<String>();
+                    values = new HashSet();
                 }
                 Node fchild = (Text) valueNode.getFirstChild();
                 if (fchild != null) {
@@ -299,9 +299,9 @@ public class XMLUtils {
                 continue;
             }
             if (map == null) {
-                map = new HashMap<String, Set<String>>();
+                map = new HashMap();
             }
-            Set<String> oldValues = map.get(key);
+            Set oldValues = (Set)map.get(key);
             if (oldValues != null) {
                 values.addAll(oldValues);
             }
@@ -409,7 +409,7 @@ public class XMLUtils {
     }
 
     public static Set getChildNodes(Node parentNode, String childName) {
-        Set<Node> retVal = new HashSet<Node>();
+        Set retVal = new HashSet();
         NodeList children = parentNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node node = children.item(i);
@@ -517,7 +517,7 @@ public class XMLUtils {
             return (null);
         }
 
-        Set<String> retVal = new HashSet<String>();
+        Set retVal = new HashSet();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node n = children.item(i);
@@ -559,7 +559,7 @@ public class XMLUtils {
         String nsName,
         String tagName
     ) {
-        List<Node> list = new ArrayList<Node>();
+        List list = new ArrayList();
 
         if (element != null) {
             NodeList nl = element.getChildNodes();

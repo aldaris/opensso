@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.3 2006-09-20 23:59:55 veiming Exp $
+ * $Id: CommandManager.java,v 1.4 2006-12-08 21:02:18 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,11 +50,11 @@ public class CommandManager {
     private static Debug debugger = Debug.getInstance("amCLI");
         
     private ResourceBundle rbMessages;
-    private Map<String, Object> environment;
+    private Map environment;
     private String commandName;
     private IOutput outputWriter;
-    private List<IDefinition> definitionObjects;
-    private List<CLIRequest> requestQueue = new Vector<CLIRequest>();
+    private List definitionObjects;
+    private List requestQueue = new Vector();
     private boolean bContinue;
 
     static {
@@ -138,7 +138,7 @@ public class CommandManager {
 
     private void init(Map env)
         throws CLIException {
-        environment = new HashMap<String, Object>();
+        environment = new HashMap();
         if (env.get(CLIConstants.ARGUMENT_DEBUG) != null) {
             environment.put(CLIConstants.ARGUMENT_DEBUG, Boolean.TRUE);
         }
@@ -188,7 +188,7 @@ public class CommandManager {
     private void init(String[] argv)
         throws CLIException
     {
-        environment = new HashMap<String, Object>();
+        environment = new HashMap();
         if (getFlag(argv, CLIConstants.ARGUMENT_DEBUG,
             CLIConstants.SHORT_ARGUMENT_DEBUG)
         ) {
@@ -244,7 +244,7 @@ public class CommandManager {
             outputWriter.printlnMessage(rbMessages.getString(
                 "verbose-reading-definition-files"));
         }
-        definitionObjects = new ArrayList<IDefinition>();
+        definitionObjects = new ArrayList();
         StringTokenizer st = new StringTokenizer(definitionClassNames, ",");
         while (st.hasMoreTokens()) {
             String className = st.nextToken();
@@ -317,7 +317,7 @@ public class CommandManager {
      *
      * @return a list of definition objects.
      */
-    public List<IDefinition> getDefinitionObjects() {
+    public List getDefinitionObjects() {
         return definitionObjects;
     }
 

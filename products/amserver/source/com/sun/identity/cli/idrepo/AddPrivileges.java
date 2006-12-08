@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddPrivileges.java,v 1.1 2006-05-31 21:49:49 veiming Exp $
+ * $Id: AddPrivileges.java,v 1.2 2006-12-08 21:02:22 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class AddPrivileges extends IdentityCommand {
                             ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
                     }
                 } else {
-                    Set<String> subjects = new HashSet<String>(2);
+                    Set subjects = new HashSet(2);
                     subjects.add(uid);
                     DelegationPrivilege newDp = new DelegationPrivilege(
                         name, subjects, realm);

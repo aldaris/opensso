@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.1 2006-08-25 21:21:55 veiming Exp $
+ * $Id: Stats.java,v 1.2 2006-12-08 21:02:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,7 @@ public class Stats {
      * statsMap is a container of all active Stats objects. Log file name is the
      * key and Stats is the value of this map.
      */
-    private static Map<String, Stats> statsMap = new HashMap<String, Stats>();
+    private static Map statsMap = new HashMap();
 
     /** serviceInitialized indicates if the service is already initialized. */
     private static boolean serviceInitialized = false;
@@ -142,7 +142,7 @@ public class Stats {
 
     private static Thread sr = null;
 
-    static Vector<StatsListener> statsListeners = new Vector<StatsListener>();
+    static Vector statsListeners = new Vector();
 
     /**
      * Initializes the Stats service so that Stats objects can be created. At

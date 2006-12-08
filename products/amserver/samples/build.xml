@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-10-09 17:57:33 veiming Exp $
+   $Id: build.xml,v 1.5 2006-12-08 21:02:12 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,7 +46,7 @@
     </target>
 
     <target name="client" depends="preparebuild">
-        <javac destdir="${samples.classes.dir}" source="1.5" target="1.5"
+        <javac destdir="${samples.classes.dir}" source="1.4" target="1.4"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${samples.src.dir}"/>
             <classpath refid="build.class.path"/>

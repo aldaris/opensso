@@ -17,13 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.2 2006-05-31 22:09:58 veiming Exp $
+ * $Id: AttributeValues.java,v 1.3 2006-12-08 21:02:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
-
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -57,12 +56,12 @@ public class AttributeValues {
      * @return service attribute values.
      * @throws CLIException if the file contains data of incorrect format.
      */
-    public static Map<String, Set<String>> parse(
+    public static Map parse(
         CommandManager mgr,
         String fileName,
-        List<String> listAttributeValues
+        List listAttributeValues
     ) throws CLIException {
-        Map<String, Set<String>> results = null;
+        Map results = null;
         if (fileName != null) {
             results = parse(mgr, fileName);
         }
@@ -75,28 +74,26 @@ public class AttributeValues {
             }
         }
 
-        return (results == null) ? new HashMap<String, Set<String>>() : results;
+        return (results == null) ? new HashMap() : results;
     }
 
     /**
      * Returns a map of attribute name to set of values.
      *
      * @param mgr Command Manager object.
-     * @param fileName Name of file that contains the attribute values data.
      * @param listAttributeValues list of attribute values in the format.
      *        <code>&lt;attribute-name&gt;=&lt;attribute-value&gt;</code>.
      * @return service attribute values.
      * @throws CLIException if the file contains data of incorrect format.
      */
-    public static Map<String, Set<String>> parse(
-        CommandManager mgr, 
-        List<String> listAttributeValues
-    ) throws CLIException {
-        Map<String, Set<String>> attrValues = 
-            new HashMap<String, Set<String>>();
+    public static Map parse(CommandManager mgr, List listAttributeValues) 
+        throws CLIException {
+        Map attrValues = 
+            new HashMap();
 
         if ((listAttributeValues != null) && !listAttributeValues.isEmpty()) {
-            for (String s: listAttributeValues) {
+            for (Iterator i = listAttributeValues.iterator(); i.hasNext(); ) {
+                String s = (String)i.next();
                 int idx = s.indexOf('=');
                 if (idx == -1) {
                     throw createIncorrectFormatException(mgr, s);
@@ -105,9 +102,9 @@ public class AttributeValues {
                 String attrName = s.substring(0, idx);
                 String attrValue =  s.substring(idx+1);
 
-                Set<String> set = attrValues.get(attrName);
+                Set set = (Set)attrValues.get(attrName);
                 if (set == null) {
-                    set = new HashSet<String>();
+                    set = new HashSet();
                     attrValues.put(attrName, set);
                 }
                 set.add(attrValue);
@@ -124,14 +121,11 @@ public class AttributeValues {
      * @return service attribute values.
      * @throws CLIException if the file contains data of incorrect format.
      */
-    public static Map<String, Set<String>> parse(
-        CommandManager mgr, 
-        String fileName
-    ) throws CLIException
-    {
+    public static Map parse(CommandManager mgr, String fileName)
+        throws CLIException {
         BufferedReader in = null;
-        Map<String, Set<String>> attrValues = 
-            new HashMap<String, Set<String>>();
+        Map attrValues = 
+            new HashMap();
 
         try {
             in = new BufferedReader(new FileReader(fileName));
@@ -147,9 +141,9 @@ public class AttributeValues {
 
                     String key = line.substring(0, idx).trim();
                     String value = line.substring(idx+1).trim();
-                    Set<String> values = attrValues.get(key);
+                    Set values = (Set)attrValues.get(key);
                     if (values == null) {
-                        values = new HashSet<String>();
+                        values = new HashSet();
                         attrValues.put(key, values);
                     }
                     values.add(value);
@@ -177,11 +171,11 @@ public class AttributeValues {
      * @return values.
      * @throws CLIException if the file contains data of incorrect format.
      */
-    public static List<String> parseValues(String fileName)
+    public static List parseValues(String fileName)
         throws CLIException
     {
         BufferedReader in = null;
-        List<String> values = new ArrayList<String>();
+        List values = new ArrayList();
 
         try {
             in = new BufferedReader(new FileReader(fileName));

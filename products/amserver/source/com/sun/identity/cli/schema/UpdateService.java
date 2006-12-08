@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateService.java,v 1.3 2006-08-25 21:20:36 veiming Exp $
+ * $Id: UpdateService.java,v 1.4 2006-12-08 21:02:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,15 +38,10 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
-import com.sun.identity.policy.PolicyUtils;
-import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSSchema;
-import com.sun.identity.sm.SMSUtils;
-import com.sun.identity.sm.SchemaException;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,7 +49,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -96,8 +90,8 @@ public class UpdateService extends AuthenticatedCommand {
             String strXML = (String)xmlFiles.iterator().next();
             
             try {
-                List<String> serviceNames = 
-                    getServiceNames(SMSSchema.getXMLDocument(strXML, true));
+                List serviceNames = getServiceNames(
+                    SMSSchema.getXMLDocument(strXML, true));
                 deleteServices(rc, ssm, serviceNames, adminSSOToken,
                     continueFlag, outputWriter);
                 loadSchemaXML(ssm, strXML);
@@ -113,8 +107,8 @@ public class UpdateService extends AuthenticatedCommand {
 
                 try {
                     fis = new FileInputStream(file);
-                    List<String> serviceNames = 
-                        getServiceNames(SMSSchema.getXMLDocument(fis));
+                    List serviceNames = getServiceNames(
+                        SMSSchema.getXMLDocument(fis));
                     deleteServices(rc, ssm, serviceNames, adminSSOToken,
                         continueFlag, outputWriter);
                     loadSchema(ssm, file);
@@ -234,8 +228,8 @@ public class UpdateService extends AuthenticatedCommand {
         }
     }
     
-    private List<String> getServiceNames(Document doc) {
-        List<String> serviceNames = new ArrayList<String>();
+    private List getServiceNames(Document doc) {
+        List serviceNames = new ArrayList();
         NodeList nodes = doc.getElementsByTagName("Service");
         
         if (nodes != null) {
@@ -257,12 +251,13 @@ public class UpdateService extends AuthenticatedCommand {
     private void deleteServices(
         RequestContext rc,
         ServiceManager ssm,
-        List<String> serviceNames, 
+        List serviceNames, 
         SSOToken adminSSOToken,
         boolean continueFlag,
         IOutput outputWriter
     ) throws CLIException {
-        for (String name : serviceNames) {
+        for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
             try {
                 String[] param = {name};
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,

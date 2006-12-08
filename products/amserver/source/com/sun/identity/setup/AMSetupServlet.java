@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.11 2006-11-22 00:59:05 ak138937 Exp $
+ * $Id: AMSetupServlet.java,v 1.12 2006-12-08 21:02:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -325,14 +325,15 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     private static void handlePostPlugins(SSOToken adminSSOToken) {
-        List<ConfiguratorPlugin> plugins = getConfigPluginClasses();
-        for (ConfiguratorPlugin plugin : plugins) {
+        List plugins = getConfigPluginClasses();
+        for (Iterator i = plugins.iterator(); i.hasNext(); ) {
+            ConfiguratorPlugin plugin  = (ConfiguratorPlugin)i.next();
             plugin.doPostConfiguration(servletCtx, adminSSOToken);
         }
     }
 
-    private static List<ConfiguratorPlugin> getConfigPluginClasses() {
-        List<ConfiguratorPlugin> plugins = new ArrayList<ConfiguratorPlugin>();
+    private static List getConfigPluginClasses() {
+        List plugins = new ArrayList();
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
                 SetupConstants.PROPERTY_CONFIGURATOR_PLUGINS);
@@ -381,9 +382,10 @@ public class AMSetupServlet extends HttpServlet {
         if (initAMConfig) {
             reInitAMConfigProperties(basedir);
         }
-        List<ConfiguratorPlugin> plugins = getConfigPluginClasses();
+        List plugins = getConfigPluginClasses();
 
-        for (ConfiguratorPlugin plugin : plugins) {
+        for (Iterator i = plugins.iterator(); i.hasNext(); ) {
+            ConfiguratorPlugin plugin = (ConfiguratorPlugin)i.next();
             plugin.reinitConfiguratioFile(basedir);
         }
     }
@@ -556,7 +558,7 @@ public class AMSetupServlet extends HttpServlet {
      */
     private static void initializeConfigProperties()
         throws SecurityException, IOException {
-        List<String> dataFiles = getTagSwapConfigFiles();
+        List dataFiles = getTagSwapConfigFiles();
 
         String origpath = "@BASE_DIR@";
         Map map = ServicesDefaultValues.getDefaultValues();
@@ -574,7 +576,8 @@ public class AMSetupServlet extends HttpServlet {
             throw e;
         }
 
-         for (String file : dataFiles) {
+         for (Iterator i = dataFiles.iterator(); i.hasNext(); ) {
+            String file = (String)i.next();
             InputStreamReader fin = new InputStreamReader(
                 servletCtx.getResourceAsStream(file));
 
@@ -662,10 +665,10 @@ public class AMSetupServlet extends HttpServlet {
      * @throws MissingResourceException if the bundle cannot be found
      */
 
-    private static List<String> getSchemaFiles(boolean sdkSchema)
+    private static List getSchemaFiles(boolean sdkSchema)
         throws MissingResourceException
     {
-        List<String> fileNames = new ArrayList();
+        List fileNames = new ArrayList();
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
         String strFiles; 
@@ -681,10 +684,10 @@ public class AMSetupServlet extends HttpServlet {
         return fileNames;
     }
 
-    private static List<String> getTagSwapConfigFiles()
+    private static List getTagSwapConfigFiles()
         throws MissingResourceException
     {
-        List<String> fileNames = new ArrayList();
+        List fileNames = new ArrayList();
         ResourceBundle rb = ResourceBundle.getBundle("configuratorTagSwap");
         String strFiles = rb.getString("tagswap.files");
         StringTokenizer st = new StringTokenizer(strFiles);
@@ -724,8 +727,9 @@ public class AMSetupServlet extends HttpServlet {
         boolean sdkSchema
     )   throws IOException
     {
-        List<String> schemaFiles = getSchemaFiles(sdkSchema);
-        for (String file : schemaFiles) {
+        List schemaFiles = getSchemaFiles(sdkSchema);
+        for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
+            String file = (String)i.next();
             InputStreamReader fin = new InputStreamReader(
                 servletCtx.getResourceAsStream(file));
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentity.java,v 1.2 2006-11-12 08:46:33 veiming Exp $
+ * $Id: CreateIdentity.java,v 1.3 2006-12-08 21:02:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ public class CreateIdentity extends IdentityCommand {
         String idName = getStringOptionValue(ARGUMENT_ID_NAME);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
         Map attributeValues = Collections.EMPTY_MAP;
         
         if ((datafile != null) || (attrValues != null)) {

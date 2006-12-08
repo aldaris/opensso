@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.1 2006-08-25 21:21:48 veiming Exp $
+ * $Id: CookieUtils.java,v 1.2 2006-12-08 21:02:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public class CookieUtils {
     static String fedCookieName = SystemPropertiesManager.get(
         Constants.FEDERATION_FED_COOKIE_NAME);
 
-    private static Set<String> cookieDomains = null;
+    private static Set cookieDomains = null;
     private static int defAge = -1;
 
     static Debug debug = Debug.getInstance("amCookieUtils");
@@ -90,7 +90,7 @@ public class CookieUtils {
             return cookieDomains;
         }
 
-        Set<String> cookieDomains = new HashSet<String>();
+        Set cookieDomains = new HashSet();
         if (cdssoCookiedomain == null || cdssoCookiedomain.length() < 1) {
             return Collections.EMPTY_SET;
         }

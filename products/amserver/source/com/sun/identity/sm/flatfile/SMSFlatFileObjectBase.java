@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.4 2006-10-04 05:36:47 goodearth Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.5 2006-12-08 21:02:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -677,9 +677,12 @@ public abstract class SMSFlatFileObjectBase extends SMSObject {
             }
         }
 
-        Set subentries = (sortResults) ?
-            new CaseInsensitiveTreeSet(ascendingOrder) :
-            new CaseInsensitiveHashSet();
+        Set subentries = null;
+        if (sortResults) {
+            subentries = new CaseInsensitiveTreeSet(ascendingOrder);
+        } else {
+            subentries = new CaseInsensitiveHashSet();
+        }
 
         try {
             Set entries = getSubEntries(objName, fPrefix + filter, sidFilter,

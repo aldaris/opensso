@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.3 2006-09-21 18:29:16 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.4 2006-12-08 21:02:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -128,9 +129,9 @@ public class CLIDefinitionGenerator {
                         "class=" + className + " field=" + fld.toString());
                 }
 
-                List<String> mandatoryOptions = toList(info.mandatoryOptions());
-                List<String> optionalOptions = toList(info.optionalOptions());
-                List<String> optionAliases = toList(info.optionAliases());
+                List mandatoryOptions = toList(info.mandatoryOptions());
+                List optionalOptions = toList(info.optionalOptions());
+                List optionAliases = toList(info.optionAliases());
 
                 if ((info.macro() != null) && (info.macro().length() > 0)) {
                     Field fldMarco = clazz.getDeclaredField(info.macro());
@@ -157,8 +158,9 @@ public class CLIDefinitionGenerator {
         }
     }
     
-    private static void validateOption(List<String> options) {
-        for (String option : options) {
+    private static void validateOption(List options) {
+        for (Iterator i = options.iterator(); i.hasNext(); ) {
+            String option = (String)i.next();
             int idx = option.indexOf('|');
             String longName = option.substring(0, idx);
             String shortName = option.substring(idx+1, idx+2);
@@ -174,18 +176,20 @@ public class CLIDefinitionGenerator {
         }
     }
 
-    private static void addResourceStrings(List<String> res, PrintStream rbOut){
-        for (String s : res) {
+    private static void addResourceStrings(List res, PrintStream rbOut){
+        for (Iterator i = res.iterator(); i.hasNext(); ) {
+            String s = (String)i.next();
             rbOut.println(s);
         }
     }
 
     private static void createResourceForOptions(
         String prefix,
-        List<String> options,
+        List options,
         PrintStream rbOut
     ) {
-        for (String option : options) {
+        for (Iterator i = options.iterator(); i.hasNext(); ) {
+            String option = (String)i.next();
             StringTokenizer t = new StringTokenizer(option, "|");
             String opt = t.nextToken();
             String shortOpt = t.nextToken();
@@ -203,7 +207,7 @@ public class CLIDefinitionGenerator {
      * @return a list of string.
      */
     public static List toList(String[] array) {
-        List<String> list = new ArrayList<String>();
+        List list = new ArrayList();
         if ((array != null) && (array.length > 0)) {
             for (int i = 0; i < array.length; i++) {
                 list.add(array[i]);
@@ -218,7 +222,7 @@ public class CLIDefinitionGenerator {
      * @param list List of string where new string are to be added.
      * @param array Array of String.
      */
-    public static void appendToList(List<String> list, String[] array) {
+    public static void appendToList(List list, String[] array) {
         if ((array != null) && (array.length > 0)) {
             for (int i = 0; i < array.length; i++) {
                 list.add(array[i]);

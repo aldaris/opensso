@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddResourceBundle.java,v 1.3 2006-09-26 20:27:28 veiming Exp $
+ * $Id: AddResourceBundle.java,v 1.4 2006-12-08 21:02:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,12 +111,11 @@ public class AddResourceBundle extends AuthenticatedCommand {
         }
     }
 
-    private Map<String, Set<String>> getResourceStringsMap(Reader reader)
+    private Map getResourceStringsMap(Reader reader)
         throws CLIException
     {
         BufferedReader in = null;
-        Map<String, Set<String>> resourceStrings = 
-            new HashMap<String, Set<String>>();
+        Map resourceStrings = new HashMap();
     
         try {
             boolean commented = false;
@@ -141,7 +140,7 @@ public class AddResourceBundle extends AuthenticatedCommand {
                     if (idx != -1) {
                         String key = line.substring(0, idx).trim();
                         if (key.length() > 0) {
-                            Set<String> tmp = new HashSet<String>(2);
+                            Set tmp = new HashSet(2);
                             String value = line.substring(idx+1).trim();
                             tmp.add(value);
                             resourceStrings.put(key, tmp);

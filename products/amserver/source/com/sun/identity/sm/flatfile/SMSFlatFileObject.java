@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObject.java,v 1.7 2006-10-02 17:06:05 goodearth Exp $
+ * $Id: SMSFlatFileObject.java,v 1.8 2006-12-08 21:02:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,9 +326,11 @@ public class SMSFlatFileObject extends SMSFlatFileObjectBase {
             }
             
             // Create set for return, use sorted set if sortResults is true.
-            subentries = (sortResults) ?
-                new CaseInsensitiveTreeSet(ascendingOrder) :
-                new CaseInsensitiveHashSet();
+            if (sortResults) {
+                subentries = new CaseInsensitiveTreeSet(ascendingOrder);
+            } else {
+                subentries = new CaseInsensitiveHashSet();
+            }
 
             // Set all entries that match filter, and that match 
             // sunserviceid/sunxmlkeyvalye if sidFilter was not null.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.2 2006-11-14 21:46:42 veiming Exp $
+ * $Id: Main.java,v 1.3 2006-12-08 21:02:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -44,8 +45,8 @@ import java.util.ResourceBundle;
  * This setup the OpenSSO samples.
  */
 public class Main {
-    private Map<String, String> properties = new HashMap<String, String>();
-    private Map<String, String> labels = new HashMap<String, String>();
+    private Map properties = new HashMap();
+    private Map labels = new HashMap();
 
     private static final String FILE_CLIENT_PROPERTIES = 
         "resources/AMClient.properties";
@@ -74,8 +75,8 @@ public class Main {
     private static final String AM_ENC_KEY = "am.encryption.pwd";
     private static final String NOTIFICATION_SERVLET = "notificationservice";
 
-    private static List<String> questions = new ArrayList<String>();
-    private static List<String> clientQuestions = new ArrayList<String>();
+    private static List questions = new ArrayList();
+    private static List clientQuestions = new ArrayList();
 
     static {
         questions.add(TAG_DEBUG_DIR);
@@ -116,8 +117,10 @@ public class Main {
             }
         }
 
-        System.setProperty(CLIENT_ENC_KEY, properties.get(TAG_CLIENT_ENC_KEY));
-        System.setProperty(AM_ENC_KEY, properties.get(TAG_CLIENT_ENC_KEY));
+        System.setProperty(CLIENT_ENC_KEY,
+            (String)properties.get(TAG_CLIENT_ENC_KEY));
+        System.setProperty(AM_ENC_KEY,
+            (String)properties.get(TAG_CLIENT_ENC_KEY));
     }
 
     private void promptForClientAnswers()
@@ -126,12 +129,13 @@ public class Main {
         System.out.println();
         System.out.println(labels.get("CLIENT_Q"));
         System.out.println();
-        Map<String, String> tracker = new HashMap<String, String>();
+        Map tracker = new HashMap();
 
-        for (String q : clientQuestions) {
+        for (Iterator i = clientQuestions.iterator(); i.hasNext(); ) {
+            String q = (String)i.next();
             String value = "";
             while (value.length() == 0) {
-                String label = labels.get(q);
+                String label = (String)labels.get(q);
                 System.out.print(label + ": ");
                 value = (new BufferedReader(
                     new InputStreamReader(System.in))).readLine();
@@ -151,7 +155,8 @@ public class Main {
     private void promptForServerAnswers()
         throws IOException
     {
-        for (String q : questions) {
+        for (Iterator i = questions.iterator(); i.hasNext(); ) {
+            String q = (String)i.next();
             String value = "";
             while (value.length() == 0) {
                 String defaultValue = null;
@@ -167,7 +172,7 @@ public class Main {
                         properties.get(TAG_DEPLOY_URI) + "/notificationservice";
                 }
 
-                String label = labels.get(q);
+                String label = (String)labels.get(q);
 
                 if (defaultValue != null) {
                     label += " (hit enter to accept default value, " + 
@@ -197,11 +202,13 @@ public class Main {
         throws IOException
     {
         String content = getFileContent(FILE_CLIENT_PROPERTIES);
-        for (String tag : properties.keySet()) {
-            content = content.replaceAll("@" + tag + "@", properties.get(tag));
+        for (Iterator i = properties.keySet().iterator(); i.hasNext(); ) {
+            String tag = (String)i.next();
+            content = content.replaceAll("@" + tag + "@",
+                (String)properties.get(tag));
         }
 
-        String protocol = properties.get(TAG_SERVER_PROTOCOL);
+        String protocol = (String)properties.get(TAG_SERVER_PROTOCOL);
         if (protocol.equalsIgnoreCase("https")) {
             content += TRUST_ALL_CERTS;
         }

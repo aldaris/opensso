@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkOperations.java,v 1.2 2006-07-17 18:10:57 veiming Exp $
+ * $Id: BulkOperations.java,v 1.3 2006-12-08 21:02:17 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public class BulkOperations extends AuthenticatedCommand {
         throws CLIException
     {
         argv = argv.trim();
-        List<String> options = new ArrayList<String>();
+        List options = new ArrayList();
         char[] array = argv.toCharArray();
         int len = array.length;
         boolean escape = false;
@@ -141,7 +141,7 @@ public class BulkOperations extends AuthenticatedCommand {
         String[] optionArray = new String[options.size()];
         int sz = options.size();
         for (int i = 0; i < sz; i++) {
-            optionArray[i] = options.get(i);
+            optionArray[i] = (String)options.get(i);
         }
         return optionArray;
     }

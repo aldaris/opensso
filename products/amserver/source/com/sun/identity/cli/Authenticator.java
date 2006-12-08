@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Authenticator.java,v 1.4 2006-11-12 08:46:31 veiming Exp $
+ * $Id: Authenticator.java,v 1.5 2006-12-08 21:02:17 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ class Authenticator {
     private static final String LDAP_AUTH_MODULE = "LDAP";
     private static final String FLATFILE_AUTH_MODULE = "DataStore";
 
-    private static Set<String> ACTIVE_STATE_ATTRIBUTES = new HashSet<String>(4);
+    private static Set ACTIVE_STATE_ATTRIBUTES = new HashSet(4);
     private static Authenticator instance = new Authenticator();
 
     static {

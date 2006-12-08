@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaChoiceValues.java,v 1.1 2006-05-31 21:50:06 veiming Exp $
+ * $Id: SetAttributeSchemaChoiceValues.java,v 1.2 2006-12-08 21:02:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class SetAttributeSchemaChoiceValues extends SchemaCommand {
         String subSchemaName = getStringOptionValue(IArgument.SUBSCHEMA_NAME);
         String attributeName = getStringOptionValue(IArgument.ATTRIBUTE_NAME);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List<String> choiceValues = rc.getOption(IArgument.CHOICE_VALUES);
+        List choiceValues = rc.getOption(IArgument.CHOICE_VALUES);
         boolean toAdd = isOptionSet(ARGUMENT_ADD);
 
         if ((datafile == null) && (choiceValues == null)) {

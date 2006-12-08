@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrderedSet.java,v 1.1 2006-08-25 21:21:44 veiming Exp $
+ * $Id: OrderedSet.java,v 1.2 2006-12-08 21:02:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ import java.util.Set;
  * methods. All other methods it needs are in the base class.
  */
 public class OrderedSet extends AbstractSet implements Set, Serializable {
-    protected List<Object> list = new ArrayList<Object>();
+    protected List list = new ArrayList();
 
     /**
      * Adds the specified element to this set if it is not already present

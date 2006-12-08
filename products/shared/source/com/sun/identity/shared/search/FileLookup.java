@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileLookup.java,v 1.1 2006-08-25 21:21:54 veiming Exp $
+ * $Id: FileLookup.java,v 1.2 2006-12-08 21:02:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,7 +355,7 @@ public class FileLookup {
         return orderedPaths;
     }
 
-    private static Map<String, File> fileTable = new HashMap<String, File>();
+    private static Map fileTable = new HashMap();
 
     /**
      * Return the first existing file in the ordered search paths.
@@ -441,7 +441,7 @@ public class FileLookup {
                 }
                 if (enableCache) {
                     synchronized (fileTable) {
-                        File temp1 = fileTable.get(tempFile);
+                        File temp1 = (File)fileTable.get(tempFile);
                         if (temp1 == null) {
                             fileTable.put(tempFile, file);
                         } else {

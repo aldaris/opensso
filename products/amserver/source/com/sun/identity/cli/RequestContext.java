@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.3 2006-08-29 07:51:43 veiming Exp $
+ * $Id: RequestContext.java,v 1.4 2006-12-08 21:02:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import java.util.ResourceBundle;
  * This object is passed to sub command handler which services the request.
  */
 public class RequestContext {
-    private Map<String, List<String>> mapOptions = 
-        new HashMap<String, List<String>>();
+    private Map mapOptions = 
+        new HashMap();
     private CommandManager commandMgr;
     private CLIRequest request;
     private ResourceBundle rb;
@@ -129,8 +129,8 @@ public class RequestContext {
      *
      * @return values of an argument/option.
      */
-    public List<String> getOption(String name) {
-        return mapOptions.get(name);
+    public List getOption(String name) {
+        return (List)mapOptions.get(name);
     }
 
     /**
@@ -138,7 +138,7 @@ public class RequestContext {
      *
      * @return a map of argument/option to its values.
      */
-    public Map<String, List<String>> getOptions() {
+    public Map getOptions() {
         return mapOptions;
     }
 
@@ -160,7 +160,7 @@ public class RequestContext {
         String[] argv
     ) throws CLIException {
         //skip the first index because it is the sub command name.
-        List<String> values = null;
+        List values = null;
         for (int i = 1; i < argv.length; i++) {
             String arg = argv[i];
             if (arg.startsWith(CLIConstants.PREFIX_ARGUMENT_LONG)) {
@@ -170,7 +170,7 @@ public class RequestContext {
                     i += skip;
                     values = null;
                 } else if (subcmd.isSupportedOption(option)) {
-                    values = new ArrayList<String>();
+                    values = new ArrayList();
                     mapOptions.put(option, values);
                 } else {
                     values = null;
@@ -184,7 +184,7 @@ public class RequestContext {
                 } else {
                     String longOption = subcmd.getLongOptionName(option);
                     if (longOption != null) {
-                        values = new ArrayList<String>();
+                        values = new ArrayList();
                         mapOptions.put(longOption, values);
                     } else {
                         values = null;
@@ -202,7 +202,7 @@ public class RequestContext {
         String[] argv
     ) throws CLIException {
         //skip the first index because it is the sub command name.
-        List<String> values = null;
+        List values = null;
         for (int i = 1; i < argv.length; i++) {
             String arg = argv[i];
             if (arg.startsWith(CLIConstants.PREFIX_ARGUMENT_LONG)) {
@@ -212,7 +212,7 @@ public class RequestContext {
                     i += skip;
                     values = null;
                 } else if (subcmd.isSupportedOption(option)) {
-                    values = new ArrayList<String>();
+                    values = new ArrayList();
                     mapOptions.put(option, values);
                 } else {
                     throw createIncorrectOptionException(commandName, argv);
@@ -228,7 +228,7 @@ public class RequestContext {
                     if (longOption == null) {
                         throw createIncorrectOptionException(commandName, argv);
                     } else {
-                        values = new ArrayList<String>();
+                        values = new ArrayList();
                         mapOptions.put(longOption, values);
                     }
                 }
@@ -280,5 +280,4 @@ public class RequestContext {
             rb.getString("error-message-incorrect-options"),
             param), ExitCodes.INCORRECT_OPTION, subCommand.getName());
     }
-
 }

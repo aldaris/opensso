@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.4 2006-10-31 00:24:29 veiming Exp $
+ * $Id: RegisterServices.java,v 1.5 2006-12-08 21:02:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,10 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -46,7 +45,7 @@ import java.util.StringTokenizer;
  */
 public class RegisterServices {
     
-    private static final List<String> serviceNames = new ArrayList<String>();
+    private static final List serviceNames = new ArrayList();
 
     static {
         ResourceBundle rb = ResourceBundle.getBundle(
@@ -71,7 +70,8 @@ public class RegisterServices {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
         ServiceManager serviceManager = new ServiceManager(adminToken);
 
-        for (String serviceFileName : serviceNames) {
+        for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
+            String serviceFileName = (String)i.next();
             BufferedReader rawReader = null;
             InputStream serviceStream = null;
             
