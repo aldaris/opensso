@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateLayoutTask.java,v 1.1 2006-09-28 07:37:21 rarcot Exp $
+ * $Id: CreateLayoutTask.java,v 1.2 2006-12-08 23:35:05 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ public class CreateLayoutTask implements ITask, InstallConstants {
         String instanceDirPath = productHome + FILE_SEP + instanceName;
         String logsDirPath = instanceDirPath + FILE_SEP
                 + INSTANCE_LOGS_DIR_NAME;
+        String baseConfigDirPath = productHome +  FILE_SEP +
+	        INSTANCE_CONFIG_DIR_NAME;
         String configDirPath = instanceDirPath + FILE_SEP
                 + INSTANCE_CONFIG_DIR_NAME;
         String debugLogsDirPath = logsDirPath + FILE_SEP
@@ -65,10 +67,8 @@ public class CreateLayoutTask implements ITask, InstallConstants {
         stateAccess.put(STR_CONFIG_DIR_PREFIX_TAG, configDirPath);
         stateAccess.put(STR_DEBUG_DIR_PREFIX_TAG, debugLogsDirPath);
         stateAccess.put(STR_DEBUG_LEVEL_TAG, STR_DEBUG_LEVEL_DEFAULT_VALUE);
-
-        // FIXME: Remove this code if found as not needed after testing.
-        //stateAccess.put(STR_LOG_CONFIG_FILE_PATH, configDirPath + FILE_SEP +
-        //    ToolsConfiguration.getProductLogConfigFileName());
+        stateAccess.put(STR_LOG_CONFIG_FILE_PATH, baseConfigDirPath + FILE_SEP +
+            STR_LOG_CONFIG_FILENAME);
 
         // All the operations should succeed. If one of them does not then an
         // Exception is thrown as it would be a Fatal Exception. Hence this 

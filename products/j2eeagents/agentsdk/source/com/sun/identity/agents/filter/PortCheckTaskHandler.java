@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PortCheckTaskHandler.java,v 1.1 2006-09-28 23:34:39 huacui Exp $
+ * $Id: PortCheckTaskHandler.java,v 1.2 2006-12-08 23:32:42 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -263,6 +263,22 @@ implements IPortCheckTaskHandler {
                     logWarning(
                         "PortCheckTaskHandler: Exception while trying to get "
                         + "for file " + fileName, ex);
+                }
+            }
+
+            if( inStream == null ) {
+                try {
+                    ClassLoader cl = 
+                        Thread.currentThread().getContextClassLoader();
+                    if( cl != null ) 
+                        inStream = cl.getResourceAsStream(fileName);
+
+                } catch(Exception ex) {
+                    if (isLogWarningEnabled()) {
+                        logWarning(
+                         "PortCheckTaskHandler: Exception while trying to get "
+                         + "for file " + fileName, ex);
+                    }
                 }
             }
 

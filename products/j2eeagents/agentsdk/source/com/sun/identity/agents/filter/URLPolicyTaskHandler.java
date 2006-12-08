@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.2 2006-10-12 06:24:03 veiming Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.3 2006-12-08 23:32:42 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,6 +184,22 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
                 logWarning(
                         "URLPolicyTaskHandler: Exception while trying to get "
                         + "for file " + fileName, ex);
+            }
+        }
+
+        if( inStream == null ) {
+            try {
+                ClassLoader cl = 
+                    Thread.currentThread().getContextClassLoader();
+                if( cl != null ) 
+                    inStream = cl.getResourceAsStream(fileName);
+
+            } catch(Exception ex) {
+                if (isLogWarningEnabled()) {
+                    logWarning(
+                     "URLPolicyTaskHandler: Exception while trying to get "
+                     + "for file " + fileName, ex);
+                }
             }
         }
         
