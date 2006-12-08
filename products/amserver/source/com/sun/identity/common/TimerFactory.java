@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerFactory.java,v 1.2 2006-08-29 21:55:07 veiming Exp $
+ * $Id: TimerFactory.java,v 1.3 2006-12-08 01:36:19 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,7 @@ public class TimerFactory {
     }
 
     public static Timer getTimer() {
+        timer = constructTimer("AMTimer");
         return timer;
     }
 }
