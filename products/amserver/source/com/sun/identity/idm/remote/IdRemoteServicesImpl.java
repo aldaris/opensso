@@ -17,26 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.6 2006-10-26 20:53:25 kenwho Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.7 2006-12-08 02:39:42 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm.remote;
 
-import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.security.auth.callback.Callback;
-
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.sdk.AMSDKBundle;
-import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
@@ -47,9 +40,20 @@ import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
-import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
+import java.rmi.RemoteException;
+import java.security.AccessController;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import javax.security.auth.callback.Callback;
 
 /*
  * Class that implements the remote services that are needed for IdRepo.
@@ -71,7 +75,55 @@ public class IdRemoteServicesImpl implements IdServices {
 
     private static Debug debug = Debug.getInstance("amIdmClient");
 
+    private static boolean sendRestrictionContext;
+
     private static IdServices instance;
+    
+    static {
+        /*
+         * Here we set sendRestrictionContext by checking a property
+         * in agent configuration file and also if the server is
+         * sending back the right version string indicating that it
+         * supports cookie hijacking.
+         */
+        String euc = SystemProperties.get(
+            Constants.IS_ENABLE_UNIQUE_COOKIE);
+        if ((euc != null) && (euc.length() > 0)) {
+            sendRestrictionContext = Boolean.valueOf(euc).booleanValue();
+            if (debug.messageEnabled()) {
+                debug.message("IdRemoteServicesImpl.<init>: " +
+                    Constants.IS_ENABLE_UNIQUE_COOKIE +
+                    " = " +sendRestrictionContext);
+            }
+        }
+        
+        if (sendRestrictionContext) {
+            SMSJAXRPCObject smsObj = new SMSJAXRPCObject();
+            SSOToken appToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            try {
+                Map map = smsObj.read(appToken,
+                    "o=" + SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
+                euc = (String)map.get(SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
+                if ((euc != null) && (euc.length() > 0)) {
+                    int version = Integer.valueOf(euc).intValue();
+                    sendRestrictionContext = (version > 9);
+                }
+            } catch (NumberFormatException e) {
+                debug.warning("IdRemoteServicesImpl.<init>.", e);
+            } catch (SSOException e) {
+                debug.warning("IdRemoteServicesImpl.<init>.", e);
+            } catch (SMSException e) {
+                debug.warning("IdRemoteServicesImpl.<init>.", e);
+            }
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message(
+                "IdRemoteServicesImpl.<init>: sendRestrictionContext = " +
+                    sendRestrictionContext);
+       }
+   }
 
     protected static Debug getDebug() {
         return debug;
@@ -119,7 +171,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Map attrMap, String amOrgName) throws IdRepoException, SSOException
     {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, attrMap, amOrgName };
             String univid = (String) client.send(client.encodeMessage(
                     "create_idrepo", objs), null);
@@ -144,7 +196,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String orgName, String amsdkDN) throws IdRepoException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, orgName, amsdkDN };
             client.send(client.encodeMessage("delete_idrepo", objs), null);
         } catch (RemoteException rex) {
@@ -166,7 +218,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Set attrNames, String amOrgName, String amsdkDN, boolean isString)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, attrNames, amOrgName, amsdkDN };
             Map res = ((Map) client.send(client.encodeMessage(
                     "getAttributes1_idrepo", objs), null));
@@ -197,7 +249,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String amOrgName, String amsdkDN) throws IdRepoException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
             Map res = ((Map) client.send(client.encodeMessage(
                     "getAttributes2_idrepo", objs), null));
@@ -228,7 +280,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, attrNames, amOrgName, amsdkDN };
             client.send(client.encodeMessage("removeAttributes_idrepo", objs),
                     null);
@@ -258,7 +310,7 @@ public class IdRemoteServicesImpl implements IdServices {
             filterOp = IdRepo.OR_MOD;
         }
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     pattern, new Integer(ctrl.getTimeOut()),
                     new Integer(ctrl.getMaxResults()),
                     ctrl.getReturnAttributes(),
@@ -288,7 +340,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
             boolean isString) throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, attributes, new Boolean(isAdd), amOrgName, amsdkDN,
                     new Boolean(isString) };
             client.send(client.encodeMessage("setAttributes2_idrepo", objs),
@@ -312,7 +364,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String amOrgName, String amsdkDN) throws IdRepoException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, stype.getType(), attrMap, amOrgName,
                     amsdkDN };
             client.send(client.encodeMessage("assignService_idrepo", objs),
@@ -336,7 +388,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Map mapOfServiceNamesAndOCs, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, mapOfServiceNamesAndOCs, amOrgName, amsdkDN };
             return ((Set) client.send(client.encodeMessage(
                     "getAssignedServices_idrepo", objs), null));
@@ -368,7 +420,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     + ";  amsdkDN=" + amsdkDN);
             }
 
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, attrNames, amOrgName, amsdkDN };
             return ((Map) client.send(client.encodeMessage(
                     "getServiceAttributes_idrepo", objs), null));
@@ -417,7 +469,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     + amOrgName + ";  amsdkDN=" + amsdkDN);
             }
 
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                    name, serviceName, attrNames, amOrgName, amsdkDN};
             return ((Map)client.send(
                     client.encodeMessage(
@@ -442,7 +494,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String serviceName, Map attrMap, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, attrMap, amOrgName, amsdkDN };
             client.send(client.encodeMessage("unassignService_idrepo", objs),
                     null);
@@ -473,7 +525,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     ";  attrMap=" + attrMap + ";  amOrgName=" + amOrgName +
                     ";  amsdkDN=" + amsdkDN);
             }
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, stype.getType(), attrMap, amOrgName,
                     amsdkDN };
             client.send(client.encodeMessage("modifyService_idrepo", objs),
@@ -497,7 +549,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String amOrgName, IdType membersType, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, membersType.getName(), amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
                     "getMembers_idrepo", objs), null);
@@ -528,7 +580,7 @@ public class IdRemoteServicesImpl implements IdServices {
             IdType membershipType, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, membershipType.getName(), amOrgName, amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
                     "getMemberships_idrepo", objs), null);
@@ -560,7 +612,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Set members, IdType membersType, int operation, String amOrgName)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, members, membersType.getName(),
                     new Integer(operation), amOrgName };
             client.send(client.encodeMessage("modifyMemberShip_idrepo", objs),
@@ -585,7 +637,7 @@ public class IdRemoteServicesImpl implements IdServices {
     public Set getSupportedOperations(SSOToken token, IdType type,
             String amOrgName) throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     amOrgName };
             Set ops = (Set) client.send(client.encodeMessage(
                     "getSupportedOperations_idrepo", objs), null);
@@ -617,7 +669,7 @@ public class IdRemoteServicesImpl implements IdServices {
     public Set getSupportedTypes(SSOToken token, String amOrgName)
             throws IdRepoException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), amOrgName };
+            Object[] objs = { getTokenString(token), amOrgName };
             Set types = (Set) client.send(client.encodeMessage(
                     "getSupportedTypes_idrepo", objs), null);
             Set resTypes = new HashSet();
@@ -649,7 +701,7 @@ public class IdRemoteServicesImpl implements IdServices {
         String amOrgName) throws SSOException, IdRepoException
     {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName};
             Boolean res =
                 ((Boolean) client
@@ -675,7 +727,7 @@ public class IdRemoteServicesImpl implements IdServices {
             String amOrgName, String amsdkDN) throws SSOException,
             IdRepoException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
             Boolean res = ((Boolean) client.send(client.encodeMessage(
                     "isActive_idrepo", objs), null));
@@ -691,7 +743,7 @@ public class IdRemoteServicesImpl implements IdServices {
         String amOrgName, String amsdkDN, boolean active) throws SSOException,
         IdRepoException {
         try {
-            Object[] objs = { token.getTokenID().toString(), type.getName(),
+            Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN, new Boolean(active)};
             client.send(
                     client.encodeMessage("setActiveStatus_idrepo", objs),
@@ -745,5 +797,15 @@ public class IdRemoteServicesImpl implements IdServices {
             results.setErrorCode(err.intValue());
         }
         return results;
+    }
+
+    private String getTokenString(SSOToken token) {
+        if (!sendRestrictionContext) {
+            return getTokenString(token);
+        }
+        SSOToken appToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        return token.getTokenID().toString() + " " +
+            appToken.getTokenID().toString();
     }
 }

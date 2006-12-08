@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestrictedTokenContext.java,v 1.2 2006-08-25 21:21:20 veiming Exp $
+ * $Id: RestrictedTokenContext.java,v 1.3 2006-12-08 02:39:54 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,13 @@ import com.iplanet.sso.SSOTokenManager;
 public class RestrictedTokenContext {
 
     /* The LocalThread for the currentcontext*/
-     private static ThreadLocal currentContext = new ThreadLocal();
+    private static ThreadLocal currentContext = new ThreadLocal();
+
+    /* The Object prefix*/
+    private static final String OBJECT_PREFIX = "object:";
+
+    /*The Token Prefix*/
+     private static final String TOKEN_PREFIX = "token:";
 
     /**
      * Returns the current context of the running thread
@@ -62,8 +68,7 @@ public class RestrictedTokenContext {
      * @param action
      *            action to be performed
      * @return object
-     * @throws A
-     *             Exception is thrown if the there was an error
+     * @throws Exception if the there was an error.
      */
     public static Object doUsing(Object context, RestrictedTokenAction action)
             throws Exception {
@@ -76,20 +81,13 @@ public class RestrictedTokenContext {
         }
     }
 
-    /* The Object prefix*/
-     private static final String OBJECT_PREFIX = "object:";
-
-    /*The Token Prefix*/
-     private static final String TOKEN_PREFIX = "token:";
-
     /**
      * Serialize the current context to a string
      * 
      * @param context
      *            to be serialized
      * @return string containing the serialized object
-     * @throws A
-     *             Exception is thrown if the there was an error
+     * @throws Exception if the there was an error.
      */
     public static String marshal(Object context) throws Exception {
         if (context instanceof SSOToken) {
@@ -112,8 +110,7 @@ public class RestrictedTokenContext {
      * @param data
      *            string containing serialized context
      * @return deserialized context object
-     * @throws A
-     *             Exception is thrown if the there was an error
+     * @throws Exception if the there was an error.
      */
     public static Object unmarshal(String data) throws Exception {
         if (data.startsWith(TOKEN_PREFIX)) {

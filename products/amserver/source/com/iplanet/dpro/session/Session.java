@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.4 2006-08-25 21:19:37 veiming Exp $
+ * $Id: Session.java,v 1.5 2006-12-08 02:39:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -707,10 +708,31 @@ public class Session {
         Session session = (Session) sessionTable.get(sid);
         if (session != null) {
             TokenRestriction restriction = session.getRestriction();
+            Object context = RestrictedTokenContext.getCurrent();
+            if (context == null) {
+                if (session.context != null) {
+                    context = session.context;
+                } else {
+                    /*
+                     * In cookie hijacking mode...
+                     * After the server remove the agent token id from the
+                     * user token id. server needs to create the agent token
+                     * from this agent token id. Now, the restriction context
+                     * required for session creation is null, so we added it
+                     * to get the agent session created.*/
+                    try {
+                        context = InetAddress.getLocalHost();
+                        session.context = context;
+                        sessionDebug.message("Session:getSession : context: "
+                            + context);
+                    } catch (java.net.UnknownHostException e) {
+                        sessionDebug.warning("Session:getSession : ", e);
+                    }
+                }
+            }
+            
             try {
-                if (restriction != null
-                        && !restriction.isSatisfied(RestrictedTokenContext
-                                .getCurrent())) {
+                if ((restriction != null) && !restriction.isSatisfied(context)){
                     throw new SessionException(SessionBundle.rbName,
                             "restrictionViolation", null);
                 }

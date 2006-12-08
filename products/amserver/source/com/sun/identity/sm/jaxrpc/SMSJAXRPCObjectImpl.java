@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.4 2006-08-25 21:21:34 veiming Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.5 2006-12-08 02:40:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,23 +139,30 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      * Returns the attribute names and values of the provided object using the
      * identity of the provided SSO Token
      */
-    public Map read(String tokenID, String objName) throws SMSException,
-            SSOException, RemoteException {
+    public Map read(String tokenID, String objName)
+        throws SMSException, SSOException, RemoteException {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::read dn: " + objName);
         }
-        CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
+
+        Map ans = new HashMap();
+
+        if (objName.equals("o=" + SMSJAXRPCObject.AMJAXRPCVERSIONSTR)) {
+           ans.put(SMSJAXRPCObject.AMJAXRPCVERSIONSTR,
+                   SMSJAXRPCObject.AMJAXRPCVERSION);
+        } else {
+            CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
                 objName, null);
-        HashMap answer = new HashMap();
-        Map attrs = ce.getSMSEntry().getAttributes();
-        if (attrs != null) {
-            for (Iterator items = attrs.keySet().iterator(); items.hasNext();) {
-                String attrName = items.next().toString();
-                Object o = attrs.get(attrName);
-                answer.put(attrName, o);
+            Map attrs = ce.getSMSEntry().getAttributes();
+            if (attrs != null) {
+                for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
+                    String attrName = i.next().toString();
+                    Object o = attrs.get(attrName);
+                    ans.put(attrName, o);
+                }
             }
         }
-        return (answer);
+        return (ans);
     }
 
     /**

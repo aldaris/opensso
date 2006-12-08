@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrincipalTokenRestriction.java,v 1.2 2006-08-25 21:21:20 veiming Exp $
+ * $Id: PrincipalTokenRestriction.java,v 1.3 2006-12-08 02:39:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,8 +81,7 @@ public class PrincipalTokenRestriction implements TokenRestriction {
      *            context can be: - the SSOToken of the Application against
      *            which the restriction is being compared
      * @return boolean True if the restriction is satisfied, false otherwise
-     * @throws A
-     *             Exception is thrown if the there was an error
+     * @throws Exception if the there was an error.
      */
     public boolean isSatisfied(Object context) throws Exception {
         if (context instanceof SSOToken) {

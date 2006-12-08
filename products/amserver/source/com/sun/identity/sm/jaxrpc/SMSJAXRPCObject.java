@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.2 2006-08-25 21:21:33 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.3 2006-12-08 02:39:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,7 +56,17 @@ import com.sun.identity.sm.SMSUtils;
 
 public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
 
-    private SOAPClient client;
+    private static SOAPClient client;
+
+    /**
+     * JAXRPC Version String variable name.
+     */
+    public static final String AMJAXRPCVERSIONSTR = "AM_JAXRPC_VERSION";
+
+    /**
+     * JAXRPC Version String.
+     */
+    public static final String AMJAXRPCVERSION = "10";
 
     public SMSJAXRPCObject() {
         if (!initialized) {

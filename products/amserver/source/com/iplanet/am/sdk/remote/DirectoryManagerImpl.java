@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.7 2006-10-26 20:51:05 kenwho Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.8 2006-12-08 02:39:29 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,8 @@ import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.session.util.RestrictedTokenAction;
+import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSUtils;
@@ -124,8 +126,8 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
         // Construct serverURL
         serverURL = SystemProperties.get("com.iplanet.am.server.protocol")
-        + "://" + SystemProperties.get("com.iplanet.am.server.host")
-        + ":" + SystemProperties.get(Constants.AM_SERVER_PORT);
+            + "://" + SystemProperties.get("com.iplanet.am.server.host")
+            + ":" + SystemProperties.get(Constants.AM_SERVER_PORT);
         
         // Get TokenManager and register this class for events
         try {
@@ -148,7 +150,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         int objectType, String serviceName, Map attributes, int priority)
         throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.createAMTemplate(ssoToken, entryDN, objectType,
                 serviceName, attributes, priority);
         } catch (AMException e) {
@@ -166,7 +168,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         SSOException, RemoteException {
         
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.createEntry(ssoToken, entryName, objectType, parentDN,
                 attributes);
         } catch (AMException e) {
@@ -181,7 +183,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     
     public boolean doesEntryExists(String token, String entryDN)
         throws AMRemoteException, SSOException, RemoteException {
-        SSOToken ssoToken = tm.createSSOToken(token);
+        SSOToken ssoToken = getSSOToken(token);
         return dsServices.doesEntryExists(ssoToken, entryDN);
     }
     
@@ -189,7 +191,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         String serviceName, int type) throws AMRemoteException,
         SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAMTemplateDN(ssoToken, entryDN, objectType,
                 serviceName, type);
         } catch (AMException e) {
@@ -206,7 +208,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         boolean ignoreCompliance, boolean byteValues, int profileType)
         throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN,
                 ignoreCompliance, byteValues, profileType);
         } catch (AMException e) {
@@ -219,9 +221,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public Map getAttributes1(String token, String entryDN, int profileType)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, profileType);
         } catch (AMException e) {
             if (debug.messageEnabled()) {
@@ -233,11 +235,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public Map getAttributes2(String token, String entryDN, Set attrNames,
-        int profileType) throws AMRemoteException, SSOException,
-        RemoteException {
+    public Map getAttributes2(
+        String token,
+        String entryDN,
+        Set attrNames,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                 profileType);
         } catch (AMException e) {
@@ -250,11 +255,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public Map getAttributesByteValues1(String token, String entryDN,
-        int profileType) throws AMRemoteException, SSOException,
-        RemoteException {
+    public Map getAttributesByteValues1(
+        String token,
+        String entryDN,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributesByteValues(ssoToken, entryDN,
                 profileType);
         } catch (AMException amex) {
@@ -267,11 +274,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public Map getAttributesByteValues2(String token, String entryDN,
-        Set attrNames, int profileType) throws AMRemoteException,
-        SSOException, RemoteException {
+    public Map getAttributesByteValues2(
+        String token,
+        String entryDN,
+        Set attrNames,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributesByteValues(ssoToken, entryDN,
                 attrNames, profileType);
         } catch (AMException amex) {
@@ -286,21 +296,25 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     
     
     public Set getAttributesForSchema(String objectclass)
-    throws RemoteException {
+        throws RemoteException {
         return dsServices.getAttributesForSchema(objectclass);
     }
     
     
     public String getCreationTemplateName(int objectType)
-    throws RemoteException {
+        throws RemoteException {
         return dsServices.getCreationTemplateName(objectType);
     }
     
-    public Map getDCTreeAttributes(String token, String entryDN, Set attrNames,
-        boolean byteValues, int objectType) throws AMRemoteException,
-        SSOException, RemoteException {
+    public Map getDCTreeAttributes(
+        String token,
+        String entryDN,
+        Set attrNames,
+        boolean byteValues,
+        int objectType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getDCTreeAttributes(ssoToken, entryDN, attrNames,
                 byteValues, objectType);
         } catch (AMException amex) {
@@ -314,7 +328,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public String getDeletedObjectFilter(int objecttype)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
             return complianceServices.getDeletedObjectFilter(objecttype);
         } catch (AMException amex) {
@@ -327,11 +341,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public Map getExternalAttributes(String token, String entryDN,
-        Set attrNames, int profileType) throws AMRemoteException,
-        SSOException, RemoteException {
+    public Map getExternalAttributes(
+        String token,
+        String entryDN,
+        Set attrNames,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getExternalAttributes(ssoToken, entryDN,
                 attrNames, profileType);
         } catch (AMException amex) {
@@ -344,11 +361,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public LinkedList getGroupFilterAndScope(String token, String entryDN,
-        int profileType) throws AMRemoteException, SSOException,
-        RemoteException {
+    public LinkedList getGroupFilterAndScope(
+        String token,
+        String entryDN,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             String[] array = dsServices.getGroupFilterAndScope(ssoToken,
                 entryDN, profileType);
             LinkedList list = new LinkedList();
@@ -366,9 +385,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public Set getMembers(String token, String entryDN, int objectType)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getMembers(ssoToken, entryDN, objectType);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -377,11 +396,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             }
             throw convertException(amex);
         }
-        
     }
     
     public String getNamingAttr(int objectType, String orgDN)
-    throws RemoteException {
+        throws RemoteException {
         return dsServices.getNamingAttribute(objectType, orgDN);
     }
     
@@ -389,10 +407,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return dsServices.getObjectClass(objectType);
     }
     
-    public int getObjectType(String token, String dn) throws AMRemoteException,
-        SSOException, RemoteException {
+    public int getObjectType(String token, String dn)
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getObjectType(ssoToken, dn);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -405,9 +423,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public String getOrganizationDN(String token, String entryDN)
-    throws AMRemoteException, RemoteException, SSOException {
+        throws AMRemoteException, RemoteException, SSOException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getOrganizationDN(ssoToken, entryDN);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -419,11 +437,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public String verifyAndGetOrgDN(String token, String entryDN,
-        String childDN) throws AMRemoteException, RemoteException,
-        SSOException {
+    public String verifyAndGetOrgDN(
+        String token,
+        String entryDN,
+        String childDN
+    ) throws AMRemoteException, RemoteException, SSOException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.verifyAndGetOrgDN(ssoToken, entryDN, childDN);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -436,9 +456,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public String getOrgDNFromDomain(String token, String domain)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dcTreeServices.getOrganizationDN(ssoToken, domain);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -450,14 +470,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public String getOrgSearchFilter(String entryDN) throws RemoteException {
+    public String getOrgSearchFilter(String entryDN)
+        throws RemoteException {
         return dsServices.getOrgSearchFilter(entryDN);
     }
     
     public Set getRegisteredServiceNames(String token, String entryDN)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            // SSOToken ssoToken = tm.createSSOToken(token);
             return dsServices.getRegisteredServiceNames(null, entryDN);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -469,16 +489,19 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public String getSearchFilterFromTemplate(int objectType, String orgDN,
-        String searchTemplateName) throws RemoteException {
+    public String getSearchFilterFromTemplate(
+        int objectType,
+        String orgDN,
+        String searchTemplateName
+    ) throws RemoteException {
         return dsServices.getSearchFilterFromTemplate(objectType, orgDN,
             searchTemplateName);
     }
     
-    public Set getTopLevelContainers(String token) throws AMRemoteException,
-        SSOException, RemoteException {
+    public Set getTopLevelContainers(String token)
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getTopLevelContainers(ssoToken);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -490,11 +513,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public boolean isAncestorOrgDeleted(String token, String dn,
-        int profileType) throws AMRemoteException, SSOException,
-        RemoteException {
+    public boolean isAncestorOrgDeleted(
+        String token,
+        String dn,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return complianceServices.isAncestorOrgDeleted(ssoToken, dn,
                 profileType);
         } catch (AMException amex) {
@@ -507,11 +532,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public void modifyMemberShip(String token, Set members, String target,
-        int type, int operation) throws AMRemoteException, SSOException,
-        RemoteException {
+    public void modifyMemberShip(
+        String token,
+        Set members,
+        String target,
+        int type,
+        int operation
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.modifyMemberShip(ssoToken, members, target, type,
                 operation);
         } catch (AMException amex) {
@@ -524,10 +553,13 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public void registerService(String token, String orgDN, String serviceName)
-    throws AMRemoteException, SSOException, RemoteException {
+    public void registerService(
+        String token,
+        String orgDN,
+        String serviceName
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.registerService(ssoToken, orgDN, serviceName);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -540,9 +572,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public void removeAdminRole(String token, String dn, boolean recursive)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.removeAdminRole(ssoToken, dn, recursive);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -554,11 +586,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public void removeEntry(String token, String entryDN, int objectType,
-        boolean recursive, boolean softDelete) throws AMRemoteException,
-        SSOException, RemoteException {
+    public void removeEntry(
+        String token,
+        String entryDN,
+        int objectType,
+        boolean recursive,
+        boolean softDelete
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.removeEntry(ssoToken, entryDN, objectType, recursive,
                 softDelete);
         } catch (AMException amex) {
@@ -571,11 +607,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public String renameEntry(String token, int objectType, String entryDN,
-        String newName, boolean deleteOldName) throws AMRemoteException,
-        SSOException, RemoteException {
+    public String renameEntry(
+        String token,
+        int objectType,
+        String entryDN,
+        String newName,
+        boolean deleteOldName
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.renameEntry(ssoToken, objectType, entryDN,
                 newName, deleteOldName);
         } catch (AMException amex) {
@@ -588,11 +628,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public Set search1(String token, String entryDN, String searchFilter,
-        int searchScope) throws AMRemoteException, SSOException,
-        RemoteException {
+    public Set search1(
+        String token,
+        String entryDN,
+        String searchFilter,
+        int searchScope
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.search(ssoToken, entryDN, searchFilter,
                 searchScope);
         } catch (AMException amex) {
@@ -618,11 +661,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             for (int i = 0; i < keysLength; i++) {
                 String data = (String) sortKeys.get(i);
                 keys[i] = new SortKey();
-                if (data.startsWith("true:")) {
-                    keys[i].reverse = true;
-                } else {
-                    keys[i].reverse = false;
-                }
+                keys[i].reverse = data.startsWith("true:");
                 keys[i].attributeName = data.substring(5);
             }
         }
@@ -681,11 +720,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             for (int i = 0; i < keysLength; i++) {
                 String data = (String) sortKeys.get(i);
                 keys[i] = new SortKey();
-                if (data.startsWith("true:")) {
-                    keys[i].reverse = true;
-                } else {
-                    keys[i].reverse = false;
-                }
+                keys[i].reverse = data.startsWith("true:");
                 keys[i].attributeName = data.substring(5);
             }
         }
@@ -734,11 +769,16 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
     }
     
-    public void setAttributes(String token, String entryDN, int objectType,
-        Map stringAttributes, Map byteAttributes, boolean isAdd)
-        throws AMRemoteException, SSOException, RemoteException {
+    public void setAttributes(
+        String token,
+        String entryDN,
+        int objectType,
+        Map stringAttributes,
+        Map byteAttributes,
+        boolean isAdd
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.setAttributes(ssoToken, entryDN, objectType,
                 stringAttributes, byteAttributes, isAdd);
         } catch (AMException amex) {
@@ -751,9 +791,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public void setGroupFilter(String token, String entryDN, String filter)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.setGroupFilter(ssoToken, entryDN, filter);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -765,11 +805,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public void unRegisterService(String token, String entryDN, int objectType,
-        String serviceName, int type) throws AMRemoteException,
-        SSOException, RemoteException {
+    public void unRegisterService(
+        String token,
+        String entryDN,
+        int objectType,
+        String serviceName,
+        int type
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             // TODO FIX LATER
             dsServices.unRegisterService(ssoToken, entryDN, objectType,
                 serviceName, type);
@@ -783,11 +827,14 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public void updateUserAttribute(String token, Set members,
-        String staticGroupDN, boolean toAdd) throws AMRemoteException,
-        SSOException, RemoteException {
+    public void updateUserAttribute(
+        String token,
+        Set members,
+        String staticGroupDN,
+        boolean toAdd
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             dsServices.updateUserAttribute(ssoToken, members, staticGroupDN,
                 toAdd);
         } catch (AMException amex) {
@@ -801,9 +848,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public void verifyAndDeleteObject(String token, String dn)
-    throws AMRemoteException, SSOException, RemoteException {
+        throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             complianceServices.verifyAndDeleteObject(ssoToken, dn);
         } catch (AMException amex) {
             if (debug.messageEnabled()) {
@@ -841,11 +888,16 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return null;
     }
     
-    public Map getAttributes4(String token, String entryDN, Set attrNames,
-        boolean ignoreCompliance, boolean byteValues, int profileType)
-        throws AMRemoteException, SSOException, RemoteException {
+    public Map getAttributes4(
+        String token,
+        String entryDN,
+        Set attrNames,
+        boolean ignoreCompliance,
+        boolean byteValues,
+        int profileType
+    ) throws AMRemoteException, SSOException, RemoteException {
         try {
-            SSOToken ssoToken = tm.createSSOToken(token);
+            SSOToken ssoToken = getSSOToken(token);
             return dsServices.getAttributes(ssoToken, entryDN, attrNames,
                 ignoreCompliance, byteValues, profileType);
         } catch (AMException amex) {
@@ -911,11 +963,17 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         notificationURLs.remove(notificationID);
     }
     
-    public void assignService_idrepo(String token, String type, String name,
-        String serviceName, String stype, Map attrMap, String amOrgName,
-        String amsdkDN) throws RemoteException, IdRepoException,
-        SSOException {
-        SSOToken ssoToken = tm.createSSOToken(token);
+    public void assignService_idrepo(
+        String token,
+        String type,
+        String name,
+        String serviceName,
+        String stype,
+        Map attrMap,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         SchemaType schemaType = new SchemaType(stype);
         idServices.assignService(ssoToken, idtype, name, serviceName,
@@ -923,40 +981,58 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         
     }
     
-    public String create_idrepo(String token, String type, String name,
-        Map attrMap, String amOrgName) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public String create_idrepo(
+        String token,
+        String type,
+        String name,
+        Map attrMap,
+        String amOrgName
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return IdUtils.getUniversalId(idServices.create(stoken, idtype, name,
+        return IdUtils.getUniversalId(idServices.create(ssoToken, idtype, name,
             attrMap, amOrgName));
     }
     
-    public void delete_idrepo(String token, String type, String name,
-        String orgName, String amsdkDN) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void delete_idrepo(
+        String token,
+        String type,
+        String name,
+        String orgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        idServices.delete(stoken, idtype, name, orgName, amsdkDN);
+        idServices.delete(ssoToken, idtype, name, orgName, amsdkDN);
         
     }
     
-    public Set getAssignedServices_idrepo(String token, String type,
-        String name, Map mapOfServiceNamesAndOCs, String amOrgName,
-        String amsdkDN) throws RemoteException, IdRepoException,
+    public Set getAssignedServices_idrepo(
+        String token,
+        String type,
+        String name,
+        Map mapOfServiceNamesAndOCs,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException,
         SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return idServices.getAssignedServices(stoken, idtype, name,
+        return idServices.getAssignedServices(ssoToken, idtype, name,
             mapOfServiceNamesAndOCs, amOrgName, amsdkDN);
     }
     
-    public Map getAttributes1_idrepo(String token, String type, String name,
-        Set attrNames, String amOrgName, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Map getAttributes1_idrepo(
+        String token,
+        String type,
+        String name,
+        Set attrNames,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        Map res = idServices.getAttributes(stoken, idtype, name, attrNames,
+        Map res = idServices.getAttributes(ssoToken, idtype, name, attrNames,
             amOrgName, amsdkDN, true);
         if (res != null && res instanceof CaseInsensitiveHashMap) {
             Map res2 = new HashMap();
@@ -970,12 +1046,16 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return res;
     }
     
-    public Map getAttributes2_idrepo(String token, String type, String name,
-        String amOrgName, String amsdkDN) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Map getAttributes2_idrepo(
+        String token,
+        String type,
+        String name,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        Map res = idServices.getAttributes(stoken, idtype, name, amOrgName,
+        Map res = idServices.getAttributes(ssoToken, idtype, name, amOrgName,
             amsdkDN);
         
         if (res != null && res instanceof CaseInsensitiveHashMap) {
@@ -990,14 +1070,19 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return res;
     }
     
-    public Set getMembers_idrepo(String token, String type, String name,
-        String amOrgName, String membersType, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
+    public Set getMembers_idrepo(
+        String token,
+        String type,
+        String name,
+        String amOrgName,
+        String membersType,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         Set results = new HashSet();
-        SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membersType);
-        Set idSet = idServices.getMembers(stoken, idtype, name, amOrgName,
+        Set idSet = idServices.getMembers(ssoToken, idtype, name, amOrgName,
             mtype, amsdkDN);
         if (idSet != null) {
             Iterator it = idSet.iterator();
@@ -1009,14 +1094,19 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return results;
     }
     
-    public Set getMemberships_idrepo(String token, String type, String name,
-        String membershipType, String amOrgName, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
+    public Set getMemberships_idrepo(
+        String token,
+        String type,
+        String name,
+        String membershipType,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         Set results = new HashSet();
-        SSOToken stoken = tm.createSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membershipType);
-        Set idSet = idServices.getMemberships(stoken, idtype, name, mtype,
+        Set idSet = idServices.getMemberships(ssoToken, idtype, name, mtype,
             amOrgName, amsdkDN);
         if (idSet != null) {
             Iterator it = idSet.iterator();
@@ -1028,33 +1118,45 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return results;
     }
     
-    public Map getServiceAttributes_idrepo(String token, String type,
-        String name, String serviceName, Set attrNames, String amOrgName,
-        String amsdkDN) throws RemoteException, IdRepoException,
-        SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Map getServiceAttributes_idrepo(
+        String token,
+        String type,
+        String name,
+        String serviceName,
+        Set attrNames,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return idServices.getServiceAttributes(stoken, idtype, name,
+        return idServices.getServiceAttributes(ssoToken, idtype, name,
             serviceName, attrNames, amOrgName, amsdkDN);
     }
 
-    public Map getServiceAttributesAscending_idrepo(String token, String type,
-            String name, String serviceName, Set attrNames, String amOrgName,
-            String amsdkDN) throws RemoteException, IdRepoException,
-            SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Map getServiceAttributesAscending_idrepo(
+        String token,
+        String type,
+        String name,
+        String serviceName,
+        Set attrNames,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return idServices.getServiceAttributesAscending(stoken, idtype,
+        return idServices.getServiceAttributesAscending(ssoToken, idtype,
             name, serviceName, attrNames, amOrgName, amsdkDN);
     }
     
-    public Set getSupportedOperations_idrepo(String token, String type,
-        String amOrgName) throws RemoteException, IdRepoException,
-        SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Set getSupportedOperations_idrepo(
+        String token,
+        String type,
+        String amOrgName
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         Set opSet = idServices
-            .getSupportedOperations(stoken, idtype, amOrgName);
+            .getSupportedOperations(ssoToken, idtype, amOrgName);
         Set resSet = new HashSet();
         if (opSet != null) {
             Iterator it = opSet.iterator();
@@ -1068,9 +1170,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     }
     
     public Set getSupportedTypes_idrepo(String token, String amOrgName)
-    throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
-        Set typeSet = idServices.getSupportedTypes(stoken, amOrgName);
+        throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
+        Set typeSet = idServices.getSupportedTypes(ssoToken, amOrgName);
         Set resTypes = new HashSet();
         if (typeSet != null) {
             Iterator it = typeSet.iterator();
@@ -1083,81 +1185,124 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return resTypes;
     }
     
-    public boolean isExists_idrepo(String token, String type, String name,
-        String amOrgName) throws RemoteException, SSOException,
-        IdRepoException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public boolean isExists_idrepo(
+        String token,
+        String type,
+        String name,
+        String amOrgName
+    ) throws RemoteException, SSOException, IdRepoException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return idServices.isExists(stoken, idtype, name, amOrgName);
+        return idServices.isExists(ssoToken, idtype, name, amOrgName);
         
     }
     
-    public boolean isActive_idrepo(String token, String type, String name,
-        String amOrgName, String amsdkDN) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public boolean isActive_idrepo(
+        String token,
+        String type,
+        String name,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        return idServices.isActive(stoken, idtype, name, amOrgName, amsdkDN);
-        
+        return idServices.isActive(ssoToken, idtype, name, amOrgName, amsdkDN);
     }
 
-    public void setActiveStatus_idrepo(String token, String type, String name,
-            String amOrgName, String amsdkDN, boolean active)
-            throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void setActiveStatus_idrepo(
+        String token,
+        String type,
+        String name,
+        String amOrgName,
+        String amsdkDN,
+        boolean active
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         idServices.setActiveStatus(
-            stoken, idtype, name, amOrgName, amsdkDN, active);
+            ssoToken, idtype, name, amOrgName, amsdkDN, active);
 
     }
 
-    public void modifyMemberShip_idrepo(String token, String type, String name,
-        Set members, String membersType, int operation, String amOrgName)
-        throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void modifyMemberShip_idrepo(
+        String token,
+        String type,
+        String name,
+        Set members,
+        String membersType,
+        int operation,
+        String amOrgName
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdType mtype = IdUtils.getType(membersType);
-        idServices.modifyMemberShip(stoken, idtype, name, members, mtype,
+        idServices.modifyMemberShip(ssoToken, idtype, name, members, mtype,
             operation, amOrgName);
     }
     
-    public void modifyService_idrepo(String token, String type, String name,
-        String serviceName, String stype, Map attrMap, String amOrgName,
-        String amsdkDN) throws RemoteException, IdRepoException,
-        SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void modifyService_idrepo(
+        String token,
+        String type,
+        String name,
+        String serviceName,
+        String stype,
+        Map attrMap,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         SchemaType schematype = new SchemaType(stype);
-        idServices.modifyService(stoken, idtype, name, serviceName, schematype,
-            attrMap, amOrgName, amsdkDN);
+        idServices.modifyService(ssoToken, idtype, name, serviceName,
+            schematype, attrMap, amOrgName, amsdkDN);
     }
     
-    public void removeAttributes_idrepo(String token, String type, String name,
-        Set attrNames, String amOrgName, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void removeAttributes_idrepo(
+        String token,
+        String type,
+        String name,
+        Set attrNames,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        idServices.removeAttributes(stoken, idtype, name, attrNames, amOrgName,
-            amsdkDN);
+        idServices.removeAttributes(ssoToken, idtype, name, attrNames,
+            amOrgName, amsdkDN);
     }
     
-    public Map search1_idrepo(String token, String type, String pattern,
-        Map avPairs, boolean recursive, int maxResults, int maxTime,
-        Set returnAttrs, String amOrgName) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
-            IdType idtype = IdUtils.getType(type);
+    public Map search1_idrepo(
+        String token,
+        String type,
+        String pattern,
+        Map avPairs,
+        boolean recursive,
+        int maxResults,
+        int maxTime,
+        Set returnAttrs,
+        String amOrgName
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
         return search2_idrepo(token, type, pattern, maxTime, maxResults,
             returnAttrs, (returnAttrs == null), 0, avPairs, recursive,
             amOrgName);
     }
     
-    public Map search2_idrepo(String token, String type, String pattern,
-        int maxTime, int maxResults, Set returnAttrs,
-        boolean returnAllAttrs, int filterOp, Map avPairs,
-        boolean recursive, String amOrgName) throws RemoteException,
-        IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public Map search2_idrepo(
+        String token,
+        String type,
+        String pattern,
+        int maxTime,
+        int maxResults,
+        Set returnAttrs,
+        boolean returnAllAttrs,
+        int filterOp,
+        Map avPairs,
+        boolean recursive,
+        String amOrgName
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
         IdSearchControl ctrl = new IdSearchControl();
         ctrl.setAllReturnAttributes(returnAllAttrs);
@@ -1167,37 +1312,55 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         IdSearchOpModifier modifier = (filterOp == IdRepo.OR_MOD) ?
             IdSearchOpModifier.OR : IdSearchOpModifier.AND;
         ctrl.setSearchModifiers(modifier, avPairs);
-        IdSearchResults idres = idServices.search(stoken, idtype, pattern,
+        IdSearchResults idres = idServices.search(ssoToken, idtype, pattern,
             ctrl, amOrgName);
         return IdSearchResultsToMap(idres);
     }
     
-    public void setAttributes_idrepo(String token, String type, String name,
-        Map attributes, boolean isAdd, String amOrgName, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void setAttributes_idrepo(
+        String token,
+        String type,
+        String name,
+        Map attributes,
+        boolean isAdd,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        idServices.setAttributes(stoken, idtype, name, attributes, isAdd,
+        idServices.setAttributes(ssoToken, idtype, name, attributes, isAdd,
             amOrgName, amsdkDN, true);
     }
     
-    public void setAttributes2_idrepo(String token, String type, String name,
-        Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
-        boolean isString) throws RemoteException, IdRepoException,
-        SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void setAttributes2_idrepo(
+        String token,
+        String type,
+        String name,
+        Map attributes,
+        boolean isAdd,
+        String amOrgName,
+        String amsdkDN,
+        boolean isString
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        idServices.setAttributes(stoken, idtype, name, attributes, isAdd,
+        idServices.setAttributes(ssoToken, idtype, name, attributes, isAdd,
             amOrgName, amsdkDN, isString);
     }
     
-    public void unassignService_idrepo(String token, String type, String name,
-        String serviceName, Map attrMap, String amOrgName, String amsdkDN)
-        throws RemoteException, IdRepoException, SSOException {
-        SSOToken stoken = tm.createSSOToken(token);
+    public void unassignService_idrepo(
+        String token,
+        String type,
+        String name,
+        String serviceName,
+        Map attrMap,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
         IdType idtype = IdUtils.getType(type);
-        idServices.unassignService(stoken, idtype, name, serviceName, attrMap,
-            amOrgName, amsdkDN);
+        idServices.unassignService(ssoToken, idtype, name, serviceName,
+            attrMap, amOrgName, amsdkDN);
         
     }
     
@@ -1424,4 +1587,42 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     public void setConfigMap(Map cmap) {
         
     }
+
+
+    /*
+     * Check if agent token ID is appended to the token string.
+     * if yes, we use it as a restriction context. This is meant
+     * for cookie hijacking feature where agent appends the agent token ID
+     * to the user sso token before sending it over to the server for
+     * validation.
+     */
+    private SSOToken getSSOToken(String token) throws SSOException {
+        int index = token.indexOf(" ");
+
+        if (index == -1) {
+            return tm.createSSOToken(token);
+        }
+
+        SSOToken stoken = null;
+        String agentSSOTokenID = token.substring(index +1);
+        String tokenStr = token.substring(0,index);
+        final String ftoken = tokenStr;
+        
+        try {
+            SSOToken agentSSOToken = tm.createSSOToken(agentSSOTokenID);
+            stoken = (SSOToken)RestrictedTokenContext.doUsing(agentSSOToken,
+                new RestrictedTokenAction() {
+                    public Object run() throws Exception {
+                        return tm.createSSOToken(ftoken);
+                    }
+            });
+       } catch (SSOException e) {
+           debug.error("DirectoryManagerImpl.getSSOToken", e);
+           return tm.createSSOToken(tokenStr);
+       } catch (Exception e) {
+           debug.error("DirectoryManagerImpl.getSSOToken", e);
+       }
+       return stoken;
+   }
+
 }
