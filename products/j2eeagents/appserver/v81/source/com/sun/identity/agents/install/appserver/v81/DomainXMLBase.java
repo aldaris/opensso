@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.1 2006-09-29 00:34:18 huacui Exp $
+ * $Id: DomainXMLBase.java,v 1.2 2006-12-08 23:31:25 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,17 +52,21 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
         XMLElement javaConfig = getUniqueElement(STR_JAVA_CONFIG_ELEMENT, 
             instanceConfig);
         if (javaConfig != null) {
-            String classpath = javaConfig.getAttributeValue(
-                STR_CLASSPATH_ATTR);
+            String classPathTag = STR_CLASSPATH_ATTR;
+            String classpath = javaConfig.getAttributeValue(classPathTag);
+            if (classpath == null) {
+                // classpath-suffix tag is used in some AS containers
+                classPathTag = STR_CLASSPATH_SUFFIX_ATTR;
+                classpath = javaConfig.getAttributeValue(classPathTag);
+            }
             if (classpath != null) {
                 String updatedClasspath = appendAgentClassPath(classpath, 
                     stateAccess);
-                javaConfig.updateAttribute(STR_CLASSPATH_ATTR, 
-                    updatedClasspath);                
+                javaConfig.updateAttribute(classPathTag, updatedClasspath);
                 status = true;
             } else {
                 Debug.log("DomainXMLBase.addAgentClasspath() - Error: " +
-                    "Missing '" + STR_CLASSPATH_ATTR + "' " + "attribute");
+                    "Missing '" + classPathTag + "' " + "attribute");
             }
             
             // Add JVM Options - If an error occurs an Exception will be thrown
@@ -151,17 +155,21 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
         XMLElement javaConfig = getUniqueElement(STR_JAVA_CONFIG_ELEMENT, 
             instanceConfig);
         if (javaConfig != null) {
-            String classpath = javaConfig.getAttributeValue(
-                STR_CLASSPATH_ATTR);
+            String classPathTag = STR_CLASSPATH_ATTR;
+            String classpath = javaConfig.getAttributeValue(classPathTag);
+            if (classpath == null) {
+                // classpath-suffix tag is used in some AS containers
+                classPathTag = STR_CLASSPATH_SUFFIX_ATTR;
+                classpath = javaConfig.getAttributeValue(classPathTag);
+            }
             if (classpath != null) {
                 String updatedClasspath = deleteAgentClasspath(classpath, 
                     stateAccess);
-                javaConfig.updateAttribute(STR_CLASSPATH_ATTR, 
-                    updatedClasspath);
+                javaConfig.updateAttribute(classPathTag, updatedClasspath);
                 status = true;
             } else {
                 Debug.log("DomainXMLBase.removeAgentClasspath() - " +
-                    "Error: Missing '" + STR_CLASSPATH_ATTR + "' " +
+                    "Error: Missing '" + classPathTag + "' " +
                     "attribute");                
             }            
             
@@ -448,6 +456,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
     public static final String STR_PROPERTY_ELEMENT = "property";
     
     public static final String STR_CLASSPATH_ATTR = "server-classpath";
+    public static final String STR_CLASSPATH_SUFFIX_ATTR = "classpath-suffix";
     public static final String STR_DEFAULT_REALM_ATTR = "default-realm";
     public static final String STR_CLASS_NAME_ATTR = "classname";
     public static final String STR_CONFIG_REL_ATTR = "config-ref";
