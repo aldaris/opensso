@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.1 2006-10-30 23:14:17 qcheng Exp $
+ * $Id: IDFFMetaManager.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -913,7 +913,7 @@ public class IDFFMetaManager {
      */
     public boolean isTrustedProvider(String hostedEntityID, String entityID) {
         String classMethod = "IDFFMetaManager:isTrustedProvider";
-        boolean isTrusted = Boolean.FALSE;
+        boolean isTrusted = false;
         try {
             SPDescriptorConfigElement spConfig =
                     getSPDescriptorConfig(entityID);
@@ -1253,7 +1253,7 @@ public class IDFFMetaManager {
      * @param entityID the entity identifer.
      */
     private boolean isSameCircleOfTrust(BaseConfigType config,String entityID){
-        boolean isTrusted = Boolean.FALSE;
+        boolean isTrusted = false;
         if (config != null) {
             Map attr = IDFFMetaUtils.getAttributes(config);
             List cotList = (List) attr.get(IDFFCOTUtils.COT_LIST);
@@ -1262,7 +1262,7 @@ public class IDFFMetaManager {
                     String cotName = (String) iter.next();
                     if (cotManager.isInCircleOfTrust(ROOT_REALM,cotName,
                             COTConstants.IDFF,entityID)) {
-                        isTrusted = Boolean.TRUE;
+                        isTrusted = true;
                     }
                 }
             }

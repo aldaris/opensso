@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.1 2006-10-30 23:14:19 qcheng Exp $
+ * $Id: FSAssertionManager.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -559,9 +559,10 @@ public final class FSAssertionManager {
         if (artifact != null){
             Integer artifactTimeout;
             try {
-                artifactTimeout = Integer.parseInt(
+                int temp = Integer.parseInt(
                     IDFFMetaUtils.getFirstAttributeValue(
                         attributes, IFSConstants.ARTIFACT_TIMEOUT));
+                artifactTimeout = new Integer(temp);
             } catch(Exception ex){
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
@@ -579,9 +580,10 @@ public final class FSAssertionManager {
         } else {
             Integer assertionTimeout;
             try {
-                assertionTimeout = Integer.parseInt(
+                int temp = Integer.parseInt(
                     IDFFMetaUtils.getFirstAttributeValue(
                         attributes, IFSConstants.ASSERTION_INTERVAL));
+                assertionTimeout = new Integer(temp);
             } catch(Exception ex){
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
@@ -717,8 +719,9 @@ public final class FSAssertionManager {
         Entry entry = new Entry(assertion, destID, artString, token);
         Integer maxNumber = null; 
         try {
-            maxNumber = Integer.parseInt(IDFFMetaUtils.getFirstAttributeValue(
+            int temp = Integer.parseInt(IDFFMetaUtils.getFirstAttributeValue(
                 attributes, IFSConstants.ASSERTION_LIMIT));
+            maxNumber = new Integer(temp);
         } catch(Exception ex){
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSAssertionManager.createAssertion(id):"
@@ -994,10 +997,11 @@ public final class FSAssertionManager {
                             }
                             Integer temp = null;
                             try {
-                                temp = Integer.parseInt(
+                                int tmp = Integer.parseInt(
                                     IDFFMetaUtils.getFirstAttributeValue(
                                         attributes,
                                         IFSConstants.CLEANUP_INTERVAL));
+                                temp = new Integer(tmp);
                             } catch (Exception e) {
                                 FSUtils.debug.error("CleanUpThread.run(): "
                                     + "Exception while parsing interval", e);
@@ -1011,10 +1015,11 @@ public final class FSAssertionManager {
                             // get the Assertion timeout 
                             Integer assrtTimeout = null;
                             try {
-                                assrtTimeout = Integer.parseInt(
+                                int tmp = Integer.parseInt(
                                     IDFFMetaUtils.getFirstAttributeValue(
                                         attributes, 
                                         IFSConstants.ASSERTION_INTERVAL));
+                                assrtTimeout = new Integer(tmp);
                             } catch (Exception e) {
                                 FSUtils.debug.error("CleanUpThread.run(): "
                                     + "Exception while parsing timeout", e);

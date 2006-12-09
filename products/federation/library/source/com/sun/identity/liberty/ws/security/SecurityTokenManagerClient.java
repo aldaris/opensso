@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.1 2006-10-30 23:15:17 qcheng Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -276,7 +276,7 @@ public final class SecurityTokenManagerClient {
             securityTokenManager.setCertAlias(certAlias);
         } else {
             try {
-                Object[] obj = {certAlias, true};
+                Object[] obj = {certAlias, Boolean.TRUE};
                 stub.send("setCertificate", obj, ssoToken);
                 isCertificateSet = true;
 	    } catch (Exception e) {
@@ -305,7 +305,7 @@ public final class SecurityTokenManagerClient {
 	} else {
 	    try {
 		String certString = Base64.encode(cert.getEncoded());
-                Object[] obj = {certString, false};
+                Object[] obj = {certString, Boolean.FALSE};
                 stub.send("setCertificate", obj, ssoToken);
                 isCertificateSet = true;
 	    } catch (Exception e) {
@@ -437,8 +437,9 @@ public final class SecurityTokenManagerClient {
 	try {
             String ni = senderIdentity.toString(true, true);
             String sc = invocatorSession.toXMLString(true, true);
-            Object[] obj = {ni, sc, resourceID, false, 
-                includeAuthN, includeResourceAccessStatement};
+            Object[] obj = {ni, sc, resourceID, Boolean.FALSE, 
+                Boolean.valueOf(includeAuthN),
+                Boolean.valueOf(includeResourceAccessStatement)};
             String assertion = (String) stub.send("getSAMLAuthorizationToken",
                 obj, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,
@@ -505,8 +506,9 @@ public final class SecurityTokenManagerClient {
             String ni = senderIdentity.toString(true, true);
             String sc = invocatorSession.toXMLString(true, true);
             String resourceID = encResourceID.toString();
-            Object[] obj = {ni, sc, resourceID,  true,
-                includeAuthN, includeResourceAccessStatement};
+            Object[] obj = {ni, sc, resourceID,  Boolean.TRUE,
+                Boolean.valueOf(includeAuthN),
+                Boolean.valueOf(includeResourceAccessStatement)};
             assertion = (String) stub.send("getSAMLAuthorizationToken",
                 obj, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,

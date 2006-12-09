@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.1 2006-10-30 23:13:59 qcheng Exp $
+ * $Id: CircleOfTrustManager.java,v 1.2 2006-12-09 06:21:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -289,7 +289,7 @@ public class CircleOfTrustManager {
             String[] data = { cotType };
             throw new COTException("invalidCOTType",data);
         }
-        return Boolean.TRUE;
+        return true;
     }
     
     /**
@@ -926,7 +926,7 @@ public class CircleOfTrustManager {
      *         the configuration is invalid.
      */
     boolean isValidCotTypeInConfig(Map attrs, String cotType)
-    throws COTException {
+        throws COTException {
         COTUtils.isValidCOTType(cotType);
         Set valueSet = null;
         String value = COTUtils.getFirstEntry(attrs,COTConstants.COT_TYPE);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCOTUtils.java,v 1.1 2006-10-30 23:14:16 qcheng Exp $
+ * $Id: IDFFCOTUtils.java,v 1.2 2006-12-09 06:21:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -176,14 +176,14 @@ public class IDFFCOTUtils {
             ObjectFactory objFactory,
             IDFFMetaManager idffMetaMgr)
             throws IDFFMetaException,JAXBException {
-        boolean foundCOT = Boolean.FALSE;
+        boolean foundCOT = false;
         for (Iterator iter = configList.iterator(); iter.hasNext();) {
             BaseConfigType bConfig = (BaseConfigType)iter.next();
             List list = bConfig.getAttribute();
             for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
                 AttributeType avp = (AttributeType)iter2.next();
                 if (avp.getName().trim().equalsIgnoreCase(COT_LIST)) {
-                    foundCOT = Boolean.TRUE;
+                    foundCOT = true;
                     List avpl = avp.getValue();
                     if (avpl.isEmpty() ||!containsValue(avpl,cotName)) {
                         avpl.add(cotName);
