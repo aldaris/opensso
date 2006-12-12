@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.2 2006-12-08 21:02:44 veiming Exp $
+ * $Id: XMLUtils.java,v 1.3 2006-12-12 23:34:46 arviranga Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -537,7 +537,15 @@ public class XMLUtils {
         StringBuffer value = new StringBuffer("");
         for (int j = 0; j < textNodes.getLength(); j++) {
             textNode = textNodes.item(j);
-            value.append(textNode.getNodeValue());
+            String text = null;
+            if (textNode.getNodeType() == Node.TEXT_NODE) {
+                text = textNode.getNodeValue();
+            } else if (textNode.getNodeType() == Node.ELEMENT_NODE) {
+                text = print(textNode);
+            }
+            if (text != null) {
+                value.append(text);
+            }
         }
         return (value.toString().trim());
     }

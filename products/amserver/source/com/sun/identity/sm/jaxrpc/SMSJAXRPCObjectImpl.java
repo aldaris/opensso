@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.5 2006-12-08 02:40:04 veiming Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.6 2006-12-12 23:34:31 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,16 +145,18 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             debug.message("SMSJAXRPCObjectImpl::read dn: " + objName);
         }
 
-        Map ans = new HashMap();
+        Map ans = null;
 
         if (objName.equals("o=" + SMSJAXRPCObject.AMJAXRPCVERSIONSTR)) {
-           ans.put(SMSJAXRPCObject.AMJAXRPCVERSIONSTR,
-                   SMSJAXRPCObject.AMJAXRPCVERSION);
+            ans = new HashMap();
+            ans.put(SMSJAXRPCObject.AMJAXRPCVERSIONSTR,
+                SMSJAXRPCObject.AMJAXRPCVERSION);
         } else {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
                 objName, null);
             Map attrs = ce.getSMSEntry().getAttributes();
             if (attrs != null) {
+                ans = new HashMap();
                 for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
                     String attrName = i.next().toString();
                     Object o = attrs.get(attrName);
