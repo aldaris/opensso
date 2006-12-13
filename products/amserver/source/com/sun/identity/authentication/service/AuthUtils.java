@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.8 2006-11-06 20:24:32 pawand Exp $
+ * $Id: AuthUtils.java,v 1.9 2006-12-13 20:58:15 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -160,8 +160,7 @@ public class AuthUtils {
      */
     private static String authCookieName = SystemProperties.get(
         Constants.AM_AUTH_COOKIE_NAME, ISAuthConstants.AUTH_COOKIE_NAME);
-    private static String loadBalanceCookieName = SystemProperties.get(
-        Constants.AM_LB_COOKIE_NAME);
+    private static String loadBalanceCookieName = null;
     private static String persistentCookieName = SystemProperties.get(
         Constants.AM_PCOOKIE_NAME);
     private static String loadBalanceCookieValue = SystemProperties.get(
@@ -192,6 +191,14 @@ public class AuthUtils {
                 webContainer.indexOf("IBM5.1") >= 0 ) {
                 setRequestEncoding = true;
             }
+        }
+        
+        if(WebtopNaming.isServerMode()) {
+            loadBalanceCookieName =
+                SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
+        } else { 
+            loadBalanceCookieName =
+                SystemProperties.get(Constants.AM_LB_COOKIE_NAME);
         }
         
         String proto = SystemProperties.get(Constants.DISTAUTH_SERVER_PROTOCOL);
@@ -2860,7 +2867,13 @@ public class AuthUtils {
      * @return configured LB Cookie Value
      */
     public static String getlbCookieValue() {
-        return loadBalanceCookieValue;
+        try {
+            return WebtopNaming.getAMServerID();
+        } catch (Exception e) {
+            utilDebug.error("getlbCookieValue - Failed to get Server ID "
+                + e.toString());
+            return null;
+        }
     }
 
     /**

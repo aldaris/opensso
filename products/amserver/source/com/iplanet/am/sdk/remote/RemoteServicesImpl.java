@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.4 2006-12-13 00:27:14 rarcot Exp $
+ * $Id: RemoteServicesImpl.java,v 1.5 2006-12-13 20:58:13 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import com.iplanet.am.sdk.common.IComplianceServices;
 import com.iplanet.am.sdk.common.IDCTreeServices;
 import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.sdk.common.MiscUtils;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.SearchControl;
@@ -119,9 +120,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
      */
     public boolean doesEntryExists(SSOToken token, String entryDN) {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN };
             Boolean res = ((Boolean) client.send(client.encodeMessage(
-                    "doesEntryExists", objs), null));
+                    "doesEntryExists", objs), 
+                    Session.getLBCookie(tokenID), null));
             return res.booleanValue();
         } catch (RemoteException rex) {
             return false;
@@ -148,9 +151,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public int getObjectType(SSOToken token, String dn) throws AMException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), dn };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, dn };
             Integer res = ((Integer) client.send(client.encodeMessage(
-                    "getObjectType", objs), null));
+                    "getObjectType", objs), 
+                    Session.getLBCookie(tokenID), null));
             return res.intValue();
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -210,11 +215,13 @@ public class RemoteServicesImpl implements IDirectoryServices {
             throws AMException, SSOException {
         // Object []
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     attrNames, new Boolean(byteValues), new Integer(objectType) 
                     };
             return ((Map) client.send(client.encodeMessage(
-                    "getDCTreeAttributes", objs), null));
+                    "getDCTreeAttributes", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -247,10 +254,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Map getAttributes(SSOToken token, String entryDN, int profileType)
             throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes1",
-                    objs), null);
+                    objs), Session.getLBCookie(tokenID), null);
             AMHashMap res = new AMHashMap();
             res.copy(map);
             return res;
@@ -286,10 +294,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Map getAttributes(SSOToken token, String entryDN, Set attrNames,
             int profileType) throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     attrNames, new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes2",
-                    objs), null);
+                    objs), Session.getLBCookie(tokenID), null);
             AMHashMap res = new AMHashMap();
             res.copy(map);
             return res;
@@ -330,10 +339,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Map getAttributesByteValues(SSOToken token, String entryDN,
             int profileType) throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
-                    new Integer(profileType) };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, new Integer(profileType) };
             return ((Map) client.send(client.encodeMessage(
-                    "getAttributesByteValues1", objs), null));
+                    "getAttributesByteValues1", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -365,10 +375,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Map getAttributesByteValues(SSOToken token, String entryDN,
             Set attrNames, int profileType) throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     attrNames, new Integer(profileType) };
             return ((Map) client.send(client.encodeMessage(
-                    "getAttributesByteValues2", objs), null));
+                    "getAttributesByteValues2", objs), 
+                    Session.getLBCookie(tokenID), null));
 
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -420,11 +432,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             throws AMException, SSOException {
 
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Boolean(ignoreCompliance), new Boolean(byteValues),
                     new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes3",
-                    objs), null);
+                    objs), Session.getLBCookie(tokenID), null);
             AMHashMap res = new AMHashMap();
             res.copy(map);
             return res;
@@ -481,11 +494,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             boolean ignoreCompliance, boolean byteValues, int profileType)
             throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     attrNames, new Boolean(ignoreCompliance),
                     new Boolean(byteValues), new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes4",
-                    objs), null);
+                    objs), Session.getLBCookie(tokenID), null);
             AMHashMap res = new AMHashMap();
             res.copy(map);
             return res;
@@ -520,7 +534,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { entryDN };
             return ((String) client.send(client.encodeMessage(
-                    "getOrgSearchFilter", objs), null));
+                    "getOrgSearchFilter", objs), null, null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -563,9 +577,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public String getOrganizationDN(SSOToken token, String entryDN)
             throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN };
             return ((String) client.send(client.encodeMessage(
-                    "getOrganizationDN", objs), null));
+                    "getOrganizationDN", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -612,9 +628,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public String verifyAndGetOrgDN(SSOToken token, String entryDN,
             String childDN) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN, childDN };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, childDN };
             return ((String) client.send(client.encodeMessage(
-                    "verifyAndGetOrgDN", objs), null));
+                    "verifyAndGetOrgDN", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -661,10 +679,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Map getExternalAttributes(SSOToken token, String entryDN,
             Set attrNames, int profileType) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     attrNames, new Integer(profileType) };
             return ((Map) client.send(client.encodeMessage(
-                    "getExternalAttributes", objs), null));
+                    "getExternalAttributes", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -707,10 +727,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void updateUserAttribute(SSOToken token, Set members,
             String staticGroupDN, boolean toAdd) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), members,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, members,
                     staticGroupDN, new Boolean(toAdd) };
             client.send(client.encodeMessage("updateUserAttribute", objs),
-                    null);
+                    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -753,9 +774,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
             String parentDN, Map attributes) throws AMEntryExistsException,
             AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryName,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryName,
                     new Integer(objectType), parentDN, attributes };
-            client.send(client.encodeMessage("createEntry", objs), null);
+            client.send(client.encodeMessage("createEntry", objs), 
+        	    Session.getLBCookie(tokenID), null);
 
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -801,10 +824,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             boolean recursive, boolean softDelete) throws AMException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), new Boolean(recursive),
                     new Boolean(softDelete) };
-            client.send(client.encodeMessage("removeEntry", objs), null);
+            client.send(client.encodeMessage("removeEntry", objs), 
+        	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -848,9 +873,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void removeAdminRole(SSOToken token, String dn, boolean recursive)
             throws SSOException, AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), dn,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, dn,
                     new Boolean(recursive) };
-            client.send(client.encodeMessage("removeAdminRole", objs), null);
+            client.send(client.encodeMessage("removeAdminRole", objs), 
+        	    Session.getLBCookie(tokenID),
+        	    null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -896,10 +924,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Set search(SSOToken token, String entryDN, String searchFilter,
             int searchScope) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     searchFilter, new Integer(searchScope) };
             return ((Set) client.send(client.encodeMessage("search1", objs),
-                    null));
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -956,8 +985,9 @@ public class RemoteServicesImpl implements IDirectoryServices {
                 vlvRange = new int[3];
             }
             Set attrNamesSet = MiscUtils.stringArrayToSet(attrNames);
+        	String tokenID = token.getTokenID().toString();
             Object[] objs = {
-                    token.getTokenID().toString(),
+            		tokenID,
                     entryDN,
                     searchFilter,
                     sortKeys,
@@ -972,7 +1002,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
                             searchControl.isGetAllReturnAttributesEnabled()),
                     attrNamesSet };
             Map results = (Map) client.send(client.encodeMessage("search3",
-                    objs), token, null);
+                    objs), Session.getLBCookie(tokenID), null);
 
             String cString = (String) results.remove(AMSR_COUNT);
             Set dns = (Set) results.remove(AMSR_RESULTS);
@@ -1023,10 +1053,10 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Set getMembers(SSOToken token, String entryDN, int objectType)
             throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
-                    new Integer(objectType) };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, new Integer(objectType) };
             return ((Set) client.send(client.encodeMessage("getMembers", objs),
-                    null));
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1070,11 +1100,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public String renameEntry(SSOToken token, int objectType, String entryDN,
             String newName, boolean deleteOldName) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(),
-                    new Integer(objectType), entryDN, newName,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = {tokenID, new Integer(objectType), entryDN, newName,
                     new Boolean(deleteOldName) };
             return ((String) client.send(client.encodeMessage("renameEntry",
-                    objs), null));
+                    objs), Session.getLBCookie(tokenID), null));
 
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -1115,10 +1145,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
             Map stringAttributes, Map byteAttributes, boolean isAdd)
             throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), stringAttributes, byteAttributes,
                     new Boolean(isAdd) };
-            client.send(client.encodeMessage("setAttributes", objs), null);
+            client.send(client.encodeMessage("setAttributes", objs), 
+        	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1154,10 +1186,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public String[] getGroupFilterAndScope(SSOToken token, String entryDN,
             int profileType) throws SSOException, AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
-                    new Integer(profileType) };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, new Integer(profileType) };
             LinkedList list = (LinkedList) client.send(client.encodeMessage(
-                    "getGroupFilterAndScope", objs), null);
+                    "getGroupFilterAndScope", objs), 
+                    Session.getLBCookie(tokenID), null);
             String[] array = new String[list.size()];
             list.toArray(array);
             return array;
@@ -1201,8 +1234,10 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void setGroupFilter(SSOToken token, String entryDN, String filter)
             throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN, filter };
-            client.send(client.encodeMessage("setGroupFilter", objs), null);
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, filter };
+            client.send(client.encodeMessage("setGroupFilter", objs), 
+        	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1254,9 +1289,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void modifyMemberShip(SSOToken token, Set members, String target,
             int type, int operation) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), members, target,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, members, target,
                     new Integer(type), new Integer(operation) };
-            client.send(client.encodeMessage("modifyMemberShip", objs), null);
+            client.send(client.encodeMessage("modifyMemberShip", objs), 
+        	    Session.getLBCookie(tokenID), null);
 
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -1296,7 +1333,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { null, entryDN };
             return ((Set) client.send(client.encodeMessage(
-                    "getRegisteredServiceNames", objs), null));
+                    "getRegisteredServiceNames", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1334,9 +1372,10 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void registerService(SSOToken token, String orgDN, String 
             serviceName) throws AMException, SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString(), orgDN, serviceName 
-                    };
-            client.send(client.encodeMessage("registerService", objs), null);
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, orgDN, serviceName };
+            client.send(client.encodeMessage("registerService", objs), 
+        	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1385,9 +1424,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public void unRegisterService(SSOToken token, String entryDN,
             int objectType, String serviceName, int type) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), serviceName, new Integer(type) };
-            client.send(client.encodeMessage("unRegisterService", objs), null);
+            client.send(client.encodeMessage("unRegisterService", objs), 
+        	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1428,10 +1469,12 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public String getAMTemplateDN(SSOToken token, String entryDN,
             int objectType, String serviceName, int type) throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), serviceName, new Integer(type) };
             return ((String) client.send(client.encodeMessage(
-                    "getAMTemplateDN", objs), null));
+                    "getAMTemplateDN", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
@@ -1475,11 +1518,13 @@ public class RemoteServicesImpl implements IDirectoryServices {
             int objectType, String serviceName, Map attributes, int priority)
             throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), entryDN,
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), serviceName, attributes,
                     new Integer(priority) };
             return ((String) client.send(client.encodeMessage(
-                    "createAMTemplate", objs), null));
+                    "createAMTemplate", objs), 
+                    Session.getLBCookie(tokenID), null));
 
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
@@ -1513,7 +1558,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { new Integer(objectType), orgDN };
             return ((String) client.send(client.encodeMessage("getNamingAttr",
-                    objs), null));
+                    objs), null, null));
         } catch (RemoteException rex) {
             getDebug().error(
                     "RemoteServicesImpl.getNamingAttr: caught exception=", rex);
@@ -1536,7 +1581,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { new Integer(objectType) };
             return ((String) client.send(client.encodeMessage(
-                    "getCreationTemplateName", objs), null));
+                    "getCreationTemplateName", objs), null, null));
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getCreationTemplateName: " 
                     + "caught exception=", rex);
@@ -1556,7 +1601,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { new Integer(objectType) };
             return ((String) client.send(client.encodeMessage(
-                    "getObjectClassFromDS", objs), null));
+                    "getObjectClassFromDS", objs), null, null));
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getObjectClassFromDS: " 
                     + "caught exception=", rex);
@@ -1583,7 +1628,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { objectclass };
             return ((Set) client.send(client.encodeMessage(
-                    "getAttributesForSchema", objs), null));
+                    "getAttributesForSchema", objs), null, null));
         } catch (RemoteException rex) {
             getDebug().error("RemoteServicesImpl.getAttributesForSchema: " +
                     "caught exception=", rex);
@@ -1604,7 +1649,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
             Object[] objs = { new Integer(objectType), orgDN };
             return ((String) client.send(client.encodeMessage(
-                    "getSearchFilterFromTemplate", objs), null));
+                    "getSearchFilterFromTemplate", objs), null, null));
         } catch (RemoteException rex) {
             getDebug().error(
                     "RemoteServicesImpl.getSearchFilterFromTemplate: caught "
@@ -1624,9 +1669,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
     public Set getTopLevelContainers(SSOToken token) throws AMException,
             SSOException {
         try {
-            Object[] objs = { token.getTokenID().toString() };
+        	String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID };
             return ((Set) client.send(client.encodeMessage(
-                    "getTopLevelContainers", objs), null));
+                    "getTopLevelContainers", objs), 
+                    Session.getLBCookie(tokenID), null));
         } catch (AMRemoteException amrex) {
             if (getDebug().messageEnabled()) {
                 getDebug().message(

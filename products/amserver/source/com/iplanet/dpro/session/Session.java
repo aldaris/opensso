@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.5 2006-12-08 02:39:35 veiming Exp $
+ * $Id: Session.java,v 1.6 2006-12-13 20:58:14 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,9 +205,17 @@ public class Session {
 
     public static final String SESSION_SERVICE = "session";
 
-    private static String cookieName = SystemProperties
-            .get("com.iplanet.am.cookie.name");
+    private static String cookieName = 
+	SystemProperties.get("com.iplanet.am.cookie.name");
 
+    public static final String lbCookieName = 
+        SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
+
+    private static final boolean resetLBCookie = 
+        Boolean.valueOf(SystemProperties.
+                 get("com.sun.identity.session.resetLBCookie", "false"))
+                  .booleanValue();
+    
     private String cookieStr;
 
     Boolean cookieMode = null;
@@ -229,10 +237,9 @@ public class Session {
      * Indicates whether session to use polling or notifications to clear the
      * client cache
      */
-    private static boolean pollingEnabled = Boolean.valueOf(
-            SystemProperties
-                    .get("com.iplanet.am.session.client.polling.enable"))
-            .booleanValue();
+    private static boolean pollingEnabled = Boolean.valueOf(SystemProperties
+                     .get("com.iplanet.am.session.client.polling.enable"))
+                     .booleanValue();
 
     /**
      * Session Poller. Invoke this only when the users choose polling method for
@@ -332,6 +339,52 @@ public class Session {
         return cookieName;
     }
 
+    /**
+     * Returns lbcookie value for the Session
+     * @param  a session string for lbcookie.
+     * @return lbcookie value
+     * @throws SessionException if session is invalid
+     */
+    public static String getLBCookie(String sid) 
+             throws SessionException {
+        return getLBCookie(new SessionID(sid));
+    }
+
+    /**
+     * Returns lbcookie value for the Session
+     * @param  a session ID for lbcookie.
+     * @return lbcookie value
+     * @throws SessionException if session is invalid
+     */
+    public static String getLBCookie(SessionID sid) 
+             throws SessionException {
+        String cookieValue = null;
+        if(sid == null || sid.toString() == null || 
+            sid.toString().length() == 0) {
+            throw new SessionException(SessionBundle.rbName, 
+        	    "invalidSessionID", null);
+        }
+         
+        if(resetLBCookie) {
+            if (isServerMode()) {
+                SessionService ss = SessionService.getSessionService();            
+                if (ss.isSessionFailoverEnabled()) {
+                    cookieValue = ss.getCurrentHostServer(sid);
+                }    
+            } else {            
+                Session sess = (Session) sessionTable.get(sid);
+                if (sess != null) {
+                    cookieValue = sess.getProperty(lbCookieName);
+                }
+            }
+        }    
+        
+        if(cookieValue == null || cookieValue.length() == 0) {
+            cookieValue = sid.getExtension(SessionID.PRIMARY_ID);
+        }
+        return lbCookieName + "=" + cookieValue;
+    }
+    
     /**
      * Returns the session ID.
      * @return The session ID.
@@ -524,9 +577,13 @@ public class Session {
      *            service.
      */
     public String getProperty(String name) throws SessionException {
-        if (maxCachingTimeReached()) {
-            refresh(false);
-        }
+        if (name != lbCookieName) {
+            if (maxCachingTimeReached() || 
+        	!sessionProperties.containsKey(name)) {
+                refresh(false);
+            }
+        } 
+        
         return (String) sessionProperties.get(name);
     }
 
@@ -774,12 +831,11 @@ public class Session {
         try {
 
             String cookies = cookieName + "=" + sreq.getSessionID();
-            SessionID sessionID = new SessionID(sreq.getSessionID());
-            if (sessionID.getTail() != null) {
-                cookies = cookies + ";" + httpSessionTrackingCookieName + "="
-                        + sessionID.getTail();
+            if (!isServerMode()) {
+                SessionID sessionID = new SessionID(sreq.getSessionID());
+                cookies = cookies + ";" + Session.getLBCookie(sessionID);
             }
-
+ 
             Request req = new Request(sreq.toXMLString());
             RequestSet set = new RequestSet(SESSION_SERVICE);
             set.addRequest(req);

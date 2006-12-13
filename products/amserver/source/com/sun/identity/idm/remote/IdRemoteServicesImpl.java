@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.7 2006-12-08 02:39:42 veiming Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.8 2006-12-13 20:58:16 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.idm.remote;
 
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.sdk.AMSDKBundle;
+import com.iplanet.dpro.session.Session;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -42,7 +44,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -174,7 +175,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, attrMap, amOrgName };
             String univid = (String) client.send(client.encodeMessage(
-                    "create_idrepo", objs), null);
+                    "create_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             return IdUtils.getIdentity(token, univid);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -198,7 +200,8 @@ public class IdRemoteServicesImpl implements IdServices {
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, orgName, amsdkDN };
-            client.send(client.encodeMessage("delete_idrepo", objs), null);
+            client.send(client.encodeMessage("delete_idrepo", objs), 
+        	    Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (RemoteException rex) {
             getDebug().error(
                     "IdRemoteServicesImpl.create_idrepo: caught exception=",
@@ -221,7 +224,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, attrNames, amOrgName, amsdkDN };
             Map res = ((Map) client.send(client.encodeMessage(
-                    "getAttributes1_idrepo", objs), null));
+                    "getAttributes1_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
             if (res != null) {
                 Map res2 = new AMHashMap();
                 Iterator it = res.keySet().iterator();
@@ -252,7 +256,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
             Map res = ((Map) client.send(client.encodeMessage(
-                    "getAttributes2_idrepo", objs), null));
+                    "getAttributes2_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
             if (res != null) {
                 Map res2 = new AMHashMap();
                 Iterator it = res.keySet().iterator();
@@ -283,7 +288,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, attrNames, amOrgName, amsdkDN };
             client.send(client.encodeMessage("removeAttributes_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (RemoteException rex) {
             getDebug().error("IdRemoteServicesImpl.removeAttributes_idrepo: " 
                     + "caught exception=", rex);
@@ -318,7 +323,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     new Integer(filterOp), avMap,
                     new Boolean(ctrl.isRecursive()), amOrgName };
             Map idresults = ((Map) client.send(client.encodeMessage(
-                    "search2_idrepo", objs), null));
+                    "search2_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
             return mapToIdSearchResults(token, type, amOrgName, idresults);
         } catch (RemoteException rex) {
             getDebug().error(
@@ -344,7 +350,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, attributes, new Boolean(isAdd), amOrgName, amsdkDN,
                     new Boolean(isString) };
             client.send(client.encodeMessage("setAttributes2_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error("IdRemoteServicesImpl.setAttributes_idrepo: " 
@@ -368,7 +374,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, serviceName, stype.getType(), attrMap, amOrgName,
                     amsdkDN };
             client.send(client.encodeMessage("assignService_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error("IdRemoteServicesImpl.assignService_idrepo: " 
@@ -391,7 +397,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, mapOfServiceNamesAndOCs, amOrgName, amsdkDN };
             return ((Set) client.send(client.encodeMessage(
-                    "getAssignedServices_idrepo", objs), null));
+                    "getAssignedServices_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
 
         } catch (RemoteException rex) {
             getDebug().error(
@@ -423,7 +430,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, attrNames, amOrgName, amsdkDN };
             return ((Map) client.send(client.encodeMessage(
-                    "getServiceAttributes_idrepo", objs), null));
+                    "getServiceAttributes_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
 
         } catch (RemoteException rex) {
             getDebug().error(
@@ -474,7 +482,7 @@ public class IdRemoteServicesImpl implements IdServices {
             return ((Map)client.send(
                     client.encodeMessage(
                         "getServiceAttributesAscending_idrepo", objs),
-                        token, null));
+                        Session.getLBCookie(token.getTokenID().toString()), null));
 
         } catch (RemoteException rex) {
             getDebug().error(
@@ -497,7 +505,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, attrMap, amOrgName, amsdkDN };
             client.send(client.encodeMessage("unassignService_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error("IdRemoteServicesImpl.unassignService_idrepo: "
@@ -529,7 +537,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, serviceName, stype.getType(), attrMap, amOrgName,
                     amsdkDN };
             client.send(client.encodeMessage("modifyService_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error("IdRemoteServicesImpl.modifyService_idrepo: " +
@@ -552,7 +560,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, membersType.getName(), amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
-                    "getMembers_idrepo", objs), null);
+                    "getMembers_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             Set idres = new HashSet();
             if (res != null) {
                 Iterator it = res.iterator();
@@ -583,7 +592,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, membershipType.getName(), amOrgName, amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
-                    "getMemberships_idrepo", objs), null);
+                    "getMemberships_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             Set idres = new HashSet();
             if (res != null) {
                 Iterator it = res.iterator();
@@ -616,7 +626,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, members, membersType.getName(),
                     new Integer(operation), amOrgName };
             client.send(client.encodeMessage("modifyMemberShip_idrepo", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error(
@@ -640,7 +650,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     amOrgName };
             Set ops = (Set) client.send(client.encodeMessage(
-                    "getSupportedOperations_idrepo", objs), null);
+                    "getSupportedOperations_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             Set resOps = new HashSet();
             if (ops != null) {
                 Iterator it = ops.iterator();
@@ -671,7 +682,8 @@ public class IdRemoteServicesImpl implements IdServices {
         try {
             Object[] objs = { getTokenString(token), amOrgName };
             Set types = (Set) client.send(client.encodeMessage(
-                    "getSupportedTypes_idrepo", objs), null);
+                    "getSupportedTypes_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             Set resTypes = new HashSet();
             if (types != null) {
                 Iterator it = types.iterator();
@@ -706,7 +718,7 @@ public class IdRemoteServicesImpl implements IdServices {
             Boolean res =
                 ((Boolean) client
                     .send(client.encodeMessage("isExists_idrepo", objs),
-                            token, null));
+                            Session.getLBCookie(token.getTokenID().toString()), null));
             return res.booleanValue();
         } catch (RemoteException rex) {
             getDebug().error(
@@ -730,7 +742,8 @@ public class IdRemoteServicesImpl implements IdServices {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
             Boolean res = ((Boolean) client.send(client.encodeMessage(
-                    "isActive_idrepo", objs), null));
+                    "isActive_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
             return res.booleanValue();
         } catch (RemoteException rex) {
             return false;
@@ -747,7 +760,7 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, amOrgName, amsdkDN, new Boolean(active)};
             client.send(
                     client.encodeMessage("setActiveStatus_idrepo", objs),
-                    token, null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (RemoteException rex) {
             getDebug().error(

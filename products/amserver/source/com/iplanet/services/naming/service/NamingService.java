@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.3 2006-08-28 18:50:41 veiming Exp $
+ * $Id: NamingService.java,v 1.4 2006-12-13 20:58:14 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.iplanet.services.naming.service;
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.services.comm.server.RequestHandler;
 import com.iplanet.services.comm.share.Request;
@@ -354,6 +355,8 @@ public class NamingService implements RequestHandler, ServiceListener {
                 } else {
                     nres.setNamingTable(replacedTable);
                 }
+                nres.setAttribute(Constants.NAMING_AM_LB_COOKIE, 
+                        Session.getLBCookie(sessionId));
             }
         } catch (Exception e) {
             nres.setException(e.getMessage());

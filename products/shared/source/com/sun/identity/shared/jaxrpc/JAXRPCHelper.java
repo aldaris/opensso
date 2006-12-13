@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCHelper.java,v 1.1 2006-08-25 21:21:49 veiming Exp $
+ * $Id: JAXRPCHelper.java,v 1.2 2006-12-13 20:54:49 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,7 @@ public class JAXRPCHelper {
             }
             SOAPClient client = new SOAPClient();
             client.setURL(url);
-            client.send(client.encodeMessage("checkForLocal", null), null);
+            client.send(client.encodeMessage("checkForLocal", null),null,null);
         } catch (Exception e) {
             // Server is not valid
             if (debug.messageEnabled()) {

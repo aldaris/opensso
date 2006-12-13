@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.3 2006-12-08 02:39:59 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.4 2006-12-13 20:58:16 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import netscape.ldap.util.DN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.services.comm.client.NotificationHandler;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.share.Notification;
@@ -84,7 +85,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                                 new SMSNotificationHandler());
                         // Register for notification with SMS Server
                         client.send("registerNotificationURL", url.toString(),
-                                null);
+                                null, null);
                         if (debug.messageEnabled()) {
                             debug.message("SMSJAXRPCObject: Using notification "
                                             + "mechanism for cache updates: "
@@ -119,8 +120,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             SSOException {
         try {
             String[] objs = { token.getTokenID().toString(), objName };
-            return ((Map) 
-                    client.send(client.encodeMessage("read", objs), null));
+            return ((Map) client.send(client.encodeMessage("read", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -140,7 +141,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         try {
             Object[] objs = { token.getTokenID().toString(), objName,
                     attributes };
-            client.send(client.encodeMessage("create", objs), null);
+            client.send(client.encodeMessage("create", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -159,7 +161,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         try {
             Object[] objs = { token.getTokenID().toString(), objName,
                     toMods(mods) };
-            client.send(client.encodeMessage("modify", objs), null);
+            client.send(client.encodeMessage("modify", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -177,7 +180,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             SSOException {
         try {
             String[] objs = { token.getTokenID().toString(), objName };
-            client.send(client.encodeMessage("delete", objs), null);
+            client.send(client.encodeMessage("delete", objs), 
+                Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -202,7 +206,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                     new Integer(numOfEntries), new Boolean(sortResults),
                     new Boolean(ascendingOrder), new Boolean(recursive) };
             return ((Set) client.send(client.encodeMessage("searchSubOrgNames",
-                    objs), null));
+                    objs), Session.getLBCookie(token.getTokenID().toString()),
+                    null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -228,7 +233,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                     new Integer(numOfEntries), new Boolean(sortResults),
                     new Boolean(ascendingOrder), serviceName, attrName, values};
             return ((Set) client.send(client.encodeMessage(
-                    "searchOrganizationNames", objs), null));
+                    "searchOrganizationNames", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -253,7 +259,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                     new Integer(numOfEntries), new Boolean(sortResults),
                     new Boolean(ascendingOrder) };
             return ((Set) client.send(client.encodeMessage("subEntries", objs),
-                    null));
+                    Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -277,7 +283,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                     sidFilter, new Integer(numOfEntries),
                     new Boolean(sortResults), new Boolean(ascendingOrder) };
             return ((Set) client.send(client.encodeMessage("schemaSubEntries",
-                    objs), null));
+                    objs), Session.getLBCookie(token.getTokenID().toString()),
+                    null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {
@@ -297,6 +304,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         try {
             String[] objs = { token.getTokenID().toString(), startDN, filter };
             return ((Set) client.send(client.encodeMessage("search", objs),
+                    Session.getLBCookie(token.getTokenID().toString()),
                     null));
         } catch (SSOException ssoe) {
             throw ssoe;
@@ -331,7 +339,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         try {
             String[] objs = { token.getTokenID().toString(), dn };
             Boolean b = (Boolean) client.send(client.encodeMessage(
-                    "entryExists", objs), null);
+                    "entryExists", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null);
             entryExists = b.booleanValue();
         } catch (Exception re) {
             debug.error("SMSJAXRPCObject:entryExists -- Exception:", re);
@@ -359,7 +368,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         if (baseDN == null) {
             try {
                 baseDN = (String) client.send(client.encodeMessage(
-                        "getRootSuffix", null), null);
+                        "getRootSuffix", null), null, null);
             } catch (Exception re) {
                 debug.error("SMSJAXRPCObject:getRootSuffix:Exception:", re);
             }
@@ -539,7 +548,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                         sleep(sleepTime);
                     Object obj[] = { new Integer(pollingTime) };
                     Set mods = (Set) client.send(client.encodeMessage(
-                            "objectsChanged", obj), null);
+                            "objectsChanged", obj), null, null);
                     if (debug.messageEnabled()) {
                         debug.message("SMSJAXRPCObject:"
                                 + "NotificationThread retrived changes: "

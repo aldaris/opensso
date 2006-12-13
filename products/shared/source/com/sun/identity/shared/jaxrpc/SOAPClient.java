@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.2 2006-12-08 21:02:42 veiming Exp $
+ * $Id: SOAPClient.java,v 1.3 2006-12-13 20:54:49 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,12 +130,28 @@ public class SOAPClient {
     public SOAPClient(String urls[]) {
         this.urls = urls;
     }
+
+    /**
+     * Performs a raw SOAP call with "message" as the SOAP data
+     * and response is returned as <code>StringBuffer</code>
+     */
+    public InputStream call(String message, String lbcookie, String cookies)
+           throws Exception {
+        if (lbcookie != null) {
+            if((cookies == null) || (cookies.length() == 0)) {
+                cookies = lbcookie;
+            } else {
+                cookies = cookies + ";" + lbcookie;
+            }
+        }
+        return call(message, cookies);
+    }
     
     /**
      * Performs a raw SOAP call with "message" as the SOAP data and response is
      * returned as <code>StringBuffer</code>
      */
-    public InputStream call(String message, String cookies) throws Exception {
+    private InputStream call(String message, String cookies) throws Exception {
         if (debug.messageEnabled()) {
             debug.message("SOAP Client: Message being sent:" + message);
         }
@@ -246,8 +262,8 @@ public class SOAPClient {
      * </code>.
      */
     public synchronized Object send(String functionName, Object params[],
-        String cookies) throws Exception {
-        return (send(encodeMessage(functionName, params), cookies));
+         String lbcookie, String cookies) throws Exception {
+        return (send(encodeMessage(functionName, params), lbcookie, cookies));
     }
     
     /**
@@ -258,8 +274,23 @@ public class SOAPClient {
      * </code>.
      */
     public synchronized Object send(String functionName, Object param,
+         String lbcookie, String cookies) throws Exception {
+        return (send(encodeMessage(functionName, param), lbcookie, cookies));
+    }
+
+    public synchronized Object send(String message, String lbcookie, 
         String cookies) throws Exception {
-        return (send(encodeMessage(functionName, param), cookies));
+        /*** TODO
+         * If token is null try to user APPSSOToken
+         */
+        if(lbcookie != null) {
+            if((cookies == null) || (cookies.length() == 0)) {
+                cookies = lbcookie;
+            } else {
+                cookies = cookies + ";" + lbcookie;
+            }
+        }    
+        return (send(message, cookies));
     }
     
     /**
@@ -270,7 +301,7 @@ public class SOAPClient {
      * an <code>Exception
      * </code>.
      */
-    public synchronized Object send(String message, String cookies)
+    private synchronized Object send(String message, String cookies)
     throws Exception {
         // Initialize variables
         exceptionClassName = exceptionMessage = null;

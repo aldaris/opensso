@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityObject.java,v 1.3 2006-08-25 21:20:44 veiming Exp $
+ * $Id: EntityObject.java,v 1.4 2006-12-13 20:58:15 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 
+import com.iplanet.dpro.session.Session;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
@@ -79,7 +80,8 @@ public class EntityObject {
             Object[] objs = { tokenString, entityName, entityType,
                     entityLocation, attributes };
             return ((Set) client.send(client
-                    .encodeMessage("createEntity", objs), null));
+                    .encodeMessage("createEntity", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
 
         } catch (RemoteException rex) {
             EntityUtils.debug.warning(
@@ -111,7 +113,8 @@ public class EntityObject {
         try {
             Object[] objs = { tokenString, entityName, entityType,
                     entityLocation };
-            client.send(client.encodeMessage("deleteEntity", objs), null);
+            client.send(client.encodeMessage("deleteEntity", objs), 
+        	    Session.getLBCookie(token.getTokenID().toString()),  null);
         } catch (RemoteException rex) {
             EntityUtils.debug.warning(
                     "EntityObject:deleteEntity->RemoteException", rex);
@@ -142,7 +145,7 @@ public class EntityObject {
             Object[] objs = { tokenString, entityName, entityType,
                     entityLocation };
             return ((Map) client.send(client.encodeMessage("getEntity", objs),
-                    null));
+                    Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (RemoteException rex) {
             EntityUtils.debug.warning(
                     "EntityObject:getEntity->RemoteException", rex);
@@ -176,7 +179,8 @@ public class EntityObject {
             Object[] objs = { tokenString, entityType, entityLocation,
                     entityFilter };
             return ((Set) client.send(client.encodeMessage("getEntityNames",
-                    objs), null));
+                    objs), Session.getLBCookie(token.getTokenID().toString()),
+                    null));
         } catch (RemoteException rex) {
             EntityUtils.debug.warning(
                     "EntityObject:getEntityNames->RemoteException", rex);
@@ -209,7 +213,8 @@ public class EntityObject {
         try {
             Object[] objs = { tokenString, entityName, entityType,
                     entityLocation, attributes };
-            client.send(client.encodeMessage("modifyEntity", objs), null);
+            client.send(client.encodeMessage("modifyEntity", objs), 
+        	    Session.getLBCookie(token.getTokenID().toString()),  null);
         } catch (RemoteException rex) {
             EntityUtils.debug.warning(
                     "EntityObject:modifyEntity->RemoteException", rex);

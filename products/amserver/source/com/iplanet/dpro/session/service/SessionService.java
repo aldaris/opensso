@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.8 2006-10-10 02:03:03 bhavnab Exp $
+ * $Id: SessionService.java,v 1.9 2006-12-13 20:58:14 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -605,6 +605,7 @@ public class SessionService {
         String amCtxId = Long.toHexString(secureRandom.nextLong())
                 + (isSiteEnabled ? thisSessionServerID : sessionServerID);
         session.putProperty(Constants.AM_CTX_ID, amCtxId);
+        session.putProperty(Session.lbCookieName, getLocalServerID());
 
         return session;
     }
@@ -2550,6 +2551,7 @@ public class SessionService {
         if (checkIfShouldDestroy(sess))
             return;
 
+        sess.putProperty(Session.lbCookieName, getLocalServerID());
         sessionTable.put(sess.getID(), sess);
 
         String sessionHandle = sess.getSessionHandle();
