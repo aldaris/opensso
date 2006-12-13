@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.3 2006-11-22 01:09:39 ak138937 Exp $
+   $Id: configurator.jsp,v 1.4 2006-12-13 20:18:48 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,20 +39,15 @@
     <title>Sun Java(TM) System Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
-         content="Copyright © 2004 Sun Microsystems, Inc. All Rights Reserved. Use is subject to license terms.">
+         content="Copyright (c) 2004 Sun Microsystems, Inc. All Rights Reserved. Use is subject to license terms.">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
 
     <script language="Javascript">
-
         function gotoLoginPage() {
             this.location.replace("./UI/Login");
         }
-
-        function gotoConfigurator() {
-            this.location.replace("configurator.jsp");
-        }
-
     </script>
+
 </head>
 <body class="DefBdy">
 
@@ -108,9 +103,8 @@ border="0" height="10" width="108" /></td></tr></table>
                 result = AMSetupServlet.processRequest(request, response);
             } catch (Exception e) {
                 out.println("<b>" + e.getMessage() + "</b>");
-                out.println("<script language=\"Javascript\">setTimeout('gotoConfigurator()', 10000);</script>\n");
 		out.println("<p>");
-	        %><config:message i18nKey="configurator.redirect"/><%
+	        %><config:message i18nKey="configurator.gotoConfiguratorJSP"/><%
 	        out.println("</p>");
             }
         }
@@ -120,8 +114,8 @@ border="0" height="10" width="108" /></td></tr></table>
 	    %><config:message i18nKey="configurator.successstatus"/><%
 	    out.println("</p>");
             out.println("<script language=\"Javascript\">setTimeout('gotoLoginPage()', 5000);</script>\n");
-	    out.println("<p>");
-	    %><config:message i18nKey="configurator.redirect5"/><%
+            out.println("<p>");
+            %><config:message i18nKey="configurator.redirect5"/><%
 	    out.println("</p>");
         } else {
 	    out.println("<p>");
