@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.10 2006-11-04 00:08:26 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.11 2006-12-13 00:27:15 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -237,10 +237,60 @@ public class IdServicesImpl implements IdServices {
         }
         return (false);
     }
+    
+    
+    private AMIdentity getRealmIdentity(SSOToken token, String orgDN)
+            throws IdRepoException {
+        String universalId = "id=ContainerDefaultTemplateRole,ou=realm,"
+                + orgDN;
+        return IdUtils.getIdentity(token, universalId);
+    }
+
+    private AMIdentity getSubRealmIdentity(SSOToken token, String subRealmName,
+            String parentRealmName) throws IdRepoException, SSOException {
+        String realmName = parentRealmName;
+        if (DN.isDN(parentRealmName)) {
+            // Wouldn't be a DN if it starts with "/"
+            realmName = DNMapper.orgNameToRealmName(parentRealmName);
+        }
+
+        String fullRealmName = realmName + IdConstants.SLASH_SEPARATOR
+                + subRealmName;
+        String subOrganizationDN = DNMapper.orgNameToDN(fullRealmName);
+
+        return getRealmIdentity(token, subOrganizationDN);
+    }
+
+    private AMIdentity createRealmIdentity(SSOToken token, IdType type,
+            String name, Map attrMap, String orgName) throws IdRepoException,
+            SSOException {
+
+        try {
+            OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+                    token, orgName);
+
+            Map serviceAttrsMap = new HashMap();
+            serviceAttrsMap.put(IdConstants.REPO_SERVICE, attrMap);
+
+            orgMgr.createSubOrganization(name, serviceAttrsMap);
+
+            return getSubRealmIdentity(token, name, orgName);
+        } catch (SMSException sme) {
+            debug.error("AMIdentityRepository.createIdentity() - "
+                    + "Error occurred while creating " + type.getName() + ":"
+                    + name, sme);
+            throw new IdRepoException(sme.getMessage());
+        }
+    }
 
     public AMIdentity create(SSOToken token, IdType type, String name,
             Map attrMap, String amOrgName) throws IdRepoException, SSOException 
             {
+        
+        if (type.equals(IdType.REALM)) {                        
+            return createRealmIdentity(token, type, name, attrMap, amOrgName);
+        }
+        
         IdRepoException origEx = null;
         // First get the list of plugins that support the create operation.
         // Check permission first. If allowed then proceed, else the

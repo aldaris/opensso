@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.2 2006-08-25 21:21:24 veiming Exp $
+ * $Id: CreateServiceConfig.java,v 1.3 2006-12-13 00:27:16 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -310,6 +310,12 @@ public class CreateServiceConfig {
     static void checkAndCreateOrgUnitNode(SSOToken token, String dn)
             throws SMSException, SSOException {
         SMSEntry e = new SMSEntry(token, dn);
+
+        if (SMSEntry.debug.messageEnabled()) {
+            SMSEntry.debug.message("CreateServiceConfig." +
+                    "checkAndCreateOrgUnitNode() creating entry: " + dn);
+        }
+        
         if (e.isNewEntry()) {
             // Add needed object classes
             e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);

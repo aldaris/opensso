@@ -17,12 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.10 2006-08-25 21:20:46 veiming Exp $
+ * $Id: AMIdentityRepository.java,v 1.11 2006-12-13 00:27:14 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.security.auth.callback.Callback;
+
+import netscape.ldap.LDAPDN;
+import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.sso.SSOException;
@@ -32,17 +45,9 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import javax.security.auth.callback.Callback;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
 
 /**
  * The class <code> AMIdentityRepository </code> represents an object to access
@@ -62,7 +67,9 @@ import netscape.ldap.util.DN;
 public final class AMIdentityRepository {
     private SSOToken token;
 
-    private String org;
+    private String organizationDN;
+    
+    private String idRealmName;
 
     private IdRepo pluginClass;
 
@@ -89,7 +96,8 @@ public final class AMIdentityRepository {
     public AMIdentityRepository(SSOToken ssotoken, String realmName)
             throws IdRepoException, SSOException {
         token = ssotoken;
-        org = DNMapper.orgNameToDN(realmName);
+        idRealmName = realmName;
+        organizationDN = DNMapper.orgNameToDN(realmName);
     }
 
     /**
@@ -106,7 +114,7 @@ public final class AMIdentityRepository {
      */
     public Set getSupportedIdTypes() throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
-        Set res = idServices.getSupportedTypes(token, org);
+        Set res = idServices.getSupportedTypes(token, organizationDN);
         res.remove(IdType.REALM);
         return res;
     }
@@ -129,7 +137,7 @@ public final class AMIdentityRepository {
     public Set getAllowedIdOperations(IdType type) throws IdRepoException,
             SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
-        return idServices.getSupportedOperations(token, type, org);
+        return idServices.getSupportedOperations(token, type, organizationDN);
 
     }
 
@@ -151,13 +159,15 @@ public final class AMIdentityRepository {
     public IdSearchResults getSpecialIdentities(IdType type)
             throws IdRepoException, SSOException {
 
-        IdSearchResults results = getSpecialIdentities(token, type, org);
+        IdSearchResults results = getSpecialIdentities(token, type, 
+                organizationDN);
 
         if (type.equals(IdType.USER)) {
             // Iterating through to get out the names and remove only amadmin
             // anonymous as per AM console requirement.
 
-            IdSearchResults newResults = new IdSearchResults(type, org);
+            IdSearchResults newResults = new IdSearchResults(type, 
+                    organizationDN);
             Set identities = results.getSearchResults();
             if ((identities != null) && !identities.isEmpty()) {
                 for (Iterator i = identities.iterator(); i.hasNext();) {
@@ -233,6 +243,11 @@ public final class AMIdentityRepository {
      * Searches for identities of certain types from each plugin and returns a
      * combined result
      * 
+     * <b>Note:</b> The AMIdentity objects representing IdType.REALM can be
+     * used for services related operations only. The realm <code>AMIdentity
+     * </code> object can be used to assign and unassign services containing
+     * dynamic attributes to this realm.
+     * 
      * @param type
      *            Type of identity being searched for.
      * @param pattern
@@ -240,7 +255,7 @@ public final class AMIdentityRepository {
      * @param ctrl
      *            IdSearchControl which can be used to set up various search
      *            controls on the search to be performed.
-     * @return Returns the combines results in an object IdSearchResults.
+     * @return Returns the combined results in an object IdSearchResults.
      * @see com.sun.identity.idm.IdSearchControl
      * @see com.sun.identity.idm.IdSearchResults
      * @throws IdRepoException
@@ -250,8 +265,44 @@ public final class AMIdentityRepository {
      */
     public IdSearchResults searchIdentities(IdType type, String pattern,
             IdSearchControl ctrl) throws IdRepoException, SSOException {
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
-        return idServices.search(token, type, pattern, ctrl, org);
+        IdSearchResults idSearchResults = null;
+
+        if (type.equals(IdType.REALM)) {
+            try {
+                idSearchResults = new IdSearchResults(type, idRealmName);
+                OrganizationConfigManager orgMgr =
+                    new OrganizationConfigManager(token, idRealmName);
+                Set realmNames = orgMgr.getSubOrganizationNames(pattern, false);
+                if (realmNames != null) {
+                    Iterator iter = realmNames.iterator();
+                    while (iter.hasNext()) {
+                        String realmName = (String) iter.next();
+
+                        AMIdentity realmIdentity = getSubRealmIdentity(
+                                realmName);
+                        Map attributes = new HashMap();
+                        // TODO: To add attribute support to realms.
+                        // Un comment this part once the support is added.
+                        idSearchResults.addResult(realmIdentity, attributes);
+                        idSearchResults.setErrorCode(IdSearchResults.SUCCESS);
+                    }
+                }
+            } catch (SMSException sme) {
+                debug.error("AMIdentityRepository.createIdentity() - "
+                        + "Error occurred while creating " + type.getName()
+                        + ":", sme);
+                throw new IdRepoException(sme.getMessage());
+            }
+        } else {
+            IdServices idServices =
+                IdServicesFactory.getDataStoreServices();
+
+            idSearchResults = idServices.search(token, type, pattern, ctrl,
+                    organizationDN);
+        }
+
+        return idSearchResults;
+
     }
 
     /**
@@ -270,22 +321,54 @@ public final class AMIdentityRepository {
      *             if user's single sign on token is invalid.
      */
     public AMIdentity getRealmIdentity() throws IdRepoException, SSOException {
-        String univId = "id=ContainerDefaultTemplateRole,ou=realm," + org;
-        return IdUtils.getIdentity(token, univId);
+        return getRealmIdentity(token, organizationDN);
+    }
+
+    private AMIdentity getRealmIdentity(SSOToken token, String orgDN)
+        throws IdRepoException {
+        String universalId = "id=ContainerDefaultTemplateRole,ou=realm," +
+            orgDN;
+        return IdUtils.getIdentity(token, universalId);
+    }
+
+    private AMIdentity getSubRealmIdentity(String subRealmName) throws
+        IdRepoException, SSOException {
+        String realmName = idRealmName;
+        if (DN.isDN(idRealmName)) {  // Wouldn't be a DN if it starts with "/"
+            realmName = DNMapper.orgNameToRealmName(idRealmName);
+        }
+
+        String fullRealmName = realmName + IdConstants.SLASH_SEPARATOR +
+            subRealmName;
+        String subOrganizationDN = DNMapper.orgNameToDN(fullRealmName);
+
+        return getRealmIdentity(token, subOrganizationDN);
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * iPlanet-PUBLIC-METHOD Creates a single object of a type. The object is
+     * created in all the plugins that support creation of this type of object.
      * 
-     * Creates a single object of a type. The object is created in all the
-     * plugins that support creation of this type of object.
+     * This method is only valid for:
      * 
-     * This method is only valid for IdType Agent, Realm, and User.
+     * <li> {@link IdType#AGENT IdType.AGENT} </li>
+     * <li> {@link IdType#USER  IdType.USER} </li>
+     * <li> {@link IdType#REALM  IdType.REALM} </li>
+     * 
+     * <br>
+     * <b>Note:</b> For creating {@link IdType#REALM  IdType.REALM} identities,
+     * a map of <code>sunIdentityRepositoryService</code> attributes need to
+     * be passed. Also, AMIdentity object representing this realm can be used
+     * for services related operations only. This <code> AMIdentity
+     * </code>
+     * object can be used to assign and unassign services containing dynamic
+     * attributes to this realm
      * 
      * @param type
-     *            Type of object to be created.
+     *            <code>IdType</code> of object to be created.
      * @param idName
-     *            Name of object
+     *            Name of object. If the type is <code>IdType.REALM</code>
+     *            then enter a valid realm name.
      * @param attrMap
      *            Map of attribute-values to be set when creating the entry.
      * @return Identity object representing the newly created entry.
@@ -297,7 +380,7 @@ public final class AMIdentityRepository {
     public AMIdentity createIdentity(IdType type, String idName, Map attrMap)
             throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
-        return idServices.create(token, type, idName, attrMap, org);
+        return idServices.create(token, type, idName, attrMap, organizationDN);
     }
 
     /**
@@ -306,7 +389,20 @@ public final class AMIdentityRepository {
      * Creates multiple objects of the same type. The objects are created in all
      * the <code>IdRepo</code> plugins that support creation of these objects.
      * 
-     * This method is only valid for IdType Agent, Realm, and User.
+     * This method is only valid for:
+     * 
+     * <li> {@link IdType#AGENT IdType.AGENT} </li>
+     * <li> (@link IdType#USER IdType.USER} </li>
+     * <li> {@link IdType#REALM  IdType.REALM} </li>
+     * 
+     * <br>
+     * <b>Note:</b> For creating {@link IdType#REALM  IdType.REALM} identities,
+     * a map of <code>sunIdentityRepositoryService</code> attributes need to
+     * be passed. Also, AMIdentity object representing this realm can be used
+     * for services related operations only. This <code> AMIdentity
+     * </code>
+     * object can be used to assign and unassign services containing dynamic
+     * attributes to this realm
      * 
      * @param type
      *            Type of object to be created
@@ -326,13 +422,12 @@ public final class AMIdentityRepository {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
         Iterator it = identityNamesAndAttrs.keySet().iterator();
 
         while (it.hasNext()) {
             String name = (String) it.next();
             Map attrMap = (Map) identityNamesAndAttrs.get(name);
-            AMIdentity id = idServices.create(token, type, name, attrMap, org);
+            AMIdentity id = createIdentity(type, name, attrMap);
             results.add(id);
         }
 
@@ -344,7 +439,11 @@ public final class AMIdentityRepository {
      * 
      * Deletes identities. The Set passed is a set of AMIdentity objects.
      * 
-     * This method is only valid for IdType Agent, Realm, and User.
+     * This method is only valid for:
+     * 
+     * <li> {@link IdType#AGENT IdType.AGENT} </li>
+     * <li> {@link IdType#REALM IdType.REALM} </li>
+     * <li> (@link IdType#USER IdType.USER} </li>
      * 
      * @param type
      *            Type of Identity to be deleted.
@@ -367,7 +466,11 @@ public final class AMIdentityRepository {
      * 
      * Deletes identities. The Set passed is a set of AMIdentity objects.
      * 
-     * This method is only valid for IdType Agent, Realm, and User.
+     * This method is only valid for:
+     * 
+     * <li> {@link IdType#AGENT IdType.AGENT} </li>
+     * <li> {@link IdType#REALM IdType.REALM} </li>
+     * <li> (@link IdType#USER IdType.USER} </li>
      * 
      * @param identities
      *            Set of AMIDentity objects to be deleted
@@ -382,12 +485,12 @@ public final class AMIdentityRepository {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
         Iterator it = identities.iterator();
         while (it.hasNext()) {
             AMIdentity id = (AMIdentity) it.next();
-            idServices.delete(token, id.getType(), id.getName(), org, id
-                    .getDN());
+            IdServices idServices = IdServicesFactory.getDataStoreServices();
+            idServices.delete(token, id.getType(), id.getName(), organizationDN, 
+                    id.getDN());
         }
     }
 
@@ -407,7 +510,7 @@ public final class AMIdentityRepository {
     public boolean authenticate(Callback[] credentials) throws IdRepoException,
             com.sun.identity.authentication.spi.AuthLoginException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
-        return (idServices.authenticate(org, credentials));
+        return (idServices.authenticate(organizationDN, credentials));
     }
 
     /**
@@ -423,13 +526,13 @@ public final class AMIdentityRepository {
      * @return Integer identifier for this listener.
      */
     public int addEventListener(IdEventListener listener) {
-        ArrayList listOfListeners = (ArrayList) listeners.get(org);
+        ArrayList listOfListeners = (ArrayList) listeners.get(organizationDN);
         if (listOfListeners == null) {
             listOfListeners = new ArrayList();
         }
         synchronized (listeners) {
             listOfListeners.add(listener);
-            listeners.put(org, listOfListeners);
+            listeners.put(organizationDN, listOfListeners);
         }
         return (listOfListeners.size() - 1);
     }
@@ -444,7 +547,7 @@ public final class AMIdentityRepository {
      *            Integer identifying the listener.
      */
     public void removeEventListener(int identifier) {
-        ArrayList listOfListeners = (ArrayList) listeners.get(org);
+        ArrayList listOfListeners = (ArrayList) listeners.get(organizationDN);
         if (listOfListeners != null) {
             synchronized (listeners) {
                 listOfListeners.remove(identifier);
@@ -524,7 +627,7 @@ public final class AMIdentityRepository {
     public String toString() {
         StringBuffer sb = new StringBuffer(100);
         sb.append("AMIdentityRepository object: ")
-            .append(org);
+            .append(organizationDN);
         return (sb.toString());
     }
 

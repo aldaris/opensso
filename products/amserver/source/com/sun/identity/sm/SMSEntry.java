@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.10 2006-11-08 21:10:55 hengming Exp $
+ * $Id: SMSEntry.java,v 1.11 2006-12-13 00:27:16 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1622,22 +1622,18 @@ public class SMSEntry implements Cloneable {
                 return;
             }
 
-            String tmpName = name.toLowerCase();
             if (type == SMSObjectListener.ADD
                     && ((new StringTokenizer(name, ",")).countTokens() 
-                            <= (baseDNCount + 1)
-                            || tmpName.startsWith("ou=services,")
-                            || tmpName.startsWith("ou=globalconfig,")
-                            || tmpName.startsWith("ou=organizationconfig,")
-                            || tmpName.startsWith("ou=instances,") || tmpName
-                            .startsWith("ou=pluginconfig,"))) {
+                            <= (baseDNCount + 1))) {
                 return;
             }
 
             // Send local notification only if datastore notification is
-            // not enabled
-            if (ServiceManager.isRealmEnabled() && !enableDataStoreNotification) 
-            {
+            // not enabled.  Local notifications should always be sent on the
+            // client side.
+            if ((SMSJAXRPCObjectFlg) || (ServiceManager.isRealmEnabled() &&
+                    !enableDataStoreNotification)) {
+                
                 if (eventDebug.messageEnabled()) {
                     eventDebug.message("SMSEntry::NotificationThread:run "
                             + "sending local notifications");

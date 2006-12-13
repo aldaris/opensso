@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.15 2006-10-26 20:52:43 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.16 2006-12-13 00:27:14 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,8 +188,15 @@ public final class AMIdentity {
      * 
      * @return Name of the identity iPlanet-PUBLIC-METHOD
      */
-    public String getName() {
-        return name;
+    public String getName() {        
+        String sname = name;
+        if (type.equals(IdType.REALM)) {
+            // Since '0'th location currently has ContainerDefaultTemplate
+            // the 2nd location would have the realm name
+            String[] array = (new DN(univIdWithoutDN)).explodeDN(true);
+            sname = array[2];
+        }
+        return sname;        
     }
 
     /**

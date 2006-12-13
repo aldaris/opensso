@@ -17,12 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.9 2006-12-08 21:02:14 veiming Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.10 2006-12-13 00:27:13 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.remote;
+
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.security.AccessController;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.iplanet.am.sdk.AMDirectoryAccessFactory;
 import com.iplanet.am.sdk.AMException;
@@ -43,15 +58,15 @@ import com.iplanet.ums.SearchControl;
 import com.iplanet.ums.SortKey;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdServicesFactory;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
-import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdServices;
+import com.sun.identity.idm.IdServicesFactory;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
@@ -61,20 +76,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.SchemaType;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.security.AccessController;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 
 public class DirectoryManagerImpl implements DirectoryManagerIF,
     AMObjectListener {
@@ -110,6 +112,8 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     
     static String serverURL;
     
+    static String serverPort;
+    
     static {
         
         dsServices = AMDirectoryAccessFactory.getDirectoryServices();
@@ -126,10 +130,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
         
         // Construct serverURL
-        serverURL = SystemProperties.get("com.iplanet.am.server.protocol")
-            + "://" + SystemProperties.get("com.iplanet.am.server.host")
-            + ":" + SystemProperties.get(Constants.AM_SERVER_PORT);
-        
+
+        serverPort = SystemProperties.get(Constants.AM_SERVER_PORT);
+        serverURL = SystemProperties.get(Constants.AM_SERVER_PROTOCOL) +
+            "://" + SystemProperties.get(Constants.AM_SERVER_HOST) +
+             ":" + serverPort;
+                       
         // Get TokenManager and register this class for events
         try {
             tm = SSOTokenManager.getInstance();
@@ -932,15 +938,61 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         return (answer);
     }
     
+    
+    private boolean isClientOnSameServer(String clientURL) {
+        // Check URL is not the local server
+
+        boolean success = true;
+        
+        URL urlClient = null;
+        URL urlServer = null;
+        try {
+            urlClient = new URL(clientURL);
+            urlServer = new URL(serverURL);
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            if (debug.warningEnabled()) {
+                debug.warning("DirectoryManagerImpl.checkIfCientOnSameServer()" 
+                        + " - clientURL is malformed." + clientURL);
+            }
+            success = false;
+        }
+        
+        if (success) { // check if it is the same server
+            int port = urlClient.getPort();
+            if (port == -1) { 
+                // If it is Port 80, and is not explicilty in the URL
+                port = urlClient.getDefaultPort();              
+            }
+            String clientPort = Integer.toString(port);
+
+            // Protocol is same - http, so no need to check that
+            boolean sameServer = ((urlServer.getHost().equalsIgnoreCase(
+                    urlClient.getHost())) && serverPort.equals(clientPort));
+
+            debug.message("DirectoryManagerImpl.checkIfClientOnSameServer() "                     
+                    + "Received registerNotification request from client: " 
+                    + clientURL + " Server URL " + serverURL 
+                    + " Port determined as: " + clientPort + " Check is: " 
+                    + sameServer);
+            
+            return sameServer;
+        } else { 
+            return false;
+        }
+    }
+    
     public String registerNotificationURL(String url) throws RemoteException {
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
-            if (!url.startsWith(serverURL)) {
+            if (!isClientOnSameServer(url)) {
                 notificationURLs.put(id, new URL(url));
                 if (debug.messageEnabled()) {
-                    debug.message("DirectoryManagerImpl:register for "
-                        + "notification URL: " + url);
+                    debug.message("DirectoryManagerImpl: " 
+                            + "registerNotificationURL register for " 
+                            + "notification URL: " + url);
+
                 }
             } else {
                 // Cannot add this server for notifications
@@ -1420,11 +1472,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
-            if (!url.startsWith(serverURL)) {
+            if (!isClientOnSameServer(url)) {
                 notificationURLs.put(id, new URL(url));
                 if (debug.messageEnabled()) {
-                    debug.message("DirectoryManagerImpl:register for "
-                        + "notification URL: " + url);
+                    debug.message("DirectoryManagerImpl:" 
+                            + "registerNotificationURL_idrepo() - register " 
+                            + "for notification URL: " + url);
                 }
             } else {
                 // Cannot add this server for notifications
@@ -1446,6 +1499,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     // Implementation to process entry changed events
     protected static synchronized void processEntryChanged(String method,
         String name, int type, Set attrNames, boolean amsdk) {
+        
+        debug.message("DirectoryManagerImpl.processEntryChaged method "
+                + "processing");
+        
         HashMap thisCache = amsdk ? cache : idrepoCache;
         LinkedList cIndices = amsdk ? cacheIndices : idrepoCacheIndices;
         // Obtain the cache index
@@ -1457,9 +1514,10 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             modDNs = new HashSet();
             thisCache.put(cacheIndex, modDNs);
             // Maintain cacheIndex
-            cacheIndices.addFirst(cacheIndex);
+            cIndices.addFirst(cacheIndex);
             if (cIndices.size() > cacheSize) {
-                cIndices.removeLast();
+                String removedIndex = (String) cIndices.removeLast();
+                thisCache.remove(removedIndex);
             }
         }
         
@@ -1492,6 +1550,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         if (debug.messageEnabled()) {
             debug.message("DirectoryManagerImpl::processing entry change: "
                 + sb.toString());
+            debug.message("DirectoryManagerImpl = notificationURLS" 
+                    + notificationURLs.values());
+
         }
         
         // If notification URLs are present, send notifications

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.3 2006-08-25 21:19:25 veiming Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.4 2006-12-13 00:27:13 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,9 +39,9 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import netscape.ldap.LDAPDN;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPUrl;
-import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
 
@@ -103,8 +103,8 @@ import com.iplanet.ums.cos.COSTemplate;
 import com.iplanet.ums.cos.DirectCOSDefinition;
 import com.iplanet.ums.cos.ICOSDefinition;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -300,21 +300,25 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             String defaultErrorCode) throws AMException {
         try {
             LDAPException lex = (LDAPException) ue.getRootCause();
-            int errorCode = lex.getLDAPResultCode();
-            // Check for specific error conditions
-            switch (errorCode) {
-            case LDAPException.CONSTRAINT_VIOLATION: // LDAP Constraint
-                // Voilated
-                throw new AMException(token, "19", ue);
-            case LDAPException.TIME_LIMIT_EXCEEDED:
-                throw new AMException(token, "3", ue);
-            case LDAPException.SIZE_LIMIT_EXCEEDED:
-                throw new AMException(token, "4", ue);
-            case LDAPException.NOT_ALLOWED_ON_RDN:
-                throw new AMException(token, "967", ue);
-            case LDAPException.ADMIN_LIMIT_EXCEEDED:
-                throw new AMException(token, "968", ue);
-            default:
+            if (lex != null) {
+                int errorCode = lex.getLDAPResultCode();
+                // Check for specific error conditions
+                switch (errorCode) {
+                case LDAPException.CONSTRAINT_VIOLATION: // LDAP Constraint
+                    // Voilated
+                    throw new AMException(token, "19", ue);
+                case LDAPException.TIME_LIMIT_EXCEEDED:
+                    throw new AMException(token, "3", ue);
+                case LDAPException.SIZE_LIMIT_EXCEEDED:
+                    throw new AMException(token, "4", ue);
+                case LDAPException.NOT_ALLOWED_ON_RDN:
+                    throw new AMException(token, "967", ue);
+                case LDAPException.ADMIN_LIMIT_EXCEEDED:
+                    throw new AMException(token, "968", ue);
+                default:
+                    throw new AMException(token, defaultErrorCode, ue);
+                }
+            } else {
                 throw new AMException(token, defaultErrorCode, ue);
             }
         } catch (Throwable ex) { // Cannot obtain the specific error

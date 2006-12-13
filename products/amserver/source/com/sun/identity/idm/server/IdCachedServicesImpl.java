@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.6 2006-11-04 00:08:25 kenwho Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.7 2006-12-13 00:27:15 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -316,7 +316,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         
         // Get the entry DN
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
-        String dn = IdUtils.getUniversalId(id);
+        String dn = id.getUniversalId().toLowerCase();
 
         // Get the principal DN
         AMIdentity tokenId = IdUtils.getIdentity(token);
@@ -399,7 +399,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         
         // Get the identity dn
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
-        String dn = IdUtils.getUniversalId(id);
+        String dn = id.getUniversalId().toLowerCase();
 
         // Get the principal dn
         AMIdentity tokenId = IdUtils.getIdentity(token);

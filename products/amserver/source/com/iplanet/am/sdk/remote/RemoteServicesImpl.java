@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.3 2006-10-26 20:51:05 kenwho Exp $
+ * $Id: RemoteServicesImpl.java,v 1.4 2006-12-13 00:27:14 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,8 +69,6 @@ public class RemoteServicesImpl implements IDirectoryServices {
 
     // Protected Members
     private SOAPClient client;
-
-    protected EventListener eventListener;
 
     protected IDCTreeServices dcTreeServicesImpl;
 
@@ -1663,10 +1661,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
 
     public void addListener(SSOToken token, AMObjectListener listener,
             Map configMap) throws AMEventManagerException {
-        if (eventListener == null) {
-            eventListener = new EventListener();
-        }
-        eventListener.addListener(token, listener);
+        EventListener.getInstance().addListener(token, listener);
     }
 
 }

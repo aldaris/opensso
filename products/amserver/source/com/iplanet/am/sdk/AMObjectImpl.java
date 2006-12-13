@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.6 2006-08-25 21:19:19 veiming Exp $
+ * $Id: AMObjectImpl.java,v 1.7 2006-12-13 00:27:12 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -763,7 +763,8 @@ class AMObjectImpl implements AMObject {
             }
 
             synchronized (objImplListeners) {
-                Set destObjs = (Set) objImplListeners.get(entryDN);
+                Set destObjs = (Set) objImplListeners.get(
+		    entryDN.toLowerCase());
 
                 if (destObjs == null) {
                     destObjs = new HashSet();
@@ -1637,7 +1638,8 @@ class AMObjectImpl implements AMObject {
             }
 
             synchronized (objImplListeners) {
-                Set destObjs = (Set) objImplListeners.get(entryDN);
+                Set destObjs = (Set) objImplListeners.get(
+		    entryDN.toLowerCase());
 
                 if (destObjs != null) {
                     destObjs.remove(this);
@@ -2076,7 +2078,7 @@ class AMObjectImpl implements AMObject {
                     debug.message("In AMObjectImpl.notifyACIChangeEvent(..): "
                             + "ACI Entry removed event");
                 }
-                Set objImplSet = (Set) objImplListeners.get(dn);
+                Set objImplSet = (Set) objImplListeners.get(dn.toLowerCase());
                 if (objImplSet == null) {
                     return;
                 }
@@ -2143,7 +2145,8 @@ class AMObjectImpl implements AMObject {
                         debug.message("AMObjectImpl.notifyEntryEvent(..): "
                                 + "change/remove entry event!" + dn);
                     }
-                    Set objImplSet = (Set) objImplListeners.get(dn);
+                    Set objImplSet = (Set) objImplListeners.get(
+			dn.toLowerCase());
                     if (objImplSet == null) {
                         return;
                     }
@@ -2177,7 +2180,7 @@ class AMObjectImpl implements AMObject {
             debug.message("AMObjectImpl.sendExpiryEvent(..) - for:" + sourceDN);
         }
 
-        Set objectImplSet = (Set) objImplListeners.get(sourceDN);
+        Set objectImplSet = (Set) objImplListeners.get(sourceDN.toLowerCase());
         if (objectImplSet != null) {
             synchronized (objectImplSet) { // Lock, so that no more objects
                 // get added/removed here
@@ -2259,7 +2262,7 @@ class AMObjectImpl implements AMObject {
             while (dnItr.hasNext()) { // Iterate through the dn set.
 
                 String dn = (String) dnItr.next();
-                Set objSet = (Set) objImplListeners.get(dn);
+                Set objSet = (Set) objImplListeners.get(dn.toLowerCase());
 
                 if (objSet == null) {
                     continue;

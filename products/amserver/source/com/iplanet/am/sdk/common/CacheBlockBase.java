@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlockBase.java,v 1.2 2006-08-25 21:19:22 veiming Exp $
+ * $Id: CacheBlockBase.java,v 1.3 2006-12-13 00:27:12 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -409,11 +409,15 @@ public abstract class CacheBlockBase {
         sb.append(" Valid Entry: ").append(isValidEntry);
         sb.append("\nOrganization: ").append(organizationDN);
         sb.append("\nString Attributes: ");
-        sb.append(MiscUtils.mapSetToString(stringAttributes));
+        if ((stringAttributes != null) && (!stringAttributes.isEmpty())) {
+            sb.append(MiscUtils.mapSetToString(stringAttributes));
+        }        
         sb.append("\nByte Attributes: ");
         sb.append(MiscUtils.mapSetToString(byteAttributes));
         sb.append("\nByte Negative Attributes: ");
-        sb.append(byteAttributes.getNegativeByteAttrClone().toString());
+        if ((byteAttributes != null) && (!byteAttributes.isEmpty())) {
+            sb.append(byteAttributes.getNegativeByteAttrClone().toString());
+        }        
         sb.append("\nCache Entries: ");
 
         if (cacheEntries != null && !cacheEntries.isEmpty()) {

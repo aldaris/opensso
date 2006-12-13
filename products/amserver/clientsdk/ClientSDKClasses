@@ -229,6 +229,7 @@ com/sun/identity/authentication/spi/SAMLCallback.class
 com/sun/identity/authentication/spi/HttpCallback.class
 com/sun/identity/authentication/spi/PagePropertiesCallback.class
 com/sun/identity/authentication/spi/DSAMECallbackInterface.class
+com/sun/identity/authentication/spi/InvalidPasswordException.class
 com/sun/identity/authentication/share/AuthXMLTags.class
 com/sun/identity/authentication/share/AuthXMLUtils.class
 com/sun/identity/authentication/service/AuthUtils.class

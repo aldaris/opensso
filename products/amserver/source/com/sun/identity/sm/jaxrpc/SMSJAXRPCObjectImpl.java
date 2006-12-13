@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.6 2006-12-12 23:34:31 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.7 2006-12-13 00:27:16 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ import com.iplanet.services.comm.share.NotificationSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -145,26 +146,30 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             debug.message("SMSJAXRPCObjectImpl::read dn: " + objName);
         }
 
-        Map ans = null;
-
+        Map returnAttributes = null;
         if (objName.equals("o=" + SMSJAXRPCObject.AMJAXRPCVERSIONSTR)) {
-            ans = new HashMap();
-            ans.put(SMSJAXRPCObject.AMJAXRPCVERSIONSTR,
-                SMSJAXRPCObject.AMJAXRPCVERSION);
+
+            returnAttributes = new HashMap();
+            returnAttributes.put(SMSJAXRPCObject.AMJAXRPCVERSIONSTR,
+                   SMSJAXRPCObject.AMJAXRPCVERSION);
         } else {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
-                objName, null);
+                objName, null);                    
             Map attrs = ce.getSMSEntry().getAttributes();
-            if (attrs != null) {
-                ans = new HashMap();
-                for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
-                    String attrName = i.next().toString();
+            if ((attrs != null) && (attrs instanceof CaseInsensitiveHashMap)) {
+                returnAttributes = new HashMap();
+                for (Iterator items = attrs.keySet().iterator(); 
+                    items.hasNext();) {
+                    String attrName = items.next().toString();
                     Object o = attrs.get(attrName);
-                    ans.put(attrName, o);
-                }
-            }
+                    returnAttributes.put(attrName, o);
+                }            
+            } else { // could be null or instance of HashMap - return as it is.
+                returnAttributes = attrs;
+            }                             
         }
-        return (ans);
+        return returnAttributes;
+
     }
 
     /**
@@ -338,7 +343,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             // Maintain cacheIndex
             cacheIndices.addFirst(cacheIndex);
             if (cacheIndices.size() > cacheSize) {
-                cacheIndices.removeLast();
+                String index = (String) cacheIndices.removeLast();
+                cache.remove(index);
             }
         }
         String modItem = null;

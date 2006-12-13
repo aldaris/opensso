@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.11 2006-11-04 00:07:26 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.12 2006-12-13 00:27:12 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -144,9 +144,8 @@ public class AMSDKRepo extends IdRepo {
     public String create(SSOToken token, IdType type, String name, Map attrMap)
             throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug
-                    .message("AMSDKIdRepo: Create called on " + type + ": "
-                            + name);
+            debug.message("AMSDKIdRepo: Create called on " + type + ": "
+                    + name);
         }
         String dn = null;
         AMStoreConnection amsc = (sc == null) ? new AMStoreConnection(token)

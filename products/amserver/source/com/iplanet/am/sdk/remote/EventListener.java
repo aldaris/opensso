@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.4 2006-08-25 21:19:28 veiming Exp $
+ * $Id: EventListener.java,v 1.5 2006-12-13 00:27:13 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,16 +62,25 @@ import netscape.ldap.util.DN;
 class EventListener {
 
     private static Debug debug = RemoteServicesImpl.getDebug();
-
+    
+    private static SOAPClient client;
+    
     private static boolean initialized = false;
 
     private static Set listeners = new HashSet();
 
-    private static SOAPClient client;
-
     private static String notificationID;
 
     private static String idRepoNotificationID;
+    
+    private static EventListener instance = null;
+    
+    public synchronized static EventListener getInstance() {
+        if (instance == null) {
+            instance = new EventListener();
+        }
+        return instance;
+    }
 
     /**
      * Constructor for <class>EventListener</class>. Should be instantiated
@@ -80,55 +89,49 @@ class EventListener {
      * @param set
      *            of listeners interested in obtaining change events
      */
-    public EventListener() {
-        if (!initialized) {
-            synchronized (debug) {
-                if (!initialized) {
-                    // Construct the SOAP Client
-                    client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
+    private EventListener() {
 
-                    // Check if notification URL is provided
-                    try {
-                        URL url = WebtopNaming.getNotificationURL();
+        // Construct the SOAP Client
+        client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
 
-                        // Register for notification with AM Server
-                        notificationID = (String) client
-                                .send("registerNotificationURL",
-                                        url.toString(), null);
-                        // Register with PLLClient for notificaiton
-                        PLLClient.addNotificationHandler(
-                                RemoteServicesImpl.SDK_SERVICE,
-                                new EventNotificationHandler());
+        // Check if notification URL is provided
+        try {
+            URL url = WebtopNaming.getNotificationURL();
 
-                        // Register for IdRepo Service
-                        idRepoNotificationID = (String) client.send(
-                                "registerNotificationURL_idrepo", url
-                                        .toString(), null);
-                        // Register with PLLClient for notificaiton
-                        PLLClient.addNotificationHandler(
-                                RemoteServicesImpl.IDREPO_SERVICE,
-                                new IdRepoEventNotificationHandler());
+            // Register for notification with AM Server
+            notificationID = (String) client.send(
+                    "registerNotificationURL", url.toString(), null);
 
-                        if (debug.messageEnabled()) {
-                            debug.message("EventService: Using notification "
-                                    + "mechanism for cache updates: "
-                                    + url.toString());
-                        }
-                    } catch (Exception e) {
-                        // Use polling mechanism to update caches
-                        if (debug.warningEnabled()) {
-                            debug.warning("EventService: Registering for "
-                                    + "notification via URL failed: "
-                                    + e.getMessage()
-                                    + "\nUsing polling mechanism for updates");
-                        }
-                        // Start the daemon thread to check for changes
-                        NotificationThread nt = new NotificationThread();
-                        nt.start();
-                    }
-                    initialized = true;
-                }
+            // Register with PLLClient for notificaiton
+            PLLClient.addNotificationHandler(
+                    RemoteServicesImpl.SDK_SERVICE,
+                    new EventNotificationHandler());
+
+            // Register for IdRepo Service
+            idRepoNotificationID = (String) client.send(
+                    "registerNotificationURL_idrepo", url.toString(), null);
+
+            // Register with PLLClient for notificaiton
+            PLLClient.addNotificationHandler(
+                    RemoteServicesImpl.IDREPO_SERVICE,
+                    new IdRepoEventNotificationHandler());
+
+            if (debug.messageEnabled()) {
+                debug.message("EventService: Using notification "
+                        + "mechanism for cache updates: "
+                        + url.toString());
             }
+        } catch (Exception e) {
+            // Use polling mechanism to update caches
+            if (debug.warningEnabled()) {
+                debug.warning("EventService: Registering for "
+                        + "notification via URL failed: "
+                        + e.getMessage()
+                        + "\nUsing polling mechanism for updates");
+            }
+            // Start the daemon thread to check for changes
+            NotificationThread nt = new NotificationThread();
+            nt.start();
         }
     }
 
@@ -487,8 +490,10 @@ class EventListener {
                         .elementAt(i);
                 String content = notification.getContent();
                 if (debug.messageEnabled()) {
-                    debug.message("EventListener:EventNotificationHandler: "
-                            + " received notification: " + content);
+                    debug.message("EventListener:" 
+                            + "IdRepoEventNotificationHandler: received " 
+                            + "notification: " + content);
+
                 }
                 // Send notification
                 sendNotification(content);
