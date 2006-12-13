@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DCTreeServicesImpl.java,v 1.2 2006-08-25 21:19:28 veiming Exp $
+ * $Id: DCTreeServicesImpl.java,v 1.3 2006-12-13 23:59:00 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMSDKBundle;
 import com.iplanet.am.sdk.common.DCTreeServicesHelper;
 import com.iplanet.am.sdk.common.IDCTreeServices;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
@@ -46,9 +47,10 @@ public class DCTreeServicesImpl extends DCTreeServicesHelper implements
     public String getOrganizationDN(SSOToken token, String domainName)
             throws AMException {
         try {
-            Object[] objs = { token.getTokenID().toString(), domainName };
+            Object[] objs = { token.getTokenID().toString(), domainName }; 
             return ((String) client.send(client.encodeMessage(
-                    "getOrgDNFromDomain", objs), null));
+                  "getOrgDNFromDomain", objs), 
+                  Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (AMRemoteException amrex) {
             debug.error("DCTreeServicesImpl.getOrganizationDN()- "
                     + "encountered exception=", amrex);

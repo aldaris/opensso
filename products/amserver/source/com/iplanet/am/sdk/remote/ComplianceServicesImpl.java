@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.2 2006-08-25 21:19:28 veiming Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.3 2006-12-13 23:59:00 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.iplanet.am.sdk.remote;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMSDKBundle;
 import com.iplanet.am.sdk.common.IComplianceServices;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
@@ -50,7 +51,8 @@ public class ComplianceServicesImpl implements IComplianceServices {
             Object[] objs = { token.getTokenID().toString(), dn,
                     new Integer(profileType) };
             Boolean res = ((Boolean) client.send(client.encodeMessage(
-                    "isAncestorOrgDeleted", objs), null));
+                    "isAncestorOrgDeleted", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
             return res.booleanValue();
 
         } catch (AMRemoteException amrex) {
@@ -73,7 +75,7 @@ public class ComplianceServicesImpl implements IComplianceServices {
         try {
             Object[] objs = { token.getTokenID().toString(), profileDN };
             client.send(client.encodeMessage("verifyAndDeleteObject", objs),
-                    null);
+                    Session.getLBCookie(token.getTokenID().toString()), null);
         } catch (AMRemoteException amrex) {
             debug.error("ComplianceServicesImpl.verifyAndDeleteObject()- "
                     + "encountered exception=", amrex);
@@ -95,7 +97,7 @@ public class ComplianceServicesImpl implements IComplianceServices {
 
             Object[] objs = { new Integer(objectType) };
             return ((String) client.send(client.encodeMessage(
-                    "getDeletedObjectFilter", objs), null));
+                    "getDeletedObjectFilter", objs), null, null));
 
         } catch (AMRemoteException amrex) {
             debug.error("ComplianceServicesImpl.getDeletedObjectFilter()- "
