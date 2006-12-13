@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.7 2006-12-13 00:27:15 rarcot Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.8 2006-12-13 02:02:54 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,7 +194,6 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
      * EventService notifies that all entries have been modified (or should be
      * marked dirty).
      * 
-     * @param dn
      */
     public synchronized void clearCache() {
         idRepoCache.clear();

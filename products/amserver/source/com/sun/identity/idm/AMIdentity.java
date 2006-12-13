@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.16 2006-12-13 00:27:14 rarcot Exp $
+ * $Id: AMIdentity.java,v 1.17 2006-12-13 02:01:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,8 @@ import netscape.ldap.util.DN;
  * String name = identity.getName();
  * 
  * </PRE>
+ *
+ * @supported.api
  */
 
 public final class AMIdentity {
@@ -110,7 +112,7 @@ public final class AMIdentity {
     protected String univDN = null;
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Constructor for the <code>AMIdentity</code> object.
      * 
@@ -124,13 +126,17 @@ public final class AMIdentity {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Constructor for the <code>AMIdentity</code> object.
      * 
      * @param ssotoken
-     *            Single sign on token of the user
+     *            Single sign on token to construct the identity
+     *            object. Access permission to Identity object
+     *            would be based on this user
      * @param universalId
+     *            Universal Identifier of the identity.
+     * 
      */
     public AMIdentity(SSOToken ssotoken, String universalId) {
         univId = univIdWithoutDN = DNUtils.normalizeDN(universalId);
@@ -150,10 +156,20 @@ public final class AMIdentity {
     }
 
     /**
-     * Non-javadoc, non-public methods public constructor for AMIdentity.
+     * Constructor for the <code>AMIdentity</code> object.
      * 
-     * @param ssotoken
-     * @param universalId
+     * @param token
+     *            Single sign on token to construct the identity
+     *            object. Access permission to Identity object
+     *            would be based on this user
+     * @param name
+     *            the name associated with this identity.
+     * @param type
+     *            the <code>IdType</code> of this identity.
+     * @param orgName
+     *            the organizaton name this identity belongs to.
+     * @param amsdkdn
+     *            the amsdk name assoicated with this identity if any.
      */
     public AMIdentity(SSOToken token, String name, IdType type, String orgName,
             String amsdkdn) {
@@ -186,7 +202,8 @@ public final class AMIdentity {
      * 
      * Returns the name of the identity.
      * 
-     * @return Name of the identity iPlanet-PUBLIC-METHOD
+     * @return Name of the identity 
+     * @supported.api
      */
     public String getName() {        
         String sname = name;
@@ -202,8 +219,8 @@ public final class AMIdentity {
     /**
      * Returns the Type of the Identity.
      * 
-     * @return IdType representing the type of this object.
-     *         iPlanet-PUBLIC-METHOD
+     * @return <code>IdType</code> representing the type of this object.
+     * @supported.api
      */
     public IdType getType() {
         return type;
@@ -212,7 +229,8 @@ public final class AMIdentity {
     /**
      * Returns the realm for this identity.
      * 
-     * @return String representing realm name. iPlanet-PUBLIC-METHOD
+     * @return String representing realm name. 
+     * @supported.api
      */
     public String getRealm() {
         return orgName;
@@ -229,7 +247,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public boolean isActive() throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
@@ -247,7 +265,7 @@ public final class AMIdentity {
      * assigned the value corresponding to activated.
      * @throws IdRepoException If there are repository related error conditions.
      * @throws SSOException If user's single sign on token is invalid.
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setActiveStatus(boolean active)
         throws IdRepoException, SSOException {
@@ -265,7 +283,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Map getAttributes() throws IdRepoException, SSOException {
 
@@ -291,7 +309,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Map getAttributes(Set attrNames) throws IdRepoException,
             SSOException {
@@ -329,7 +347,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Map getBinaryAttributes(Set attrNames) throws IdRepoException,
             SSOException {
@@ -353,7 +371,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getAttribute(String attrName) throws IdRepoException,
             SSOException {
@@ -379,7 +397,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setAttributes(Map attrMap) throws IdRepoException, SSOException 
     {
@@ -399,7 +417,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setBinaryAttributes(Map attrMap) throws IdRepoException,
             SSOException {
@@ -418,7 +436,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If the user's single sign on token is invalid
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeAttributes(Set attrNames) throws IdRepoException,
             SSOException {
@@ -442,7 +460,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void store() throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
@@ -470,7 +488,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getAssignedServices() throws IdRepoException, SSOException {
         // Get all service names for the type from SMS
@@ -508,7 +526,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getAssignableServices() throws IdRepoException, SSOException {
         // Get all service names for the type from SMS
@@ -556,7 +574,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void assignService(String serviceName, Map attributes)
             throws IdRepoException, SSOException {
@@ -636,7 +654,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void unassignService(String serviceName) throws IdRepoException,
             SSOException {
@@ -705,7 +723,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Map getServiceAttributes(String serviceName)
         throws IdRepoException, SSOException {
@@ -732,7 +750,7 @@ public final class AMIdentity {
      * @return Map of attribute-values.
      * @throws IdRepoException if there are repository related error conditions.
      * @throws SSOException If user's single sign on token is invalid.
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Map getServiceAttributesAscending(String serviceName)
         throws IdRepoException, SSOException {
@@ -765,7 +783,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void modifyService(String serviceName, Map attrMap)
             throws IdRepoException, SSOException {
@@ -841,7 +859,7 @@ public final class AMIdentity {
      * @param attrNames Set of attributes name.
      * @throws IdRepoException If there are repository related error conditions.
      * @throws SSOException If user's single sign on token is invalid.
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void removeServiceAttributes(String serviceName, Set attrNames)
         throws IdRepoException, SSOException {
@@ -869,7 +887,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public boolean isMember(AMIdentity identity) throws IdRepoException,
             SSOException {
@@ -1040,7 +1058,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getMembers(IdType mtype) throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
@@ -1053,7 +1071,7 @@ public final class AMIdentity {
      * 
      * This method is only valid for AMIdentity objects of type User and Role.
      * 
-     * @param type
+     * @param mtype
      *            Type of member identity.
      * @return Set of AMIdentity objects of the given type that this identity
      *         belongs to.
@@ -1061,7 +1079,7 @@ public final class AMIdentity {
      *             if there are repository related error conditions.
      * @throws SSOException
      *             if user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public Set getMemberships(IdType mtype) throws IdRepoException,
             SSOException {
@@ -1082,7 +1100,7 @@ public final class AMIdentity {
      *             If there are repository related error conditions.
      * @throws SSOException
      *             If user's single sign on token is invalid.
-     *             iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public boolean isExists() throws IdRepoException, SSOException {
         IdServices idServices = IdServicesFactory.getDataStoreServices();
@@ -1090,7 +1108,11 @@ public final class AMIdentity {
     }
 
     /**
-     * Overrides the default "equal" method. iPlanet-PUBLIC-METHOD
+     * Returns <code>true</code> if the given object is equal to this object.
+     *
+     * @param o Object for comparison.
+     * @return <code>true</code> if the given object is equal to this object.
+     * @supported.api
      */
     public boolean equals(Object o) {
         if (o instanceof AMIdentity) {
@@ -1124,16 +1146,15 @@ public final class AMIdentity {
     /**
      * Nonjavadoc, non-public methods
      * 
-     * @return
      */
     public void setDN(String dn) {
         univDN = dn;
     }
 
     /**
-     * Non-javadoc, non-public method
-     * 
-     * @return
+     * Returns universal distinguished name of this object.
+     *
+     * @return universal distinguished name of this object.
      */
     public String getDN() {
         return univDN;
@@ -1143,7 +1164,7 @@ public final class AMIdentity {
      * Returns the universal identifier of this object.
      * 
      * @return String representing the universal identifier of this object.
-     *         iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String getUniversalId() {
         return univId;

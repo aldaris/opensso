@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.10 2006-08-25 21:20:49 veiming Exp $
+ * $Id: IdUtils.java,v 1.11 2006-12-13 02:01:46 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,8 @@ import com.sun.identity.sm.ServiceManager;
 /**
  * The class defines some static utilities used by other components like policy
  * and auth
+ *
+ * @supported.api
  */
 public final class IdUtils {
     private static Debug debug = AMIdentityRepository.debug;
@@ -166,7 +168,8 @@ public final class IdUtils {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Returns a handle of the Identity object based on
+     * @supported.api 
+     * Returns a handle of the Identity object based on
      * the SSO Token passed in (<code>AMIdentity</code> object of the user
      * who is authenticated).
      * 
@@ -196,7 +199,7 @@ public final class IdUtils {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD 
+     * @supported.api
      * 
      * Returns a string which uniquely represents this identity object.
      * 
@@ -210,7 +213,7 @@ public final class IdUtils {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD 
+     * @supported.api 
      * 
      * Returns an <code>AMIdentity</code> object, if provided with a string 
      * identifier for the object.
@@ -339,7 +342,8 @@ public final class IdUtils {
     /**
      * Returns corresponding <code>IdType</code> object given a type.
      * 
-     * @param typeType of object to return.
+     * @param type of object to return.
+     * @return Idtype of type.
      * @throws IdRepoException if there are no corresponding types.
      */
     public static IdType getType(String type) throws IdRepoException {
@@ -375,7 +379,6 @@ public final class IdUtils {
 
     /**
      * Returns an organization which maps to the identifier used by application
-     * in order to iPlanet-PUBLIC-METHOD
      * 
      * @param orgIdentifier  Organization identifier
      * @return Organization mapping to that identifier.
@@ -514,11 +517,12 @@ public final class IdUtils {
      * for organization status in the AM enabled Sun DS. Otherwise, it checks
      * for organization status from the realms tree.
      * 
-     * @param token
-     * @param org
-     * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     * @param token token SSOToken a valid SSOToken.
+     * @param org name of the organization of interest.
+     * @return <code>true</code> if org is active; 
+     *    otherwise <code>false</code>
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
      */
     public static boolean isOrganizationActive(SSOToken token, String org)
             throws IdRepoException, SSOException {
@@ -566,12 +570,15 @@ public final class IdUtils {
      * Throws all exceptions since the method calling this one takes
      * care of catching them and behaving appropriately
      * @param token
+     *    Single sign on token to construct the identity
      * @param amsdkdn
+     *    the amsdk dn of the identity. 
      * @param realm
-     * @return
-     * @throws AMException
-     * @throws SSOException
-     * @throws IdRepoException
+     *    the name of the realm. 
+     * @return Identity object
+     * @throws AMException if there is an AM SDK related error.
+     * @throws SSOException If user's single sign on token is invalid.
+     * @throws IdRepoException If there are repository related error conditions.
      */
     private static AMIdentity getIdentityFromAMSDKDN(SSOToken token,
             String amsdkdn, String realm) throws AMException, SSOException,
@@ -600,10 +607,10 @@ public final class IdUtils {
     }
 
     /**
-     * Non-javadoc, non-public methods
+     * Returns an IdRepoException based on an <code>AMException</code>
      * 
      * @param ame
-     * @return
+     * @return IdRepoException based on ame.
      */
     public static IdRepoException convertAMException(AMException ame) {
         Object[] args = ame.getMessageArgs();
@@ -619,10 +626,11 @@ public final class IdUtils {
     }
 
     /**
-     * private method to check the type
+     * private method to check the typeName is supported. 
      * 
-     * @param typeName
-     * @return
+     * @param typeName is the name of the type in question.
+     * @return <code>true</code> if typeName is supported;
+     *    otherwise <code>false</code>
      */
     private static boolean supportedType(String typeName) {
         return (mapSupportedTypes.get(typeName) != null);

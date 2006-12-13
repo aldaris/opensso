@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.4 2006-10-26 20:52:43 kenwho Exp $
+ * $Id: IdRepo.java,v 1.5 2006-12-13 02:01:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.sun.identity.sm.SchemaType;
  * 
  * This interface defines the methods which need to be implemented by plugins.
  * Two plugins are supported, <code> ldap </code> and <code> remote </code>.
+ *
+ * @supported.all.api
  */
 public abstract class IdRepo {
 
@@ -78,12 +80,11 @@ public abstract class IdRepo {
     }
 
     /**
-     * Return supported operations for a given type in the specified
-     * organization.
+     * Return supported operations for a given IdType
      * 
      * @param type
-     * @param orgName
-     * @return
+     *     Identity type
+     * @return set of IdOperation supported for this IdType.
      */
     public Set getSupportedOperations(IdType type) {
         Set set = new HashSet();
@@ -92,35 +93,49 @@ public abstract class IdRepo {
     }
 
     /**
-     * Returns the supported types of identities for this plugin. If a plugin
-     * does not override this method, it returns an empty set.
-     * 
      * @return Returns a Set of IdTypes supported by this plugin.
+     * Returns the supported types of identities for this
+     * plugin. If a plugin does not override this method, it
+     * returns an empty set.
+     *
+     * @return a Set of IdTypes supported by this plugin.
      */
     public Set getSupportedTypes() {
         return Collections.EMPTY_SET;
     }
 
     /**
-     * Returns true if the entry exists in the datastore.
-     * 
+     * Returns true if the <code> name </code> object exists in the data store.
+    *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object  of interest.
      * @return
+     *     <code>true</code> if name object is in data store
+     *     else <code>false</code>
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract boolean isExists(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException;
 
     /**
-     * Returns true if the entry's status is active or if the entry is not
-     * usually marked
-     * 
-     * @param token
-     * @param type
-     * @param name
+     * Returns true if the <code> name </code> object is active.
+     *
      * @return
+     *     <code>true</code> if name object is in active
+     *     else <code>false</code>
+     * @param token
+     *     Single sign on token of identity performing the task.
+     * @param type
+     *     Identity type of this object.
+     * @param name
+     *     Name of the object of interest.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public boolean isActive(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
@@ -128,113 +143,148 @@ public abstract class IdRepo {
     }
 
     /**
-     * Replaces attributes in the identity with the new ones.
+     * Sets the object's status to <code>active</code>.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param active
-     * @throws IdRepoException
-     * @throws SSOException
+     *     true if setting to active; false otherwise.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void setActiveStatus(SSOToken token, IdType type,
         String name,  boolean active)
         throws IdRepoException, SSOException;
 
     /**
-     * Returns attributes of identity.
-     * 
+     * Returns all attributes and values of name object
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Map getAttributes(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException;
 
     /**
-     * 
+     * Returns requested attributes and values of name object.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @param attrNames
+     *     Set of attribute names to be read
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException;
 
     /**
-     * Returns binary attributes as an array of bytes.
-     * 
+     * Returns requested binary attributes as an array of bytes.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param attrNames
+     *     Set of attribute names to be read
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Map getBinaryAttributes(SSOToken token, IdType type,
             String name, Set attrNames) throws IdRepoException, SSOException;
 
     /**
-     * Creates the identity
-     * 
+     * Creates an identity.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @param attrMap
-     * @return String representation of this identity
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values assoicated with this object.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract String create(SSOToken token, IdType type, String name,
             Map attrMap) throws IdRepoException, SSOException;
 
     /**
      * Deletes an identity.
-     * 
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Name of the object of interest.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void delete(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException;
 
     /**
-     * Replaces attributes in the identity with the new ones.
-     * 
+     * Set the values of attributes of the identity.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @param attributes
+     *     Map of attribute-values to set or add.
      * @param isAdd
-     * @throws IdRepoException
-     * @throws SSOException
+     *     if <code>true</code> add the attribute-values; otherwise
+     *     replaces the attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void setAttributes(SSOToken token, IdType type,
             String name, Map attributes, boolean isAdd) throws IdRepoException,
             SSOException;
 
     /**
-     * 
+     *
+     * Set the values of binary attributes the identity.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param attributes
+     *     Map of binary attribute-values to set or add.
      * @param isAdd
-     * @throws IdRepoException
-     * @throws SSOException
+     *     if <code>true</code> add the attribute-values; otherwise
+     *     replaces the attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void setBinaryAttributes(SSOToken token, IdType type,
             String name, Map attributes, boolean isAdd) throws IdRepoException,
@@ -242,33 +292,45 @@ public abstract class IdRepo {
 
     /**
      * Removes the attributes from the identity.
-     * 
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @param attrNames
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Set of attribute names to remove.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void removeAttributes(SSOToken token, IdType type,
             String name, Set attrNames) throws IdRepoException, SSOException;
 
     /**
      * Search for specific type of identities.
-     * 
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param pattern
+     *     pattern to search for.
      * @param maxTime
+     *     maximum wait time for search.
      * @param maxResults
+     *     maximum records to return.
      * @param returnAttrs
+     *     Set of attribute names to return.
      * @param returnAllAttrs
+     *     return all attributes
      * @param filterOp
+     *     filter condition.
      * @param avPairs
-     * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     additional search conditions.
+     * @return RepoSearchResults
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract RepoSearchResults search(SSOToken token, IdType type,
             String pattern, int maxTime, int maxResults, Set returnAttrs,
@@ -276,101 +338,137 @@ public abstract class IdRepo {
             boolean recursive) throws IdRepoException, SSOException;
 
     /**
-     * Modify membership of the identity. Set of members is a set of unique
-     * identifiers of other identities.
-     * 
+     * Modify membership of the identity. Set of members is
+     * a set of unique identifiers of other identities.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
      * @param members
+     *     Set of names to be added as members of name
+     * @param membersType
+     *     IdType of members.
      * @param operation
-     * @throws IdRepoException
-     * @throws SSOException
+     *     operations to perform on members ADDMEMBER or REMOVEMEMBER.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void modifyMemberShip(SSOToken token, IdType type,
             String name, Set members, IdType membersType, int operation)
             throws IdRepoException, SSOException;
 
     /**
-     * Returns members of an identity. Applicable if identity is a group or a
-     * role, for example.
-     * 
+     * Returns members of an identity. Applicable if identity is a
+     * group or a role.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
+     * @param membersType
+     *     IdType of members of name object.
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Set of of members belongs to <code>name</code>
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Set getMembers(SSOToken token, IdType type, String name,
             IdType membersType) throws IdRepoException, SSOException;
 
     /**
-     * Returns the memberships of a identity. For example, returns the groups or
-     * roles that a user belongs to.
-     * 
+     * Returns the memberships of an identity. For example, returns the
+     * groups or roles that a user belongs to.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param orgName
+     *     Name of the object of interest.
+     * @param membershipType
+     *     IdType of memberships to return.
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Set of objects that <code>name</code> is a member of.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Set getMemberships(SSOToken token, IdType type,
             String name, IdType membershipType) throws IdRepoException,
             SSOException;
 
     /**
-     * This method is used to assign a service to the given identity. The
-     * behaviour of this method will be different, depending on how each plugin
-     * will implement the services model. The map of attribute-values has
-     * already been validated and default values have already been inherited by
-     * the framework. The plugin has to verify if the service is assigned (in
-     * which case it should throw an exception), and assign the service and the
-     * attributes to the identity (if supported).
-     * 
+     * This method is used to assign a service to the given identity.
+     * The behavior of this method will be different, depending on
+     * how each plugin will implement the services model. The map
+     * of attribute-values has already been validated and default
+     * values have already been inherited by the framework.
+     * The plugin has to verify if the service is assigned (in which
+     * case it should throw an exception), and assign the service
+     * and the attributes to the identity (if supported).
+     *
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param serviceName
+     *     service to assign
+     * @param stype
      * @param attrMap
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void assignService(SSOToken token, IdType type,
             String name, String serviceName, SchemaType stype, Map attrMap)
             throws IdRepoException, SSOException;
 
     /**
-     * Returns the set of services assigned to this identity. The framework has
-     * to check if the values are objectclasses, then map it to service names.
-     * Or if they are servicenames, then there is no mapping needed.
-     * 
+     * Returns the set of services assigned to this identity.
+     * The framework has to check if the values are objectclasses,
+     * then map it to service names. Or if they are servicenames, then
+     * there is no mapping needed.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
-     * @param objectClasses
+     *     Name of the object of interest.
+     * @param mapOfServicesAndOCs
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Set of name of services assigned to <code>name</code>
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Set getAssignedServices(SSOToken token, IdType type,
             String name, Map mapOfServicesAndOCs) throws IdRepoException,
             SSOException;
 
     /**
-     * If the service is already assigned to the entry, then this method
-     * unassigns the service and removes the related attributes from the entry.
-     * 
+     * If the service is already assigned to the identity then
+     * this method unassigns the service and removes the related
+     * attributes from the entry.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param serviceName
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Service name to remove.
+     * @param attrMap
+     *     Map of attribute-values to remove
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void unassignService(SSOToken token, IdType type,
             String name, String serviceName, Map attrMap)
@@ -378,43 +476,56 @@ public abstract class IdRepo {
 
     /**
      * Returns the attribute values of the service attributes.
-     * 
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param serviceName
+     *     Name of service.
      * @param attrNames
+     *     Set of attribute names.
      * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     *     Map of attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract Map getServiceAttributes(SSOToken token, IdType type,
             String name, String serviceName, Set attrNames)
             throws IdRepoException, SSOException;
 
     /**
-     * Modifies the attribute values of the service attributes
-     * 
+     * Modifies the attribute values of the service attributes.
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param type
+     *     Identity type of this object.
      * @param name
+     *     Name of the object of interest.
      * @param serviceName
+     *     Name of service.
+     * @param sType
      * @param attrMap
-     * @throws IdRepoException
-     * @throws SSOException
+     *     map of attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract void modifyService(SSOToken token, IdType type,
             String name, String serviceName, SchemaType sType, Map attrMap)
             throws IdRepoException, SSOException;
 
     /**
-     * 
+     * Adds a listener for changes in the repository
+     *
      * @param token
+     *     Single sign on token of identity performing the task.
      * @param listener
-     * @param configMap
-     * @return
-     * @throws IdRepoException
-     * @throws SSOException
+     * @return status code
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public abstract int addListener(SSOToken token, IdRepoListener listener)
             throws IdRepoException, SSOException;
@@ -431,7 +542,7 @@ public abstract class IdRepo {
     /**
      * Return the configuration map
      * 
-     * @return
+     * @return configuration map
      */
     public Map getConfiguration() {
         return configMap;
@@ -452,6 +563,8 @@ public abstract class IdRepo {
      *            name of the identity
      * 
      * @return fully qualified name for the identity within the data store
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
      */
     public String getFullyQualifiedName(SSOToken token, IdType type, 
             String name) throws IdRepoException, SSOException {

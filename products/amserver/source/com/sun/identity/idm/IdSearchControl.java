@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchControl.java,v 1.4 2006-06-23 00:48:06 arviranga Exp $
+ * $Id: IdSearchControl.java,v 1.5 2006-12-13 02:01:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,10 +218,12 @@ public final class IdSearchControl {
      * Sets the recursive flag to be true or false. It is false by default so
      * plugin searches are not recursive.
      *
-     * @ deprecated This method is deprecated. The setting for recursive
+     * @deprecated This method is deprecated. The setting for recursive
      * search should be configured via the data store.
      *
-     * @param rec boolean true or false
+     * @param rec 
+     *        <code>true</code> if search is recursive; 
+     *        else <code>false</code>
      */
     public void setRecursive(boolean rec) {
         recursive = rec;
@@ -230,10 +232,10 @@ public final class IdSearchControl {
     /**
      * Returns true if recursive is enabled, false otherwise
      *
-     * @ deprecated This method is deprecated. The setting for recursive
+     * @deprecated This method is deprecated. The setting for recursive
      * search should be configured via the data store.
      * 
-     * @return true or false
+     * @return true if recursive search is on; else false.
      */
     public boolean isRecursive() {
         return recursive;

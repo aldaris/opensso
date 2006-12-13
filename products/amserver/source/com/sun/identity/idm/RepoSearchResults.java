@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RepoSearchResults.java,v 1.1 2005-11-01 00:31:12 arvindp Exp $
+ * $Id: RepoSearchResults.java,v 1.2 2006-12-13 02:01:46 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,8 +70,8 @@ public class RepoSearchResults {
     /**
      * Constructs the <code>RepoSearchResults</code> object.
      * 
-     * @param count
-     *            Number of entries
+     * @param type 
+     *            search for <code> IdType </code>
      * @param results
      *            Set of <code> names </code> from the search
      * @param errorCode

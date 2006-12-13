@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.9 2006-10-26 20:52:45 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.10 2006-12-13 02:02:54 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,6 @@ import com.sun.identity.idm.IdRepoException;
  * A single connection is established initially and reused to service all
  * notification requests.
  * 
- * @supported.api
  */
 public class LDAPv3EventService implements Runnable {
 
@@ -312,7 +311,6 @@ public class LDAPv3EventService implements Runnable {
      * At the end, close THE Event Manager's connections Abandon all previous
      * persistent search requests.
      *
-     * @supported.api
      */
     public void finalize() {
         Collection requestObjs = _requestList.values();
@@ -373,7 +371,6 @@ public class LDAPv3EventService implements Runnable {
     /**
      * Adds a listener to the directory.
      *
-     * @supported.api
      */
     public synchronized String addListener(SSOToken token,
             IdRepoListener listener, String base, int scope, String filter,
@@ -484,7 +481,6 @@ public class LDAPv3EventService implements Runnable {
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
      *
-     * @supported.api
      */
     public void run() {
         if (debugger.messageEnabled()) {
@@ -622,10 +618,9 @@ public class LDAPv3EventService implements Runnable {
      * removes the listener from the list of Persistent Search listeners of the
      * asynchronous seach for the given search ID.
      * 
-     * @param requestID
+     * @param request
      *            The request ID returned by the addListener
      *
-     * @supported.api
      */
     protected void removeListener(Request request) {
         if (debugger.messageEnabled()) {
@@ -659,7 +654,9 @@ public class LDAPv3EventService implements Runnable {
      * Reset all searches. Clear cache only if true is passed to argument
      * 
      * @param clearCaches
-     * @return
+     *          generate a event to clears the cache if <code>true</code>
+     *          before resetting all searches.
+     * @return true if successfully reset all searches.
      */
     protected synchronized boolean resetAllSearches(boolean clearCaches) {
 

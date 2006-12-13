@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileTreeNode.java,v 1.2 2006-08-25 21:21:33 veiming Exp $
+ * $Id: SMSFlatFileTreeNode.java,v 1.3 2006-12-13 02:03:19 kenwho Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,7 @@ public class SMSFlatFileTreeNode {
     /**
      * Returns parent node.
      *
-     * @Returns parent node.
+     * @return parent node.
      */
     public SMSFlatFileTreeNode getParentNode() {
         return parentNode;
@@ -93,7 +93,7 @@ public class SMSFlatFileTreeNode {
      * Adds child.
      *
      * @param child Child node.
-     * @returns <code>true</code> if child is added to the tree.
+     * @return <code>true</code> if child is added to the tree.
      * @throws SMSException if the dn of the child is not prefix with
      *         this node.
      */
@@ -159,7 +159,7 @@ public class SMSFlatFileTreeNode {
      *
      * @param dn Distinguished Name of the node.
      * @param baseDir Base Directory.
-     * @returns the attribute file name of a node.
+     * @return the attribute file name of a node.
      */
     public String getAttributeFilename(String dn, String baseDir) {
         SMSFlatFileTreeNode child = getChild(dn);
@@ -170,7 +170,7 @@ public class SMSFlatFileTreeNode {
      * Returns the attribute file name of this node.
      *
      * @param baseDir Base Directory.
-     * @returns the attribute file name of a node.
+     * @return the attribute file name of a node.
      */
     public String getAttributeFilename(String baseDir) {
         String hash = Hash.hash(distinguishedName);
@@ -183,7 +183,7 @@ public class SMSFlatFileTreeNode {
      *
      * @param baseDir Base Directory.
      * @param dn Distinguished name of the node.
-     * @returns <code>true</code> is a node of a given <code>dn</code> exists.
+     * @return <code>true</code> is a node of a given <code>dn</code> exists.
      */
     public boolean isExists(String baseDir, String dn) {
         String hash = Hash.hash(dn);

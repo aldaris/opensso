@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoException.java,v 1.4 2006-08-25 21:20:47 veiming Exp $
+ * $Id: IdRepoException.java,v 1.5 2006-12-13 02:01:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,8 +154,8 @@ public class IdRepoException extends Exception implements L10NMessage {
      /**
       * Returns the LDAP error code associated with this error message.
       *
-      * @return Error code associated with this error message.
-      * @returns null if not cause by LDAPException.
+      * @return Error code associated with this error message and null if
+      *      not caused by <code>LDAPException</code>.
       * @see #IdRepoException(String, String, Object[])
       */
      public String getLDAPErrorCode() {

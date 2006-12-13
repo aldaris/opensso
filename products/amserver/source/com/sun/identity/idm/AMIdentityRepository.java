@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.11 2006-12-13 00:27:14 rarcot Exp $
+ * $Id: AMIdentityRepository.java,v 1.12 2006-12-13 02:01:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ import com.sun.identity.sm.ServiceManager;
  * 
  * </PRE>
  * 
+ * @supported.api
  */
 public final class AMIdentityRepository {
     private SSOToken token;
@@ -78,7 +79,7 @@ public final class AMIdentityRepository {
     public static Map listeners = new CaseInsensitiveHashMap();
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Constructor for the <code>AMIdentityRepository</code> object. If a null
      * is passed for the organization identifier <code>realmName</code>, then
@@ -101,7 +102,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Returns the set of supported object types <code>IdType</code> for this
      * deployment. This is not realm specific.
@@ -120,7 +121,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Returns the set of Operations for a given <code>IdType</code>,
      * <code>IdOperations</code> that can be performed on an Identity. This
@@ -142,7 +143,6 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
      * 
      * Return the special identities for this realm for a given type. These
      * identities cannot be deleted and hence have to be shown in the admin
@@ -238,7 +238,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Searches for identities of certain types from each plugin and returns a
      * combined result
@@ -247,7 +247,7 @@ public final class AMIdentityRepository {
      * used for services related operations only. The realm <code>AMIdentity
      * </code> object can be used to assign and unassign services containing
      * dynamic attributes to this realm.
-     * 
+     *
      * @param type
      *            Type of identity being searched for.
      * @param pattern
@@ -306,13 +306,12 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
-     * Returns a handle of the Identity object representing this realm for
-     * services related operations only. This <code> AMIdentity
-     * </code> object
-     * can be used to assign and unassign services containing dynamic attributes
-     * to this realm
+     * Returns a handle of the Identity object representing this
+     * realm for services related operations only. This <code> AMIdentity
+     * </code> object can be used to assign and unassign services containing
+     * dynamic attributes to this realm
      * 
      * @return a handle of the Identity object.
      * @throws IdRepoException
@@ -346,23 +345,27 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD Creates a single object of a type. The object is
+     * @supported.api
+     *
+     * Creates a single object of a type. The object is
      * created in all the plugins that support creation of this type of object.
      * 
      * This method is only valid for:
-     * 
+     *
+     * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
-     * <li> {@link IdType#USER  IdType.USER} </li>
-     * <li> {@link IdType#REALM  IdType.REALM} </li>
-     * 
+     * <li> {@link IdType#USER  IdType.USER}  </li>
+     * <li> {@link IdType#REALM  IdType.REALM}  </li>
+     * </ol>
+     *
      * <br>
      * <b>Note:</b> For creating {@link IdType#REALM  IdType.REALM} identities,
      * a map of <code>sunIdentityRepositoryService</code> attributes need to
-     * be passed. Also, AMIdentity object representing this realm can be used
-     * for services related operations only. This <code> AMIdentity
-     * </code>
-     * object can be used to assign and unassign services containing dynamic
-     * attributes to this realm
+     * be passed. Also, AMIdentity object representing this realm can be
+     * used for services related operations only. This <code> AMIdentity
+     * </code> object can be used to assign and unassign services containing
+     * dynamic attributes to this realm
+     *
      * 
      * @param type
      *            <code>IdType</code> of object to be created.
@@ -384,25 +387,26 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Creates multiple objects of the same type. The objects are created in all
      * the <code>IdRepo</code> plugins that support creation of these objects.
      * 
      * This method is only valid for:
-     * 
+     *
+     * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
-     * <li> (@link IdType#USER IdType.USER} </li>
-     * <li> {@link IdType#REALM  IdType.REALM} </li>
-     * 
+     * <li> (@link IdType#USER  IdType.USER}  </li>
+     * <li> {@link IdType#REALM  IdType.REALM}  </li>
+     * </ol>
+     *
      * <br>
      * <b>Note:</b> For creating {@link IdType#REALM  IdType.REALM} identities,
      * a map of <code>sunIdentityRepositoryService</code> attributes need to
-     * be passed. Also, AMIdentity object representing this realm can be used
-     * for services related operations only. This <code> AMIdentity
-     * </code>
-     * object can be used to assign and unassign services containing dynamic
-     * attributes to this realm
+     * be passed. Also, AMIdentity object representing this realm can be
+     * used for services related operations only. This <code> AMIdentity
+     * </code> object can be used to assign and unassign services containing
+     * dynamic attributes to this realm.
      * 
      * @param type
      *            Type of object to be created
@@ -435,15 +439,17 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Deletes identities. The Set passed is a set of AMIdentity objects.
      * 
      * This method is only valid for:
      * 
+     * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
      * <li> {@link IdType#REALM IdType.REALM} </li>
      * <li> (@link IdType#USER IdType.USER} </li>
+     * </ol>
      * 
      * @param type
      *            Type of Identity to be deleted.
@@ -462,15 +468,17 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Deletes identities. The Set passed is a set of AMIdentity objects.
      * 
      * This method is only valid for:
-     * 
+     *
+     * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
      * <li> {@link IdType#REALM IdType.REALM} </li>
-     * <li> (@link IdType#USER IdType.USER} </li>
+     * <li> (@link IdType#USER  IdType.USER}  </li>
+     * </ol>
      * 
      * @param identities
      *            Set of AMIDentity objects to be deleted
@@ -514,7 +522,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Adds a listener, which should receive notifications for all changes that
      * occurred in this organization.
@@ -538,7 +546,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Removes listener as the application is no longer interested in receiving
      * notifications.
@@ -556,7 +564,7 @@ public final class AMIdentityRepository {
     }
 
     /**
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      * 
      * Clears the cache.
      */
