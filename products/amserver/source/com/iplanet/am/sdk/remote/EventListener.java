@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.5 2006-12-13 00:27:13 rarcot Exp $
+ * $Id: EventListener.java,v 1.6 2006-12-13 23:06:33 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -437,7 +437,7 @@ class EventListener {
                         sleep(sleepTime);
                     }
                     Object obj[] = { new Integer(pollingTime) };
-                    Set mods = (Set) client.send("objectsChanged", obj, null);
+                    Set mods = (Set) client.send("objectsChanged", obj, null, null);
                     if (debug.messageEnabled()) {
                         debug.message("EventListener:NotificationThread "
                                 + "retrived changes: " + mods);
@@ -449,7 +449,7 @@ class EventListener {
 
                     // Check for IdRepo changes
                     mods = (Set) client
-                            .send("objectsChanged_idrepo", obj, null);
+                            .send("objectsChanged_idrepo", obj, null, null);
                     if (debug.messageEnabled()) {
                         debug.message("EventListener:NotificationThread "
                                 + "retrived idrepo changes: " + mods);
