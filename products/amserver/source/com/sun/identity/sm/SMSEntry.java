@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.12 2006-12-13 23:41:49 veiming Exp $
+ * $Id: SMSEntry.java,v 1.13 2006-12-13 23:56:12 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.sm;
 
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -1671,8 +1672,10 @@ public class SMSEntry implements Cloneable {
                                     "SMSEntry.NotificationThread.run " + 
                                     "Sending to URL: " + surl);
                             }
-                            client.send("notifyObjectChanged", params, null, 
-                                null);
+                            client.send("notifyObjectChanged", params,
+                        	    Session.getLBCookie(
+                        	        adminSSOToken.getTokenID().toString()), 
+                        	        null);
                         } catch (Throwable t) {
                             if (eventDebug.warningEnabled()) {
                                 eventDebug.warning(
