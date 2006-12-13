@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.11 2006-12-13 00:27:16 rarcot Exp $
+ * $Id: SMSEntry.java,v 1.12 2006-12-13 23:41:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1671,7 +1671,8 @@ public class SMSEntry implements Cloneable {
                                     "SMSEntry.NotificationThread.run " + 
                                     "Sending to URL: " + surl);
                             }
-                            client.send("notifyObjectChanged", params, null);
+                            client.send("notifyObjectChanged", params, null, 
+                                null);
                         } catch (Throwable t) {
                             if (eventDebug.warningEnabled()) {
                                 eventDebug.warning(
