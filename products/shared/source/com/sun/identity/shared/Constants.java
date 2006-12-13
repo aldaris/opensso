@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.3 2006-11-29 05:36:54 veiming Exp $
+ * $Id: Constants.java,v 1.4 2006-12-13 20:53:50 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -950,4 +950,10 @@ public interface Constants {
      * authentication component should forward request.
      */
     String FORWARD_YES_VALUE = "yes";
+    
+    /**
+     * Attribute name for the load balancer cookie in the
+     * Naming Response.
+     */
+    public static final String NAMING_AM_LB_COOKIE = "am_load_balancer_cookie";
 }
