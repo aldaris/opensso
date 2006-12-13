@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.2 2006-12-05 21:56:18 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.3 2006-12-13 19:03:22 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -391,6 +391,14 @@ public class SPSingleLogout {
                     throw new SAML2Exception(
                         SAML2Utils.bundle.getString("invalidSignInResponse"));
             }
+            SPSSODescriptorElement spsso =
+                sm.getSPSSODescriptor(realm, spEntityID);
+            String loc = getSLOResponseLocationOrLocation(spsso); 
+            if (!SAML2Utils.verifyDestination(logoutRes.getDestination(),
+                loc)) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("invalidDestination"));
+            }    
         }
 
         String inResponseTo = logoutRes.getInResponseTo();
@@ -494,6 +502,14 @@ public class SPSingleLogout {
                     throw new SAML2Exception(
                         SAML2Utils.bundle.getString("invalidSignInRequest"));
             }
+            SPSSODescriptorElement spsso =
+                sm.getSPSSODescriptor(realm, spEntityID);
+            String loc = getSLOResponseLocationOrLocation(spsso);
+            if (!SAML2Utils.verifyDestination(logoutReq.getDestination(),
+                loc)) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("invalidDestination"));
+            } 
         }
         
         // get IDPSSODescriptor
@@ -550,7 +566,7 @@ public class SPSingleLogout {
         LogoutResponse logoutRes =
             processLogoutRequest(logoutReq, spEntityID, realm,
                                  request, response, false);
-
+        logoutRes.setDestination(location);
         LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState, 
                 realm, spEntityID, SAML2Constants.SP_ROLE, idpEntityID);
     }
@@ -902,4 +918,22 @@ public class SPSingleLogout {
         }
         return dest;
     }
+   
+    private static String getSLOResponseLocationOrLocation(
+        SPSSODescriptorElement spsso) {
+        String location = null;
+        if (spsso != null) {
+            List sloList = spsso.getSingleLogoutService();
+            if (sloList != null && !sloList.isEmpty()) {
+                location = LogoutUtil.getSLOResponseServiceLocation(
+                           sloList, SAML2Constants.HTTP_REDIRECT);
+                if (location == null || (location.length() == 0)) {
+                    location = LogoutUtil.getSLOServiceLocation(
+                          sloList, SAML2Constants.HTTP_REDIRECT);
+                }
+            }
+        }
+        return location;
+    }
 }
+

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
+ * $Id: SPSSOFederate.java,v 1.3 2006-12-13 19:03:22 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -233,7 +233,8 @@ public class SPSSOFederate {
         
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm,spEntityID,
-                    paramsMap,spConfigAttrsMap,extensionsList,spsso);
+                    paramsMap,spConfigAttrsMap,extensionsList,spsso,
+                    ssoURL);
                 
             String authReqXMLString = authnRequest.toXMLString(true,true);
         
@@ -353,13 +354,13 @@ public class SPSSOFederate {
     
     /* Create AuthnRequest */
     private static AuthnRequest createAuthnRequest(String realmName,
-                                             String spEntityID,
-                                             Map paramsMap,
-                                             Map spConfigMap,
-                                             List extensionsList,
-                                             SPSSODescriptorElement spsso
-                                            ) throws SAML2Exception {
-
+        String spEntityID,
+        Map paramsMap,
+        Map spConfigMap,
+        List extensionsList,
+        SPSSODescriptorElement spsso,
+        String ssourl
+        ) throws SAML2Exception {
         // generate unique request ID
         String requestID = SAML2Utils.generateID();
         if ((requestID == null) || (requestID.length() == 0)) {
@@ -398,8 +399,12 @@ public class SPSSOFederate {
                                                       paramsMap,spConfigMap);
          
          AuthnRequest authnReq = 
-                ProtocolFactory.getInstance().createAuthnRequest();
-         authnReq.setDestination(destinationURI);
+                ProtocolFactory.getInstance().createAuthnRequest();    
+         if ((destinationURI == null) || (destinationURI.length() == 0)) {
+             authnReq.setDestination(ssourl);
+         } else {
+             authnReq.setDestination(destinationURI);
+         }
          authnReq.setConsent(consent);
          authnReq.setIsPassive(isPassive);
          authnReq.setForceAuthn(isforceAuthn);
@@ -422,7 +427,7 @@ public class SPSSOFederate {
     }
 
     /* Returns the SingleSignOnService URL */
-    private static String getSSOURL(List ssoServiceList) {
+    static String getSSOURL(List ssoServiceList) {
          String ssoURL = null;
          String binding = SAML2Constants.HTTP_REDIRECT;
          if ((ssoServiceList != null) && (!ssoServiceList.isEmpty())) {
@@ -464,7 +469,7 @@ public class SPSSOFederate {
      * Returns an Ordered Set containing the AssertionConsumerServiceURL
      * and AssertionConsumerServiceIndex.
      */
-    private static OrderedSet getACSUrl(SPSSODescriptorElement spsso,
+    static OrderedSet getACSUrl(SPSSODescriptorElement spsso,
                                         String binding) {
         String responseBinding = binding;
         if ((binding != null) && (binding.length() > 0) &&

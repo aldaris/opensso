@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.1 2006-10-30 23:16:35 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,6 +91,7 @@ import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -554,7 +555,7 @@ public class IDPSSOUtil {
         Issuer issuer = AssertionFactory.getInstance().createIssuer();
         issuer.setValue(idpEntityID);
         res.setIssuer(issuer);
-
+        res.setDestination(acsURL); 
         return res;
     }
 
@@ -851,6 +852,14 @@ public class IDPSSOUtil {
             SAML2Utils.debug.message(classMethod +
                 "SessionIndex (in AuthnStatement) =" + sessionIndex);
         }
+        Set authContextSet = (HashSet)
+            IDPCache.authnContextCache.get(sessionIndex);
+        if (authContextSet == null || authContextSet.isEmpty()) {
+                authContextSet = new HashSet();
+        }
+        authContextSet.add(authnContext);
+        // cache the AuthContext to use in the case of session upgrade.
+        IDPCache.authnContextCache.put(sessionIndex,authContextSet);
         authnStatement.setSessionIndex(sessionIndex);
         return authnStatement;
     }

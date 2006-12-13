@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.2 2006-12-05 21:56:15 weisun2 Exp $
+ * $Id: SAML2Constants.java,v 1.3 2006-12-13 19:03:19 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -522,6 +522,11 @@ public interface SAML2Constants {
     public static final String RELAY_STATE="RelayState";
 
     /**
+     * RelayState Alias Parameter
+     */
+    public static final String RELAY_STATE_ALIAS="RelayStateAlias";
+
+    /**
      * Realm Parameter
      */
     public static final String REALM="realm";
@@ -839,6 +844,13 @@ public interface SAML2Constants {
 
     // IDP response info ID
     public static final String RES_INFO_ID = "resInfoID";
+     
+    // Default query parameter to use for RelayState if
+    // RelayState is no specified and if RelayState cannot
+    // be obtained from query parameters list specified in 
+    // RelayStateAlias 
+
+    public static final String GOTO = "goto";
     
     // Delimiter for values of multi-valued property set in SSO token
     public static final char DELIMITER = '|';

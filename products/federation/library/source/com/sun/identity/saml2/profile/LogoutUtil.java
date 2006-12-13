@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.1 2006-10-30 23:16:36 qcheng Exp $
+ * $Id: LogoutUtil.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -216,6 +216,9 @@ public class LogoutUtil {
             debug.message(classMethod +
                 "Recipient's single logout service location = " +
                 location);
+            if (destinationURI == null || (destinationURI.length() == 0)) { 
+                logoutReq.setDestination(location);
+            }  
         }
 
         if (debug.messageEnabled()) {

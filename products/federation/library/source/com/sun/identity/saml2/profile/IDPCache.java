@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.1 2006-10-30 23:16:34 qcheng Exp $
+ * $Id: IDPCache.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,10 @@
 
 package com.sun.identity.saml2.profile;
 
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class caches authn request objects and relay states
@@ -106,5 +109,28 @@ public class IDPCache {
      * IDP: used in SingleSignOnService and ArtifactResolutionService
      */
     public static Hashtable responseCache = new Hashtable();
+ 
+    /**
+     * Cache saves informate needed to determine the Authentication
+     * Context of the incoming request from Service Provider. 
+     * key   : sessionIndex (String)
+     * value : the AuthnContext object
+     */
+    public static Hashtable authnContextCache = new Hashtable();
 
+    /**
+     * Cache saves information to determine if the request was
+     * a session upgrade case. 
+     * key   : requestID (String)
+     * value : session upgrade (Boolean)
+     */
+    public static Set isSessionUpgradeCache =  
+        Collections.synchronizedSet(new HashSet());
+
+    /**
+     * Cache saves the IDP Session object before an session upgrade.
+     * key    : requestID (String)
+     * value  : IDPSession object.
+     */
+    public static Hashtable oldIDPSessionCache = new Hashtable();
 }

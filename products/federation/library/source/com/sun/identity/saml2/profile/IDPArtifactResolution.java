@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.1 2006-10-30 23:16:34 qcheng Exp $
+ * $Id: IDPArtifactResolution.java,v 1.2 2006-12-13 19:03:20 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
@@ -254,6 +255,10 @@ public class IDPArtifactResolution {
             return SAML2Utils.createSOAPFault(SAML2Constants.SERVER_FAULT, 
                 "metaDataError", null);
         }
+        OrderedSet acsSet = SPSSOFederate.getACSUrl(spSSODescriptor,
+            SAML2Constants.HTTP_ARTIFACT);
+        String acsURL = (String) acsSet.get(0);
+        String protocolBinding = (String)acsSet.get(1);
 
         String isArtifactResolveSigned = 
            SAML2Utils.getAttributeValueFromSSOConfig(
@@ -293,13 +298,13 @@ public class IDPArtifactResolution {
         String artStr = art.getArtifactValue();
         Response res = 
             (Response)IDPCache.responsesByArtifacts.remove(artStr);
+        String remoteArtURL = null; 
         if (res == null) {
-
             // in LB case, artifact may reside on the other server.
             String remoteServiceURL =
-                        SAML2Utils.getRemoteServiceURL(art.getMessageHandle());
+                 SAML2Utils.getRemoteServiceURL(art.getMessageHandle());
             if (remoteServiceURL != null) {
-                String remoteArtURL = remoteServiceURL +request.getRequestURI();
+                remoteArtURL = remoteServiceURL +request.getRequestURI();
                 try {
                     SOAPConnection con = SAML2Utils.scf.createConnection();
                     SOAPMessage resMsg = con.call(message, remoteArtURL);
@@ -352,7 +357,7 @@ public class IDPArtifactResolution {
         artResponse.setIssueInstant(new Date());
         artResponse.setAny(res.toXMLString(true,true));
         artResponse.setIssuer(issuer);
-
+        artResponse.setDestination(acsURL); 
         
         String wantArtifactResponseSigned = 
            SAML2Utils.getAttributeValueFromSSOConfig(

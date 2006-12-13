@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.1 2006-10-30 23:16:36 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
@@ -377,6 +378,25 @@ public class IDPSingleLogout {
                     throw new SAML2Exception(
                         SAML2Utils.bundle.getString("invalidSignInRequest"));
             }
+            IDPSSODescriptorElement idpsso =
+                sm.getIDPSSODescriptor(realm, idpEntityID);
+            String loc = null; 
+            if (idpsso != null) {
+                List sloList = idpsso.getSingleLogoutService();
+                if ((sloList != null) && (!sloList.isEmpty())) {
+                    loc = LogoutUtil.getSLOResponseServiceLocation(
+                          sloList, SAML2Constants.HTTP_REDIRECT);
+                    if ((loc == null) || (loc.length() == 0)) {
+                        loc = LogoutUtil.getSLOServiceLocation(
+                             sloList, SAML2Constants.HTTP_REDIRECT);
+                    }
+                }                   
+            }
+            if (!SAML2Utils.verifyDestination(logoutReq.getDestination(),
+                loc)) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("invalidDestination"));
+            }   
         }
 
         LogoutResponse logoutRes = processLogoutRequest(
@@ -437,7 +457,7 @@ public class IDPSingleLogout {
                     location);
             }
         }
-
+        logoutRes.setDestination(location); 
         LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState, 
                 realm, idpEntityID, SAML2Constants.IDP_ROLE, spEntityID);
     }
@@ -509,6 +529,25 @@ public class IDPSingleLogout {
                     throw new SAML2Exception(
                         SAML2Utils.bundle.getString("invalidSignInResponse"));
             }
+            IDPSSODescriptorElement idpsso =
+                sm.getIDPSSODescriptor(realm, idpEntityID);
+            String loc = null; 
+            if (idpsso != null) {
+                List sloList = idpsso.getSingleLogoutService();
+                if (sloList != null && !sloList.isEmpty()) {
+                     loc = LogoutUtil.getSLOResponseServiceLocation(
+                          sloList, SAML2Constants.HTTP_REDIRECT);
+                    if (loc == null || (loc.length() == 0)) {
+                        loc = LogoutUtil.getSLOServiceLocation(
+                             sloList, SAML2Constants.HTTP_REDIRECT);
+                    }
+                }
+            }
+            if (!SAML2Utils.verifyDestination(logoutRes.getDestination(),
+                loc)) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("invalidDestination"));
+            }  
         }
 
         // use the cache to figure out which session index is in question
@@ -643,6 +682,7 @@ public class IDPSingleLogout {
                           logoutRes.getIssuer().getValue());
             
             if (location != null && logoutRes != null) {
+                logoutRes.setDestination(location); 
                 LogoutUtil.sendSLOResponse(response, logoutRes, location, 
                     relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE, 
                     spEntityID);

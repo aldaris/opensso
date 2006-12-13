@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOInit.jsp,v 1.2 2006-12-05 21:55:51 weisun2 Exp $
+   $Id: idpSSOInit.jsp,v 1.3 2006-12-13 19:03:54 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -52,18 +52,25 @@
 
     3. RelayState	    Target URL on successful complete of SSO/Federation
 
-    4. NameIDFormat	    NameIDPolicy format Identifier Value.
-			    The supported values are :
+    4. RelayStateAlias	    Specify the parameter(s) to use as the RelayState.
+                            e.g. if the request URL has :
+                             ?TARGET=http://server:port/uri&RelayStateAlias=TARGET
+                            then the TARGET query parameter will be interpreted as
+                            RelayState and on successful completion of
+                            SSO/Federation user will be redirected to the TARGET URL.
+
+
+    5. NameIDFormat	    NameIDPolicy format Identifier Value.
+                            The supported values are :
 			        persistent
 			        transient
 
-    5. binding              URI value that identifies a SAML protocol binding to
+    6. binding              URI value that identifies a SAML protocol binding to
                             used when returning the Response message.
                             The supported values are :
                                 HTTP-Artifact
                                 HTTP-POST
-
-
+			  
 			    NOTE: There are other SAML defined values for these
 				  which are not supported by FM/AM.
 --%>
@@ -104,7 +111,7 @@
 	// get the nameIDPolicy
 	String nameIDFormat =
 		request.getParameter(SAML2Constants.NAMEID_POLICY_FORMAT);
-	String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+	String relayState = SAML2Utils.getRelayState(request);
 	IDPSSOUtil.doSSOFederate(request,response,null,spEntityID,
 				 metaAlias, nameIDFormat,relayState);
     } catch (SAML2Exception sse) {

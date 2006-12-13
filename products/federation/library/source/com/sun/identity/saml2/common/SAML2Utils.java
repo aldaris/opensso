@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.1 2006-10-30 23:16:15 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.2 2006-12-13 19:03:19 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1075,13 +1075,12 @@ public class SAML2Utils extends SAML2SDKUtils {
      */
     public static Map getParamsMap(HttpServletRequest request) {
         Map paramsMap = new HashMap();
-        String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+        String relayState = getRelayState(request);
         if (relayState != null) {
             List list = new ArrayList();
             list.add(relayState);
             paramsMap.put(SAML2Constants.RELAY_STATE,list);
-        }
-        
+        }       
         String isPassive = request.getParameter(SAML2Constants.ISPASSIVE);
         if (isPassive != null)  {
             List list = new ArrayList();
@@ -1169,6 +1168,12 @@ public class SAML2Utils extends SAML2SDKUtils {
                     authClassRefList);
         }
         
+        String authLevel = request.getParameter(SAML2Constants.AUTH_LEVEL);
+        if (authLevel != null && authLevel.length() > 0) {
+            List list = new ArrayList();
+            list.add(authLevel);
+            paramsMap.put(SAML2Constants.AUTH_LEVEL,list);
+        }
         return paramsMap;
     }
     
@@ -2676,5 +2681,64 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         return spAccountMapper;
     }
+   
+    /**
+     * Returns the URL to which redirection will happen after
+     * Single-Signon / Federation. This methods checks the 
+     * following parameters to determine the Relay State.
+     *     1. The "RelayState" query parameter in the request.
+     *     2. The "RelayStateAlias" query parameter in the
+     *        request which is used in the absence of the
+     *        RelayState parameter to determine which query parameter
+     *        to use if no "RelayState" query paramerter is present.
+     *     3. The "goto" query parameter if present is the default
+     *        RelayState in the absence of the above.
+     *
+     * @param request the <code>HttpServletRequest</code> object.
+     * @return the value of the URL to which to redirect on 
+     *         successful Single-SignOn  / Federation.
+     */
+    public static String getRelayState(HttpServletRequest request) {
+       String relayState =
+               (String)request.getParameter(SAML2Constants.RELAY_STATE);
+       if ( (relayState == null) || (relayState.length() == 0)) {
+           String relayStateAlias =
+               request.getParameter(SAML2Constants.RELAY_STATE_ALIAS);
+           if (relayStateAlias != null && relayStateAlias.length() > 0) {
+               StringTokenizer st = 
+                      new StringTokenizer(relayStateAlias,"|");
+               while (st.hasMoreTokens()) {
+                   String tmp = (String) st.nextToken();
+                   relayState = (String)request.getParameter(tmp);
+                   if (relayState != null && relayState.length() > 0) {
+                       break;
+                   }
+               }
+           }
+           if (relayState == null) {
+               // check if goto parameter is there.
+               relayState = (String)request.getParameter(SAML2Constants.GOTO);
+           }
+       }
+       return relayState;
+    }
     
+    /**
+     * Compares the destination and location
+     * @param destination Destination
+     * @param location the URL from the meta
+     * @return <code>true</code> if the input are the same, 
+     *         otherwise, return <code>false</code>
+     */
+    public static boolean verifyDestination(String destination, 
+        String location) {
+        /* Note: 
+        Here we assume there is one endpoint per protocol. In future,
+        we may support more than one endpoint per protocol. The caller 
+        code should change accordingly. 
+        */
+        return ((location != null) && (location.length() != 0) &&
+            (destination != null) && (destination.length() != 0) &&
+            (location.equalsIgnoreCase(destination)));  
+    }    
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.3 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,9 @@ package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.common.QuerySignatureUtil;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
@@ -41,12 +43,15 @@ import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.plugins.IDPAuthnContextInfo;
 import com.sun.identity.saml2.plugins.IDPAuthnContextMapper;
 import com.sun.identity.saml2.protocol.AuthnRequest;
+import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -228,6 +233,20 @@ public class IDPSSOFederate {
                                 "invalidSignInRequest"));
                         return;
                     }
+                    // verify Destination
+                    List ssoServiceList =
+                         idpSSODescriptor.getSingleSignOnService();
+                    String ssoURL = SPSSOFederate.getSSOURL(ssoServiceList);
+                    if (!SAML2Utils.verifyDestination(
+                        authnReq.getDestination(),
+                        ssoURL)) {
+                        SAML2Utils.debug.error(classMethod +
+                            "authn request destination verification failed.");
+                        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                            SAML2Utils.bundle.getString(
+                            "invalidDestination"));
+                        return;
+                    }
                 } catch (SAML2Exception se) {
                     SAML2Utils.debug.error(classMethod +
                         "authn request verification failed.", se);
@@ -315,9 +334,68 @@ public class IDPSSOFederate {
                 } 
                 return;
             } else {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod + 
+                        "Session is valid");
+                }
+                RequestedAuthnContext requestAuthnContext =
+                                   authnReq.getRequestedAuthnContext();
+                boolean sessionUpgrade = true;
+                IDPSession oldIDPSession = null;
+                String sessionIndex = null;
+                sessionIndex = IDPSSOUtil.getSessionIndex(session);
+                sessionUpgrade =
+                    isSessionUpgrade(requestAuthnContext,sessionIndex);
+                 
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod +
+                               "Session Upgrade is :" + sessionUpgrade);
+                }
+                if (sessionUpgrade) {
+                    // Save the original IDP Session
+                    oldIDPSession = (IDPSession) 
+                            IDPCache.idpSessionsByIndices.get(sessionIndex); 
+                    IDPCache.oldIDPSessionCache.put(reqID,oldIDPSession);
+                    // Save the new requestId and AuthnRequest
+                    IDPCache.authnRequestCache.put(reqID, 
+                        new CacheObject(authnReq));
+                    // save if the request was an Session Upgrade case.
+                    IDPCache.isSessionUpgradeCache.add(reqID);
+                    // redirect to the authentication service
+
+                    // save the relay state in the IDPCache so that it can be
+                    // retrieved later when the user successfully
+                    // authenticates
+                    if ((relayState != null) &&
+                        (relayState.trim().length() != 0)) {
+                        IDPCache.relayStateCache.put(reqID, relayState);
+                    }
+
+                    try {
+                         redirectAuthentication(request, response, authnReq,
+                                                reqID, realm, idpEntityID);
+                         return;
+                    } catch (IOException ioe) {
+                        SAML2Utils.debug.error(classMethod +
+                             "Unable to redirect to authentication.", ioe);
+                        SAML2Utils.bundle.getString("UnableToRedirectToAuth");
+                        sessionUpgrade = false;
+                        cleanUpCache(reqID);
+                    } catch (SAML2Exception se) {
+                       SAML2Utils.debug.error(classMethod +
+                        "Unable to redirect to authentication.", se);
+                       SAML2Utils.bundle.getString("UnableToRedirectToAuth");
+                       sessionUpgrade = false;
+                       cleanUpCache(reqID);
+                    }
+                } 
+                // comes here if either no session upgrade or error
+                // redirecting to authentication url.
                 // generate assertion response
-                sendResponseToACS(
-                    request, response, authnReq, idpMetaAlias, relayState);
+                if (!sessionUpgrade) {
+                     sendResponseToACS(request,response,authnReq,
+                                       idpMetaAlias,relayState);
+                }
             }
         } else {
             // the second visit, the user has already authenticated
@@ -338,15 +416,35 @@ public class IDPSSOFederate {
                 return;
             }
             if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(
-                    classMethod + "RequestID=" + reqID);
+                SAML2Utils.debug.message(classMethod + "RequestID=" + reqID);
             }
+            boolean isSessionUpgrade = false;
+
+            if (IDPCache.isSessionUpgradeCache != null 
+                && !IDPCache.isSessionUpgradeCache.isEmpty()) {
+                if (IDPCache.isSessionUpgradeCache.contains(reqID)) {
+                    isSessionUpgrade =  true;
+                }
+            }
+            if (isSessionUpgrade) {
+                 IDPSession oldSess = 
+                     (IDPSession)IDPCache.oldIDPSessionCache.remove(reqID);
+                 SessionProvider sessionProvider =
+                     SessionManager.getProvider();
+                 session = sessionProvider.getSession(request);
+                 String sessionIndex = IDPSSOUtil.getSessionIndex(session);
+                 if (sessionIndex != null && (sessionIndex.length() != 0 )) { 
+                     IDPCache.idpSessionsByIndices.put(sessionIndex,oldSess);
+                 }
+            } 
             // generate assertion response
             sendResponseToACS(
                 request, response, authnReq, idpMetaAlias, relayState);
         }
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + "I/O rrror", ioe);
+        } catch (SessionException sso) {
+            SAML2Utils.debug.error("SSOException : " , sso);
         }
     }
 
@@ -470,5 +568,109 @@ public class IDPSSOFederate {
         //       if not, redirect
         response.sendRedirect(newURL.toString());
         return;
+    }
+    
+       /**
+     * Iterates through the RequestedAuthnContext from Service Provider and
+     * check if user has already authenticated with the same AuthnContext.
+     * If RequestAuthnContext is not found in the authenticated AuthnContext
+     * then session upgrade will be done .
+     *
+     * @param requestAuthnContext the <code>RequestAuthnContext</code> object.
+     * @param sessionIndex the Session Index of the active session.
+     * @return true if the requester requires to reauthenticate
+     */
+    private static boolean isSessionUpgrade(
+                               RequestedAuthnContext requestAuthnContext,
+                               String sessionIndex) {
+        String classMethod = "IDPSSOFederate.isSessionUpgrade: ";
+
+        if (sessionIndex == null) {
+            return false;
+        }
+
+        boolean sessionUpgrade=true;
+        if (requestAuthnContext != null) {
+            // Get the AuthContext 
+            Set authContextSet = 
+                (HashSet) IDPCache.authnContextCache.remove(sessionIndex);
+            if (authContextSet != null && !authContextSet.isEmpty()) {
+                Iterator authCtxIterator = authContextSet.iterator();
+                List authnCtxRefList = 
+                    requestAuthnContext.getAuthnContextClassRef();
+                if (authnCtxRefList != null &&  !authnCtxRefList.isEmpty()){
+                    Iterator i = authnCtxRefList.iterator();
+                    while (i.hasNext()) {
+                        String authClass = (String)i.next();
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(classMethod 
+                                        + "SP authClassReference: " 
+                                        + authClass);
+                        }
+                        while (authCtxIterator.hasNext()) {
+                            AuthnContext authnContext = 
+                                  (AuthnContext)authCtxIterator.next();
+                            String origAuthnCtxClassRef = 
+                                  authnContext.getAuthnContextClassRef();
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message(classMethod 
+                                  +  "SP Original authClassReference: "
+                                  + origAuthnCtxClassRef);
+                            }
+                            if (authClass != null && 
+                                authClass.equals(origAuthnCtxClassRef)) {
+                                sessionUpgrade = false;
+                                break;
+                            }
+                         }
+                     }
+                 } else { 
+                     List authnCtxDeclRef = 
+                         requestAuthnContext.getAuthnContextDeclRef();
+                     if (authnCtxDeclRef != null && 
+                                   !authnCtxDeclRef.isEmpty()) {
+                         Iterator i = authnCtxDeclRef.iterator();
+                         while(i.hasNext()) {
+                             String authClass = (String)i.next();
+                             if (SAML2Utils.debug.messageEnabled()) {
+                                 SAML2Utils.debug.message(classMethod +
+                                     "authDeclReference from SP is :" + 
+                                      authClass);
+                             }
+                             while (authCtxIterator.hasNext()) {
+                                 AuthnContext authnContext = 
+                                     (AuthnContext)authCtxIterator.next();
+                                 String origDeclRef = 
+                                     authnContext.getAuthnContextDeclRef();
+                                 if (SAML2Utils.debug.messageEnabled()) {
+                                     SAML2Utils.debug.message(classMethod 
+                                     +"Original authDeclRef from  SP is : " 
+                                     + origDeclRef);
+                                 }
+                                 if ((authClass != null) 
+                                     && (authClass.equals(origDeclRef))) {
+                                     sessionUpgrade=false;
+                                     break;
+                                 }
+                             }
+                          }
+                      }
+                 }
+            } else {
+                // no authcontext to compare with 
+                // so no session upgrade.
+                 sessionUpgrade=false;
+            }
+         }
+         return sessionUpgrade;
+    }
+
+    /**
+     * clean up the cache created for session upgrade.
+     */
+    private static void cleanUpCache(String reqID) {
+        IDPCache.oldIDPSessionCache.remove(reqID);
+        IDPCache.authnRequestCache.remove(reqID);
+        IDPCache.isSessionUpgradeCache.remove(reqID); 
     }
 }

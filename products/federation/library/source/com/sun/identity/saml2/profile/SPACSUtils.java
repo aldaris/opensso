@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.3 2006-12-13 19:03:21 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -883,7 +883,7 @@ public class SPACSUtils {
         // return error code for local user login
         if ((userName == null) || (userName.length() == 0)) {
             throw new SAML2Exception(
-		SAML2Utils.bundle.getString("noUserMapping"));
+                SAML2Utils.bundle.getString("noUserMapping"));
         }
         
         boolean isFedInfoExists =

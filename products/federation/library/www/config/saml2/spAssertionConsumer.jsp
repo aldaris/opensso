@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.1 2006-10-30 23:17:22 qcheng Exp $
+   $Id: spAssertionConsumer.jsp,v 1.2 2006-12-13 19:03:54 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -236,7 +236,7 @@ com.sun.identity.plugin.session.SessionException
     } else {
         realRedirectUrl = finalUrl;
     }
-    if (realRedirectUrl == null || redirectUrl.length() == 0) {
+    if (realRedirectUrl == null || (realRedirectUrl.trim().length() == 0)) {
         %>
         <jsp:forward page="/saml2/jsp/default.jsp?message=ssoSuccess" />
         <%

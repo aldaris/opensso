@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
+   $Id: spSSOInit.jsp,v 1.3 2006-12-13 19:03:54 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -58,28 +58,35 @@
 
     3. RelayState	    Target URL on successful complete of SSO/Federation
 
-    4. NameIDFormat	    NameIDPolicy format Identifier Value.
+     4. RelayStateAlias      Specify the parameter(s) to use as the RelayState.
+                            e.g. if the request URL has :
+                             ?TARGET=http://server:port/uri&RelayStateAlias=TARGET
+                            then the TARGET query parameter will be interpreted as
+                            RelayState and on successful completion of 
+                            SSO/Federation user will be redirected to the TARGET URL.
+
+    5. NameIDFormat	    NameIDPolicy format Identifier Value.
 			    The supported values are :
 			    	persistent
 			    	transient
 
 			    NOTE: There are other SAML defined values for these
 				  which are not supported by FM/AM.
-
-    5. binding		    URI value that identifies a SAML protocol binding to
+		    
+    6. binding		    URI value that identifies a SAML protocol binding to
 			    used when returning the Response message.
 
 			    The supported values are :
 				HTTP-Artifact
 				HTTP-POST
 
-    6. AssertionConsumerServiceIndex
+    7. AssertionConsumerServiceIndex 
 			    An integer number indicating the location
 			    to which the Response message should be returned to
 			    the requester.
 
 
-    7. AttributeConsumingServiceIndex
+    8. AttributeConsumingServiceIndex
 			    Indirectly specifies information associated
 			    with the requester describing the SAML attributes
 			    the requester desires or requires to be supplied
@@ -88,16 +95,16 @@
 			    Note: This parameter may not be supported for
 			    this release.
 
-    8. isPassive	    true or false value indicating whether the IDP
+    9. isPassive	    true or false value indicating whether the IDP 
 			    should authenticate passively.
 
-    9. ForceAuthN	    true or false value indicating if IDP must
+    10. ForceAuthN	    true or false value indicating if IDP must
 			    force authentication OR false if IDP can rely on
 			    reusing existing security contexts.
 
 			    true - force authentication
 
-    10.AllowCreate	    Value indicates if IDP is allowed to created a new
+    11.AllowCreate	    Value indicates if IDP is allowed to created a new
 			    identifier for the principal if it does not exist.
 			    Value of this parameter can be true OR false.
 
@@ -114,7 +121,10 @@
 			    The value is a pipe separated value with multiple
 			    references.
 
-    15.AuthComparison       The comparison method used to evaluate the
+    15 AuthLevel            The Authentication Level of the Authentication
+                            Context to use for Authentication. 
+
+    16.AuthComparison       The comparison method used to evaluate the
 			    requested context classes or statements.
 			    Allowed values are :
 				exact
@@ -122,13 +132,12 @@
 				maximum
 				better
 
-    16.Consent		    Specifies a URI a SAML defined identifier
+    17.Consent		    Specifies a URI a SAML defined identifier 
 			    known as Consent Identifiers.These are defined in
 			    the SAML 2 Assertions and Protocols Document.
 
 			    Note: This parameter may not be supported for
 			    this release.
-
 --%>
 <html>
 

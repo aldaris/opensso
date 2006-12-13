@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
+ * $Id: DoManageNameID.java,v 1.3 2006-12-13 19:03:20 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,6 +217,7 @@ public class DoManageNameID {
 
             String relayState = SAML2Utils.getParameter(paramsMap,
                              SAML2Constants.RELAY_STATE);
+            mniRequest.setDestination(mniURL); 
             saveMNIRequestInfo(request, response, paramsMap, 
                         mniRequest, relayState, hostEntityRole);
 
@@ -377,8 +378,9 @@ public class DoManageNameID {
     }
 
     private static boolean verifyMNIRequest(ManageNameIDRequest mniRequest, 
-                                         String realm, String remoteEntity, 
-                                    String hostEntity, String hostEntityRole)
+        String realm, String remoteEntity, 
+        String hostEntity, String hostEntityRole,
+        String destination)
         throws SAML2Exception, SessionException {
         String method = "verifyMNIRequest : ";
         if (debug.messageEnabled()) {
@@ -388,8 +390,8 @@ public class DoManageNameID {
         }
         
         boolean needVerifySignature = 
-                SAML2Utils.getWantMNIRequestSigned(realm, hostEntity, 
-                           hostEntityRole);
+            SAML2Utils.getWantMNIRequestSigned(realm, hostEntity, 
+            hostEntityRole);
         
         if (needVerifySignature == false) {
             if (debug.messageEnabled()) {
@@ -492,8 +494,9 @@ public class DoManageNameID {
     }
 
     private static boolean verifyMNIResponse(ManageNameIDResponse mniResponse, 
-                                            String realm, String remoteEntity, 
-                                     String hostEntity, String hostEntityRole) 
+        String realm, String remoteEntity, 
+        String hostEntity, String hostEntityRole,
+        String destination) 
         throws SAML2Exception, SessionException {
         String method = "verifyMNIResponse : ";
         if (debug.messageEnabled()) {
@@ -654,27 +657,22 @@ public class DoManageNameID {
         
         try {
             ManageNameIDServiceElement mniService =
-                    getMNIServiceElement(realm, remoteEntityID, 
-                                 hostRole, SAML2Constants.HTTP_REDIRECT);
-            
-            ManageNameIDResponse mniResponse = processManageNameIDRequest(
-                            mniRequest,
-                            metaAlias,
-                            remoteEntityID,
-                            paramsMap);
-            
+                getMNIServiceElement(realm, remoteEntityID, 
+                hostRole, SAML2Constants.HTTP_REDIRECT);
             String mniURL = mniService.getResponseLocation();
-            
+            ManageNameIDResponse mniResponse = processManageNameIDRequest(
+                mniRequest, metaAlias, remoteEntityID,
+                paramsMap, mniURL);
             sendMNIResponse(response, mniResponse, mniURL, relayState, realm, 
-                            hostEntity, hostRole, remoteEntityID);        
+                hostEntity, hostRole, remoteEntityID);        
         } catch (SAML2MetaException e) {
             logError("metaDataError", LogUtil.METADATA_ERROR, null);
             throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("metaDataError"));            
+                SAML2Utils.bundle.getString("metaDataError"));            
         } catch (SessionException e) {
             logError("invalidSSOToken", LogUtil.INVALID_SSOTOKEN, null);
             throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("invalidSSOToken"));       
+                SAML2Utils.bundle.getString("invalidSSOToken"));       
         }
     }
 
@@ -732,8 +730,9 @@ public class DoManageNameID {
             debug.message(method + "Remote EntityID is : " + remoteEntityID);
         }
             
+        String dest = mniRequest.getDestination();     
         boolean valid = verifyMNIRequest(mniRequest, realm, remoteEntityID, 
-                            hostEntity, hostEntityRole);
+            hostEntity, hostEntityRole, dest);
         if (valid == false)  {
             logError("invalidSignInRequest", 
                          LogUtil.MNI_REQUEST_INVALID_SIGNATURE, metaAlias);
@@ -742,13 +741,11 @@ public class DoManageNameID {
         }
         
         ManageNameIDResponse mniResponse = processManageNameIDRequest(
-                        mniRequest,
-                        metaAlias,
-                        remoteEntityID,
-                        paramsMap);
+            mniRequest, metaAlias, remoteEntityID,
+            paramsMap, null);
         
         signMNIResponse(mniResponse, realm, hostEntity, 
-                        hostEntityRole, remoteEntityID);
+            hostEntityRole, remoteEntityID);
 
         SOAPMessage reply = SAML2Utils.createSOAPMessage(
             mniResponse.toXMLString(true, true));
@@ -861,10 +858,11 @@ public class DoManageNameID {
         return success;
     }
     private static ManageNameIDResponse processManageNameIDRequest(
-                                       ManageNameIDRequest mniRequest,
-                                       String metaAlias,
-                                       String remoteEntityID,
-                                       Map paramsMap) {
+        ManageNameIDRequest mniRequest,
+        String metaAlias,
+        String remoteEntityID,
+        Map paramsMap,
+        String destination) {
         String method = "processManageNameIDRequest: ";
         Status status = null;
         SPAccountMapper spAcctMapper = null;
@@ -943,7 +941,10 @@ public class DoManageNameID {
             mniResponse.setInResponseTo(mniRequest.getID());
             mniResponse.setVersion(SAML2Constants.VERSION_2_0);
             mniResponse.setIssueInstant(new Date());
-            mniResponse.setIssuer(SAML2Utils.createIssuer(hostEntityID));
+            mniResponse.setIssuer(SAML2Utils.createIssuer(hostEntityID)); 
+            if (destination != null && (destination.length() != 0)) {
+                mniResponse.setDestination(destination);
+            }
         } catch (SAML2Exception e) {
             debug.error("Error : ", e);
         }
@@ -973,15 +974,16 @@ public class DoManageNameID {
                                           .append(encodedXML);
                 
             if (relayState != null && relayState.length() > 0 
-                                && relayState.getBytes("UTF-8").length <= 80) {
+                && relayState.getBytes("UTF-8").length <= 80) {
                 queryString.append("&").append(SAML2Constants.RELAY_STATE)
                            .append("=").append(URLEncDec.encode(relayState));
             }
             if (debug.messageEnabled()) {
-                debug.message(method + "MNI Response is : " + mniResXMLString);
+                debug.message(method + "MNI Response is : " +
+                    mniResXMLString);
                 debug.message(method + "Relay State is : " + relayState);
             }
-                
+            mniResponse.setDestination(mniURL);    
             boolean needToSign = false; 
             if (hostEntityRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
                 needToSign = 
@@ -1194,11 +1196,11 @@ public class DoManageNameID {
                 Issuer resIssuer = mniResponse.getIssuer();
                 String requestId = mniResponse.getInResponseTo();
             SAML2Utils.verifyResponseIssuer(
-                            realm, hostEntity, resIssuer, requestId);
+                realm, hostEntity, resIssuer, requestId);
                     
-            boolean validSign = 
-                    verifyMNIResponse(mniResponse, realm, remoteEntityID, 
-                                        hostEntity, hostRole);
+            boolean validSign = verifyMNIResponse(mniResponse, realm,
+                remoteEntityID, hostEntity,
+                hostRole, mniResponse.getDestination());
             if (validSign == false) {
                 logError("invalidSignInResponse", 
                          LogUtil.CANNOT_INSTANTIATE_MNI_RESPONSE , null);
