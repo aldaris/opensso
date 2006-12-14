@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.5 2006-08-25 21:21:25 veiming Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.6 2006-12-14 00:59:03 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,9 @@ class OrganizationConfigManagerImpl {
     // Instance variables
     private String orgDN;
 
-    private CachedSubEntries subEntries = null;
+    private CachedSubEntries subEntries;
+    
+    private CachedSMSEntry smsEntry;
 
     // Pointer to schema changes listeners
     private HashMap listenerObjects;
@@ -64,8 +66,9 @@ class OrganizationConfigManagerImpl {
      * used to perform read operations. It is assumed that the application
      * calling this constructor should authenticate the user.
      */
-    private OrganizationConfigManagerImpl(String orgDN, SSOToken token)
-            throws SMSException {
+    private OrganizationConfigManagerImpl(CachedSMSEntry entry,
+        String orgDN, SSOToken token) throws SMSException {
+        this.smsEntry = entry;
         this.orgDN = orgDN;
 
         // Initialize instance variables
@@ -343,6 +346,20 @@ class OrganizationConfigManagerImpl {
             answer = getFromCache(orgDN, token);
         }
         if ((answer != null) && ServiceManager.isRealmEnabled()) {
+            // If in co-exist mode, SMS will not get updates for org
+            // hence have to update the cEntry
+            if (ServiceManager.isCoexistenceMode()) {
+                answer.smsEntry.update();
+            }
+            if (answer.smsEntry.isNewEntry()) {
+                if (debug.messageEnabled()) {
+                    debug.message("OrganizationConfigManagerImpl::getInstance" +
+                        " called with non-existent realm: " + orgName);
+                }
+                String args[] = { orgName };
+                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-REALM_NAME_NOT_FOUND", args));
+            }
             return (answer);
         }
 
@@ -371,7 +388,7 @@ class OrganizationConfigManagerImpl {
         }
 
         // Not in cache, construct the entry and add to cache
-        answer = new OrganizationConfigManagerImpl(orgDN, token);
+        answer = new OrganizationConfigManagerImpl(cEntry, orgDN, token);
         synchronized(configMgrMutex) {
             // Check the cache again
             OrganizationConfigManagerImpl tmp;
