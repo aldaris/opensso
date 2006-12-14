@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.3 2006-12-13 20:54:49 beomsuk Exp $
+ * $Id: SOAPClient.java,v 1.4 2006-12-14 00:02:35 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -254,6 +254,19 @@ public class SOAPClient {
         return (in_buf);
     }
     
+    /**
+     * Performs a JAXRPC method call. The parameter <code>
+     * functionName</code>
+     * is the JAXRPC function to be called with parameters <code>params</code>.
+     * Returns an object on success, else throws an <code>Exception
+     * </code>.
+     */
+    public synchronized Object send(String functionName, Object params[],
+         String cookies) throws Exception {
+        return (send(encodeMessage(functionName, params), (String)null, 
+        		cookies));
+    }
+
     /**
      * Performs a JAXRPC method call. The parameter <code>
      * functionName</code>
