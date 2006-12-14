@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManagerClient.java,v 1.1 2006-10-30 23:17:00 qcheng Exp $
+ * $Id: LibertyManagerClient.java,v 1.2 2006-12-14 18:40:20 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public final class LibertyManagerClient {
 
             String[] objs = { tokenID, hostProviderID }; 
             String resourceOffering = (String)client.send(
-                "getDiscoveryResourceOffering", objs, null);
+                "getDiscoveryResourceOffering", objs, null, null);
 
             if ((resourceOffering == null) || (resourceOffering.length() == 0))
             {
@@ -152,7 +152,7 @@ public final class LibertyManagerClient {
 
             String[] objs = { tokenID, hostProviderID };
             String credential = (String)client.send(
-                "getDiscoveryServiceCredential", objs, null);
+                "getDiscoveryServiceCredential", objs, null, null);
  
             if ((credential == null) || (credential.length() == 0)) {
                 if (FSUtils.debug.messageEnabled()) {

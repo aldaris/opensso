@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLClient.java,v 1.1 2006-10-30 23:15:33 qcheng Exp $
+ * $Id: SAMLClient.java,v 1.2 2006-12-14 18:40:19 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -778,7 +778,7 @@ public class SAMLClient {
             // SOAPMessage  reply = con.call(msg, urlEndpoint); 
             String[] urls = { urlEndpoint };
             SOAPClient client = new SOAPClient(urls);
-            InputStream inbuf = client.call(xmlString, null);
+            InputStream inbuf = client.call(xmlString, null, null);
             StringBuffer reply = new StringBuffer();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(

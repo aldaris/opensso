@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.3 2006-12-14 18:40:19 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -277,7 +277,7 @@ public final class SecurityTokenManagerClient {
         } else {
             try {
                 Object[] obj = {certAlias, Boolean.TRUE};
-                stub.send("setCertificate", obj, ssoToken);
+                stub.send("setCertificate", obj, null, ssoToken);
                 isCertificateSet = true;
 	    } catch (Exception e) {
 		if (SecurityTokenManager.debug.warningEnabled()) {
@@ -306,7 +306,7 @@ public final class SecurityTokenManagerClient {
 	    try {
 		String certString = Base64.encode(cert.getEncoded());
                 Object[] obj = {certString, Boolean.FALSE};
-                stub.send("setCertificate", obj, ssoToken);
+                stub.send("setCertificate", obj, null, ssoToken);
                 isCertificateSet = true;
 	    } catch (Exception e) {
 		if (SecurityTokenManager.debug.warningEnabled()) {
@@ -441,7 +441,7 @@ public final class SecurityTokenManagerClient {
                 Boolean.valueOf(includeAuthN),
                 Boolean.valueOf(includeResourceAccessStatement)};
             String assertion = (String) stub.send("getSAMLAuthorizationToken",
-                obj, ssoToken);
+                obj, null, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,
 		    SecurityTokenManager.debug).getDocumentElement()));
 	} catch (Exception e) {
@@ -510,7 +510,7 @@ public final class SecurityTokenManagerClient {
                 Boolean.valueOf(includeAuthN),
                 Boolean.valueOf(includeResourceAccessStatement)};
             assertion = (String) stub.send("getSAMLAuthorizationToken",
-                obj, ssoToken);
+                obj, null, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,
                     SecurityTokenManager.debug).getDocumentElement()));
         } catch (Exception e) {

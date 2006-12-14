@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerClient.java,v 1.1 2006-10-30 23:14:19 qcheng Exp $
+ * $Id: FSAssertionManagerClient.java,v 1.2 2006-12-14 18:40:18 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -185,7 +185,7 @@ public final class FSAssertionManagerClient {
         try {
             Object[] obj = {hostedEntityId, artifact.getAssertionArtifact(),
                 Base64.encode(SAMLUtils.stringToByteArray(destID))};
-            assertion = (String) stub.send("getAssertion", obj, null); 
+            assertion = (String) stub.send("getAssertion", obj, null, null); 
             if (assertion == null && FSUtils.debug.messageEnabled()) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("AMC:getAssertion(" + artifact + 
@@ -239,7 +239,8 @@ public final class FSAssertionManagerClient {
         String providerId = null;
         try {
             Object[] obj = {hostedEntityId, artifact.getAssertionArtifact()};
-            providerId = (String) stub.send("getDestIdForArtifact", obj, null); 
+            providerId = (String) stub.send("getDestIdForArtifact", obj, 
+            		null, null); 
             if (providerId == null && FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(
                     "AMC:getDestIdForArtifact(" + artifact +
@@ -285,7 +286,8 @@ public final class FSAssertionManagerClient {
     {
         try {
             Object[] obj = {userDN, hostedEntityId};
-            Boolean ret = (Boolean) stub.send("isUserExists", obj, null);
+            Boolean ret = (Boolean) stub.send("isUserExists", obj, null,
+            		null);
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("AMC:isUserExists(" + userDN + ")"
                     + " returned " + ret);
