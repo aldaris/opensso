@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.7 2006-08-25 21:19:21 veiming Exp $
+ * $Id: AMStoreConnection.java,v 1.8 2006-12-15 00:24:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,14 +143,12 @@ public final class AMStoreConnection implements AMConstants {
     static {
         // This initialization probably should be a method call so that we can
         // throw an exception if root suffix is incorrect or not specified
-        rootSuffix = (new DN(SMSEntry.getRootSuffix()).toRFCString()
-                .toLowerCase());
+        defaultOrg = rootSuffix = 
+            com.sun.identity.common.DNUtils.normalizeDN(
+                SMSEntry.getAMSdkBaseDN());
         if (debug.messageEnabled()) {
             debug.message("com.iplanet.am.rootsuffix " + rootSuffix);
         }
-
-        defaultOrg = SystemProperties.get("com.iplanet.am.defaultOrg") + ","
-                + rootSuffix;
 
         if (debug.messageEnabled()) {
             debug.message("default org: " + defaultOrg);

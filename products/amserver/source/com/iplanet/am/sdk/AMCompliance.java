@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCompliance.java,v 1.3 2006-08-25 21:19:16 veiming Exp $
+ * $Id: AMCompliance.java,v 1.4 2006-12-15 00:24:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,8 +79,7 @@ class AMCompliance implements AMConstants {
      * Method to intialize all the AMCompliance class static variables
      */
     protected static void init() {
-        rootSuffix = (new DN(SMSEntry.getRootSuffix()).toRFCString()
-                .toLowerCase());
+        rootSuffix = AMStoreConnection.rootSuffix;
         if (rootSuffix == null || rootSuffix == "") {
             debug.error("com.iplanet.am.rootsuffix property value "
                     + "should not be null");
@@ -180,7 +179,7 @@ class AMCompliance implements AMConstants {
             return true;
         }
 
-        DN rootDN = new DN(AMStoreConnection.rootSuffix);
+        DN rootDN = new DN(rootSuffix);
         DN objectDN = new DN(objDN);
         if (rootDN.equals(objectDN) || rootDN.equals(objectDN.getParent())) {
             return true;
