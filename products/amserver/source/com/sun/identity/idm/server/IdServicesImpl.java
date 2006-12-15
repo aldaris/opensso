@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.11 2006-12-13 00:27:15 rarcot Exp $
+ * $Id: IdServicesImpl.java,v 1.12 2006-12-15 21:31:07 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1278,7 +1278,10 @@ public class IdServicesImpl implements IdServices {
             String p = IdConstants.SPECIAL_PLUGIN;
             IdRepo pClass = null;
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(p);
+                Object o = idRepoMap.get(p);
+                if (o instanceof IdRepo) {
+                    pClass = (IdRepo) o;
+                }
             }
             if (pClass == null) {
                 try {
@@ -2109,7 +2112,10 @@ public class IdServicesImpl implements IdServices {
             IdRepo pClass = null;
 
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(p);
+                Object o = idRepoMap.get(p);
+                if (o instanceof IdRepo) {
+                    pClass = (IdRepo) o;
+                }
             }
             if (pClass == null) {
                 try {
@@ -2146,7 +2152,10 @@ public class IdServicesImpl implements IdServices {
             String cacheKey = orgName + ":" + IdConstants.AMSDK_PLUGIN_NAME;
             IdRepo pClass = null;
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(cacheKey);
+                Object o = idRepoMap.get(cacheKey);
+                if (o instanceof IdRepo) {
+                    pClass = (IdRepo) o;
+                }
             }
             if (pClass == null) {
                 Map amsdkConfig = new HashMap();
@@ -2293,7 +2302,10 @@ public class IdServicesImpl implements IdServices {
             String p = IdConstants.SPECIAL_PLUGIN;
             IdRepo pClass = null;
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(p);
+                Object o = idRepoMap.get(p);
+                if (o instanceof IdRepo) {
+                    pClass = (IdRepo) o;
+                }
             }
             if (pClass == null) {
                 try {
@@ -2335,7 +2347,10 @@ public class IdServicesImpl implements IdServices {
             String cacheKey = orgName + ":amSDK";
             IdRepo pClass = null;
             synchronized (idRepoMap) {
-                pClass = (IdRepo) idRepoMap.get(cacheKey);
+                Object o = idRepoMap.get(cacheKey);
+                if (o instanceof IdRepo) {
+                    pClass = (IdRepo) o;
+                }
             }
             if (pClass == null) {
                 Map amsdkConfig = new HashMap();
@@ -2373,7 +2388,6 @@ public class IdServicesImpl implements IdServices {
             String cacheKey = orgName + ":" + p;
             Map classMap = null;
             synchronized (idRepoMap) {
-                // pClass = (IdRepo) idRepoMap.get(cacheKey);
                 Object obj = idRepoMap.get(cacheKey);
                 if (obj instanceof Map) {
                     // set it to class map only if this is an instance of
