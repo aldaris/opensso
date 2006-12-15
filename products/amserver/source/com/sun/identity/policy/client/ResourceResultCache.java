@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.3 2006-08-25 21:21:07 veiming Exp $
+ * $Id: ResourceResultCache.java,v 1.4 2006-12-15 00:46:25 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -603,28 +603,7 @@ class ResourceResultCache implements SSOTokenListener {
             policyRequest.setRequestId(newRequestID());
             policyRequest.setResourceResultRequest(rrRequest);
 
-            PolicyService policyService = new PolicyService();
-            policyService.setMethodID(PolicyService.POLICY_REQUEST_ID);
-            policyService.setPolicyRequest(policyRequest); 
-            String xmlString = policyService.toXMLString();
-
-            Request request = new Request(xmlString);
-            RequestSet requestSet 
-                    = new RequestSet(PolicyService.POLICY_SERVICE);
-            if (debug.messageEnabled()) {
-                debug.message("ResourceResultCache.getResultsFromServer():"
-                        + "sending PLL request to URL=" + policyServiceUrl 
-                        + ":\nPLL message=" + xmlString);
-            }
-            requestSet.addRequest(request);
-            Vector responses = PLLClient.send(policyServiceUrl, requestSet);
-            response = (Response) responses.elementAt(0);
-            PolicyService ps = PolicyService.parseXML(response.getContent());
-            if (debug.messageEnabled()) {
-                debug.message("ResourceResultCache.getResultsFromServer():"
-                        + "got PLL response:" + ps.toXMLString());
-            }
-
+            PolicyService ps = sendPLLRequest(policyServiceUrl, policyRequest);
             if (ps != null) {
                 PolicyResponse pr = ps.getPolicyResponse();
                 String exceptionMessage = pr.getExceptionMsg();
@@ -908,21 +887,8 @@ class ResourceResultCache implements SSOTokenListener {
                     PolicyRequest.POLICY_REQUEST_ADD_POLICY_LISTENER);
             policyReq.setPolicyListenerRequest(listenerReq);
 
-            PolicyService psReq = new PolicyService();
-            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-            psReq.setPolicyRequest(policyReq);
-
-            String xmlStr = psReq.toXMLString();
-
             try {
-                Request req = new Request(xmlStr);
-                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-                set.addRequest(req);
-                Vector responses = PLLClient.send(policyServiceURL, 
-                                                         set);
-                Response res = (Response) responses.elementAt(0);
-                PolicyService ps = PolicyService.parseXML(res.getContent());
-
+                PolicyService ps = sendPLLRequest(policyServiceURL, policyReq);
                 if (ps != null) {
                     if (debug.messageEnabled()) {
                         debug.message("ResourceResultCache."
@@ -987,20 +953,8 @@ class ResourceResultCache implements SSOTokenListener {
                     PolicyRequest.POLICY_REQUEST_REMOVE_POLICY_LISTENER);
             policyReq.setRemoveListenerRequest(rmReq);
 
-            PolicyService psReq = new PolicyService();
-            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-            psReq.setPolicyRequest(policyReq);
-
-            String xmlStr = psReq.toXMLString();
-
             try {
-                Request req = new Request(xmlStr);
-                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-                set.addRequest(req);
-                Vector responses = PLLClient.send(policyServiceURL, 
-                                                         set);
-                Response res = (Response) responses.elementAt(0);
-                PolicyService ps = PolicyService.parseXML(res.getContent());
+                PolicyService ps = sendPLLRequest(policyServiceURL, policyReq);
                 if (ps != null) {
                     if (debug.messageEnabled()) {
                         debug.message("ResourceResultCache."
@@ -1388,22 +1342,9 @@ class ResourceResultCache implements SSOTokenListener {
             policyReq.setMethodID(
                 PolicyRequest.POLICY_REQUEST_ADVICES_HANDLEABLE_BY_AM_REQUEST);
 
-            PolicyService psReq = new PolicyService();
-            psReq.setMethodID(PolicyService.POLICY_REQUEST_ID);
-            psReq.setPolicyRequest(policyReq);
-
-            String xmlStr = psReq.toXMLString();
-
             try {
-                Request req = new Request(xmlStr);
-                RequestSet set = new RequestSet(PolicyService.POLICY_SERVICE);
-                set.addRequest(req);
-                Vector responses = PLLClient.send(policyServiceURL, 
-                                                         set);
-                Response res = (Response) responses.elementAt(0);
-                PolicyService ps = PolicyService.parseXML(res.getContent());
-
-                if (ps != null) {
+                PolicyService ps = sendPLLRequest(policyServiceURL, policyReq);
+        	if (ps != null) {
                     if (debug.messageEnabled()) {
                         debug.message("ResourceResultCache."
                                 + "getAdvicesHandleableByAM():"
@@ -1501,5 +1442,69 @@ class ResourceResultCache implements SSOTokenListener {
         }
     }
 
+    /**
+     * Return a PolicyService object based on the XML document received
+     * from remote Policy Server. This is in response to a request that we
+     * send to the Policy server.
+     * @param policyServiceUrl The URL of the Policy Service
+     * @param preq The SessionRequest XML document
+     * @return PolicyService 
+     * @exception SendRequestException is thrown if there was an error in
+     * sending the XML document or PolicyException if there are any parsing
+     * errors.     
+     */
+    public static PolicyService sendPLLRequest(URL policyServiceUrl,
+                           PolicyRequest preq) throws SendRequestException,
+                           PolicyException{
+        String lbcookie = null;
+        try {
+            lbcookie = getLBCookie(preq);
+        } catch (Exception e) {
+            throw new SendRequestException(e);
+        }
+        
+        PolicyService policyService = new PolicyService();
+        policyService.setMethodID(PolicyService.POLICY_REQUEST_ID);
+        policyService.setPolicyRequest(preq); 
+        String xmlString = policyService.toXMLString();
+
+        Request request = new Request(xmlString);
+        RequestSet requestSet 
+                = new RequestSet(PolicyService.POLICY_SERVICE);
+        
+        requestSet.addRequest(request);
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.sendPLLRequest:"
+                    + "sending PLL request to URL=" + policyServiceUrl 
+                    + ":\nPLL message=" + xmlString);
+        }
+        Vector responses = PLLClient.send(policyServiceUrl, lbcookie, requestSet);
+        Response response = (Response) responses.elementAt(0);
+        PolicyService ps = PolicyService.parseXML(response.getContent());
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.sendPLLRequest:"
+                                + "result=" + ps.toXMLString());
+        }
+        return ps;
+        
+     }
+    
+    /**
+     * Returns lbcookie value for the Session
+     * @param  a policy request
+     * @return lbcookie name and value pair
+     * @throws Exception if session in request is invalid
+     */
+    public static String getLBCookie(PolicyRequest preq) throws Exception{
+       String lbcookie = null;
+       ResourceResultRequest rrReq = preq.getResourceResultRequest();
+       if(rrReq !=null ) {
+           lbcookie = Session.getLBCookie(rrReq.getUserSSOToken());
+       } else {
+           lbcookie = Session.getLBCookie(preq.getAppSSOToken());
+       }
+       return lbcookie;
+    }
+    
 }
 
