@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.6 2006-08-25 21:19:53 veiming Exp $
+ * $Id: EventService.java,v 1.7 2006-12-15 00:51:27 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,7 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * Event Service monitors changes on the server. Implemented with the persistant
@@ -419,6 +420,16 @@ public class EventService implements Runnable {
                     String enableDataStoreNotification = SystemProperties.get(
                         "com.sun.identity.sm.enableDataStoreNotification", 
                         "true");
+
+                    // if UM and SM root suffix are different, then inmemory
+                    // notification is enabled through
+                    // enableDataStoreNotification=false
+
+                    if (!SMSEntry.getRootSuffix().equalsIgnoreCase(
+                        SMSEntry.getAMSdkBaseDN())) {
+                        enableDataStoreNotification = "false";
+                    }
+
                     if (debugger.messageEnabled()) {
                         debugger.message("EventService.initListeners()-" 
                                 + "com.sun.identity.sm." 
