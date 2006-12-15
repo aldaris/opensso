@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchFilterManager.java,v 1.2 2006-08-25 21:19:27 veiming Exp $
+ * $Id: SearchFilterManager.java,v 1.3 2006-12-15 00:50:07 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,7 @@ import netscape.ldap.util.DN;
  * 
  * After obtaining the search filter for a particular AMObject, it is cached.
  * 
- * <b>NOTE:</b> This Cache does not recieve notifications right now. Hence,
+ * <b>NOTE:</b> This Cache does not receive notifications right now. Hence,
  * once the information is cached, the values will not change until a server
  * restart. Also, any new Search Templates added will not take affect, if the
  * Cache already has store global default values corresponding to that AMObject
@@ -56,8 +56,8 @@ import netscape.ldap.util.DN;
  */
 public class SearchFilterManager {
 
-    private static final String ROOT_SUFFIX_DN = (new DN(SMSEntry
-            .getRootSuffix()).toRFCString().toLowerCase());
+    private static final String ROOT_SUFFIX_DN =
+        (new DN(SMSEntry.getAMSdkBaseDN()).toRFCString().toLowerCase());
 
     private static Debug debug = CommonUtils.getDebugInstance();
 
