@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.10 2006-08-25 21:20:28 veiming Exp $
+ * $Id: AuthD.java,v 1.11 2006-12-15 00:53:00 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.IOException;
@@ -255,11 +256,7 @@ public class AuthD  {
     private AuthD() {
         debug.message("AuthD initializing");
         try {
-            rootSuffix = SystemProperties.get(Constants.AM_ROOT_SUFFIX);
-            defaultOrg = SystemProperties.get(Constants.AM_DEFAULT_ORG);
-            if (!defaultOrg.equals(rootSuffix)) {
-                defaultOrg += "," + rootSuffix;
-            }
+            rootSuffix = defaultOrg = ServiceManager.getBaseDN();
             initAuthSessions();
             // only for backward compatibilty support
             // for retrieving user container DN and usernaming attr.

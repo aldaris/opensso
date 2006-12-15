@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.4 2006-08-25 21:20:15 veiming Exp $
+ * $Id: AuthContext.java,v 1.5 2006-12-15 00:52:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,8 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.authentication.internal.util.AuthI18n;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.ServiceManager;
+
 
 /**
  * The AuthContext provides the implementation for authenticating users using
@@ -808,17 +810,11 @@ public final class AuthContext extends Object {
      */
     public String getOrganizationName() {
         if (organizationName == null) {
-            String rootSuffix = SystemProperties.get(Constants.AM_ROOT_SUFFIX);
-            organizationName = SystemProperties.get(Constants.AM_DEFAULT_ORG);
+            String rootSuffix = organizationName = ServiceManager.getBaseDN();
             if ((rootSuffix != null) && (organizationName != null)) {
                 rootSuffix = new DN(rootSuffix).toRFCString().toLowerCase();
                 organizationName = new DN(organizationName).toRFCString()
                         .toLowerCase();
-                if (!organizationName.equals(rootSuffix)) {
-                    if (!organizationName.endsWith(rootSuffix)) {
-                        organizationName += "," + rootSuffix;
-                    }
-                }
             }
         }
         return organizationName;
