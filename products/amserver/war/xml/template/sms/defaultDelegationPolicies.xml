@@ -4,10 +4,10 @@
     PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"    "jar://com/sun/identity/policy/policyAdmin.dtd">
                                                                                 
 <Policies>
-<Policy name="@ROOT_SUFFIX_HAT@^^RealmAdmin" referralPolicy="false" active="true" >
+<Policy name="@SM_ROOT_SUFFIX_HAT@^^RealmAdmin" referralPolicy="false" active="true" >
 <Rule name="delegation-rule1">
 <ServiceName name="sunAMDelegationService" />
-<ResourceName name="sms://*@ROOT_SUFFIX@/*" />
+<ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/*" />
 <AttributeValuePair>
 <Attribute name="MODIFY" />
 <Value>allow</Value>
@@ -25,15 +25,15 @@
 <Subject name="delegation-subject" type="AMIdentitySubject" includeType="inclusive">
 <AttributeValuePair>
 <Attribute name="Values"/>
-<Value>id=Top-level Admin Role,ou=role,@ROOT_SUFFIX@,amsdkdn=cn=Top-level Admin Role,@ROOT_SUFFIX@</Value>
+<Value>id=Top-level Admin Role,ou=role,@SM_CONFIG_ROOT_SUFFIX@,amsdkdn=cn=Top-level Admin Role,@ROOT_SUFFIX@</Value>
 </AttributeValuePair>
 </Subject>
 </Subjects>
 </Policy>
-<Policy name="@ROOT_SUFFIX_HAT@^^PolicyAdmin" referralPolicy="false" active="true" >
+<Policy name="@SM_ROOT_SUFFIX_HAT@^^PolicyAdmin" referralPolicy="false" active="true" >
 <Rule name="delegation-rule1">
 <ServiceName name="sunAMDelegationService" />
-<ResourceName name="sms://*@ROOT_SUFFIX@/iPlanetAMPolicy*Service/*" />
+<ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/iPlanetAMPolicy*Service/*" />
 <AttributeValuePair>
 <Attribute name="MODIFY" />
 <Value>allow</Value>
@@ -49,7 +49,7 @@
 </Rule>
 <Rule name="delegation-rule2">
 <ServiceName name="sunAMDelegationService" />
-<ResourceName name="sms://*@ROOT_SUFFIX@/sunAMRealmService/*" />
+<ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/sunAMRealmService/*" />
 <AttributeValuePair>
 <Attribute name="READ" />
 <Value>allow</Value>
@@ -57,7 +57,7 @@
 </Rule>
 <Rule name="delegation-rule3">
 <ServiceName name="sunAMDelegationService" />
-<ResourceName name="sms://*@ROOT_SUFFIX@/sunIdentityRepositoryService/*" />
+<ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/*" />
 <AttributeValuePair>
 <Attribute name="READ" />
 <Value>allow</Value>
@@ -67,7 +67,7 @@
 <Subject name="delegation-subject" type="AMIdentitySubject" includeType="inclusive">
 <AttributeValuePair>
 <Attribute name="Values"/>
-<Value>id=Top-level Policy Admin Role,ou=role,@ROOT_SUFFIX@,amsdkdn=cn=Top-level Policy Admin Role,@ROOT_SUFFIX@</Value>
+<Value>id=Top-level Policy Admin Role,ou=role,@SM_CONFIG_ROOT_SUFFIX@,amsdkdn=cn=Top-level Policy Admin Role,@ROOT_SUFFIX@</Value>
 </AttributeValuePair>
 </Subject>
 </Subjects>
@@ -77,7 +77,7 @@
 <Policy name="AllUserReadableServices" referralPolicy="false" active="true" >
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/globalConfig/*" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/globalConfig/*" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -85,7 +85,7 @@
     </Rule>
     <Rule name="delegation-rule2">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@ROOT_SUFFIX@/DAI/1.0/globalConfig/*" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/DAI/1.0/globalConfig/*" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -93,7 +93,7 @@
     </Rule>
     <Rule name="delegation-rule3">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@ROOT_SUFFIX@/iPlanetAMAdminConsoleService/1.0/globalConfig/*" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/iPlanetAMAdminConsoleService/1.0/globalConfig/*" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -109,7 +109,7 @@
 <Policy name="SelfReadAttributes" referralPolicy="false" active="true" >
     <Rule name="user-read-rule">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://*@ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/*" />
+        <ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/*" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -133,7 +133,7 @@
 <Policy name="SelfWriteAttributes" referralPolicy="false" active="true" >
     <Rule name="user-read-rule">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://*@ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/*" />
+        <ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/*" />
         <AttributeValuePair>
             <Attribute name="MODIFY" />
             <Value>allow</Value>
@@ -166,10 +166,10 @@
     </Conditions>
 </Policy>
 
-<Policy name="@ROOT_SUFFIX_HAT@^^AgentLogging" referralPolicy="false" active="true" >
+<Policy name="@SM_ROOT_SUFFIX_HAT@^^AgentLogging" referralPolicy="false" active="true" >
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://*@ROOT_SUFFIX@/iPlanetAMLoggingService/1.0/application/*" />
+        <ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/iPlanetAMLoggingService/1.0/application/*" />
         <AttributeValuePair>
             <Attribute name="MODIFY" />
             <Value>allow</Value>
