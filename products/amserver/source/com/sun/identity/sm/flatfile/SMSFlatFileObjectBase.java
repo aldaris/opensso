@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.5 2006-12-08 21:02:35 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.6 2006-12-15 01:03:34 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.sm.flatfile;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
+import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SchemaException;
 import com.sun.identity.sm.ServiceNotFoundException;
@@ -60,7 +61,7 @@ import javax.naming.NamingException;
 /**
  * This is the base implementation of flat file data store object.
  */
-public abstract class SMSFlatFileObjectBase extends SMSObject {
+public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
     protected String mRootDir = null;
     protected File mRootDirHandle = null;
     protected String mRootDN = null;
@@ -761,7 +762,7 @@ public abstract class SMSFlatFileObjectBase extends SMSObject {
     public String getRootSuffix() {
         return (mRootDN);
     }
-    
+
     /**
      * Loads the name mapper, create it if it doesn't exist.
      **/

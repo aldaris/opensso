@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.6 2006-08-25 21:21:35 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.7 2006-12-15 01:02:26 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,7 @@ import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
+import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
 
 /**
@@ -88,7 +89,7 @@ import com.sun.identity.sm.SMSObjectListener;
  * sunSMSPriority, sunKeyValue. All the schema, configuration and plugin entries
  * will be stored using the above entries.
  */
-public class SMSLdapObject extends SMSObject implements SMSObjectListener {
+public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
     // LDAP specific & retry paramters
     static DataLayer dlayer;
