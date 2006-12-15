@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.13 2006-12-13 23:56:12 beomsuk Exp $
+ * $Id: SMSEntry.java,v 1.14 2006-12-15 01:18:18 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,6 +103,8 @@ public class SMSEntry implements Cloneable {
     static String DEFAULT_ORG_PROPERTY = "com.iplanet.am.defaultOrg";
 
     static String baseDN;
+
+    static String amsdkbaseDN;
 
     static int baseDNCount;
 
@@ -310,6 +312,28 @@ public class SMSEntry implements Cloneable {
                     .getString("sms-invalid-dn"), "sms-invalid-dn");
         } else {
             baseDNCount = (new StringTokenizer(baseDN, ",")).countTokens();
+        }
+
+        // Get the amsdkbaseDN
+        String atemp = smsObject.getAMSdkBaseDN();
+        if (atemp != null) {
+            amsdkbaseDN = (new DN(atemp)).toRFCString().toLowerCase();
+        } else {
+            amsdkbaseDN = "o=unknown-suffix";
+        }
+        if (amsdkbaseDN == null) {
+            // Problem in getting amsdk base DN
+            initializationException = new SMSException(bundle.getString(
+                "sms-invalid-dn"), "sms-invalid-dn");
+        }
+
+        // if UM and SM root suffix are different, then inmemory
+        // notification is enabled through
+        // enableDataStoreNotification=false
+
+        if (!SMSEntry.baseDN.equalsIgnoreCase(
+            SMSEntry.amsdkbaseDN)) {
+            enableDataStoreNotification = false;
         }
     }
 
@@ -980,6 +1004,10 @@ public class SMSEntry implements Cloneable {
         return baseDN;
     }
 
+    public static String getAMSdkBaseDN() {
+        return amsdkbaseDN;
+    }
+
     /**
      * @return true if the given attribute's value is case sensitive.
      */
@@ -1200,13 +1228,24 @@ public class SMSEntry implements Cloneable {
                 restOfDN = "";
             } else {
                 String dn1 = rfcDN.substring(0, baseDNIndex - 1);
-                if (dn1.indexOf(DELEGATION_SERVICES_RDN) == -1) {
+                if ((dn1.indexOf(DELEGATION_SERVICES_RDN) == -1) &&
+                    (!dn1.startsWith(ORGANIZATION_RDN + EQUALS))) {
                     // Since services node is not present, it
                     // must be root realm.
                     answer[0] = baseDN;
                     restOfDN = dn1;
+                } else if (dn1.startsWith(DELEGATION_SERVICES_RDN)) {
+                    answer[0] =
+                        rfcDN.substring(DELEGATION_SERVICES_RDN.length());
+                    restOfDN = "";
+                } else if (dn1.startsWith(ORGANIZATION_RDN + EQUALS)) {
+                  // In case of subrealms say,
+                  // o=a3,o=a2,o=a1,o=etat-de-vaud,ou=services,o=smsnode
+                    answer[0] = rfcDN;
+                    restOfDN = "";
                 } else {
-                    // In Legacy mode, there will be only one "ou=services"
+                    // In realm mode, "ou=services" seperates service name
+                    // from realm name.
                     answer[0] = rfcDN.substring(oldStrIndex
                             + DELEGATION_SERVICES_RDN_WITH_COMMA_LEN);
                     restOfDN = rfcDN.substring(0, oldStrIndex);
@@ -1566,6 +1605,8 @@ public class SMSEntry implements Cloneable {
     public static final String OC_REALM_SERVICE = "sunRealmService";
 
     public static final String OC_SERVICE_COMP = "sunServiceComponent";
+
+    public static final String SMS_SERVER_GROUP = "sms";
 
     // Internal hidden realms used for storing delegation policies
     public static final String SUN_INTERNAL_REALM_NAME = "sunamhiddenrealm";
