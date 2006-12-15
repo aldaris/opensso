@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.3 2006-09-22 19:17:35 pbryan Exp $
+ * $Id: Cert.java,v 1.4 2006-12-15 00:25:15 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,17 @@ import javax.servlet.http.HttpServletRequest;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPUrl;
+import sun.security.x509.X509CertInfo;
+import sun.security.x509.X509CertImpl;
+import sun.security.x509.CertificateExtensions;
+import sun.security.x509.SubjectAlternativeNameExtension;
+import sun.security.x509.GeneralNames;
+import sun.security.x509.GeneralName;
+import sun.security.x509.GeneralNameInterface;
+import sun.security.x509.OtherName;
+import sun.security.x509.RFC822Name;
+import sun.security.util.ObjectIdentifier;
+import sun.security.util.DerValue;
 
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.am.util.SSLSocketFactoryManager;
@@ -98,6 +109,9 @@ public class Cert extends AMLoginModule {
     // Alternate Field in Cert to userid to access user profile 
     // if above is "other"
     private String amAuthCert_altUserProfileMapper;
+    // SubjectAltNameExtension Value Type OID 
+    // This OID type of value is retrieved and used to access user profile
+    private String amAuthCert_subjectAltExtMapper;
     // check user cert against revoke list in LDAP.
     private String amAuthCert_chkCRL;        
     // attr to use in search for user cert in CRL in LDAP
@@ -127,6 +141,8 @@ public class Cert extends AMLoginModule {
     private static final String amAuthCert = "amAuthCert";
     
     private static com.sun.identity.shared.debug.Debug debug = null;
+
+    static String UPNOID = "1.3.6.1.4.1.311.20.2.3";
 
     /**
      * Default module constructor does nothing
@@ -185,6 +201,8 @@ public class Cert extends AMLoginModule {
                 options, "iplanet-am-auth-cert-user-profile-mapper"); 
             amAuthCert_altUserProfileMapper = CollectionHelper.getMapAttr(
                 options, "iplanet-am-auth-cert-user-profile-mapper-other");
+            amAuthCert_subjectAltExtMapper = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-cert-user-profile-mapper-ext");
             amAuthCert_chkCRL = CollectionHelper.getMapAttr(
                 options, "iplanet-am-auth-cert-check-crl"); 
             if (amAuthCert_chkCRL.equalsIgnoreCase("true")) {
@@ -313,6 +331,8 @@ public class Cert extends AMLoginModule {
                     "\n\tuseSSL=" + amAuthCert_useSSL +
                     "\n\tocspEnable=" + ocspEnabled +
                     "\n\tuserProfileMapper=" + amAuthCert_userProfileMapper +
+                    "\n\tsubjectAltExtMapper=" + 
+                        amAuthCert_subjectAltExtMapper +
                     "\n\taltUserProfileMapper=" + 
                         amAuthCert_altUserProfileMapper +
                     "\n\tchkCRL=" + amAuthCert_chkCRL +
@@ -473,6 +493,72 @@ public class Cert extends AMLoginModule {
 
     private void getTokenFromCert(X509Certificate cert)
         throws AuthLoginException {
+	if (!amAuthCert_subjectAltExtMapper.equalsIgnoreCase("none")) {
+	    getTokenFromSubjectAltExt(cert);
+	}
+
+	if (!amAuthCert_userProfileMapper.equalsIgnoreCase("none") && 
+	    (userTokenId == null)) {
+	    getTokenFromSubjectDN(cert);
+	}
+    }
+
+    private void getTokenFromSubjectAltExt(X509Certificate cert)
+        throws AuthLoginException {
+        try {
+            X509CertImpl certImpl = 
+                new X509CertImpl(cert.getEncoded());
+            X509CertInfo cinfo = 
+                new X509CertInfo(certImpl.getTBSCertificate());
+            CertificateExtensions exts = (CertificateExtensions) 
+                            cinfo.get(X509CertInfo.EXTENSIONS);
+            SubjectAlternativeNameExtension altNameExt = 
+                (SubjectAlternativeNameExtension)
+                    exts.get(SubjectAlternativeNameExtension.NAME);
+
+            if (altNameExt != null) {
+                GeneralNames names = (GeneralNames) altNameExt.get
+                    (SubjectAlternativeNameExtension.SUBJECT_NAME);
+        
+                GeneralName generalname = null;  
+                ObjectIdentifier upnoid = new ObjectIdentifier(UPNOID); 
+                Iterator itr = (Iterator) names.iterator();
+                while ((userTokenId == null) && itr.hasNext()) {
+                    generalname = (GeneralName) itr.next(); 
+                    if (generalname != null) {
+                        if (amAuthCert_subjectAltExtMapper.
+                        	equalsIgnoreCase("UPN") && 
+                        	(generalname.getType() == 
+                	        GeneralNameInterface.NAME_ANY)) {
+                            OtherName othername = 
+                                (OtherName)generalname.getName(); 
+                            if (upnoid.equals((Object)(othername.getOID()))) {
+                                byte[] nval = othername.getNameValue(); 
+                                DerValue derValue = new DerValue(nval); 
+                                userTokenId = 
+                                    derValue.getData().getUTF8String(); 
+                            } 
+                        }else if (amAuthCert_subjectAltExtMapper.
+                            equalsIgnoreCase("RFC822Name") && 
+                            (generalname.getType() == 
+                	        GeneralNameInterface.NAME_RFC822)) {
+                            RFC822Name email = 
+                                (RFC822Name) generalname.getName(); 
+                            userTokenId = email.getName(); 
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            debug.error("Certificate - " +
+                    "Error in getTokenFromSubjectAltExt = " , e);
+            throw new AuthLoginException(amAuthCert, "CertNoReg", null);
+        }
+            
+    }
+
+    private void getTokenFromSubjectDN(X509Certificate cert)
+        throws AuthLoginException {
     /*
      * The certificate has passed the authentication steps
      * so return the part of the certificate as specified 
@@ -531,7 +617,7 @@ public class Cert extends AMLoginModule {
             return;
         } catch (Exception e) {
             if (debug.messageEnabled()) {
-                debug.message("Certificate - Error in getTokenFromCert = " , e);
+                debug.message("Certificate - Error in getTokenFromSubjectDN = " , e);
             }
             throw new AuthLoginException(amAuthCert, "CertNoReg", null);
         }
