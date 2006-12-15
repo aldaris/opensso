@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.8 2006-08-10 20:35:12 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.9 2006-12-15 00:56:37 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -538,6 +538,14 @@ public class OrganizationConfigManager {
         // delete the corresponding organization.
         if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
             String amsdkName = DNMapper.realmNameToAMSDKName(subOrgDN);
+            if (!SMSEntry.baseDN.equalsIgnoreCase(
+                SMSEntry.amsdkbaseDN)) {
+                String convOrg = subOrgName;
+                if (subOrgName.startsWith("/")) {
+                    convOrg = DNMapper.convertToDN(subOrgName).toString();
+                }
+                amsdkName = convOrg + SMSEntry.COMMA + amSDKOrgDN;
+            }
             amsdk.deleteSubOrganization(amsdkName);
         }
 
@@ -1568,10 +1576,17 @@ public class OrganizationConfigManager {
                 }
                 Iterator items = defaultServices.iterator();
                 String serviceName = null;
-                amsdk = new OrgConfigViaAMSDK(token,
-                  orgNamingAttrInLegacyMode + SMSEntry.EQUALS +
+                if (SMSEntry.baseDN.equalsIgnoreCase(
+                    SMSEntry.amsdkbaseDN)) {
+                    amsdk = new OrgConfigViaAMSDK(token,
+                      orgNamingAttrInLegacyMode + SMSEntry.EQUALS +
                         subOrgName + SMSEntry.COMMA +
                         DNMapper.realmNameToAMSDKName(orgDN), subOrgDN);
+                } else {
+                    amsdk = new OrgConfigViaAMSDK(token,
+                      orgNamingAttrInLegacyMode + SMSEntry.EQUALS +
+                        subOrgName + SMSEntry.COMMA + amSDKOrgDN, subOrgDN);
+                }
                 while (items.hasNext()) {
                     serviceName = (String) items.next();
                     if (assignedServices.contains(serviceName)) {

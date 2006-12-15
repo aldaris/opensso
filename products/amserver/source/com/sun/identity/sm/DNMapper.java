@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.6 2006-08-25 21:21:24 veiming Exp $
+ * $Id: DNMapper.java,v 1.7 2006-12-15 00:56:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,9 @@ public class DNMapper {
                 return (orgdn);
             }
             // Check for root suffix and SMS base DN
-            if (orgdnlc.equals(SMSEntry.baseDN) || orgdnlc.equals(serviceDN)) {
+            if (orgdnlc.equals(SMSEntry.baseDN) || 
+                orgdnlc.equals(serviceDN) ||
+                orgdnlc.equals(SMSEntry.amsdkbaseDN)) {
                 // Add to cache and return
                 updateCache(orgName, SMSEntry.baseDN);
                 return (SMSEntry.baseDN);
@@ -187,6 +189,11 @@ public class DNMapper {
         }
 
         // Check for baseDN and internal hidden realm names
+        if ((dnlc.equals(SMSEntry.baseDN)) &&
+            (!dnlc.equals(SMSEntry.amsdkbaseDN))) {
+            return (SMSEntry.amsdkbaseDN);
+        }
+
         if (dnlc.equals(SMSEntry.baseDN)
                 || dnlc.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
             return (SMSEntry.baseDN);

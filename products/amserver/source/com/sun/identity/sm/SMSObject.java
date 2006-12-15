@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.2 2006-08-25 21:21:27 veiming Exp $
+ * $Id: SMSObject.java,v 1.3 2006-12-15 00:56:37 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,6 +147,12 @@ public abstract class SMSObject {
      * SMSEntries will end with this root suffix.
      */
     public abstract String getRootSuffix();
+
+    /**
+     * Returns the AMSDK BaseDN for the UM objects.
+     */
+    public abstract String getAMSdkBaseDN();
+
 
     // Non-abstract convenience methods for implementation classes
 

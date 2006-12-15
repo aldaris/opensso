@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.4 2006-08-25 21:21:25 veiming Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.5 2006-12-15 00:56:36 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,7 +151,14 @@ public class OrgConfigViaAMSDK {
                 parentOrgWithAdminToken = amcom.getOrganization(orgName);
             }
 
-            // Get the Realm <---> LDAP Org attribute mappings
+            // Get the Realm <---> LDAP Org attribute mappings.
+            // To get the service config of idrepo service.
+            String newOrg = orgName;
+            if (!SMSEntry.baseDN.equalsIgnoreCase(
+                SMSEntry.amsdkbaseDN)) {
+                newOrg = smsOrgName;
+            }
+
             if (ServiceManager.isConfigMigratedTo70()
                     && (serviceConfig = (ServiceConfig) 
                             attributeMappingServiceConfigs.get(orgName)) 
@@ -160,7 +167,7 @@ public class OrgConfigViaAMSDK {
                 ServiceConfigManager scm = new ServiceConfigManager(
                         IDREPO_SERVICE, adminToken);
                 // Do we need to use internal token?
-                serviceConfig = scm.getOrganizationConfig(orgName, null);
+                serviceConfig = scm.getOrganizationConfig(newOrg, null);
                 if (debug.messageEnabled()) {
                     debug.message("OrgConfigViaAMSDK::constructor"
                             + ": serviceConfig" + serviceConfig);
