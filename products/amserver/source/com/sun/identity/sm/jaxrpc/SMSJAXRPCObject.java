@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.4 2006-12-13 20:58:16 beomsuk Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.5 2006-12-15 01:19:53 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -376,6 +376,23 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         return (baseDN);
     }
 
+
+    /**
+     * Returns the root suffix (i.e., base DN) for the UMS objects.
+     * All UMSEntries will end with this root suffix.
+     */
+    public String getAMSdkBaseDN() {
+        if (amsdkbaseDN == null) {
+            try {
+                amsdkbaseDN = (String) client.send(client.encodeMessage(
+                    "getAMSdkBaseDN", null), null, null);
+            } catch (Exception re) {
+                debug.error("SMSJAXRPCObject:getAMSdkBaseDN:Exception:", re);
+            }
+        }
+        return (amsdkbaseDN);
+    }
+
     /**
      * Registration of Notification Callbacks
      */
@@ -495,6 +512,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
 
     // Static variables
     private static String baseDN;
+
+    private static String amsdkbaseDN;
 
     private static Set entriesPresent = new HashSet();
 

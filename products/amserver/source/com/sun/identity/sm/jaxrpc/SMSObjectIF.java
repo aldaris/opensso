@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObjectIF.java,v 1.1 2005-11-01 00:31:36 arvindp Exp $
+ * $Id: SMSObjectIF.java,v 1.2 2006-12-15 01:19:53 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,6 +76,8 @@ public interface SMSObjectIF extends Remote {
             throws SSOException, RemoteException;
 
     public String getRootSuffix() throws RemoteException;
+
+    public String getAMSdkBaseDN() throws RemoteException;
 
     // Objects changed within <i>time</i> minutes
     public Set objectsChanged(int time) throws RemoteException;
