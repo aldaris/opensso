@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.5 2006-12-15 00:56:36 goodearth Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.6 2006-12-15 21:27:13 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -251,6 +251,12 @@ public class OrgConfigViaAMSDK {
      */
     void assignService(String serviceName) throws SMSException {
         try {
+            // Check if it is a hidden realm
+            if (ServiceManager.isCoexistenceMode() &&
+                (parentOrgName.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)))
+            {
+                return;
+            }
             // Check if service is already assigned
             if (!getAssignedServices().contains(serviceName)) {
                 parentOrg.registerService(serviceName, false, false);
