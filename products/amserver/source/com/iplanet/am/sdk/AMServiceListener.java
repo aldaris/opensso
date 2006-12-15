@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceListener.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
+ * $Id: AMServiceListener.java,v 1.3 2006-12-15 21:40:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,13 +29,15 @@ package com.iplanet.am.sdk;
  * applications in order to receive service data change notifications. The
  * method <code>serviceChanged()</code> is invoked when a service schema data
  * or a service configuration data has been changed.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMServiceListener {
     /**
      * This method will be invoked when a service's schema has been changed.
      * 
-     * @param seviceName
+     * @param serviceName
      *            name of the service
      * @param version
      *            version of the service

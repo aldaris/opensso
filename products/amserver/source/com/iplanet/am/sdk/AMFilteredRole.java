@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFilteredRole.java,v 1.2 2005-12-08 01:16:02 veiming Exp $
+ * $Id: AMFilteredRole.java,v 1.3 2006-12-15 21:38:33 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ import com.iplanet.sso.SSOException;
  * }
  * 
  * </PRE>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMFilteredRole extends AMRole {

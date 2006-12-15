@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAssignableDynamicGroupImpl.java,v 1.2 2006-06-16 19:35:59 rarcot Exp $
+ * $Id: AMAssignableDynamicGroupImpl.java,v 1.3 2006-12-15 21:37:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.iplanet.sso.SSOTokenManager;
 /**
  * The <code>AMAssignableDynamicGroupImpl</code> class implements interface
  * <code>AMGroupAssignableDynamicGroup</code>.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 class AMAssignableDynamicGroupImpl extends AMGroupImpl implements
         AMAssignableDynamicGroup {

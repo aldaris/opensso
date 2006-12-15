@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchFilterManager.java,v 1.3 2006-08-25 21:19:20 veiming Exp $
+ * $Id: AMSearchFilterManager.java,v 1.4 2006-12-15 21:40:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ import netscape.ldap.util.DN;
  * Cache already has store global default values corresponding to that AMObject
  * type.
  * 
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMSearchFilterManager {
 

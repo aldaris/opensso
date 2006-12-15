@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationalUnitImpl.java,v 1.3 2006-06-16 19:36:09 rarcot Exp $
+ * $Id: AMOrganizationalUnitImpl.java,v 1.4 2006-12-15 21:39:32 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,8 @@ import com.sun.identity.sm.ServiceConfig;
 /**
  * The <code>AMOrganizationalUnitImpl</code> class implements interface
  * AMOrganizationalUnit
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 
 class AMOrganizationalUnitImpl extends AMObjectImpl implements

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEntityType.java,v 1.4 2006-08-25 21:19:17 veiming Exp $
+ * $Id: AMEntityType.java,v 1.5 2006-12-15 21:38:32 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
 
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This class defines a supported managed object type by <code> AM SDK </code>
@@ -49,6 +48,9 @@ import com.sun.identity.sm.ServiceSchemaManager;
  *        }
  * 
  * </PRE>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+ * @supported.all.api
  */
 public final class AMEntityType {
 
@@ -202,7 +204,7 @@ public final class AMEntityType {
     /**
      * Returns the naming attribute
      * 
-     * @return
+     * @return value of naming attribute.
      */
     protected String getNamingAttribute() {
         return namingAttribute;
@@ -211,7 +213,7 @@ public final class AMEntityType {
     /**
      * Returns the objectclass
      * 
-     * @return
+     * @return objectclass used to identify this entry.
      */
     protected String getObjectClass() {
         return objectClass;
@@ -220,7 +222,7 @@ public final class AMEntityType {
     /**
      * Returns the creation template name
      * 
-     * @return
+     * @return name of creation template used
      */
     protected String getCreationTemplate() {
         return creationTemplateName;
@@ -238,7 +240,9 @@ public final class AMEntityType {
     /**
      * Returns the parent container RDN
      * 
-     * @return
+     * @return relative distinguished name of the container in which this
+     * entity shoould be created.
+
      */
     protected String getContainerRDN() {
         return containerRDN;
@@ -247,7 +251,7 @@ public final class AMEntityType {
     /**
      * Returns the parent container type
      * 
-     * @return
+     * @return the integer type of the container.
      */
     protected int getContainerType() {
         return containerType;

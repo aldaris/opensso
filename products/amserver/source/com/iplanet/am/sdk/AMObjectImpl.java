@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.7 2006-12-13 00:27:12 rarcot Exp $
+ * $Id: AMObjectImpl.java,v 1.8 2006-12-15 21:38:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,7 @@ import com.sun.identity.shared.debug.Debug;
  * *Impl instances and then notifications are sent to each of their private Set
  * of listeners.
  * 
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 class AMObjectImpl implements AMObject {
     // ~ Static fields/initializers
@@ -3342,7 +3343,7 @@ class AMObjectImpl implements AMObject {
      * whose suffix which ends with affectedDN in the objImpListeners.
      * <p>
      * 
-     * @param affectDN -
+     * @param affectedDN -
      *            String which has been stripped to reflect the subtree of DN's
      *            that will be affected in case of cos related changes
      * @param dpEvent -

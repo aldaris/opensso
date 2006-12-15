@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEvent.java,v 1.5 2006-08-11 00:42:22 rarcot Exp $
+ * $Id: AMEvent.java,v 1.6 2006-12-15 21:38:32 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,6 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 
 import com.iplanet.services.ldap.event.DSEvent;
 
-/* iPlanet-PUBLIC-CLASS */
-
 /** <p>Represents an event fired by Sun Java System Access Manager SDK.</p>
  *
  * <p><code>AMEvent</code>'s state consists of the following:
@@ -43,6 +41,9 @@ import com.iplanet.services.ldap.event.DSEvent;
  * <li>The source object type: Type of the underlying object that caused
  *     event.
  * </ul>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+ * @supported.all.api
  */
 public class AMEvent extends EventObject {
 

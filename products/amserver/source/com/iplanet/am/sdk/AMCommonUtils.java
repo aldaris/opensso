@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonUtils.java,v 1.4 2006-08-25 21:19:16 veiming Exp $
+ * $Id: AMCommonUtils.java,v 1.5 2006-12-15 21:37:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ import netscape.ldap.util.DN;
 /**
  * This class contains all the miscellaneous utility methods used in the
  * <code>com.iplanet.am.sdk</code> package.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMCommonUtils implements AMConstants {
 
@@ -589,7 +591,6 @@ public class AMCommonUtils implements AMConstants {
     /**
      * Returns a Set of supported entity types
      * 
-     * @return
      */
     protected static Set getSupportedEntityTypes() {
         return supportedEntities;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStaticGroup.java,v 1.2 2005-12-08 01:16:07 veiming Exp $
+ * $Id: AMStaticGroup.java,v 1.3 2006-12-15 21:40:41 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ import com.iplanet.sso.SSOException;
  * (amsc.doesEntryExist(sDN)) { AMStaticGroup sg = amsc.getStaticGroup(rDN); }
  * 
  * </PRE>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMStaticGroup extends AMGroup {

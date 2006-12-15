@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPreCallBackException.java,v 1.2 2005-12-08 01:16:04 veiming Exp $
+ * $Id: AMPreCallBackException.java,v 1.3 2006-12-15 21:40:03 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import com.iplanet.ums.UMSException;
  * being performed by SDK. This helps distinguish a <code>pre-callback</code>
  * exception from normal SDK exceptions and can be handled differently by any
  * applications, if they wish to.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public class AMPreCallBackException extends AMException {

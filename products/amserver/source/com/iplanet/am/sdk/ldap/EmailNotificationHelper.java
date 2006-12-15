@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmailNotificationHelper.java,v 1.2 2006-08-25 21:19:25 veiming Exp $
+ * $Id: EmailNotificationHelper.java,v 1.3 2006-12-15 21:41:27 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -202,11 +202,10 @@ public class EmailNotificationHelper {
 
     /**
      * The proper setUser<>NotificationList method should be called before
-     * calling this method. TODO: Change signature to use a Map instead of
-     * AttrSet
+     * calling this method. 
      * 
-     * @param attrSet
-     *            the attrSet of the user
+     * @param attributes
+     *            the attributes of the user
      */
     public void sendUserCreateNotification(Map attributes) {
         try {
@@ -248,8 +247,12 @@ public class EmailNotificationHelper {
      * The proper setUser<>NotificationList method should be called before
      * calling this method.
      * 
-     * @param attrSet
-     *            the attrSet of the user
+     * @param token
+     *            a valid single sign on token
+     * @param attributes
+     *            the attribues of the user
+     * @param oldAttributes
+     *            the previous attributes of the user
      */
     public void sendUserModifyNotification(SSOToken token, Map attributes,
             Map oldAttributes) {

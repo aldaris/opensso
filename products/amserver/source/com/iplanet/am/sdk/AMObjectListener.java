@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectListener.java,v 1.1 2005-11-01 00:29:11 arvindp Exp $
+ * $Id: AMObjectListener.java,v 1.2 2006-12-15 21:38:59 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import java.util.Set;
 /**
  * The purpose of this interface is to allow AM SDK plugin implementors to
  * return changes about AM Entities
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public interface AMObjectListener extends EventListener {
 
@@ -57,7 +59,7 @@ public interface AMObjectListener extends EventListener {
      * attributes of all members of the organization. This callback should be
      * used to notify modifications of "dynamic" or "virtual" attributes.
      * 
-     * @param parentName
+     * @param parentNames
      *            name of the parent whoes "dynamic" attributes attributes have
      *            been modified, affecting all its children
      * @param type
@@ -81,7 +83,7 @@ public interface AMObjectListener extends EventListener {
      * entities in an organization and all cached entries for that organization
      * will be cleared.
      * 
-     * @param name
+     * @param orgName
      *            unique name of the organization whoes permissions has changed
      * @param configMap
      *            Map of configuration information which the AM SDK framework

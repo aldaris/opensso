@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.6 2006-06-29 14:13:36 goodearth Exp $
+ * $Id: AMOrganizationImpl.java,v 1.7 2006-12-15 21:39:32 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,8 @@ import com.sun.identity.sm.ServiceSchemaManager;
 /**
  * The <code>AMOrganizationImpl</code> class implements interface
  * AMOrganization
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 
 class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {

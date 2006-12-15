@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDynamicGroup.java,v 1.2 2005-12-08 01:16:01 veiming Exp $
+ * $Id: AMDynamicGroup.java,v 1.3 2006-12-15 21:37:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ import com.iplanet.sso.SSOException;
  * }
  * 
  * </PRE>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMDynamicGroup extends AMGroup {

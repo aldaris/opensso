@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDirectoryServices.java,v 1.1 2006-06-16 19:36:20 rarcot Exp $
+ * $Id: IDirectoryServices.java,v 1.2 2006-12-15 21:41:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -371,7 +371,7 @@ public interface IDirectoryServices {
      *            Profile Type, ORGANIZATION, AMObject.ROLE, AMObject.USER, etc.
      * @param parentDN
      *            the parent DN
-     * @param attrSet
+     * @param attributes
      *            the initial attribute set for creation
      */
     public void createEntry(SSOToken token, String entryName, int objectType,
@@ -437,7 +437,7 @@ public interface IDirectoryServices {
      *            DN of the entry to start the search with
      * @param searchFilter
      *            search filter
-     * @param SearchControl
+     * @param searchControl
      *            search control defining the VLV indexes and search scope
      * @return Set set of matching DNs
      */
@@ -490,8 +490,13 @@ public interface IDirectoryServices {
      *            DN of the profile whose template is to be set
      * @param objectType
      *            profile type
-     * @param attrSet
-     *            attributes to be set
+     * @param stringAttributes
+     *            string attributes to be set
+     * @param byteAttributes
+     *            byte attributes to be set
+     * @param isAdd
+     *            <code>true</code> if to add to current value;
+     *            otherwise it will replace current value.
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -542,9 +547,6 @@ public interface IDirectoryServices {
      *            type of the target object, AMObject.ROLE or AMObject.GROUP
      * @param operation
      *            type of operation, ADD_MEMBER or REMOVE_MEMBER
-     * @param updateUserEntry
-     *            If true then call the updatUserAttribute when modifying group
-     *            membership
      */
     public void modifyMemberShip(SSOToken token, Set members, String target,
             int type, int operation) throws AMException;
@@ -585,7 +587,7 @@ public interface IDirectoryServices {
      *            profile type
      * @param serviceName
      *            Service Name
-     * @param type
+     * @param templateType
      *            Template type
      */
     public void unRegisterService(SSOToken token, String entryDN,
@@ -615,9 +617,11 @@ public interface IDirectoryServices {
      *            token
      * @param entryDN
      *            DN of the profile whose template is to be set
+     * @param objectType
+     *            the type of object
      * @param serviceName
      *            Service Name
-     * @param attrSet
+     * @param attributes
      *            attributes to be set
      * @param priority
      *            template priority
@@ -631,8 +635,11 @@ public interface IDirectoryServices {
      * Returns the naming attribute
      * 
      * @param objectType
+     *            the type of object of interest.
      * @param orgDN
+     *            the organization dn the object belongs to.
      * @return
+     *            the naming attribute for the object. 
      */
     public String getNamingAttribute(int objectType, String orgDN);
 
@@ -640,7 +647,9 @@ public interface IDirectoryServices {
      * Returns the objectclass representing an object type.
      * 
      * @param objectType
+     *            the type of object of interest.
      * @return
+     *            the objectclass for the representing the object type.
      */
     public String getObjectClass(int objectType);
 

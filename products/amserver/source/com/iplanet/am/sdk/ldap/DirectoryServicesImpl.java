@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.4 2006-12-13 00:27:13 rarcot Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.5 2006-12-15 21:41:27 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -482,7 +482,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
     /**
      * Gets the type of the object given its DN.
      * 
-     * @param SSOToken
+     * @param token
      *            token a valid SSOToken
      * @param dn
      *            DN of the object whose type is to be known.
@@ -501,7 +501,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
     /**
      * Gets the type of the object given its DN.
      * 
-     * @param SSOToken
+     * @param token
      *            token a valid SSOToken
      * @param dn
      *            DN of the object whose type is to be known.
@@ -589,8 +589,14 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      * 
      * @param token
      *            a valid SSOToken
-     * @param po
-     *            the PersistentObject
+     * @param entryDN
+     *            the dn of the entry
+     * @param attrNames
+     *            attribute names
+     * @param byteValues
+     *            <code>true</code> if result in byte
+     * @param objectType
+     *            the object type.
      * @return an AttrSet of values or null if not found
      * @throws AMException
      *             if error encountered in fetching the DC node attributes.
@@ -1474,7 +1480,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            Profile Type, ORGANIZATION, AMObject.ROLE, AMObject.USER, etc.
      * @param parentDN
      *            the parent DN
-     * @param attrSet
+     * @param attributes
      *            the initial attribute set for creation
      */
     public void createEntry(SSOToken token, String entryName, int objectType,
@@ -2101,8 +2107,10 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            DN of the entry to start the search with
      * @param searchFilter
      *            search filter
-     * @param SearchControl
+     * @param searchControl
      *            search control defining the VLV indexes and search scope
+     * @param attrNames
+     *            name of attributes
      * @return Set set of matching DNs
      */
     public AMSearchResults search(SSOToken token, String entryDN,
@@ -2432,8 +2440,13 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            DN of the profile whose template is to be set
      * @param objectType
      *            profile type
-     * @param attrSet
+     * @param stringAttributes
      *            attributes to be set
+     * @param byteAttributes
+     *            attributes to be set
+     * @param isAdd
+     *            <code>true</code> if add to existing value;
+     *            otherwise replace the existing value.
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -2816,9 +2829,6 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            type of the target object, AMObject.ROLE or AMObject.GROUP
      * @param operation
      *            type of operation, ADD_MEMBER or REMOVE_MEMBER
-     * @param updateUserEntry
-     *            If true then call the updatUserAttribute when modifying group
-     *            membership
      */
     public void modifyMemberShip(SSOToken token, Set members, String target,
             int type, int operation) throws AMException {
@@ -3029,8 +3039,6 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            profile type
      * @param serviceName
      *            Service Name
-     * @param template
-     *            AMTemplate
      * @param type
      *            Template type
      */
@@ -3148,9 +3156,11 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      *            token
      * @param entryDN
      *            DN of the profile whose template is to be set
+     * @param objectType
+     *            the entry type
      * @param serviceName
      *            Service Name
-     * @param attrSet
+     * @param attributes
      *            attributes to be set
      * @param priority
      *            template priority
@@ -3326,7 +3336,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      * objectclass based on the LDAP schema
      * 
      * @param objectclass
-     * @return
+     * @return the attributes for the objectclass
      */
     public Set getAttributesForSchema(String objectclass) {
         try {

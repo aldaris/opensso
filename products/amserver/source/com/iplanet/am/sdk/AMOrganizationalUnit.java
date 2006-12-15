@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationalUnit.java,v 1.2 2005-12-08 01:16:03 veiming Exp $
+ * $Id: AMOrganizationalUnit.java,v 1.3 2006-12-15 21:39:32 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,8 @@ import com.iplanet.sso.SSOException;
  * amsc.getOrganizationalUnit(oDN); }
  * 
  * </PRE>
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMOrganizationalUnit extends AMObject {
@@ -1345,7 +1347,6 @@ public interface AMOrganizationalUnit extends AMObject {
      * @param peopleContainers
      *            Map where the key is the name of the people container, and the
      *            value is a Map to represent Attribute-Value Pairs.
-     * @return set of <code>PeopleContainer</code> objects created.
      * @throws AMException
      *             if an error is encountered when trying to access/retrieve
      *             data from the data store.

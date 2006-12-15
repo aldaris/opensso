@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCallBack.java,v 1.1 2005-11-01 00:28:58 arvindp Exp $
+ * $Id: AMCallBack.java,v 1.2 2006-12-15 21:37:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,9 @@ import com.iplanet.sso.SSOToken;
  * using token of the authenticated user while constructing such a localized
  * message.
  * </ul>
+ * 
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+ * @supported.all.api
  */
 public class AMCallBack {
 

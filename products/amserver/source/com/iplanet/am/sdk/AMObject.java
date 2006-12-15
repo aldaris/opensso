@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObject.java,v 1.2 2005-12-08 01:16:03 veiming Exp $
+ * $Id: AMObject.java,v 1.3 2006-12-15 21:38:58 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.iplanet.sso.SSOException;
  * The <code>AMObject</code> interface provides methods to manage various Sun
  * Java System Access Manager objects and their attributes.
  *
+ * @deprecated As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public interface AMObject extends AMConstants {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectClassManager.java,v 1.3 2006-08-25 21:19:18 veiming Exp $
+ * $Id: AMObjectClassManager.java,v 1.4 2006-12-15 21:38:58 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import java.util.Map;
 
 /**
  * A Class to manage the object class information.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMObjectClassManager {
     // Debug object

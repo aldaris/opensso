@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEventManagerException.java,v 1.1 2005-11-01 00:29:05 arvindp Exp $
+ * $Id: AMEventManagerException.java,v 1.2 2006-12-15 21:38:33 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,8 @@ import com.iplanet.ums.UMSException;
  * @see AMException
  * @see java.lang.Exception
  * @see java.lang.Throwable
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMEventManagerException extends AMException {
     public AMEventManagerException(String msg, String errorCode) {

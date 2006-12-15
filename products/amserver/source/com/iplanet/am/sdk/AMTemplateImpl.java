@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTemplateImpl.java,v 1.1 2005-11-01 00:29:21 arvindp Exp $
+ * $Id: AMTemplateImpl.java,v 1.2 2006-12-15 21:40:42 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,10 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 
+/*
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+*/
 class AMTemplateImpl extends AMObjectImpl implements AMTemplate {
     private String serviceName;
 

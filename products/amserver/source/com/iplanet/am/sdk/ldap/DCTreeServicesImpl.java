@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DCTreeServicesImpl.java,v 1.2 2006-08-25 21:19:24 veiming Exp $
+ * $Id: DCTreeServicesImpl.java,v 1.3 2006-12-15 21:41:27 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -389,8 +389,11 @@ public class DCTreeServicesImpl extends DCTreeServicesHelper implements
      * Returns the organization DN matching the domain name
      * 
      * @param token
+     *            SSOToken
      * @param domainName
+     *            String representing domin name
      * @return
+     *            the organization dn
      * @throws AMException
      */
     public String getOrganizationDN(SSOToken token, String domainName)

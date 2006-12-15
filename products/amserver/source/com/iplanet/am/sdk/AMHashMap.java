@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMHashMap.java,v 1.3 2006-06-16 19:36:06 rarcot Exp $
+ * $Id: AMHashMap.java,v 1.4 2006-12-15 21:38:58 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
     /**
      * Creates a new AMHashMap
      * 
-     * @param byteValues
+     * @param forByteValues
      *            if true then, this map is used for storing byte values. if
      *            false, then used for storing String values
      */
@@ -168,7 +168,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
      * method adds puts a new element in this map with the missing key and empty
      * Set.
      * 
-     * @param attrNames
+     * @param keys
      *            the Set of keys that will be compared against the keys in this
      *            map.
      * @return a set of keys which are missing
@@ -200,7 +200,7 @@ public class AMHashMap extends CaseInsensitiveHashMap {
      * are empty. If a key is missing, this method adds puts a new element in
      * this map with the missing key and empty Set.
      * 
-     * @param attrNames
+     * @param keys
      *            the Set of keys that will be compared against the keys in this
      *            map.
      * @return a set of keys which are missing and keys whose values are empty

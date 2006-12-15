@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFilteredRoleImpl.java,v 1.3 2006-06-16 19:36:05 rarcot Exp $
+ * $Id: AMFilteredRoleImpl.java,v 1.4 2006-12-15 21:38:33 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,9 @@ import com.iplanet.ums.SearchControl;
 
 /**
  * The <code>AMFilteredRoleImpl</code> implements interface AMFilteredRole
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
-
 class AMFilteredRoleImpl extends AMRoleImpl implements AMFilteredRole {
     
     public AMFilteredRoleImpl(SSOToken ssoToken, String DN) {

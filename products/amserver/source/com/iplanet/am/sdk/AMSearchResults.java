@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchResults.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
+ * $Id: AMSearchResults.java,v 1.3 2006-12-15 21:40:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,8 @@ import java.util.Set;
 /**
  * This class <code>AMSearchResults</code> provides to obtain the search
  * results.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public class AMSearchResults {

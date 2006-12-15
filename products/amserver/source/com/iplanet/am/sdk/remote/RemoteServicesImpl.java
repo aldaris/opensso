@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.5 2006-12-13 20:58:13 beomsuk Exp $
+ * $Id: RemoteServicesImpl.java,v 1.6 2006-12-15 21:40:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
     /**
      * Gets the type of the object given its DN.
      * 
-     * @param SSOToken
+     * @param token
      *            token a valid SSOToken
      * @param dn
      *            DN of the object whose type is to be known.
@@ -204,8 +204,14 @@ public class RemoteServicesImpl implements IDirectoryServices {
      * 
      * @param token
      *            a valid SSOToken
-     * @param po
-     *            the PersistentObject
+     * @param entryDN
+     *            dn of the entry
+     * @param attrNames
+     *            attributes name
+     * @param byteValues
+     *            <code>true</code> if in bytes
+     * @param objectType
+     *            the object type of entryDN.
      * @return an AttrSet of values or null if not found
      * @throws AMException
      *             if error encountered in fetching the DC node attributes.
@@ -767,7 +773,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            Profile Type, ORGANIZATION, AMObject.ROLE, AMObject.USER, etc.
      * @param parentDN
      *            the parent DN
-     * @param attrSet
+     * @param attributes
      *            the initial attribute set for creation
      */
     public void createEntry(SSOToken token, String entryName, int objectType,
@@ -959,9 +965,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            DN of the entry to start the search with
      * @param searchFilter
      *            search filter
-     * @param SearchControl
+     * @param searchControl
      *            search control defining the VLV indexes and search scope
-     * @return Set set of matching DNs
+     * @param attrNames
+     *            attributes name
+     * @return Set of matching DNs
      */
     public AMSearchResults search(SSOToken token, String entryDN,
             String searchFilter, SearchControl searchControl,
@@ -1138,8 +1146,13 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            DN of the profile whose template is to be set
      * @param objectType
      *            profile type
-     * @param attrSet
+     * @param stringAttributes
      *            attributes to be set
+     * @param byteAttributes
+     *            attributes to be set
+     * @param isAdd
+     *            <code>true</code> add to existing value;
+     *            otherwise replace existing value
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -1282,9 +1295,6 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            type of the target object, AMObject.ROLE or AMObject.GROUP
      * @param operation
      *            type of operation, ADD_MEMBER or REMOVE_MEMBER
-     * @param updateUserEntry
-     *            If true then call the updatUserAttribute when modifying group
-     *            membership
      */
     public void modifyMemberShip(SSOToken token, Set members, String target,
             int type, int operation) throws AMException {
@@ -1416,8 +1426,6 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            profile type
      * @param serviceName
      *            Service Name
-     * @param template
-     *            AMTemplate
      * @param type
      *            Template type
      */
@@ -1506,9 +1514,11 @@ public class RemoteServicesImpl implements IDirectoryServices {
      *            token
      * @param entryDN
      *            DN of the profile whose template is to be set
+     * @param objectType
+     *            object type
      * @param serviceName
      *            Service Name
-     * @param attrSet
+     * @param attributes
      *            attributes to be set
      * @param priority
      *            template priority
@@ -1622,7 +1632,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
      * objectclass based on the LDAP schema
      * 
      * @param objectclass
-     * @return
+     * @return Set of the attributes for the  object class
      */
     public Set getAttributesForSchema(String objectclass) {
         try {

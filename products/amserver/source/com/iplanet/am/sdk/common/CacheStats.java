@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheStats.java,v 1.2 2006-08-25 21:19:22 veiming Exp $
+ * $Id: CacheStats.java,v 1.3 2006-12-15 21:41:26 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,9 +58,9 @@ public class CacheStats implements StatsListener {
      * Creates a new CacheStats object, adds the object as a listener to the
      * Stats class and returns the object.
      * 
-     * @param name
+     * @param instanceName
      *            name associated with the CacheStats instance.
-     * @param debug
+     * @param debugObject
      *            the debug instance to which the CacheStats object will be
      *            associated.
      * @return a CacheStats object

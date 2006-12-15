@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMException.java,v 1.4 2006-08-25 21:19:18 veiming Exp $
+ * $Id: AMException.java,v 1.5 2006-12-15 21:38:33 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import netscape.ldap.LDAPException;
 /**
  * The <code>AMException</code> is thrown whenever an error is is encountered
  * while performing an operation on the data store.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public class AMException extends Exception implements L10NMessage {
@@ -58,7 +60,7 @@ public class AMException extends Exception implements L10NMessage {
      * 
      * @param msg
      *            The detailed message
-     * @param erroCode
+     * @param errorCode
      *            Matches the appropriate entry in
      *            <code>amProfile.properties</code>.
      */

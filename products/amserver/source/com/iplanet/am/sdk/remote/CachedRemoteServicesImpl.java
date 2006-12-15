@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedRemoteServicesImpl.java,v 1.1 2006-06-16 19:36:35 rarcot Exp $
+ * $Id: CachedRemoteServicesImpl.java,v 1.2 2006-12-15 21:41:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -277,7 +277,6 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      * EventService notifies that all entries have been modified (or should be
      * marked dirty).
      * 
-     * @param dn
      */
     public synchronized void clearCache() {
         sdkCache.clear();
@@ -523,7 +522,7 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
     /**
      * Gets the type of the object given its DN.
      * 
-     * @param SSOToken
+     * @param token
      *            token a valid SSOToken
      * @param dn
      *            DN of the object whose type is to be known.
@@ -651,9 +650,11 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      * @param ignoreCompliance
      *            a boolean value specificying if compliance related entries
      *            need to ignored or not. Ignored if true.
-     * @param fetchByteValues
+     * @param byteValues
      *            if false StringValues are fetched, if true byte values are
      *            fetched.
+     * @param profileType
+     *            the oject type of entryDN
      * @return a Map containing attribute names as keys and Set of values
      *         corresponding to each key.
      * @throws AMException
@@ -915,7 +916,7 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      * 
      * @param token
      *            the sso token
-     * @param profileType
+     * @param objectType
      *            the type of entry
      * @param entryDN
      *            the entry DN
@@ -955,8 +956,13 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      *            DN of the profile whose template is to be set
      * @param objectType
      *            profile type
-     * @param attributes
+     * @param stringAttributes
      *            a AMHashMap of attributes to be set
+     * @param byteAttributes
+     *            a AMHashMap of attributes to be set
+     * @param isAdd
+     *            <code>true</code> add to existing value; 
+     *            otherwise replace the existing value
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -1005,14 +1011,14 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      *            token
      * @param entryDN
      *            DN of the profile whose template is to be set
+     * @param objectType
+     *            the object type
      * @param serviceName
      *            Service Name
-     * @param attrSet
+     * @param attributes
      *            attributes to be set
      * @param priority
      *            template priority
-     * @param type
-     *            Template type, AMTemplate.DYNAMIC_TEMPLATE
      * @return String DN of the newly created template
      */
     public String createAMTemplate(SSOToken token, String entryDN,

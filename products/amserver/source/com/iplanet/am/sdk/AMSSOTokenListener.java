@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSSOTokenListener.java,v 1.1 2005-11-01 00:29:17 arvindp Exp $
+ * $Id: AMSSOTokenListener.java,v 1.2 2006-12-15 21:40:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,8 @@ import com.iplanet.sso.SSOTokenManager;
  * interface. This listener updates the profile name table, the objImplListeners
  * table and AMCommonUtils's dpCache by invalidating (removing) all entires
  * affected because of the SSOToken becoming invalid.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 class AMSSOTokenListener implements SSOTokenListener {
 

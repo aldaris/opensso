@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserPasswordValidation.java,v 1.1 2005-11-01 00:29:23 arvindp Exp $
+ * $Id: AMUserPasswordValidation.java,v 1.2 2006-12-15 21:40:42 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,9 @@ import java.util.Map;
  * <code>userID</code> or password supplied by the user. The Exception
  * mechanism provides a means to notify the plugin specific validation error to
  * the user.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+ * @supported.all.api
  */
 public class AMUserPasswordValidation {
 

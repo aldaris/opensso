@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMRoleImpl.java,v 1.3 2006-06-16 19:36:10 rarcot Exp $
+ * $Id: AMRoleImpl.java,v 1.4 2006-12-15 21:40:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,8 @@ import com.iplanet.ums.SearchControl;
 
 /**
  * The <code>AMRole</code> interface provides methods to manage role
+ *
+ ** @deprecated  As of Sun Java System Access Manager 7.1.
  */
 
 class AMRoleImpl extends AMObjectImpl implements AMRole {

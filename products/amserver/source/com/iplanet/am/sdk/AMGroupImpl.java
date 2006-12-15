@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupImpl.java,v 1.3 2006-06-16 19:36:06 rarcot Exp $
+ * $Id: AMGroupImpl.java,v 1.4 2006-12-15 21:38:57 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,8 +39,8 @@ import com.iplanet.ums.SearchControl;
 
 /**
  * The <code>AMGroupImpl</code> class implements interface AMGroup
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
-
 abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
 
     public AMGroupImpl(SSOToken ssoToken, String DN, int profileType) {

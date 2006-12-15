@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedDirectoryServicesImpl.java,v 1.1 2006-06-16 19:36:26 rarcot Exp $
+ * $Id: CachedDirectoryServicesImpl.java,v 1.2 2006-12-15 21:41:27 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -280,7 +280,6 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
      * EventService notifies that all entries have been modified (or should be
      * marked dirty).
      * 
-     * @param dn
      */
     public synchronized void clearCache() {
         sdkCache.clear();
@@ -522,7 +521,7 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
     /**
      * Gets the type of the object given its DN.
      * 
-     * @param SSOToken
+     * @param token
      *            token a valid SSOToken
      * @param dn
      *            DN of the object whose type is to be known.
@@ -650,9 +649,11 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
      * @param ignoreCompliance
      *            a boolean value specificying if compliance related entries
      *            need to ignored or not. Ignored if true.
-     * @param fetchByteValues
+     * @param byteValues
      *            if false StringValues are fetched, if true byte values are
      *            fetched.
+     * @param profileType
+     *            the entry type.            
      * @return a Map containing attribute names as keys and Set of values
      *         corresponding to each key.
      * @throws AMException
@@ -907,7 +908,7 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
      * 
      * @param token
      *            the sso token
-     * @param profileType
+     * @param objectType
      *            the type of entry
      * @param entryDN
      *            the entry DN
@@ -947,8 +948,13 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
      *            DN of the profile whose template is to be set
      * @param objectType
      *            profile type
-     * @param attributes
+     * @param stringAttributes
      *            a AMHashMap of attributes to be set
+     * @param byteAttributes
+     *            a AMHashMap of attributes to be set
+     * @param isAdd
+     *            <code>true</code> add to existing value;
+     *            otherwise replace existing value.
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
@@ -997,14 +1003,14 @@ public class CachedDirectoryServicesImpl extends DirectoryServicesImpl
      *            token
      * @param entryDN
      *            DN of the profile whose template is to be set
+     * @param objectType
+     *            Template type, AMTemplate.DYNAMIC_TEMPLATE
      * @param serviceName
      *            Service Name
-     * @param attrSet
+     * @param attributes
      *            attributes to be set
      * @param priority
      *            template priority
-     * @param type
-     *            Template type, AMTemplate.DYNAMIC_TEMPLATE
      * @return String DN of the newly created template
      */
     public String createAMTemplate(SSOToken token, String entryDN,

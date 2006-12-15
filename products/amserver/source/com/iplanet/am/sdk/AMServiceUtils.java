@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceUtils.java,v 1.2 2006-08-25 21:19:20 veiming Exp $
+ * $Id: AMServiceUtils.java,v 1.3 2006-12-15 21:40:41 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,8 @@ import netscape.ldap.util.DN;
 /**
  * This class has some of the most commonly used Service Management
  * functionality.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMServiceUtils {
 
@@ -164,7 +166,7 @@ public class AMServiceUtils {
      *            SSOToken a valid SSOToken
      * @param serviceName
      *            the service name
-     * @param schemaType
+     * @param type
      *            service schema type (Dynamic, Policy etc)
      * @return returns a Map of Default Configuration values for the specified
      *         service.

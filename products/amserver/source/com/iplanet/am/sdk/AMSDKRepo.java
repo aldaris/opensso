@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.12 2006-12-13 00:27:12 rarcot Exp $
+ * $Id: AMSDKRepo.java,v 1.13 2006-12-15 21:40:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -975,17 +975,23 @@ public class AMSDKRepo extends IdRepo {
     }
 
     /**
-     * Returns <code>true</code> if the successfully authenticates the
-     * identity with the provided credentials. In case it requires additional
-     * credentials, the list would be returned via the
-     * <code>IdRepoException</code> exception.
+     * Sets the Attributes of the named identity. the single sign on
+     * token must have the necessary permission to set the attributes.
      * 
-     * @param credentials
-     *            Array of callback objects containing information such as
-     *            username and password.
-     * 
-     * @return <code>true</code> if it authenticates the identity; else
-     *         <code>false</code>
+     * @param token
+     *            single sign on token for this operation.
+     * @param type 
+     *            type of the identity
+     * @param name 
+     *            name of the identity
+     * @param attributes 
+     *            attributes to set.
+     * @param isAdd
+     *            should attributes values be added to existing values.
+     * @throws IdRepoException
+     *             if there are repository related error conditions.
+     * @throws SSOException
+     *             if user's single sign on token is invalid.
      */
     public void setAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd) 

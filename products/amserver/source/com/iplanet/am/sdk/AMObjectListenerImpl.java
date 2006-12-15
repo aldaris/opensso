@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectListenerImpl.java,v 1.2 2006-08-25 21:19:19 veiming Exp $
+ * $Id: AMObjectListenerImpl.java,v 1.3 2006-12-15 21:39:31 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import netscape.ldap.util.DN;
 /**
  * This class provides the implementation for listening to change
  * events in Identity Repository.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public class AMObjectListenerImpl implements AMObjectListener {
 

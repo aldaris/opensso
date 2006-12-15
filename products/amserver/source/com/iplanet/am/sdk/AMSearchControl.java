@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchControl.java,v 1.2 2005-12-08 01:16:06 veiming Exp $
+ * $Id: AMSearchControl.java,v 1.3 2006-12-15 21:40:04 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.iplanet.ums.SearchControl;
  * time limit, result limit and Virtual list view. In future, we will provide
  * ways for client to define different hierarchical tree through
  * <code>AMSearchControl</code>.
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  * @supported.all.api
  */
 public class AMSearchControl {
