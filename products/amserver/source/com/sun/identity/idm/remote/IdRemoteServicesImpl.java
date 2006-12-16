@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.8 2006-12-13 20:58:16 beomsuk Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.9 2006-12-16 01:52:15 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -814,7 +814,7 @@ public class IdRemoteServicesImpl implements IdServices {
 
     private String getTokenString(SSOToken token) {
         if (!sendRestrictionContext) {
-            return getTokenString(token);
+            return token.getTokenID().toString(); 
         }
         SSOToken appToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
