@@ -1,0 +1,54 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: Readme.xml,v 1.1 2006-12-18 21:42:39 manish_rustagi Exp $
+
+   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<sample title="OpenSSO - DistAuth" relativePath="."  >
+                                                                                
+    <section title="Description">
+    <paragraph>
+    Here is the way to create distauth application web archive for OpenSSO. 
+    You have to do the followings to setup the distauth application.
+    </paragraph>
+
+    <paragraph>
+    <orderedlist nocontext="no">
+    <item>on the shell prompt,<br />
+        <code>scripts/setup.sh</code> (have to <code>chmod</code> to make it
+        executable) for Unix and Linux; or<br />
+        <code>scripts/setup.bat</code> for Windows.<br />
+    This setup class will prompt for some server information; create the 
+    <code>AMConfig.properties</code> file under <code>war/WEB-INF/classes</code>
+    directory.
+    </item>
+    <item>type <code>ant war</code> to create the WAR file and deploy it.
+    </item>
+    </orderedlist></paragraph>
+    <paragraph>
+    Note: Ant (<code>http://www.ant.org</code>) version 1.6 or higher is needed 
+    for the creation of web archive.
+    <br />
+    </paragraph>
+    </section>
+
+</sample>
