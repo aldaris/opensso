@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.2 2006-08-25 21:20:33 veiming Exp $
+ * $Id: AMModuleProperties.java,v 1.3 2006-12-18 22:01:20 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,7 +179,13 @@ class AMModuleProperties {
                     p = 0;
                     String timeout = getAttribute(node, "timeout");
                     String template = getAttribute(node, "template");
+                    if(template == null){
+                    	template = "";
+                    }
                     String image = getAttribute(node, "image");
+                    if(image == null){
+                    	image = "";
+                    }
                     String header = getAttribute(node, "header");
                     boolean error = Boolean.valueOf(
                         getAttribute(node, "error")).booleanValue();

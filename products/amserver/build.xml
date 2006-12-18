@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.35 2006-12-15 21:42:10 kenwho Exp $
+   $Id: build.xml,v 1.36 2006-12-18 21:55:22 manish_rustagi Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -59,7 +59,6 @@
             </condition>
         </fail>
     </target>
-
 
     <target name="build" depends="checkjar, preparebuild, sharedlib">
         <javac destdir="${amserver.classes.dir}" source="1.4" target="1.4"
@@ -246,7 +245,7 @@
         </java>
     </target>
 
-    <target name="clean" depends="nightly-clean,war-clean,jars-clean,clientsdk-clean,demo-clean,samples-clean,unittest-clean">
+    <target name="clean" depends="nightly-clean,war-clean,jars-clean,clientsdk-clean,demo-clean,samples-clean,distauth-clean,unittest-clean">
         <delete dir="${amserver.built.publicapidocs.dir}"/>
         <delete dir="${amserver.built.apidocs.dir}"/>
         <delete dir="${amserver.built.docs.dir}"/>
@@ -288,7 +287,11 @@
         <ant antfile="${amserver.samples.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples,unittest">
+    <target name="distauth" depends="clientsdk,war">
+        <ant antfile="${amserver.distauth.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples,distauth,unittest">
         <antcall target="jars" />
         <antcall target="war" />
 
@@ -333,6 +336,11 @@
              inheritRefs="true" target="clean"/>
     </target>
 
+    <target name="distauth-clean">
+        <ant antfile="${amserver.distauth.dir}/build.xml"
+             inheritRefs="true" target="clean"/>
+    </target>
+
     <target name="demo-clean">
         <ant antfile="${amserver.demobase.dir}/build.xml"
              inheritRefs="true" target="clean"/>
@@ -363,6 +371,8 @@
         <echo message=" jars-clean : deletes generated jars"/>
         <echo message=" war        : builds the WAR"/>
         <echo message=" war-clean  : deletes generated WAR"/>
+        <echo message=" distauth   : builds the distauth zip"/>
+        <echo message=" distauth-clean : deletes generated distauth zip"/>
         <echo message=" samples    : builds the client samples"/>
         <echo message=" samples-clean : deletes generated client samples"/>
         <echo message=" clientsdk  : builds the clientsdk jar/war"/>

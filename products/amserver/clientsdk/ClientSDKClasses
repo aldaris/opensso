@@ -213,6 +213,8 @@ com/iplanet/services/cdm/ClientException.class
 com/iplanet/services/cdm/DefaultClientTypesManager.class
 com/iplanet/services/cdm/ClientDetectionInterface.class
 com/iplanet/services/cdm/ClientDetectionException.class
+com/iplanet/services/cdm/CDMBundle.class
+com/iplanet/services/cdm/ClientDetectionDefaultImpl.class
 com/iplanet/services/cdm/clientschema/AMClientDataListener.class
 com/iplanet/services/cdm/clientschema/AMClientCapException.class
 com/iplanet/services/cdm/clientschema/AMClientCapData.class
