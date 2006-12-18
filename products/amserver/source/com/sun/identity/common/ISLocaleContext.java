@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.7 2006-07-17 18:11:13 veiming Exp $
+ * $Id: ISLocaleContext.java,v 1.8 2006-12-18 22:18:21 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.common;
 
 import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.Misc;
 import com.iplanet.services.cdm.Client;
@@ -35,6 +34,7 @@ import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
