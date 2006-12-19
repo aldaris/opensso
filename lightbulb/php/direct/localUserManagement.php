@@ -18,14 +18,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: localUserManagement.php,v 1.2 2006-11-03 00:49:39 superpat7 Exp $
+ * $Id: localUserManagement.php,v 1.3 2006-12-19 00:42:38 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 session_start();
 
-// Brain dead implementation...
 function setUserId($userID)
 {
     $_SESSION['UserID'] = $userID;
@@ -61,9 +60,9 @@ function federatedLogin()
 
 function authenticateLocalUser($userid, $password)
 {
-    $user="root";
-    $mysqlpassword="";
-    $database="mysql";
+    $user="dbuser";
+    $mysqlpassword="dbpassword";
+    $database="lightbulb";
 
     mysql_connect("localhost",$user,$mysqlpassword) or die("Not connected : " . mysql_error() . "\n");
 
@@ -93,11 +92,11 @@ function authenticateLocalUser($userid, $password)
 
 function getUserName($userid)
 {
-    $user="root";
-    $password="";
-    $database="mysql";
+    $user="dbuser";
+    $mysqlpassword="dbpassword";
+    $database="lightbulb";
 
-    mysql_connect("localhost",$user,$password) or die("Not connected : " . mysql_error() . "\n");
+    mysql_connect("localhost",$user,$mysqlpassword) or die("Not connected : " . mysql_error() . "\n");
 
     mysql_select_db($database) or die( "Unable to select database : " . mysql_error() . "\n");
 

@@ -18,14 +18,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: makedb.php,v 1.1 2006-10-19 22:05:15 superpat7 Exp $
+ * $Id: makedb.php,v 1.2 2006-12-19 00:42:39 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-$user="root";
-$password="";
-$database="mysql";
+$user="dbuser";
+$password="dbpassword";
+$database="lightbulb";
 
 $link = mysql_connect("localhost",$user,$password);
 if (!$link) {
@@ -37,7 +37,7 @@ $result = mysql_query($sql);
 mysql_free_result($result);
 @mysql_select_db($database) or die( "Unable to select database : " . mysql_error() . "\n");
 
-$query="DROP TABLE users";
+$query="DROP TABLE IF EXISTS users";
 $result = mysql_query($query);
 if (!$result) {
    echo 'MySQL Error: ' . mysql_error() . "\n";
@@ -85,7 +85,7 @@ $i++;
 }
 
 
-$query="DROP TABLE nameidmapping";
+$query="DROP TABLE IF EXISTS nameidmapping";
 $result = mysql_query($query);
 if (!$result) {
    echo 'MySQL Error: ' . mysql_error() . "\n";

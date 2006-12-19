@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: listIds.php,v 1.1 2006-10-19 22:04:39 superpat7 Exp $
+ * $Id: listIds.php,v 1.2 2006-12-19 00:42:38 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,9 +31,9 @@
         <h3>Users</h3>
         <table border="1">
 <?php
-$user="root";
-$password="";
-$database="mysql";
+$user="dbuser";
+$password="dbpassword";
+$database="lightbulb";
 
 mysql_connect("localhost",$user,$password) or die("Not connected : " . mysql_error() . "\n");
 

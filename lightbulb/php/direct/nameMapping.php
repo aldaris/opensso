@@ -18,16 +18,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: nameMapping.php,v 1.1 2006-10-19 22:02:11 superpat7 Exp $
+ * $Id: nameMapping.php,v 1.2 2006-12-19 00:42:39 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 function nameIdToLocalId($idp, $sp, $nameID)
 {
-$user="root";
-$password="";
-$database="mysql";
+$user="dbuser";
+$password="dbpassword";
+$database="lightbulb";
 
 mysql_connect("localhost",$user,$password) or die("Not connected : " . mysql_error() . "\n");
 
@@ -52,9 +52,9 @@ while ($i < $num) {
 
 function mapNameIdToLocalId($idp, $sp, $nameID, $localId)
 {
-$user="root";
-$password="";
-$database="mysql";
+$user="dbuser";
+$password="dbpassword";
+$database="lightbulb";
 
 mysql_connect("localhost",$user,$password) or die("Not connected : " . mysql_error() . "\n");
 
