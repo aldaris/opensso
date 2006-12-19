@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.7 2006-12-15 00:56:36 goodearth Exp $
+ * $Id: DNMapper.java,v 1.8 2006-12-19 00:40:48 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -335,14 +335,30 @@ public class DNMapper {
         StringBuffer buf = new StringBuffer(orgName.length());
         String[] rdns = LDAPDN.explodeDN(orgName, false);
         int size = rdns.length;
+
+        if (debug.messageEnabled()) {
+            debug.message("DNMapper.normalizeDN():orgName "+ orgName);
+        }
         if (!realmEnabled) {
             orgAttr = OrgConfigViaAMSDK.getNamingAttrForOrg();
         }
+        placeHold = (realmEnabled) ? SMSEntry.ORGANIZATION_RDN : orgAttr;
         for (int i = 0; i < size; i++) {
             String[] strArr = splitString(rdns[i]);
-            placeHold = (realmEnabled) ? SMSEntry.ORGANIZATION_RDN : orgAttr;
-            buf.append(placeHold).append(SMSEntry.EQUALS).append(strArr[1])
-                    .append(SMSEntry.COMMA);
+
+            // Check if orgName is a hidden internal realm,if so prepend with o
+            if (orgName.toLowerCase().
+                startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
+                buf.append(SMSEntry.ORGANIZATION_RDN);
+            } else {
+                buf.append(placeHold);
+            }
+            buf.append(SMSEntry.EQUALS)
+               .append(strArr[1]).append(SMSEntry.COMMA);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("DNMapper.normalizeDN():finalorgdn "+
+                buf.toString());
         }
         return (buf.toString());
     }
