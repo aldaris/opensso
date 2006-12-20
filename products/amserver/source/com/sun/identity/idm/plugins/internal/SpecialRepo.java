@@ -17,50 +17,54 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.8 2006-10-26 20:52:44 kenwho Exp $
+ * $Id: SpecialRepo.java,v 1.9 2006-12-20 23:06:17 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm.plugins.internal;
 
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.security.AccessController;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.callback.*;
 
-import com.sun.identity.idm.IdRepoListener;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.encode.Hash;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
+
+import com.iplanet.services.ldap.ServerConfigMgr;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.services.ldap.ServerConfigMgr;
+import com.sun.identity.authentication.internal.AuthSubject;
+import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
+import com.sun.identity.security.AdminPasswordAction;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceSchemaManager;
-import com.sun.identity.security.AdminPasswordAction;
-import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.authentication.internal.AuthSubject;
-import com.sun.identity.authentication.internal.server.SMSAuthModule;
-import com.sun.identity.authentication.spi.AuthLoginException;
 
 public class SpecialRepo extends IdRepo implements ServiceListener {
     public static final String NAME = 
@@ -86,6 +90,25 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     String ssmListenerId, scmListenerId;
 
     public SpecialRepo() {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        try {
+            ssm = new ServiceSchemaManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
+            scm = new ServiceConfigManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
+        } catch (SMSException smse) {
+            if (debug.warningEnabled()) {
+                debug.warning("SpecialRepo.SpecialRepo: "
+                        + "Unable to init ssm and scm due to " + smse);
+            }
+        } catch (SSOException ssoe) {
+            if (debug.warningEnabled()) {
+                debug.warning("SpecialRepo.SpecialRepo: "
+                        + "Unable to init ssm and scm due to " + ssoe);
+            }
+        }
+        
         loadSupportedOps();
         if (debug.messageEnabled()) {
             debug.message(": SpecialRepo invoked");

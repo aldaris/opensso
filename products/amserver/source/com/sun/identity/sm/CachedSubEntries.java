@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.5 2006-10-16 17:17:59 arviranga Exp $
+ * $Id: CachedSubEntries.java,v 1.6 2006-12-20 23:06:17 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import netscape.ldap.util.DN;
 
-class CachedSubEntries {
+public class CachedSubEntries {
     // Cache of SMSEntries to obtain sub entries
     protected static HashMap smsEntries = new CaseInsensitiveHashMap(100);
 
@@ -96,7 +96,7 @@ class CachedSubEntries {
         return (subEntries);
     }
 
-    protected Set getSubEntries(SSOToken token, String pattern)
+    public Set getSubEntries(SSOToken token, String pattern)
             throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading sub-entries DN: " + dn
@@ -122,7 +122,7 @@ class CachedSubEntries {
         return (getSchemaSubEntries(token, pattern, serviceidPattern));
     }
 
-    protected Set getSchemaSubEntries(SSOToken token, String pattern,
+    public Set getSchemaSubEntries(SSOToken token, String pattern,
             String serviceidPattern) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading sub-entries DN: " + dn
@@ -167,7 +167,7 @@ class CachedSubEntries {
         SMSEventListenerManager.removeNotification(notificationID);
     }
 
-    static CachedSubEntries getInstance(SSOToken token, String dn)
+    public static CachedSubEntries getInstance(SSOToken token, String dn)
             throws SMSException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries::getInstance DN: " + dn);
@@ -196,7 +196,7 @@ class CachedSubEntries {
         return (answer);
     }
 
-    protected Set searchSubOrgNames(SSOToken token, String pattern,
+    public Set searchSubOrgNames(SSOToken token, String pattern,
             boolean recursive) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading subOrgNames DN: " + dn
@@ -222,7 +222,7 @@ class CachedSubEntries {
                 sortOrder, recursive));
     }
 
-    protected Set searchOrgNames(SSOToken token, String serviceName,
+    public Set searchOrgNames(SSOToken token, String serviceName,
             String attrName, Set values) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading orgNames DN: " + dn

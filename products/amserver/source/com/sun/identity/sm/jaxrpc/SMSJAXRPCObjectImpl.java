@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.8 2006-12-15 01:19:53 goodearth Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.9 2006-12-20 23:06:18 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ import com.sun.identity.jaxrpc.JAXRPCUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.CachedSMSEntry;
+import com.sun.identity.sm.CachedSubEntries;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
@@ -226,8 +227,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::searchSubOrgNames dn: " + dn);
         }
-        return (smsObject.searchSubOrgNames(getToken(tokenID), dn, filter,
-                numOfEntries, sortResults, ascendingOrder, recursive));
+        
+        CachedSubEntries ce = CachedSubEntries.getInstance(
+                getToken(tokenID), dn);
+        return (ce.searchSubOrgNames(getToken(tokenID), filter, recursive));
     }
 
     /**
@@ -244,8 +247,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             debug.message("SMSJAXRPCObjectImpl::searchOrganizationNames dn: "
                     + dn);
         }
-        return (smsObject.searchOrganizationNames(getToken(tokenID), dn,
-                numOfEntries, sortResults, ascendingOrder, serviceName,
+
+        CachedSubEntries ce = CachedSubEntries.getInstance(
+                getToken(tokenID), dn);
+        return (ce.searchOrgNames(getToken(tokenID), serviceName,
                 attrName, values));
     }
 
@@ -260,8 +265,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::subentries dn: " + dn);
         }
-        return (smsObject.subEntries(getToken(tokenID), dn, filter,
-                numOfEntries, sortResults, ascendingOrder));
+        
+        CachedSubEntries ce = CachedSubEntries.getInstance(
+                getToken(tokenID), dn);
+        return (ce.getSubEntries(getToken(tokenID), filter));        
     }
 
     /**
@@ -276,8 +283,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::subentries dn: " + dn);
         }
-        return (smsObject.schemaSubEntries(getToken(tokenID), dn, filter,
-                sidFilter, numOfEntries, sortResults, ao));
+        
+        CachedSubEntries ce = CachedSubEntries.getInstance(
+                getToken(tokenID), dn);
+        return (ce.getSchemaSubEntries(getToken(tokenID), filter, sidFilter));        
     }
 
     /**

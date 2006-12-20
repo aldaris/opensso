@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.5 2006-12-15 21:41:27 kenwho Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.6 2006-12-20 23:06:17 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -662,7 +662,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             Set attrNames, int profileType) throws AMException, SSOException {
         boolean ignoreCompliance = true;
         boolean byteValues = false;
-        return getAttributes(token, entryDN, attrNames, ignoreCompliance,
+        return getAttributesFromDS(token, entryDN, attrNames, ignoreCompliance,
                 byteValues, profileType);
     }
 
@@ -745,6 +745,14 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             throw new AMException(token, "330", e);
         }
     }
+    
+    public Map getAttributes(SSOToken token, String entryDN, Set attrNames,
+            boolean ignoreCompliance, boolean byteValues, int profileType)
+            throws AMException, SSOException {
+        
+        return getAttributesFromDS(token, entryDN, attrNames, ignoreCompliance, 
+                byteValues, profileType);   
+    }
 
     /**
      * Gets the specific attributes corresponding to the entryDN. This method
@@ -767,9 +775,11 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      * @throws AMException
      *             if an error is encountered in fetching the attributes
      */
-    public Map getAttributes(SSOToken token, String entryDN, Set attrNames,
-            boolean ignoreCompliance, boolean byteValues, int profileType)
+    public Map getAttributesFromDS(SSOToken token, String entryDN, 
+            Set attrNames, boolean ignoreCompliance, boolean byteValues, 
+            int profileType)
             throws AMException, SSOException {
+        
         if (attrNames == null) {
             return getAttributes(token, entryDN, ignoreCompliance, byteValues,
                     profileType);
