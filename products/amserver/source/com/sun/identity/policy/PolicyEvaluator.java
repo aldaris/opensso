@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.3 2006-12-20 00:24:38 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -303,7 +303,6 @@ public class PolicyEvaluator {
 
         ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
         serviceType = stm.getServiceType(serviceTypeName);
-        //policyManager = new PolicyManager(stm.getSSOToken(), orgName);
         policyManager = policyCache.getPolicyManager(orgName);
         this.orgNames.add(policyManager.getOrganizationDN());
         this.serviceTypeNames.add(serviceTypeName);
@@ -660,9 +659,19 @@ public class PolicyEvaluator {
             }
             PolicyEvaluator pe = new PolicyEvaluator(orgToVisit, 
                     serviceTypeName);
+            /**
+             * save policy config before passing control down to
+             * sub realm
+             */
+	    Map savedPolicyConfig =(Map)envParameters.get(SUN_AM_POLICY_CONFIG);
+	    // Update env to point to the realm policy config data.
+	    envParameters.put(SUN_AM_POLICY_CONFIG, PolicyConfig.
+	        getPolicyConfig(orgToVisit));
             PolicyDecision policyDecision 
                     = pe.getPolicyDecision(token, resourceName, actionNames,
                     envParameters,visitedOrgs); 
+	    // restore back the policy config data for the parent realm
+	    envParameters.put(SUN_AM_POLICY_CONFIG, savedPolicyConfig);
             if ( mergedPolicyDecision == null ) {
                 mergedPolicyDecision = policyDecision;
             } else {

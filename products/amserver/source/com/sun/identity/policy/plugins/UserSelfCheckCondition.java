@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSelfCheckCondition.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
+ * $Id: UserSelfCheckCondition.java,v 1.3 2006-12-20 00:24:39 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,9 @@ public class UserSelfCheckCondition implements Condition {
     // Attributes names that are allowed by the condition
     public static final String ATTRIBUTES = "attributes";
 
+    // Attributes names that are NOT allowed by the condition
+    public static final String NOT_ATTRIBUTES = "notAttributes";
+
     //  Constants for constructing resource names
     static final String RESOURCE_PREFIX = "sms://";
     static final String RESOURCE_NAME =
@@ -62,6 +65,7 @@ public class UserSelfCheckCondition implements Condition {
 
     // Instance variables
     private Set attributes;
+    private Set notAttributes;
     private boolean allowAllAttributes;
     private Map properties;
 
@@ -86,6 +90,7 @@ public class UserSelfCheckCondition implements Condition {
         if (propertyNames == null) {
             List answer = new LinkedList();
             answer.add(ATTRIBUTES);
+            answer.add(NOT_ATTRIBUTES);
             propertyNames = Collections.unmodifiableList(answer);
         }
         return (propertyNames);
@@ -150,17 +155,36 @@ public class UserSelfCheckCondition implements Condition {
                 "properties_can_not_be_null_or_empty", null, null);
         }
         this.properties = Collections.unmodifiableMap(properties);
-
-        //Check if attributes is set
-        Object set = properties.get(ATTRIBUTES);
-        if (set != null && set instanceof Set) {
-            attributes = new CaseInsensitiveHashSet();
-            attributes.addAll((Set) set);
-        } else {
-            String[] args = { ATTRIBUTES };
-            throw new PolicyException(ResBundleUtils.rbName,
-                "required_properties_can_not_be_null_or_empty", args, null);
+	Object attrSet = properties.get(ATTRIBUTES);
+ 	Object notAttrSet = properties.get(NOT_ATTRIBUTES);
+	if ((attrSet == null) && (notAttrSet == null)) {
+	    throw new PolicyException(ResBundleUtils.rbName,
+		"properties_can_not_be_null_or_empty", null, null);
         }
+        //Check if attributes is set
+	if ((attrSet != null) && (attrSet instanceof Set)) {
+	    attributes = new CaseInsensitiveHashSet();
+	    attributes.addAll((Set) attrSet);
+	} else {
+	    if (debug.messageEnabled()) {
+		debug.message("UserSelfCheckCondition:setProperties: "
+		    +"Attributes are empty");
+	    }
+	}
+        //Check if NotAttributes is set
+	if (notAttrSet != null && notAttrSet instanceof Set) {
+	    notAttributes = new CaseInsensitiveHashSet();
+	    notAttributes.addAll((Set) notAttrSet);
+	    if (debug.messageEnabled()) {
+	        debug.message("UserSelfCheckCondition.setProperties():"
+                    + "notAttributes = " + properties.get(NOT_ATTRIBUTES));
+	    }
+	} else {
+	    if (debug.messageEnabled()) {
+		debug.message("UserSelfCheckCondition:setProperties: "
+		    +"NotAttributes are empty");
+	    }
+	}
 
         // Check if all attributes are allowed
         if (attributes.contains("*")) {
@@ -170,7 +194,8 @@ public class UserSelfCheckCondition implements Condition {
         }
         if (debug.messageEnabled()) {
             debug.message("UserSelfCheckCondition.setProperties():"
-                    + "attributes = " + properties.get(ATTRIBUTES));
+                    + "attributes, notAttributes = " + attributes
+                    +","+notAttributes); 
         }
     }
 
@@ -213,19 +238,25 @@ public class UserSelfCheckCondition implements Condition {
 
         // Check if attributes in envMap are a subset of "attributes"
         boolean attributeCheckOk = allowAllAttributes;
+        if (debug.messageEnabled()) {
+            debug.message("UserSelfCheckCondition.getConditionDecision: " +
+                "attributeCheckOk:" + attributeCheckOk);
+        }
+        Set attrSet = null;
         if (!attributeCheckOk) {
             Object o = env.get(ATTRIBUTES);
             if (o != null && o instanceof Set) {
                 Set s = (Set) o;
                 if (!s.isEmpty()) {
-                    Set set = new CaseInsensitiveHashSet();
-                    set.addAll((Set) o);
+                    attrSet = new CaseInsensitiveHashSet();
+                    attrSet.addAll((Set) o);
                     if (debug.messageEnabled()) {
                         debug.message("UserSelfCheckCondition." +
                              "getConditionDecision: Is attributes " +
-                             set + " subset of config attrs: " + attributes);
+                             attrSet + " subset of config attrs: " 
+                             + attributes);
                     }
-                    if (attributes.containsAll(set)) {
+                    if (attributes.containsAll(attrSet)) {
                         attributeCheckOk = true;
                     }
                 }
@@ -237,6 +268,27 @@ public class UserSelfCheckCondition implements Condition {
         if (debug.messageEnabled()) {
             debug.message("UserSelfCheckCondition.getConditionDecision: " +
                 "attributes check:" + attributeCheckOk);
+        }
+        // if attributeCheckOk is false, then
+        // check if the attributes in the envMap are 
+        // part of the NotAttributes list
+        if (!(attributeCheckOk)) {
+            if ((attrSet != null) && !(attrSet.isEmpty())) {
+                if (debug.messageEnabled()) {
+                    debug.message("UserSelfCheckCondition." +
+                        "getConditionDecision: Is attributes " +
+                        attrSet + " subset of notattrs:" + notAttributes);
+                }
+                Iterator it = attrSet.iterator();
+                for (int i = 0; it.hasNext(); i++) {
+                    String attr = (String)it.next();
+                    if ((notAttributes.contains(attr))) {
+                        break;
+                    }
+                    // none of the attributes are in NotAttributes set
+                    attributeCheckOk = true;
+                }
+            }
         }
         if (attributeCheckOk) {
             // Construct the users' resource string
@@ -255,12 +307,14 @@ public class UserSelfCheckCondition implements Condition {
                         +"getConditionDecision: invalid sso token: " 
                         + ssoe.getMessage());
                 }
+                throw ssoe;
             } catch (IdRepoException ide) {
                 // Debug it
                 if (debug.messageEnabled()) {
                     debug.message("UserSelfCheckCondition."
                         +"getConditionDecision IdRepo exception: ", ide);
                 }
+                throw new PolicyException(ide);
             }
 
 

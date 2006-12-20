@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.5 2006-08-25 21:20:41 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.6 2006-12-20 00:24:38 bhavnab Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,10 +31,13 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.sm.DNMapper;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * The <code>DelegationEvaluator</code> class provides interfaces to evaluate
@@ -47,6 +50,19 @@ public class DelegationEvaluator {
 
     static AMIdentity privilegedUser;
 
+     // Provide allow permission for super admin during install
+     static boolean installTime = Boolean.valueOf(
+         SystemProperties.get("com.sun.identity.security.amadmin",
+         "false")).booleanValue();
+     static Set adminUserSet = new HashSet();
+     static {
+         String adminUser = SystemProperties.get(
+             "com.sun.identity.authentication.super.user");
+         if (adminUser != null) {
+             adminUserSet.add(DNUtils.normalizeDN(adminUser));
+         }
+     }
+ 
     private DelegationInterface pluginInstance = null;
 
     static {
@@ -96,7 +112,9 @@ public class DelegationEvaluator {
             } catch (IdRepoException ide) {
                 throw (new DelegationException(ide.getMessage()));
             }
-            if (user.equals(privilegedUser)) {
+            if (((privilegedUser != null) && user.equals(privilegedUser)) ||
+                 (installTime && adminUserSet.contains(
+                 DNUtils.normalizeDN(token.getPrincipal().getName())))) {
                 result = true;
             } else {
                 if (pluginInstance == null) {
@@ -111,8 +129,9 @@ public class DelegationEvaluator {
             }
         }
         if (debug.messageEnabled()) {
-            debug.message("isAllowed() returns " + result + " for user: " +
-                token.getProperty(Constants.UNIVERSAL_IDENTIFIER) +
+            debug.message("isAllowed() returns " + result + 
+                " for user:token.getPrincipal().getName() " +
+                token.getPrincipal().getName()+
                 " for permission " + permission);
         }
         return result;
