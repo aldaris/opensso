@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.11 2006-12-13 02:01:46 kenwho Exp $
+ * $Id: IdUtils.java,v 1.12 2006-12-20 23:07:10 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,12 +40,12 @@ import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;

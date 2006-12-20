@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.12 2006-12-15 21:31:07 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.13 2006-12-20 23:07:11 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -368,12 +368,34 @@ public class IdServicesImpl implements IdServices {
 
     }
 
+    private void deleteRealmIdentity(SSOToken token, String realmName,
+            String orgDN) throws IdRepoException {
+        
+        try {
+            // By default a Realm is not a leaf node, delete the
+            // whole realm tree.
+            String parentRealmName = DNMapper.orgNameToRealmName(orgDN);
+            OrganizationConfigManager orgMgr =
+                new OrganizationConfigManager(token, parentRealmName);
+            orgMgr.deleteSubOrganization(realmName, true);
+        } catch (SMSException sme) {
+            throw new IdRepoException(sme.getMessage());
+        }
+        
+    }
+        
     /*
      * (non-Javadoc)
      */
     public void delete(SSOToken token, IdType type, String name,
             String orgName, String amsdkDN) throws IdRepoException,
-            SSOException {
+            SSOException {        
+        
+        if (type.equals(IdType.REALM)) {
+            deleteRealmIdentity(token, name, orgName);
+            return;
+        }    
+        
         IdRepoException origEx = null;
         // First get the list of plugins that support the create operation.
 
@@ -1285,21 +1307,21 @@ public class IdServicesImpl implements IdServices {
             }
             if (pClass == null) {
                 try {
-
-                    Class thisClass = Class.forName(p);
-                    thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(new HashMap());
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
                     synchronized (idRepoMap) {
+                        Class thisClass = Class.forName(p);
+                        thisPlugin = (IdRepo) thisClass.newInstance();
+                        thisPlugin.initialize(new HashMap());
+                        Map listenerConfig = new HashMap();
+                        listenerConfig.put("realm", orgName);
+                        IdRepoListener lter = new IdRepoListener();
+                        lter.setConfigMap(listenerConfig);
+                        thisPlugin.addListener(token, lter);                  
                         idRepoMap.put(p, thisPlugin);
-                    }
-                    Set opSet = thisPlugin.getSupportedOperations(type);
-                    if (opSet != null && opSet.contains(IdOperation.READ)) {
-                        pluginClasses.add(thisPlugin);
+                    
+                        Set opSet = thisPlugin.getSupportedOperations(type);
+                        if (opSet != null && opSet.contains(IdOperation.READ)) {
+                            pluginClasses.add(thisPlugin);
+                        }
                     }
                 } catch (Exception e) {
                     getDebug().error(
@@ -2119,20 +2141,22 @@ public class IdServicesImpl implements IdServices {
             }
             if (pClass == null) {
                 try {
-                    Class thisClass = Class.forName(p);
-                    IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(new HashMap());
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
                     synchronized (idRepoMap) {
+                        Class thisClass = Class.forName(p);
+                        IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
+                        thisPlugin.initialize(new HashMap());
+                        Map listenerConfig = new HashMap();
+                        listenerConfig.put("realm", orgName);
+                        IdRepoListener lter = new IdRepoListener();
+                        lter.setConfigMap(listenerConfig);
+                        thisPlugin.addListener(token, lter);
+                    
                         idRepoMap.put(p, thisPlugin);
-                    }
-                    Set opSet = thisPlugin.getSupportedOperations(type);
-                    if (opSet != null && opSet.contains(op)) {
-                        pluginClasses.add(thisPlugin);
+                        
+                        Set opSet = thisPlugin.getSupportedOperations(type);
+                        if (opSet != null && opSet.contains(op)) {
+                            pluginClasses.add(thisPlugin);
+                        }
                     }
                 } catch (Exception e) {
                     getDebug().error(
@@ -2163,22 +2187,24 @@ public class IdServicesImpl implements IdServices {
                 vals.add(DNMapper.realmNameToAMSDKName(orgName));
                 amsdkConfig.put("amSDKOrgName", vals);
                 try {
-                    Class thisClass = Class.forName(p);
-                    IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(amsdkConfig);
-                    // Add listener to this plugin class!
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    listenerConfig.put("amsdk", "true");
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
                     synchronized (idRepoMap) {
+                        Class thisClass = Class.forName(p);
+                        IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
+                        thisPlugin.initialize(amsdkConfig);
+                        // Add listener to this plugin class!
+                        Map listenerConfig = new HashMap();
+                        listenerConfig.put("realm", orgName);
+                        listenerConfig.put("amsdk", "true");
+                        IdRepoListener lter = new IdRepoListener();
+                        lter.setConfigMap(listenerConfig);
+                        thisPlugin.addListener(token, lter);
+                    
                         idRepoMap.put(cacheKey, thisPlugin);
-                    }
-                    Set opSet = thisPlugin.getSupportedOperations(type);
-                    if (opSet != null && opSet.contains(op)) {
-                        pluginClasses.add(thisPlugin);
+                    
+                        Set opSet = thisPlugin.getSupportedOperations(type);
+                        if (opSet != null && opSet.contains(op)) {
+                            pluginClasses.add(thisPlugin);
+                        }
                     }
                 } catch (Exception e) {
                     getDebug().error(
@@ -2197,6 +2223,16 @@ public class IdServicesImpl implements IdServices {
         Iterator it = plugins.iterator();
         while (it.hasNext()) {
             String p = (String) it.next();
+                        
+            // Check if it is Legacy mode & if the plugin is AM SDK. If so skip
+            // it because, AM SDK plugin is always added by default in Legacy
+            // mode
+            if (ServiceManager.isCoexistenceMode()
+                    && p.equals(IdConstants.AMSDK_PLUGIN_NAME))
+            {
+                continue;
+            }
+                        
             String cacheKey = orgName + ":" + p;
             IdRepo pClass = null;
             Map classMap = null;
@@ -2242,32 +2278,35 @@ public class IdServicesImpl implements IdServices {
                         if (vals != null) {
                             String className = (String) vals.iterator().next();
                             try {
-                                Class thisClass = Class.forName(className);
-                                IdRepo thisPlugin = (IdRepo) thisClass
-                                        .newInstance();
-                                thisPlugin.initialize(configMap);
-                                // Add listener to this plugin class!
-                                Map listenerConfig = new HashMap();
-                                listenerConfig.put("realm", orgName);
-                                if (className.equals(IdConstants.AMSDK_PLUGIN)) 
-                                {
-                                    listenerConfig.put("amsdk", "true");
-                                }
-                                listenerConfig.put("plugin-name", pn);
-                                IdRepoListener lter = new IdRepoListener();
-                                lter.setConfigMap(listenerConfig);
-                                thisPlugin.addListener(token, lter);
                                 synchronized (idRepoMap) {
+                                    Class thisClass = Class.forName(className);
+                                    IdRepo thisPlugin = (IdRepo) thisClass
+                                        .newInstance();
+                                    thisPlugin.initialize(configMap);
+                                    // Add listener to this plugin class!
+                                    Map listenerConfig = new HashMap();
+                                    listenerConfig.put("realm", orgName);
+                                    if (className.equals(
+                                            IdConstants.AMSDK_PLUGIN)) 
+                                    {
+                                        listenerConfig.put("amsdk", "true");
+                                    }
+                                    listenerConfig.put("plugin-name", pn);
+                                    IdRepoListener lter = new IdRepoListener();
+                                    lter.setConfigMap(listenerConfig);
+                                    thisPlugin.addListener(token, lter);
+                                
                                     Map tmpMap = (Map) idRepoMap.get(cacheKey);
                                     if (tmpMap == null) {
                                         tmpMap = new HashMap();
                                     }
                                     tmpMap.put(pn, thisPlugin);
                                     idRepoMap.put(cacheKey, tmpMap);
-                                }
-                                if (thisPlugin.getSupportedOperations(type)
+                                
+                                    if (thisPlugin.getSupportedOperations(type)
                                         .contains(op)) {
-                                    pluginClasses.add(thisPlugin);
+                                        pluginClasses.add(thisPlugin);
+                                    }
                                 }
                             } catch (Exception e) {
                                 getDebug().error(
@@ -2309,23 +2348,26 @@ public class IdServicesImpl implements IdServices {
             }
             if (pClass == null) {
                 try {
-                    Class thisClass = Class.forName(p);
-                    IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(new HashMap());
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
-                    // thisPlugin.addListener(token, )
                     synchronized (idRepoMap) {
+                        Class thisClass = Class.forName(p);
+                        IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
+                        thisPlugin.initialize(new HashMap());
+                        Map listenerConfig = new HashMap();
+                        listenerConfig.put("realm", orgName);
+                        IdRepoListener lter = new IdRepoListener();
+                        lter.setConfigMap(listenerConfig);
+                        thisPlugin.addListener(token, lter);
+                        // thisPlugin.addListener(token, )
+                    
                         idRepoMap.put(p, thisPlugin);
-                    }
-                    pluginClasses.add(thisPlugin);
-                    if (debug.messageEnabled()) {
-                        debug.message("IdServicesImpl.getAllConfiguredPlugins:"
-                           + " isConfigMigratedTo70 pluginClasses="
-                           + pluginClasses);
+                    
+                        pluginClasses.add(thisPlugin);
+                        if (debug.messageEnabled()) {
+                            debug.message("IdServicesImpl." 
+                                    + "getAllConfiguredPlugins:"
+                                    + "isConfigMigratedTo70 pluginClasses="
+                                    + pluginClasses);
+                        }
                     }
                 } catch (Exception e) {
                     getDebug().error(
@@ -2358,20 +2400,21 @@ public class IdServicesImpl implements IdServices {
                 vals.add(DNMapper.realmNameToAMSDKName(orgName));
                 amsdkConfig.put("amSDKOrgName", vals);
                 try {
-                    Class thisClass = Class.forName(p);
-                    IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(amsdkConfig);
-                    // Add listener to this plugin class!
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    listenerConfig.put("amsdk", "true");
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
                     synchronized (idRepoMap) {
-                        idRepoMap.put(cacheKey, thisPlugin);
+                        Class thisClass = Class.forName(p);
+                        IdRepo thisPlugin = (IdRepo) thisClass.newInstance();
+                        thisPlugin.initialize(amsdkConfig);
+                        // Add listener to this plugin class!
+                        Map listenerConfig = new HashMap();
+                        listenerConfig.put("realm", orgName);
+                        listenerConfig.put("amsdk", "true");
+                        IdRepoListener lter = new IdRepoListener();
+                        lter.setConfigMap(listenerConfig);
+                        thisPlugin.addListener(token, lter);
+                    
+                        idRepoMap.put(cacheKey, thisPlugin);                    
+                        pluginClasses.add(thisPlugin);
                     }
-                    pluginClasses.add(thisPlugin);
                 } catch (Exception e) {
                     getDebug().error(
                         "IdServicesImpl.getAllConfiguredPlugins: "
@@ -2385,6 +2428,16 @@ public class IdServicesImpl implements IdServices {
         Iterator it = plugins.iterator();
         while (it.hasNext()) {
             String p = (String) it.next();
+
+            // Check if it is Legacy mode & if the plugin is AM SDK. If so skip
+            // it because, AM SDK plugin is always added by default in Legacy
+            // mode.
+            if (ServiceManager.isCoexistenceMode()
+                    && p.equals(IdConstants.AMSDK_PLUGIN_NAME))
+            {
+                continue;
+            }            
+            
             String cacheKey = orgName + ":" + p;
             Map classMap = null;
             synchronized (idRepoMap) {
@@ -2424,30 +2477,32 @@ public class IdServicesImpl implements IdServices {
                         if (vals != null) {
                             String className = (String) vals.iterator().next();
                             try {
-                                Class thisClass = Class.forName(className);
-                                IdRepo thisPlugin = (IdRepo) thisClass
-                                        .newInstance();
-                                thisPlugin.initialize(configMap);
-                                // Add listener to this plugin class!
-                                Map listenerConfig = new HashMap();
-                                listenerConfig.put("realm", orgName);
-                                if (className.equals(IdConstants.AMSDK_PLUGIN)) 
-                                {
-                                    listenerConfig.put("amsdk", "true");
-                                }
-                                listenerConfig.put("plugin-name", pn);
-                                IdRepoListener lter = new IdRepoListener();
-                                lter.setConfigMap(listenerConfig);
-                                thisPlugin.addListener(token, lter);
                                 synchronized (idRepoMap) {
+                                    Class thisClass = Class.forName(className);
+                                    IdRepo thisPlugin = (IdRepo) thisClass
+                                            .newInstance();
+                                    thisPlugin.initialize(configMap);
+                                    // Add listener to this plugin class!
+                                    Map listenerConfig = new HashMap();
+                                    listenerConfig.put("realm", orgName);
+                                    if (className.equals(
+                                            IdConstants.AMSDK_PLUGIN)) {
+                                        listenerConfig.put("amsdk", "true");
+                                    }
+                                    listenerConfig.put("plugin-name", pn);
+                                    IdRepoListener lter = new IdRepoListener();
+                                    lter.setConfigMap(listenerConfig);
+                                    thisPlugin.addListener(token, lter);
+
                                     Map tmpMap = (Map) idRepoMap.get(cacheKey);
                                     if (tmpMap == null) {
                                         tmpMap = new HashMap();
                                     }
                                     tmpMap.put(pn, thisPlugin);
                                     idRepoMap.put(cacheKey, tmpMap);
+
+                                    pluginClasses.add(thisPlugin);
                                 }
-                                pluginClasses.add(thisPlugin);
                             } catch (Exception e) {
                                 getDebug().error(
                                     "IdServicesImpl.getAllConfiguredPlugins: "

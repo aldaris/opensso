@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConstants.java,v 1.3 2005-12-08 01:16:01 veiming Exp $
+ * $Id: AMConstants.java,v 1.4 2006-12-20 23:07:08 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,9 @@ import java.util.Set;
 /**
  * This interface defines constants used by <code>AM SDK</code>.
  * @supported.all.api
+ * 
+ * <br>
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 public interface AMConstants {
 

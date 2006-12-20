@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.6 2006-12-13 23:06:33 beomsuk Exp $
+ * $Id: EventListener.java,v 1.7 2006-12-20 23:07:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,8 +95,9 @@ class EventListener {
         client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
 
         // Check if notification URL is provided
+        URL url = null;
         try {
-            URL url = WebtopNaming.getNotificationURL();
+            url = WebtopNaming.getNotificationURL();
 
             // Register for notification with AM Server
             notificationID = (String) client.send(
@@ -125,7 +126,7 @@ class EventListener {
             // Use polling mechanism to update caches
             if (debug.warningEnabled()) {
                 debug.warning("EventService: Registering for "
-                        + "notification via URL failed: "
+                        + "notification via URL failed for " + url 
                         + e.getMessage()
                         + "\nUsing polling mechanism for updates");
             }
@@ -187,7 +188,7 @@ class EventListener {
     static void sendNotification(String nItem) {
         if (debug.messageEnabled()) {
             debug.message("EventListener::sendNotification: "
-                    + "Received notification: " + nItem);
+                    + "Received notification.");
         }
 
         // Construct the XML document
@@ -285,7 +286,7 @@ class EventListener {
             }
             if (debug.messageEnabled()) {
                 debug.message("EventListener::sendNotification: Sent "
-                        + "notification: " + nItem);
+                        + "notification.");
             }
         } catch (Exception e) {
             if (debug.warningEnabled()) {
@@ -298,7 +299,7 @@ class EventListener {
     static void sendIdRepoNotification(String nItem) {
         if (debug.messageEnabled()) {
             debug.message("EventListener::sendIdRepoNotification: "
-                    + "Received notification: " + nItem);
+                    + "Received notification.");
         }
 
         // Construct the XML document

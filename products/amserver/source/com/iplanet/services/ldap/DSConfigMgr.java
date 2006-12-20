@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.4 2006-08-25 21:19:52 veiming Exp $
+ * $Id: DSConfigMgr.java,v 1.5 2006-12-20 23:07:10 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,8 +151,14 @@ public class DSConfigMgr {
                             + SystemProperties.CONFIG_FILE_NAME;
                     is = new FileInputStream(configFile);
                 }
-            } catch (IOException ex) {
-                debugger.error("DSConfigMgr.getDSConfigMgr: ", ex);
+            } catch (IOException ex) {                
+                
+                if (debugger.warningEnabled()) {
+                    debugger.warning("DSConfigMgr.getDSConfigMgr: " 
+                            + "serverconfig.xml probably missing. May be " 
+                            + "running in client mode  ", ex);
+                }
+                
                 throw new LDAPServiceException(
                         LDAPServiceException.FILE_NOT_FOUND, ex.getMessage());
             }

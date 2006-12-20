@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMOrganizationImpl.java,v 1.7 2006-12-15 21:39:32 kenwho Exp $
+ * $Id: AMOrganizationImpl.java,v 1.8 2006-12-20 23:07:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3514,6 +3514,11 @@ class AMOrganizationImpl extends AMObjectImpl implements AMOrganization {
 
     protected Set createEntitiesUnderOrg(int type, Map entityNamesAndAttrs)
             throws AMException, SSOException {
+        
+        if (debug.messageEnabled()) {
+            debug.message("AMOrganizationImpl.createEntities enter.  " 
+                    + "entityNamesAndAttrs=" + entityNamesAndAttrs);
+        }
         String stype = (String) AMCommonUtils.supportedNames.get(Integer
                 .toString(type));
         if (stype == null) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.13 2006-12-15 21:40:04 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.14 2006-12-20 23:07:09 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public class AMSDKRepo extends IdRepo {
 
     private String agentDN = null;
 
-    private Debug debug;
+    private static Debug debug =  Debug.getInstance("amsdkRepo");
 
     private static final String PC_ATTR = "iplanet-am-admin-console-default-pc";
 
@@ -105,7 +105,6 @@ public class AMSDKRepo extends IdRepo {
 
     public AMSDKRepo() {
         loadSupportedOps();
-        debug = Debug.getInstance("amsdkRepo");
     }
 
     /*
@@ -1469,6 +1468,12 @@ public class AMSDKRepo extends IdRepo {
 
     public static void notifyObjectChangedEvent(String normalizedDN,
             int eventType) {
+        
+        if (debug.messageEnabled()) {
+            debug.message("AMSDKRepo.notifyObjectChangedEvent - Sending "
+                    + "event to listeners.");
+        }
+        
         synchronized (listeners) {
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
@@ -1480,6 +1485,12 @@ public class AMSDKRepo extends IdRepo {
     }
 
     public static void notifyAllObjectsChangedEvent() {
+        
+        if (debug.messageEnabled()) {
+            debug.message("AMSDKRepo.notifyAllObjectsChangedEvent -  Sending "
+                    + "event to listeners.");
+        }
+        
         synchronized (listeners) {
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
