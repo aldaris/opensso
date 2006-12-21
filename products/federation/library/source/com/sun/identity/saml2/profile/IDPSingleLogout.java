@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.3 2006-12-21 19:48:46 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -171,6 +171,7 @@ public class IDPSingleLogout {
                     }
                 } else {
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                    IDPCache.authnContextCache.remove(idpSessionIndex);
                 }       
                 idpSessionIndex = null;
             }
@@ -199,6 +200,7 @@ public class IDPSingleLogout {
                     debug.message("No SP session participant(s)");
                 }
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                IDPCache.authnContextCache.remove(idpSessionIndex);
                 sessionProvider.invalidateSession(
                     session, request, response);
                 return;
@@ -268,6 +270,7 @@ public class IDPSingleLogout {
                                  request, response);
                              IDPCache.idpSessionsByIndices.
                                  remove(idpSessionIndex);
+                             IDPCache.authnContextCache.remove(idpSessionIndex);
                          }
                      }
                 }
@@ -404,6 +407,7 @@ public class IDPSingleLogout {
             request,
             response,
             SAML2Constants.HTTP_REDIRECT,
+            relayState,
             idpEntityID,
             realm
             );
@@ -575,6 +579,7 @@ public class IDPSingleLogout {
                 }
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                IDPCache.authnContextCache.remove(idpSessionIndex);
             }       
             idpSessionIndex = null;
         }
@@ -584,7 +589,7 @@ public class IDPSingleLogout {
                 debug.message("No SP session participant(s)");
             }
             sessionProvider.invalidateSession(session, request, response);
-            return true;
+            return false;
         }
         
         if (debug.messageEnabled()) {
@@ -620,9 +625,10 @@ public class IDPSingleLogout {
                     sessionProvider.invalidateSession(
                         idpSession.getSession(), request, response);
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                    IDPCache.authnContextCache.remove(idpSessionIndex);
                 }
                 debug.message("IDP initiated SLO Success");
-                return true;
+                return false;
             }
             String originatingLogoutSPEntityID = 
                 idpSession.getOriginatingLogoutSPEntityID();
@@ -686,10 +692,14 @@ public class IDPSingleLogout {
                 LogoutUtil.sendSLOResponse(response, logoutRes, location, 
                     relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE, 
                     spEntityID);
+                IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                IDPCache.authnContextCache.remove(idpSessionIndex);
+                return true;   
             }
             
             IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
-            return true;
+            IDPCache.authnContextCache.remove(idpSessionIndex);
+            return false;
         } else {
             // send Next Request
             NameIDandSPpair pair = (NameIDandSPpair)list.remove(0);
@@ -738,7 +748,7 @@ public class IDPSingleLogout {
                 idpSession.setPendingLogoutRequestID(requestIDStr);
             }
             
-            return false;
+            return true;
         }
     }
 
@@ -750,6 +760,7 @@ public class IDPSingleLogout {
      * @param request the HttpServletRequest.
      * @param response the HttpServletResponse.
      * @param binding name of binding will be used for request processing.
+     * @param relayState the relay state.
      * @param idpEntityID name of host entity ID.
      * @param realm name of host entity.
      * @return LogoutResponse the target URL on successful
@@ -762,6 +773,7 @@ public class IDPSingleLogout {
         HttpServletRequest request,
         HttpServletResponse response,
         String binding,
+        String relayState,
         String idpEntityID,
         String realm) throws SAML2Exception {
 
@@ -838,6 +850,7 @@ public class IDPSingleLogout {
                         sessionIndex, idpSession.getSession(),
                         request, response);
                     IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                    IDPCache.authnContextCache.remove(sessionIndex);
                     break;
                 }
 
@@ -878,16 +891,9 @@ public class IDPSingleLogout {
                     HashMap paramsMap = new HashMap();
                     paramsMap.put(SAML2Constants.ROLE, SAML2Constants.IDP_ROLE);
                     StringBuffer requestID = LogoutUtil.doLogout(metaAlias,
-                                                                spEntityID,
-                                                                  slosList,
-                                                                      null,
-                                                                   binding,
-                                                                      null,
-                                                              sessionIndex,
-                                                          pair.getNameID(),
-                                                                  response,
-                                                                 paramsMap,
-                                                                 spConfig);
+                        spEntityID, slosList, null, binding, relayState,
+                        sessionIndex, pair.getNameID(), response,
+                        paramsMap, spConfig);                                 
 
                     if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
                         String requestIDStr = requestID.toString();
@@ -905,6 +911,7 @@ public class IDPSingleLogout {
                     sessionIndex, idpSession.getSession(),
                     request, response);
                 IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                IDPCache.authnContextCache.remove(sessionIndex);
             } while (false);
             
         } catch (SessionException ssoe) {
@@ -984,6 +991,7 @@ public class IDPSingleLogout {
                                 idpToken, request, response);
                             IDPCache.
                                 idpSessionsByIndices.remove(idpSessionIndex);
+                            IDPCache.authnContextCache.remove(idpSessionIndex);
                         }
                     } catch (SessionException e) {
                         debug.error(
@@ -993,6 +1001,7 @@ public class IDPSingleLogout {
                 }
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                IDPCache.authnContextCache.remove(idpSessionIndex);
             }       
         }
     }

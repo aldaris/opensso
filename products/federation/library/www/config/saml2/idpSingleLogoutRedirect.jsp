@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutRedirect.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
+   $Id: idpSingleLogoutRedirect.jsp,v 1.3 2006-12-21 19:49:17 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -98,12 +98,14 @@
             return;
         }
 
-        if (doRelayState && (relayState != null)) {
-            response.sendRedirect(relayState);
-        } else {
-            %>
-            <jsp:forward page="/saml2/jsp/default.jsp?message=idpSloSuccess" />
-            <%
+        if (!doRelayState) {
+            if (relayState != null) {
+                response.sendRedirect(relayState);
+            } else {
+                %>
+                <jsp:forward page="/saml2/jsp/default.jsp?message=idpSloSuccess" />
+                <%
+            }    
         }
     } else {
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);

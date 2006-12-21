@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.1 2006-10-30 23:16:53 qcheng Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.2 2006-12-21 19:48:47 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,8 +169,8 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
         LogoutResponse loRes = null;
         try {
             // process LogoutRequestElement
-            loRes = IDPSingleLogout.processLogoutRequest(logoutReq,
-                request, response, SAML2Constants.SOAP, idpEntityID, realm);
+             loRes = IDPSingleLogout.processLogoutRequest(logoutReq, request, 
+                 response, SAML2Constants.SOAP, null, idpEntityID, realm);
             LogoutUtil.signSLOResponse(loRes, realm, idpEntityID, 
                     SAML2Constants.IDP_ROLE, logoutReq.getIssuer().getValue());
         } catch (SAML2Exception e) {

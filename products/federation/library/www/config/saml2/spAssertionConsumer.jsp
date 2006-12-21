@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.2 2006-12-13 19:03:54 weisun2 Exp $
+   $Id: spAssertionConsumer.jsp,v 1.3 2006-12-21 19:49:17 weisun2 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -242,7 +242,7 @@ com.sun.identity.plugin.session.SessionException
         <%
     } else {
         // log it
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect(realRedirectUrl);
     }
 %>
 </body>

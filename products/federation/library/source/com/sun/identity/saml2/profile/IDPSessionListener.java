@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.1 2006-10-30 23:16:35 qcheng Exp $
+ * $Id: IDPSessionListener.java,v 1.2 2006-12-21 19:48:46 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,6 +89,7 @@ public class IDPSessionListener
                return;
            }
            IDPCache.idpSessionsByIndices.remove(sessionIndex);
+           IDPCache.authnContextCache.remove(sessionIndex);
            if (SAML2Utils.debug.messageEnabled()) {
                SAML2Utils.debug.message(
                    classMethod +
