@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.xml,v 1.1 2006-08-04 21:07:02 veiming Exp $
+   $Id: Readme.xml,v 1.2 2006-12-21 01:02:34 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,7 +31,7 @@
     Here are a set of samples for OpenSSO. There are two parts to this set of
     samples. It is the commandline and the Web ARchive (WAR) parts. The 
     commandline samples can be executed from this directory via different 
-    Ant targets. You have to do the followings the setup the samples.
+    Ant targets. You have to do the following to setup the samples.
     </paragraph>
 
     <paragraph>
@@ -87,6 +87,26 @@
     You can get a Single Sign-On token ID by authenticating to the server; and
     then visit the client SDK sample web application's Single Sign On Token
     Verification Servlet.
+    </paragraph>
+    </section>
+
+    <section title="AMIdentityRepository Sample">
+    <paragraph>
+    1. IdRepoSample.java (plus the rest of the *.java files)
+    This demonstrates use of the <code>AMIdentityRepository</code> class.
+    To execute this sample, type <br />
+        <code>scripts/CommandLineIdrepo.sh</code> for Unix and Linux; or<br />
+        <code>scripts/CommandLineIdrepo.bat</code> for Windows.
+    </paragraph>
+    </section>
+
+    <section title="Logging Sample">
+    <paragraph>
+    1. LogSample.java
+    This demonstrates logging to an OpenSSO server.
+    To execute this sample, type <br />
+        <code>scripts/CommandLineLogging.sh</code> for Unix and Linux; or<br />
+        <code>scripts/CommandLineLogging.bat</code> for Windows.
     </paragraph>
     </section>
 
