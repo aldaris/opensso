@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSample.java,v 1.1 2006-12-21 00:57:41 bigfatrat Exp $
+ * $Id: LogSample.java,v 1.2 2006-12-21 17:39:59 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,14 +156,14 @@ public class LogSample {
 
             System.out.println("LogSample: Logging Successful !!!");
 
-	    userAC.logout();
-	    loggerAC.logout();
+            userAC.logout();
+            loggerAC.logout();
         } catch (AMLogException amex) {
             System.err.println("LogSample: AMLogException: " +
-		amex.getMessage());
+                amex.getMessage());
             System.err.println("LogSample: Logging Failed; " +
-		"Is user '" + loggedBySID +
-		"' a member of a Role or Group with log writing privileges?");
+                "Is user '" + loggedBySID +
+                "' a member of a Role or Group with log writing privileges?");
         } catch (Exception ssoe) {
             System.err.println("LogSample: Exception: " + ssoe.getMessage());
             System.err.println("LogSample: Logging Failed !!!");
