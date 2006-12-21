@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerClient.java,v 1.2 2006-12-14 18:40:19 beomsuk Exp $
+ * $Id: AssertionManagerClient.java,v 1.3 2006-12-21 18:48:28 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public final class AssertionManagerClient {
                 // exception if service does not exist or does not have
                 // permissions: javax.xml.soap.SOAPException
                 // java.rmi.RemoteException, java.rmi.ServerException
-                remoteStub.send("checkForLocal", null, null);
+                remoteStub.send("checkForLocal", null, null,null);
                 if (isLocal) {
                     SAMLUtils.debug.warning("AMC(): Using local service");
                     assertionManager = AssertionManager.getInstance();
@@ -236,7 +236,7 @@ public final class AssertionManagerClient {
             // The following call will check if the JVM contains the
             // the service instance also. If this is a server instance also
             // "short-circuit" will be performed.
-            remoteStub.send("checkForLocal", null, null);
+            remoteStub.send("checkForLocal", null, null,null);
         } catch (Exception ee) {
             if (SAMLUtils.debug.warningEnabled()) {
                 SAMLUtils.debug.warning(
