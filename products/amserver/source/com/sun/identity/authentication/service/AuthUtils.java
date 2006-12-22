@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.9 2006-12-13 20:58:15 beomsuk Exp $
+ * $Id: AuthUtils.java,v 1.10 2006-12-22 02:50:14 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1351,6 +1351,19 @@ public class AuthUtils {
         return getAuthContext(null, sessionID, false, req);
     }
     
+     /** Returns the AuthContext Handle for the Request.
+      *  @param orgName OrganizationName in request
+      *  @param sessionID Session ID for this request
+      *  @param isLogout a boolean which is true if it is a Logout request
+      *  @param req HttpServletRequest
+      *  @return AuthContextLocal object
+      */
+     public static AuthContextLocal getAuthContext(String orgName,
+         String sessionID, boolean isLogout, HttpServletRequest req)
+         throws AuthException {
+         return getAuthContext(orgName, sessionID, false, req, null, null);
+     }
+    
     /**
      * Creates authentication context for organization and session ID, if
      * <code>sessionupgrade</code> then save the previous authentication
@@ -1360,6 +1373,8 @@ public class AuthUtils {
      * @param sessionID sessionID of the request - "0" if new request
      * @param isLogout Logout request - if yes then no session.
      * @param req HTTP Servlet Request.
+     * @param indexType Index Type
+     * @param indexName Index Name
      * @return the created authentication context.
      * @throws AuthException if it fails to create <code>AuthContext</code>
      */
@@ -1367,7 +1382,9 @@ public class AuthUtils {
         String orgName,
         String sessionID,
         boolean isLogout,
-        HttpServletRequest req
+        HttpServletRequest req,
+        String indexType,
+        String indexName
     ) throws AuthException {
         AuthContextLocal authContext = null;
         SessionID sid = null;
@@ -1401,9 +1418,18 @@ public class AuthUtils {
                         utilDebug.message("sid from sess is : " + sess.getID());
                         utilDebug.message("sess is : " + sessionState);
                     }
-                    sessionUpgrade = true;
-                    if ((sessionState == Session.INVALID)  || (isLogout)) {
-                        sessionUpgrade = false;
+                    if (!((sessionState == Session.INVALID)  || (isLogout))) {
+                        if ((indexType != null) && (indexName != null)) {
+                            Hashtable indexTable = new Hashtable();
+                            indexTable.put(indexType, indexName);
+                            if (authContext != null) {
+                                SSOToken ssot = prevLoginState.getSSOToken();
+                                sessionUpgrade = checkSessionUpgrade(ssot,
+                                    indexTable);
+                            }
+                        } else {
+                            sessionUpgrade = true;
+                        }
                     }
                     if (utilDebug.messageEnabled()) {
                         utilDebug.message(
@@ -2327,8 +2353,8 @@ public class AuthUtils {
         return firstIndexName;
     }
     
-    // search valve in the String
-    private boolean isContain(String value, String key) {
+    // search value in the String
+    private static boolean isContain(String value, String key) {
         if (value == null) {
             return false;
         }
@@ -2359,7 +2385,7 @@ public class AuthUtils {
      * @return <code>true</code> if this is Session Upgrade case for given 
      * ssoToken and request parameters
      */
-    public boolean checkSessionUpgrade(SSOToken ssoToken,Hashtable reqDataHash){
+    public static boolean checkSessionUpgrade(SSOToken ssoToken,Hashtable reqDataHash){
         utilDebug.message("Check Session upgrade!");
         String tmp = null;
         String value = null;
