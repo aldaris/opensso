@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Condition.java,v 1.2 2006-08-21 18:46:35 bhavnab Exp $
+ * $Id: Condition.java,v 1.3 2006-12-22 03:40:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,6 +131,18 @@ public interface Condition extends Cloneable {
      */
     public static final String AUTH_SCHEME = "AuthScheme";
 
+    /** 
+     * Key that is used to specify application name
+     * for the resources protected by the policy
+     */
+    public static final String APPLICATION_NAME = "ApplicationName";
+
+    /** 
+     * Key that is used to specify the application
+     * idle time out
+     */
+    public static final String APPLICATION_IDLE_TIMEOUT 
+            = "ApplicationIdleTimeout";
 
     /** Key that is used to define the name of authentication scheme of the 
      *  request. Its passed down as part of the <code>env</code> Map to

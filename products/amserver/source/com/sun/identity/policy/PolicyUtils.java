@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.5 2006-08-28 18:50:42 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.6 2006-12-22 03:40:11 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -75,6 +76,7 @@ public class PolicyUtils {
     public static final String EMPTY_STRING = "";
     public static final String NULL_STRING = "null";
     public static final String NEW_LINE = "\n";
+    public static final String ADVICES_TAG_NAME = "Advices";
     public static final String ADVICES_START_TAG = "<Advices>";
     public static final String ADVICES_END_TAG = "</Advices>";
 
@@ -906,6 +908,97 @@ public class PolicyUtils {
         }
         return displayString;
     }
+   
+    /**
+     * Parses an XML string representation of policy advices and 
+     * returns a Map of advices.  The keys of returned map would be advice name 
+     * keys. Each key is a String object. The values against each key is a 
+     * Set of String(s) of advice values
+     *
+     * @param advicesXML XML string representation of policy advices conforming
+     * to the following DTD. The input string may not be validated against the 
+     * dtd for performance reasons.  
+
+         <!-- This DTD defines the Advices that could be included in
+        ActionDecision nested in PolicyDecision. Agents would post this
+        Advices to authentication service URL
+
+        Unique Declaration name for DOCTYPE tag:
+                  "iPlanet Policy Advices Interface 1.0 DTD"
+        -->
+
+
+        <!ELEMENT    AttributeValuePair    (Attribute, Value*) >
+
+
+        <!-- Attribute defines the attribute name i.e., a configuration
+             parameter.
+        -->
+        <!ELEMENT    Attribute     EMPTY >
+        <!ATTLIST    Attribute 
+              name    NMTOKEN    #REQUIRED 
+        >
+
+
+        <!-- Value element represents a value string.
+        -->
+        <!ELEMENT    Value    ( #PCDATA ) >
+
+
+        <!-- Advices element provides some additional info which may help the 
+             client could use to influence the policy decision
+        -->
+        <!ELEMENT    Advices   ( AttributeValuePair+ ) >
+
+     *
+     * @return the map of policy advices parsed from the passed in advicesXML
+     *         If the passed in advicesXML is null, null would be returned
+
+     * @throws PolicyException if there is any error parsing the passed in
+     *                         advicesXML
+     */
+    public static Map parseAdvicesXML(String advicesXML) 
+            throws PolicyException {
+
+        if(PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("PolicyUtils.parseAdvicesXML():"
+                    + " entering, advicesXML= " + advicesXML);
+        }
+
+        Map advices = null;
+        if (advicesXML != null) {
+            Document document = XMLUtils.toDOMDocument(advicesXML, 
+                    PolicyManager.debug);
+            if (document != null) {
+                Node advicesNode 
+                        = XMLUtils.getRootNode(document, ADVICES_TAG_NAME);
+                if (advicesNode != null) {
+                    advices = XMLUtils.parseAttributeValuePairTags(
+                            advicesNode);
+                } else {
+                    if(PolicyManager.debug.messageEnabled()) {
+                        PolicyManager.debug.message(
+                                "PolicyUtils.parseAdvicesXML():"
+                                + " advicesNode is null");
+                    }
+                }
+            } else {
+                if(PolicyManager.debug.messageEnabled()) {
+                    PolicyManager.debug.message(
+                            "PolicyUtils.parseAdvicesXML():"
+                            + " document is null");
+                }
+            }
+        }
+
+        if(PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("PolicyUtils.parseAdvicesXML():"
+                    + " returning, advices= " + advices);
+        }
+
+        return advices;
+    }
+
    
     /** 
      * Returns XML string representation of a <code>Map</code> of policy advices

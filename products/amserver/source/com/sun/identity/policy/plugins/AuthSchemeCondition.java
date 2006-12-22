@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthSchemeCondition.java,v 1.3 2006-08-25 21:21:08 veiming Exp $
+ * $Id: AuthSchemeCondition.java,v 1.4 2006-12-22 03:40:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,13 +64,45 @@ public class AuthSchemeCondition implements Condition {
     public static final String AUTH_SCHEME_CONDITION_ADVICE =
             "AuthSchemeConditionAdvice"; 
 
+    /** 
+     * Prefix for key that is used to set session property
+     * to track application based session idle timeout
+     */
+    public static final String APPLICATION_IDLE_TIMESOUT_AT_PREFIX
+            = "am.protected.policy.AppIdleTimesoutAt.";
+
+    /** 
+     * Key name that is used to communicate ForceAuth advice.
+     * This indicates to authentication service that user needs to 
+     * authenticate again even if he has already authenticated to 
+     * required module instance, chain, level or realm.
+     */
+    public static final String FORCE_AUTH_ADVICE = "ForceAuth";
+
+    /** 
+     * Constant for representing <code>true</value> for ForceAuth
+     */
+    public static final String TRUE = "true";
+
+    /** 
+     * Constant for representing authn type of module_intance
+     */
+    public static final String MODULE_INSTANCE = "module_instance";
+
     private Map properties;
     private Set authSchemes = new HashSet(); //Set of String(s)
+
+    private int appIdleTimeout = Integer.MAX_VALUE; //millis
+    private String appName = null;
+    private String appIdleTimesoutAtSessionKey = null;
+    private boolean appIdleTimeoutEnabled = false;
 
     private static List propertyNames = new ArrayList(1);
 
     static {
         propertyNames.add(AUTH_SCHEME);
+        propertyNames.add(APPLICATION_NAME);
+        propertyNames.add(APPLICATION_IDLE_TIMEOUT);
     }
 
     /** No argument constructor 
@@ -148,6 +180,16 @@ public class AuthSchemeCondition implements Condition {
     public void setProperties(Map properties) throws PolicyException {
         this.properties = properties;
         validateProperties();
+        if ( DEBUG.messageEnabled()) {
+            DEBUG.message("At AuthSchemeCondition."
+                    + "setProperties():"
+                    + "authSchemes=" + authSchemes
+                    + ", appName=" + appName
+                    + ", appIdleTimeout millis=" + appIdleTimeout
+                    + ", appIdleTimeoutEnabled=" + appIdleTimeoutEnabled
+                    + ", appIdleTimesoutAtSessionKey"
+                    + appIdleTimesoutAtSessionKey);
+        }
     }
 
     /** Gets the properties of the condition.  
@@ -199,6 +241,13 @@ public class AuthSchemeCondition implements Condition {
      */
     public ConditionDecision getConditionDecision(SSOToken token, Map env) 
             throws PolicyException, SSOException {
+        if ( DEBUG.messageEnabled()) {
+            DEBUG.message("At AuthSchemeCondition."
+                    + "getConditionDecision():entering:"
+                    + "authSchemes=" + authSchemes
+                    + ", appName=" + appName
+                    + ", appIdleTimeout=" + appIdleTimeout);
+        }
         boolean allowed = false;
         Set requestAuthSchemes = null;
         Set requestAuthSchemesIgnoreRealm = null;
@@ -287,13 +336,68 @@ public class AuthSchemeCondition implements Condition {
             DEBUG.message("At AuthSchemeCondition.getConditionDecision():"
                     + "authSchemes = " + authSchemes + "," 
                     + " requestAuthSchemes = " + requestAuthSchemes + ", "
-                    + " allowed = " + allowed);
+		    + " allowed before appIdleTimeout check = " + allowed);
         }
         Map advices = new HashMap();
         if (!allowed) {
             advices.put(AUTH_SCHEME_CONDITION_ADVICE, adviceMessages);
         }
-        return new ConditionDecision(allowed, advices);
+        long timeToLive = Long.MAX_VALUE;
+
+        //following additions are to support application idle timeout
+        long currentTimeMillis = System.currentTimeMillis(); 
+        Set expiredAuthSchemes = new HashSet(); //a collector
+        if (appIdleTimeoutEnabled) {
+            if (allowed) { //condition satisfied pending idletimeout check
+                //do idletimeout check
+                long idleTimesOutAtMillis = getApplicationIdleTimesoutAt(token,
+                        expiredAuthSchemes, currentTimeMillis);
+                if (idleTimesOutAtMillis <= currentTimeMillis) {
+                    allowed = false;
+                }
+                if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At AuthSchemeCondition."
+                            + "getConditionDecision():"
+                            + "currentTimeMillis = " + currentTimeMillis 
+                            + ", idleTimesOutAtMillis = " 
+                            + idleTimesOutAtMillis 
+                            + ", expiredAuthSchemes = " + expiredAuthSchemes 
+                            + ", allowed after appIdleTimeout check = " 
+                            + allowed);
+                }
+            }
+
+            if (allowed) { //condition satisfied
+                long appIdleTimesoutAt = currentTimeMillis + appIdleTimeout;
+                token.setProperty(appIdleTimesoutAtSessionKey, 
+                        Long.toString(appIdleTimesoutAt));
+                timeToLive = appIdleTimesoutAt;
+                if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At AuthSchemeCondition."
+                            + "getConditionDecision():"
+                            + "app access allowed, revised appIdleTimesOutAt="
+                            + appIdleTimesoutAt
+                            + ", currentTimeMillis=" + currentTimeMillis);
+                }
+            } else { //condiiton not satisifed
+                adviceMessages.addAll(expiredAuthSchemes);
+                advices.put(AUTH_SCHEME_CONDITION_ADVICE, adviceMessages);
+                Set forceAuthAdvices = new HashSet();
+                forceAuthAdvices.add(TRUE);
+                advices.put(FORCE_AUTH_ADVICE, forceAuthAdvices);
+            }
+
+        }
+
+        if ( DEBUG.messageEnabled()) {
+            DEBUG.message("At AuthSchemeCondition.getConditionDecision():"
+                    + "just before return:"
+                    + "allowed = " + allowed 
+                    + ", timeToLive = " + timeToLive 
+                    + ", advices = " + advices );
+        }
+
+        return new ConditionDecision(allowed, timeToLive, advices);
     }
 
     /**
@@ -348,7 +452,9 @@ public class AuthSchemeCondition implements Condition {
         Iterator keys = keySet.iterator();
         while ( keys.hasNext()) {
             String key = (String) keys.next();
-            if ( !AUTH_SCHEME.equals(key) ) {
+            if ( !AUTH_SCHEME.equals(key) 
+                        && !APPLICATION_NAME.equals(key)
+                        && !APPLICATION_IDLE_TIMEOUT.equals(key)) {
                 String args[] = {key};
                 throw new PolicyException(
                         ResBundleUtils.rbName,
@@ -361,6 +467,56 @@ public class AuthSchemeCondition implements Condition {
         Set authSchemeSet = (Set) properties.get(AUTH_SCHEME);
         if ( authSchemeSet != null ) {
             validateAuthSchemes(authSchemeSet);
+        }
+
+        //appIdleTimeoutEnabled
+        appIdleTimeoutEnabled = false;
+
+        //cache app name
+        appName = null;
+        appIdleTimesoutAtSessionKey = null;
+        Set appNameSet = (Set) properties.get(APPLICATION_NAME);
+        if ( (appNameSet != null) && !appNameSet.isEmpty() ) {
+            appName = (String)(appNameSet.iterator().next());
+            appName = appName.trim();
+            if (appName.length() == 0) {
+                appName = null;
+            } else {
+                appIdleTimesoutAtSessionKey 
+                        = APPLICATION_IDLE_TIMESOUT_AT_PREFIX 
+                        + appName;
+            }
+        }
+
+        //cache appIdleTimeout
+        Set appIdleTimeoutSet = (Set) properties.get(APPLICATION_IDLE_TIMEOUT);
+        if ( (appIdleTimeoutSet != null) && !appIdleTimeoutSet.isEmpty() ) {
+            String appIdleTimeoutString 
+                    = (String)(appIdleTimeoutSet.iterator().next());
+            appIdleTimeoutString = appIdleTimeoutString.trim();
+            if (appIdleTimeoutString.length() == 0) {
+                appIdleTimeoutString = null;
+            } else {
+                try {
+                    appIdleTimeout = Integer.parseInt(appIdleTimeoutString);
+
+                    //convert timeout in minutes to milliseconds
+                    appIdleTimeout = appIdleTimeout * 60 * 1000; 
+                } catch (NumberFormatException nfe) {
+                    //debug warning
+                    if ( DEBUG.warningEnabled()) {
+                        DEBUG.warning("At AuthSchemeCondition."
+                                + "validateProperties():"
+                                + "can not parse appIdleTeimout"
+                                + "defaulting to " + Integer.MAX_VALUE);
+                    }
+                    appIdleTimeout = Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        if ((appName != null) && (appIdleTimeout != Integer.MAX_VALUE)) {
+            appIdleTimeoutEnabled = true;
         }
 
         return true;
@@ -396,4 +552,75 @@ public class AuthSchemeCondition implements Condition {
         }
         return true;
     }
+
+    /**
+     * Returns the time at which the application would idle time out
+     * @param ssoToken <code>SSOToken</code> of the user
+     * @param expiredAuthSchemes <code>Set</code> that would be filled
+     *       with the authn module instance names that require 
+     *       reauthentication. This <code>Set</code> acts as a collector.
+     * @param currentTimeMillis current time in milli seconds
+     * @throws SSOException if <code>SSOToken</code> is invalid
+     * @throws PolicyException if there is any other policy error
+     */
+    private long getApplicationIdleTimesoutAt(SSOToken ssoToken, 
+            Set expiredAuthSchemes, long currentTimeMillis) 
+            throws SSOException, PolicyException {
+        long idleTimesoutAtMillis = 0;
+        String idleTimesoutAtString = ssoToken.getProperty(
+                appIdleTimesoutAtSessionKey);
+        if (idleTimesoutAtString != null) {
+            try {
+                idleTimesoutAtMillis = Long.parseLong(idleTimesoutAtString);
+            } catch (NumberFormatException nfe) {
+                //this should not happen 
+                if ( DEBUG.warningEnabled()) {
+                    DEBUG.warning("At AuthSchemeCondition."
+                            + "getApplicationIdleTimesoutAt():"
+                            + "can not parse idleTimeoutAtMillis, "
+                            + "defaulting to 0");
+                }
+            }
+            DEBUG.message("At AuthSchemeCondition."
+                    + "getApplicationIdleTimesoutAt():"
+                    + ",idleTimeoutAtMillis based on last access=" 
+                    + idleTimesoutAtMillis
+                    + ", currentTimeMillis=" + currentTimeMillis);
+        } else { //first visit to application 
+                if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At AuthSchemeCondition."
+                            + "getApplicationIdleTimesoutAt():"
+                            + appIdleTimesoutAtSessionKey + " not set, "
+                            + "first visit to application");
+                }
+        }
+        if (idleTimesoutAtMillis <= currentTimeMillis) {
+            Iterator authSchemesIter  = authSchemes.iterator();
+            while (authSchemesIter.hasNext()) {
+                String authScheme = (String)authSchemesIter.next();
+                long authInstant= AMAuthUtils.getAuthInstant(ssoToken, 
+                        MODULE_INSTANCE, authScheme);
+                idleTimesoutAtMillis = authInstant + appIdleTimeout;
+                if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At AuthSchemeCondition."
+                            + "getApplicationIdleTimesoutAt():"
+                            + "authScheme=" + authScheme
+                            + ",authInstant=" + authInstant
+                            + ",idleTimesoutAtMillis=" + idleTimesoutAtMillis
+                            + ",currentTimeMillis=" + currentTimeMillis);
+                }
+                if (idleTimesoutAtMillis <= currentTimeMillis) {
+                    expiredAuthSchemes.add(authScheme);
+                    if ( DEBUG.messageEnabled()) {
+                        DEBUG.message("At AuthSchemeCondition."
+                                + "getApplicationIdleTimesoutAt():"
+                                + "expired authScheme=" + authScheme);
+                    }
+                    break;
+                }
+            }
+        }
+        return idleTimesoutAtMillis;
+    }
+
 }

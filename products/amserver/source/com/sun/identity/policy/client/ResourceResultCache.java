@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.4 2006-12-15 00:46:25 beomsuk Exp $
+ * $Id: ResourceResultCache.java,v 1.5 2006-12-22 03:40:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -490,6 +490,12 @@ class ResourceResultCache implements SSOTokenListener {
                             + " do not cover request action names");
                 }
                 fetchResultsFromServer = true;
+            } else if (resourceResultsHasAdvices((Set)(results[0]))
+                    && PolicyProperties.SELF.equals(cacheMode)) { 
+                //get from server if there were advices in the cached decision
+                //we do this only if cacheMode is self
+                fetchResultsFromServer = true;
+
             }
 
             if (fetchResultsFromServer) {
@@ -1506,5 +1512,22 @@ class ResourceResultCache implements SSOTokenListener {
        return lbcookie;
     }
     
+
+    private boolean resourceResultsHasAdvices(Set resourceResults) {
+        boolean hasAdvices = false;
+        if (resourceResults != null) {
+            Iterator rrIter = resourceResults.iterator();
+            while (rrIter.hasNext()) {
+                ResourceResult rr = (ResourceResult)rrIter.next();
+                if (rr.hasAdvices()) {
+                    hasAdvices =true;
+                    break;
+                }
+            }
+        }
+        return hasAdvices;
+    }
+
+
 }
 
