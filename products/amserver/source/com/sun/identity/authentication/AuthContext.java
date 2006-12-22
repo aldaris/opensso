@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.3 2006-11-14 21:46:42 veiming Exp $
+ * $Id: AuthContext.java,v 1.4 2006-12-22 02:49:25 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -607,12 +607,18 @@ public class AuthContext extends Object implements java.io.Serializable {
             StringBuffer request = new StringBuffer(100);
             String[] authHandles = new String[1];
             authHandles[0] = getAuthHandle();
-
+            if ((ssoTokenID != null) && (authHandles[0].equals("0"))) {
+                if (authDebug.messageEnabled()) {
+                    authDebug.message("AuthContext.runRemoteLogin: Found"
+                        + " SSOTokenID " + ssoTokenID);
+                }
+                authHandles[0] = ssoTokenID;
+            }
             request.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
                      (Object[])authHandles))
                     .append(AuthXMLTags.LOGIN_BEGIN);
 
-            if (authHandles[0].equals("0")) {
+            if (!useOldStyleRemoteAuthentication) {
                 request.append(AuthXMLTags.SPACE)
                     .append(AuthXMLTags.ORG_NAME_ATTR)
                     .append(AuthXMLTags.EQUAL)
