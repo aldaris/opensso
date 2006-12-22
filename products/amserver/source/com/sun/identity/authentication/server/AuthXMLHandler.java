@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.3 2006-08-25 21:20:25 veiming Exp $
+ * $Id: AuthXMLHandler.java,v 1.4 2006-12-22 02:51:21 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -378,6 +378,9 @@ public class AuthXMLHandler implements RequestHandler {
                     postProcess(loginState, authResponse);
                     loginStatus = authContext.getStatus();
                     authResponse.setLoginStatus(loginStatus);
+                    AuthContextLocal prevAuthContext =  loginState.
+                        getPrevAuthContext();
+                    authResponse.setPrevAuthContext(prevAuthContext);
                     checkACException(authResponse, authContext);
                 } catch (Exception le) {
                     debug.error("Error during login ", le);

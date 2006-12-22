@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.2 2006-08-25 21:20:26 veiming Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.3 2006-12-22 02:51:21 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import org.w3c.dom.Node;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.share.AuthXMLTags;
@@ -125,7 +126,8 @@ public class AuthXMLRequestParser {
                     authXMLRequest.setRequestType(
                         AuthXMLRequest.NewAuthContext);
                     AuthContextLocal authContext = 
-                        AuthUtils.getAuthContext(orgName,servletReq);
+                        AuthUtils.getAuthContext(orgName,authIdentifier,false,
+                            servletReq, null, null);
                     authXMLRequest.setAuthContext(authContext);
                 }
         
@@ -162,14 +164,16 @@ public class AuthXMLRequestParser {
                     AuthContextLocal authContext = null;
                     if (orgName != null) {
                         authXMLRequest.setOrgName(orgName);
-                        authContext = AuthUtils.getAuthContext(
-                            orgName,servletReq);
-                    } else {
-                        authContext = AuthUtils.getAuthContext(
-                            servletReq, authIdentifier);
                     }
                     authXMLRequest.setRequestType(AuthXMLRequest.Login);
                     parseLoginNodeElements(loginNode,authXMLRequest);
+                    AuthContext.IndexType indexType = authXMLRequest.
+                        getIndexType();
+                    String indexTypeParam = convertIndexType(indexType);
+                    authContext =
+                        AuthUtils.getAuthContext(orgName,authIdentifier,false,
+                            servletReq, indexTypeParam,
+                            authXMLRequest.getIndexName());
                     authXMLRequest.setAuthContext(authContext);
                 }        
 
@@ -215,6 +219,26 @@ public class AuthXMLRequestParser {
 
         return authXMLRequest;
     }
+     /* Converts IndexType param to query patameter String */
+     private String convertIndexType(AuthContext.IndexType index) {
+         String indexTypeParam = null;
+         if (index == AuthContext.IndexType.SERVICE) {
+             indexTypeParam = "service";
+         } else if (index == AuthContext.IndexType.LEVEL) {
+             indexTypeParam = "authlevel";
+         } else if (index == AuthContext.IndexType.ROLE) {
+             indexTypeParam = "role";
+         } else if (index == AuthContext.IndexType.
+             MODULE_INSTANCE) {
+             indexTypeParam = "module";
+         } else if (index == AuthContext.IndexType.USER) {
+             indexTypeParam = "user";
+         } else if (index == AuthContext.IndexType.
+             COMPOSITE_ADVICE) {
+             indexTypeParam = "sunamcompositeadvice";
+         }
+         return indexTypeParam;
+     }
 
     /* get the attribute value for a node */
     private String parseNodeAttributes(Node requestNode,String attrName) {

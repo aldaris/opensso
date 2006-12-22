@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.2 2006-08-25 21:20:26 veiming Exp $
+ * $Id: AuthXMLResponse.java,v 1.3 2006-12-22 02:51:21 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -339,6 +339,13 @@ public class AuthXMLResponse {
                             authUtils.destroySession(authContext);
                     } else if (loginStatus == AuthContext.Status.SUCCESS) {
                         xmlString.append(createLoginStatusString());
+                        if (oldAuthContext != null) {
+                            if (debug.messageEnabled()) {
+                                debug.message("AuthXMLResponse.toXMLString : "
+                                    +"destroying old session");
+                            }
+                            authUtils.destroySession(oldAuthContext);
+                        }
                     }
                 }
                 break;
@@ -456,8 +463,8 @@ public class AuthXMLResponse {
      * Set previous AuthContext
      * @param oldAuthContext previous AuthContext object
      */
-    public void setPrevAuthContext(AuthContextLocal oldAuthContext) {
-        oldAuthContext = this.oldAuthContext;
+    public void setPrevAuthContext(AuthContextLocal aOldAuthContext) {
+        this.oldAuthContext = aOldAuthContext;
     }
 
 }
