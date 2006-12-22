@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.7 2006-08-25 21:20:31 veiming Exp $
+ * $Id: LoginState.java,v 1.8 2006-12-22 02:58:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.server.AuthContextLocal;
@@ -206,6 +207,9 @@ public class LoginState {
     Set domainAuthenticators = null;
     Set moduleInstances= null;
     AuthContextLocal oldAuthContext;
+    private InternalSession oldSession = null;
+    private SSOToken oldSSOToken = null;
+    private boolean forceAuth;
     boolean sessionUpgrade = false;
     int upgradeAuthLevel = 0;
     String loginURL = null;
@@ -1076,6 +1080,55 @@ public class LoginState {
             debug.message("oldUserDN is : "+ oldUserDN);
             debug.message("sessonUpgrade is : " + sessionUpgrade);
         }
+
+        Date authInstantDate = new Date();
+        String authInstant = DateUtils.toUTCDateFormat(authInstantDate);
+        
+        String moduleAuthTime = null;
+        if (sessionUpgrade) {
+            LoginState oldLoginState = AuthUtils.getLoginState(oldAuthContext);
+            if (oldLoginState != null) {
+                oldSession = oldLoginState.getSession();
+                try {
+                    oldSSOToken = oldLoginState.getSSOToken();
+                } catch (SSOException ssoExp) {
+                    ad.debug.warning("LoginState.setSessionProperties : "
+                        + "cannot get old SSO Token",ssoExp);
+                }
+            }
+            Map moduleTimeMap = null;
+            if (oldSSOToken != null) {
+                moduleTimeMap = AMAuthUtils.getModuleAuthTimeMap(oldSSOToken);
+            }
+            if (moduleTimeMap == null) {
+                moduleTimeMap = new HashMap();
+            }
+            StringTokenizer tokenizer = new StringTokenizer(authMethName,
+                ISAuthConstants.PIPE_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String moduleName = (String) tokenizer.nextToken();
+                moduleTimeMap.put(moduleName,authInstant);
+            }
+            Set entrySet = moduleTimeMap.entrySet();
+            boolean firstElement = true;
+            for(Iterator iter = entrySet.iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry)iter.next();
+                String moduleName = (String)entry.getKey();
+                String authTime = (String)entry.getValue();
+                StringBuffer sb = new StringBuffer();
+                if (!firstElement) {
+                    sb.append(ISAuthConstants.PIPE_SEPARATOR);
+                }
+                firstElement = false;
+                if (moduleAuthTime == null) {
+                    moduleAuthTime = (sb.append(moduleName).append(
+                        "+").append(authTime)).toString();
+                } else {
+                    moduleAuthTime += sb.append(moduleName).append(
+                        "+").append(authTime);
+                }
+            }
+        }
         
         if ((sessionUpgrade) && ((oldUserDN != null)
         && (DNUtils.normalizeDN(userDN).equals(
@@ -1084,9 +1137,9 @@ public class LoginState {
         } else {
             sessionUpgrade = false;
         }
-        
-        Date authInstantDate = new Date();
-        String authInstant = DateUtils.toUTCDateFormat(authInstantDate);
+        if (forceAuth && sessionUpgrade) {
+            session = oldSession;
+        }
         
         //Sets the User profile option used, in session.
         String userProfile = ISAuthConstants.REQUIRED;
@@ -1142,7 +1195,8 @@ public class LoginState {
                 "successURL = " + sessionSuccessURL+ "\n" +
                 "IndexType = " + indexType+ "\n" +
                 "UserProfile = " + userProfile+ "\n" +
-                "AuthInstant = " + authInstant);
+                "AuthInstant = " + authInstant+ "\n" +
+                "ModuleAuthTime = " + moduleAuthTime);
         }
         
         try {
@@ -1183,6 +1237,10 @@ public class LoginState {
             session.putProperty(ISAuthConstants.COOKIE_SUPPORT_PROPERTY, 
                 cookieSupport);
             session.putProperty(ISAuthConstants.AUTH_INSTANT, authInstant);
+            if ((moduleAuthTime != null) && (moduleAuthTime.length() != 0)) {
+                 session.putProperty(ISAuthConstants.MODULE_AUTH_TIME,
+                     moduleAuthTime);
+            }
             if (principalList != null) {
                 session.putProperty(ISAuthConstants.PRINCIPALS, principalList);
             }
@@ -1317,6 +1375,15 @@ public class LoginState {
     public SessionID getSid() {
         return sid; 
     }
+    
+    public boolean getForceFlag() {
+         return forceAuth;
+    }
+
+    public void setForceAuth(boolean force) {
+        forceAuth = force;
+    }
+
     
     /**
      * Returns user domain.
@@ -4382,13 +4449,6 @@ public class LoginState {
     
     void sessionUpgrade() {
         // set the larger authlevel
-        LoginState oldLoginState = AuthUtils.getLoginState(oldAuthContext);
-        InternalSession oldSession = null;
-        
-        if (oldLoginState != null) {
-            oldSession = oldLoginState.getSession();
-        }
-        
         if (oldSession == null) {
             return;
         }
@@ -4494,7 +4554,11 @@ public class LoginState {
         if (value == null) {
             return;
         }
-        session.putProperty(property,value);
+        if (!forceAuth) {
+            session.putProperty(property,value);
+        } else {
+            oldSession.putProperty(property,value);
+        }
     }
     
     /* compare old session property and new session property */

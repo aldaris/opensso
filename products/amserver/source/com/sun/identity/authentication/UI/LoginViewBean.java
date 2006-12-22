@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.6 2006-09-07 00:39:33 veiming Exp $
+ * $Id: LoginViewBean.java,v 1.7 2006-12-22 02:59:48 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -276,7 +276,9 @@ public class LoginViewBean extends AuthViewBeanBase {
             sessionID = au.getSessionIDFromRequest(request);
             SSOToken ssoToken = au.getExistingValidSSOToken(sessionID);
             AuthContextLocal origAC = au.getOrigAuthContext(sessionID);
-            if ((origAC == null) && !au.newSessionArgExists(reqDataHash)){
+            forceAuth = AuthUtils.forceAuthFlagExists(reqDataHash);
+            if ((origAC == null) && !au.newSessionArgExists(reqDataHash) &&
+                !forceAuth){
                 // The Cookie might be create on the other Access Manager server
                 // and valid
                 String originalRedirectURL = au.getOrigRedirectURL(request,
@@ -303,8 +305,12 @@ public class LoginViewBean extends AuthViewBeanBase {
                         if (isPost) {
                             isBackPost = canGetOrigCredentials(ssoToken);
                         }
-                        sessionUpgrade = au.checkSessionUpgrade(
-                            ssoToken, reqDataHash);
+                        if  (forceAuth) {
+                            sessionUpgrade = true;
+                        } else {
+                            sessionUpgrade = au.checkSessionUpgrade(
+                                ssoToken, reqDataHash);
+                        }
                         if (loginDebug.messageEnabled()) {
                             loginDebug.message(
                                 "Session Upgrade = " + sessionUpgrade);
@@ -315,6 +321,9 @@ public class LoginViewBean extends AuthViewBeanBase {
             
             ac = au.getAuthContext(
                 request, response, sessionID, sessionUpgrade, isBackPost);
+            if (sessionUpgrade) {
+                ac.getLoginState().setForceAuth(forceAuth);
+            }
             java.util.Locale locale =
                 com.sun.identity.shared.locale.Locale.getLocale(
                     au.getLocale(ac));
@@ -440,14 +449,23 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message(
                             "Login failure, current session destroyed!");
                     } else if (ac.getStatus()==AuthContext.Status.SUCCESS) {
-                        if (au.isCookieSupported(ac)) {
-                            setCookie();
-                            clearCookie(AuthUtils.getAuthCookieName());
-                        }
-                        if (prevAC != null) {
-                            loginDebug.message(
-                                "Destroy existing/old valid session");
-                            au.destroySession(prevAC);
+                        if (ac.getLoginState().getForceFlag()) {
+                            if (loginDebug.messageEnabled()) {
+                                loginDebug.message("Forced Auth Succeed."
+                                    + "Restoring updated session");
+                            }
+                            clearCookieAndDestroySession(ac);
+                            ac = prevAC;
+                        } else {
+                            if (au.isCookieSupported(ac)) {
+                                setCookie();
+                                clearCookie(AuthUtils.getAuthCookieName());
+                            }
+                            if (prevAC != null) {
+                                loginDebug.message(
+                                    "Destroy existing/old valid session");
+                                au.destroySession(prevAC);
+                            }
                         }
                     }
                     
@@ -511,22 +529,31 @@ public class LoginViewBean extends AuthViewBeanBase {
                 loginDebug.message("Previous AC : " + prevAC);
             }
             if (ac.getStatus() == AuthContext.Status.SUCCESS) {
-                if (au.isCookieSupported(ac)) {
-                    setCookie();
-                    clearCookie(AuthUtils.getAuthCookieName());
-                }
-                try {
-                    if (prevAC != null) {
-                        if (loginDebug.messageEnabled()) {
-                            loginDebug.message("Destroy the " +
-                            "original session Successful!");
-                        }
-                        au.destroySession(prevAC);
-                    }
-                } catch (Exception e) {
+                if (ac.getLoginState().getForceFlag()) {
                     if (loginDebug.messageEnabled()) {
-                        loginDebug.message("Destroy " +
-                        "original session Failed! " + e.getMessage());
+                        loginDebug.message("Forced Auth Succeed. "
+                            + "Restoring updated session");
+                    }
+                    clearCookieAndDestroySession(ac);
+                    ac = prevAC;
+                } else {
+                    if (au.isCookieSupported(ac)) {
+                        setCookie();
+                        clearCookie(AuthUtils.getAuthCookieName());
+                    }
+                    try {
+                        if (prevAC != null) {
+                            if (loginDebug.messageEnabled()) {
+                                loginDebug.message("Destroy the " +
+                                "original session Successful!");
+                            }
+                            au.destroySession(prevAC);
+                        }
+                    } catch (Exception e) {
+                        if (loginDebug.messageEnabled()) {
+                            loginDebug.message("Destroy " +
+                            "original session Failed! " + e.getMessage());
+                        }
                     }
                 }
             } else if (ac.getStatus() == AuthContext.Status.FAILED) {
@@ -1934,6 +1961,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     public int defaultButtonIndex = 0;
     String jsp_page=null;
     String param=null;   
+    private boolean forceAuth;
     
     /** Default parameter name for old token */
     public static final String TOKEN_OLD = "Login.Token";

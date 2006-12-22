@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.4 2006-09-07 00:39:34 veiming Exp $
+ * $Id: ISAuthConstants.java,v 1.5 2006-12-22 02:55:05 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -434,6 +434,8 @@ public interface ISAuthConstants {
     public static final String CLIENT_TYPE = "clientType";  
     
     public static final String AUTH_INSTANT = "authInstant";
+    
+    public static final String MODULE_AUTH_TIME = "moduleAuthTime";
     
     public static final String PRINCIPALS = "Principals";
     

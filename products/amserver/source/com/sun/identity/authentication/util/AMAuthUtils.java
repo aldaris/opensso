@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthUtils.java,v 1.2 2006-08-25 21:20:34 veiming Exp $
+ * $Id: AMAuthUtils.java,v 1.3 2006-12-22 02:55:05 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,11 +26,19 @@
 package com.sun.identity.authentication.util;
 
 import com.sun.identity.shared.debug.Debug;
-import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenID;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.common.DateUtils;
 import com.sun.identity.sm.DNMapper;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -285,5 +293,108 @@ public class AMAuthUtils {
             utilDebug.message("parseRealmData:returnData : " + returnData );
         }
         return returnData;
+    }
+    
+     /**
+     * Returns a <code>Map<code> with all Auth Module instance names as key
+     * and the time the module was authenticated as value.
+     * @param token valid user <code>SSOToken</code>
+     * @return Map containing module instace auth time.
+     */
+    public static Map getModuleAuthTimeMap( SSOToken ssoToken ) {
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AMAuthUtils.getModuleAuthTimeMap : ssoToken = "
+                +ssoToken.getTokenID());
+        }
+        String moduleAuthTime = null;
+        try {
+            moduleAuthTime = ssoToken.getProperty(ISAuthConstants.
+                MODULE_AUTH_TIME);
+        } catch (SSOException ssoExp) {
+            utilDebug.warning("AMAuthUtils.getModuleAuthTimeMap :" 
+                 + "Cannot get Module Auth Time from SSO Token");
+        }
+        Map moduleTimeMap = new HashMap();
+        if ((moduleAuthTime == null) || (moduleAuthTime.length()==0)) {
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AMAuthUtils.getModuleAuthTimeMap : " + 
+                    "MODULE_AUTH_TIME not set in SSO Token ");
+            }
+            try {
+                String authType = ssoToken.getProperty(ISAuthConstants.
+                    AUTH_TYPE);
+                String authInstant = ssoToken.getProperty(
+                    ISAuthConstants.AUTH_INSTANT);
+                StringTokenizer tokenizer = new StringTokenizer(authType,
+                    ISAuthConstants.PIPE_SEPARATOR);
+                while (tokenizer.hasMoreTokens()) {
+                    String moduleName = (String)tokenizer.nextToken();
+                    moduleTimeMap.put(moduleName, authInstant);
+                }
+            } catch (SSOException ssoExp) {
+                utilDebug.error("AMAuthUtils.getModuleAuthTimeMap : Cannot "
+                    + "get Auth type/instant from SSO Token", ssoExp);
+            }
+        } else {
+            StringTokenizer tokenizer = new StringTokenizer(moduleAuthTime,
+                ISAuthConstants.PIPE_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                StringTokenizer elemToken = new StringTokenizer((String)
+                    tokenizer.nextToken(), "+");
+                while (elemToken.hasMoreTokens()) {
+                    String moduleName = (String)elemToken.nextToken();
+                    String authTime = (String)elemToken.nextToken();
+                    moduleTimeMap.put(moduleName, authTime);
+                }
+            }
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AMAuthUtils.getModuleAuthTimeMap : "
+                + "moduleTimeMap " + "= " + moduleTimeMap);
+        }
+        return moduleTimeMap;
+    }
+    
+    /**
+     * Returns time at which the particular authentication occured
+     * @param ssoToken valid user <code>SSOToken</code>
+     * @param authType valid Authentication Type.
+     * @param authValue valid Authentication value.
+     * @return long value of authentication time.
+     */
+    public static long getAuthInstant(SSOToken ssoToken, String authType,
+        String authValue){
+        // Refreshing the SSOToken
+        try {
+            SSOTokenManager manager = SSOTokenManager.getInstance();
+            manager.refreshSession(ssoToken);
+        } catch (SSOException ssoExp) {
+            utilDebug.warning("AMAuthUtils.getAuthInstant : Cannot refresh "
+                + "the SSO Token");
+        }
+        long retTime = 0;
+        AuthUtils au = new AuthUtils();
+        AuthContext.IndexType indexType = au.getIndexType(authType);
+        if (indexType == AuthContext.IndexType.MODULE_INSTANCE) {
+            Map moduleTimeMap = getModuleAuthTimeMap(ssoToken);
+            String strDate = (String) moduleTimeMap.get(authValue);
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AMAuthUtils.getAuthInstant : "
+                    + "date from getAuthInstant = " + strDate);
+            }
+            if ((strDate != null) && (strDate.length() != 0)) {
+                Date dt = null;
+                try {
+                    dt = DateUtils.stringToDate(strDate);
+                } catch (java.text.ParseException parseExp) {
+                    utilDebug.message("AMAuthUtils.getAuthInstant : "
+                        + "Cannot parse Date");
+                }
+                if (dt != null) {
+                    retTime = dt.getTime();
+                }
+            }
+        }
+        return retTime;
     }
 }

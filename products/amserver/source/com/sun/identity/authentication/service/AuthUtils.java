@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.10 2006-12-22 02:50:14 pawand Exp $
+ * $Id: AuthUtils.java,v 1.11 2006-12-22 02:58:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,8 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ResourceLookup;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.policy.PolicyUtils;
+import com.sun.identity.policy.plugins.AuthSchemeCondition;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.EncodeAction;
 import com.sun.identity.session.util.SessionUtils;
@@ -72,6 +74,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -2274,6 +2277,62 @@ public class AuthUtils {
             utilDebug.message("newSessionArgExists : " + newSessionArgExists);
         }
         return newSessionArgExists;
+    }
+
+    /**
+     * Returns true if the request has the ForceAuth=<code>true</code>
+     * query parameter or composite advise.
+     *
+     * @return true if this parameter is present otherwise false.
+     */
+    public static boolean forceAuthFlagExists(Hashtable reqDataHash) {
+        String force = (String) reqDataHash.get("ForceAuth");
+        boolean forceFlag = (Boolean.valueOf(force)).booleanValue();
+        if (utilDebug.messageEnabled()) {
+             utilDebug.message("AuthUtils.forceFlagExists : " + forceFlag);
+        }
+        if (forceFlag == false) {
+            if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
+                String tmp = (String)reqDataHash.
+                    get(Constants.COMPOSITE_ADVICE);
+                forceFlag =
+                checkForForcedAuth(tmp);
+            }
+        }
+        return forceFlag;
+    }
+
+    /**
+     * Returns true if the composite Advice has the ForceAuth element
+     *
+     * @return true if this parameter is present otherwise false.
+     */
+    public static boolean checkForForcedAuth(String xmlCompositeAdvice) {
+        boolean returnForcedAuth = false;
+        try {
+            String decodedAdviceXML = URLDecoder.decode(xmlCompositeAdvice);
+            Map adviceMap = PolicyUtils.parseAdvicesXML(decodedAdviceXML);
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AuthUtils.checkForForcedAuth : decoded XML "
+                    +"= " + decodedAdviceXML);
+                utilDebug.message("AuthUtils.checkForForcedAuth : result Map = "
+                + adviceMap);
+            }
+            if (adviceMap != null) {
+                if (adviceMap.containsKey(AuthSchemeCondition.
+                    FORCE_AUTH_ADVICE)) {
+                    returnForcedAuth = true;
+                }
+            }
+        } catch  (com.sun.identity.policy.PolicyException polExp) {
+            utilDebug.error("AuthUtils.checkForForcedAuth : Error in "
+                + "Policy  XML parsing ",polExp );
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AuthUtils.checkForForcedAuth: returnForcedAuth"+
+                "= " + returnForcedAuth);
+        }
+        return returnForcedAuth;
     }
     
     /**
