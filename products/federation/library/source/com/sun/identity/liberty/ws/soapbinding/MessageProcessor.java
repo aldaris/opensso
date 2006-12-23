@@ -17,24 +17,34 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessageProcessor.java,v 1.1 2006-10-30 23:15:21 qcheng Exp $
+ * $Id: MessageProcessor.java,v 1.2 2006-12-23 05:10:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.soapbinding;
 
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPException;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
+import com.sun.identity.liberty.ws.common.wsse.WSSEConstants;
 import com.sun.identity.liberty.ws.security.SecurityUtils;
 import com.sun.identity.liberty.ws.security.SecurityTokenManager;
 import com.sun.identity.liberty.ws.security.SecurityAssertion;
@@ -43,6 +53,7 @@ import com.sun.identity.liberty.ws.disco.DiscoveryClient;
 import com.sun.identity.liberty.ws.disco.QueryResponse;
 import com.sun.identity.liberty.ws.disco.Description;
 import com.sun.identity.liberty.ws.disco.ServiceInstance;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 
 /**
@@ -56,7 +67,7 @@ public class MessageProcessor {
 
 
     private SOAPProviderConfig _config = null;
-    private static final String REQUEST = "REQUEST";
+    private String correlationId = null;
 
     private MessageProcessor() {}
 
@@ -91,7 +102,7 @@ public class MessageProcessor {
         Message req = null;
         try {
             req = new Message(soapMessage);
-            
+            sharedData.put(SOAPBindingConstants.LIBERTY_REQUEST, req);
             if(req.getSecurityProfileType() != Message.ANONYMOUS &&
                     !SecurityUtils.verifyMessage(req)) {
                 Utils.debug.error("MessageProcessor.validateRequest: Signature"+
@@ -147,11 +158,12 @@ public class MessageProcessor {
          Utils.debug.message("MessageProcessor.secureResponse : Init");
 
          try {
-             Message req = (Message)sharedData.get(REQUEST);
+             Message req = (Message)sharedData.get(
+                 SOAPBindingConstants.LIBERTY_REQUEST);
              addCorrelationHeader(soapMessage, req);
 
              if(_config.isResponseSignEnabled()) {
-                soapMessage = signMessage(soapMessage, null);
+                soapMessage = signMessage(soapMessage, null, null);
              }
 
              if(Utils.debug.messageEnabled()) {
@@ -206,16 +218,22 @@ public class MessageProcessor {
             
             String securityProfile = processResourceOffering(serviceOffering);
             
+            SecurityAssertion securityAssertion = null;
             // If the security profile is of SAML or Bearer insert a
             // security token for this profile.
             if (securityProfile.equals(Message.NULL_SAML) ||
-                    securityProfile.equals(Message.TLS_SAML) ||
-                    securityProfile.equals(Message.CLIENT_TLS_SAML) ||
-                    securityProfile.equals(Message.NULL_BEARER) ||
-                    securityProfile.equals(Message.TLS_BEARER) ||
-                    securityProfile.equals(Message.CLIENT_TLS_BEARER)) {
+                securityProfile.equals(Message.TLS_SAML) ||
+                securityProfile.equals(Message.CLIENT_TLS_SAML) ||
+                securityProfile.equals(Message.NULL_BEARER) ||
+                securityProfile.equals(Message.TLS_BEARER) ||
+                securityProfile.equals(Message.CLIENT_TLS_BEARER) ||
+                securityProfile.equals(Message.NULL_SAML_WSF11) ||
+                securityProfile.equals(Message.TLS_SAML_WSF11) ||
+                securityProfile.equals(Message.CLIENT_TLS_SAML_WSF11) ||
+                securityProfile.equals(Message.NULL_BEARER_WSF11) ||
+                securityProfile.equals(Message.TLS_BEARER_WSF11) ||
+                securityProfile.equals(Message.CLIENT_TLS_BEARER_WSF11)) {
                 
-                SecurityAssertion securityAssertion = null;
                 if(creds != null && creds.size() != 0) {
                     securityAssertion = (SecurityAssertion)creds.get(0);
                     securityAssertion.addToParent(header);
@@ -223,13 +241,20 @@ public class MessageProcessor {
             }
             
             if (securityProfile.equals(Message.NULL_SAML) ||
-                    securityProfile.equals(Message.TLS_SAML) ||
-                    securityProfile.equals(Message.CLIENT_TLS_SAML) ||
-                    securityProfile.equals(Message.NULL_X509) ||
-                    securityProfile.equals(Message.TLS_X509) ||
-                    securityProfile.equals(Message.CLIENT_TLS_X509)) {
+                securityProfile.equals(Message.TLS_SAML) ||
+                securityProfile.equals(Message.CLIENT_TLS_SAML) ||
+                securityProfile.equals(Message.NULL_X509) ||
+                securityProfile.equals(Message.TLS_X509) ||
+                securityProfile.equals(Message.CLIENT_TLS_X509) ||
+                securityProfile.equals(Message.NULL_SAML_WSF11) ||
+                securityProfile.equals(Message.TLS_SAML_WSF11) ||
+                securityProfile.equals(Message.CLIENT_TLS_SAML_WSF11) ||
+                securityProfile.equals(Message.NULL_X509_WSF11) ||
+                securityProfile.equals(Message.TLS_X509_WSF11) ||
+                securityProfile.equals(Message.CLIENT_TLS_X509_WSF11)) {
                 
-                soapMessage = signMessage(soapMessage, securityProfile);
+                soapMessage = signMessage(soapMessage, securityProfile,
+                    securityAssertion);
             }
             
             if (Utils.debug.messageEnabled()) {
@@ -280,41 +305,97 @@ public class MessageProcessor {
 
     /**
      * Signs the message.
-     *
      * @param soapMessage SOAPMessage that needs to be signed.
      * @param profile Security profile that needs to be used for signing.
+     * @param assertion Security Assertion
      * @return SOAPMessage signed SOAPMessage.
-     * @throws SOAPBindingException if there is an error.
      */
-    private SOAPMessage signMessage(SOAPMessage soapMessage,String profile)
+    private SOAPMessage signMessage(
+         SOAPMessage soapMessage, 
+         String profile,
+         SecurityAssertion assertion
+    )
     throws SOAPBindingException {
         try {
-            Message msg = new Message(soapMessage);
-            if(profile == null || profile.endsWith("X509")) {
-                msg.setSecurityProfileType(Message.X509_TOKEN);
-                SecurityTokenManager manager =
-                        new SecurityTokenManager(null);
-                msg.setBinarySecurityToken(manager.getX509CertificateToken());
-            } else if (profile.endsWith("SAML")) {
-                msg.setSecurityProfileType(Message.SAML_TOKEN);
+            SOAPHeader soapHeader = 
+                    soapMessage.getSOAPPart().getEnvelope().getHeader();
+            if(soapHeader == null) {
+               soapMessage.getSOAPPart().getEnvelope().addHeader();
             }
-            
-            Element sigElem = SecurityUtils.signMessage(msg);
-            
+            SOAPBody soapBody = 
+                   soapMessage.getSOAPPart().getEnvelope().getBody();
+            if(soapBody == null) {
+               throw new SOAPBindingException(
+                     Utils.bundle.getString("nullSOAPBody"));
+            }
+
+            String bodyId = SAMLUtils.generateID();
+            soapBody.setAttributeNS(WSSEConstants.NS_WSU_WSF11,
+                     WSSEConstants.WSU_ID, bodyId);
+            List ids = new ArrayList();
+            ids.add(bodyId);
+            if(correlationId != null) {
+               ids.add(correlationId);
+            }
+
+            Certificate cert = null;
+            Element sigElem = null;
+            ByteArrayInputStream bin = null;
+            ByteArrayOutputStream bop = new ByteArrayOutputStream();
+            Document doc = null;
+            if(profile == null || 
+                      profile.equals(Message.NULL_X509) ||
+                      profile.equals(Message.TLS_X509) ||
+                      profile.equals(Message.CLIENT_TLS_X509) ||
+                      profile.equals(Message.NULL_X509_WSF11) ||
+                      profile.equals(Message.TLS_X509_WSF11) ||
+                      profile.equals(Message.CLIENT_TLS_X509_WSF11)) {
+
+               BinarySecurityToken binaryToken = addBinaryToken(soapMessage);
+               cert = SecurityUtils.getCertificate(binaryToken);
+               soapMessage.writeTo(bop);
+               bin = new ByteArrayInputStream(bop.toByteArray());
+               doc = XMLUtils.toDOMDocument(bin, Utils.debug);
+               sigElem = SecurityUtils.getSignatureManager().
+                         signWithWSSX509TokenProfile(doc, cert, "", ids, 
+                         SOAPBindingConstants.WSF_11_VERSION); 
+
+            } else if(profile.equals(Message.NULL_SAML) ||
+                      profile.equals(Message.TLS_SAML) ||
+                      profile.equals(Message.CLIENT_TLS_SAML) ||
+                      profile.equals(Message.NULL_SAML_WSF11) ||
+                      profile.equals(Message.TLS_SAML_WSF11) ||
+                      profile.equals(Message.CLIENT_TLS_SAML_WSF11)) {
+
+               cert = SecurityUtils.getCertificate(assertion);
+               soapMessage.writeTo(bop);
+                      new ByteArrayInputStream(bop.toByteArray());
+               bin = new ByteArrayInputStream(bop.toByteArray());
+               doc = XMLUtils.toDOMDocument(bin, Utils.debug);
+               sigElem = SecurityUtils.getSignatureManager().
+                         signWithWSSSAMLTokenProfile(doc, cert, 
+                         assertion.getAssertionID(), "", ids, 
+                         SOAPBindingConstants.WSF_11_VERSION); 
+            }
+
             if(sigElem == null) {
-                Utils.debug.error("MessageProcessor.signMessage: " +
-                        "SigElement is null");
-                throw new SOAPBindingException(
-                        Utils.bundle.getString("cannotSignMessage"));
+               Utils.debug.error("MessageProcessor.signMessage: " +
+                "SigElement is null");
+               throw new SOAPBindingException(
+                 Utils.bundle.getString("cannotSignMessage"));
             }
-            
+
+            Element securityHeader = getSecurityHeader(soapMessage);
+            securityHeader.appendChild(securityHeader.getOwnerDocument().
+                           importNode(sigElem, true));
+
             return Utils.DocumentToSOAPMessage(sigElem.getOwnerDocument());
-            
+
         } catch (Exception ex) {
             Utils.debug.error("MessageProcessor.signMessage: " +
-                    "Signing failed.", ex);
+               "Signing failed.", ex);
             throw new SOAPBindingException(
-                    Utils.bundle.getString("cannotSignMessage"));
+                Utils.bundle.getString("cannotSignMessage"));
         }
     }
 
@@ -337,6 +418,7 @@ public class MessageProcessor {
             }
             
             CorrelationHeader cHeader = new CorrelationHeader();
+            correlationId = cHeader.getId();
             if(req != null) {
                 cHeader.setRefToMessageID(
                         req.getCorrelationHeader().getMessageID());
@@ -348,6 +430,32 @@ public class MessageProcessor {
                     "Could not add correlation header", ex);
             throw new SOAPBindingException(
                     Utils.bundle.getString("cannotAddCorrelationHeader"));
+        }
+    }
+
+    /**
+     * Adds binary token to the security header.
+     */
+    private BinarySecurityToken addBinaryToken(
+         SOAPMessage msg
+    ) throws SOAPBindingException {
+        try { 
+            SOAPHeader header =
+                   msg.getSOAPPart().getEnvelope().getHeader();
+            if(header == null) {
+               header = msg.getSOAPPart().getEnvelope().addHeader();
+            }
+            SecurityTokenManager manager = new SecurityTokenManager(null);
+            BinarySecurityToken binaryToken = 
+                     manager.getX509CertificateToken();
+            binaryToken.setWSFVersion(SOAPBindingConstants.WSF_11_VERSION);
+            binaryToken.addToParent(header);
+            return binaryToken;
+        } catch (Exception ex) {
+            Utils.debug.error("MessageProcessor.addBinaryToken: " +
+             "Could not add binary security token", ex);
+            throw new SOAPBindingException(
+                Utils.bundle.getString("cannotAddCorrelationHeader"));
         }
     }
 
@@ -416,4 +524,39 @@ public class MessageProcessor {
         }
     }
 
+    /**
+     * Returns the security header element.
+     */
+    private Element getSecurityHeader(SOAPMessage soapMessage) 
+                 throws SOAPBindingException {
+        try {
+            SOAPHeader header = 
+                 soapMessage.getSOAPPart().getEnvelope().getHeader();
+            NodeList headerChildNodes = header.getChildNodes();
+            if((headerChildNodes == null) ||
+                        (headerChildNodes.getLength() == 0)) {
+               throw new SOAPBindingException(
+                     Utils.bundle.getString("noSecurityHeader"));
+            }
+            for(int i=0; i < headerChildNodes.getLength(); i++) {
+
+                 Node currentNode = headerChildNodes.item(i);
+                 if(currentNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                 }
+                 if((WSSEConstants.TAG_SECURITYT.equals(
+                       currentNode.getLocalName())) &&
+                    (WSSEConstants.NS_WSSE_WSF11.equals(
+                       currentNode.getNamespaceURI()))) {
+                    return (Element)currentNode;
+                 }
+             }
+             return null;
+        } catch (SOAPException se) {
+             Utils.debug.error("MessageProcess.getSecurityHeader:: " +
+             "SOAPException", se);
+             throw new SOAPBindingException(
+             Utils.bundle.getString("noSecurityHeader"));
+        }
+    }
 }

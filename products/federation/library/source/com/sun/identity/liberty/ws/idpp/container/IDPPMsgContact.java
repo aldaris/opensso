@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPMsgContact.java,v 1.1 2006-10-30 23:15:06 qcheng Exp $
+ * $Id: IDPPMsgContact.java,v 1.2 2006-12-23 05:08:28 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -153,11 +153,13 @@ public class IDPPMsgContact extends IDPPBaseContainer {
             } else if(attribute.equals("MsgMethod")) {
                mse.getMsgMethod().add(getDSTURI(value));
             } else if(attribute.equals("MsgTechnology")) {
-               mse.getMsgMethod().add(getDSTURI(value));
+               mse.getMsgTechnology().add(getDSTURI(value));
             } else if(attribute.equals("MsgAccount")) {
                mse.setMsgAccount(getDSTString(value));
             } else if(attribute.equals("MsgSubAccount")) {
                mse.setMsgSubaccount(getDSTString(value));
+            } else if(attribute.equals("MsgProvider")) {
+               mse.setMsgProvider(getDSTString(value));
             } else if(attribute.equals("id")) {
                mse.setId(value);
             }

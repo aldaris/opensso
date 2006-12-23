@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.1 2006-10-30 23:15:20 qcheng Exp $
+ * $Id: Client.java,v 1.2 2006-12-23 05:09:59 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,7 +143,7 @@ public class Client {
         }      
 
 	if(soapAction == null || soapAction.length() == 0) {
-	    soapAction = "DEFAULT_SOAP_ACTION";
+	    soapAction = "";
 	}
 
 	con.setRequestProperty(SOAPBindingConstants.SOAP_ACTION_HEADER,

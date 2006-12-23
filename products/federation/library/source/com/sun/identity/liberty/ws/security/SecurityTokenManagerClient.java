@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.3 2006-12-14 18:40:19 beomsuk Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.4 2006-12-23 05:09:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,6 @@ public final class SecurityTokenManagerClient {
     // If local pointer to SecurityTokenManager instance
     private SecurityTokenManager securityTokenManager;
     private String ssoToken = null;
-    private boolean isCertificateSet = false;
 
     // JAX-RPC remote stub
     private SOAPClient stub;
@@ -278,7 +277,6 @@ public final class SecurityTokenManagerClient {
             try {
                 Object[] obj = {certAlias, Boolean.TRUE};
                 stub.send("setCertificate", obj, null, ssoToken);
-                isCertificateSet = true;
 	    } catch (Exception e) {
 		if (SecurityTokenManager.debug.warningEnabled()) {
 		    SecurityTokenManager.debug.warning(
@@ -307,7 +305,6 @@ public final class SecurityTokenManagerClient {
 		String certString = Base64.encode(cert.getEncoded());
                 Object[] obj = {certString, Boolean.FALSE};
                 stub.send("setCertificate", obj, null, ssoToken);
-                isCertificateSet = true;
 	    } catch (Exception e) {
 		if (SecurityTokenManager.debug.warningEnabled()) {
 		    SecurityTokenManager.debug.warning(
@@ -330,11 +327,6 @@ public final class SecurityTokenManagerClient {
 	if (useLocal) {
 	    return securityTokenManager.getX509CertificateToken();
 	} 
-
-	if (! isCertificateSet) {
-	    throw (new SecurityTokenException(
-		    bundle.getString("nullCertificate")));
-	}
 
 	String bst = null;
 	try {
@@ -364,11 +356,6 @@ public final class SecurityTokenManagerClient {
 	if (useLocal) {
 	    return (securityTokenManager.getSAMLAuthenticationToken(
 			senderIdentity));
-	}
-
-	if (!isCertificateSet) {
-	    throw (new SecurityTokenException(
-		    bundle.getString("nullCertificate")));
 	}
 
 	try {
@@ -427,11 +414,6 @@ public final class SecurityTokenManagerClient {
 	    return (securityTokenManager.getSAMLAuthorizationToken(
 			senderIdentity, invocatorSession, resourceID,
 			includeAuthN, includeResourceAccessStatement));
-	}
-
-	if (! isCertificateSet) {
-	    throw (new SecurityTokenException(
-		    bundle.getString("nullCertificate")));
 	}
 
 	try {
@@ -496,11 +478,6 @@ public final class SecurityTokenManagerClient {
         }
 
         String assertion = null;
-
-        if (! isCertificateSet) {
-            throw (new SecurityTokenException(
-                bundle.getString("nullCertificate")));
-        }
 
         try {
             String ni = senderIdentity.toString(true, true);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTClient.java,v 1.1 2006-10-30 23:14:56 qcheng Exp $
+ * $Id: DSTClient.java,v 1.2 2006-12-23 05:07:30 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,11 +40,13 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.w3c.dom.Element;
-import com.sun.identity.liberty.ws.security.SecurityTokenManager;
+import com.sun.identity.liberty.ws.security.SecurityTokenManagerClient;
 import com.sun.identity.liberty.ws.interaction.InteractionRedirectException;
 import com.sun.identity.liberty.ws.interaction.InteractionException;
 import com.sun.identity.liberty.ws.interaction.InteractionManager;
 import com.sun.identity.liberty.ws.soapbinding.ServiceInstanceUpdateHeader;
+import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
+import com.sun.identity.liberty.ws.soapbinding.Utils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,6 +74,7 @@ public class DSTClient {
      private boolean clientAuthEnabled = false;
      private String providerID = null;
      private ServiceInstanceUpdateHeader serviceInstanceUpdateHeader = null;
+     private String wsfVersion = Utils.getDefaultWSFVersion();
 
 
     /**
@@ -353,32 +356,62 @@ public class DSTClient {
 
                } else if(secProfile.equals(Message.NULL_X509) ||
                   secProfile.equals(Message.TLS_X509) ||
-                  secProfile.equals(Message.CLIENT_TLS_X509)) {
+                  secProfile.equals(Message.CLIENT_TLS_X509) ||
+                  secProfile.equals(Message.NULL_X509_WSF11) ||
+                  secProfile.equals(Message.TLS_X509_WSF11) ||
+                  secProfile.equals(Message.CLIENT_TLS_X509_WSF11)) {
 
                   securityProfile = Message.X509_TOKEN;
-                  if(secProfile.equals(Message.CLIENT_TLS_X509)) {
-                     clientAuthEnabled = true;
+                  if (secProfile.equals(Message.NULL_X509) ||
+                      secProfile.equals(Message.TLS_X509) ||
+                      secProfile.equals(Message.CLIENT_TLS_X509)) {
+                      wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  }
+
+                  securityProfile = Message.X509_TOKEN;
+                  if (secProfile.equals(Message.CLIENT_TLS_X509) ||
+                      secProfile.equals(Message.CLIENT_TLS_X509_WSF11)) {
+                      clientAuthEnabled = true;
                   }
                   foundProfile = true;
                   break;
 
                } else if(secProfile.equals(Message.NULL_SAML) ||
                   secProfile.equals(Message.TLS_SAML) ||
-                  secProfile.equals(Message.CLIENT_TLS_SAML)) {
+                  secProfile.equals(Message.CLIENT_TLS_SAML) ||
+                  secProfile.equals(Message.NULL_SAML_WSF11) ||
+                  secProfile.equals(Message.TLS_SAML_WSF11) ||
+                  secProfile.equals(Message.CLIENT_TLS_SAML_WSF11)) {
 
                   securityProfile = Message.SAML_TOKEN;
-                  if(secProfile.equals(Message.CLIENT_TLS_SAML)) {
-                     clientAuthEnabled = true;
+                  if (secProfile.equals(Message.NULL_SAML) ||
+                      secProfile.equals(Message.TLS_SAML) ||
+                      secProfile.equals(Message.CLIENT_TLS_SAML)) {
+                      wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  }
+                  if (secProfile.equals(Message.CLIENT_TLS_SAML) ||
+                      secProfile.equals(Message.CLIENT_TLS_SAML_WSF11)) {
+                      clientAuthEnabled = true;
                   }
                   foundProfile = true;
                   break;
                } else if(secProfile.equals(Message.NULL_BEARER) ||
                   secProfile.equals(Message.TLS_BEARER) ||
-                  secProfile.equals(Message.CLIENT_TLS_BEARER)) {
+                  secProfile.equals(Message.CLIENT_TLS_BEARER) ||
+                  secProfile.equals(Message.NULL_BEARER_WSF11) ||
+                  secProfile.equals(Message.TLS_BEARER_WSF11) ||
+                  secProfile.equals(Message.CLIENT_TLS_BEARER_WSF11)) {
 
                   securityProfile = Message.BEARER_TOKEN;
-                  if(secProfile.equals(Message.CLIENT_TLS_BEARER)) {
-                     clientAuthEnabled = true;
+                  if (secProfile.equals(Message.NULL_BEARER) ||
+                      secProfile.equals(Message.TLS_BEARER) ||
+                      secProfile.equals(Message.CLIENT_TLS_BEARER)) {
+                      wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  }
+
+                  if (secProfile.equals(Message.CLIENT_TLS_BEARER) ||
+                      secProfile.equals(Message.CLIENT_TLS_BEARER_WSF11)) {
+                      clientAuthEnabled = true;
                   }
                   foundProfile = true;
                   break;
@@ -412,8 +445,10 @@ public class DSTClient {
     private void generateBinarySecurityToken(Object credential)
      throws DSTException {
         try {
-            SecurityTokenManager manager = new SecurityTokenManager(credential);
-            this.token =  manager.getX509CertificateToken();
+            SecurityTokenManagerClient manager =
+                new SecurityTokenManagerClient(credential);
+            token =  manager.getX509CertificateToken();
+            token.setWSFVersion(wsfVersion);
         } catch (Exception e) {
             DSTUtils.debug.error("DSTClient:generateBinarySecurityToken:" +
             "Error in generating binary security token.", e);
@@ -773,6 +808,7 @@ public class DSTClient {
             }
                 
             msg.setSOAPBodies(requestObjects);
+            msg.setWSFVersion(wsfVersion);
 
             if(clientAuthEnabled) {
                msg.setClientAuthentication(clientAuthEnabled);
@@ -869,4 +905,12 @@ public class DSTClient {
         return serviceInstanceUpdateHeader;
     }
 
+    /**
+     * Sets the web services version.
+     *
+     * @param wsfVersion the web services version that needs to be set.
+     */
+    public void setWSFVersion(String wsfVersion) {
+        this.wsfVersion = wsfVersion;
+    }
 }

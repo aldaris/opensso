@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: id-sis-pp-query.jsp,v 1.1 2006-10-30 23:17:42 qcheng Exp $
+   $Id: id-sis-pp-query.jsp,v 1.2 2006-12-23 05:14:19 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -179,7 +179,7 @@ com.sun.identity.shared.xml.XMLUtils"
             }
 
             List items = new ArrayList();
-            DSTQueryItem item = new DSTQueryItem("/PP/CommonName/AnalyzedName/FN",
+            DSTQueryItem item = new DSTQueryItem(queryString,
                 "urn:liberty:sis-2003-08:pp");
             item.setId("id1");
             item.setItemID("name1");

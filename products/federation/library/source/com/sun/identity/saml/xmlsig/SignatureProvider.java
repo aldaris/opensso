@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SignatureProvider.java,v 1.2 2006-11-30 05:47:38 qcheng Exp $
+ * $Id: SignatureProvider.java,v 1.3 2006-12-23 05:13:07 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -287,6 +287,25 @@ public interface SignatureProvider {
         throws XMLSignatureException;
 
     /**
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert signer's Certificate
+     * @param assertionID assertion ID for the SAML Security Token
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param the web services framework that should be used.
+     *     For WSF1.1, the version must be "1.1" and for WSF1.0,
+     *     it must be "1.0"
+     * @return SAML Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithWSSSAMLTokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String assertionID, String algorithm, java.util.List ids,
+        String wsfVersion) throws XMLSignatureException;
+
+    /**
      *
      * Sign part of the XML document referred by the supplied a list
      * of id attributes of nodes
@@ -297,10 +316,27 @@ public interface SignatureProvider {
      * @return X509 Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */
-    public org.w3c.dom.Element signWithWSSX509TokenProfile(org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-                                   java.lang.String algorithm,
-                                   java.util.List ids)
+    public org.w3c.dom.Element signWithWSSX509TokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String algorithm, java.util.List ids) throws XMLSignatureException;
+
+    /**
+     *
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param the web services framework that should be used.
+     *     For WSF1.1, it should be "1.1" and for WSF1.0,
+     *     it should be "1.0"
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithWSSX509TokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String algorithm, java.util.List ids, String wsfVersion)
         throws XMLSignatureException;
 
      /**                                                                       
@@ -404,6 +440,20 @@ public interface SignatureProvider {
                                       java.lang.String idAttrName,
                                       java.lang.String certAlias)
         throws XMLSignatureException;
+
+    /**
+     * Verify all the signatures of the XML document
+     * @param the web services framework that should be used.
+     *     For WSF1.1, it should be "1.1" and for WSF1.0, it should be "1.0"
+     * @param certAlias alias for Signer's certificate, this is used to search
+     *     signer's public certificate if it is not presented in
+     *     <code>ds:KeyInfo</code>.
+     * @param document XML dom document whose signature to be verified
+     * @return true if the XML signature is verified, false otherwise
+     * @exception XMLSignatureException if problem occurs during verification
+     */
+    public boolean verifyXMLSignature(String wsfVersion,String certAlias,
+        org.w3c.dom.Document document) throws XMLSignatureException;
 
     /**
      * Returns the real key provider.

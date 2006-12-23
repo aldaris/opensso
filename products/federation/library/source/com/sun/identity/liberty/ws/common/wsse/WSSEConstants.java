@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSEConstants.java,v 1.1 2006-10-30 23:14:48 qcheng Exp $
+ * $Id: WSSEConstants.java,v 1.2 2006-12-23 05:06:17 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,6 +116,12 @@ public class WSSEConstants {
             "http://schemas.xmlsoap.org/ws/2003/06/secext";
 
     /**
+     * WSU namespace definition.
+     */
+    public static final String NS_WSU =
+            "http://schemas.xmlsoap.org/ws/2003/06/utility";
+
+    /**
      * Discovery Service namespace definition.
      */
     public static final String NS_DISCO= "urn:liberty:disco:2003-08";
@@ -185,4 +191,39 @@ public class WSSEConstants {
      */
     public static final String END_CERT   = "\n-----END CERTIFICATE-----";
 
+    /**
+     * WSSE 1.1 namespace definition.
+     */
+    public static final String NS_WSSE_WSF11 =
+          "http://docs.oasis-open.org/wss/2004/01/" +
+          "oasis-200401-wss-wssecurity-secext-1.0.xsd";
+
+    /**
+     * WSU 1.1 namespace definition.
+     */
+    public static final String NS_WSU_WSF11 =
+          "http://docs.oasis-open.org/wss/2004/01/" +
+          "oasis-200401-wss-wssecurity-utility-1.0.xsd";
+
+    /**
+     * X509 token profile namespace definition.
+     */
+    public static final String NS_X509 =  "http://docs.oasis-open.org/wss/" +
+          "2004/01/oasis-200401-wss-x509-token-profile-1.0";
+
+    /**
+     * SOAP message security namespace definition.
+     */
+    public static final String NS_SMS = "http://docs.oasis-open.org/wss/"  +
+          "2004/01/oasis-200401-wss-soap-message-security-1.0";
+
+    /**
+     * WSU namespace with xmlns prefix.
+     */
+    public static final String TAG_XML_WSU = "xmlns:wsu";
+
+    /**
+     * Tag with namespace prefix for Id.
+     */
+    public static final String WSU_ID = "wsu:Id";
 }

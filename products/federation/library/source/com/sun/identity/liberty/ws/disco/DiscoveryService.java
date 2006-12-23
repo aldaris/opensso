@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryService.java,v 1.1 2006-10-30 23:14:50 qcheng Exp $
+ * $Id: DiscoveryService.java,v 1.2 2006-12-23 05:06:49 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import org.w3c.dom.*;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.liberty.ws.common.LogUtil;
 import com.sun.identity.liberty.ws.common.Status;
+import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.security.*;
 import com.sun.identity.liberty.ws.soapbinding.*;
 import com.sun.identity.liberty.ws.interfaces.*;
@@ -106,12 +107,24 @@ public final class DiscoveryService implements RequestHandler {
             (authnMech.equals(Message.TLS_BEARER)) ||
             (authnMech.equals(Message.CLIENT_TLS_X509)) ||
             (authnMech.equals(Message.CLIENT_TLS_SAML)) ||
-            (authnMech.equals(Message.CLIENT_TLS_BEARER)))
+            (authnMech.equals(Message.CLIENT_TLS_BEARER)) ||
+            (authnMech.equals(Message.NULL_X509_WSF11)) ||
+            (authnMech.equals(Message.NULL_SAML_WSF11)) ||
+            (authnMech.equals(Message.NULL_BEARER_WSF11)) ||
+            (authnMech.equals(Message.TLS_X509_WSF11)) ||
+            (authnMech.equals(Message.TLS_SAML_WSF11)) ||
+            (authnMech.equals(Message.TLS_BEARER_WSF11)) ||
+            (authnMech.equals(Message.CLIENT_TLS_X509_WSF11)) ||
+            (authnMech.equals(Message.CLIENT_TLS_SAML_WSF11)) ||
+            (authnMech.equals(Message.CLIENT_TLS_BEARER_WSF11)))
         {
-           try {
+            try {
                 SecurityTokenManager stm =
                     new SecurityTokenManager(request.getToken());
-                message = new Message(provH, stm.getX509CertificateToken());
+                BinarySecurityToken binaryToken = stm.getX509CertificateToken();
+                binaryToken.setWSFVersion(request.getWSFVersion());
+                message = new Message(provH, binaryToken);
+                message.setWSFVersion(request.getWSFVersion());
             } catch (Exception e) {
                 DiscoUtils.debug.error("DiscoveryService.processRequest:"
                         + "couldn't generate Message with X509 token: ", e);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PlainMechanismHandler.java,v 1.1 2006-10-30 23:18:02 qcheng Exp $
+ * $Id: PlainMechanismHandler.java,v 1.2 2006-12-23 05:15:40 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,9 @@ import javax.security.auth.callback.PasswordCallback;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcConstants;
@@ -164,6 +166,15 @@ public class PlainMechanismHandler implements MechanismHandler {
             SSOToken token = authContext.getSSOToken();
             String userDN = token.getPrincipal().getName();
             SASLResponse saslResp = new SASLResponse(SASLResponse.OK);
+
+            try {
+                SSOTokenManager.getInstance().destroyToken(token);
+            } catch (SSOException ssoex) {
+                if (AuthnSvcUtils.debug.warningEnabled()) {
+                    AuthnSvcUtils.debug.warning(
+                        "PlainMechanismHandler.authenticate:", ssoex);
+                }
+            }
 
             if (!AuthnSvcUtils.setResourceOfferingAndCredentials(
                 saslResp, message, userDN)) {

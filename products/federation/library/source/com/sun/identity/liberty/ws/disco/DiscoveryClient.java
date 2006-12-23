@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryClient.java,v 1.1 2006-10-30 23:14:49 qcheng Exp $
+ * $Id: DiscoveryClient.java,v 1.2 2006-12-23 05:06:49 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,9 @@ import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.liberty.ws.soapbinding.ProviderHeader;
 import com.sun.identity.liberty.ws.soapbinding.Client;
+import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
 import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
+import com.sun.identity.liberty.ws.soapbinding.Utils;
 import com.sun.identity.liberty.ws.disco.common.*;
 import com.sun.identity.liberty.ws.security.*;
 
@@ -61,6 +63,7 @@ public class DiscoveryClient {
     private boolean processed = true;
     private String soapAction = null;
     private Object session = null;
+    private String wsfVersion = Utils.getDefaultWSFVersion();
 
     /**
      * Constructor, connects to Discovery Service without web service security
@@ -198,30 +201,48 @@ public class DiscoveryClient {
                     return;
                 } else if ((mech.equals(Message.NULL_X509)) ||
                     (mech.equals(Message.TLS_X509)) ||
-                    (mech.equals(Message.CLIENT_TLS_X509)))
+                    (mech.equals(Message.CLIENT_TLS_X509)) ||
+                    (mech.equals(Message.NULL_X509_WSF11)) ||
+                    (mech.equals(Message.TLS_X509_WSF11)) ||
+                    (mech.equals(Message.CLIENT_TLS_X509_WSF11)))
                 {
                     clientMech = Message.X509_TOKEN;
+                    if (mech.equals(Message.NULL_X509) ||
+                        mech.equals(Message.TLS_X509) ||
+                        mech.equals(Message.CLIENT_TLS_X509)) {
+                        wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    }
                     DiscoSDKUtils.debug.message("DiscoClient: x509");
                     try {
                         SecurityTokenManagerClient stm =
                             new SecurityTokenManagerClient(session);
                         stm.setCertAlias(certAlias);
                         token = stm.getX509CertificateToken();
+                        token.setWSFVersion(wsfVersion);
                     } catch (Exception e) {
                         DiscoSDKUtils.debug.error("DiscoveryClient.processResource"
                             + "Offering: couldn't generate X509 token: ", e);
                         throw new DiscoveryException(e.getMessage());
                     }
-                    if (mech.equals(Message.CLIENT_TLS_X509)) {
+                    if (mech.equals(Message.CLIENT_TLS_X509) ||
+                        mech.equals(Message.CLIENT_TLS_X509_WSF11)) {
                         clientAuth = true;
                         DiscoSDKUtils.debug.message("DiscoClient: clientAuth on");
                     }
                     return;
                 } else if ((mech.equals(Message.NULL_SAML)) ||
                     (mech.equals(Message.TLS_SAML)) ||
-                    (mech.equals(Message.CLIENT_TLS_SAML)))
+                    (mech.equals(Message.CLIENT_TLS_SAML)) ||
+                    (mech.equals(Message.NULL_SAML_WSF11)) ||
+                    (mech.equals(Message.TLS_SAML_WSF11)) ||
+                    (mech.equals(Message.CLIENT_TLS_SAML_WSF11)))
                 {
                     clientMech = Message.SAML_TOKEN;
+                    if (mech.equals(Message.NULL_SAML) ||
+                        mech.equals(Message.TLS_SAML) ||
+                        mech.equals(Message.CLIENT_TLS_SAML)) {
+                        wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    }
                     DiscoSDKUtils.debug.message("DiscoClient: saml token");
                     List credRefs = desc.getCredentialRef();
                     if ((credRefs == null) || (credRefs.size() == 0)) {
@@ -248,16 +269,25 @@ public class DiscoveryClient {
                             }
                         }
                     }
-                    if (mech.equals(Message.CLIENT_TLS_SAML)) {
+                    if (mech.equals(Message.CLIENT_TLS_SAML) ||
+                        mech.equals(Message.CLIENT_TLS_SAML_WSF11)) {
                         clientAuth = true;
                         DiscoSDKUtils.debug.message("DiscoClient: clientAuth on");
                     }
                     return;
                 } else if ((mech.equals(Message.NULL_BEARER)) ||
                     (mech.equals(Message.TLS_BEARER)) ||
-                    (mech.equals(Message.CLIENT_TLS_BEARER)))
+                    (mech.equals(Message.CLIENT_TLS_BEARER)) ||
+                    (mech.equals(Message.NULL_BEARER_WSF11)) ||
+                    (mech.equals(Message.TLS_BEARER_WSF11)) ||
+                    (mech.equals(Message.CLIENT_TLS_BEARER_WSF11)))
                 {
                     clientMech = Message.BEARER_TOKEN;
+                    if (mech.equals(Message.NULL_BEARER) ||
+                        mech.equals(Message.TLS_BEARER) ||
+                        mech.equals(Message.CLIENT_TLS_BEARER)) {
+                        wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    }
                     DiscoSDKUtils.debug.message("DiscoClient: bearer token");
                     List credRefs = desc.getCredentialRef();
                     if ((credRefs == null) || (credRefs.size() == 0)) {
@@ -284,7 +314,8 @@ public class DiscoveryClient {
                             }
                         }
                     }
-                    if (mech.equals(Message.CLIENT_TLS_BEARER)) {
+                    if (mech.equals(Message.CLIENT_TLS_BEARER) ||
+                        mech.equals(Message.CLIENT_TLS_BEARER_WSF11)) {
                         clientAuth = true;
                         DiscoSDKUtils.debug.message("DiscoClient: clientAuth on");
                     }
@@ -442,6 +473,7 @@ public class DiscoveryClient {
         if (clientAuth) {
             req.setClientAuthentication(clientAuth);
         }
+        req.setWSFVersion(wsfVersion);
         return req;
     }
 
@@ -477,5 +509,14 @@ public class DiscoveryClient {
         req.setSOAPBody(DiscoSDKUtils.parseXML(modify.toString()));
 
         return new ModifyResponse(getResponse(req));
+    }
+
+    /**
+     * Sets the web services version.
+     *
+     * @param wsfVersion the web services version that should be used.
+     */
+    public void setWSFVersion(String wsfVersion) {
+        this.wsfVersion = wsfVersion;
     }
 }

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmDisco.xml,v 1.1 2006-10-30 23:18:13 qcheng Exp $
+   $Id: fmDisco.xml,v 1.2 2006-12-23 05:15:12 hengming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/sunIdentityServerDiscoveryService"
             i18nFileName="fmDiscoConfiguration"
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="sunIdentityServerDiscoServiceDescription"
             propertiesViewBeanURL="../service/SMDiscoveryService">
             <Global>
@@ -70,8 +70,17 @@
                         <ChoiceValue>urn:liberty:security:2004-04:TLS:Bearer</ChoiceValue>
                         <ChoiceValue>urn:liberty:security:2003-08:ClientTLS:null</ChoiceValue>
                         <ChoiceValue>urn:liberty:security:2003-08:ClientTLS:X509</ChoiceValue>
-                        <ChoiceValue>urn:liberty:security:2003-08:Client:SAML</ChoiceValue>
-                        <ChoiceValue>urn:liberty:security:2004-04:Client:Bearer</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2003-08:ClientTLS:SAML</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2004-04:ClientTLS:Bearer</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:null:X509</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:null:SAML</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:null:Bearer</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:TLS:X509</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:TLS:SAML</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:TLS:Bearer</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:ClientTLS:X509</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:ClientTLS:SAML</ChoiceValue>
+                        <ChoiceValue>urn:liberty:security:2005-02:ClientTLS:Bearer</ChoiceValue>
                     </ChoiceValues>
                     <DefaultValues>
                         <Value>urn:liberty:security:2003-08:null:null</Value>
@@ -84,8 +93,17 @@
                         <Value>urn:liberty:security:2004-04:TLS:Bearer</Value>
                         <Value>urn:liberty:security:2003-08:ClientTLS:null</Value>
                         <Value>urn:liberty:security:2003-08:ClientTLS:X509</Value>
-                        <Value>urn:liberty:security:2003-08:Client:SAML</Value>
-                        <Value>urn:liberty:security:2004-04:Client:Bearer</Value>
+                        <Value>urn:liberty:security:2003-08:ClientTLS:SAML</Value>
+                        <Value>urn:liberty:security:2004-04:ClientTLS:Bearer</Value>
+                        <Value>urn:liberty:security:2005-02:null:X509</Value>
+                        <Value>urn:liberty:security:2005-02:null:SAML</Value>
+                        <Value>urn:liberty:security:2005-02:null:Bearer</Value>
+                        <Value>urn:liberty:security:2005-02:TLS:X509</Value>
+                        <Value>urn:liberty:security:2005-02:TLS:SAML</Value>
+                        <Value>urn:liberty:security:2005-02:TLS:Bearer</Value>
+                        <Value>urn:liberty:security:2005-02:ClientTLS:X509</Value>
+                        <Value>urn:liberty:security:2005-02:ClientTLS:SAML</Value>
+                        <Value>urn:liberty:security:2005-02:ClientTLS:Bearer</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sunIdentityServerDiscoSupportedDirectives"

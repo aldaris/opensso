@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.1 2006-10-30 23:15:24 qcheng Exp $
+ * $Id: Utils.java,v 1.2 2006-12-23 05:10:01 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,6 +125,8 @@ public class Utils {
 
     static final String SUPPORTED_ACTORS_PROP =
                "com.sun.identity.liberty.ws.soap.supportedActors";
+    static final String LIBERTY_WSF_VERSION =
+        "com.sun.identity.liberty.wsf.version";
     static Set supportedActors = new HashSet();
 
     private static Map messageIDMap = new HashMap();
@@ -828,6 +830,16 @@ public class Utils {
         return MessageFormat.format(bundle.getString(key), params);
     }
     
+    /**
+     * Returns the default web services version.
+     *
+     * @return the default web services version.
+     */
+    public static String getDefaultWSFVersion() {
+        return SystemPropertiesManager.get(LIBERTY_WSF_VERSION,
+            SOAPBindingConstants.WSF_11_VERSION);
+    }
+
     /**
      * This thread is to cleanup messageIDMap.
      */

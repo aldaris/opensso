@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderHeader.java,v 1.1 2006-10-30 23:15:21 qcheng Exp $
+ * $Id: ProviderHeader.java,v 1.2 2006-12-23 05:10:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,9 @@ public class ProviderHeader {
             throw new SOAPBindingException(msg);
         }
         this.providerID = providerID;
+        if(id == null) {
+           id = SAMLUtils.generateID();
+        }
         actor = SOAPBindingConstants.DEFAULT_SOAP_ACTOR;
         mustUnderstand = Boolean.TRUE;
     }

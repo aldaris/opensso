@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.1 2006-10-30 23:15:54 qcheng Exp $
+ * $Id: XMLSignatureManager.java,v 1.2 2006-12-23 05:13:07 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -372,6 +372,29 @@ public class XMLSignatureManager {
     }
 
     /**
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert signer's Certificate
+     * @param assertionID assertion ID for the SAML Security Token
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param the web services framework that should be used.
+     *     For WSF1.1, the version must be "1.1" and for WSF1.0,
+     *     it must be "1.0"
+     * @return SAML Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithWSSSAMLTokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String assertionID, String algorithm, java.util.List ids,
+        String wsfVersion) throws XMLSignatureException {
+
+        return sp.signWithWSSSAMLTokenProfile(doc, cert, assertionID,
+            algorithm, ids, wsfVersion);
+    }
+
+    /**
      *
      * Sign part of the XML document referred by the supplied a list
      * of id attributes of nodes
@@ -382,12 +405,33 @@ public class XMLSignatureManager {
      * @return X509 Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */
-    public org.w3c.dom.Element signWithWSSX509TokenProfile(org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-                                   java.lang.String algorithm,
-                                   java.util.List ids)
+    public org.w3c.dom.Element signWithWSSX509TokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String algorithm, java.util.List ids) throws XMLSignatureException {
+        return sp.signWithWSSX509TokenProfile(doc, cert, algorithm, ids);
+    }
+
+    /**
+     *
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param the web services framework that should be used.
+     *     For WSF1.1, it should be "1.1" and for WSF1.0,
+     *     it should be "1.0"
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithWSSX509TokenProfile(
+        org.w3c.dom.Document doc, java.security.cert.Certificate cert,
+        String algorithm, java.util.List ids, String wsfVersion)
         throws XMLSignatureException {
-           return sp.signWithWSSX509TokenProfile(doc, cert, algorithm, ids);
+
+         return sp.signWithWSSX509TokenProfile(doc, cert, algorithm, ids,
+             wsfVersion);
     }
 
     /**                                                                        
@@ -518,6 +562,21 @@ public class XMLSignatureManager {
         return sp.verifyXMLSignature(xmlString, idAttrName, certAlias);
     }
     
+    /**
+     * Verify all the signatures of the XML document
+     * @param wsfVersion the web services version that should be used.
+     * @param certAlias alias for Signer's certificate, this is used to search
+     *     signer's public certificate if it is not presented in
+     *     <code>ds:KeyInfo</code>.
+     * @param document XML dom document whose signature to be verified
+     * @return true if the XML signature is verified, false otherwise
+     * @exception XMLSignatureException if problem occurs during verification.
+     */
+    public boolean verifyXMLSignature(String wsfVersion, String certAlias,
+        org.w3c.dom.Document document) throws XMLSignatureException {
+        return sp.verifyXMLSignature(wsfVersion, certAlias, document);
+    }
+
     /**
      * Get <code>KeyProvider</code>
      * @return <code>KeyProvider</code>

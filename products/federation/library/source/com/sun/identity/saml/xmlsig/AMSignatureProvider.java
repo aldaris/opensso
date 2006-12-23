@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.1 2006-10-30 23:15:53 qcheng Exp $
+ * $Id: AMSignatureProvider.java,v 1.2 2006-12-23 05:13:06 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,8 @@ import com.sun.org.apache.xml.internal.security.keys.keyresolver.
 import com.sun.org.apache.xml.internal.security.utils.Constants;
 import com.sun.org.apache.xml.internal.security.transforms.Transforms;
 import com.sun.org.apache.xml.internal.security.Init;
+import com.sun.identity.liberty.ws.common.wsse.WSSEConstants;
+import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
 
 /**
  * <code>SignatureProvider</code> is an interface
@@ -80,6 +82,7 @@ public class AMSignatureProvider implements SignatureProvider {
     // flag to check if the partner's signing cert is in the keystore.
     private boolean checkCert = true;
     private boolean isJKSKeyStore= false;
+    private String wsfVersion = null;
     private String defaultSigAlg = null;
 
     /**
@@ -698,12 +701,29 @@ public class AMSignatureProvider implements SignatureProvider {
      * @return SAML Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */
-    public org.w3c.dom.Element signWithWSSSAMLTokenProfile(
-				   org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-				   String assertionID,
-                                   java.lang.String algorithm,
-                                   java.util.List ids)
+    public Element signWithWSSSAMLTokenProfile(Document doc,
+        java.security.cert.Certificate cert, String assertionID,
+        String algorithm, List ids) throws XMLSignatureException {
+
+        return signWithWSSSAMLTokenProfile(doc, cert, assertionID, algorithm,
+            ids, SOAPBindingConstants.WSF_10_VERSION);
+    }
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param assertionID assertion ID
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param wsfVersion the web services version.
+     * @return SAML Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public Element signWithWSSSAMLTokenProfile(Document doc,
+        java.security.cert.Certificate cert, String assertionID,
+        String algorithm, List ids, String wsfVersion)
         throws XMLSignatureException {
 
 	if (doc == null) {
@@ -711,7 +731,6 @@ public class AMSignatureProvider implements SignatureProvider {
             throw new XMLSignatureException(
                       SAMLUtilsCommon.bundle.getString("nullInput"));
         }
-
         if (cert == null) {
             SAMLUtilsCommon.debug.error("signWithWSSSAMLTokenProfile: " +
 					"Certificate is null");
@@ -724,12 +743,36 @@ public class AMSignatureProvider implements SignatureProvider {
 	    throw new XMLSignatureException(
 		      SAMLUtilsCommon.bundle.getString("nullInput"));
 	}
-        org.w3c.dom.Element root = (Element) doc.getDocumentElement().
-                getElementsByTagNameNS(SAMLConstants.NS_WSSE,
-                         SAMLConstants.TAG_SECURITY).item(0);
+
+        this.wsfVersion = wsfVersion;
+        String wsseNS = SAMLConstants.NS_WSSE;
+        String wsuNS = SAMLConstants.NS_WSU;
+
+        if ((wsfVersion != null) &&
+            (wsfVersion.equals(SOAPBindingConstants.WSF_11_VERSION))) {
+            wsseNS = WSSEConstants.NS_WSSE_WSF11;
+            wsuNS = WSSEConstants.NS_WSU_WSF11;
+        }
+
+        Element root = (Element)doc.getDocumentElement().
+            getElementsByTagNameNS(wsseNS, SAMLConstants.TAG_SECURITY).item(0);
         XMLSignature signature = null;
         try {
-            Constants.setSignatureSpecNSprefix("");
+            Constants.setSignatureSpecNSprefix("ds");
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
+                      XMLUtils.createDSctx(doc, "wsu", wsuNS);
+            NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
+                                "//*[@wsu:Id]", wsucontext);
+            if(wsuNodes != null && wsuNodes.getLength() != 0) {
+               for(int i=0; i < wsuNodes.getLength(); i++) {
+                   Element elem = (Element) wsuNodes.item(i);
+                   String id = elem.getAttributeNS(wsuNS, "Id");
+                   if (id != null && id.length() != 0) {
+                       IdResolver.registerElementById(elem, id);
+                   }
+               }
+            }
+
             String certAlias = keystore.getCertificateAlias(cert);
             PrivateKey privateKey =
                 (PrivateKey) keystore.getPrivateKey(certAlias);
@@ -739,9 +782,6 @@ public class AMSignatureProvider implements SignatureProvider {
                           SAMLUtilsCommon.bundle.getString("nullprivatekey"));
             }
 
-	    // TODO: code clean up
-            // should find cert alias, add security token and call signXML
-            // to avoid code duplication
             if (algorithm == null || algorithm.length() == 0) {
                 algorithm = getKeyAlgorithm(privateKey); 
             }
@@ -766,21 +806,19 @@ public class AMSignatureProvider implements SignatureProvider {
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
             KeyInfo keyInfo = signature.getKeyInfo();
-            Element securityTokenRef =
-                doc.createElementNS(SAMLConstants.NS_WSSE,
-                        SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+            Element securityTokenRef = doc.createElementNS(wsseNS,
+                SAMLConstants.TAG_SECURITYTOKENREFERENCE);
             keyInfo.addUnknownElement(securityTokenRef);
 
             securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
-                        SAMLConstants.TAG_XMLNS, SAMLConstants.NS_WSSE);
+                        SAMLConstants.TAG_XMLNS, wsseNS);
             securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
                         SAMLConstants.TAG_XMLNS_SEC, SAMLConstants.NS_SEC);
             securityTokenRef.setAttributeNS(null, SAMLConstants.TAG_USAGE,
                         SAMLConstants.TAG_SEC_MESSAGEAUTHENTICATION);
 
-            Element reference = doc.createElementNS(
-                        SAMLConstants.NS_WSSE,
-                        SAMLConstants.TAG_REFERENCE);
+            Element reference = doc.createElementNS(wsseNS,
+                SAMLConstants.TAG_REFERENCE);
             reference.setAttributeNS(null, SAMLConstants.TAG_URI,
                         "#"+assertionID);
 
@@ -812,13 +850,29 @@ public class AMSignatureProvider implements SignatureProvider {
      * @return X509 Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */
-    public org.w3c.dom.Element signWithWSSX509TokenProfile(
-				   org.w3c.dom.Document doc,   
-				   java.security.cert.Certificate cert,
-				   java.lang.String algorithm,
-                                   java.util.List ids) 
+    public Element signWithWSSX509TokenProfile(Document doc,
+        java.security.cert.Certificate cert, String algorithm, List ids)
         throws XMLSignatureException {
 
+        return signWithWSSX509TokenProfile(doc, cert, algorithm, ids,
+            SOAPBindingConstants.WSF_10_VERSION);
+    }
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param wsfVersion the web services version.
+     * @return X509 Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public Element signWithWSSX509TokenProfile(Document doc,
+        java.security.cert.Certificate cert, String algorithm, List ids,
+        String wsfVersion) throws XMLSignatureException {
+  
         if (doc == null) { 
             SAMLUtilsCommon.debug.error("signXML: doc is null.");  
             throw new XMLSignatureException( 
@@ -829,14 +883,38 @@ public class AMSignatureProvider implements SignatureProvider {
 	    SAMLUtilsCommon.debug.message("Soap Envlope: " +
 		XMLUtils.print(doc.getDocumentElement()));
 	}
-	org.w3c.dom.Element root = (Element) doc.getDocumentElement().
-		getElementsByTagNameNS(SAMLConstants.NS_WSSE,
-					SAMLConstants.TAG_SECURITY).item(0);
+
+        this.wsfVersion = wsfVersion;
+        String wsseNS = SAMLConstants.NS_WSSE;
+        String wsuNS = SAMLConstants.NS_WSU;
+
+        if ((wsfVersion != null) &&
+           (wsfVersion.equals(SOAPBindingConstants.WSF_11_VERSION))) {
+            wsseNS = WSSEConstants.NS_WSSE_WSF11;
+            wsuNS = WSSEConstants.NS_WSU_WSF11;
+        }
+
+        Element root = (Element)doc.getDocumentElement().
+            getElementsByTagNameNS(wsseNS, SAMLConstants.TAG_SECURITY).item(0);
 
         XMLSignature signature = null;
         try {
-            Constants.setSignatureSpecNSprefix("");    
-	    String certAlias = keystore.getCertificateAlias(cert);
+            Constants.setSignatureSpecNSprefix("ds");    
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
+                XMLUtils.createDSctx(doc, "wsu", wsuNS);
+            NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
+                "//*[@wsu:Id]", wsucontext);
+            if ((wsuNodes != null) && (wsuNodes.getLength() != 0)) {
+               for(int i=0; i < wsuNodes.getLength(); i++) {
+                   Element elem = (Element) wsuNodes.item(i);
+                   String id = elem.getAttributeNS(wsuNS, "Id");
+                   if (id != null && id.length() != 0) {
+                       IdResolver.registerElementById(elem, id);
+                   }
+               }
+            }
+
+            String certAlias = keystore.getCertificateAlias(cert);
             PrivateKey privateKey =         
                 (PrivateKey) keystore.getPrivateKey(certAlias);
             if (privateKey == null) {         
@@ -873,27 +951,23 @@ public class AMSignatureProvider implements SignatureProvider {
 	    }
 
 	    KeyInfo keyInfo = signature.getKeyInfo();
-	    Element securityTokenRef =
-		doc.createElementNS(SAMLConstants.NS_WSSE,
-		    SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+	    Element securityTokenRef = doc.createElementNS(wsseNS,
+                SAMLConstants.TAG_SECURITYTOKENREFERENCE);
 	    keyInfo.addUnknownElement(securityTokenRef);
 	    securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
-		    SAMLConstants.TAG_XMLNS, SAMLConstants.NS_WSSE);
+		    SAMLConstants.TAG_XMLNS, wsseNS);
 	    securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
 		    SAMLConstants.TAG_XMLNS_SEC, SAMLConstants.NS_SEC);
 	    securityTokenRef.setAttributeNS(null, SAMLConstants.TAG_USAGE,
 		    SAMLConstants.TAG_SEC_MESSAGEAUTHENTICATION);
 
-            Element bsf = (Element)
-		root.getElementsByTagNameNS(SAMLConstants.NS_WSSE,
-			SAMLConstants.BINARYSECURITYTOKEN).item(0);
+            Element bsf = (Element)root.getElementsByTagNameNS(wsseNS,
+                SAMLConstants.BINARYSECURITYTOKEN).item(0);
 
-	    String certId = bsf.getAttributeNS(SAMLConstants.NS_WSU,
-					SAMLConstants.TAG_ID);
+	    String certId = bsf.getAttributeNS(wsuNS, SAMLConstants.TAG_ID);
 
-	    Element reference =
-		doc.createElementNS(SAMLConstants.NS_WSSE,
-			SAMLConstants.TAG_REFERENCE);
+	    Element reference =	doc.createElementNS(wsseNS,
+                SAMLConstants.TAG_REFERENCE);
 	    securityTokenRef.appendChild(reference);
 	    reference.setAttributeNS(null, SAMLConstants.TAG_URI, "#"+certId);
 
@@ -908,18 +982,35 @@ public class AMSignatureProvider implements SignatureProvider {
         return (signature.getElement());   
     }
 
-     /** 
+    /** 
      * Verify all the signatures of the xml document  
      * @param doc XML dom document whose signature to be verified    
      * @param certAlias certAlias alias for Signer's certificate, this is used 
-                        to search signer's public certificate if it is not  
-                        presented in ds:KeyInfo      
+     *     to search signer's public certificate if it is not presented in
+     *     ds:KeyInfo      
      * @return true if the xml signature is verified, false otherwise 
      * @throws XMLSignatureException if problem occurs during verification
      */                                                                        
-    public boolean verifyXMLSignature(org.w3c.dom.Document doc,  
-                                      java.lang.String certAlias)  
+    public boolean verifyXMLSignature(Document doc, String certAlias)  
         throws XMLSignatureException {  
+
+        return verifyXMLSignature(SOAPBindingConstants.WSF_10_VERSION,
+            certAlias, doc);
+    }
+
+    /**
+     * Verify all the signatures of the xml document
+     * @param wsfVersion the web services version.
+     * @param doc XML dom document whose signature to be verified
+     * @param certAlias certAlias alias for Signer's certificate, this is used
+     *     to search signer's public certificate if it is not presented in
+     *     ds:KeyInfo
+     * @return true if the xml signature is verified, false otherwise
+     * @exception XMLSignatureException if problem occurs during verification
+     */
+    public boolean verifyXMLSignature(String wsfVersion, String certAlias,
+        Document doc) throws XMLSignatureException {
+
         if (doc == null) {   
             SAMLUtilsCommon.debug.error("verifyXMLSignature:" +
                 " document is null."); 
@@ -928,43 +1019,45 @@ public class AMSignatureProvider implements SignatureProvider {
         }               
 
         try {      
-            String[] attrs;
-            // check if there is a binary security token.
-            NodeList wsuNodes = doc.getElementsByTagNameNS(
-                     SAMLConstants.NS_WSSE, "BinarySecurityToken");
-            if(wsuNodes != null && wsuNodes.getLength() != 0) {
-               String[] attrs1 = 
-                    {"AssertionID", "RequestID", "ResponseID", "wsu:Id"};
-               attrs = attrs1;
-            } else {
-               String[] attrs2 = {"AssertionID", "RequestID", "ResponseID"}; 
-               attrs = attrs2;
+            this.wsfVersion = wsfVersion;
+            String wsuNS = SAMLConstants.NS_WSU;
+            String wsseNS = SAMLConstants.NS_WSSE;
+
+            if((wsfVersion != null) &&
+               (wsfVersion.equals(SOAPBindingConstants.WSF_11_VERSION))) {
+               wsuNS = WSSEConstants.NS_WSU_WSF11;
+               wsseNS = WSSEConstants.NS_WSSE_WSF11;
             }
 
-            for ( int j = 0; j < attrs.length; j++) {
-                NodeList aList = null;
-                if(wsuNodes != null && wsuNodes.getLength() != 0) {
-                   aList = (NodeList)XPathAPI.selectNodeList(
-                                doc, "//*[@" + attrs[j]+"]", wsuNodes.item(0));
-                } else {
-                   aList = (NodeList)XPathAPI.selectNodeList(
-                                doc, "//*[@" + attrs[j]+"]");
-                }
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
+                XMLUtils.createDSctx(doc, "wsu", wsuNS);
 
-                if (aList != null && aList.getLength() != 0) {
+            NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
+                "//*[@wsu:Id]", wsucontext);
+
+            if ((wsuNodes != null) && (wsuNodes.getLength() != 0)) {
+               for(int i=0; i < wsuNodes.getLength(); i++) {
+                   Element elem = (Element) wsuNodes.item(i);
+                   String id = elem.getAttributeNS(wsuNS, "Id");
+                   if ((id != null) && (id.length() != 0)) {
+                       IdResolver.registerElementById(elem, id);
+                   }
+               }
+            }
+            
+            String[] attrs = {"AssertionID", "RequestID", "ResponseID"};
+            for (int j = 0; j < attrs.length; j++) {
+                NodeList aList = (NodeList)XPathAPI.selectNodeList(doc,
+                    "//*[@" + attrs[j]+"]");
+                if ((aList != null) && (aList.getLength() != 0)) {
                     int len = aList.getLength();
-                    if (SAMLUtilsCommon.debug.messageEnabled()) {
-                        SAMLUtilsCommon.debug.message ("found "+ attrs[j] +
-                           "=" + len); 
-                    }
-
                     for (int i = 0; i < len; i++) {
                         Element elem = (Element) aList.item(i);
                         String id = elem.getAttribute(attrs[j]);
                         if (id != null && id.length() != 0) {
-                            if (SAMLUtilsCommon.debug.messageEnabled()) {
-                                SAMLUtilsCommon.debug.message ("found "+
-                                    attrs[j]+ "=" + id + " elment=" +
+                            if (SAMLUtils.debug.messageEnabled()) {
+                                SAMLUtils.debug.message("found " + attrs[j] + 
+                                    "=" + id + " elment=" +
                                     XMLUtils.print(elem));
                             }
                             IdResolver.registerElementById(elem, id);
@@ -1433,9 +1526,17 @@ public class AMSignatureProvider implements SignatureProvider {
 	try {
             SAMLUtilsCommon.debug.message("getWSSTTokenProfilePublicKey:"+
                 " entering");
+
+            String wsseNS = SAMLConstants.NS_WSSE;
+            String wsuNS = SAMLConstants.NS_WSU;
+            if ((wsfVersion != null) &&
+                (wsfVersion.equals(SOAPBindingConstants.WSF_11_VERSION)) ) {
+                wsseNS = WSSEConstants.NS_WSSE_WSF11;
+                wsuNS = WSSEConstants.NS_WSU_WSF11;
+            }
             Element securityElement = (Element) doc.getDocumentElement().
-                getElementsByTagNameNS(SAMLConstants.NS_WSSE,
-                SAMLConstants.TAG_SECURITY).item(0);
+                getElementsByTagNameNS(wsseNS, SAMLConstants.TAG_SECURITY).
+                item(0);
 
 	    Element nscontext = com.sun.org.apache.xml.internal.security.utils.
                 XMLUtils.createDSctx(doc,"ds",Constants.SignatureSpecNS);
@@ -1445,18 +1546,16 @@ public class AMSignatureProvider implements SignatureProvider {
 
 	    Element keyinfo = (Element) sigElement.getElementsByTagNameNS(
                 Constants.SignatureSpecNS, SAMLConstants.TAG_KEYINFO).item(0);
-	    Element str = (Element) keyinfo.getElementsByTagNameNS(
-                            SAMLConstants.NS_WSSE,
-                            SAMLConstants.TAG_SECURITYTOKENREFERENCE).item(0);
+	    Element str = (Element) keyinfo.getElementsByTagNameNS(wsseNS,
+                SAMLConstants.TAG_SECURITYTOKENREFERENCE).item(0);
 	    Element reference = (Element) keyinfo.getElementsByTagNameNS(
-                   SAMLConstants.NS_WSSE, SAMLConstants.TAG_REFERENCE).item(0);
+                wsseNS, SAMLConstants.TAG_REFERENCE).item(0);
 
             if (reference != null) {
 	        String id = reference.getAttribute(SAMLConstants.TAG_URI);
 	        id = id.substring(1);
 	        nscontext = com.sun.org.apache.xml.internal.security.utils.
-                    XMLUtils.createDSctx(doc,SAMLConstants.PREFIX_WSU,
-                                         SAMLConstants.NS_WSU);
+                    XMLUtils.createDSctx(doc, SAMLConstants.PREFIX_WSU, wsuNS);
 	        Node n = XPathAPI.selectSingleNode(
 		    doc, "//*[@"+ SAMLConstants.PREFIX_WSU + ":" +
                     SAMLConstants.TAG_ID +"=\"" + id + "\"]", nscontext);

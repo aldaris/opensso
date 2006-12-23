@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityUtils.java,v 1.1 2006-10-30 23:15:18 qcheng Exp $
+ * $Id: SecurityUtils.java,v 1.2 2006-12-23 05:09:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -172,13 +172,14 @@ public class SecurityUtils {
             }
             if (securityType==m.X509_TOKEN) {
                 cert = m.getMessageCertificate();
-                return sm.signWithWSSX509TokenProfile(doc, cert, "", ids);
+	        return sm.signWithWSSX509TokenProfile(doc, cert, "", ids, 
+                       m.getWSFVersion());
             } else if (securityType==m.SAML_TOKEN) {
                 SecurityAssertion assertion = m.getAssertion();
                 cert = m.getMessageCertificate();
                 String assertionID = assertion.getAssertionID();
-                return sm.signWithWSSSAMLTokenProfile(doc, cert, assertionID,
-                        "", ids);
+	        return sm.signWithWSSSAMLTokenProfile(doc, cert, assertionID,
+			"", ids, m.getWSFVersion());
             } else if (securityType==m.ANONYMOUS) {
                 // Should be transportation layer encryption.
             }
@@ -258,7 +259,8 @@ public class SecurityUtils {
             if (messageCert != null) {
                 String messageCertAlias =
                         keystore.getCertificateAlias(messageCert);
-                return sm.verifyXMLSignature(doc, messageCertAlias);
+                return sm.verifyXMLSignature(m.getWSFVersion(), 
+                    messageCertAlias, doc);
             }
             
             return true;
@@ -342,7 +344,7 @@ public class SecurityUtils {
                             (ResourceAccessStatement)statement;
                         subject = raStatement.getProxySubject();
                         if (subject == null) {
-                            raStatement.getSubject();
+                            subject = raStatement.getSubject();
                         }
                     } else if (stype == 
                         SessionContextStatement.SESSIONCONTEXT_STATEMENT) {
@@ -350,7 +352,7 @@ public class SecurityUtils {
                             (SessionContextStatement)statement;
                         subject = scStatement.getProxySubject();
                         if (subject == null) {
-                            scStatement.getSubject();
+                            subject = scStatement.getSubject();
                         }
                     }
 
@@ -569,5 +571,12 @@ public class SecurityUtils {
             cert = (X509Certificate) getCertificate(keyInfo);
         }
         return cert;
+    }
+
+    /**
+     * Returns XML Signature instance.
+     */
+    public static XMLSignatureManager getSignatureManager() {
+        return sm;
     }
 }

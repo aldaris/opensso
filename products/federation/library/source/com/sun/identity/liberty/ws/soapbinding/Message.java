@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Message.java,v 1.1 2006-10-30 23:15:20 qcheng Exp $
+ * $Id: Message.java,v 1.2 2006-12-23 05:10:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,6 +168,61 @@ public class Message {
     public static final String CLIENT_TLS_BEARER =
                        "urn:liberty:security:2004-04:ClientTLS:Bearer";
 
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:null:X509"
+     */
+    public static final String NULL_X509_WSF11 =
+                       "urn:liberty:security:2005-02:null:X509";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:TLS:X509"
+     */
+    public static final String TLS_X509_WSF11 =
+                       "urn:liberty:security:2005-02:TLS:X509";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:ClientTLS:X509"
+     */
+    public static final String CLIENT_TLS_X509_WSF11 =
+                       "urn:liberty:security:2005-02:ClientTLS:X509";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:null:SAML"
+     */
+    public static final String NULL_SAML_WSF11 =
+                       "urn:liberty:security:2005-02:null:SAML";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:TLS:SAML"
+     */
+    public static final String TLS_SAML_WSF11 =
+                       "urn:liberty:security:2005-02:TLS:SAML";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:ClientTLS:SAML"
+     */
+    public static final String CLIENT_TLS_SAML_WSF11 =
+                       "urn:liberty:security:2005-02:ClientTLS:SAML";
+
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:null:Bearer"
+     */
+    public static final String NULL_BEARER_WSF11 =
+                       "urn:liberty:security:2005-02:null:Bearer";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:TLS:Bearer"
+     */
+    public static final String TLS_BEARER_WSF11 =
+                       "urn:liberty:security:2005-02:TLS:Bearer";
+
+    /**
+     * Authentication mechanism "urn:liberty:security:2005-02:ClientTLS:Bearer"
+     */
+    public static final String CLIENT_TLS_BEARER_WSF11 =
+                       "urn:liberty:security:2005-02:ClientTLS:Bearer";
+
     private int securityProfileType = ANONYMOUS;
     private CorrelationHeader correlationHeader = null;
     private ConsentHeader consentHeader = null;
@@ -191,6 +246,7 @@ public class Message {
     private boolean clientAuthentication = false;
     private String authenticationMechanism = null;
     private Document doc = null;
+    private String wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
 
     /**
      * Default Constructor.
@@ -258,6 +314,7 @@ public class Message {
                     Utils.bundle.getString("binarySecurityTokenNull"));
         }
         binarySecurityToken = token;
+        wsfVersion = binarySecurityToken.getWSFVersion();
         messageCertificate =
             (X509Certificate)SecurityUtils.getCertificate(binarySecurityToken);
         correlationHeader = new CorrelationHeader();
@@ -362,13 +419,28 @@ public class Message {
             if (certificate == null) {
                 switch (securityProfileType) {
                     case X509_TOKEN:
-                        authenticationMechanism = TLS_X509;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = TLS_X509_WSF11;
+                        } else {
+                           authenticationMechanism = TLS_X509;
+                        }
                         return authenticationMechanism;
                     case SAML_TOKEN:
-                        authenticationMechanism = TLS_SAML;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = TLS_SAML_WSF11;
+                        } else {
+                           authenticationMechanism = TLS_SAML;
+                        }
                         return authenticationMechanism;
                     case BEARER_TOKEN:
-                        authenticationMechanism = TLS_BEARER;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = TLS_BEARER_WSF11;
+                        } else {
+                           authenticationMechanism = TLS_BEARER;
+                        }
                         return authenticationMechanism;
                     default:
                         authenticationMechanism = TLS_NULL;
@@ -377,13 +449,28 @@ public class Message {
             } else {
                 switch (securityProfileType) {
                     case X509_TOKEN:
-                        authenticationMechanism = CLIENT_TLS_X509;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = CLIENT_TLS_X509_WSF11;
+                        } else {
+                           authenticationMechanism = CLIENT_TLS_X509;
+                        }
                         return authenticationMechanism;
                     case SAML_TOKEN:
-                        authenticationMechanism = CLIENT_TLS_SAML;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = CLIENT_TLS_SAML_WSF11;
+                        } else {
+                           authenticationMechanism = CLIENT_TLS_SAML;
+                        }
                         return authenticationMechanism;
                     case BEARER_TOKEN:
-                        authenticationMechanism = CLIENT_TLS_BEARER;
+                        if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                                wsfVersion)) {
+                           authenticationMechanism = CLIENT_TLS_BEARER_WSF11;
+                        } else {
+                           authenticationMechanism = CLIENT_TLS_BEARER;
+                        }
                         return authenticationMechanism;
                     default:
                         authenticationMechanism = CLIENT_TLS_NULL;
@@ -393,13 +480,28 @@ public class Message {
         } else {
             switch (securityProfileType) {
                 case X509_TOKEN:
-                    authenticationMechanism = NULL_X509;
+                    if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                            wsfVersion)) {
+                       authenticationMechanism = NULL_X509_WSF11;
+                    } else {
+                       authenticationMechanism = NULL_X509;
+                    }
                     return authenticationMechanism;
                 case SAML_TOKEN:
-                    authenticationMechanism = NULL_SAML;
+                    if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                            wsfVersion)) {
+                       authenticationMechanism = NULL_SAML_WSF11;
+                    } else {
+                       authenticationMechanism = NULL_SAML;
+                    }
                     return authenticationMechanism;
                 case BEARER_TOKEN:
-                    authenticationMechanism = NULL_BEARER;
+                    if(SOAPBindingConstants.WSF_11_VERSION.equals(
+                                            wsfVersion)) {
+                       authenticationMechanism = NULL_BEARER_WSF11;
+                    } else {
+                       authenticationMechanism = NULL_BEARER;
+                    }
                     return authenticationMechanism;
                 default:
                     authenticationMechanism = NULL_NULL;
@@ -890,6 +992,13 @@ public class Message {
             throw new SOAPBindingException(ex.getMessage());
         }
 
+        String wsseNS = WSSEConstants.NS_WSSE_WSF11;
+        String wsuNS = WSSEConstants.NS_WSU_WSF11;
+        if(SOAPBindingConstants.WSF_10_VERSION.equals(wsfVersion)) {
+           wsseNS = WSSEConstants.NS_WSSE;
+           wsuNS = WSSEConstants.NS_WSU;
+        }
+
         Element envelopeE = doc.createElementNS(SOAPBindingConstants.NS_SOAP,
                                            SOAPBindingConstants.PTAG_ENVELOPE);
         envelopeE.setAttributeNS(SOAPBindingConstants.NS_XML,
@@ -901,6 +1010,9 @@ public class Message {
         envelopeE.setAttributeNS(SOAPBindingConstants.NS_XML,
                                  SOAPBindingConstants.XMLNS_SOAP_BINDING_11,
                                  SOAPBindingConstants.NS_SOAP_BINDING_11);
+        envelopeE.setAttributeNS(SOAPBindingConstants.NS_XML,
+                                 WSSEConstants.TAG_XML_WSU,
+                                 wsuNS);
         doc.appendChild(envelopeE);
         Element headerE = doc.createElementNS(SOAPBindingConstants.NS_SOAP,
                                              SOAPBindingConstants.PTAG_HEADER);
@@ -950,12 +1062,10 @@ public class Message {
                     "Message.toDocument: adding security headers ");
             }
 
-            Element securityE = doc.createElementNS(WSSEConstants.NS_WSSE,
-                                           WSSEConstants.TAG_WSSE + ":" +
-                                           WSSEConstants.TAG_SECURITYT);
+            Element securityE = doc.createElementNS(wsseNS,
+                WSSEConstants.TAG_WSSE + ":" + WSSEConstants.TAG_SECURITYT);
             securityE.setAttributeNS(SOAPBindingConstants.NS_XML,
-                                     WSSEConstants.TAG_XML_WSSE,
-                                     WSSEConstants.NS_WSSE);
+                WSSEConstants.TAG_XML_WSSE, wsseNS);
             headerE.appendChild(securityE);
 
             if (assertion != null) {
@@ -1015,6 +1125,9 @@ public class Message {
             if (bodyE == null) {
                 bodyE = doc.createElementNS(SOAPBindingConstants.NS_SOAP,
                                             SOAPBindingConstants.PTAG_BODY);
+                bodyE.setAttributeNS(SOAPBindingConstants.NS_XML,
+                    SOAPBindingConstants.XMLNS_SOAP,
+                    SOAPBindingConstants.NS_SOAP);
                 envelopeE.appendChild(bodyE);
             }
 
@@ -1027,7 +1140,12 @@ public class Message {
             if (bodyId == null) {
                 bodyId = SAMLUtils.generateID();
             }
-            bodyE.setAttributeNS(null, SOAPBindingConstants.ATTR_id, bodyId);
+            if (SOAPBindingConstants.WSF_10_VERSION.equals(wsfVersion)) {
+                bodyE.setAttributeNS(null, SOAPBindingConstants.ATTR_id,
+                    bodyId);
+            } else {
+                bodyE.setAttributeNS(wsuNS, WSSEConstants.WSU_ID, bodyId);
+            }
         }
 
         return doc;
@@ -1132,7 +1250,8 @@ public class Message {
 
                         serviceInstanceUpdateHeader =
                                 new ServiceInstanceUpdateHeader(element);
-                    } else if (WSSEConstants.NS_WSSE.equals(ns)) {
+                    } else if (WSSEConstants.NS_WSSE.equals(ns) ||
+                        WSSEConstants.NS_WSSE_WSF11.equals(ns)) {
                         if (WSSEConstants.TAG_SECURITYT.equals(localName)) {
                             securityE = element;
                         } else {
@@ -1190,16 +1309,35 @@ public class Message {
             securityProfileType = ANONYMOUS;
             return;
         }
-        
-        NodeList nl = securityE.getElementsByTagNameNS(SAMLConstants.NS_WSSE,
-                SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+
+        String wsseNS = securityE.getNamespaceURI();
+        if (wsseNS == null) {
+            securityProfileType = ANONYMOUS;
+            return;
+        }
+        String wsuNS = null;
+        if (wsseNS.equals(WSSEConstants.NS_WSSE_WSF11)) {
+            wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
+            wsuNS = WSSEConstants.NS_WSU_WSF11;
+
+        } else if(wsseNS.equals(WSSEConstants.NS_WSSE)) {
+            wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+            wsuNS = WSSEConstants.NS_WSU;
+
+        } else {
+            securityProfileType = ANONYMOUS;
+            return;
+        }
+
+        NodeList nl = securityE.getElementsByTagNameNS(wsseNS,
+            SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+
         Element securityTokenRefE = null;
         String uri = null;
         if (nl != null && nl.getLength() > 0) {
             securityTokenRefE = (Element)nl.item(0);
             List list = XMLUtils.getElementsByTagNameNS1(securityTokenRefE,
-                    SAMLConstants.NS_WSSE,
-                    SAMLConstants.TAG_REFERENCE);
+                wsseNS, SAMLConstants.TAG_REFERENCE);
             if (!list.isEmpty()) {
                 Element referenceE = (Element)list.get(0);
                 uri = XMLUtils.getNodeAttributeValue(referenceE,
@@ -1234,7 +1372,7 @@ public class Message {
                 }
                 
                 if (SAMLConstants.BINARYSECURITYTOKEN.equals(localName) &&
-                        SAMLConstants.NS_WSSE.equals(ns)) {
+                    wsseNS.equals(ns)) {
                     
                     Element binarySecurityTokenE = (Element)child;
                     String valuetype = XMLUtils.getNodeAttributeValue(
@@ -1248,9 +1386,7 @@ public class Message {
                     }
                     if (uri != null) {
                         String id = XMLUtils.getNodeAttributeValueNS(
-                                binarySecurityTokenE,
-                                SAMLConstants.NS_WSU,
-                                SAMLConstants.TAG_ID);
+                            binarySecurityTokenE, wsuNS, SAMLConstants.TAG_ID);
                         if (!uri.equals(id)) {
                             securityHeaders.add(child);
                             continue;
@@ -1322,5 +1458,27 @@ public class Message {
         if (securityHeaders.isEmpty()) {
             securityHeaders = null;
         }
+    }
+
+    /**
+     * Returns the web services version of the message.
+     *
+     * @return the web services version.
+     */
+    public String
+    getWSFVersion()
+    {
+        return wsfVersion;
+    }
+
+    /**
+     * Sets the web services version to the message.
+     *
+     * @param version the web services framework version.
+     */
+    public void
+    setWSFVersion(String version)
+    {
+       this.wsfVersion = version;
     }
 }

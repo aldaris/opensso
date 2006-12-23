@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.2 2006-11-30 05:47:35 qcheng Exp $
+ * $Id: BinarySecurityToken.java,v 1.3 2006-12-23 05:06:17 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,10 +32,13 @@ import java.util.ResourceBundle;
 import java.util.Map;
 import java.util.HashMap;
 import com.sun.identity.shared.locale.Locale;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 import javax.xml.namespace.QName;
+import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
+import com.sun.identity.liberty.ws.soapbinding.Utils;
 
 /**
  * The class <code>BinarySecurityToken</code> provides interface to parse and
@@ -83,11 +86,6 @@ public class BinarySecurityToken {
                                             "libBinarySecurityToken");
     private static Debug debug = Debug.getInstance("libBinarySecurityToken");
 
-    // constants for WSS namespace & tag
-    private static final String WSSE_NS = 
-        "http://schemas.xmlsoap.org/ws/2003/06/secext";
-    private static final String WSU_NS = 
-        "http://schemas.xmlsoap.org/ws/2003/06/utility";
     private static final String WSSE = "wsse";
     private static final String WSU = "wsu";
     private static final String BINARY_SECURITY_TOKEN = "BinarySecurityToken";
@@ -95,6 +93,10 @@ public class BinarySecurityToken {
     private static final String VALUE_TYPE = "ValueType";
     private static final String ID = "Id";
     private static final String XML_NS = "xmlns";
+
+    private String wsfVersion = null;
+    private String wsseNS = null;
+    private String wsuNS = null;
 
     /**
      * Default constructor
@@ -124,6 +126,7 @@ public class BinarySecurityToken {
         this.valueType = valueType;
         this.encodingType = encodingType;
         this.id = SAMLUtils.generateID();
+        setWSFVersion(Utils.getDefaultWSFVersion());
     }
 
     /**
@@ -152,6 +155,15 @@ public class BinarySecurityToken {
                 ":" + elementName) ;   
         }
 
+        wsseNS = token.getNamespaceURI();
+        if ((wsseNS != null) && WSSEConstants.NS_WSSE_WSF11.equals(wsseNS)) {
+            wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
+        } else if((wsseNS != null) &&  WSSEConstants.NS_WSSE.equals(wsseNS)) {
+            wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+        } else {
+            throw new Exception(bundle.getString("invalidNameSpace"));
+        }
+
         // check attributes
         NamedNodeMap nm = token.getAttributes();
         if (nm == null) {
@@ -172,6 +184,7 @@ public class BinarySecurityToken {
             // check Id/EncodingType/ValueType attribute
             if (localName.equals(ID)) {
                 this.id = attr.getValue();
+                wsuNS = attr.getNamespaceURI();
             } else if (localName.equals(ENCODING_TYPE)) {
                 // no namespace match done here
                 encodingType = (QName) 
@@ -222,6 +235,12 @@ public class BinarySecurityToken {
      * trim prefix and get the value, e.g, for wsse:X509v3 will return X509v3 
      */
     private String trimPrefix(String val) {
+        if ((val != null) &&
+            (val.startsWith(WSSEConstants.NS_X509) ||
+            val.startsWith(WSSEConstants.NS_SMS))) {
+            return val;
+        }
+
         int pos = val.indexOf(":");
         if (pos == -1) {
             return val;
@@ -279,14 +298,30 @@ public class BinarySecurityToken {
      */
     public String toString() {
         if (xmlString == null) {
-            xmlString = "<" + WSSE + ":" + BINARY_SECURITY_TOKEN + " " +
-                XML_NS + ":" + WSSE + "=\"" + WSSE_NS + "\" " + 
-                XML_NS + ":" + WSU + "=\"" + WSU_NS + "\" " + WSU + ":" +
-                ID + "=\"" + id + "\" " + VALUE_TYPE + "=\"" + 
-                WSSE + ":" + valueType.getLocalPart() + "\" " +
-                ENCODING_TYPE + "=\"" + WSSE + ":" + 
-                encodingType.getLocalPart() + "\">\n" + value.toString() + 
-                "\n" + "</" + WSSE + ":" + BINARY_SECURITY_TOKEN + ">\n"; 
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("<").append(WSSE).append(":")
+                .append(BINARY_SECURITY_TOKEN).append(" ").append(XML_NS)
+                .append(":").append(WSSE).append("=\"").append(wsseNS)
+                .append("\" ").append(XML_NS).append(":").append(WSU)
+                .append("=\"").append(wsuNS).append("\" ").append(WSU)
+                .append(":").append(ID).append("=\"").append(id).append("\" ")
+                .append(VALUE_TYPE).append("=\"");
+            if (SOAPBindingConstants.WSF_11_VERSION.equals(wsfVersion)) {
+                sb.append(WSSEConstants.NS_X509).append("#")
+                    .append(valueType.getLocalPart()).append("\" ")
+                    .append(ENCODING_TYPE).append("=\"")
+                    .append(WSSEConstants.NS_SMS).append("#")
+                    .append(encodingType.getLocalPart()).append("\">\n");
+            } else {
+                sb.append(WSSE).append(":").append(valueType.getLocalPart())
+                    .append("\" ").append(ENCODING_TYPE).append("=\"")
+                    .append(WSSE).append(":")
+                    .append(encodingType.getLocalPart()).append("\">\n");
+            }
+            sb.append(value.toString()).append("\n").append("</").append(WSSE)
+                .append(":").append(BINARY_SECURITY_TOKEN).append(">\n");
+            xmlString = sb.toString();
         }
         return xmlString;
     }
@@ -296,21 +331,19 @@ public class BinarySecurityToken {
      * the value name given corresponds to a X509 Certificate.
      * @supported.api
      */
-    public static final QName X509V3 = new QName(WSSE_NS, "X509v3", WSSE);
+    public static final QName X509V3 = new QName("X509v3");
 
     /**
      * The <code>KERBEROSV5TGT</code> value type indicates that
      * the value name given corresponds to a Kerberos V5 TGT.
      */
-    public static final QName KERBEROSV5TGT = 
-        new QName(WSSE_NS, "Kerberosv5TGT", WSSE);
+    public static final QName KERBEROSV5TGT = new QName("Kerberosv5TGT");
 
     /**
      * The <code>KERBEROSV5ST</code> value type indicates
      * that the value name given corresponds to a Kerberos V5 service ticket.
      */
-    public static final QName KERBEROSV5ST = 
-        new QName(WSSE_NS, "Kerberosv5ST", WSSE);
+    public static final QName KERBEROSV5ST = new QName("Kerberosv5ST");
 
     /**
      * The <code>PKCS7</code> value type indicates
@@ -318,7 +351,7 @@ public class BinarySecurityToken {
      * PKCS7 object.
      * @supported.api
      */
-    public static final QName PKCS7 = new QName(WSSE_NS, "PKCS7", WSSE);
+    public static final QName PKCS7 = new QName("PKCS7");
 
     /**
      * The <code>PKIPATH</code> value type indicates
@@ -326,7 +359,7 @@ public class BinarySecurityToken {
      * PKI Path object.
      * @supported.api
      */
-    public static final QName PKIPath = new QName(WSSE_NS, "PKIPath", WSSE);
+    public static final QName PKIPath = new QName("PKIPath");
 
     // map from string to ValueType object
     static Map valueMap = new HashMap(); 
@@ -336,6 +369,7 @@ public class BinarySecurityToken {
         valueMap.put(PKCS7.getLocalPart(), PKCS7);
         valueMap.put(KERBEROSV5ST.getLocalPart(), KERBEROSV5ST);
         valueMap.put(KERBEROSV5TGT.getLocalPart(), KERBEROSV5TGT);
+        valueMap.put(WSSEConstants.NS_X509 + "#X509v3", X509V3);
     }
 
     /** 
@@ -343,8 +377,7 @@ public class BinarySecurityToken {
      * name given corresponds to base64 encoding of a binary value.
      * @supported.api
      */
-    public static final QName BASE64BINARY = 
-        new QName(WSSE_NS, "Base64Binary", WSSE);
+    public static final QName BASE64BINARY = new QName("Base64Binary");
         
     /**
      * The <code>HEXBINARY</code> encoding type indicates that
@@ -352,13 +385,61 @@ public class BinarySecurityToken {
      * a binary value.
      * @supported.api
      */
-    public static final QName HEXBINARY =
-        new QName(WSSE_NS, "HexBinary", WSSE);
+    public static final QName HEXBINARY = new QName("HexBinary");
         
     // map from string to EncodingType object 
     static Map encodingMap = new HashMap(); 
     static {
         encodingMap.put(HEXBINARY.getLocalPart(), HEXBINARY);
         encodingMap.put(BASE64BINARY.getLocalPart(), BASE64BINARY);
+        encodingMap.put(WSSEConstants.NS_SMS + "#Base64Binary", BASE64BINARY);
     } 
+
+    /**
+     * Adds th binary security token to the header element.
+     * @param headerE the security header element.
+     * @exception Exception if there is a failure in adding to the header.
+     */
+    public void addToParent(Element headerE) throws Exception {
+
+         Document doc = headerE.getOwnerDocument();
+         Element securityE = doc.createElementNS(wsseNS,
+                 WSSEConstants.TAG_WSSE + ":" +
+                 WSSEConstants.TAG_SECURITYT);
+         securityE.setAttributeNS(SOAPBindingConstants.NS_XML,
+                    WSSEConstants.TAG_XML_WSSE, wsseNS);
+         headerE.appendChild(securityE);
+
+         Document binaryTokenD = XMLUtils.toDOMDocument(toString(), debug);
+
+         Element binaryTokenE = binaryTokenD.getDocumentElement();
+         securityE.appendChild(doc.importNode(binaryTokenE, true));
+
+    }
+
+    /**
+     * Returns the web services version.
+     * @return the web services version.
+     */
+    public String getWSFVersion() {
+        return wsfVersion;
+    }
+
+    /**
+     * Sets the web services version.
+     * @param version the web services version.
+     */
+    public void setWSFVersion(String version) {
+        this.wsfVersion = version;
+        if(wsfVersion != null &&
+                 SOAPBindingConstants.WSF_10_VERSION.equals(wsfVersion)) {
+           wsseNS = WSSEConstants.NS_WSSE;
+           wsuNS = WSSEConstants.NS_WSU;
+        } else {
+           wsseNS = WSSEConstants.NS_WSSE_WSF11;
+           wsuNS = WSSEConstants.NS_WSU_WSF11;
+        }
+        xmlString = null;
+    }
+
 }

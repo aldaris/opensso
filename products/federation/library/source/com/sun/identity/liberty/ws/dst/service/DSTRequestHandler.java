@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTRequestHandler.java,v 1.1 2006-10-30 23:15:00 qcheng Exp $
+ * $Id: DSTRequestHandler.java,v 1.2 2006-12-23 05:07:46 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,6 +94,7 @@ public abstract class DSTRequestHandler implements RequestHandler {
 
        response.setCorrelationHeader(msg.getCorrelationHeader());
 
+       response.setWSFVersion(msg.getWSFVersion());
        List responseBodies = processSOAPBodies(requestBodies, msg, response);
        responseBodies = Utils.convertJAXBToElement(responseBodies);
 
@@ -137,7 +138,9 @@ public abstract class DSTRequestHandler implements RequestHandler {
         try {
             SecurityTokenManager manager = new SecurityTokenManager(
                                  msg.getToken());
-            return manager.getX509CertificateToken();
+            BinarySecurityToken binaryToken = manager.getX509CertificateToken();
+            binaryToken.setWSFVersion(msg.getWSFVersion());
+            return binaryToken;
         } catch (Exception e) {
             DSTUtils.debug.error("DSTRequestHandler:generateBinary" +
             "SecurityToken: Error in generating binary security token.", e);

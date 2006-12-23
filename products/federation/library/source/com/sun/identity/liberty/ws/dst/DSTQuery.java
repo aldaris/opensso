@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTQuery.java,v 1.1 2006-10-30 23:14:58 qcheng Exp $
+ * $Id: DSTQuery.java,v 1.2 2006-12-23 05:07:30 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -373,8 +373,7 @@ public class DSTQuery {
         }
         if(declareNS) {
            sb.append(" xmlns:").append(prefix).append("=\"")
-             .append(nameSpaceURI).append("\"")
-             .append(" xmlns=\"").append(nameSpaceURI).append("\"");
+             .append(nameSpaceURI).append("\"");
         }
         sb.append(">");
         if(encryptedResourceID == null) {

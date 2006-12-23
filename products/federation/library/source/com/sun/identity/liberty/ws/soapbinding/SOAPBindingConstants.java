@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPBindingConstants.java,v 1.1 2006-10-30 23:15:22 qcheng Exp $
+ * $Id: SOAPBindingConstants.java,v 1.2 2006-12-23 05:10:00 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -336,4 +336,20 @@ public final class SOAPBindingConstants {
      * Default Encoding .
      */
     static final String DEFAULT_ENCODING = "UTF-8";
+
+    /**
+     * ID-WSF verstion 1.1.
+     */
+    public static final String WSF_11_VERSION = "1.1";
+
+    /**
+     * ID-WSF verstion 1.0.
+     */
+    public static final String WSF_10_VERSION = "1.0";
+
+    /**
+     * Liberty Request.
+     */
+    public static final String LIBERTY_REQUEST = "LibertyRequest";
+
 }
