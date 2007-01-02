@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutRequestImpl.java,v 1.1 2006-10-30 23:16:49 qcheng Exp $
+ * $Id: LogoutRequestImpl.java,v 1.2 2007-01-02 21:58:00 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -457,7 +457,7 @@ implements LogoutRequest {
         consent = element.getAttribute(SAML2Constants.CONSENT);
         String notOnOrAfterStr = element.getAttribute(
         SAML2Constants.NOTONORAFTER);
-        //validateNotOnOrAfterStr(notOnOrAfterStr);
+        validateNotOnOrAfterStr(notOnOrAfterStr);
         reason = element.getAttribute(SAML2Constants.REASON);
         
         String sessionIndexStr = null;
@@ -508,10 +508,7 @@ implements LogoutRequest {
    /* Validates the NotOnOrAfter attribute in the SAML Request. */
     private void validateNotOnOrAfterStr(String notOnOrAfterStr)
     throws SAML2Exception {
-        if ((notOnOrAfterStr == null || notOnOrAfterStr.length() == 0)) {
-            throw new SAML2Exception(
-            SAML2SDKUtils.bundle.getString("missingNotOnOrAfterStr"));
-        } else {
+       if (notOnOrAfterStr != null && notOnOrAfterStr.length() != 0) {
             try {
                 notOnOrAfter = DateUtils.stringToDate(notOnOrAfterStr);
             } catch (ParseException e) {

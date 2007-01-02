@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: LogoutUtil.java,v 1.3 2007-01-02 21:57:59 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -192,7 +192,31 @@ public class LogoutUtil {
         // set optional attributes / elements
         logoutReq.setDestination(destinationURI);
         logoutReq.setConsent(consent);
-        logoutReq.setIssuer(issuer);
+        logoutReq.setIssuer(issuer);  
+        if (hostEntityRole.equals(SAML2Constants.IDP_ROLE)) {
+            // use the assertion effective time (in seconds)
+            int effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
+            String effectiveTimeStr = SAML2Utils.getAttributeValueFromSSOConfig(
+                realm, requesterEntityID, SAML2Constants.IDP_ROLE,
+                SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE);
+            if (effectiveTimeStr != null) {
+                try {
+                    effectiveTime = Integer.parseInt(effectiveTimeStr);
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "got effective time from config:" + effectiveTime);
+                    }
+                } catch (NumberFormatException nfe) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Failed to get assertion effective time from " +
+                        "IDP SSO config: ", nfe);
+                    effectiveTime = SAML2Constants.ASSERTION_EFFECTIVE_TIME;
+                }
+            }
+            Date date = new Date();
+            date.setTime(date.getTime() + effectiveTime * 1000);
+            logoutReq.setNotOnOrAfter(date);
+        }    
         if (extensions != null) {
             logoutReq.setExtensions(extensions);
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.1 2006-10-30 23:16:29 qcheng Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.2 2007-01-02 21:57:59 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
 
 import com.sun.identity.saml2.common.SAML2Exception;
@@ -43,6 +44,7 @@ import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.saml2.assertion.EncryptedID;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.profile.IDPSSOUtil;
 
 /**
  * This class <code>DefaultIDPAccountMapper</code> is the default
@@ -55,9 +57,6 @@ import com.sun.identity.saml2.assertion.AssertionFactory;
 
 public class DefaultIDPAccountMapper extends DefaultAccountMapper 
      implements IDPAccountMapper {
-
-     protected static final String NULL = "null";
-     protected static final String DELIM = "|";
 
      public DefaultIDPAccountMapper() {
          debug.message("DefaultIDPAccountMapper.constructor");
@@ -83,59 +82,33 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
     ) throws SAML2Exception {
 
         String userID = null;
+        String nameIDFormat = null;
         try {
-            userID = SessionManager.getProvider().
-                getPrincipalName(session);
+            SessionProvider sessionProv = SessionManager.getProvider();
+            userID = sessionProv.getPrincipalName(session);
+            String[] values = sessionProv.getProperty(session, 
+                IDPSSOUtil.NAMEID_FORMAT);
+            if ((values != null) && (values.length > 0)) {
+                nameIDFormat = values[0]; 
+            }
         } catch (SessionException se) {
-             throw new SAML2Exception(bundle.getString(
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
                    "invalidSSOToken")); 
         }
-        NameIDInfo info = AccountUtils.getAccountFederation(
-                            userID, hostEntityID, remoteEntityID);
-        if (info == null) {
-            return null;
-        } 
-        return getNameID(info);
-    }
-
-    /**
-     * Returns the <code>NameID</code> object from the <code>NameIDInfo</code>
-     * object.
-     * @param info the <code>NameIDInfo</code> object.
-     * @return the <code>NameID</code>.
-     * @exception SAML2Exception if any failure.
-     */
-    protected NameID getNameID(NameIDInfo info) throws SAML2Exception {
         
+        String nameIDValue = null;
+        if (nameIDFormat != null &&
+            nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME)) {
+            nameIDValue = userID;
+        } else {
+            nameIDValue = SAML2Utils.createNameIdentifier();
+        }
         NameID nameID = AssertionFactory.getInstance().createNameID(); 
-
-        String nameIDValue = info.getNameIDValue();
-        if(!NULL.equals(nameIDValue)) {
-           nameID.setValue(nameIDValue);   
-        }
-
-        String nameQualifier =info.getNameQualifier();
-        if(!NULL.equals(nameQualifier)) {
-           nameID.setNameQualifier(nameQualifier);   
-        }
-
-        String format = info.getFormat();
-        if(!NULL.equals(format)) {
-           nameID.setFormat(format);
-        }
-
-        String spNameIDValue = info.getSPNameIDValue();
-        if(!NULL.equals(spNameIDValue)) {
-           nameID.setSPProvidedID(spNameIDValue);
-        }
-
-        String spNameQualifier = info.getSPNameQualifier();
-        if(!NULL.equals(spNameQualifier)) {
-           nameID.setSPNameQualifier(spNameQualifier);
-        }
-
+        nameID.setValue(nameIDValue);
+        nameID.setFormat(nameIDFormat);
+        nameID.setNameQualifier(hostEntityID);
+        nameID.setSPNameQualifier(remoteEntityID);
+        nameID.setSPProvidedID(null);
         return nameID;
-
     }
-
 }

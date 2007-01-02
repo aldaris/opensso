@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionsImpl.java,v 1.1 2006-10-30 23:16:07 qcheng Exp $
+ * $Id: ConditionsImpl.java,v 1.2 2007-01-02 21:57:58 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,7 @@ public class ConditionsImpl implements Conditions {
             } 
         } 
         attrValue = element.getAttribute(NOT_ON_OR_AFTER_ATTR);
-        if ((attrValue != null) || (attrValue.trim().length() != 0)) {
+        if ((attrValue != null) && (attrValue.trim().length() != 0)) {
             try {
                 notOnOrAfter = DateUtils.stringToDate(attrValue);   
             } catch (ParseException pe) {

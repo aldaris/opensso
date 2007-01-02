@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.2 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.3 2007-01-02 21:57:59 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,9 @@ import javax.servlet.http.HttpServletResponse;
  * provider to do single sign on and/or federation.
  */
 public class IDPSSOUtil {
-
+    // key name for name id format on SSOToken
+    public static final String NAMEID_FORMAT = "SAML2NameIDFormat";
+    public static final String NULL = "null";
     public static SAML2MetaManager metaManager = null;
     public static CircleOfTrustManager cotManager = null;
     static IDPSessionListener sessionListener = new IDPSessionListener();
@@ -1085,27 +1087,39 @@ public class IDPSSOUtil {
         boolean isTransient = nameIDFormat.equals(
             SAML2Constants.NAMEID_TRANSIENT_FORMAT);
         if (!isTransient) {
+            String userID = null;
+            try {
+                userID = sessionProvider.getPrincipalName(session);
+            } catch (SessionException se) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get principal name from the session.", se);
+            throw new SAML2Exception(
+                   SAML2Utils.bundle.getString("invalidSSOToken")); 
+            }   
+            NameIDInfo info = AccountUtils.getAccountFederation(
+                userID, idpEntityID, recipientEntityID);
+            if (info != null) {
+                nameID = getNameID(info);
+            }
+        }
+        if (nameID == null) {
+            // Gets federation info from the IDP account mapper
+            // ideally, the IDP account mapper should take a name id format, 
+            // for now, sets name id format on SSO token
+            try {
+                String[] values = { nameIDFormat };
+                sessionProvider.setProperty(session, NAMEID_FORMAT,
+                    values);
+            } catch (SessionException se) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "invalidSSOToken"));
+            }
             // read federation info from the persistent datastore
             IDPAccountMapper idpAccountMapper = 
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
             nameID = idpAccountMapper.getNameID(
                          session, idpEntityID, remoteEntityID); 
-        }
-        if (nameID == null) {
-            // new federation or transient
-            String nameIDValue = null;
-            if (nameIDFormat != null &&
-                nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME)) {
-                nameIDValue = userName;
-            } else {
-                nameIDValue = SAML2Utils.createNameIdentifier();
-            }
-            nameID = AssertionFactory.getInstance().createNameID();
-            nameID.setValue(nameIDValue);
-            nameID.setFormat(nameIDFormat);
-            nameID.setNameQualifier(idpEntityID);
-            nameID.setSPNameQualifier(spNameQualifier);
-            nameID.setSPProvidedID(null);
+     
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
                 nameIDInfo = new NameIDInfo(idpEntityID, remoteEntityID,
@@ -2148,5 +2162,43 @@ public class IDPSSOUtil {
        }
        return writerURL;
     }
+   
+   /**
+     * Returns the <code>NameID</code> object from the <code>NameIDInfo</code>
+     * object.
+     * @param info the <code>NameIDInfo</code> object.
+     * @return the <code>NameID</code>.
+     * @exception SAML2Exception if any failure.
+     */
+    private static NameID getNameID(NameIDInfo info) throws SAML2Exception {
+        
+        NameID nameID = AssertionFactory.getInstance().createNameID(); 
 
+        String nameIDValue = info.getNameIDValue();
+        if(!NULL.equals(nameIDValue)) {
+            nameID.setValue(nameIDValue);   
+        }
+
+        String nameQualifier = info.getNameQualifier();
+        if(!NULL.equals(nameQualifier)) {
+            nameID.setNameQualifier(nameQualifier);   
+        }
+
+        String format = info.getFormat();
+        if(!NULL.equals(format)) {
+            nameID.setFormat(format);
+        }
+
+        String spNameIDValue = info.getSPNameIDValue();
+        if(!NULL.equals(spNameIDValue)) {
+            nameID.setSPProvidedID(spNameIDValue);
+        }
+
+        String spNameQualifier = info.getSPNameQualifier();
+        if(!NULL.equals(spNameQualifier)) {
+            nameID.setSPNameQualifier(spNameQualifier);
+        }
+
+        return nameID;
+    }
 }

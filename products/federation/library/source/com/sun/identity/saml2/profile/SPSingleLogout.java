@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.3 2006-12-13 19:03:22 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.4 2007-01-02 21:58:00 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -596,6 +596,7 @@ public class SPSingleLogout {
         
         try {
             do {
+                 // TODO: check the NotOnOrAfter attribute of LogoutRequest
                 issuer = logoutReq.getIssuer();
                 String requestId = logoutReq.getID();
                 SAML2Utils.verifyRequestIssuer(
