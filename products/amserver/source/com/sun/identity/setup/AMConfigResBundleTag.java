@@ -17,26 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfigResBundleTag.java,v 1.1 2006-11-22 00:52:08 ak138937 Exp $
+ * $Id: AMConfigResBundleTag.java,v 1.2 2007-01-05 02:41:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
+import com.iplanet.am.util.Locale;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
+import java.util.Iterator;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import com.iplanet.am.util.Locale;
 
 /*
  * This tag handler class is used to load resource bundle

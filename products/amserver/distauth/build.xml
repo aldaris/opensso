@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-12-18 21:42:38 manish_rustagi Exp $
+   $Id: build.xml,v 1.2 2007-01-05 02:40:51 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,13 +50,6 @@
             <classpath refid="build.class.path"/>
         </javac>
 
-        <!--<java classname="com.sun.identity.distauth.setup.Scripts" fork="true">
-            <classpath>
-                <pathelement path="${distauth.classes.dir}"/>
-            </classpath>
-            <arg value="${amserver.distauth.dir}" />
-        </java>-->
-
         <copy file="${amserver.distauth.dir}/buildwar.xml" 
               tofile="${distauth.package.dir}/build.xml" />
 
@@ -64,10 +57,7 @@
               tofile="${distauth.package.dir}/classes/configDefault.properties" />
 
         <copy todir="${distauth.package.dir}/classes">
-            <fileset dir="${distauth.classes.dir}">
-                <exclude name="com/sun/identity/distauth/setup/Scripts.class" />
-                <exclude name="com/sun/identity/distauth/setup/ScriptFileFilter.class" />
-            </fileset>
+            <fileset dir="${distauth.classes.dir}" />
         </copy>
 
         <copy todir="${distauth.package.dir}/scripts">
@@ -98,7 +88,7 @@
 
         <copy todir="${distauth.package.dir}/war/css">
             <fileset dir="${lockhart.dir}/css">
-		<exclude name="css_generic.css" />
+                <exclude name="css_generic.css" />
             </fileset>
         </copy>
 
@@ -157,7 +147,7 @@
             </fileset>
             <fileset dir="${amserver.classes.dir}">
                 <include name="com/sun/identity/authentication/distUI/*.class" />
-		<include name="com/sun/identity/authentication/UI/taglib/*.class" />
+                <include name="com/sun/identity/authentication/UI/taglib/*.class" />
                 <include name="com/sun/identity/authentication/UI/AuthViewBeanBase.class" />
                 <include name="com/sun/identity/authentication/UI/ButtonTiledView.class" />
                 <include name="com/sun/identity/authentication/UI/CallBackChoiceTiledView.class" />
@@ -167,26 +157,28 @@
 
         <xslt in="${amserver.distauth.dir}/docs/Readme.xml"
             out="${distauth.package.dir}/docs/Readme.txt"
-            style="${amserver.distauth.dir}/docs/ReadmeText.xsl" />
+            style="${products.xml.dir}/ReadmeText.xsl" />
 
         <zip destfile="${amserver.dist.dir}/distauth.zip"
             basedir="${distauth.package.dir}" />
+        <checksum file="${amserver.dist.dir}/distauth.zip"
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
         <mkdir dir="${amserver.built.distauth.dir}"/>
-	<mkdir dir="${amserver.dist.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
         <mkdir dir="${distauth.classes.dir}"/>
         <mkdir dir="${distauth.package.dir}" />
         <mkdir dir="${distauth.package.dir}/scripts" />
         <mkdir dir="${distauth.package.dir}/classes" />
         <mkdir dir="${distauth.package.dir}/docs" />
         <mkdir dir="${distauth.package.dir}/war" />
-	<mkdir dir="${distauth.package.dir}/war/config/auth/default" />
-	<mkdir dir="${distauth.package.dir}/war/css" />
-	<mkdir dir="${distauth.package.dir}/war/images" />
-	<mkdir dir="${distauth.package.dir}/war/images/button" />
-	<mkdir dir="${distauth.package.dir}/war/js" />
+        <mkdir dir="${distauth.package.dir}/war/config/auth/default" />
+        <mkdir dir="${distauth.package.dir}/war/css" />
+        <mkdir dir="${distauth.package.dir}/war/images" />
+        <mkdir dir="${distauth.package.dir}/war/images/button" />
+        <mkdir dir="${distauth.package.dir}/war/js" />
         <mkdir dir="${distauth.package.dir}/war/WEB-INF" />
         <mkdir dir="${distauth.package.dir}/war/WEB-INF/classes" />
         <mkdir dir="${distauth.package.dir}/war/WEB-INF/lib" />
@@ -199,12 +191,12 @@
         <delete dir="${distauth.package.dir}/war/WEB-INF/lib"/>
         <delete dir="${distauth.package.dir}/war/WEB-INF/classes" />
         <delete dir="${distauth.package.dir}/war/WEB-INF"/>
-	<delete dir="${distauth.package.dir}/war/js" />
-	<delete dir="${distauth.package.dir}/war/images/button" />
-	<delete dir="${distauth.package.dir}/war/images" />
-	<delete dir="${distauth.package.dir}/war/css" />
-	<delete dir="${distauth.package.dir}/war/config/auth/default" />
-	<delete dir="${distauth.package.dir}/war" />
+        <delete dir="${distauth.package.dir}/war/js" />
+        <delete dir="${distauth.package.dir}/war/images/button" />
+        <delete dir="${distauth.package.dir}/war/images" />
+        <delete dir="${distauth.package.dir}/war/css" />
+        <delete dir="${distauth.package.dir}/war/config/auth/default" />
+        <delete dir="${distauth.package.dir}/war" />
         <delete dir="${distauth.package.dir}/xml" />
         <delete dir="${distauth.package.dir}/resources" />
         <delete dir="${distauth.package.dir}/docs" />

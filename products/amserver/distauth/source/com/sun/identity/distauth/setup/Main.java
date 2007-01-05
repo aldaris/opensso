@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.1 2006-12-18 21:42:41 manish_rustagi Exp $
+ * $Id: Main.java,v 1.2 2007-01-05 02:40:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,11 +57,6 @@ public class Main {
     private static final String TAG_SERVER_HOST = "SERVER_HOST";
     private static final String TAG_SERVER_PORT = "SERVER_PORT";
     private static final String TAG_DEPLOY_URI = "DEPLOY_URI";
-    //private static final String TAG_NOTIFICATION_URL = "NOTIFICATION_URL";
-    //private static final String TAG_DISTAUTH_SERVER_PROTOCOL = "DISTAUTH_SERVER_PROTOCOL";
-    //private static final String TAG_DISTAUTH_SERVER_HOST = "DISTAUTH_SERVER_HOST";
-    //private static final String TAG_DISTAUTH_SERVER_PORT = "DISTAUTH_SERVER_PORT";
-    //private static final String TAG_DISTAUTH_DEPLOY_URI = "DISTAUTH_DEPLOY_URI";
 
     private static final String TRUST_ALL_CERTS =
         "com.iplanet.am.jssproxy.trustAllServerCerts=true\n";
@@ -70,18 +65,18 @@ public class Main {
 
     static {
         questions.add("DEBUG_DIR");
-	questions.add("APPLICATION_USER");	
+        questions.add("APPLICATION_USER");
         questions.add("APPLICATION_PASSWD");
         questions.add("SERVER_PROTOCOL");
         questions.add("SERVER_HOST");
         questions.add("SERVER_PORT");
         questions.add("DEPLOY_URI");
         questions.add("NAMING_URL");
-	questions.add("DISTAUTH_SERVER_PROTOCOL");
-	questions.add("DISTAUTH_SERVER_HOST");
-	questions.add("DISTAUTH_SERVER_PORT");
-	questions.add("DISTAUTH_DEPLOY_URI");
-	questions.add("NOTIFICATION_URL");
+        questions.add("DISTAUTH_SERVER_PROTOCOL");
+        questions.add("DISTAUTH_SERVER_HOST");
+        questions.add("DISTAUTH_SERVER_PORT");
+        questions.add("DISTAUTH_DEPLOY_URI");
+        questions.add("NOTIFICATION_URL");
     }
     
     public Main()
@@ -150,27 +145,14 @@ public class Main {
         String content = getFileContent(TEMPLATE_AMCONFIG_PROPERTIES);
         for (Iterator i = properties.keySet().iterator(); i.hasNext(); ) {
             String tag = (String)i.next();
-            content = content.replaceAll("@" + tag + "@", (String)properties.get(tag));
+            content = content.replaceAll("@" + tag + "@",
+                (String)properties.get(tag));
         }
-
-        /*
-        String protocol = properties.get(TAG_SERVER_PROTOCOL);
-        if (protocol.equalsIgnoreCase("https")) {
-            content += TRUST_ALL_CERTS;
-        }
-	*/
 
         BufferedWriter out = new BufferedWriter(new FileWriter(
             FILE_AMCONFIG_PROPERTIES));
         out.write(content);
         out.close();
-
-        /*
-        BufferedWriter fout = new BufferedWriter(new FileWriter(
-            CLASSES_AMCONFIG_PROPERTIES));
-        fout.write(content);
-        fout.close();
-        */
     }
 
     private String getFileContent(String fileName)

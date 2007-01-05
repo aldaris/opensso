@@ -17,21 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfigMsgTag.java,v 1.1 2006-11-22 00:51:20 ak138937 Exp $
+ * $Id: AMConfigMsgTag.java,v 1.2 2007-01-05 02:41:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Locale;
 import java.util.List;
 import java.util.ArrayList;
 import java.text.MessageFormat;
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;

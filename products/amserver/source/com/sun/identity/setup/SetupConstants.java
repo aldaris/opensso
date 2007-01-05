@@ -17,10 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.3 2006-11-22 00:57:54 ak138937 Exp $
+ * $Id: SetupConstants.java,v 1.4 2007-01-05 02:41:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
+
 package com.sun.identity.setup;
 
 /**

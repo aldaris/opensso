@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FQDNUtils.java,v 1.1 2005-11-01 00:30:57 arvindp Exp $
+ * $Id: FQDNUtils.java,v 1.2 2007-01-05 02:41:00 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.shared.Constants;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;

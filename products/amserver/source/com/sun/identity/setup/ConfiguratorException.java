@@ -17,19 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguratorException.java,v 1.1 2006-11-22 00:52:33 ak138937 Exp $
+ * $Id: ConfiguratorException.java,v 1.2 2007-01-05 02:41:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
-import com.iplanet.am.util.Debug;
-import com.sun.identity.common.L10NMessage;
-
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
-import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 
 public class ConfiguratorException extends RuntimeException 
@@ -38,7 +37,7 @@ public class ConfiguratorException extends RuntimeException
     private String message;
     private String bundleName = "amConfigurator";
     private String errorCode  ;
-    private Object[] args	;
+    private Object[] args        ;
     private ResourceBundle bundle;
 
     /*
@@ -49,29 +48,31 @@ public class ConfiguratorException extends RuntimeException
      * for correctly locating the error messsage. The default getMessage()
      * will always return English messages only. This is in consistent with
      * current JRE
-     * @param errorCode	 Key to resource bundle. You can use
-     * String localizedStr = rb.getString(errorCode)
-     * @param args  arguments to message. If it is not present pass the
-     * as null
-     * @param locale - User's preferred locale. The localized error message will 
+     * @param errorCode Key to resource bundle. You can use
+     *        <code>String localizedStr = rb.getString(errorCode)</code>
+     * @param args arguments to message. If it is not present pass the
+     *        as null
+     * @param locale User's preferred locale. The localized error message will 
      * be displayed according to user's preferred locale.
      */
-    public ConfiguratorException(String errorCode, Object[] args, 
-        java.util.Locale locale) {
-
-	this.errorCode	= errorCode;
-	this.args	= args;
-	this.message	= getL10NMessage (locale);
+    public ConfiguratorException(
+        String errorCode, 
+        Object[] args, 
+        java.util.Locale locale
+    ) {
+        this.errorCode = errorCode;
+        this.args = args;
+        this.message = getL10NMessage (locale);
     }
 
     /*
      * Constructs a <code>ConfiguratorException</code> with a detailed message.
      *
-     * @param message
+     * @param message Exception Message.
      * Detailed message for this exception.
      */
     public ConfiguratorException(String message) {
-	super(message);
+        super(message);
     }
 
     /*
@@ -80,7 +81,7 @@ public class ConfiguratorException extends RuntimeException
      * @return resource bundle name associated with this error message.
      */
     public String getResourceBundleName() {
-	return bundleName;
+        return bundleName;
     }
 
     /*
@@ -89,7 +90,7 @@ public class ConfiguratorException extends RuntimeException
      * @return error code associated with this error message.
      */
     public String getErrorCode() {
-	return errorCode;
+        return errorCode;
     }
 
     /*
@@ -100,37 +101,37 @@ public class ConfiguratorException extends RuntimeException
      * @return arguments for formatting this error message.
      */
      public Object[] getMessageArgs() {
-	return args;
+        return args;
      }
 
      public String getMessage() {
-	 if (message != null) {
+         if (message != null) {
             // messgae is set only if l10n resource bundle is specified
             return message;
-	 }
+         }
          return super.getMessage();
      }
 
     /*
      * Returns localized error message.
      *
-     * @param locale
+     * @param locale Locale of returned message.
      * @return localized error message.
      */
     public String getL10NMessage (java.util.Locale locale) {
-	if (errorCode == null) {
-	    return getMessage();
-	}
-	String result = message;
-	if (bundleName != null && locale != null) {
-	    bundle = ResourceBundle.getBundle(bundleName, locale);
-	    String mid	= bundle.getString (errorCode);
-	    if (args == null || args.length == 0) {
-		result = mid;
-	    } else {
-		result = MessageFormat.format (mid,args);
+        if (errorCode == null) {
+            return getMessage();
+        }
+        String result = message;
+        if (bundleName != null && locale != null) {
+            bundle = ResourceBundle.getBundle(bundleName, locale);
+            String mid = bundle.getString (errorCode);
+            if ((args == null) || (args.length == 0)) {
+                result = mid;
+            } else {
+                result = MessageFormat.format (mid,args);
             }
-	}
+        }
 
         return result;
     }
