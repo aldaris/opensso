@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: X509CRLExtensionFactory.java,v 1.2 2006-08-25 21:19:45 veiming Exp $
+ * $Id: X509CRLExtensionFactory.java,v 1.3 2007-01-05 23:43:15 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,9 +44,15 @@ public class X509CRLExtensionFactory {
     private static Class idpClass = null;
     private static Class cdpExtensionClass = null;
     private static Class idpExtensionClass = null;
-    private static Class booleanClass = null;
-    private static Class objectClass = null;
+    private static Class booleanClass = java.lang.Boolean.class;
+    private static Class objectClass = java.lang.Object.class;
     private static Debug debug = SecurityDebug.debug;
+    static final String CDP_CLASS_NAME = "CRLDistributionPointImpl";
+    static final String IDP_CLASS_NAME = "IssuingDistributionPointImpl";
+    static final String CDP_EXTENSION_CLASS_NAME = 
+    	"CRLDistributionPointsExtensionImpl";
+    static final String IDP_EXTENSION_CLASS_NAME = 
+    	"IssuingDistributionPointExtensionImpl";
     
     static {
         /* 
@@ -54,7 +60,7 @@ public class X509CRLExtensionFactory {
          * Default security provider pkg is com.sun.identity.security.x509.impl
          */ 
         provider = SystemProperties.get(Constants.SECURITY_PROVIDER_PKG, 
-                                       Constants.SUN_SECURITY_PROVIDER_PKG);
+                       Constants.SUN_SECURITY_PROVIDER_PKG).trim();
         instance = new X509CRLExtensionFactory();
     }
     
@@ -64,22 +70,15 @@ public class X509CRLExtensionFactory {
     
     private static void loadCRLExtensionClass() {
         try {
-            booleanClass = Class.forName("java.lang.Boolean");
-            objectClass = Class.forName("java.lang.Object");
-            cdpClass = 
-                Class.forName(provider+".CRLDistributionPointImpl", 
-                              false, ClassLoader.getSystemClassLoader());
-            idpClass = 
-                Class.forName(provider+".IssuingDistributionPointImpl", 
-                              false, ClassLoader.getSystemClassLoader());
-            cdpExtensionClass = 
-                Class.forName(provider+".CRLDistributionPointsExtensionImpl", 
-                              false, ClassLoader.getSystemClassLoader());
-            idpExtensionClass = 
-                Class.forName(provider+".IssuingDistributionPointExtensionImpl",
-                              false, ClassLoader.getSystemClassLoader());
+            cdpClass = Class.forName(provider + "." + CDP_CLASS_NAME);
+            idpClass = Class.forName(provider + "." + IDP_CLASS_NAME);
+            cdpExtensionClass = Class.forName(provider + "." + 
+                CDP_EXTENSION_CLASS_NAME);
+            idpExtensionClass = Class.forName(provider + "." + 
+                IDP_EXTENSION_CLASS_NAME);
         } catch (ClassNotFoundException e) {
-            debug.error("X509CRLExtensionFactory : class load failed.");
+            debug.error("X509CRLExtensionFactory.loadCRLExtensionClass : " + 
+                "class load failed.", e);
         }
     }
 
@@ -106,8 +105,9 @@ public class X509CRLExtensionFactory {
             try {
                 return (CRLDistributionPoint)cdpClass.newInstance();
             } catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
-                            "class instantiation failed.", e);
+                debug.error(
+                    "X509CRLExtensionFactory.createCRLDistributionPoint : " +
+                    "class instantiation failed.", e);
             }
         }
          
@@ -140,7 +140,8 @@ public class X509CRLExtensionFactory {
                 return (CRLDistributionPointsExtension)
                     constructor.newInstance(parameters);
             } catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
+                debug.error("X509CRLExtensionFactory." + 
+                    "createCRLDistributionPointsExtension : " +
                     "class instantiation failed.", e);
             }
         }
@@ -172,7 +173,8 @@ public class X509CRLExtensionFactory {
                 return (CRLDistributionPointsExtension)
                     constructor.newInstance(parameters);
             } catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
+                debug.error("X509CRLExtensionFactory." + 
+                    "createCRLDistributionPointsExtension : " +
                     "class instantiation failed.", e);
             }
         }
@@ -194,8 +196,9 @@ public class X509CRLExtensionFactory {
             try {
                 return (IssuingDistributionPoint) idpClass.newInstance();
             } catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
-                            "class instantiation failed.", e);
+                debug.error("X509CRLExtensionFactory." + 
+                    "createIssuingDistributionPoint: " +
+                    "class instantiation failed.", e);
             }
         }
             
@@ -229,8 +232,9 @@ public class X509CRLExtensionFactory {
                 return (IssuingDistributionPointExtension)
                     constructor.newInstance(parameters);
             } catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
-                            "class instantiation failed.", e);
+                debug.error("X509CRLExtensionFactory." + 
+                    "createIssuingDistributionPointExtension : " +
+                    "class instantiation failed.", e);
             }
         }
 
@@ -262,8 +266,9 @@ public class X509CRLExtensionFactory {
                 return (IssuingDistributionPointExtension)
                     constructor.newInstance(parameters);
             }  catch (Exception e) {
-                debug.error("X509CRLExtensionFactory : " +
-                            "class instantiation failed.", e);
+                debug.error("X509CRLExtensionFactory." + 
+                    "createIssuingDistributionPointExtension : " +
+                    "class instantiation failed.", e);
             }
         }
         
