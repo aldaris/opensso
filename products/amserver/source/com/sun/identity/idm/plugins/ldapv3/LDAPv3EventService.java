@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.10 2006-12-13 02:02:54 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.11 2007-01-05 00:38:56 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -356,11 +356,13 @@ public class LDAPv3EventService implements Runnable {
                     + target);
         }
         Request myRequest = findRequst(target);
-        myRequest.setStopStatus(true);
-        _requestList.remove(myRequest);
-        removeListener(myRequest);
-        dispatchEventAllChanged(myRequest);
-        // generate a interupt to wake up the process
+        if (myRequest != null) {
+            myRequest.setStopStatus(true);
+            _requestList.remove(myRequest);
+            removeListener(myRequest);
+            dispatchEventAllChanged(myRequest);
+        }
+        // generate an interrupt to wake up the process
         // should we generate interrupt before or after removing listener.
         // we want to interrupt after removing request from _requestList
         // so the all relevent info will have been updated when the tread
