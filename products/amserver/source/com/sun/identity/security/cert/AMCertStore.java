@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertStore.java,v 1.2 2006-08-25 21:21:17 veiming Exp $
+ * $Id: AMCertStore.java,v 1.3 2007-01-05 23:44:38 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,14 +32,11 @@ package com.sun.identity.security.cert;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.AccessController;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
 
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
@@ -47,7 +44,6 @@ import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPSocketFactory;
 
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.security.SecurityDebug;
@@ -72,7 +68,7 @@ public class AMCertStore {
         try {
            cf = CertificateFactory.getInstance("X.509");
         } catch (CertificateException e) {
-           debug.error(""+e.toString());
+           debug.error("AMCertStore : ", e);
         }
     }
     /**
@@ -100,13 +96,21 @@ public class AMCertStore {
          * use in verification of the users certificates.
          */
         if (storeParam.isSecure()) {
-            debug.message("Cert:  initial ldc  using ssl.");
+        	if (debug.messageEnabled()) {
+                debug.message("AMCertStore.getConnection: " +
+                    "initial ldc  using ssl.");
+        	}
+        	
             try {
                 ldapconn = new LDAPConnection(
                     storeParam.getSecureSocketFactory());
-                debug.message("validate(): SSLSocketFactory called");
+            	if (debug.messageEnabled()) {
+                    debug.message("AMCertStore.getConnection: " + 
+                        "SSLSocketFactory called");
+            	}
             } catch (Exception e) {
-                debug.error("validate.JSSSocketFactory", e);
+                debug.error("AMCertStore.getConnection: " + 
+                	"JSSSocketFactory", e);
             }
         } else { // non-ssl
             ldapconn = new LDAPConnection();
@@ -117,7 +121,8 @@ public class AMCertStore {
             ldapconn.authenticate(storeParam.ldap_version, storeParam.getUser(),
                          storeParam.getPassword());
         } catch (LDAPException e) {
-            debug.message("Certificate: dircontext",e);
+            debug.error("AMCertStore.getConnection: " + 
+                "Exception in connection to LDAP server", e);
         }
         
         return ldapconn;
@@ -151,9 +156,9 @@ public class AMCertStore {
                 return null;
             }
         } catch (Exception e) {
-            debug.error("Error in ldap search for " +
-                storeParam.getSearchFilter());
-            debug.error("" + e.toString());
+            debug.error("AMCertStore.getSearchResults : " +
+            	"Error in ldap search for " + storeParam.getSearchFilter());
+            debug.error("AMCertStore.getSearchResults : ", e);
             return null;
         }
 
@@ -177,7 +182,8 @@ public class AMCertStore {
             LDAPSearchResults results = getSearchResults(ldc);
             ldapEntry = results.next();
         }catch (Exception e) {
-            debug.error("Error in getting Cached CRL");
+            debug.error("AMCertStore.getLdapEntry : " + 
+                "Error in getting Cached CRL");
             return null;
         }
                 
@@ -214,7 +220,7 @@ public class AMCertStore {
                     certAttribute = 
                                 attrSet.getAttribute("usercertificate;binary");
                     if (certAttribute == null ) {
-                        debug.message(
+                        debug.message("AMCertStore.getCertificate : " +
                             "Certificate - get usercertificate is null ");
                         continue;
                     }
@@ -228,7 +234,8 @@ public class AMCertStore {
                     try {
                         c = (X509Certificate) cf.generateCertificate(bis);
                     } catch (CertificateParsingException e) {
-                        debug.error("Error in Certificate parsing : ", e);
+                        debug.error("AMCertStore.getCertificate : " +
+                            "Error in Certificate parsing : ", e);
                     }
                     
                     if ((c != null) && cert.equals(c)) 
@@ -236,8 +243,8 @@ public class AMCertStore {
                 }  // inner while
             }  // outer while  
         } catch (Exception e) {
-            debug.error("Certificate - Error finding registered certificate = "
-                                                             , e);
+            debug.error("AMCertStore.getCertificate : " +
+                "Certificate - Error finding registered certificate = ", e);
         } finally {
             try {
                 ldc.disconnect();
@@ -261,7 +268,8 @@ public class AMCertStore {
                      (sun.security.x509.X500Name)certificate.getIssuerDN();
             dn = new X500Name(dname.getEncoded());
             } catch (IOException e) {
-                debug.error("Error in getting issuer DN : " + e.toString());
+                debug.error("AMCertStore.getIssuerDN : " +
+                    "Error in getting issuer DN : ", e);
             }
             
         return dn;
@@ -281,7 +289,8 @@ public class AMCertStore {
                        (sun.security.x509.X500Name)certificate.getSubjectDN();
             dn = new X500Name(dname.getEncoded());
             } catch (Exception e) {
-                debug.error("Error in getting subject DN : " + e.toString());
+                debug.error("AMCertStore.getSubjectDN : " +
+                    "Error in getting subject DN : " + e.toString());
             }
         return dn;
     }    
@@ -299,8 +308,8 @@ public class AMCertStore {
                     .append(attrValue).append(")").toString();
  
         if (debug.messageEnabled()) {
-            debug.message("Certificate - ldc.search: using this filter: " + 
-                searchFilter);
+            debug.message("AMCertStore.setSearchFilter : " +
+                "ldc.search: using this filter: " + searchFilter);
         }
                 
         return searchFilter;

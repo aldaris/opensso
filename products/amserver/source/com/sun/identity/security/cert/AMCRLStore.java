@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.2 2006-08-25 21:21:16 veiming Exp $
+ * $Id: AMCRLStore.java,v 1.3 2007-01-05 23:44:38 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.security.cert;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -128,7 +129,7 @@ public class AMCRLStore extends AMCertStore {
                 crl = getCRLFromEntry(crlEntry);
             }
                 
-            if (needCRLUpdate(crl)) {
+            if ((crl == null) || needCRLUpdate(crl)) {
                 X509CRL tmpcrl = null;
                 IssuingDistributionPointExtension crlIDPExt = getCRLIDPExt(crl);
                 CRLDistributionPointsExtension crlDPExt =
@@ -145,15 +146,17 @@ public class AMCRLStore extends AMCertStore {
                     if (crlEntry == null) {
                         crlEntry = getLdapEntry(ldc);
                     }
-                    updateCRL(ldc, crlEntry.getDN().toString(),
-                        tmpcrl.getEncoded());
+                    if (crlEntry != null) {
+                        updateCRL(ldc, crlEntry.getDN().toString(),
+                            tmpcrl.getEncoded());
+                    }
                 }
                 crl = tmpcrl;
              }
                     
             updateCRLCache(certificate, crl);
         } catch (Exception e) {
-            debug.error("Error in getting CRL : " + e.toString());
+            debug.error("AMCRLStore.getCRL : " + "Error in getting CRL : ", e);
         } finally {
             try {
                 ldc.disconnect();
@@ -197,6 +200,9 @@ public class AMCRLStore extends AMCertStore {
         
     private X509CRL getCRLFromEntry(LDAPEntry crlEntry) 
         throws AuthLoginException  {
+        if (crlEntry == null) {
+                return null;
+        }
          LDAPAttributeSet attributeSet = crlEntry.getAttributeSet();
          LDAPAttribute crlAttribute = null;
          X509CRL crl = null;
@@ -228,7 +234,8 @@ public class AMCRLStore extends AMCertStore {
                 return null;
             }
         } catch (Exception e) {
-            debug.error("Error in getting Cached CRL");
+            debug.error("AMCRLStore.getCRLFromEntry : " + 
+                "Error in getting Cached CRL");
             return null;
         }
 
@@ -238,7 +245,8 @@ public class AMCRLStore extends AMCertStore {
             cf = CertificateFactory.getInstance("X.509");
             crl = (X509CRL) cf.generateCRL(new ByteArrayInputStream(bytes));
         } catch (Exception e) {
-            debug.error("Certificate: CertRevoked = ", e);
+            debug.error("AMCRLStore.getCRLFromEntry : " +
+                "Error in generating CRL", e);
         }
 
         return crl;
@@ -272,8 +280,8 @@ public class AMCRLStore extends AMCertStore {
                     }
                 }
             } catch (Exception e) {
-                debug.error(
-                    "Error finding CRL distribution Point configured: ", e);
+                debug.error("AMCRLStore.getCRLDPExt : " +
+                    "Error finding CRL distribution Point configured.", e);
             }
         }
         
@@ -291,15 +299,18 @@ public class AMCRLStore extends AMCertStore {
         
         if (extFactory != null) {
             try {
-                byte[] ext = 
-                  crl.getExtensionValue(IssuingDistributionPointExtension.OID);
+                byte[] ext = null;
+                if (crl != null) { 
+                    crl.getExtensionValue(
+                        IssuingDistributionPointExtension.OID);
+                }
                 if (ext != null) {
                     idpExt = extFactory.createIssuingDistributionPointExtension(
                         Boolean.FALSE, ext);
                 }
             } catch (Exception e) {
-                debug.error(
-                    "Error finding CRL distribution Point configured: ", e);
+                debug.error("AMCRLStore.getCRLIDPExt : " +
+                    "Error finding CRL distribution Point configured.", e);
             }   
         }
         
@@ -354,7 +365,8 @@ public class AMCRLStore extends AMCertStore {
             try {
                 crl = (X509CRL) cf.generateCRL(new ByteArrayInputStream(Crls)); 
             } catch (Exception e) {
-                debug.error("Error in generating X509CRL" + e.toString());
+                debug.error("AMCRLStore.getUpdateCRLFromCrlDP : " +
+                    "Error in generating X509CRL", e);
             }
         }
                                         
@@ -370,9 +382,9 @@ public class AMCRLStore extends AMCertStore {
      * @param CRLDistributionPointsExtension dpExt
      */
     private synchronized X509CRL 
-            getUpdateCRLFromCrlIDP(IssuingDistributionPointExtension idpExt) {
+        getUpdateCRLFromCrlIDP(IssuingDistributionPointExtension idpExt) {
         // Get CRL Distribution points
-            IssuingDistributionPoint IDP = idpExt.getIssuingDistributionPoint();
+        IssuingDistributionPoint IDP = idpExt.getIssuingDistributionPoint();
         byte[] Crls = null;
         X509CRL crl = null;
         GeneralNames gName = null;
@@ -386,7 +398,8 @@ public class AMCRLStore extends AMCertStore {
             try {
                 crl = (X509CRL)cf.generateCRL(new ByteArrayInputStream(Crls));
             } catch (Exception e) {
-                debug.error("Error in generating X509CRL" + e.toString());
+                debug.error("AMCRLStore.getUpdateCRLFromCrlIDP : " +
+                    "Error in generating X509CRL", e);
             }
         }
                                         
@@ -412,7 +425,8 @@ public class AMCRLStore extends AMCertStore {
         
             uri = uri.substring(proto_pos, uri.length());
             if (debug.messageEnabled()) {
-                debug.message("DP Name : " + uri);
+                debug.message("AMCRLStore.getCRLsFromGeneralNames : " +
+                    "DP Name : " + uri);
             }
             Crls = getCRLByURI(uri);
         } while ((Crls != null) && (idx < gName.size())); 
@@ -434,7 +448,8 @@ public class AMCRLStore extends AMCertStore {
         try {
             ldc.modify(dn, mod);
         } catch (LDAPException e){
-            debug.error("Error updating CRL Cache : ", e);
+            debug.error("AMCRLStore.updateCRL : " +
+                "Error updating CRL Cache : ", e);
             return false;
         }
 
@@ -449,11 +464,11 @@ public class AMCRLStore extends AMCertStore {
      * @param String uri
      */
     private byte[] getCRLByURI(String uri) {
-            if (uri == null) {
-                    return null;
-            }
+        if (uri == null) {
+            return null;
+        }
             
-            String protocol = uri.trim().toLowerCase();
+        String protocol = uri.trim().toLowerCase();
         if (protocol.startsWith("http") || protocol.startsWith("https")) {
             return getCRLByHttpURI(uri);
         } else if (protocol.startsWith("ldap") || protocol.startsWith("ldaps")){
@@ -493,8 +508,8 @@ public class AMCRLStore extends AMCertStore {
                     null,null,false);
 
             if (results == null || results.hasMoreElements() == false) {
-                debug.error(
-                    "verifyCertificate - No CRL distribution Point configured");
+                debug.error("AMCRLStore.getCRLByLdapURI : " +
+                    "No CRL found.");
                 return null;
             }
 
@@ -510,8 +525,8 @@ public class AMCRLStore extends AMCertStore {
                 crlAttribute = attributeSet.getAttribute(
                     "certificaterevocationlist;binary");
                 if (crlAttribute == null) {
-                    debug.error(
-                    "verifyCertificate - No CRL distribution Point configured");
+                    debug.error("AMCRLStore.getCRLByLdapURI : " +
+                        "No CRL found.");
                     return null;
                 }
             }
@@ -570,30 +585,36 @@ public class AMCRLStore extends AMCertStore {
             // Turn off Caching
             con.setUseCaches(false);
             
-            int requestLength =
-                params.toString().trim().getBytes("UTF-8").length;
-            con.setRequestProperty ("Content-Length", 
-                Integer.toString(requestLength));
+            int requestLength = 0;
+            if (params != null) { 
+                requestLength =
+                    params.toString().trim().getBytes("UTF-8").length;
+                con.setRequestProperty ("Content-Length", 
+                    Integer.toString(requestLength));
                                    
-            // Write the arguments as post data
-            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-            out.writeBytes(params.toString().trim());
-            out.flush();
-            out.close();
+                // Write the arguments as post data
+                DataOutputStream out = 
+                    new DataOutputStream(con.getOutputStream());
+                out.writeBytes(params.toString().trim());
+                out.flush();
+                out.close();
+            }
 
             // Input ...
             InputStream in = con.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int len;
             byte[] buf = new byte[1024];
             while((len = in.read(buf,0,buf.length)) != -1) {
-                buffer.append(new String(buf));
+                buffer.write(buf, 0, len);
             }
-            
-            crl = buffer.toString().getBytes();
-            
+
+            if (buffer.size() > 0) {
+                crl = buffer.toByteArray();
+            }
         } catch (Exception e) {
-            debug.error("Error in getting CRL",e);
+            debug.error("AMCRLStore.getCRLByLdapURI : " +
+                "Error in getting CRL", e);
         }
         
         return crl;

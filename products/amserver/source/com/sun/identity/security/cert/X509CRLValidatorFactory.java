@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: X509CRLValidatorFactory.java,v 1.2 2006-08-25 21:21:18 veiming Exp $
+ * $Id: X509CRLValidatorFactory.java,v 1.3 2007-01-05 23:44:39 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ public class X509CRLValidatorFactory {
     private static String provider = null;
     private static Debug debug = SecurityDebug.debug;
     private static Class validatorClass = null;
+    static final String VALIDATOR_CLASS_NAME = "X509CRLValidatorImpl";
     
     static {
         /* 
@@ -46,7 +47,7 @@ public class X509CRLValidatorFactory {
          * Default security provider pkg is com.sun.identity.security.x509.impl
          */ 
         provider = SystemProperties.get(Constants.SECURITY_PROVIDER_PKG, 
-                                       Constants.SUN_SECURITY_PROVIDER_PKG);
+                       Constants.SUN_SECURITY_PROVIDER_PKG).trim();
         instance = new X509CRLValidatorFactory();
     }
 
@@ -55,12 +56,12 @@ public class X509CRLValidatorFactory {
     }
         
     private static void loadValidatorClass() {
-        String className = provider+".X509CRLValidatorImpl";
+        String className = provider + "." + VALIDATOR_CLASS_NAME;
         try {
-            validatorClass = Class.forName(className, 
-                                 false, ClassLoader.getSystemClassLoader());
+            validatorClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            debug.error("X509CRLValidatorFactory : class load failed.", e);
+            debug.error("X509CRLValidatorFactory.loadValidatorClass : " + 
+                "class load failed.", e);
         }
     }
     
@@ -87,8 +88,8 @@ public class X509CRLValidatorFactory {
             try {
                 return (CRLValidator) validatorClass.newInstance();
             } catch (Exception e) {
-                debug.error("X509CRLValidatorFactory : " +
-                            "class instantiation failed.", e);
+                debug.error("X509CRLValidatorFactory.createCRLValidator : " +
+                    "class instantiation failed.", e);
             }
         }
         
