@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCompliance.java,v 1.4 2006-12-15 00:24:02 goodearth Exp $
+ * $Id: AMCompliance.java,v 1.5 2007-01-05 00:44:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,8 @@ import netscape.ldap.util.DN;
  * NOTE: An explicit check must be performed using AMCompliance.
  * isIplanetCompliant() method before calling any other methods in this
  * class. 
+ *
+ * @deprecated  As of Sun Java System Access Manager 7.1.
  */
 class AMCompliance implements AMConstants {
     // Map to keep role->group name mapping

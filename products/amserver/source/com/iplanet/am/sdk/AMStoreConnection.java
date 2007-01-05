@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.8 2006-12-15 00:24:02 goodearth Exp $
+ * $Id: AMStoreConnection.java,v 1.9 2007-01-05 00:44:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,6 @@ import java.util.StringTokenizer;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * The <code>AMStoreConnection</code> class represents a connection to the Sun
@@ -127,6 +126,8 @@ import netscape.ldap.util.DN;
  * <code>sun.com</code>. More examples of how to use this method are provided
  * in the Javadocs of the method below.
  * 
+ * @deprecated  As of Sun Java System Access Manager 7.1.
+ * @supported.all.api
  */
 public final class AMStoreConnection implements AMConstants {
     // ~ Static fields/initializers
