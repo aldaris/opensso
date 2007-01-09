@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ICDMConstants.java,v 1.2 2006-01-27 09:55:07 mrudul_uchil Exp $
+ * $Id: ICDMConstants.java,v 1.3 2007-01-09 06:52:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,4 +42,8 @@ interface ICDMConstants {
 
     public static final String CDM_DEFAULT_CLIENT_TYPE ="genericHTML";
 
+    /**
+     * Default content type for unidentified client type.
+     */
+    public static final String CDM_DEFAULT_CONTENT_TYPE ="text/html";
 }

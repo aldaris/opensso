@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthMembership.xml,v 1.1 2006-08-29 07:52:29 veiming Exp $
+    $Id: amAuthMembership.xml,v 1.2 2007-01-09 06:52:40 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/iPlanetAMAuthMembershipService"
             i18nFileName="amAuthMembership"
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="iplanet-am-auth-membership-service-description">
 
             <Organization>
@@ -135,6 +135,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="a113">
+                    <BooleanValues>
+                        <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                        <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
                     <DefaultValues>
                         <Value>false</Value>
                     </DefaultValues>
@@ -143,6 +147,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="a114">
+                    <BooleanValues>
+                        <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                        <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
                     <DefaultValues>
                         <Value>true</Value>
                     </DefaultValues>
@@ -261,6 +269,10 @@
                         type="single"
                         syntax="boolean"
                         i18nKey="a113">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
                         </DefaultValues>
@@ -269,6 +281,10 @@
                         type="single"
                         syntax="boolean"
                         i18nKey="a114">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
                         </DefaultValues>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.6 2006-12-13 20:58:14 beomsuk Exp $
+ * $Id: Session.java,v 1.7 2007-01-09 06:52:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,10 +340,11 @@ public class Session {
     }
 
     /**
-     * Returns lbcookie value for the Session
-     * @param  a session string for lbcookie.
-     * @return lbcookie value
-     * @throws SessionException if session is invalid
+     * Returns load balancer cookie value for the Session.
+     *
+     * @param sid Session string for load balancer cookie.
+     * @return load balancer cookie value.
+     * @throws SessionException if session is invalid.
      */
     public static String getLBCookie(String sid) 
              throws SessionException {
@@ -351,12 +352,12 @@ public class Session {
     }
 
     /**
-     * Returns lbcookie value for the Session
-     * @param  a session ID for lbcookie.
-     * @return lbcookie value
-     * @throws SessionException if session is invalid
+     * Returns load balancer cookie value for the Session.
+     * @param  sid Session ID for load balancer cookie.
+     * @return load balancer cookie value.
+     * @throws SessionException if session is invalid.
      */
-    public static String getLBCookie(SessionID sid) 
+    public static String getLBCookie(SessionID sid)
              throws SessionException {
         String cookieValue = null;
         if(sid == null || sid.toString() == null || 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthUtils.java,v 1.3 2006-12-22 02:55:05 pawand Exp $
+ * $Id: AMAuthUtils.java,v 1.4 2007-01-09 06:52:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -298,10 +298,11 @@ public class AMAuthUtils {
      /**
      * Returns a <code>Map<code> with all Auth Module instance names as key
      * and the time the module was authenticated as value.
-     * @param token valid user <code>SSOToken</code>
+     *
+     * @param ssoToken valid user's single sign on token.
      * @return Map containing module instace auth time.
      */
-    public static Map getModuleAuthTimeMap( SSOToken ssoToken ) {
+    public static Map getModuleAuthTimeMap(SSOToken ssoToken) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("AMAuthUtils.getModuleAuthTimeMap : ssoToken = "
                 +ssoToken.getTokenID());

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAdminConsole.xml,v 1.1 2006-08-29 07:52:23 veiming Exp $
+    $Id: amAdminConsole.xml,v 1.2 2007-01-09 06:52:39 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMAdminConsoleService"
             i18nFileName="amAdminConsole"
-            revisionNumber="30"
+            revisionNumber="40"
             i18nKey="iplanet-am-admin-console-service-description">
 
 	    <Global>
@@ -43,6 +43,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g100">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
                     <DefaultValues>
                         <Value>true</Value>
                     </DefaultValues>
@@ -51,6 +55,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g101">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
                     <DefaultValues>
                         <Value>UM_ENABLED</Value>
                     </DefaultValues>
@@ -59,6 +67,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g102">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -67,6 +79,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g103">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -75,6 +91,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g104">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -95,6 +115,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g108">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -136,6 +160,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g109">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -144,6 +172,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="g110">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -242,6 +274,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="d103">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -250,6 +286,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="d105">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -258,6 +298,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="d106">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
 		    <DefaultValues>
 			<Value>false</Value>
 		    </DefaultValues>
@@ -395,6 +439,10 @@
                     type="single"
                     syntax="boolean"
                     i18nKey="d125">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                    </BooleanValues>
                     <DefaultValues>
                          <Value>false</Value>
                     </DefaultValues>

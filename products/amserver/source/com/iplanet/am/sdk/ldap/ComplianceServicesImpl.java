@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.3 2006-12-15 00:50:07 goodearth Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.4 2007-01-09 06:52:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -376,17 +376,12 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
      * Method which verifies if the groupDN corresponds to an admin role. If
      * true then the <Code> members </Code> are removed from the admin role.
      * 
-     * @param token
-     *            SSO Token
-     * @param members
-     *            Set of member DNs to be operated
-     * @param roleDN
-     *            DN of the role
-     * 
-     * @exception AMException
-     *                if unsuccessful in removing the members from the
-     *                corresponding admin groups and updating the memberOf and
-     *                adminRole attribute values to null.
+     * @param token Single Sign On Token.
+     * @param members Set of member DNs to be operated.
+     * @param groupDN Distinguished Name of the group.
+     * @throws AMException if unsuccessful in removing the members from the
+     *         corresponding admin groups and updating the <code>memberOf</code>
+     *         and <code>adminRole</code> attribute values to null.
      */
     protected void verifyAndUnLinkGroupToRole(SSOToken token, Set members,
             String groupDN) throws AMException {
@@ -400,7 +395,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
                     .getNamingAttribute(AMObject.ROLE)
                     + "=" + roleName + "," + orgDN;
             if (debug.messageEnabled()) {
-                debug.error("Compliance.verifyAndUnlinkGroupToRole(): "
+                debug.message("Compliance.verifyAndUnlinkGroupToRole(): "
                         + "Unlinking group: " + groupDN + " to role :"
                         + roleDN);
             }
@@ -454,14 +449,11 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
      * attribute.
      * <p>
      * 
-     * @param dn
-     *            a string representing the dn of the entry
-     * @param po
-     *            a PersistentObject of the entry
-     * @exception AMException
-     *                the fetched attSet has inetuserstatus attribute and the
-     *                value of which is "deleted" or if unable to fetch the
-     *                attribute set.
+     * @param po a PersistentObject of the entry.
+     * @param attributeName Array of attribute names.
+     * @throws AMException if the fetched attribute names has inetuserstatus
+     *         attribute and the value of which is "deleted" or if unable to
+     *         fetch the attribute set.
      */
     protected AttrSet verifyAndGetAttributes(PersistentObject po,
             String[] attributeNames) throws AMException {
@@ -478,8 +470,9 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
             if (attributeNames[i].equalsIgnoreCase(USER_STATUS_ATTRIBUTE)) {
                 found = true;
                 break;
-            } else
+            } else {
                 fetchAttributes[i] = attributeNames[i];
+            }
         }
 
         if (!found) // Add "inetuserstatus" attribute
@@ -580,13 +573,11 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
      * Method which checks all the parent organizations of this entry till the
      * base DN, and returns true if any one of them is deleted.
      * 
-     * @param token
-     *            SSO token of user
-     * @param DN
-     *            string representing dn of the object.
-     * @param profileType
-     *            the profile type of the object whose ancestor is is being
-     *            checked.
+     * @param token Single Sign On token of user.
+     * @param dn Distinguished name of the object.
+     * @param profileType the profile type of the object whose ancestor is
+     *        being checked.
+     * @throws AMException if there are errors from data layer.
      */
     public boolean isAncestorOrgDeleted(SSOToken token, String dn,
             int profileType) throws AMException {

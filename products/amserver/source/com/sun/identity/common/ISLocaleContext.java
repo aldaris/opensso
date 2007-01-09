@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.8 2006-12-18 22:18:21 manish_rustagi Exp $
+ * $Id: ISLocaleContext.java,v 1.9 2007-01-09 06:52:39 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
@@ -171,10 +172,10 @@ public class ISLocaleContext {
             initLocale = java.util.Locale.getDefault();
             initLocaleLevel = OS_LOCALE;
         }
-        initCharset = G11NSettings.CDM_DEFAULT_CHARSET;
-        if (defaultClient != null) {
-            initCharset = defaultClient.getCharset(initLocale);
-        }
+
+        initCharset = (defaultClient != null) ?
+            defaultClient.getCharset(initLocale) :
+            Constants.CONSOLE_UI_DEFAULT_CHARSET;
     }
 
     /**
@@ -229,10 +230,8 @@ public class ISLocaleContext {
         }
         if (level >= localeLevel) {
             localeLevel = level;
-            charset = initCharset;
-            if (client != null) {
-                charset = client.getCharset(loc);
-            }
+            charset = (client != null) ? charset = client.getCharset(loc) :
+                Constants.CONSOLE_UI_DEFAULT_CHARSET;
             locale = loc;
         }
     }
