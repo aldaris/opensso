@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthErrorCode.java,v 1.1 2006-01-28 09:16:24 veiming Exp $
+ * $Id: AMAuthErrorCode.java,v 1.2 2007-01-09 19:01:35 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,4 +134,14 @@ public class AMAuthErrorCode {
      *  Module based authentication is not allowed
      */ 
     public static final String MODULE_BASED_AUTH_NOT_ALLOWED = "120";
+
+    /**
+     *  Too many auth attempts
+     */ 
+    public static final String AUTH_TOO_MANY_ATTEMPTS = "121";
+
+    /*
+     *  Invalid SSO Token presented by remote Auth
+     */
+    public static final String REMOTE_AUTH_INVALID_SSO_TOKEN = "122";
 }

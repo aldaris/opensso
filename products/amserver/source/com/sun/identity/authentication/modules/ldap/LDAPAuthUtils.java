@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.7 2006-08-25 21:20:22 veiming Exp $
+ * $Id: LDAPAuthUtils.java,v 1.8 2007-01-09 19:07:29 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,7 +112,7 @@ public class LDAPAuthUtils {
     
     static HashMap connectionPools = new HashMap();
     static HashMap adminConnectionPools = new HashMap();
-    static HashMap adminConnectionPoolsStatus = new HashMap();
+    static HashMap connectionPoolsStatus = new HashMap();
     private LDAPConnectionPool cPool = null;
     private LDAPConnectionPool acPool = null;
     
@@ -406,7 +406,7 @@ public class LDAPAuthUtils {
     private LDAPConnection getAdminConnection() throws LDAPException {
         if (acPool == null) {
             acPool = createConnectionPool(adminConnectionPools,
-             adminConnectionPoolsStatus, serverHost, serverPort,
+             connectionPoolsStatus, serverHost, serverPort,
              version, ldapSSL, authDN, authPassword);
         }
         LDAPConnection ldc = acPool.getConnection();

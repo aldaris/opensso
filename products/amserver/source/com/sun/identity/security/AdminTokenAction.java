@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.6 2006-08-25 21:21:14 veiming Exp $
+ * $Id: AdminTokenAction.java,v 1.7 2007-01-09 18:52:03 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,6 +228,11 @@ public class AdminTokenAction implements PrivilegedAction {
         if (answer == null) {
             debug.error("AdminTokenAction: FATAL ERROR: " +
 		"Cannot obtain Application SSO token." +
+		"\nCheck AMConfig.properties for the following properties" +
+		"\n\tcom.sun.identity.agents.app.username" +
+		"\n\tcom.iplanet.am.service.password");
+	    throw new AMSecurityPropertiesException("AdminTokenAction: " + 
+                " FATAL ERROR: Cannot obtain Application SSO token." +
 		"\nCheck AMConfig.properties for the following properties" +
 		"\n\tcom.sun.identity.agents.app.username" +
 		"\n\tcom.iplanet.am.service.password");

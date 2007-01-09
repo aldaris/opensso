@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NT.java,v 1.2 2006-08-25 21:20:24 veiming Exp $
+ * $Id: NT.java,v 1.3 2007-01-09 19:08:43 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,7 +183,7 @@ public class NT extends AMLoginModule {
         try {
             if (!userName.equals(new String(userName.getBytes("ASCII"),
                 "ASCII"))) {
-               if (getCredentialsFromSharedState) {
+               if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                     return ISAuthConstants.LOGIN_START;
                }
@@ -192,7 +192,7 @@ public class NT extends AMLoginModule {
             }
             if (!userPassword.equals(new String(userPassword.getBytes("ASCII"), 
                 "ASCII"))) {
-               if (getCredentialsFromSharedState) {
+               if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                     return ISAuthConstants.LOGIN_START;
                }
@@ -201,7 +201,7 @@ public class NT extends AMLoginModule {
                         "NTPasswordNotASCII", null);
             }
         } catch (UnsupportedEncodingException ueex) {
-           if (getCredentialsFromSharedState) {
+           if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
            }
@@ -246,7 +246,7 @@ public class NT extends AMLoginModule {
             String out = buftxt.toString();
 
             if (out.indexOf ("Usage:") != -1) {
-                   if (getCredentialsFromSharedState) {
+                   if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                            return ISAuthConstants.LOGIN_START;
                    }
@@ -256,7 +256,7 @@ public class NT extends AMLoginModule {
                 setFailureID(userName);
                 throw new AuthLoginException(amAuthNT, "NTSMBUsage", null);
             } else if(out.indexOf("failed") != -1) {
-                   if (getCredentialsFromSharedState) {
+                   if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                            return ISAuthConstants.LOGIN_START;
                    }
@@ -266,7 +266,7 @@ public class NT extends AMLoginModule {
                 setFailureID(userName);
                 throw new AuthLoginException(amAuthNT, "NTLoginFailed", null);
             } else if (out.indexOf ("timeout") != -1) {
-                   if (getCredentialsFromSharedState) {
+                   if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                            return ISAuthConstants.LOGIN_START;
                    }
@@ -281,7 +281,7 @@ public class NT extends AMLoginModule {
                     debug.message("Exit value of samba client: " + exitValue);
                 }
                 if (exitValue != 0) {
-                       if (getCredentialsFromSharedState) {
+                       if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                         getCredentialsFromSharedState = false;
                                return ISAuthConstants.LOGIN_START;
                        }
@@ -293,7 +293,7 @@ public class NT extends AMLoginModule {
                 return ISAuthConstants.LOGIN_SUCCEED;
             }
         } catch (Exception ex) {
-           if (getCredentialsFromSharedState) {
+           if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
            }

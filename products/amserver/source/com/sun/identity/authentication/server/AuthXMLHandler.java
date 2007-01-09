@@ -17,16 +17,42 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.4 2006-12-22 02:51:21 pawand Exp $
+ * $Id: AuthXMLHandler.java,v 1.5 2007-01-09 19:04:24 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
 package com.sun.identity.authentication.server;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.services.comm.client.PLLClient;
+import com.iplanet.services.comm.server.RequestHandler;
+import com.iplanet.services.comm.share.Request;
+import com.iplanet.services.comm.share.RequestSet;
+import com.iplanet.services.comm.share.Response;
+import com.iplanet.services.comm.share.ResponseSet;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.service.AMAuthErrorCode;
+import com.sun.identity.authentication.service.AuthException;
+import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.service.LoginState;
+import com.sun.identity.authentication.service.X509CertificateCallback;
+import com.sun.identity.authentication.share.AuthXMLTags;
+import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
+
 import java.net.URL;
+import java.security.AccessController;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -47,29 +73,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.identity.shared.debug.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.services.comm.client.PLLClient;
-import com.iplanet.services.comm.server.RequestHandler;
-import com.iplanet.services.comm.share.Request;
-import com.iplanet.services.comm.share.RequestSet;
-import com.iplanet.services.comm.share.Response;
-import com.iplanet.services.comm.share.ResponseSet;
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.service.AMAuthErrorCode;
-import com.sun.identity.authentication.service.AuthException;
-import com.sun.identity.authentication.service.AuthUtils;
-import com.sun.identity.authentication.service.LoginState;
-import com.sun.identity.authentication.service.X509CertificateCallback;
-import com.sun.identity.authentication.share.AuthXMLTags;
-import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.shared.locale.L10NMessage;
-
 /**
  * <code>AuthXMLHandler</code> class implements the <code>RequestHandler</code>.
  * It processes the authentication request from remote client which 
@@ -85,6 +88,7 @@ public class AuthXMLHandler implements RequestHandler {
     private static AuthUtils au;
     private static String serviceURI;
     private static boolean messageEnabled = false;
+    private boolean security = false;
     
     static {
         debug = com.sun.identity.shared.debug.Debug.getInstance("amXMLHandler");
@@ -229,6 +233,10 @@ public class AuthXMLHandler implements RequestHandler {
             debug.error("Got Auth Exception", e);
             authResponse = new AuthXMLResponse(AuthXMLRequest.NewAuthContext);
             authResponse.setErrorCode(e.getErrorCode());
+        } catch (Exception ex) {
+            debug.error("Error while processing xml request",ex);
+            authResponse = new AuthXMLResponse(AuthXMLRequest.NewAuthContext);
+            setErrorCode(authResponse, ex);
         }
         debug.message("=======================Returning");
         return new Response(authResponse.toXMLString());
@@ -257,6 +265,57 @@ public class AuthXMLHandler implements RequestHandler {
             debug.message("authContext is : " + authContext);
             debug.message("requestType : " + requestType);
         }
+        String securityEnabled =  null;
+        try {
+            securityEnabled =  au.getRemoteSecurityEnabled();
+        } catch (AuthException auExp) {
+            debug.error("Got Exception", auExp);
+            setErrorCode(authResponse, auExp);
+            return authResponse;
+        }
+        if (debug.messageEnabled()) {
+            debug.message("Security Enabled = " + securityEnabled);
+        }
+
+        if ((securityEnabled != null) && (securityEnabled.equals("true"))) {
+            security = true;
+            String indexNameLoc =  authXMLRequest.getIndexName();
+            AuthContext.IndexType indexTypeLoc =  authXMLRequest.getIndexType();
+            if (indexTypeLoc == null) {
+                indexTypeLoc = au.getIndexType(authContext);
+                indexNameLoc =   au.getIndexName(authContext);
+            }
+            if (debug.messageEnabled()) {
+                debug.message("Index Name Local : " + indexNameLoc);
+                debug.message("Index Type Local : " + indexTypeLoc);
+            }
+            if (((indexTypeLoc == null) || (indexNameLoc == null)) || 
+                !((indexTypeLoc == AuthContext.IndexType.MODULE_INSTANCE) && 
+                indexNameLoc.equals("Application"))) {
+                try {
+                    String ssoTokenID = authXMLRequest.getAppSSOTokenID();
+                    if (debug.messageEnabled()) {
+                        debug.message("Session ID = : " + ssoTokenID);
+                    }
+                    SSOTokenManager manager = SSOTokenManager.getInstance();
+                    SSOToken appSSOToken = manager.createSSOToken(ssoTokenID);
+                    if (!manager.isValidToken(appSSOToken)) {
+                        debug.message("App SSOToken is not valid");
+                        throw new AuthException(
+                            AMAuthErrorCode.REMOTE_AUTH_INVALID_SSO_TOKEN, null);
+                    } else {
+                        debug.message("App SSOToken is VALID");
+                    } 
+                }catch (Exception exp) {
+                    debug.error("Got Exception", exp);
+                    setErrorCode(authResponse, exp);
+                    return authResponse;
+                }
+            }
+        } else {
+            security = false;
+        }
+
         // if index type is level and choice callback has a
         // selected choice then start module based authentication.
         if ((au.getIndexType(authContext) == AuthContext.IndexType.LEVEL) ||
@@ -310,6 +369,18 @@ public class AuthXMLHandler implements RequestHandler {
                         processNewRequest(servletRequest, servletResponse,
                         authResponse, loginState, authContext);
                     }
+                    String clientHost = null;
+                    if (security) {
+                        clientHost = authXMLRequest.getHostName();
+                        if (messageEnabled) {
+		            debug.message("Client Host from Request = " + 
+                                clientHost);
+                        }
+                    }
+                    if ((clientHost == null) && (servletRequest != null)) {
+                        clientHost = servletRequest.getRemoteAddr();
+                    }
+                    loginState.setClient(clientHost);
                     authContext.login();
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
@@ -336,6 +407,18 @@ public class AuthXMLHandler implements RequestHandler {
                         processNewRequest(servletRequest, servletResponse,
                         authResponse, loginState, authContext);
                     }
+                    String clientHost = null;
+                    if (security) {
+                        clientHost = authXMLRequest.getHostName();
+                        if (messageEnabled) {
+		            debug.message("Client Host from Request = " + 
+                                clientHost);
+                        }
+                    }
+                    if ((clientHost == null)  && (servletRequest != null)) {
+                        clientHost = servletRequest.getRemoteAddr();
+                    }
+                    loginState.setClient(clientHost);
                     authContext.login(indexType,indexName);
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
@@ -476,11 +559,6 @@ public class AuthXMLHandler implements RequestHandler {
         }
         AuthContextLocal prevAuthContext =  loginState.getPrevAuthContext();
         authResponse.setPrevAuthContext(prevAuthContext);
-        String clientHost = null;
-        if (servletRequest != null) {
-            clientHost = servletRequest.getRemoteAddr();
-            loginState.setClient(clientHost);
-        }
                     
         authResponse.setLoginStatus(AuthContext.Status.IN_PROGRESS);
         au.setlbCookie(authContext, servletResponse);

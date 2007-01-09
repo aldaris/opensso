@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.2 2006-08-25 21:20:32 veiming Exp $
+ * $Id: AuthXMLUtils.java,v 1.3 2007-01-09 18:58:33 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -374,7 +375,7 @@ public class AuthXMLUtils {
             passwordCallback = new PasswordCallback(prompt,echoPassword);
         }
         
-        String value = getValue(childNode);
+        String value = getValueNoTrim(childNode);
         
         /** if (debug.messageEnabled()) {
          *     debug.message("Value is : " + value);
@@ -936,7 +937,15 @@ public class AuthXMLUtils {
         }
         return (null);
     }
-    
+
+    protected static String getValueNoTrim(Node node) {
+        Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.VALUE);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNodeNoTrim(pNode));
+        }
+        return (null);
+    }
+
     protected static String getValueOfChildNode(Node node, String childNode) {
         Node pNode = XMLUtils.getChildNode(node, childNode);
         if (pNode != null) {
@@ -944,7 +953,8 @@ public class AuthXMLUtils {
         }
         return (null);
     }
-    
+
+ 
     static DSAMECallbackInterface createCustomCallback(
         Node childNode,
         Callback customCallback) {

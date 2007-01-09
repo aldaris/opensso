@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.3 2006-12-22 02:51:21 pawand Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.4 2007-01-09 19:04:24 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class AuthXMLRequestParser {
                 xmlString.toString().getBytes("UTF-8")));
 
            if (debug.messageEnabled()) {
-               debug.message("AuthXMLRequestParser : xmlDoc : " + xmlDocument);
+               debug.message("AuthXMLRequestParser: in the constructor");
            }
        } catch (Exception e) {
             debug.message("AuthXMLRequest Parser error : " , e);
@@ -112,6 +112,18 @@ public class AuthXMLRequestParser {
                         debug.message("AuthIdentifier is : " + authIdentifier);
                     }
                     authXMLRequest.setAuthIdentifier(authIdentifier);
+                }
+
+	        Node appSSOTokenNode = XMLUtils.getChildNode((Node) requestNode,"AppSSOToken");
+                if (appSSOTokenNode != null) {
+                    debug.message("Got the SSO Token node: ");
+                    String appSSOTokenID = XMLUtils.getValueOfValueNode(appSSOTokenNode);
+                    if (appSSOTokenID != null) {
+                        if (debug.messageEnabled()) {
+                            debug.message("Got the Session Id: "+appSSOTokenID);
+                        }
+                        authXMLRequest.setAppSSOTokenID(appSSOTokenID);
+                    }
                 }
 
                 // get the Nodes for the Request Element
@@ -165,6 +177,11 @@ public class AuthXMLRequestParser {
                     if (orgName != null) {
                         authXMLRequest.setOrgName(orgName);
                     }
+                    String hostName = 
+                        parseNodeAttributes(loginNode,"hostName");
+                    if (hostName != null) {
+                        authXMLRequest.setHostName(hostName);
+                    }  
                     authXMLRequest.setRequestType(AuthXMLRequest.Login);
                     parseLoginNodeElements(loginNode,authXMLRequest);
                     AuthContext.IndexType indexType = authXMLRequest.

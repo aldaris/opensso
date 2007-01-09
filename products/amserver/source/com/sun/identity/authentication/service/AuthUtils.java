@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.11 2006-12-22 02:58:55 pawand Exp $
+ * $Id: AuthUtils.java,v 1.12 2007-01-09 19:01:36 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 package com.sun.identity.authentication.service;
 
 import com.iplanet.am.util.AMClientDetector;
+import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.service.InternalSession;
@@ -62,6 +62,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
@@ -352,18 +353,11 @@ public class AuthUtils {
                     utilDebug.message(
                         "getAuthContext: found existing request.");
                 }
-                try {
-                    authContext = processAuthContext(authContext,request,
-                    response,dataHash,sid);
-                    loginState = getLoginState(authContext);
-                    loginState.setRequestType(false);
-                } catch (AuthException ae) {
-                    utilDebug.message("Error Retrieving AuthContextLocal");
-                    if (utilDebug.messageEnabled()) {
-                        utilDebug.message("Exception " , ae);
-                    }
-                    throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
-                }
+
+                authContext = processAuthContext(authContext,request,
+                                                   response,dataHash,sid);
+                loginState = getLoginState(authContext);
+                loginState.setRequestType(false);
             }
             
         } catch (Exception ee) {
@@ -427,6 +421,11 @@ public class AuthUtils {
                 throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
             }
         } else {
+            if (authContext.submittedRequirements()) {
+                ad.debug.error("Currently processing submit Requirements");
+                throw new AuthException(
+                         AMAuthErrorCode.AUTH_TOO_MANY_ATTEMPTS, null);
+            }
             // update loginState - requestHash , sess
             utilDebug.message("new session arg does not exist");
             loginState.setHttpServletRequest(request);
@@ -1183,6 +1182,33 @@ public class AuthUtils {
             return null;
         }
     }
+
+    /**
+     * Returns the indexName for auth context object
+     * @param authContext auth context that has indexName
+     * @return IndexName from given auth context
+     */
+    public String getIndexName(AuthContextLocal authContext) {
+        
+        try {
+            String indexName = null;
+            LoginState loginState = getLoginState(authContext);
+            
+            if (loginState != null) {
+                indexName = loginState.getIndexName();
+            }
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("in getIndexName, index Name : " + indexName);
+            }
+            return indexName;
+        } catch (Exception e) {
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("Error in getIndexName : " + e.toString());
+            }
+            return null;
+        }
+    }
+
     
     /**
      * Returns array of Callback that are associated with given auth context
@@ -4255,4 +4281,87 @@ public class AuthUtils {
 
         return advices;
     }
+
+    /**
+    * Sets server cookie to <code>HttpServletResponse</code> object
+    * @param aCookie auth context associated with lb cookie
+    * @param response <code>true</code> if it is persistent
+    * @throws AuthException if it fails to create pcookie
+    */
+    public void setServerCookie(Cookie aCookie, HttpServletResponse response)
+        throws AuthException {
+        String cookieName = aCookie.getName();
+        String cookieValue = aCookie.getValue();
+        if (cookieName != null && cookieName.length() != 0) {
+            Set domains = getCookieDomains();
+            if (!domains.isEmpty()) {
+                for (Iterator it = domains.iterator(); it.hasNext(); ) {
+                    String domain = (String)it.next();
+                    Cookie cookie = createCookie(cookieName, cookieValue,
+                        domain);
+                    response.addCookie(cookie);
+                }
+            } else {
+                response.addCookie(createCookie(cookieName,cookieValue,null));
+            }
+        }
+    } 
+
+    /**
+    * Creates new server cookie with 0 max age given
+    * <code>HttpServletResponse</code>response and <code>Cookie</code>
+    * @param aCookie auth context associated with lb cookie
+    * @param response <code>HttpServletResponse</code> response object
+    */
+    public void clearServerCookie(String cookieName,
+        HttpServletResponse response){
+        if (utilDebug.messageEnabled()) {
+	    utilDebug.message("In clear server Cookie = " +  cookieName);
+        }
+        if (cookieName != null && cookieName.length() != 0) {
+            Set domains = getCookieDomains();
+            if (!domains.isEmpty()) {
+                for (Iterator it = domains.iterator(); it.hasNext(); ) {
+                    String domain = (String)it.next();
+                    Cookie cookie =
+                    createPersistentCookie(cookieName, "LOGOUT", 0, domain);
+                    response.addCookie(cookie);
+                    utilDebug.message("In clear server Cookie added cookie");
+                }
+            } else {
+                response.addCookie(
+                createPersistentCookie(cookieName, "LOGOUT", 0, null));
+                utilDebug.message("In clear server added cookie no domain");
+            }
+        }
+    }
+
+    /**
+     * Returns true if remote Auth security is enabled and false otherwise
+     *
+     * @return the value of sunRemoteAuthSecurityEnabled attribute
+     */
+     public String getRemoteSecurityEnabled() throws AuthException {
+         ServiceSchema schema = null;
+         try {
+             SSOToken dUserToken = (SSOToken) AccessController.doPrivileged(
+                 AdminTokenAction.getInstance());
+             ServiceSchemaManager scm = new ServiceSchemaManager(
+                 "iPlanetAMAuthService", dUserToken);
+             schema = scm.getGlobalSchema();
+         } catch ( Exception exp) {
+             utilDebug.error("Cannot get global schema",exp);
+             throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
+         }
+         Map attrs = null;
+         if (schema != null) {
+             attrs = schema.getAttributeDefaults();
+         }
+         String securityEnabled = (String)Misc.getMapAttr(attrs,
+             ISAuthConstants.REMOTE_AUTH_APP_TOKEN_ENABLED);
+         if (utilDebug.messageEnabled()) {
+             utilDebug.message("Security Enabled = " + securityEnabled);
+         }
+         return securityEnabled;   
+     }
 }

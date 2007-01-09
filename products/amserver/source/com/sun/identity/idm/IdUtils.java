@@ -17,12 +17,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.12 2006-12-20 23:07:10 rarcot Exp $
+ * $Id: IdUtils.java,v 1.13 2007-01-09 18:53:48 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idm;
+
+import com.iplanet.am.sdk.AMDirectoryAccessFactory;
+import com.iplanet.am.sdk.AMException;
+import com.iplanet.am.sdk.AMObject;
+import com.iplanet.am.sdk.AMOrganization;
+import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
 
 import java.security.AccessController;
 import java.util.HashSet;
@@ -34,24 +54,6 @@ import java.util.StringTokenizer;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
-import com.iplanet.am.sdk.AMDirectoryAccessFactory;
-import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.sdk.AMObject;
-import com.iplanet.am.sdk.AMOrganization;
-import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.sm.DNMapper;
-import com.sun.identity.sm.OrganizationConfigManager;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceManager;
 
 /**
  * The class defines some static utilities used by other components like policy
@@ -670,6 +672,35 @@ public final class IdUtils {
         }
         return memberSet;
     }
+
+    /**
+     * Returns the user name extracted from the uuid
+     * if the orgName supplied in the parameter is 
+     * not same realm name in uuid then <code>IdRepoException</code>
+     * is thrown
+     * 
+     * @param uuid uuid of the user
+     * @param orgName the org user is trying to login to
+     * @return user name
+     * @throws IdRepoException 
+     */
+    public static String getIdentityName(String uuid, String orgName)
+        throws IdRepoException {
+        String username = uuid;
+        // Check uuid
+        if ((uuid != null) && uuid.toLowerCase().startsWith("id=")) {
+            // Could be universal id, get the identity object
+            AMIdentity id = new AMIdentity(null, uuid);
+            username = id.getName();
+            // Check the realm names
+            String realm = DNUtils.normalizeDN(id.getRealm());
+            if (!DNUtils.normalizeDN(orgName).equals(realm)) {
+                Object[] args = {uuid, orgName};
+		throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "403", args);
+            }
+        }
+        return (username);
+    } 
 
     // SMS service listener to reinitialize if IdRepo service changes
     static class IdUtilsListener implements com.sun.identity.sm.ServiceListener 

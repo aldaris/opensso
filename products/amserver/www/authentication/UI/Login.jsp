@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: Login.jsp,v 1.2 2006-01-30 20:58:45 veiming Exp $
+   $Id: Login.jsp,v 1.3 2007-01-09 18:50:20 manish_rustagi Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -70,10 +70,17 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
         var hiddenFrm = document.forms['Login'];
 
         if (hiddenFrm != null) {
-            hiddenFrm.elements['IDButton'].value = value;
-            hiddenFrm.submit();
+	    hiddenFrm.elements['IDButton'].value = value;
+            if (this.submitted) {
+                alert("The request is currently being processed");
+            }
+            else {
+                this.submitted = true;
+                hiddenFrm.submit();
+            }
         }
     }
+
 </jato:content>
 </script>
 <script type="text/javascript"><!--// Empty script so IE5.0 Windows will draw table and button borders

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBC.java,v 1.2 2006-08-25 21:20:21 veiming Exp $
+ * $Id: JDBC.java,v 1.3 2007-01-09 19:06:47 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -371,7 +371,7 @@ public class JDBC extends AMLoginModule {
                 throw new AuthLoginException(amAuthJDBC, "nullResult", null);
              }
         } catch (Throwable e) {
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             }

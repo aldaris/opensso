@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Membership.java,v 1.2 2006-08-25 21:20:23 veiming Exp $
+ * $Id: Membership.java,v 1.3 2007-01-09 19:08:13 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -655,7 +655,7 @@ public class Membership extends AMLoginModule {
             }
             
         } catch(LDAPUtilException ex) {
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             }
@@ -691,7 +691,7 @@ public class Membership extends AMLoginModule {
         } catch (UserNamePasswordValidationException upve) {
             // Note: Do not set failure Id for this exception
             
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             } else {
@@ -753,7 +753,8 @@ public class Membership extends AMLoginModule {
                     }
                     
                 case USER_NOT_FOUND :
-                    if (getCredentialsFromSharedState) {
+                    if (getCredentialsFromSharedState && 
+                        !isUseFirstPassEnabled()) {
                         getCredentialsFromSharedState = false;
                         return ISAuthConstants.LOGIN_START;
                     }
@@ -767,7 +768,7 @@ public class Membership extends AMLoginModule {
             
         } catch(LDAPUtilException ex) {
             
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             }

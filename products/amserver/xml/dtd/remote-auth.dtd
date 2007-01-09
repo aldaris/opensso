@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remote-auth.dtd,v 1.1 2006-08-29 07:52:18 veiming Exp $
+    $Id: remote-auth.dtd,v 1.2 2007-01-09 18:48:23 manish_rustagi Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -79,8 +79,9 @@ Abort                        LoginStatus or Exception
 -->
 
 
-<!ELEMENT       Request         ( NewAuthContext | QueryInformation |
-                                  Login | SubmitRequirements | Logout | Abort) >
+<!ELEMENT       Request        (AppSSOToken?, ( NewAuthContext |
+                               QueryInformation | Login | SubmitRequirements |
+                               Logout | Abort)) >
 <!ATTLIST       Request
         authIdentifier          NMTOKEN         #REQUIRED
 >
@@ -121,6 +122,10 @@ either moduleInstanceName -->
             requestedInformation        (moduleInstanceNames) #REQUIRED
 >
 
+<!-- AppSSOToken element is used to pass Application SSO Token .
+-->
+<!ELEMENT     AppSSOToken ( #PCDATA ) >
+
 <!-- NewAuthContext element is used to create a new AuthContext 
 for a request and a session id associated with the AuthContext
 created. The orgName is the Sun Java System Access Manager organization 
@@ -134,7 +139,7 @@ name which client belongs to and will authenticate against.
 
 <!-- Login element will be used by the client to initialize
 a authentication session with the service. It will have an EMPTY 
-element or can have IndexTypeNamePair. -->
+element or can have IndexTypeNamePair. 
 
 The IndexTypeNamePair element can be used to specify the index type and
 index value based on which authentication will be done.
@@ -146,7 +151,9 @@ which the client will authenticate.
 <!ELEMENT        Login        (IndexTypeNamePair?,  Params?)>
 <!ATTLIST        Login        
         orgName         CDATA        #IMPLIED
+        hostName        CDATA        #IMPLIED
 >
+
 <!-- SubmitRequirements element is used by the client to submit the
 credentials gathered by it, either by displaying the information
 to the user or otherwise. -->

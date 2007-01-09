@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.2 2006-08-25 21:20:27 veiming Exp $
+ * $Id: AMLoginContext.java,v 1.3 2007-01-09 19:01:36 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -248,7 +248,7 @@ public class AMLoginContext {
             }
         } catch (AuthLoginException le) {
             debug.message("Error  : " ,le);
-            throw new AuthLoginException(le);
+            throw le;
         } catch (Exception e) {
             debug.message("Error : " , e);
             throw new AuthLoginException(e);
@@ -1609,12 +1609,8 @@ public class AMLoginContext {
                 ignoreProfile = true;
             }
             if (pCookieMode) {
-                try {
-                    processPCookieMode(userValid);
-                    return true;
-                } catch (AuthLoginException le) {
-                    throw new AuthLoginException(le);
-                }
+                processPCookieMode(userValid);
+                return true;
             } else if ((!userValid) && (!ignoreProfile)) {
                 debug.message("User is not active");
                 loginState.logFailed(
@@ -1672,13 +1668,22 @@ public class AMLoginContext {
                 if (debug.messageEnabled()) {
                     debug.message("user is not valid");
                 }
-                loginState.setErrorCode(AMAuthErrorCode.AUTH_INVALID_PCOOKIE);
+                loginState.setErrorCode(AMAuthErrorCode.AUTH_USER_INACTIVE);
                 setErrorMsgAndTemplate();
                 st.setStatus(LoginStatus.AUTH_FAILED);
                 throw new AuthLoginException(bundleName,
-                AMAuthErrorCode.AUTH_INVALID_PCOOKIE, null);
+                AMAuthErrorCode.AUTH_USER_INACTIVE, null);
             }
             AMAccountLockout amAccountLockout =new AMAccountLockout(loginState);
+            boolean accountLocked = amAccountLockout.isLockedOut();
+            if (accountLocked) {
+                loginState.logFailed(bundle.getString("lockOut"),"LOCKEDOUT");
+                loginState.setErrorCode(AMAuthErrorCode.AUTH_USER_LOCKED);
+                setErrorMsgAndTemplate();
+                st.setStatus(LoginStatus.AUTH_FAILED);
+                throw new AuthLoginException(bundleName,
+                AMAuthErrorCode.AUTH_USER_LOCKED, null);
+            }
             boolean accountExpired = amAccountLockout.isAccountExpired();
             if (accountExpired) {
                 loginState.logFailed(

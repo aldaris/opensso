@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.3 2006-08-25 21:20:33 veiming Exp $
+ * $Id: AMLoginModule.java,v 1.4 2007-01-09 18:57:33 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.sdk.AMUserPasswordValidation;
+import com.iplanet.am.util.Misc;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
@@ -71,6 +72,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -224,6 +226,7 @@ public abstract class AMLoginModule implements LoginModule {
     //use Shared state by default disabled
     private boolean isSharedState = false;
     private boolean isStore = true;
+    private String sharedStateBehaviorPattern = "";
     
     /**
      * Holds handle to ResourceBundleCache to quickly get ResourceBundle for
@@ -668,6 +671,16 @@ public abstract class AMLoginModule implements LoginModule {
         isStore = Boolean.valueOf(CollectionHelper.getMapAttr(
             options, ISAuthConstants.STORE_SHARED_STATE_ENABLED, "true")
             ).booleanValue();
+
+        sharedStateBehaviorPattern = Misc.getMapAttr(options,
+            ISAuthConstants.SHARED_STATE_BEHAVIOR_PATTERN,
+            "tryFirstPass");
+        
+        if (debug.messageEnabled()) {
+            debug.message("AMLoginModule" +
+            ISAuthConstants.SHARED_STATE_BEHAVIOR_PATTERN +
+            " is set to " + sharedStateBehaviorPattern);
+        }        
         
         // call customer init method
         init(subject, sharedState, options);
@@ -745,6 +758,26 @@ public abstract class AMLoginModule implements LoginModule {
     private int wrapProcess(Callback[] callbacks, int state)
     throws AuthLoginException {
         try {
+            if (callbacks != null) {
+                for (int i = 0; i < callbacks.length; i++) {
+                    if (callbacks[i] instanceof NameCallback) {
+                        String newUser = null;
+                        try {
+                            newUser = IdUtils.getIdentityName(
+                                ((NameCallback) callbacks[i]).getName(), 
+                                getRequestOrg());
+                        } catch (IdRepoException idRepoExp) {
+                            //Print message and let Auth proceed.
+                            debug.message(
+                                "AMLoginModule.wrapProcess: Cannot get "+
+                                "username from idrepo. ", idRepoExp);
+                        } 
+                        if (newUser != null) {
+                            ((NameCallback) callbacks[i]).setName(newUser);
+                        }
+                    }
+                }
+            }
             return process(callbacks, state);
         } catch (LoginException e) {
             currentState = ISAuthConstants.LOGIN_IGNORE;
@@ -1231,6 +1264,7 @@ public abstract class AMLoginModule implements LoginModule {
         }
         return loginState.getPersistentCookieMode();
     }
+
     /**
      * Checks if dynamic profile creation is enabled.
      *
@@ -1832,11 +1866,21 @@ public abstract class AMLoginModule implements LoginModule {
         
     }
     
-    // this method instantiates and retuens plugin object
+    /*
+     * this method instantiates and returns plugin object
+     */
     private AMUserPasswordValidation getUPValidationInstance() {
         
         try {
-            String className = getPluginClassName();
+            String className ;
+            String orgDN = getRequestOrg();
+            if (orgDN != null){
+            	className = getOrgPluginClassName(orgDN);
+            }
+            else {
+                className = getPluginClassName();
+            }
+
             if (debug.messageEnabled()) {
                 debug.message("UserPasswordValidation Class Name is : " +
                 className);
@@ -1861,8 +1905,30 @@ public abstract class AMLoginModule implements LoginModule {
             return null;
         }
     }
+
+    /*
+     * this method gets plugin classname from adminstration service for the org
+     */
+    private String getOrgPluginClassName(String orgDN) {
+        try {
+            Map config =
+            getOrgServiceTemplate(orgDN,ISAuthConstants.ADMINISTRATION_SERVICE);
+            String className =
+            Misc.getServerMapAttr(config,
+            ISAuthConstants.USERID_PASSWORD_VALIDATION_CLASS);
+            if (debug.messageEnabled()) {
+                debug.message("Org Plugin Class:  " + className);
+            }
+            return className;
+        } catch (Exception ee) {
+            debug.message("Error while getting UserPasswordValidationClass " ,ee );
+            return null;
+        }
+    }
     
-    // this method  gets plugin classname from adminstration service
+    /*
+     * this method gets plugin classname from adminstration service
+     */
     private String getPluginClassName() throws AuthLoginException {
         Map config = getServiceConfig(ISAuthConstants.ADMINISTRATION_SERVICE);
         String className =
@@ -1947,6 +2013,15 @@ public abstract class AMLoginModule implements LoginModule {
      */
     public boolean isSharedStateEnabled() {
         return isSharedState;
+    }
+
+    /**
+     * This method returns use first pass enabled or not
+     * @return return true if use first pass is enabled for the module
+     */
+    public boolean isUseFirstPassEnabled() {
+        return (sharedStateBehaviorPattern != null) && 
+                sharedStateBehaviorPattern.equals("useFirstPass");
     }
     
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.5 2006-12-22 02:55:05 pawand Exp $
+ * $Id: ISAuthConstants.java,v 1.6 2007-01-09 18:55:32 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -354,6 +354,10 @@ public interface ISAuthConstants {
     public static final String STORE_SHARED_STATE_ENABLED = AUTH_ATTR_PREFIX
             + "store-shared-state-enabled";
 
+    public static final String SHARED_STATE_BEHAVIOR_PATTERN = AUTH_ATTR_PREFIX
+            + "shared-state-behavior-pattern";
+
+
     /**
      * Log and debug file names
      */
@@ -422,6 +426,9 @@ public interface ISAuthConstants {
     public static final String LOGIN_URL = "loginURL";
     
     public static final String SUCCESS_URL = "successURL";
+
+    public static final String POST_PROCESS_SUCCESS_URL =
+        "PostProcessSuccessURL";
     
     public static final String USER_ID = "UserId";
     
@@ -556,4 +563,10 @@ public interface ISAuthConstants {
     public static final String SESSION_STORE = 
         "com.sun.identity.auth.sessionStore";
 
+    // Attribute to check if Remote Auth Security is enabled
+    public static final String REMOTE_AUTH_APP_TOKEN_ENABLED = 
+        "sunRemoteAuthSecurityEnabled";
+
+    // Property to store the Distributed Authentication Login URL in SSOToken
+    public static final String DISTAUTH_LOGINURL = "DistAuthLoginURL";
 }

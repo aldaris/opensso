@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.1 2006-01-28 09:16:52 veiming Exp $
+ * $Id: AuthXMLTags.java,v 1.2 2007-01-09 18:58:33 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public interface AuthXMLTags {
     public static final String SELECTED_VALUES = "SelectedValues";
     public static final String ORG_NAME_ELEMENT = "OrganizationName";
     public static final String ORG_NAME_ATTR = "orgName";
+    public static final String HOST_NAME_ATTR = "hostName";
     public static final String REQUESTED_INFO = "requestedInformation";
     public static final String MODULE_INSTANCE = "moduleInstanceNames";
     public static final String STATUS = "status";
@@ -126,6 +127,8 @@ public interface AuthXMLTags {
     public static final String LOGIN_END = "</Login>";
     public static final String LOGOUT_BEGIN = "<Logout>";
     public static final String LOGOUT_END = "</Logout>";
+    public static final String APPSSOTOKEN_BEGIN = "<AppSSOToken>";
+    public static final String APPSSOTOKEN_END = "</AppSSOToken>";
     public static final String ABORT_BEGIN = "<Abort>";
     public static final String ABORT_END = "</Abort>";
     //public static final String ORG_NAME_BEGIN = "<OrganizationName>";

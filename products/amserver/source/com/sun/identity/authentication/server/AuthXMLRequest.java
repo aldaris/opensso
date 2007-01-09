@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.2 2006-08-25 21:20:26 veiming Exp $
+ * $Id: AuthXMLRequest.java,v 1.3 2007-01-09 19:04:24 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,9 @@ public class AuthXMLRequest {
     private int requestType; 
     private String version=null;
     private String authIdentifier=null;
+    private String appSSOTokenID=null;
     private String orgName=null;
+    private String hostName=null;
     private String requestedInformation=null;
     private boolean isPCookie=false;
     private AuthContext.IndexType indexType=null;
@@ -158,12 +160,31 @@ public class AuthXMLRequest {
     }
 
     /**
+     * Sets the Application SSO Token id as received in PLL request
+     *
+     * @param appSSOTokenID Application SSOToken Id.
+     *
+     */
+    public void setAppSSOTokenID(String appSSOTokenID) {
+	this.appSSOTokenID = appSSOTokenID;
+    }
+
+    /**
      * Sets the organization name.
      *
      * @param orgName Organization Name.
      */
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    /**
+     * Sets the host name.
+     *
+     * @param hostName Host Name.
+     */
+    public void setHostName(String hostName) {
+	this.hostName = hostName;
     }
 
     /**
@@ -259,6 +280,15 @@ public class AuthXMLRequest {
     }
 
     /**
+     * Returns the host name.
+     *
+     * @return the host name.
+     */
+    public String getHostName() {
+ 	return hostName;
+    }
+
+    /**
      * Returns the authentication Identifier - session ID
      *
      * @return authentication identifier.
@@ -266,7 +296,18 @@ public class AuthXMLRequest {
     public String getAuthIdentifier() {
         return authIdentifier;
     }
-  
+
+    /**
+     * Returns the Application SSO Token id as set by 
+     * <code>setAppSSOTokenID</code>
+     *
+     * @return Application SSO Token id
+     *
+     */
+    public String getAppSSOTokenID() {
+        return appSSOTokenID;
+    }
+ 
    /**
      * Returns the callbacks set by client.
      *

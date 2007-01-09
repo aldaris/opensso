@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.8 2006-12-22 02:58:55 pawand Exp $
+ * $Id: LoginState.java,v 1.9 2007-01-09 19:01:36 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3269,6 +3269,15 @@ public class LoginState {
      */
     public String getSuccessLoginURL() {
         /* this method for UI, called from AuthUtils */
+        String post_process_goto = null;
+        if (session != null) {
+           post_process_goto = session.getProperty(
+               ISAuthConstants.POST_PROCESS_SUCCESS_URL);
+        }
+        if ((post_process_goto != null) &&
+            (post_process_goto.length() > 0)) {
+            return post_process_goto;
+        }
         String currentGoto = (servletRequest == null)?
         null: servletRequest.getParameter("goto");
         if (messageEnabled) {
@@ -4055,6 +4064,15 @@ public class LoginState {
      */
     public void setIndexName(String indexName) {
         this.indexName = indexName;
+    }
+
+    /**
+     * Returns the index name.
+     *
+     * @return the index name.
+     */
+    public String getIndexName() {
+        return this.indexName;
     }
     
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.3 2006-08-25 21:20:25 veiming Exp $
+ * $Id: AuthContextLocal.java,v 1.4 2007-01-09 19:04:23 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,10 +145,14 @@ public final class AuthContextLocal extends Object
      */
     protected Subject subject;
     /**
-     * character arrary for password
+     * character array for password
      */
     protected char[] password;
     private LoginState loginState = null;
+    /**
+     * Holds information about submittion of requirements
+     */
+    private boolean inSubmitRequirements = false;
 
     /**
      * Creates <code>AuthContextLocal</code> instance is obtained for a given
@@ -353,7 +357,7 @@ public final class AuthContextLocal extends Object
             if (authDebug.messageEnabled()) {
                 authDebug.message("Exception in ac.login : " + e.toString());
             }
-            throw new AuthLoginException(e);
+            throw e;
         }
     }
 
@@ -488,23 +492,26 @@ public final class AuthContextLocal extends Object
      */
     public void submitRequirements(Callback[] info) {
         authDebug.message("AuthContextLocal::submitRequirements()");
-        informationRequired = null;
-
-        amlc.submitRequiredInfo(info) ;
-        if (!amlc.isPureJAAS()) {
-            amlc.runLogin();
-        }
-
-        if (amlc.getStatus() == LoginStatus.AUTH_SUCCESS) {
-            loginStatus = AuthContext.Status.SUCCESS;
-        } else if (amlc.getStatus() == LoginStatus.AUTH_FAILED) {
-            loginStatus = AuthContext.Status.FAILED;
-        }
-        authDebug.message("AuthContextLocal::submitRequirements end");
-        if (authDebug.messageEnabled()) {
-            authDebug.message("Status at the end of submitRequirements() : "
-            + loginStatus);
-        }
+	inSubmitRequirements = true;
+	try{
+	   informationRequired = null;
+ 	   amlc.submitRequiredInfo(info) ;
+	   if (!amlc.isPureJAAS()) {
+		amlc.runLogin();
+	   }
+  	   if (amlc.getStatus() == LoginStatus.AUTH_SUCCESS) {
+		loginStatus = AuthContext.Status.SUCCESS;
+	   } else if (amlc.getStatus() == LoginStatus.AUTH_FAILED) {
+		loginStatus = AuthContext.Status.FAILED;
+	   }
+	   authDebug.message("AuthContextLocal::submitRequirements end");
+	   if (authDebug.messageEnabled()) {
+		authDebug.message("Status at the end of submitRequirements() : "
+				+ loginStatus);
+	   }
+         } finally {
+           inSubmitRequirements = false;
+         }
     }
 
     /**
@@ -753,6 +760,10 @@ public final class AuthContextLocal extends Object
      */
     protected String getClientHostName() {
         return (hostName);
+    }
+
+    public boolean submittedRequirements() {
+        return inSubmitRequirements;
     }
 
     /**

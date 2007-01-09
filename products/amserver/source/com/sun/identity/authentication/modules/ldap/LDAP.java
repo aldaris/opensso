@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.4 2006-08-25 21:20:22 veiming Exp $
+ * $Id: LDAP.java,v 1.5 2007-01-09 19:07:29 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ConfirmationCallback;
@@ -252,11 +253,11 @@ public class LDAP extends AMLoginModule {
                         primaryServerHost = primaryServerHost.substring(0,
                             colonIndex);
                     }
-                    if (LDAPAuthUtils.adminConnectionPoolsStatus != null) {
+                    if (LDAPAuthUtils.connectionPoolsStatus != null) {
                         String poolKey = primaryServerHost + ":" +
-                            primaryServerPort;
+                            primaryServerPort + ":" + bindDN;
                         String adminPoolStatus = (String)LDAPAuthUtils.
-                            adminConnectionPoolsStatus.get(poolKey);
+                            connectionPoolsStatus.get(poolKey);
                         if ( (adminPoolStatus == null) ||
                             (adminPoolStatus.equals(LDAPAuthUtils.STATUS_UP))) {
                              setPrimaryFlag(currentConfigName, true);
@@ -472,7 +473,7 @@ public class LDAP extends AMLoginModule {
                 throw new AuthLoginException(amAuthLDAP, "LDAPex", null);
             }
         } catch (LDAPUtilException ex) {
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             }
@@ -494,6 +495,10 @@ public class LDAP extends AMLoginModule {
                 case LDAPUtilException.INAPPROPRIATE_AUTHENTICATION:
                     debug.message("Inappropriate authentication.");
                     throw new AuthLoginException(amAuthLDAP, "InappAuth", null);
+                case LDAPUtilException.CONSTRAINT_VIOLATION:
+                    debug.message("Exceed password retry limit.");
+                    throw new AuthLoginException(amAuthLDAP,
+                            "ExceedRetryLimit", null);
                 default:
                     throw new AuthLoginException(amAuthLDAP, "LDAPex", null);
             }
@@ -552,18 +557,7 @@ public class LDAP extends AMLoginModule {
             switch (newState) {
                 case LDAPAuthUtils.SUCCESS:
                     validatedUserID = ldapUtil.getUserId();
-                    if (isProfileCreationEnabled &&
-                        userCreationAttrs.size() > 0
-                    ) {
-                        Map userAttributeValues =
-                            ldapUtil.getUserAttributeValues();
-                        if (debug.messageEnabled()) {
-                            debug.message("user creation attributes: " +
-                                userAttributeValues);
-                        }
-                        Map userValues= getAttributeMap(userAttributeValues);
-                        setUserAttributes(userValues);
-                    }
+                    createProfile();
                     currentState = ISAuthConstants.LOGIN_SUCCEED;
                     break;
                 case LDAPAuthUtils.PASSWORD_EXPIRING:
@@ -598,8 +592,8 @@ public class LDAP extends AMLoginModule {
                 case LDAPAuthUtils.SERVER_DOWN:
                     if (firstTry) {
                         String key = serverHost + ":"+serverPort + ":" + bindDN;
-                        synchronized(LDAPAuthUtils.adminConnectionPoolsStatus){
-                            LDAPAuthUtils.adminConnectionPoolsStatus.put(key,
+                        synchronized(LDAPAuthUtils.connectionPoolsStatus){
+                            LDAPAuthUtils.connectionPoolsStatus.put(key,
                                 LDAPAuthUtils.STATUS_DOWN);
                         }
                         firstTry = false;
@@ -636,7 +630,7 @@ public class LDAP extends AMLoginModule {
                 default:
             }
         } catch (LDAPUtilException ex) {
-            if (getCredentialsFromSharedState) {
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 currentState = ISAuthConstants.LOGIN_START;
                 return;
@@ -653,6 +647,7 @@ public class LDAP extends AMLoginModule {
         switch (newState) {
             case LDAPAuthUtils.PASSWORD_UPDATED_SUCCESSFULLY:
                 validatedUserID = ldapUtil.getUserId();
+                createProfile();
                 currentState = ISAuthConstants.LOGIN_SUCCEED;
                 // Instantiating the callback implementation variable. This
                 // will be used to notify the plug-in classes that a
@@ -713,6 +708,18 @@ public class LDAP extends AMLoginModule {
                 
         }
     }
+
+    private void createProfile() {
+        if (isProfileCreationEnabled && userCreationAttrs.size() > 0) {
+            Map userAttributeValues = ldapUtil.getUserAttributeValues();
+            if (debug.messageEnabled()) {
+                debug.message("user creation attributes: " +
+                        userAttributeValues);
+            }
+            Map userValues= getAttributeMap(userAttributeValues);
+            setUserAttributes(userValues);
+        }
+    }
     
     private String charToString(char[] tmpPassword, Callback cbk) {
         if (tmpPassword == null) {
@@ -763,33 +770,46 @@ public class LDAP extends AMLoginModule {
             while (foundDown) {
                 try {
                     foundDown = false;
-                    Set set1 = LDAPAuthUtils.adminConnectionPoolsStatus.
+                    Set set1 = LDAPAuthUtils.connectionPoolsStatus.
                         keySet();
                     Iterator iter1 = set1.iterator();
                     while (iter1.hasNext()){
                         String key = (String)iter1.next();
                         String status  = (String)LDAPAuthUtils.
-                            adminConnectionPoolsStatus.get(key);
+                            connectionPoolsStatus.get(key);
                         if ( status.equals(LDAPAuthUtils.STATUS_DOWN)) {
                             foundDown = true;
-                            if (LDAPAuthUtils.connectionPools != null) {
-                                ConnectionPool cPool = (ConnectionPool)
-                                    LDAPAuthUtils.adminConnectionPools.get(key);
-                                LDAPConnection ldapConn = cPool.getConnection();
-                                try {
-                                    ldapConn.reconnect();
-                                } catch(LDAPException ex) {
-                                }
-                                if(ldapConn.isConnected()) {
-                                    LDAPAuthUtils.adminConnectionPoolsStatus.
-                                        put(key,LDAPAuthUtils.STATUS_UP);
-                                }
-                    
+                            if (debug.messageEnabled()) {
+                                debug.message("Checking for server "+key);
+                            }
+                            StringTokenizer st = new StringTokenizer(key,":");
+                            String downHost = (String)st.nextToken();
+                            String downPort = (String)st.nextToken();
+                            if ((downHost != null) && (downHost.length() != 0)
+				&& (downPort != null) && (downPort.length()
+				!= 0)) {
+				int intPort = (Integer.valueOf(downPort)).
+                                    intValue();
+				try {
+                                    LDAPConnection ldapConn =
+					new LDAPConnection();
+                                    ldapConn.connect(downHost, intPort);
+                                    if(ldapConn.isConnected()) {
+					LDAPAuthUtils.
+                                            connectionPoolsStatus.
+                                            put(key,LDAPAuthUtils.STATUS_UP);
+                                    }
+                                    ldapConn.disconnect();
+                                } catch ( LDAPException e ) {
+				}
                             }
                         } 
                     }
                 } catch (Exception exp) {
                     debug.error("Error in Fallback Manager Thread",exp);
+                }
+                if (!foundDown) {
+                    return;
                 }
                 try {
                     thisThread.sleep(sleepTime);
