@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.3 2007-01-09 06:52:40 veiming Exp $
+    $Id: amAuth.xml,v 1.4 2007-01-09 18:45:41 manish_rustagi Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -80,6 +80,14 @@
                     i18nKey="">
                     <DefaultValues>
                         <Value>300</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sunRemoteAuthSecurityEnabled"
+                    type="single"
+                    syntax="boolean"
+                    i18nKey="a146">
+                    <DefaultValues>
+                        <Value>false</Value>
                     </DefaultValues>
                 </AttributeSchema>
             </Global>
@@ -248,7 +256,7 @@
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-default-auth-level" 
                     type="single"
-                    syntax="number" 
+                    syntax="number_range" rangeStart="0" rangeEnd="2147483647"
                     i18nKey="a500">
                     <DefaultValues>
                         <Value>0</Value>

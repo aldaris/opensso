@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthAD.xml,v 1.1 2006-08-29 07:52:26 veiming Exp $
+    $Id: amAuthAD.xml,v 1.2 2007-01-09 18:45:42 manish_rustagi Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,7 +127,7 @@
                 </AttributeSchema>
                 <AttributeSchema name="sunAMAuthADAuthLevel"
                     type="single"
-                    syntax="number"
+                    syntax="number_range" rangeStart="0" rangeEnd="2147483647"
                     i18nKey="a500">
                     <DefaultValues>
                         <Value>0</Value>
@@ -242,7 +242,7 @@
                     
                     <AttributeSchema name="sunAMAuthADAuthLevel"
                         type="single"
-                        syntax="number"
+                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
                         i18nKey="a500">
                         <DefaultValues>
                             <Value>0</Value>

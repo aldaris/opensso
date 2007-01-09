@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthJDBC.xml,v 1.1 2006-08-29 07:52:28 veiming Exp $
+    $Id: amAuthJDBC.xml,v 1.2 2007-01-09 18:45:43 manish_rustagi Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -115,7 +115,7 @@
                 </AttributeSchema>
                 <AttributeSchema name="sunAMAuthJDBCAuthLevel"
                     type="single"
-                    syntax="number"
+                    syntax="number_range" rangeStart="0" rangeEnd="2147483647"
                     i18nKey="a109">
                     <DefaultValues>
                         <Value>0</Value>
@@ -200,7 +200,7 @@
                     </AttributeSchema>
                         <AttributeSchema name="sunAMAuthJDBCAuthLevel"
                         type="single"
-                        syntax="number"
+                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
                         i18nKey="a109">
                         <DefaultValues>
                             <Value>0</Value>
