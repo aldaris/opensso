@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.3 2006-12-12 23:34:46 arviranga Exp $
+ * $Id: XMLUtils.java,v 1.4 2007-01-09 18:41:25 manish_rustagi Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -532,6 +532,13 @@ public class XMLUtils {
      * Method to get the value of "Value" node
      */
     public static String getValueOfValueNode(Node n) {
+        return getValueOfValueNodeNoTrim(n).trim();
+    }
+
+    /**
+     * Method to get the value of "Value" node
+     */
+    public static String getValueOfValueNodeNoTrim(Node n) {
         NodeList textNodes = n.getChildNodes();
         Node textNode;
         StringBuffer value = new StringBuffer("");
@@ -547,7 +554,7 @@ public class XMLUtils {
                 value.append(text);
             }
         }
-        return (value.toString().trim());
+        return value.toString();
     }
 
     /**
