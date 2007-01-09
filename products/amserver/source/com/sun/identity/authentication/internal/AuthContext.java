@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.5 2006-12-15 00:52:20 goodearth Exp $
+ * $Id: AuthContext.java,v 1.6 2007-01-09 19:39:19 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import javax.security.auth.login.LoginException;
 import netscape.ldap.util.DN;
 
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.SecureRandomManager;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOToken;
@@ -878,6 +880,13 @@ public final class AuthContext extends Object {
             // Set AuthLevel
             token.setProperty("AuthLevel", Integer.toString(0));
 
+            //Set ContextId 
+            SecureRandom secureRandom = 
+                SecureRandomManager.getSecureRandom();
+            String amCtxId = 
+                Long.toHexString(secureRandom.nextLong());
+            token.setProperty(Constants.AM_CTX_ID, amCtxId);
+
             if (authDebug.messageEnabled()) {
                 authDebug.message("SSOToken : Organization : "
                         + token.getProperty("Organization"));
@@ -891,6 +900,8 @@ public final class AuthContext extends Object {
                         + token.getIPAddress());
                 authDebug.message("SSOToken : getHostName : "
                         + token.getHostName());
+                authDebug.message("SSOToken : ContextId : "
+                        + token.getProperty(Constants.AM_CTX_ID));
             }
 
         } catch (Exception e) {

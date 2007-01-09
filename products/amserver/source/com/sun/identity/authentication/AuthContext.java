@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.4 2006-12-22 02:49:25 pawand Exp $
+ * $Id: AuthContext.java,v 1.5 2007-01-09 19:44:00 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,8 @@ import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.AMSecurityPropertiesException;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessageImpl;
@@ -51,12 +53,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLStreamHandler;
+import java.security.AccessController;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
@@ -121,12 +125,13 @@ public class AuthContext extends Object implements java.io.Serializable {
     Document receivedDocument;
     AuthLoginException loginException = null;
 
-    String hostName = "";
+    String hostName = null;
     String nickName = null;
     private URL authURL = null;
     private URL authServiceURL = null;
     private SSOToken ssoToken = null;
     private String ssoTokenID = null;
+    private static SSOToken appSSOToken = null;
     com.sun.identity.authentication.server.AuthContextLocal acLocal = null;
     
     /**
@@ -479,7 +484,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             authDebug.error("Failed to login to " + authServiceURL);
         } catch (Exception e) {
             authDebug.error("Failed to login to " + authServiceURL
-                + ": " + e.getMessage());
+                + ": " + e.getMessage(),e);
         }
         
         if (authURL == null) {
@@ -532,6 +537,31 @@ public class AuthContext extends Object implements java.io.Serializable {
     ) throws AuthLoginException {
         if (!localFlag) {
             setLocalFlag(authServiceURL);
+        }
+
+        if (appSSOToken == null) {
+            if (!((indexType == IndexType.MODULE_INSTANCE) && 
+                (indexName.equals("Application")))){
+                try {
+                    appSSOToken = (SSOToken) AccessController.doPrivileged(
+                        AdminTokenAction.getInstance());
+                } catch (AMSecurityPropertiesException propExp) {
+                    // Ignore the Exception and continue without App SSO Token.
+                    if (authDebug.messageEnabled()) {
+                        authDebug.message("AuthContext.runLogin: "
+                            + "Runtime Exception" + propExp.getMessage());
+                        authDebug.message("AuthContext.runLogin: Not "
+                            + "able to get appSSOToken, continuing without "
+                            + "appSSOToken");
+                    }
+                }
+                if (appSSOToken == null) {
+                    authDebug.message("Null App SSO Token");
+                }
+            }
+            if (authDebug.messageEnabled()) {
+                authDebug.message("Obtained App Token= "+appSSOToken);
+            }
         }
         
         if (localFlag) {
@@ -614,9 +644,15 @@ public class AuthContext extends Object implements java.io.Serializable {
                 }
                 authHandles[0] = ssoTokenID;
             }
-            request.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
-                     (Object[])authHandles))
-                    .append(AuthXMLTags.LOGIN_BEGIN);
+
+            request.append(MessageFormat.format(
+                AuthXMLTags.XML_REQUEST_PREFIX,authHandles));
+            if (appSSOToken != null) {
+                request.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
+                request.append(appSSOToken.getTokenID().toString()).
+                    append(AuthXMLTags.APPSSOTOKEN_END);
+            }
+            request.append(AuthXMLTags.LOGIN_BEGIN);
 
             if (!useOldStyleRemoteAuthentication) {
                 request.append(AuthXMLTags.SPACE)
@@ -625,6 +661,14 @@ public class AuthContext extends Object implements java.io.Serializable {
                     .append(AuthXMLTags.QUOTE)
                     .append(XMLUtils.escapeSpecialCharacters(organizationName))
                     .append(AuthXMLTags.QUOTE);
+                if (hostName != null) {
+                    request.append(AuthXMLTags.SPACE)
+                    .append(AuthXMLTags.HOST_NAME_ATTR)
+                    .append(AuthXMLTags.EQUAL)
+                    .append(AuthXMLTags.QUOTE)
+                    .append(XMLUtils.escapeSpecialCharacters(hostName))
+                    .append(AuthXMLTags.QUOTE);
+                }
             }
             request.append(AuthXMLTags.ELEMENT_END);
 
@@ -741,6 +785,17 @@ public class AuthContext extends Object implements java.io.Serializable {
             }
             return (getSubject(receivedDocument));
         }
+    }
+
+   /**
+    * Returns a <code>Map</code> object that
+    * that contains cookies set by AM server
+    *
+    * @return a <code>Map</code> of cookie name and
+    * <code>Cookie</code> object.
+    */
+    public Map getCookieTable() {
+        return cookieTable;
     }
     
     /**
@@ -884,9 +939,14 @@ public class AuthContext extends Object implements java.io.Serializable {
                 StringBuffer xml = new StringBuffer(100);
                 String[] authHandles = new String[1];
                 authHandles[0] = getAuthenticationHandle(receivedDocument);
-                xml.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
-                (Object[])authHandles))
-                .append(AuthXMLTags.SUBMIT_REQS_BEGIN)
+                xml.append(MessageFormat.format(
+                    AuthXMLTags.XML_REQUEST_PREFIX,authHandles));
+                if (appSSOToken != null) {
+                    xml.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
+                    xml.append(appSSOToken.getTokenID().toString()).
+                        append(AuthXMLTags.APPSSOTOKEN_END);
+                }
+                xml.append(AuthXMLTags.SUBMIT_REQS_BEGIN)
                 .append(AuthXMLUtils.getXMLForCallbacks(info))
                 .append(AuthXMLTags.SUBMIT_REQS_END)
                 .append(AuthXMLTags.XML_REQUEST_SUFFIX);
@@ -924,10 +984,15 @@ public class AuthContext extends Object implements java.io.Serializable {
             String[] authHandles = new String[1];
             authHandles[0] = getAuthenticationHandle(receivedDocument);
             xml.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
-                    (Object[])authHandles))
-                .append(AuthXMLTags.LOGOUT_BEGIN)
-                .append(AuthXMLTags.LOGOUT_END)
-                .append(AuthXMLTags.XML_REQUEST_SUFFIX);
+            authHandles));
+            if (appSSOToken != null) {
+                xml.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
+                xml.append(appSSOToken.getTokenID().toString()).
+                    append(AuthXMLTags.APPSSOTOKEN_END);
+            }
+            xml.append(AuthXMLTags.LOGOUT_BEGIN)
+               .append(AuthXMLTags.LOGOUT_END)
+               .append(AuthXMLTags.XML_REQUEST_SUFFIX);
             
             // Send the request to be processes
             receivedDocument = processRequest(xml.toString());
@@ -1175,8 +1240,13 @@ public class AuthContext extends Object implements java.io.Serializable {
             String[] authHandles = new String[1];
             authHandles[0] = getAuthenticationHandle(receivedDocument);
             xml.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
-            (Object[])authHandles))
-            .append(AuthXMLTags.ABORT_BEGIN)
+            authHandles));
+            if (appSSOToken != null) {
+                xml.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
+                xml.append(appSSOToken.getTokenID().toString()).
+                    append(AuthXMLTags.APPSSOTOKEN_END);
+            }
+            xml.append(AuthXMLTags.ABORT_BEGIN)
             .append(AuthXMLTags.ABORT_END)
             .append(AuthXMLTags.XML_REQUEST_SUFFIX);
             
@@ -1287,21 +1357,28 @@ public class AuthContext extends Object implements java.io.Serializable {
     }
     
     /**
-     * In the case of remote authentication, this method must be used
-     * to set the client's hostname or IP address. This could be used
+     * Sets the client's hostname or IP address.This could be used
      * by the policy component to restrict access to resources.
+     * This method must be called before calling <code>login</code> method.
+     * If it is called after calling <code>login</code> then 
+     * it is ineffective.
      *
-     * @param hostname Client's host name.
+     * @param hostname hostname or ip address
+     *
+     * iPlanet-PUBLIC-METHOD
      */
     public void setClientHostName(String hostname) {
         this.hostName = hostname;
     }
 
     /**
-     * Returns client host name.
+     * Returns the client's hostname or IP address as set by 
+     * setClientHostName
+     * 
+     * @return hostname/IP address
      *
-     * @return client host name.
-     */ 
+     * iPlanet-PUBLIC-METHOD
+     */
     public String getClientHostName() {
         return (hostName);
     }
@@ -1357,14 +1434,19 @@ public class AuthContext extends Object implements java.io.Serializable {
             authHandles[0] = getAuthHandle();
             
             xml.append(MessageFormat.format(AuthXMLTags.XML_REQUEST_PREFIX,
-                    (Object[])authHandles))
-                .append(AuthXMLTags.QUERY_INFO_BEGIN)
-                .append(AuthXMLTags.SPACE)
-                .append(AuthXMLTags.REQUESTED_INFO)
-                .append(AuthXMLTags.EQUAL)
-                .append(AuthXMLTags.QUOTE)
-                .append(reqInfo)
-                .append(AuthXMLTags.QUOTE);
+            authHandles));
+            if (appSSOToken != null) {
+                xml.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
+                xml.append(appSSOToken.getTokenID().toString()).
+                    append(AuthXMLTags.APPSSOTOKEN_END);
+            }
+            xml.append(AuthXMLTags.QUERY_INFO_BEGIN)
+               .append(AuthXMLTags.SPACE)
+               .append(AuthXMLTags.REQUESTED_INFO)
+               .append(AuthXMLTags.EQUAL)
+               .append(AuthXMLTags.QUOTE)
+               .append(reqInfo)
+               .append(AuthXMLTags.QUOTE);
 
             if (authHandles[0].equals("0")) {
                 xml.append(AuthXMLTags.SPACE)

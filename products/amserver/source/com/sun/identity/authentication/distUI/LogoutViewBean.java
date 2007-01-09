@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.4 2006-08-25 21:20:15 veiming Exp $
+ * $Id: LogoutViewBean.java,v 1.5 2007-01-09 19:41:30 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,30 +26,38 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.sun.identity.shared.debug.Debug;
-import com.iplanet.jato.RequestContext;
+import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.model.ModelControlException;
-import com.iplanet.jato.view.View;
+import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
+import com.iplanet.jato.view.View;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 
 /**
  * This class is a default implementation of <code>LogoutViewBean</code> auth 
@@ -103,30 +111,35 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         
         try {            
             cookieSupported = au.checkForCookies(request);
-            
-            if (session.isNew()) {
-                logoutDebug.message("New Request");
-                client_type = au.getClientType(request);
-                ISLocaleContext localeContext = new ISLocaleContext();
-                localeContext.setLocale(request);
-                locale = localeContext.getLocale();
-            } else {
-                logoutDebug.message("Existing Request");
-                client_type = (String) session.getAttribute("Client_Type");
-                locale = (java.util.Locale) session.getAttribute("Locale");
-                loginURL = (String) session.getAttribute("LoginURL");
-                orgName = (String) session.getAttribute("OrgName");
-                indexType =
-                    au.getIndexType((String) session.getAttribute("IndexType"));
-                indexName = (String) session.getAttribute("IndexName");
-                ac = (AuthContext) session.getAttribute("AuthContext");
+            client_type = au.getClientType(request);
+            ISLocaleContext localeContext = new ISLocaleContext();
+            localeContext.setLocale(request);
+            locale = localeContext.getLocale();
+            SSOTokenManager manager = SSOTokenManager.getInstance();
+            SessionID sessionID = au.getSessionIDFromRequest(request);
+            SSOToken ssoToken = au.getExistingValidSSOToken(sessionID);
+            if (ssoToken != null) {
+                ssoTokenExists = true;
+                loginURL = (String)ssoToken.getProperty
+                    (ISAuthConstants.DISTAUTH_LOGINURL);
+                orgName = (String)ssoToken.getProperty
+                    (ISAuthConstants.ORGANIZATION);
+                String strIndexType = (String)ssoToken.getProperty
+                    (ISAuthConstants.INDEX_TYPE);
+                if (strIndexType != null) {
+                    indexType = au.getIndexType(strIndexType);
+                    indexName = au.getIndexName(ssoToken, indexType);
+                }
             }
-            
+            manager.destroyToken(ssoToken);
+            logoutDebug.message("logout successfully");
+            rb =  rbCache.getResBundle(bundleName, locale);
+            ResultVal = rb.getString("logout.successful");
+           
             if (logoutDebug.messageEnabled()) {
                 logoutDebug.message("Client Type is: " + client_type);
                 logoutDebug.message("JSPLocale = " + locale);
                 logoutDebug.message("loginURL : " + loginURL);
-                logoutDebug.message("AuthContext : " + ac);
             }
             
             fallbackLocale = locale;
@@ -154,67 +167,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         // get the Logout JSP page path
         jsp_page = appendLogoutCookie(getFileName(LOGOUT_JSP));
         
-        if (ac == null) {
-            /*
-            if (SessionService.getSessionService().isSessionFailoverEnabled()) {
-                try {
-                    Session session = Session.getSession(sid);
-                    session.logout();
-                    logoutDebug.message(
-                        "logout successfully in Session failover mode");
-                    ResultVal = rb.getString("logout.successful");
-                } catch (SessionException se) {
-                    try {
-                        if (logoutDebug.messageEnabled()) {
-                            logoutDebug.message("Exception during logout", se);
-                            logoutDebug.message("Goto Login URL : "+ LOGINURL);
-                        }
-                        if (doSendRedirect(LOGINURL)) {
-                            response.sendRedirect(appendLogoutCookie(LOGINURL));
-                            return;
-                        } else {
-                            jsp_page = appendLogoutCookie(
-                                getFileName(LOGIN_JSP));
-                        }
-             
-                    } catch (Exception e) {
-                        if (logoutDebug.messageEnabled()) {
-                            logoutDebug.message(
-                                "Redirect failed:" + LOGINURL ,e);
-                        }
-                        ResultVal = e.getMessage();
-                    }
-                    super.forwardTo(requestContext);
-                    return;
-                }
-            } else {   */
+        if (!ssoTokenExists) {
             if (!isGotoSet()) {
-                    /*
-                    String originalLoginURL = au.getOrigRedirectURL(
-                        request, sid);
-                    if (originalLoginURL != null) {
-                        try {
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message("Original Login URL: " +
-                                originalLoginURL);
-                            }
-                            int index = originalLoginURL.indexOf("/Login");
-                            String originalLogoutURL =
-                            originalLoginURL.substring(0,index) + "/Logout";
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message(
-                                    "Redirect to Original Logout URL : " +
-                                        originalLogoutURL);
-                            }
-                            if (doSendRedirect(originalLogoutURL)) {
-                                response.sendRedirect(
-                                    appendLogoutCookie(originalLogoutURL));
-                                return;
-                            }
-                        } catch (Exception e) {
-                            ResultVal = getL10NMessage(e, locale);
-                        }
-                    } else { */
                 try {
                     if (logoutDebug.messageEnabled()) {
                         logoutDebug.message("AuthContext is NULL");
@@ -229,24 +183,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 } catch (Exception e) {
                     ResultVal = getL10NMessage(e, locale);
                 }
-                //}
-            }
-            //}
-        } else {
-            try {
-                ac.logout();
-                logoutDebug.message("logout successfully");
-                ResultVal = rb.getString("logout.successful");
-            } catch (Exception e) {
-                if (logoutDebug.messageEnabled()) {
-                    logoutDebug.message(
-                        "error in logout : " + e.getMessage(), e);
-                }
-                
-                ResultVal = rb.getString("logout.failure")
-                + " : " + getL10NMessage(e, locale);
-                super.forwardTo(requestContext);
-                return;
             }
         }
         
@@ -257,10 +193,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     
     private String getFileName(String fileName) {
         String relativeFileName = null;
-        if (ac != null) {
-            relativeFileName = au.getFileName(
-                fileName, locale.toString(), orgName, request, servletContext,
-                indexType, indexName);
+        if (ssoTokenExists) {
+            relativeFileName = au.getFileName(fileName,locale.toString(),
+                orgName,request,servletContext,indexType,indexName);
         } else {
             relativeFileName =
             au.getDefaultFileName(request,fileName,locale,servletContext);
@@ -287,6 +222,15 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         }
         au.clearlbCookie(response);
         clearHostUrlCookie(response);
+        Map serverCookieMap = null;
+        if (storeCookies != null &&
+            !storeCookies.isEmpty()) {
+            for (Iterator it = storeCookies.iterator();
+                it.hasNext();){
+                String cookieName = (String)it.next();
+                au.clearServerCookie(cookieName, response);
+            }
+        }
     }
     
     private void clearAllCookiesByDomain(String cookieDomain) {
@@ -500,7 +444,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     HttpServletResponse response;
     HttpSession session;
     ServletContext servletContext;
-    AuthContext ac = null;
     java.util.Locale locale = null;
     String orgName = "";
     String indexName = "";
@@ -532,6 +475,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     private static final String LOGOUT_JSP = "Logout.jsp";
     private static final String LOGIN_JSP = "Login.jsp";
     private static final String bundleName = "amAuthUI";
+    private boolean ssoTokenExists = false;
     
     static {
         LOGINURL = serviceUri + "/UI/Login";

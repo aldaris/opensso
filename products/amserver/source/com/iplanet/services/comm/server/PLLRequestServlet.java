@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.3 2006-08-28 18:50:40 veiming Exp $
+ * $Id: PLLRequestServlet.java,v 1.4 2007-01-09 19:45:17 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,8 @@ public class PLLRequestServlet extends HttpServlet {
 
     /* the default content length is set to 16k */
     private static int maxContentLength = 16384;
+
+    private static final String AUTH_SVC_ID = "Auth";
 
     public void init() throws ServletException {
         String maxContentLengthProp = SystemProperties.get(
@@ -117,11 +119,15 @@ public class PLLRequestServlet extends HttpServlet {
         }
         String xml = new String(reqData, 0, length, "UTF-8");
 
-        if (PLLServer.pllDebug.messageEnabled()) {
-            PLLServer.pllDebug.message("\nReceived RequestSet XML :\n" + xml);
+        RequestSet set = RequestSet.parseXML(xml);
+        String svcid = set.getServiceID();
+        if(!AUTH_SVC_ID.equalsIgnoreCase(svcid)) {
+            if (PLLServer.pllDebug.messageEnabled()) {
+                 PLLServer.pllDebug.message("\nReceived RequestSet XML :\n" + xml);
+            }
         }
-
-        String responseXML = handleRequest(xml, req, res);
+         
+	String responseXML = handleRequest(set, req, res);
         OutputStreamWriter out = new OutputStreamWriter(res.getOutputStream(),
                 "UTF-8");
         try {
@@ -159,9 +165,10 @@ public class PLLRequestServlet extends HttpServlet {
      * 
      * @see sunir.share.profile.service.server.http.RequestProcessor
      */
-    private String handleRequest(String requestXML, HttpServletRequest req,
-            HttpServletResponse res) throws ServletException {
-        RequestSet set = RequestSet.parseXML(requestXML);
+    private String handleRequest(RequestSet set,
+                                 HttpServletRequest req,
+                                 HttpServletResponse res)
+        throws ServletException {
         if (!isValid(set)) {
             throw new ServletException(
                     PLLBundle.getString("invalidRequestSet"));

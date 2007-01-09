@@ -237,6 +237,8 @@ com/sun/identity/authentication/share/AuthXMLUtils.class
 com/sun/identity/authentication/service/AuthUtils.class
 com/sun/identity/authentication/service/AuthException.class
 com/sun/identity/authentication/service/SSOTokenPrincipal.class
+com/sun/identity/authentication/service/ConfiguredAuthServices.class
+com/sun/identity/authentication/service/ConfiguredIdentityTypes.class
 com/sun/identity/authentication/modules/ldap/LDAPPrincipal.class
 com/sun/identity/authentication/modules/nt/NTPrincipal.class
 com/sun/identity/authentication/modules/anonymous/AnonymousAuthPrincipal.class
@@ -320,6 +322,7 @@ com/sun/identity/policy/remote/AdvicesHandleableByAMRequest.class
 com/sun/identity/policy/remote/AdvicesHandleableByAMResponse.class
 com/sun/identity/security/AppSSOTokenProvider.class
 com/sun/identity/security/AdminTokenAction.class
+com/sun/identity/security/AMSecurityPropertiesException.class
 com/sun/identity/security/SystemAppTokenProvider.class
 com/sun/identity/security/EncodeAction.class
 com/sun/identity/security/EncryptAction.class

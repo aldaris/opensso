@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.7 2006-12-22 02:59:48 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.8 2007-01-09 19:42:40 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.HttpCallback;
@@ -1014,6 +1015,17 @@ public class LoginViewBean extends AuthViewBeanBase {
             
             if ((page_state != null) && (page_state.length() != 0)) {
                 callbacks = au.getCallbacksPerState(ac, page_state);
+
+                if(callbacks == null) {
+                	errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
+                	ErrorMessage = au.getErrorVal(
+                              AMAuthErrorCode.AUTH_TIMEOUT,
+                              AuthUtils.ERROR_MESSAGE);
+                	errorTemplate = au.getErrorVal(
+                              AMAuthErrorCode.AUTH_TIMEOUT,
+                              AuthUtils.ERROR_TEMPLATE);
+                	return;
+                }            
                 
                 //Get Callbacks in order to set the page state
                 Callback[] callbacksForPageState = au.getRecdCallback(ac);

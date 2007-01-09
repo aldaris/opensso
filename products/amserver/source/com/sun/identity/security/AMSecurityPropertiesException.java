@@ -1,4 +1,3 @@
-
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -18,21 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2007-01-09 19:44:00 manish_rustagi Exp $
+ * $Id: AMSecurityPropertiesException.java,v 1.0 2006/12/21 21:21:14
+ * manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
-
+package com.sun.identity.security;
 
 /**
- * Provides interfaces and classes for writing a Remote Java client application
- * to authenticate into Sun Java System Access Manager. Using these remotable
- * interfaces and classes provided, a custom application may be authenticated
- * to Sun Java System Access Manager's list of supported authentication
- * modules/types or pure JAAS modules.
- *
- * @supported.api
+ * Exception that is thrown when AMConfig.properties does not contain
+ * com.sun.identity.agents.app.username and com.iplanet.am.service.password
  */
-package com.sun.identity.authentication;
 
+public class AMSecurityPropertiesException extends RuntimeException {
+
+    /**
+     * Constructs an <code>AMSecurityPropertiesException</code> object.
+     * @param message English message for the exception.
+     */
+    public AMSecurityPropertiesException(String message) {
+        super(message);
+    }
+}

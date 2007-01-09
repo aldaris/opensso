@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.3 2006-08-25 21:20:07 veiming Exp $
+ * $Id: AuthViewBeanBase.java,v 1.4 2007-01-09 19:42:40 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,9 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.Constants;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -194,7 +196,9 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
      * based on user preference  or LoginState may not exist if LoginFailure in
      * such case we need to fallback to this locale for responding to user
      */
-    
+
+    public static Set storeCookies = new HashSet();    
+
     public static AMResourceBundleCache rbCache =
     AMResourceBundleCache.getInstance();
     /**

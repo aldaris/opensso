@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.5 2006-08-25 21:20:14 veiming Exp $
+ * $Id: LoginViewBean.java,v 1.6 2007-01-09 19:41:30 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,15 +42,20 @@ import com.sun.identity.authentication.UI.CallBackTiledView;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.shared.locale.L10NMessageImpl;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.security.auth.callback.Callback;
@@ -330,10 +335,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 session.setAttribute("OrgName", orgName);
                 session.setAttribute("AuthContext", ac);
                 cookieSupported = au.isCookieSupported(request);
-                if (cookieSupported) {
-                    setCookie();
-                    setlbCookie();
-                }
             } else if ( (authCookieValue != null) &&
                     (authCookieValue.length() != 0) &&
                     (!authCookieValue.equalsIgnoreCase("LOGOUT")) ) {
@@ -367,6 +368,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             rb =  rbCache.getResBundle(bundleName, locale);
             
             processLogin();
+            if ((newRequest) && (au.isCookieSupported(request))) {
+                setServerCookies();
+                setCookie();
+                setlbCookie();
+            }
             
         } catch (Exception e) {
             loginDebug.message("New Auth Context Error : " , e);
@@ -446,13 +452,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         // redirect url gets a higher priority
         // if URLRedirection class is implemented
         // and customers want to use login failed url
-        if ((redirect_url != null) && (redirect_url.length() != 0)) {
+        if ((redirect_url != null) && (redirect_url.length() != 0) && (!redirect_url.equals("null"))) {
             jsp_page = "Redirect.jsp";
-        } else if ((errorTemplate != null) && (errorTemplate.length() != 0)) {
+        } else if ((errorTemplate != null) && (errorTemplate.length() != 0) && (!errorTemplate.equals("null"))) {
             jsp_page = errorTemplate;
-        } else if ((ErrorMessage != null) && (ErrorMessage.length() != 0)) {
+        } else if ((ErrorMessage != null) && (ErrorMessage.length() != 0) && (!ErrorMessage.equals("null"))) {
             jsp_page = "Message.jsp";
-        } else if ((pageTemplate != null) && (pageTemplate.length() != 0)) {
+        } else if ((pageTemplate != null) && (pageTemplate.length() != 0) && (!pageTemplate.equals("null"))) {
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("Using module Template : " + pageTemplate);
             }
@@ -655,6 +661,74 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     public void handleHrefRequest(RequestInvocationEvent event) {
         forwardTo();
     }
+
+    private void parseUserCredentials() {
+
+        Enumeration keys = reqDataHash.keys();
+    	
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            if (key.startsWith(TOKEN)) {
+                if(credentials == null) {
+                    tokenType = TOKEN;
+                    credentials = new ArrayList();
+                }
+                try {
+   	            credentials.add(new Integer(key.substring(TOKEN.length())));
+                } catch (NumberFormatException nfe) {
+                    if (loginDebug.messageEnabled()) {
+                     loginDebug.message("Parsing error " +  nfe.getMessage());
+                    }
+                }
+            }
+        }
+    	
+        if (credentials == null) {
+            keys = reqDataHash.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String)keys.nextElement();
+                if (key.startsWith(TOKEN_OLD)) {
+                    if(credentials == null) {
+                        tokenType = TOKEN_OLD;
+                        credentials = new ArrayList();
+                    }
+                    try {
+                        credentials.add(
+                              new Integer(key.substring(TOKEN_OLD.length())));
+                    } catch (NumberFormatException nfe) {
+                        if (loginDebug.messageEnabled()) {
+                           loginDebug.message("Parsing error " +  
+                        		              nfe.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+    	
+        if (credentials != null) {
+            Collections.sort(credentials);
+        }
+    }
+    
+    private void setOnePageLogin() {
+        if (!bAuthLevel) {
+        // Auth Level login will never do one page login.
+            parseUserCredentials();
+
+            if (credentials != null) {
+                onePageLogin = true;
+                userCredentials = new String[2];
+                userCredentials[0] = (String)reqDataHash.get(
+                        tokenType + ((Integer)credentials.get(0)).toString());
+                if (credentials.size() >= 2) {
+                    userCredentials[1] = (String)reqDataHash.get(
+                        tokenType + ((Integer)credentials.get(1)).toString());
+                } else {
+                    userCredentials[1] = "";
+                }
+            }
+        }
+    }
     
     protected void getLoginDisplay() throws Exception {
         loginDebug.message("In getLoginDisplay()");
@@ -667,15 +741,16 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             loginDebug.message("Login Parameters : IndexType = " + indexType +
             " IndexName = " + indexName);
         }
+
+        setOnePageLogin();
         
         try {
             if ( indexType != null ) {
-                ac.login(indexType, indexName);
+                ac.login(indexType, indexName, userCredentials);
                 session.setAttribute("IndexType", indexType.toString());
                 session.setAttribute("IndexName", indexName);
-            }
-            else {
-                ac.login();
+            } else {
+                ac.login(null,null,userCredentials);
             }
         } catch (AuthLoginException le) {
             loginDebug.message("AuthContext()::login error ", le);
@@ -691,61 +766,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             if (ac.hasMoreRequirements(true)) {
                 loginDebug.message("In getLoginDisplay, has More Requirements");
                 callbacks = ac.getRequirements(true);
-                for (int i = 0; i < callbacks.length; i++) {
-                    if (!bAuthLevel) {
-                        // Auth Level login will never do one page login.
-                        if (callbacks[i] instanceof NameCallback) {
-                            if (reqDataHash.get(TOKEN
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            } else if (reqDataHash.get(TOKEN_OLD
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            }
-                        } else if (callbacks[i] instanceof PasswordCallback) {
-                            if (reqDataHash.get(TOKEN
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            } else if (reqDataHash.get(TOKEN_OLD
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            }
-                        } else if (callbacks[i] instanceof ChoiceCallback) {
-                            if (reqDataHash.get(TOKEN
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            } else if (reqDataHash.get(TOKEN_OLD
-                            + Integer.toString(i))!=null) {
-                                onePageLogin = true;
-                                break;
-                            }
-                        } else if (callbacks[i] instanceof
-                            ConfirmationCallback
-                        ) {
-                            if (reqDataHash.get(BUTTON)!=null) {
-                                onePageLogin = true;
-                                break;
-                            } else if (reqDataHash.get(BUTTON_OLD)!=null) {
-                                onePageLogin = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                if (onePageLogin) { // user input login info in URL
-                    loginDebug.message("0 page Login !");
-                    processLoginDisplay();
-                } else {
-                    session.setAttribute("LoginCallbacks", callbacks);
-                    addLoginCallbackMessage(callbacks);
-                    //au.setCallbacksPerState(ac, pageState, callbacks);
-                }
+                session.setAttribute("LoginCallbacks", callbacks);
+                addLoginCallbackMessage(callbacks);
+                //au.setCallbacksPerState(ac, pageState, callbacks);
             } else {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message(
@@ -773,6 +796,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                             "LoginSuccessURL in getLoginDisplay " +
                             "(in case of successful auth) : " + redirect_url);
                     }
+                    ac.getSSOToken().setProperty
+                        (ISAuthConstants.DISTAUTH_LOGINURL,loginURL);
+                    session.invalidate();
                 } else if (ac.getStatus() == AuthContext.Status.FAILED) {
                     LoginFail = true;
                     setErrorMessage(null);
@@ -1055,6 +1081,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                             loginDebug.message("LoginSuccessURL (in case of " +
                             " successful auth) : " + redirect_url);
                         }
+                        ac.getSSOToken().setProperty
+                            (ISAuthConstants.DISTAUTH_LOGINURL,loginURL);
+                        session.invalidate();
                     } else if (ac.getStatus() == AuthContext.Status.FAILED) {
                         LoginFail = true;
                         setErrorMessage(null);
@@ -1285,7 +1314,29 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             setHostUrlCookie(response);
         }
     }
-    
+
+    // Method to set DSAME cookie
+    private void setServerCookies() {
+        Map serverCookieMap = ac.getCookieTable();
+        try {
+            if (serverCookieMap != null && !serverCookieMap.isEmpty()) {
+                for (Iterator it = serverCookieMap.values().iterator();
+                    it.hasNext();){
+                    Cookie cookie = (Cookie)it.next();
+                    if (!cookie.getName().equals("JSESSIONID")){
+                        au.setServerCookie(cookie, response);
+                        String cookieName = cookie.getName();
+                        if (!storeCookies.contains(cookieName)) {
+                            storeCookies.add(cookieName);
+                        }
+                    }
+                }
+            }
+         } catch (Exception exp) {
+             loginDebug.message("could not set server Cookies");
+         }
+    }
+  
     /** Method to clear AM Cookie
      */
     private void clearCookie() {
@@ -1293,6 +1344,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             clearCookie(AuthUtils.getCookieName());
             clearHostUrlCookie(response);
             au.clearlbCookie(response);
+            if (storeCookies != null && !storeCookies.isEmpty()) {
+                for (Iterator it = storeCookies.iterator();
+                    it.hasNext();){
+                    String cookieName = (String)it.next();
+                    au.clearServerCookie(cookieName, response);
+                }
+            }
         }
     }
     
@@ -1707,6 +1765,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     public String gotoUrl = "";
     /** Goto url for login failure */
     public String gotoOnFailUrl = "";
+    ArrayList credentials = null;
+    String tokenType = null;
+    public String[] userCredentials = null; 
     
     /** Default parameter name for old token */
     public static final String TOKEN_OLD = "Login.Token";
