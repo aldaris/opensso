@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.9 2007-01-05 00:44:35 kenwho Exp $
+ * $Id: AMStoreConnection.java,v 1.10 2007-01-10 00:38:58 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,18 +142,6 @@ public final class AMStoreConnection implements AMConstants {
     protected static Debug debug = AMCommonUtils.debug;
 
     static {
-        // This initialization probably should be a method call so that we can
-        // throw an exception if root suffix is incorrect or not specified
-        defaultOrg = rootSuffix = 
-            com.sun.identity.common.DNUtils.normalizeDN(
-                SMSEntry.getAMSdkBaseDN());
-        if (debug.messageEnabled()) {
-            debug.message("com.iplanet.am.rootsuffix " + rootSuffix);
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("default org: " + defaultOrg);
-        }
     }
 
     // ~ Instance fields
@@ -188,6 +176,28 @@ public final class AMStoreConnection implements AMConstants {
 
     // ~ Methods
     // ----------------------------------------------------------------
+
+    /**
+     * Returns the root suffix for user management node.
+     * 
+     * @return root suffix for user management node.
+     *
+     */
+    public static String getAMSdkBaseDN() {
+        defaultOrg = rootSuffix = 
+            com.sun.identity.common.DNUtils.normalizeDN(
+                SMSEntry.getAMSdkBaseDN());
+        if (debug.messageEnabled()) {
+            debug.message("AMStoreConnection:getAMSdkBaseDN():rootsuffix " + 
+                rootSuffix);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("default org: " + defaultOrg);
+            debug.message("AMStoreConnection:getAMSdkBaseDN():default org " + 
+                defaultOrg);
+        }
+        return defaultOrg;
+    }
 
     /**
      * Returns the filtered role naming attribute.

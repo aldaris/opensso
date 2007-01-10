@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.14 2006-12-20 23:07:09 rarcot Exp $
+ * $Id: AMSDKRepo.java,v 1.15 2007-01-10 00:38:58 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -551,7 +551,7 @@ public class AMSDKRepo extends IdRepo {
         if (orgs != null && !orgs.isEmpty()) {
             orgDN = (String) orgs.iterator().next();
         } else {
-            orgDN = AMStoreConnection.rootSuffix;
+            orgDN = AMStoreConnection.getAMSdkBaseDN();
         }
         if (adminToken == null) {
             adminToken = (SSOToken) AccessController

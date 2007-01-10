@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.6 2006-12-20 23:06:17 rarcot Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.7 2007-01-10 00:39:52 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -604,7 +604,8 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
     public Map getDCTreeAttributes(SSOToken token, String entryDN,
             Set attrNames, boolean byteValues, int objectType)
             throws AMException, SSOException {
-        String rootDN = AMStoreConnection.rootSuffix; // Already an RFC String
+        // Already an RFC String
+        String rootDN = AMStoreConnection.getAMSdkBaseDN();
         if (dcTreeImpl.isRequired() && (objectType == AMObject.ORGANIZATION)
                 && (!CommonUtils.formatToRFC(entryDN).equalsIgnoreCase(rootDN)))
         {
@@ -1589,7 +1590,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             if (objectType == AMObject.ORGANIZATION
                     || objectType == AMObject.ORGANIZATIONAL_UNIT) {
                 // Get the parent oganization for this org.
-                DN rootDN = new DN(AMStoreConnection.rootSuffix);
+                DN rootDN = new DN(AMStoreConnection.getAMSdkBaseDN());
                 DN currentOrgDN = new DN(organizationDN);
                 if (!rootDN.equals(currentOrgDN)) {
                     String parentDN = (new DN(organizationDN)).getParent()
@@ -1615,7 +1616,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             if (objectType == AMObject.ORGANIZATION
                     || objectType == AMObject.ORGANIZATIONAL_UNIT) {
                 // Get the parent oganization for this org.
-                DN rootDN = new DN(AMStoreConnection.rootSuffix);
+                DN rootDN = new DN(AMStoreConnection.getAMSdkBaseDN());
                 DN currentOrgDN = new DN(organizationDN);
                 if (!rootDN.equals(currentOrgDN)) {
                     String parentDN = (new DN(organizationDN)).getParent()
@@ -2322,7 +2323,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
     private Map setDCTreeAttributes(SSOToken token, String entryDN,
             Map attributes, int objectType) throws AMException, SSOException {
         if (objectType == AMObject.ORGANIZATION && dcTreeImpl.isRequired()
-                && !entryDN.equals(AMStoreConnection.rootSuffix)) {
+                && !entryDN.equals(AMStoreConnection.getAMSdkBaseDN())) {
             AttrSet attrSet = CommonUtils.mapToAttrSet(attributes);
             String status = attrSet.getValue(INET_DOMAIN_STATUS_ATTRIBUTE);
             if (status != null) {
@@ -2348,7 +2349,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
                     || objectType == AMObject.ORGANIZATIONAL_UNIT) {
                 // Get the parent oganization for this org.
                 // Get the parent oganization for this org.
-                DN rootDN = new DN(AMStoreConnection.rootSuffix);
+                DN rootDN = new DN(AMStoreConnection.getAMSdkBaseDN());
                 DN currentOrgDN = new DN(organizationDN);
                 if (!rootDN.equals(currentOrgDN)) {
                     String parentDN = (new DN(organizationDN)).getParent()
@@ -2371,7 +2372,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             if (objectType == AMObject.ORGANIZATION
                     || objectType == AMObject.ORGANIZATIONAL_UNIT) {
                 // Get the parent oganization for this org.
-                DN rootDN = new DN(AMStoreConnection.rootSuffix);
+                DN rootDN = new DN(AMStoreConnection.getAMSdkBaseDN());
                 DN currentOrgDN = new DN(organizationDN);
                 if (!rootDN.equals(currentOrgDN)) {
                     String parentDN = (new DN(organizationDN)).getParent()
@@ -2757,7 +2758,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             Guid[] membersGuid = CommonUtils.toGuidArray(members);
             adgroup.addMembers(CommonUtils.toGuidArray(members));
             if (complianceImpl
-                    .isAdminGroupsEnabled(AMStoreConnection.rootSuffix)) {
+                    .isAdminGroupsEnabled(AMStoreConnection.getAMSdkBaseDN())) {
                 complianceImpl.verifyAndLinkGroupToRole(token, membersGuid,
                         target);
             }
@@ -2770,7 +2771,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             // COMPLIANCE: if admin group then perform iplanet
             // compliance related operations if needed.
             if (complianceImpl
-                    .isAdminGroupsEnabled(AMStoreConnection.rootSuffix)) {
+                    .isAdminGroupsEnabled(AMStoreConnection.getAMSdkBaseDN())) {
                 complianceImpl.verifyAndUnLinkGroupToRole(token, members,
                         target);
             }
@@ -3390,7 +3391,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
 
             AMStoreConnection amsc = new AMStoreConnection(CommonUtils
                     .getInternalToken());
-            DN rootDN = new DN(AMStoreConnection.rootSuffix);
+            DN rootDN = new DN(AMStoreConnection.getAMSdkBaseDN());
             DN thisDN = new DN(orgDN);
 
             for (int i = size - 2; i >= 0; i--) {
@@ -3655,7 +3656,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
                     + SearchFilterManager.getGlobalSearchFilter(AMObject.GROUP)
                     + ")";
 
-            set = search(token, AMStoreConnection.rootSuffix, filter, 
+            set = search(token, AMStoreConnection.getAMSdkBaseDN(), filter, 
                     SCOPE_SUB);
         }
 

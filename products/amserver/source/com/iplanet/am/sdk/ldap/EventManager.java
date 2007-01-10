@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventManager.java,v 1.3 2006-12-15 00:50:07 goodearth Exp $
+ * $Id: EventManager.java,v 1.4 2007-01-10 00:39:52 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,8 @@ import com.iplanet.am.util.SystemProperties;
 class EventManager {
     protected static final int EVENT_SCOPE = LDAPv2.SCOPE_SUB;
 
-    protected static String EVENT_BASE_NODE = AMStoreConnection.rootSuffix;
+    protected static String EVENT_BASE_NODE = 
+        AMStoreConnection.getAMSdkBaseDN();
 
     protected static final String ACI_EVENT_LISTENER_CLASS = 
         "com.iplanet.am.sdk.ldap.ACIEventListener";

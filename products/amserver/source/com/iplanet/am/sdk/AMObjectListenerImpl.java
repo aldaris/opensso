@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectListenerImpl.java,v 1.3 2006-12-15 21:39:31 kenwho Exp $
+ * $Id: AMObjectListenerImpl.java,v 1.4 2007-01-10 00:38:58 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,8 +134,9 @@ public class AMObjectListenerImpl implements AMObjectListener {
         debug.error("AMObjectListenerImpl: Received all objects changed "
                 + "event from event service");
 
-        AMEvent amEvent = new AMEvent(AMStoreConnection.rootSuffix);
-        AMObjectImpl.notifyAffectedDNs(AMStoreConnection.rootSuffix, amEvent);
+        AMEvent amEvent = new AMEvent(AMStoreConnection.getAMSdkBaseDN());
+        AMObjectImpl.notifyAffectedDNs(AMStoreConnection.getAMSdkBaseDN(), 
+            amEvent);
 
         // FIXME: Avoid calling AM SDK Repo plugin here
         AMSDKRepo.notifyAllObjectsChangedEvent();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.8 2006-12-15 21:38:59 kenwho Exp $
+ * $Id: AMObjectImpl.java,v 1.9 2007-01-10 00:38:57 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,7 +449,7 @@ class AMObjectImpl implements AMObject {
     }
 
     public String getParentDN() {
-        if (entryDN.equalsIgnoreCase(AMStoreConnection.rootSuffix)) {
+        if (entryDN.equalsIgnoreCase(AMStoreConnection.getAMSdkBaseDN())) {
             return null;
         } else {
             return new DN(entryDN).getParent().toString();
@@ -2982,8 +2982,8 @@ class AMObjectImpl implements AMObject {
 
         while (iter.hasNext()) {
             String aci = (String) iter.next();
-            Set objs = dsServices.search(token, AMStoreConnection.rootSuffix,
-                    "(&"
+            Set objs = dsServices.search(token, 
+                AMStoreConnection.getAMSdkBaseDN(),"(&"
                             + AMSearchFilterManager
                                     .getGlobalSearchFilter(AMObject.GROUP)
                             + "(iplanet-am-role-aci-list=" + aci + "))",

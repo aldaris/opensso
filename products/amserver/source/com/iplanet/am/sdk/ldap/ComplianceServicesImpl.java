@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.4 2007-01-09 06:52:38 veiming Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.5 2007-01-10 00:39:51 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,6 @@ import com.iplanet.ums.PersistentObject;
 import com.iplanet.ums.UMSException;
 import com.iplanet.ums.UMSObject;
 
-import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -56,6 +55,7 @@ import com.iplanet.am.sdk.AMEntryExistsException;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.sdk.AMSDKBundle;
+import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.common.IComplianceServices;
 import com.sun.identity.shared.debug.Debug;
 
@@ -121,8 +121,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
     static SSOToken internalToken = CommonUtils.getInternalToken();
 
     static {
-        rootSuffix = (new DN(SMSEntry.getAMSdkBaseDN()).toRFCString()
-                .toLowerCase());
+        rootSuffix = AMStoreConnection.getAMSdkBaseDN();
         if (rootSuffix == null || rootSuffix == "") {
             debug.error("com.iplanet.am.rootsuffix property value "
                     + "should not be null");

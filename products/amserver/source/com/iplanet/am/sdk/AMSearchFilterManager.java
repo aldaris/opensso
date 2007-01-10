@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchFilterManager.java,v 1.4 2006-12-15 21:40:05 kenwho Exp $
+ * $Id: AMSearchFilterManager.java,v 1.5 2007-01-10 00:38:58 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,8 @@ public class AMSearchFilterManager {
             String searchTemplateName, boolean ignoreComplianceFilter) {
         String filter;
         String organizationDN = new DN(orgDN).toRFCString();
-        String rootSuffixDN = AMStoreConnection.rootSuffix; // Already in RFC
+        // Already in RFC
+        String rootSuffixDN = AMStoreConnection.getAMSdkBaseDN(); 
         if (orgDN != null && organizationDN.equals(rootSuffixDN)) {
             orgDN = null;
         }
