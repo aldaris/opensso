@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Assertion.java,v 1.1 2006-10-30 23:15:34 qcheng Exp $
+ * $Id: Assertion.java,v 1.2 2007-01-10 06:30:32 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -303,8 +303,7 @@ public class Assertion extends AssertionBase {
             throw new SAMLRequesterException(
                                 SAMLUtils.bundle.getString("missingAttribute")
                                     +":"+"IssueInstant");
-        }
-        else  {
+        } else  {
             try {
                 _issueInstant = DateUtils.stringToDate(read);
             } catch (ParseException pe) {
