@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remoteInterface.dtd,v 1.1 2006-08-29 07:52:18 veiming Exp $
+    $Id: remoteInterface.dtd,v 1.2 2007-01-10 02:25:48 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -179,6 +179,9 @@ Unique Declaration name for DOCTYPE tag:
      error message is sent back to the client using Exception.
      The attribute requestId specifies the id of the request to
      which this response is regarding.
+     The attribute issueInstant the time at which the response was issued.
+     This is the difference, measured in milliseconds, between the current 
+     time and midnight, January 1, 1970 UTC
 -->
 
 <!ELEMENT    PolicyResponse    ( ResourceResult+ 
@@ -188,6 +191,7 @@ Unique Declaration name for DOCTYPE tag:
                                  | Exception ) >
 <!ATTLIST    PolicyResponse
     requestId      CDATA        #REQUIRED
+    issueInstant   CDATA        #IMPLIED
 >
 
 

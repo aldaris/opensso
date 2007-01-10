@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.4 2006-08-25 21:21:12 veiming Exp $
+ * $Id: PolicyRequestHandler.java,v 1.5 2007-01-10 02:25:47 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,6 +132,7 @@ public class PolicyRequestHandler implements RequestHandler {
                 pRes.setMethodID(PolicyResponse.POLICY_EXCEPTION);
                 pRes.setRequestId(pe.getRequestId());
                 pRes.setExceptionMsg(pe.getMessage());
+                pRes.setIssueInstant(System.currentTimeMillis());
                 ps.setMethodID(PolicyService.POLICY_RESPONSE_ID);
                 ps.setPolicyResponse(pRes); 
                 res = new Response(ps.toXMLString());
@@ -213,6 +214,7 @@ public class PolicyRequestHandler implements RequestHandler {
             psRes.setRevision(getPolicyServiceRevision());
 
             PolicyResponse policyRes = processPolicyRequest(policyReq);
+            policyRes.setIssueInstant(System.currentTimeMillis());
             psRes.setMethodID(PolicyService.POLICY_RESPONSE_ID);
             psRes.setPolicyResponse(policyRes);
             return psRes;

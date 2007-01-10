@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyResponse.java,v 1.3 2006-08-25 21:21:12 veiming Exp $
+ * $Id: PolicyResponse.java,v 1.4 2007-01-10 02:25:47 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,6 +92,7 @@ public class PolicyResponse {
 
     static final String POLICY_RESPONSE = PolicyService.POLICY_RESPONSE;
     static final String REQUEST_ID = "requestId";
+    static final String ISSUE_INSTANT = "issueInstant";
     static final String RESOURCE_RESULT = "ResourceResult";
     static final String ADD_LISTENER_RESPONSE = "AddPolicyListenerResponse";
     static final String REMOVE_LISTENER_RESPONSE =
@@ -103,6 +104,7 @@ public class PolicyResponse {
     static Debug debug = PolicyService.debug;
     
     private int methodID = 0;
+    private long issueInstant = 0;
     private String requestId = null;
     private Set resourceResults = null;
     private AdvicesHandleableByAMResponse advicesHandleableByAMResponse = null;
@@ -148,6 +150,24 @@ public class PolicyResponse {
      */
     public void setRequestId(String reqId) {
         requestId = reqId;
+    }
+
+    /**
+     * Returns the issue instant
+     *
+     * @return the issue instant
+     */
+    public long getIssueInstant() {
+        return issueInstant;
+    }
+
+    /**
+     * Sets the issue instant
+     *
+     * @param issueInst issue instant
+     */
+    public void setIssueInstant(long issueInst) {
+        issueInstant = issueInst;
     }
 
     /**
@@ -228,6 +248,24 @@ public class PolicyResponse {
         }
         pres.setRequestId(attr);
 
+        String issueInst = XMLUtils.getNodeAttributeValue(pNode, ISSUE_INSTANT);
+        if ((issueInst != null) && (issueInst.length() != 0)) {
+            try {
+                pres.setIssueInstant(Long.parseLong(issueInst));
+            } catch(NumberFormatException nfe) {
+                //This should never happen 
+                if (debug.warningEnabled()) {
+                    debug.message("PolicyResponse: invald value for attribute:" 
+                            + ISSUE_INSTANT + ":" + issueInst);
+                }
+            }
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message("PolicyResponse: missing attribute: " 
+                        + ISSUE_INSTANT);
+            }
+        }
+
         Set nodeSet = XMLUtils.getChildNodes(pNode, RESOURCE_RESULT);
         if ((nodeSet != null) && (nodeSet.size() != 0)) {
             Set resResults = new HashSet();
@@ -299,10 +337,13 @@ public class PolicyResponse {
              .append(POLICY_RESPONSE)
              .append(" ")
              .append(REQUEST_ID)
-             .append("=\"")
-             .append(requestId)
-             .append("\">")
-             .append(CRLF);
+             .append("=\"").append(requestId).append("\" ");
+        if (issueInstant != 0) {
+            xmlsb.append(ISSUE_INSTANT)
+                .append("=\"") .append(issueInstant).append("\" ");
+        }
+        xmlsb.append(">")
+            .append(CRLF);
 
         if (methodID == POLICY_RESPONSE_RESOURCE_RESULT) { 
             Iterator itr = resourceResults.iterator();
