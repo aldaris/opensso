@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.6 2006-12-15 21:27:13 goodearth Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.7 2007-01-10 00:40:48 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,8 +154,8 @@ public class OrgConfigViaAMSDK {
             // Get the Realm <---> LDAP Org attribute mappings.
             // To get the service config of idrepo service.
             String newOrg = orgName;
-            if (!SMSEntry.baseDN.equalsIgnoreCase(
-                SMSEntry.amsdkbaseDN)) {
+            if (!SMSEntry.getRootSuffix().equalsIgnoreCase(
+                SMSEntry.getAMSdkBaseDN())) {
                 newOrg = smsOrgName;
             }
 

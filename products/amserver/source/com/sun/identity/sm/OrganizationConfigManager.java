@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.9 2006-12-15 00:56:37 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.10 2007-01-10 00:40:47 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,10 +73,10 @@ public class OrganizationConfigManager {
 
     static Pattern svcDNpattern = Pattern.compile(DNMapper.serviceDN);
 
-    static Pattern baseDNpattern = Pattern.compile(SMSEntry.baseDN);
+    static Pattern baseDNpattern = Pattern.compile(SMSEntry.getRootSuffix());
 
     protected static final String SERVICES_NODE = SMSEntry.SERVICES_RDN
-            + SMSEntry.COMMA + SMSEntry.baseDN;
+            + SMSEntry.COMMA + SMSEntry.getRootSuffix();
 
     // set the special characters which are not in realm names.
     static String specialCharsString = "*|(|)|!|/|=";
@@ -538,8 +538,8 @@ public class OrganizationConfigManager {
         // delete the corresponding organization.
         if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
             String amsdkName = DNMapper.realmNameToAMSDKName(subOrgDN);
-            if (!SMSEntry.baseDN.equalsIgnoreCase(
-                SMSEntry.amsdkbaseDN)) {
+            if (!SMSEntry.getRootSuffix().equalsIgnoreCase(
+                SMSEntry.getAMSdkBaseDN())) {
                 String convOrg = subOrgName;
                 if (subOrgName.startsWith("/")) {
                     convOrg = DNMapper.convertToDN(subOrgName).toString();
@@ -1160,7 +1160,7 @@ public class OrganizationConfigManager {
             int ndx = subOrgName.lastIndexOf(DNMapper.serviceDN);
             if (ndx == -1) {
                 // Check for baseDN
-                ndx = subOrgName.lastIndexOf(SMSEntry.baseDN);
+                ndx = subOrgName.lastIndexOf(SMSEntry.getRootSuffix());
             }
             if (ndx > 0) {
                 subOrgName = subOrgName.substring(0, ndx - 1);
@@ -1576,8 +1576,8 @@ public class OrganizationConfigManager {
                 }
                 Iterator items = defaultServices.iterator();
                 String serviceName = null;
-                if (SMSEntry.baseDN.equalsIgnoreCase(
-                    SMSEntry.amsdkbaseDN)) {
+                if (SMSEntry.getRootSuffix().equalsIgnoreCase(
+                    SMSEntry.getAMSdkBaseDN())) {
                     amsdk = new OrgConfigViaAMSDK(token,
                       orgNamingAttrInLegacyMode + SMSEntry.EQUALS +
                         subOrgName + SMSEntry.COMMA +
