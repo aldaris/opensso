@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSOAPReceiver.java,v 1.1 2006-10-30 23:14:24 qcheng Exp $
+ * $Id: FSSOAPReceiver.java,v 1.2 2007-01-10 06:29:32 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.fednsso.FSSSOBrowserArtifactProfileHandler;
 import com.sun.identity.federation.services.fednsso.FSSSOLECPProfileHandler;
 import com.sun.identity.federation.services.logout.FSLogoutStatus;
@@ -70,6 +71,8 @@ import java.net.*;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -94,6 +97,8 @@ import org.w3c.dom.Element;
 public class FSSOAPReceiver extends HttpServlet {
     private static MessageFactory msgFactory = null;
     private static FSSOAPService soapService;
+    private static final String MESSAGE = "message";
+    private static final String USERID = "userID";
 
     /**
      * Initializes the servlet.
@@ -419,7 +424,8 @@ public class FSSOAPReceiver extends HttpServlet {
                         FSNameRegistrationResponse regisResponse =
                             handleRegistrationRequest(
                                 elt, message, hostedProviderDesc, hostedConfig,
-                                hostedRole, hostedEntityId, providerAlias);
+                                hostedRole, hostedEntityId, providerAlias,
+                                request, response);
                         if (regisResponse == null) {
                             FSUtils.debug.error(
                                 "Error in creating NameRegistration Response");
@@ -625,7 +631,7 @@ public class FSSOAPReceiver extends HttpServlet {
                     FSUtils.debug.message(
                         "calling FSSOAPReceiver::handleTerminationRequest");
                     boolean bHandleStatus = handleTerminationRequest(
-                        elt, message, request);
+                        elt, message, request, response);
                     if (bHandleStatus) {
                         FSUtils.debug.message(
                             "Completed processing terminationRequest");
@@ -698,28 +704,33 @@ public class FSSOAPReceiver extends HttpServlet {
                        FSUtils.debug.error("FSSOAPReceiver, provider", e);
                     }
 
-                    SOAPMessage retSoapMessage = handleLogoutRequest(
-                        elt, message, request, hostedProviderDesc,
+                    FSLogoutNotification logoutRequest = 
+                        new FSLogoutNotification(elt);
+
+                    Map map = handleLogoutRequest(
+                        elt, logoutRequest, message, request, response,
+                        hostedProviderDesc,
                         hostedConfig, providerAlias, hostedEntityId,
                         hostedRole);
-                    FSLogoutNotification logoutRqst = 
-                        new FSLogoutNotification(elt);
                     
                     String responseID = SAMLUtils.generateID();
-                    String inResponseTo = logoutRqst.getRequestID();
-                    String relayState = logoutRqst.getRelayState();
+                    String inResponseTo = logoutRequest.getRequestID();
+                    String relayState = logoutRequest.getRelayState();
                     FSLogoutResponse resp = null;
-                    if (retSoapMessage == null) {
-                        StatusCode statusCode = 
+                    boolean statusSuccess = false;
+                    SOAPMessage retSoapMessage = null;
+                    if (map == null) {
+                        StatusCode statusCode =
                             new StatusCode(IFSConstants.SAML_FAILURE);
                         Status status = new Status(statusCode);
                         resp = new FSLogoutResponse(responseID,
                                                     inResponseTo,
                                                     status,
-                                                    hostedEntityId, 
+                                                    hostedEntityId,
                                                     relayState);
-                        
+
                     } else {
+                        retSoapMessage = (SOAPMessage) map.get(MESSAGE);
                         SOAPPart sp = retSoapMessage.getSOAPPart();
                         SOAPEnvelope se = sp.getEnvelope();
                         SOAPBody sb = se.getBody();
@@ -744,12 +755,39 @@ public class FSSOAPReceiver extends HttpServlet {
                                                         status,
                                                         hostedEntityId, 
                                                         relayState);
+                            statusSuccess = true;
                         }
                     }
                     resp.setID(IFSConstants.LOGOUTID);
-                    resp.setMinorVersion(logoutRqst.getMinorVersion());
+                    resp.setMinorVersion(logoutRequest.getMinorVersion());
                     retSoapMessage = soapService.bind(
                         resp.toXMLString(true, true));
+
+                    // Call SP Adapter postSingleLogoutSuccess for IDP/SOAP
+                    if (hostedRole != null &&
+                        hostedRole.equalsIgnoreCase(IFSConstants.SP) && 
+                        statusSuccess) 
+                    {
+                        FederationSPAdapter spAdapter =
+                            FSServiceUtils.getSPAdapter(
+                                hostedEntityId, hostedConfig);
+                        if (spAdapter != null) {
+                            if (FSUtils.debug.messageEnabled()) {
+                                FSUtils.debug.message("FSSOAPReceiver, "
+                                    + "call postSingleLogoutSuccess, IDP/SOAP");                            }
+                            try {
+                                spAdapter.postSingleLogoutSuccess(
+                                    hostedEntityId,
+                                    request, response, (String) map.get(USERID),                                    logoutRequest, resp,
+                                    IFSConstants.LOGOUT_IDP_SOAP_PROFILE);
+                            } catch (Exception e) {
+                                // ignore adapter exception
+                                FSUtils.debug.error("postSingleLogoutSuccess."
+                                    + "IDP/SOAP", e);
+                            }
+                        }
+                    }
+
                     if (FSServiceUtils.isSigningOn()){
                         try{
                             int minorVersion = resp.getMinorVersion(); 
@@ -868,8 +906,10 @@ public class FSSOAPReceiver extends HttpServlet {
         BaseConfigType hostedConfig,
         String hostedRole,
         String hostedEntityId,
-        String providerAlias
-    ) {
+        String providerAlias,
+        HttpServletRequest request,
+        HttpServletResponse response)
+    {
         try {
             FSNameRegistrationRequest regisRequest =
                 new FSNameRegistrationRequest(elt);
@@ -908,12 +948,13 @@ public class FSSOAPReceiver extends HttpServlet {
                             hostedProviderDesc);
                         regisHandler.setHostedDescriptorConfig(hostedConfig);
                         regisHandler.setHostedEntityId(hostedEntityId);
+                        regisHandler.setHostedProviderRole(hostedRole);
                         regisHandler.setMetaAlias(providerAlias);
                         regisHandler.setRemoteDescriptor(remoteDesc);
                         regisHandler.setRemoteEntityId(remoteEntityId);
                         FSNameRegistrationResponse regisResponse =
-                            regisHandler.processRegistrationRequest(
-                                regisRequest);
+                            regisHandler.processSOAPRegistrationRequest(
+                                request, response, regisRequest);
                         return regisResponse;
                     } else {
                         if (FSUtils.debug.messageEnabled()) {
@@ -942,7 +983,8 @@ public class FSSOAPReceiver extends HttpServlet {
     private boolean handleTerminationRequest(
         Element elt,
         SOAPMessage terminationMsg,
-        HttpServletRequest request) 
+        HttpServletRequest request,
+        HttpServletResponse response) 
     {
         try {
             String providerAlias = FSServiceUtils.getMetaAlias(request);
@@ -1031,13 +1073,15 @@ public class FSSOAPReceiver extends HttpServlet {
                             terminationHandler.setHostedEntityId(
                                 hostedEntityId);
                             terminationHandler.setMetaAlias(providerAlias);
+                            terminationHandler.setHostedProviderRole(
+                                hostedRole);
                             terminationHandler.setRemoteEntityId(
                                 remoteEntityId);
                             terminationHandler.setRemoteDescriptor(
                                 remoteDesc);
                             boolean bProcessStatus = terminationHandler.
-                                processTerminationRequest(
-                                    terminationRequest);
+                                processSOAPTerminationRequest(
+                                    request, response, terminationRequest);
                             return bProcessStatus;
                         } else {
                             FSUtils.debug.error(
@@ -1071,28 +1115,31 @@ public class FSSOAPReceiver extends HttpServlet {
      * Initiates the processing of the logout request received from a remote
      * trusted provider.
      * @param elt containing the logout request in the XML message
+     * @param logoutRequest logout notification
      * @param msgLogout logout message
      * @param request http request object
+     * @param response http response object
      * @param hostedProviderDesc hosted provider meta descriptor
      * @param hostedConfig hosted provider's extended meta
      * @param providerAlias hosted provider's meta alias
      * @param hostedEntityId hosted provider's entity ID
      * @param hostedRole hosted provider's role
-     * @return logout response message
+     * @return null if error in processing, or Map containing two
+     * keys, MESSAGE for SOAPMessage object and USERID for userID string
      */
-    private SOAPMessage handleLogoutRequest(Element elt, 
-            SOAPMessage msgLogout,
-            HttpServletRequest request,
-            ProviderDescriptorType hostedProviderDesc,
-            BaseConfigType hostedConfig,
-            String providerAlias,
-            String hostedEntityId,
-            String hostedRole) 
+    private Map handleLogoutRequest(
+        Element elt, 
+        FSLogoutNotification logoutRequest,       
+        SOAPMessage msgLogout,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        ProviderDescriptorType hostedProviderDesc,
+        BaseConfigType hostedConfig,
+        String providerAlias,
+        String hostedEntityId,
+        String hostedRole) 
     {
         try {
-            FSLogoutNotification logoutRequest =
-                new FSLogoutNotification(elt);
-
             String remoteEntityId = logoutRequest.getProviderId();
             ProviderDescriptorType remoteDesc = 
                 getRemoteProviderDescriptor(
@@ -1134,9 +1181,32 @@ public class FSSOAPReceiver extends HttpServlet {
                             "FSSOAPReceiver:handleLogoutRequest"
                             + " found user Id = " + userID);
                     }
-                    if (userID == null) {
-                        return null;
+                    // Call SP Adapter preSingleLogoutProcess for IDP/SOAP
+                    if (hostedRole != null &&
+                        hostedRole.equalsIgnoreCase(IFSConstants.SP)) 
+                    {
+                        FederationSPAdapter spAdapter =
+                            FSServiceUtils.getSPAdapter(
+                                hostedEntityId, hostedConfig);
+                        if (spAdapter != null) {
+                            if (FSUtils.debug.messageEnabled()) {
+                                FSUtils.debug.message("FSSOAPReceiver, " +
+                                "call preSingleLogoutProcess, IDP/SOAP");
+                            }
+                            try {
+                                spAdapter.preSingleLogoutProcess(
+                                    hostedEntityId,
+                                    request, response, userID,
+                                    logoutRequest, null,
+                                    IFSConstants.LOGOUT_IDP_SOAP_PROFILE);
+                            } catch (Exception e){
+                                // ignore adapter process error
+                                FSUtils.debug.error("preSingleLogoutProcess." +
+                                    "IDP/SOAP", e);
+                            }
+                        }
                     }
+
                     if (!isUserExists(userID, hostedEntityId)) {
                         // Need to get the list of servers from the 
                         // platform list and make a call to each of them 
@@ -1226,12 +1296,21 @@ public class FSSOAPReceiver extends HttpServlet {
                                             instSOAP.sendMessage(
                                                 msgLogout,
                                                 remoteURL.toString());
-                                        return retSOAPMessage;
+                                        if (retSOAPMessage != null) {
+                                            Map map = new HashMap();
+                                            map.put(MESSAGE, retSOAPMessage);
+                                            if (userID != null) {
+                                                map.put(USERID, userID);
+                                            }
+                                            return map;
+                                        } else {
+                                            return null;
+                                        }
                                     } catch(SOAPException e){
                                         FSUtils.debug.error(
                                         "FSSOAPException in doSOAPProfile"
                                         + " Cannot send request", e );
-                                        return retSOAPMessage;
+                                        return null;
                                     }
                                 } else {
                                     return null;
@@ -1263,13 +1342,35 @@ public class FSSOAPReceiver extends HttpServlet {
                             {
                                 MessageFactory factory = 
                                     MessageFactory.newInstance();        
-                                return factory.createMessage();
+                                SOAPMessage successSOAP =
+                                    factory.createMessage();
+                                if (successSOAP != null) {
+                                    Map map = new HashMap();
+                                    map.put(MESSAGE, successSOAP);
+                                    if (userID != null) {
+                                        map.put(USERID, userID);
+                                    }
+                                    return map;
+                                } else {
+                                    return null;
+                                }
                             } else  if (bProcessStatus.getStatus().
                                 equalsIgnoreCase(
                                     IFSConstants.SAML_UNSUPPORTED)) 
                             {
-                                return soapService.formSOAPError(
+                                SOAPMessage retSOAPMessage =
+                                    soapService.formSOAPError(
                                     "Server", "cannotProcessRequest", null);
+                                if (retSOAPMessage != null) {
+                                    Map map = new HashMap();
+                                    map.put(MESSAGE, retSOAPMessage);
+                                    if (userID != null) {
+                                        map.put(USERID, userID);
+                                    }
+                                    return map;
+                                } else {
+                                    return null;
+                                }
                             } else {
                                 return null;
                             }
@@ -1281,7 +1382,7 @@ public class FSSOAPReceiver extends HttpServlet {
                         }
                     } else {
                         FSUtils.debug.message("FSServiceManager instance is"
-                            + "null. Cannot process termination request");
+                            + "null. Cannot process logout request");
                         return null;
                     }
                 }

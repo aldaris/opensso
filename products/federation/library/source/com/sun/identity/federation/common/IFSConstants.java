@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.2 2006-10-31 03:58:22 qcheng Exp $
+ * $Id: IFSConstants.java,v 1.3 2007-01-10 06:29:30 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -745,6 +745,34 @@ public interface IFSConstants {
      */    
     public static final String NAME_REGISTRATION_PROFILE =
         "http://projectliberty.org/profiles/rni-soap";
+
+    /**
+     * URI for HTTP-Redirect-based Name Identifier Registration Profile
+     * initiated at Service Provider
+     */
+    public static final String NAME_REGISTRATION_SP_HTTP_PROFILE =
+        "http://projectliberty.org/profiles/rni-sp-http";
+    /**
+     * URI for SOAP/HTTP-based Name Identifier Registration Profile
+     * initiated at Service Provider
+     */
+    public static final String NAME_REGISTRATION_SP_SOAP_PROFILE =
+        "http://projectliberty.org/profiles/rni-sp-soap";
+    /**
+     * URI for HTTP-Redirect-based Name Identifier Registration Profile
+     * initiated at Identity Provider
+     */
+    public static final String NAME_REGISTRATION_IDP_HTTP_PROFILE =
+        "http://projectliberty.org/profiles/rni-idp-http";
+
+    /**
+     * URI for SOAP/HTTP-based Name Identifier Registration Profile
+     * initiated at Identity Provider
+     */
+    public static final String NAME_REGISTRATION_IDP_SOAP_PROFILE =
+        "http://projectliberty.org/profiles/rni-idp-soap";
+
+
     /**
      * FedCookie name 
      */   
@@ -1701,6 +1729,14 @@ public interface IFSConstants {
      * Anonymous Onetime federation
      */
     public static final String ANONYMOUS_ONETIME = "anonymousOnetime";
+    /**
+     * Parameter for status code. Used in FederationSPAdapter.
+     */
+    public static final String STATUS_CODE = "StatusCode";
+    /**
+     * Parameter for failure code. Used in FederationSPAdapter.
+     */
+    public static final String FAILURE_CODE = "FailureCode";
 
     /**
      * Used by <code>FSUserProvider</code> to pass in termination request
@@ -2297,6 +2333,11 @@ public interface IFSConstants {
      * Federation Service Provider Adapter 
      */ 
     public String FEDERATION_SP_ADAPTER = "federationSPAdapter";
+
+    /**
+     * Environment variables for Federation Service Provider Adapter
+     */ 
+    public String FEDERATION_SP_ADAPTER_ENV = "federationSPAdapterEnv";
 
     /**
      * Service Provider's supported profiles for single sign on.

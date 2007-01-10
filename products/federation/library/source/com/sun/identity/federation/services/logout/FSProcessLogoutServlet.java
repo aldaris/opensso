@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSProcessLogoutServlet.java,v 1.1 2006-10-30 23:14:32 qcheng Exp $
+ * $Id: FSProcessLogoutServlet.java,v 1.2 2007-01-10 06:29:33 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.services.util.FSSignatureUtil;
 import com.sun.identity.federation.services.FSServiceManager;
@@ -245,7 +246,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                         "Control where Source is local -  from applink");
                     doLogoutInitiation(request, response, hostedProviderDesc, 
                         hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL);
+                        ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 } else if (sourceCheck.equalsIgnoreCase("remote")){
                     // logout return
@@ -256,7 +257,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     }
                     doLogoutInitiation(request, response, hostedProviderDesc, 
                         hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL);
+                        ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 } else if (sourceCheck.equalsIgnoreCase("logoutGet")){
                     // logout Get profile
@@ -268,14 +269,14 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     }
                     doLogoutInitiation(request, response, hostedProviderDesc, 
                         hostedConfig, hostedEntityId, hostedRole, providerAlias,
-                        ssoToken, logoutDoneURL);
+                        ssoToken, logoutDoneURL, sourceCheck);
                     return;
                 }
             }
         }
 
         // received logout request from remote provider
-        FSLogoutNotification logoutObj = new FSLogoutNotification();
+        FSLogoutNotification logoutObj = null;
         try {
             logoutObj = FSLogoutNotification.parseURLEncodedRequest(request);
         } catch (FSMsgException e) {
@@ -407,7 +408,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     request, remoteDesc, remoteEntityId, isIDP);
             } catch(FSException e) {
                 FSUtils.debug.error(
-                    "FSFedTerminationHandler::processTerminationRequest " +
+                    "FSProcessLogoutServlet::doRequestProcessing " +
                     "Signature on Logout request is invalid" +
                     "Cannot proceed federation Logout");
                 String[] data = { userID };
@@ -418,7 +419,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 return;
             } catch(SAMLException e) {
                 FSUtils.debug.error(
-                    "FSFedTerminationHandler::processTerminationRequest " +
+                    "FSProcessLogoutServlet::doRequestProcessing(SAML) " +
                     "Signature on Logout request is invalid" +
                     "Cannot proceed federation Logout");
                 String[] data = { userID };
@@ -441,6 +442,11 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     if (instSManager != null) {
                         FSUtils.debug.message(
                             "FSServiceManager Instance not null");
+                        // Call SP Adapter preSingleLogoutProcess
+                        // for IDP/HTTP case
+                        callPreSingleLogoutProcess(request, response,
+                            hostedRole, hostedConfig, hostedEntityId, 
+                            userID, reqLogout);
                         FSPreLogoutHandler handlerObj =
                             instSManager.getPreLogoutHandler();
                         if (handlerObj != null) {
@@ -454,7 +460,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                             handlerObj.setMetaAlias(metaAlias);
                             handlerObj.setRemoteEntityId(remoteEntityId);
                             handlerObj.setRemoteDescriptor(remoteDesc);
-                            handlerObj.processSingleLogoutRequest(
+                            handlerObj.processHttpSingleLogoutRequest(
                                 request, response, ssoToken);
                             return;
                         }
@@ -510,7 +516,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
             }
         } else {
             FSUtils.debug.error(
-                "FSFedTerminationServlet::doRequestProcesing " +
+                "FSProcessLogoutServlet::doRequestProcesing " +
                 "Signature on Logout request is invalid" +
                 "Cannot proceed federation Logout");
             String[] data = { userID };
@@ -545,7 +551,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
         String hostedRole,
         String metaAlias,
         Object ssoToken,
-        String logoutDoneURL)
+        String logoutDoneURL,
+        String sourceCheck)
     {
         FSUtils.debug.message("FSProcessLogoutServlet::doLogoutInitiation");
         FSServiceManager instSManager = FSServiceManager.getInstance();
@@ -559,7 +566,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 handlerObj.setHostedEntityId(hostedEntityId);
                 handlerObj.setHostedProviderRole(hostedRole);
                 handlerObj.setMetaAlias(metaAlias);
-                handlerObj.handleSingleLogout(request, response, ssoToken);
+                handlerObj.handleSingleLogout(
+                    request, response, ssoToken, sourceCheck);
                 return;
             } else {
                 FSUtils.debug.error(
@@ -619,6 +627,37 @@ public class FSProcessLogoutServlet extends HttpServlet {
         } else {
             FSUtils.debug.message("Logout request is properly signed");
             return true;
+        }
+    }
+
+    private void callPreSingleLogoutProcess(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String hostedRole,
+        BaseConfigType hostedConfig,
+        String hostedEntityId,
+        String userID,
+        FSLogoutNotification reqLogout) {
+        // Call SP Adapter preSingleLogout for remote IDP initated HTTP request
+        if (hostedRole != null && hostedRole.equalsIgnoreCase(IFSConstants.SP))
+        {
+            FederationSPAdapter spAdapter =
+                FSServiceUtils.getSPAdapter(hostedEntityId, hostedConfig);
+            if (spAdapter != null) {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("FSProcessLogoutServlet, " +
+                        "call preSingleLogoutProcess");
+                }
+                try {
+                    spAdapter.preSingleLogoutProcess(
+                        hostedEntityId,
+                        request, response, userID, reqLogout, null,
+                        IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE);
+                } catch (Exception e) {
+                    // ignore adapter exception
+                    FSUtils.debug.error("preSingleLogoutProcess.IDP/HTTP", e);
+                }
+            }
         }
     }
 }   // FSProcessLogoutServlet

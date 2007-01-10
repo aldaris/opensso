@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.2 2006-10-31 03:58:24 qcheng Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.3 2007-01-10 06:29:33 exu Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1208,6 +1208,9 @@ public abstract class FSSSOAndFedHandler {
                         "AuthnRequestProcessingFailed");
                     status = new Status(
                         new StatusCode("samlp:Responder"), message, null);
+                    if (noFedStatus != null) {
+                        status = noFedStatus;
+                    }
                     errResponse = new FSAuthnResponse(null, 
                                 inResponseTo,
                                 status,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationInitiationServlet.java,v 1.1 2006-10-30 23:14:34 qcheng Exp $
+ * $Id: FSRegistrationInitiationServlet.java,v 1.2 2007-01-10 06:29:34 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -282,6 +282,7 @@ public class FSRegistrationInitiationServlet extends HttpServlet {
                         handlerObj.setHostedDescriptor(hostedProviderDesc);
                         handlerObj.setHostedDescriptorConfig(hostedConfig);
                         handlerObj.setMetaAlias(hostedProviderAlias);
+                        handlerObj.setHostedProviderRole(hostedRole);
                         handlerObj.setHostedEntityId(hostedEntityId);
                         boolean bStatus = 
                             handlerObj.handleNameRegistration(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFedTerminationHandler.java,v 1.2 2006-10-31 03:58:25 qcheng Exp $
+ * $Id: FSFedTerminationHandler.java,v 1.3 2007-01-10 06:29:35 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.message.FSFederationTerminationNotification;
 import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.util.FSSignatureUtil;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.services.logout.FSLogoutUtil;
@@ -78,7 +79,6 @@ public class FSFedTerminationHandler {
     protected ProviderDescriptorType hostedDescriptor = null;
     protected BaseConfigType hostedConfig = null;
     protected String relayState = "";
-    protected boolean isSelfIDP = false;
     protected FSAccountManager managerInst = null;
     protected static String termination_done_url = null;
     protected static String error_page_url = null;
@@ -89,6 +89,7 @@ public class FSFedTerminationHandler {
     protected String hostedEntityId = "";
     protected String remoteEntityId = "";
     protected String metaAlias = "";
+    protected String hostedProviderRole = null;
 
     /**
      * Constructor. Initializes FSAccountManager, FSAllianceManager instance.
@@ -134,6 +135,14 @@ public class FSFedTerminationHandler {
      */
     public void setHostedEntityId(String hostedId) {
         hostedEntityId = hostedId;
+    }
+
+    /**
+     * Sets hosted provider's role.
+     * @param hostedProviderRole hosted provider's role
+     */
+    public void setHostedProviderRole(String hostedProviderRole) {
+        this.hostedProviderRole = hostedProviderRole;
     }
 
     /**
@@ -329,7 +338,8 @@ public class FSFedTerminationHandler {
         String[] data = { userID };
         LogUtil.access(Level.FINER,LogUtil.TERMINATION_SUCCESS,data);
         resetFederateCookie();
-        boolean bRemoteStatus = doFederationTermination(acctInfo);
+        boolean bRemoteStatus = doFederationTermination(
+            request, response, acctInfo);
         return bRemoteStatus;
     }
     
@@ -451,6 +461,28 @@ public class FSFedTerminationHandler {
         String[] data = { FSUtils.bundle.getString(
             IFSConstants.TERMINATION_SUCCEEDED) };
         LogUtil.access(Level.FINER,LogUtil.TERMINATION_SUCCESS,data);
+        // Call SP Adaper for remote IDP initiated HTTP profile
+        if (hostedProviderRole != null &&
+            hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
+        {
+            FederationSPAdapter spAdapter =
+                FSServiceUtils.getSPAdapter(hostedEntityId, hostedConfig);
+            if (spAdapter != null) {
+                FSUtils.debug.message("FSFedTerminationHandler.HTTP");
+                try {
+                    spAdapter.postTerminationNotificationSuccess(
+                        hostedEntityId,
+                        request,
+                        response,
+                        userID,
+                        reqTermination,
+                        IFSConstants.TERMINATION_IDP_HTTP_PROFILE);
+                } catch (Exception e) {
+                    // ignore adapter exception
+                    FSUtils.debug.error("postTermNotification.IDP/HTTP", e);
+                }
+            }
+        }
         returnToSource();
         return;
     }
@@ -463,11 +495,13 @@ public class FSFedTerminationHandler {
      * @return <code>true</code> when the process is successful;
      *  <code>false</code> otherwise.
      */
-    public boolean processTerminationRequest(
+    public boolean processSOAPTerminationRequest(
+        HttpServletRequest request,
+        HttpServletResponse response,
         FSFederationTerminationNotification reqTermination)
     {
         FSUtils.debug.message(
-            "Entered FSFedTerminationHandler::processTerminationRequest");
+            "Entered FSFedTerminationHandler::processSOAPTerminationRequest");
         if (managerInst == null) {
             FSUtils.debug.error("FSSPFedTerminationHandler " +
                 "Account Manager instance is null");
@@ -496,6 +530,31 @@ public class FSFedTerminationHandler {
                     return false;
                 } else {
                     FSUtils.debug.message("User sucessfully defederated");
+                    // Call SP Adapter for remote IDP initiated SOAP case
+                    if (hostedProviderRole != null &&
+                        hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
+                    {
+                        FederationSPAdapter spAdapter =
+                            FSServiceUtils.getSPAdapter(
+                                hostedEntityId, hostedConfig);
+                        if (spAdapter != null) {
+                            FSUtils.debug.message(
+                                "FSFedTerminationHandler.SOAP");
+                            try {
+                                spAdapter.postTerminationNotificationSuccess(
+                                    hostedEntityId,
+                                    request,
+                                    response,
+                                    userID,
+                                    reqTermination,
+                                    IFSConstants.TERMINATION_IDP_SOAP_PROFILE);
+                            } catch (Exception e) {
+                                // ignore adapter exception
+                                FSUtils.debug.error("postTerm.IDP/SOAP", e);
+                            }
+                        }
+                    }
+
                     return true;
                 }
             } else {
@@ -728,7 +787,11 @@ public class FSFedTerminationHandler {
      * @return <code>true</code> if termination request is sent to remote
      *  provider successfully; <code>false</code> otherwise.
      */
-    private boolean doFederationTermination(FSAccountFedInfo acctInfo) {
+    private boolean doFederationTermination(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FSAccountFedInfo acctInfo)
+    {
         FSUtils.debug.message(
             "Entered FSFedTerminationHandler::doFederationTermination");
         try {
@@ -872,6 +935,33 @@ public class FSFedTerminationHandler {
                                 instSOAP.sendTerminationMessage(
                                     msgTermination,
                                     remoteDescriptor.getSoapEndpoint());
+                            // Call SP Adapter for SP initiated SOAP profile
+                            if (hostedProviderRole != null &&
+                                hostedProviderRole.equalsIgnoreCase(
+                                    IFSConstants.SP))
+                            {
+                                FederationSPAdapter spAdapter =
+                                  FSServiceUtils.getSPAdapter(
+                                      hostedEntityId, hostedConfig);
+                                if (spAdapter != null) {
+                                    try {
+                                        spAdapter.
+                                            postTerminationNotificationSuccess(
+                                            hostedEntityId,
+                                            request,
+                                            response,
+                                            userID,
+                                            reqFedTermination,
+                                            IFSConstants.
+                                                TERMINATION_SP_SOAP_PROFILE);
+                                    } catch (Exception e) {
+                                        // ignore adapter exception
+                                        FSUtils.debug.error("postTerm.SP/SOAP",
+                                         e);
+                                    }
+                                }
+                            }
+
                             // Always show success page since local termination
                             // succeeded and that is what is important
                             FSServiceUtils.returnLocallyAfterOperation(
@@ -974,6 +1064,29 @@ public class FSFedTerminationHandler {
                     FSUtils.debug.message(
                         "FSFedTerminationHandler::Redirect URL is " +
                         redirectURL.toString());
+                }
+                // Call SP Adaper for SP initiated HTTP profile
+                // ideally this should be called from the
+                // FSTerminationReturnServlet, but info not available there
+                if (hostedProviderRole != null &&
+                    hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) 
+                {
+                    FederationSPAdapter spAdapter = FSServiceUtils.getSPAdapter(
+                        hostedEntityId, hostedConfig);
+                    if (spAdapter != null) {
+                        try {
+                            spAdapter.postTerminationNotificationSuccess(
+                                hostedEntityId,
+                                request,
+                                response,
+                                userID,
+                                reqFedTermination,
+                                IFSConstants.TERMINATION_SP_HTTP_PROFILE);
+                        } catch (Exception e) {
+                            // ignore adapter exception
+                            FSUtils.debug.error("postTerm.SP/HTTP", e);
+                        }
+                    }
                 }
                 response.sendRedirect(redirectURL.toString());
                 return true;

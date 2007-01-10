@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.2 2006-10-31 03:58:24 qcheng Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.3 2007-01-10 06:29:34 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.services.FSSession;
 import com.sun.identity.federation.services.FSSessionPartner;
@@ -92,7 +93,10 @@ public class FSSingleLogoutHandler {
     private boolean logoutStatus = true;
     private boolean isHttpRedirect = false;
     private Object ssoToken = null;
-    
+    private FSLogoutResponse respObj = null;    
+    private FSLogoutNotification requestLogout = null;
+
+
    /*
     * Constructor.
     */
@@ -324,6 +328,9 @@ public class FSSingleLogoutHandler {
             }
             FSLogoutUtil.destroyPrincipalSession(
                 userID, hostedEntityId, sessionIndex, request, response);
+            // Call SP Adapter postSingleLogoutSuccess for SP/SOAP
+            callPostSingleLogoutSuccess(
+                respObj, IFSConstants.LOGOUT_SP_SOAP_PROFILE);
             if (response != null) {
                 returnAfterCompletion();
             }
@@ -482,6 +489,10 @@ public class FSSingleLogoutHandler {
                     responseLogout.setID(IFSConstants.LOGOUTID);
                     responseLogout.setMinorVersion(
                         getMinorVersion(descriptor));
+
+                    // Call SP Adapter postSingleLogoutSuccess for SP/HTTP
+                    callPostSingleLogoutSuccess(responseLogout,
+                        IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE);
                     String urlEncodedResponse =
                         responseLogout.toURLEncodedQueryString();
                     // Sign the request querystring
@@ -898,8 +909,34 @@ public class FSSingleLogoutHandler {
                                         IFSConstants.SAML_FAILURE);
                                 }
                             }
-                            FSLogoutResponse respObj = 
-                                new FSLogoutResponse(elt);
+                            this.requestLogout = reqLogout;
+                            respObj = new FSLogoutResponse(elt);
+                            // Call SP Adapter preSingleLogout for SP/SOAP
+                            if (hostedRole != null &&
+                                hostedRole.equalsIgnoreCase(IFSConstants.SP))
+                            {
+                                FederationSPAdapter spAdapter =
+                                    FSServiceUtils.getSPAdapter(
+                                        hostedEntityId, hostedConfig);
+                                if (spAdapter != null) {
+                                    if (FSUtils.debug.messageEnabled()) {
+                                        FSUtils.debug.message("FSSLOHandler." +
+                                        "preSingleLogoutProcess, SP/SOAP");
+                                    }
+                                    try {
+                                        spAdapter.preSingleLogoutProcess(
+                                            hostedEntityId,
+                                             request, response, userID,
+                                             reqLogout, respObj,
+                                             IFSConstants.
+                                                 LOGOUT_SP_SOAP_PROFILE);
+                                    } catch (Exception e) {
+                                        // ignore adapter error
+                                        FSUtils.debug.error("spAdapter." +
+                                        "preSingleLogoutProcess, SP/SOAP:", e);
+                                    }
+                                }
+                            }
                             Status status = respObj.getStatus();
                             StatusCode statusCode = status.getStatusCode();
                             StatusCode secondLevelStatus = 
@@ -1063,7 +1100,7 @@ public class FSSingleLogoutHandler {
                 providerDesc = metaManager.getSPDescriptor(remoteEntityId);
             }
         } catch(IDFFMetaException e){
-            FSUtils.debug.error("FSSPFedTerminationHandler::" +
+            FSUtils.debug.error("FSSingleLogoutHandler::" +
                 " getRemoteDescriptor failed:", e);
         }
         return providerDesc;
@@ -1107,7 +1144,7 @@ public class FSSingleLogoutHandler {
      * @param isSourceIDP whether source provider is an IDP or not
      * @return logout status
      */
-    public FSLogoutStatus processSingleLogoutRequest(
+    public FSLogoutStatus processHttpSingleLogoutRequest(
         HttpServletResponse response,
         HttpServletRequest request,
         FSLogoutNotification reqLogout,
@@ -1126,6 +1163,7 @@ public class FSSingleLogoutHandler {
 
         this.response = response;
         this.request = request;
+        this.requestLogout = reqLogout;
         locale = FSServiceUtils.getLocale(request);
         setLogoutURL();
         if (currentSessionProvider != null) {
@@ -1253,6 +1291,7 @@ public class FSSingleLogoutHandler {
             remoteEntityId = currentSessionProvider.getPartner();
             setRemoteDescriptor(getRemoteDescriptor(remoteEntityId));
         }
+        this.requestLogout = reqLogout;
         this.userID = userID;
         this.sessionIndex = sessionIndex;
         this.isWMLAgent = isWMLAgent;
@@ -1356,7 +1395,7 @@ public class FSSingleLogoutHandler {
             hostedConfig, IFSConstants.SIGNING_CERT_ALIAS);
         if (certAlias == null || certAlias.length() == 0) {
             if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("FSIDPFedTerminationHandler::" +
+                FSUtils.debug.message("FSSingleLogoutHandler::" +
                     " signLogoutRequest: couldn't obtain "
                     + "this site's cert alias.");
             }
@@ -1416,6 +1455,33 @@ public class FSSingleLogoutHandler {
                 "Error in getting in minor ver.", e);
         } 
         return IFSConstants.FF_11_PROTOCOL_MINOR_VERSION;
+    }
+
+    private void callPostSingleLogoutSuccess(FSLogoutResponse responseLogout,
+        String sloProfile)
+    {
+        // Call SP Adapter postSingleLogoutSuccess
+        if (hostedRole != null &&
+            hostedRole.equalsIgnoreCase(IFSConstants.SP))
+        {
+            FederationSPAdapter spAdapter =
+                FSServiceUtils.getSPAdapter(hostedEntityId, hostedConfig);
+            if (spAdapter != null) {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message(
+                        "FSSingleLogoutHandler, call postSingleLogoutSuccess");
+                }
+                try {
+                    spAdapter.postSingleLogoutSuccess(
+                        hostedEntityId, request, response, userID,
+                        requestLogout, responseLogout, sloProfile);
+                } catch (Exception e) {
+                    // ignore adapter exception
+                    FSUtils.debug.error("postSingleLogoutSuccess." + 
+                        sloProfile, e);
+                }
+            }
+        }
     }
 }
 

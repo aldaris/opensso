@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.1 2006-10-30 23:14:27 qcheng Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.2 2007-01-10 06:29:32 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.sun.identity.federation.message.FSResponse;
 import com.sun.identity.federation.message.FSSubject;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.services.util.FSServiceUtils;
@@ -145,7 +146,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
             hostMetaAlias, null, null, request,baseURL);
         try {
-            Response samlResponse = null;
             FSSOAPService soapHelper = FSSOAPService.getInstance();
             samlRequest.setID(samlRequest.getRequestID());
             SOAPMessage msg = soapHelper.bind(
@@ -294,6 +294,8 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                 FSUtils.forwardRequest(request, response, framedPageURL);
                 return;
             }
+            FederationSPAdapter spAdapter = FSServiceUtils.getSPAdapter(
+                hostEntityId, hostConfig);
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSBrowserArtifactConsumerHandler."
                     + "processSAMLResponse: Received "
@@ -307,7 +309,13 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     + FSUtils.bundle.getString("invalidResponse"));
                 String[] data = { samlResponse.toXMLString() };
                 LogUtil.error(Level.INFO,LogUtil.INVALID_RESPONSE,data);
-                FSUtils.forwardRequest(request, response, framedPageURL);
+                if (spAdapter == null ||
+                    !spAdapter.postSSOFederationFailure(hostEntityId,
+                        request, response, authnRequest, null, samlResponse,
+                        FederationSPAdapter.INVALID_RESPONSE))
+                {
+                    FSUtils.forwardRequest(request, response, framedPageURL);
+                }
                 return;
             }
             
@@ -320,7 +328,6 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     + ": No assertion found inside the AuthnResponse");
                 String[] data = { samlResponse.toXMLString() };
                 LogUtil.error(Level.INFO,LogUtil.INVALID_RESPONSE,data);
-                //response.sendRedirect(framedPageURL);
                 FSUtils.forwardRequest(request, response, framedPageURL);
                 return;
             }
@@ -344,6 +351,24 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             this.doFederate = authnRequest.getFederate();
             this.nameIDPolicy = authnRequest.getNameIDPolicy();
             
+            // Call SP preSSOFederationProcess for Artifact case
+            if (spAdapter != null) {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("FSBrowserArtifactConsumerHandler, " +
+                        "Artifact, Invoke spAdapter.preSSOFederationProcess");
+                }
+                try {
+                    spAdapter.preSSOFederationProcess(
+                        hostEntityId, request, response, authnRequest,
+                        null, (FSResponse) samlResponse);
+                } catch (Exception e) {
+                    // log run time exception in Adapter
+                    // implementation, continue
+                    FSUtils.debug.error("FSAssertionArtifactHandler"
+                        + " SPAdapter.preSSOFederationSuccess", e);
+                }
+            }
+
             framedPageURL = FSServiceUtils.getCommonLoginPageURL(
                 hostMetaAlias, 
                 authnRequest.getRelayState(), 
@@ -373,7 +398,13 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     + FSUtils.bundle.getString("invalidAssertion"));
                 String[] data = { FSUtils.bundle.getString("invalidAssertion")};
                 LogUtil.error(Level.INFO,LogUtil.INVALID_ASSERTION,data); 
-                FSUtils.forwardRequest(request, response, framedPageURL);
+                if (spAdapter == null ||
+                    !spAdapter.postSSOFederationFailure(hostEntityId,
+                        request, response, authnRequest, null, samlResponse,
+                        FederationSPAdapter.INVALID_RESPONSE))
+                {
+                    FSUtils.forwardRequest(request, response, framedPageURL);
+                }
                 return;
             }
 
@@ -383,7 +414,8 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                    ni = validSubject.getNameIdentifier();
                 }
                 if (ni != null) {
-                    if (doAccountFederation(ni)) {
+                    int returnCode = doAccountFederation(ni);
+                    if (returnCode == FederationSPAdapter.SUCCESS) {
                         // remove it from session manager table
                         FSSessionManager sessionManager =
                             FSSessionManager.getInstance(hostEntityId);
@@ -399,8 +431,14 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                                 "AccountFederationFailed") };
                         LogUtil.error(
                             Level.INFO, LogUtil.ACCOUNT_FEDERATION_FAILED,data);
-                        FSUtils.forwardRequest(
-                            request, response, framedPageURL);
+                        if (spAdapter == null ||
+                            !spAdapter.postSSOFederationFailure(hostEntityId,
+                                request, response, authnRequest,
+                                authnResponse, samlResponse, returnCode))
+                        {
+                            FSUtils.forwardRequest(
+                                request, response, framedPageURL);
+                        }
                     } 
                 } else {
                     FSUtils.debug.error("FSBrowserArtifactConsumerHandler."
@@ -463,7 +501,9 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                     Map env = new HashMap();
                     env.put(IFSConstants.FS_USER_PROVIDER_ENV_FSRESPONSE_KEY,
                                 samlResponse);
-                    if (doSingleSignOn(ni, handleType, orgDN, niIdp, env)) {
+                    int returnCode = doSingleSignOn(
+                        ni, handleType, orgDN, niIdp, env);
+                    if (returnCode == FederationSPAdapter.SUCCESS) {
                         String requestID = assertion.getInResponseTo();
                         if (isIDPProxyEnabled(requestID)) {
                             sendProxyResponse(requestID);
@@ -474,6 +514,24 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                                     LogUtil.ACCESS_GRANTED_REDIRECT_TO,
                                     data);
                         response.setHeader("Location", this.relayState);
+                        // Call SP Adapter
+                        if (spAdapter != null) {
+                            FSUtils.debug.message("Invoke spAdapter");
+                            try {
+                                if (spAdapter.postSSOFederationSuccess(
+                                    hostEntityId, request, response, ssoToken,
+                                    authnRequest, null, samlResponse))
+                                {
+                                    return;
+                                }
+                            } catch (Exception e) {
+                                // log run time exception in Adapter
+                                // implementation, continue
+                                FSUtils.debug.error("FSAssertionArtifactHandler"
+                                    + " SPAdapter.postSSOFederationSuccess:",e);
+                            }
+                        }
+
                         redirectToResource(this.relayState);
                         return;
                     } else {
@@ -483,8 +541,14 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                         String[] data = { ni.getName() };
                         LogUtil.error(
                             Level.INFO,LogUtil.SINGLE_SIGNON_FAILED ,data);
-                        FSUtils.forwardRequest(
-                            request, response, framedPageURL);
+                        if(spAdapter == null ||
+                            !spAdapter.postSSOFederationFailure(hostEntityId,
+                                request, response, authnRequest,
+                                null, samlResponse, returnCode))
+                        {
+                            FSUtils.forwardRequest(
+                                request, response, framedPageURL);
+                        }
                         return;
                     }
                 } else {

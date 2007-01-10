@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationRequestServlet.java,v 1.1 2006-10-30 23:14:35 qcheng Exp $
+ * $Id: FSRegistrationRequestServlet.java,v 1.2 2007-01-10 06:29:34 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -272,7 +272,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
  
             retURL = remoteDesc.getRegisterNameIdentifierServiceReturnURL();
         } catch (IDFFMetaException e) {
-            FSUtils.debug.error("FSTerminationRequestServlet.doRequest " +
+            FSUtils.debug.error("FSRegistrationRequestServlet.doRequest " +
                 "Processing: Can not retrieve remote provider data."
                 + remoteEntityId);
             String[] data = {  remoteEntityId };
@@ -353,6 +353,7 @@ public class FSRegistrationRequestServlet extends HttpServlet {
                     regisHandler.setRemoteDescriptor(remoteDesc);
                     regisHandler.setRemoteEntityId(remoteEntityId);
                     regisHandler.setHostedEntityId(hostedEntityId);
+                    regisHandler.setHostedProviderRole(hostedProviderRole);
                     regisHandler.setMetaAlias(providerAlias);
                     regisHandler.processRegistrationRequest(
                         request, response, regisRequest);

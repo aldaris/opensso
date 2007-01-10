@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationInitiationServlet.java,v 1.1 2006-10-30 23:14:36 qcheng Exp $
+ * $Id: FSTerminationInitiationServlet.java,v 1.2 2007-01-10 06:29:35 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -277,6 +277,7 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                     if (handlerObj != null) {
                         handlerObj.setHostedDescriptor(hostedProviderDesc);
                         handlerObj.setHostedDescriptorConfig(hostedConfig);
+                        handlerObj.setHostedProviderRole(hostedRole);
                         handlerObj.setMetaAlias(providerAlias);
                         handlerObj.setHostedEntityId(hostedEntityId);
                         boolean bStatus = 

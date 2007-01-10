@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLoginHelper.java,v 1.1 2006-10-30 23:14:23 qcheng Exp $
+ * $Id: FSLoginHelper.java,v 1.2 2007-01-10 06:29:31 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -409,13 +409,12 @@ public class FSLoginHelper {
             }
             if (!noIDP) {
                 String succintID = FSUtils.generateSourceID(remoteEntityID);
-                String providerID = FSUtils.stringToBase64(succintID);
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSLoginHelper:: createAuthnRequest "
                         + " Redirecting to intersiteTransfer URL " 
                         + interSiteURL
                         + " with providerID and Base64 encoded SuccintID. " 
-                        + remoteEntityID + "---" + providerID);
+                        + remoteEntityID + "---" + succintID);
                 }
                 //check for presence of federate cookie
                 if (!isFedCookiePresent) {
@@ -430,6 +429,7 @@ public class FSLoginHelper {
                     }
                 }
 
+                String providerID = FSUtils.stringToBase64(succintID);
                 redirectURL = interSiteURL
                     + "?" + authnReqIDKey + "=" + URLEncDec.encode(requestID)
                     + "&" + providerIDKey + "=" + URLEncDec.encode(providerID)

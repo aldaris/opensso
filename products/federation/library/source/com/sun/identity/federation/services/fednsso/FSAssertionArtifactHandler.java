@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.1 2006-10-30 23:14:26 qcheng Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.2 2007-01-10 06:29:32 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,11 +39,13 @@ import com.sun.identity.federation.message.FSAssertion;
 import com.sun.identity.federation.message.FSAuthenticationStatement;
 import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.message.FSAuthnResponse;
+import com.sun.identity.federation.message.FSResponse;
 import com.sun.identity.federation.message.FSSubject;
 import com.sun.identity.federation.message.common.AuthnContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSPAuthenticationContextInfo;
 import com.sun.identity.federation.services.FSAttributeMapper;
 import com.sun.identity.federation.services.FSServiceManager;
@@ -127,7 +129,8 @@ public class FSAssertionArtifactHandler {
     protected String hostEntityId = null;
     protected String hostMetaAlias = null;
     protected static String ANONYMOUS_PRINCIPAL = "anonymous";
-    protected static FSAttributeMapper attributeMapper = null;
+    protected FSAttributeMapper attributeMapper = null;
+    protected FSResponse samlResponse = null;
     
     static {
         cThread.start();
@@ -269,6 +272,24 @@ public class FSAssertionArtifactHandler {
         FSUtils.debug.message(
             "FSAssertionArtifactHandler.ProcessAuthnResponse: Called");
         this.authnResponse = authnResponse;
+        // Call SP adapter SPI
+        FederationSPAdapter spAdapter = FSServiceUtils.getSPAdapter(
+            hostEntityId, hostConfig);
+        if (spAdapter != null) {
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("FSAssertionArtifactHandler, POST"
+                    + " Invokde spAdapter.preSSOFederationProcess");
+            }
+            try {
+                spAdapter.preSSOFederationProcess(hostEntityId,
+                    request, response, authnRequest, authnResponse, null);
+            } catch (Exception e) {
+                // log run time exception in Adapter
+                // implementation, continue
+                FSUtils.debug.error("FSAssertionArtifactHandler" +
+                    " SPAdapter.preSSOFederationSuccess", e);
+            }
+        }
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedLoginPageURL = FSServiceUtils.getCommonLoginPageURL(
             hostMetaAlias, 
@@ -311,7 +332,13 @@ public class FSAssertionArtifactHandler {
                     + FSUtils.bundle.getString("invalidResponse")
                     + " AuthnRequest Processing Failed at the IDP"
                     + " Redirecting to the Framed Login Page");
-                response.sendRedirect(framedLoginPageURL);
+                if ((spAdapter == null) || !(spAdapter.postSSOFederationFailure(
+                    hostEntityId, request, response, authnRequest,
+                    authnResponse, null,
+                    FederationSPAdapter.INVALID_AUTHN_RESPONSE)))
+                {
+                   response.sendRedirect(framedLoginPageURL);
+                }
                 return;
             }
             
@@ -348,7 +375,8 @@ public class FSAssertionArtifactHandler {
                     ni = validSubject.getNameIdentifier();
                 }
                 if (ni != null){
-                    if (doAccountFederation(ni)) {
+                    int returnCode = doAccountFederation(ni);
+                    if (returnCode == FederationSPAdapter.SUCCESS) {
                         if (FSUtils.debug.messageEnabled()) {
                             FSUtils.debug.message("FSAssertionArtifactHandler."
                                 + "processAuthnResponse: Account federation"
@@ -370,7 +398,15 @@ public class FSAssertionArtifactHandler {
                             FSUtils.bundle.getString("AccountFederationFailed")
                                 + " AuthnRequest Processing Failed at the IDP"
                                 + " Redirecting to the Framed Login Page");
-                        response.sendRedirect(framedLoginPageURL);
+                        if (spAdapter == null ||
+                            !spAdapter.postSSOFederationFailure(
+                                hostEntityId,
+                                request, response, authnRequest,
+                                authnResponse, (FSResponse)samlResponse,
+                                returnCode))
+                        {
+                            response.sendRedirect(framedLoginPageURL);
+                        }
                     }
                 } else {
                     throw new FSException("missingNIofSubject", null);
@@ -434,7 +470,9 @@ public class FSAssertionArtifactHandler {
                 Map env = new HashMap();
                 env.put(IFSConstants.FS_USER_PROVIDER_ENV_AUTHNRESPONSE_KEY,
                     authnResponse);
-                if (doSingleSignOn(ni, handleType, orgDN, niIdp, env)){
+                int returnCode = 
+                    doSingleSignOn(ni, handleType, orgDN, niIdp, env);
+                if (returnCode == FederationSPAdapter.SUCCESS){
                     if (FSUtils.debug.messageEnabled()) {
                         FSUtils.debug.message("FSAssertionArtifactHandler."
                         + "processAuthnResponse: Accountfederation successful");
@@ -450,6 +488,28 @@ public class FSAssertionArtifactHandler {
                     LogUtil.access(
                         Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO, data); 
                     response.setHeader("Location", this.relayState);
+                    FSUtils.debug.message(
+                        "ArtifactHandler.notfederated, postSSO");
+                    if (spAdapter != null) {
+                        if (FSUtils.debug.messageEnabled()) {
+                            FSUtils.debug.message("FSAssertionArtifactHandler,"
+                                + " Invoke spAdapter.postSSOFederationSuccess");
+                        }
+                        try {
+                            if (spAdapter.postSSOFederationSuccess(
+                                    hostEntityId, request, response, ssoToken,
+                                    authnRequest, authnResponse, null))
+                            {
+                                // return if the SP spi redirection happened
+                                return;
+                            }
+                        } catch (Exception e) {
+                            // log run time exception in Adapter
+                            // implementation, continue
+                            FSUtils.debug.error("FSAssertionArtifadctHandler"
+                                + " SPAdapter.postSSOFederationSuccess:", e);
+                        }
+                    }
                     redirectToResource(this.relayState);
                     return;
                 } else {
@@ -460,7 +520,13 @@ public class FSAssertionArtifactHandler {
                         + FSUtils.bundle.getString("invalidResponse")
                         + " AuthnRequest Processing Failed at the IDP"
                         + " Redirecting to the Framed Login Page");
-                    response.sendRedirect(framedLoginPageURL);
+                    if (spAdapter == null || 
+                        !spAdapter.postSSOFederationFailure(
+                            hostEntityId, request, response,
+                            authnRequest, authnResponse, null, returnCode))
+                    {
+                       response.sendRedirect(framedLoginPageURL);
+                    }
                     return;
                 }
                 
@@ -897,7 +963,7 @@ public class FSAssertionArtifactHandler {
         return forThis;
     }
     
-    protected boolean generateToken(
+    protected int generateToken(
         NameIdentifier ni,
         int handleType, 
         String orgDN,
@@ -910,7 +976,7 @@ public class FSAssertionArtifactHandler {
         if ((ni == null)){
             FSUtils.debug.error("FSAssertionArtifactHandler."
                 + "generateToken: Invalid userDN input");
-            return false;
+            return FederationSPAdapter.SSO_FAILED;
         }
         if ((orgDN == null) ||(orgDN.length() == 0)){
             if (FSUtils.debug.messageEnabled()) {
@@ -968,7 +1034,8 @@ public class FSAssertionArtifactHandler {
                             "FSAssertionArtifactHandler.generateToken: " +
                             "Can't dereference handle. fedKey=" +
                             fedKey.toString());
-                        return false;
+                        return FederationSPAdapter.
+                            SSO_FAILED_FEDERATION_DOESNOT_EXIST;
                     }
                 } else {
                     // Check if there is any 6.2 format? 
@@ -1010,7 +1077,8 @@ public class FSAssertionArtifactHandler {
                                 FSUtils.debug.error(
                                     "FSAssertionArtifactHandler." +
                                     "generateToken: Can't dereference handle.");
-                                return false;
+                                return FederationSPAdapter.
+                                SSO_FAILED_FEDERATION_DOESNOT_EXIST;
                             }
                         } else {
                             String enabledStr =
@@ -1040,19 +1108,22 @@ public class FSAssertionArtifactHandler {
                                         "FSAssertionArtifactHandler. " +
                                         "generateToken:" +
                                         "Can't dereference handle.");
-                                    return false;
+                                    return 
+                                        FederationSPAdapter.SSO_FAILED_AUTO_FED;
                                 }
                             } else {
                                 FSUtils.debug.error(
                                     "FSAssertionArtifactHandler." +
                                     "generateToken: Can't dereference handle.");
-                                return false;
+                                return FederationSPAdapter.
+                                    SSO_FAILED_FEDERATION_DOESNOT_EXIST;
                             }
                         }
                     } else {
                         FSUtils.debug.error("FSAssertionArtifactHandler." +
                             "generateToken: Can't dereference handle.");
-                        return false;
+                        return FederationSPAdapter.
+                            SSO_FAILED_FEDERATION_DOESNOT_EXIST;
                     }
                 }
             } else {
@@ -1068,7 +1139,8 @@ public class FSAssertionArtifactHandler {
                     FSUtils.debug.error(
                         "FSAssertionArtifactHandler.generateToken: "
                         + "User's account is not federated, id=" + userID);
-                    return false;
+                    return 
+                        FederationSPAdapter.SSO_FAILED_FEDERATION_DOESNOT_EXIST;
                 }
             }
             //get AuthnLevel from authnContext
@@ -1127,7 +1199,7 @@ public class FSAssertionArtifactHandler {
                     FSUtils.debug.error("FSAssertionArtifactHandler."
                         + "generateToken: Could not find authentication level "
                         + "for default authentication context class");
-                    return false;
+                    return FederationSPAdapter.SSO_FAILED;
                 }
             }
             
@@ -1142,8 +1214,30 @@ public class FSAssertionArtifactHandler {
             //valueMap.put("securityToken",
             
             SessionProvider sessionProvider = SessionManager.getProvider();
-            Object ssoSession = sessionProvider.createSession(
-                valueMap, request, response, new StringBuffer(this.relayState));
+            Object ssoSession;
+            try {
+                ssoSession = sessionProvider.createSession(
+                    valueMap, request, response, 
+                    new StringBuffer(this.relayState));
+            } catch (SessionException se) {
+                int failureCode = se.getErrCode();
+                if (failureCode == SessionException.AUTH_USER_INACTIVE) {
+                    failureCode = 
+                        FederationSPAdapter.SSO_FAILED_AUTH_USER_INACTIVE;
+                } else if (failureCode == SessionException.AUTH_USER_LOCKED) {
+                    failureCode =
+                        FederationSPAdapter.SSO_FAILED_AUTH_USER_LOCKED;
+                } else if (failureCode == SessionException.AUTH_ACCOUNT_EXPIRED)
+                {
+                    failureCode = 
+                        FederationSPAdapter.SSO_FAILED_AUTH_ACCOUNT_EXPIRED;
+                } else {
+                    failureCode = FederationSPAdapter.
+                        SSO_FAILED_TOKEN_GENERATION;
+                }
+                   
+                return failureCode;
+            }
             try {
                 sessionProvider.addListener(
                     ssoSession, new FSTokenListener(hostEntityId));
@@ -1241,11 +1335,11 @@ public class FSAssertionArtifactHandler {
                 session.setBootStrapCredential(securityAssertions);
             }
 
-            return true;            
+            return FederationSPAdapter.SUCCESS;
         } catch(Exception e) {
             FSUtils.debug.error("FSAssertionArtifactHandler.generateToken: "
                 + "Exception Occured ", e );
-            return false;
+            return FederationSPAdapter.SSO_FAILED;
         }
     }
     
@@ -1254,7 +1348,7 @@ public class FSAssertionArtifactHandler {
     }
     
     
-    protected boolean doSingleSignOn(
+    protected int doSingleSignOn(
         NameIdentifier ni, 
         int handleType, 
         String orgDN,
@@ -1264,36 +1358,28 @@ public class FSAssertionArtifactHandler {
     {
         FSUtils.debug.message(
             "FSAssertionArtifactHandler.doSingleSignOn: Called");
-        boolean created = true;
-        try {
-            created = generateToken(ni, handleType, orgDN, niIdp, env);
-            if (!created) {
-                String[] data = 
-                    { FSUtils.bundle.getString("failGenerateSSOToken") };
-                LogUtil.error(Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION,
-                              data);
-                return false;
-            }
-            
-            return true;
-        } catch(Exception e){
-            FSUtils.debug.error("FSAssertionArtifactHandler.doSingleSignOn", e);
-            return false;
+        int returnCode = generateToken(ni, handleType, orgDN, niIdp, env);
+        if (returnCode != FederationSPAdapter.SUCCESS) {
+            String[] data = 
+                { FSUtils.bundle.getString("failGenerateSSOToken") };
+            LogUtil.error(Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data);
         }
+            
+        return returnCode;
     }
     
     protected void redirectToResource(String resourceURL) throws FSException {
     }
     
     
-    protected boolean doAccountFederation(NameIdentifier ni) {
+    protected int doAccountFederation(NameIdentifier ni) {
         FSUtils.debug.message(
             "FSAssertionArtifactHandler.doAccountFederation:Called");
         if (ni == null){
             FSUtils.debug.error(
                 "FSAssertionArtifactHandler.doAccountFederation:" +
                 FSUtils.bundle.getString("invalidInput"));
-            return false;
+            return FederationSPAdapter.FEDERATION_FAILED;
         }
         Object ssoToken = null;
         SessionProvider sessionProvider = null;
@@ -1306,7 +1392,8 @@ public class FSAssertionArtifactHandler {
             String[] data = 
                 { FSUtils.bundle.getString("failGenerateSSOToken") };
             LogUtil.error(Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data);
-            return false;
+            return FederationSPAdapter.
+                FEDERATION_FAILED_SSO_TOKEN_GENERATION;
         }
         try {
             ssoToken = sessionProvider.getSession(request);
@@ -1349,7 +1436,8 @@ public class FSAssertionArtifactHandler {
                         { FSUtils.bundle.getString("failGenerateSSOToken") };
                     LogUtil.error(
                         Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data);
-                    return false;
+                    return FederationSPAdapter.
+                        FEDERATION_FAILED_SSO_TOKEN_GENERATION;
                 }
                 this.relayState = sessionProvider.rewriteURL(
                     ssoToken, this.relayState);
@@ -1367,21 +1455,42 @@ public class FSAssertionArtifactHandler {
                     { FSUtils.bundle.getString("failGenerateSSOToken") };
                 LogUtil.error(
                     Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data);
-                return false;
+                return FederationSPAdapter.
+                    FEDERATION_FAILED_SSO_TOKEN_GENERATION;
             }
         }
 
         if (ssoToken == null && nameIDPolicy != null && 
                 nameIDPolicy.equals(IFSConstants.NAME_ID_POLICY_ONETIME)) 
         {
-            ssoToken = generateAnonymousToken(response);
+            try {
+                ssoToken = generateAnonymousToken(response);
+            } catch (SessionException se) {
+                int failureCode = se.getErrCode();
+                if (failureCode == SessionException.AUTH_USER_INACTIVE) {
+                    failureCode = FederationSPAdapter.
+                        FEDERATION_FAILED_ANON_AUTH_USER_INACTIVE;
+                } else if (failureCode == SessionException.AUTH_USER_LOCKED) {
+                    failureCode = FederationSPAdapter.
+                        FEDERATION_FAILED_ANON_AUTH_USER_LOCKED;
+                } else if (failureCode == SessionException.AUTH_ACCOUNT_EXPIRED)
+                {
+                    failureCode = FederationSPAdapter.
+                        FEDERATION_FAILED_ANON_AUTH_ACCOUNT_EXPIRED;
+                } else {
+                    failureCode = FederationSPAdapter.
+                        FEDERATION_FAILED_ANON_TOKEN_GENERATION;
+                }
+                   
+                return failureCode;
+            }
         }
 
         if (ssoToken == null) {
             FSUtils.debug.error(
                 "FSAssertionArtifactHandler.doAccountFederation:"
                 + "Account federation failed. Invalid session");
-            return false;
+            return FederationSPAdapter.FEDERATION_FAILED_ANON_TOKEN_GENERATION;
         }
 
         try {
@@ -1474,7 +1583,7 @@ public class FSAssertionArtifactHandler {
             FSUtils.debug.error(
                 "FSAssertionArtifactHandler.doAccountFederation:"
                 + FSUtils.bundle.getString("ExceptionOccured") , ex);
-            return false;
+            return FederationSPAdapter.FEDERATION_FAILED_WRITING_ACCOUNT_INFO;
         }
         String[] data = {this.relayState} ;
         LogUtil.access(Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO,data); 
@@ -1539,7 +1648,7 @@ public class FSAssertionArtifactHandler {
                     hostMetaAlias,
                     hostDesc)) 
                 {
-                    return true;
+                    return FederationSPAdapter.SUCCESS;
                 }
             }
         } catch (SessionException se) {
@@ -1548,18 +1657,41 @@ public class FSAssertionArtifactHandler {
             }
         }
         */
+        // Call SP adapter
+        FederationSPAdapter spAdapter = FSServiceUtils.getSPAdapter(
+            hostEntityId, hostConfig);
+        if (spAdapter != null) {
+            FSUtils.debug.message("Invoke spAdapter");
+            try {
+                if (spAdapter.postSSOFederationSuccess(
+                    hostEntityId, request, response, ssoToken, 
+                    authnRequest, authnResponse, (FSResponse)samlResponse))
+                {
+                    // return true if service provider SPI redirection happened
+                    return FederationSPAdapter.SUCCESS;
+                }
+            } catch (Exception e) {
+                // log run time exception in Adapter
+                // implementation, continue
+                FSUtils.debug.error("FSAssertionArtifactHandler"
+                    + " SPAdapter.postSSOFederationSuccess", e);
+            }
+        }
+
         try {
             redirectToResource(this.relayState);
-            return true;
+            return FederationSPAdapter.SUCCESS;
         } catch(Exception e){
-            return false;
+            return FederationSPAdapter.FEDERATION_FAILED;
         }
     }
 
     /**
      * Generates an anonymous token for onetime case.
      */
-    protected Object generateAnonymousToken(HttpServletResponse response) {
+    protected Object generateAnonymousToken(HttpServletResponse response)
+        throws SessionException 
+    {
 
         FSUtils.debug.message("FSAssertionArtifactHandler.generateAnonymous");
  
@@ -1575,7 +1707,9 @@ public class FSAssertionArtifactHandler {
 
             SessionProvider sessionProvider = SessionManager.getProvider();
             Object ssoSession = sessionProvider.createSession(
-                valueMap, request, response, new StringBuffer(this.relayState));            try {
+                    valueMap, request, response, 
+                    new StringBuffer(this.relayState));
+            try {
                 sessionProvider.addListener(
                     ssoSession, new FSTokenListener(hostEntityId));
             } catch (Exception e) {
@@ -1585,6 +1719,8 @@ public class FSAssertionArtifactHandler {
             }
 
             return ssoSession;
+        } catch (SessionException se) {
+            throw se;
         } catch (Exception ae) {
            FSUtils.debug.error(
                "FSAssertionArtifactHandler.generateAnonymousToken failed.", ae);

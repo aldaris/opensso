@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationReturnServlet.java,v 1.1 2006-10-30 23:14:35 qcheng Exp $
+ * $Id: FSRegistrationReturnServlet.java,v 1.2 2007-01-10 06:29:35 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,8 +191,7 @@ public class FSRegistrationReturnServlet extends HttpServlet {
         //        5. show status page or LRURL if found in MAP
         //           (eg intersiteTransfer)
         
-        FSNameRegistrationResponse regisResponse =
-        new FSNameRegistrationResponse();
+        FSNameRegistrationResponse regisResponse = null;
         try {
             regisResponse =
                 FSNameRegistrationResponse.parseURLEncodedRequest(request);
@@ -248,6 +247,7 @@ public class FSRegistrationReturnServlet extends HttpServlet {
             handlerObj.setHostedDescriptor(hostedProviderDesc);
             handlerObj.setHostedDescriptorConfig(hostedConfig);
             handlerObj.setHostedEntityId(hostedEntityId);
+            handlerObj.setHostedProviderRole(hostedProviderRole);
             handlerObj.setMetaAlias(providerAlias);
             handlerObj.setRemoteEntityId(remoteEntityId);
             handlerObj.setRemoteDescriptor(remoteDesc);

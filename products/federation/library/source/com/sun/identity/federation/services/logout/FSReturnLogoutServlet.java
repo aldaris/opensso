@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnLogoutServlet.java,v 1.1 2006-10-30 23:14:32 qcheng Exp $
+ * $Id: FSReturnLogoutServlet.java,v 1.2 2007-01-10 06:29:33 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -202,7 +202,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
         //   4. if status success then do locally else not do locally and
         //   5. show status page or LRURL if found in MAP (eg intersiteTransfer)
         
-        FSLogoutResponse logoutResponse = new FSLogoutResponse();
+        FSLogoutResponse logoutResponse = null;
         try {
             logoutResponse =
                 FSLogoutResponse.parseURLEncodedRequest(request);

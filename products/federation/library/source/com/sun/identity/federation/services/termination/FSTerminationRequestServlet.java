@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationRequestServlet.java,v 1.1 2006-10-30 23:14:36 qcheng Exp $
+ * $Id: FSTerminationRequestServlet.java,v 1.2 2007-01-10 06:29:35 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -347,6 +347,7 @@ public class FSTerminationRequestServlet extends HttpServlet {
                         termHandler.setHostedDescriptor(hostedProviderDesc);
                         termHandler.setHostedDescriptorConfig(hostedConfig);
                         termHandler.setHostedEntityId(hostedEntityId);
+                        termHandler.setHostedProviderRole(hostedProviderRole);
                         termHandler.setMetaAlias(providerAlias);
                         termHandler.setRemoteEntityId(remoteEntityId);
                         termHandler.setRemoteDescriptor(remoteDesc);

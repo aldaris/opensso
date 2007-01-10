@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIntersiteTransferService.java,v 1.1 2006-10-30 23:14:28 qcheng Exp $
+ * $Id: FSIntersiteTransferService.java,v 1.2 2007-01-10 06:29:32 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import com.sun.identity.federation.message.FSIDPList;
 import com.sun.identity.federation.message.FSScoping;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.services.util.FSSignatureManager;
@@ -533,6 +534,26 @@ public class FSIntersiteTransferService extends HttpServlet {
                     + targetURL);
             }
             
+            // Call SP adapter in case of browser GET
+            FederationSPAdapter spAdapter = FSServiceUtils.getSPAdapter(
+                authnRequest.getProviderId(), hostConfig);
+            if (spAdapter != null) {
+                if (FSUtils.debug.messageEnabled()) {
+                    FSUtils.debug.message("FSIntersiteTransferService, " + 
+                        "GET, call spAdapter.preSSOFederationRequest");
+                }
+                try {
+                    spAdapter.preSSOFederationRequest(
+                        authnRequest.getProviderId(),
+                        idpDescriptor.getId(),
+                        request, response, authnRequest);
+                } catch (Exception e) {
+                    // log run time exception in Adapter
+                    // implementation, continue
+                    FSUtils.debug.error("FSIntersiteTransferService,"
+                        + "GET SPAdapter.preSSOFederationRequest:", e);
+                }
+            }
             StringBuffer tmp = new StringBuffer(1000);
             String queryString = authnRequest.toURLEncodedQueryString();
             if (queryString == null) {
@@ -587,7 +608,6 @@ public class FSIntersiteTransferService extends HttpServlet {
                 if (authnRequestSigned) {
                     authnRequest.signXML(certAlias);
                 }
-                
                 sendAuthnRequestPost(response, targetURL, authnRequest);
                 return;
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.1 2006-10-30 23:14:31 qcheng Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.2 2007-01-10 06:29:33 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.federation.message.FSLogoutNotification;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
@@ -77,7 +78,7 @@ public  class FSPreLogoutHandler {
     protected String hostedEntityId = "";
     protected String hostedRole = null;
     protected String metaAlias = null;
-
+    protected String relayState = null;
     
     /**
      * Constructor.
@@ -178,13 +179,15 @@ public  class FSPreLogoutHandler {
      * @param response <code>HttPServletRsponse</code> to be sent back to the
      *  user agent
      * @param ssoToken used to identify the principal who wants to logout
+     * @param sourceCheck where the logout coming from
      * @return <code>true</code> if the logout is successful; <code>false</code>
      *  otherwise.
      */
     public FSLogoutStatus handleSingleLogout(
         HttpServletRequest request,
         HttpServletResponse response,
-        Object ssoToken)
+        Object ssoToken,
+        String sourceCheck)
     {
         this.request = request;
         setLogoutURL();
@@ -271,8 +274,40 @@ public  class FSPreLogoutHandler {
             } else {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("No live connections, destroy user" +
-                        " session call destroyPrincipalSession");
+                        " session call destroyPrincipalSession. source=" +
+                        sourceCheck);
                 }
+                FSLogoutResponse logoutResponse = null;
+                FederationSPAdapter spAdapter = null;
+                // Call SP Adapter preSingleLogoutProcess for SP/HTTP
+                if (hostedRole != null && 
+                    hostedRole.equalsIgnoreCase(IFSConstants.SP) &&
+                    sourceCheck.equals("remote"))
+                {
+                    spAdapter = FSServiceUtils.getSPAdapter(
+                       hostedEntityId, hostedConfig);
+                    if (spAdapter != null) {
+                        if (FSUtils.debug.messageEnabled()) {
+                            FSUtils.debug.message("FSPreLogoutHandler, " +
+                                "call preSingleLogoutProcess, SP/HTTP");
+                        }
+                        try {
+                            logoutResponse = FSLogoutResponse.
+                                parseURLEncodedRequest(request);
+                            relayState = logoutResponse.getRelayState();
+                            // unabled to access logoutRequest here
+                            spAdapter.preSingleLogoutProcess(
+                                hostedEntityId,
+                                request, response, userID, null, logoutResponse,
+                                IFSConstants.LOGOUT_SP_REDIRECT_PROFILE);
+                        } catch (Exception e) {
+                            // ignore adapter error
+                            FSUtils.debug.error(
+                                "preSingleLogoutProcess.SP/HTTP", e);
+                        }
+                    }
+                }
+
                 FSLogoutUtil.destroyPrincipalSession(
                     userID, hostedEntityId, sessionIndex, request, response);
                 // control will come here when local login has happened
@@ -281,6 +316,30 @@ public  class FSPreLogoutHandler {
                 if (SessionManager.getProvider().isValid(ssoToken)) { 
                     FSLogoutUtil.destroyLocalSession(
                         ssoToken, request, response);
+                }
+ 
+                // Call SP Adapter postSingleLogoutProcess for SP/HTTP
+                if (hostedRole != null &&
+                    hostedRole.equalsIgnoreCase(IFSConstants.SP) &&
+                    sourceCheck.equals("remote"))
+                {
+                    if (spAdapter != null) {
+                        if (FSUtils.debug.messageEnabled()) {
+                            FSUtils.debug.message("FSPreLogoutHandler, " +
+                                "call postSingleLogoutProcess, SP/HTTP");
+                        }
+                        try {
+                            spAdapter.postSingleLogoutSuccess(
+                                hostedEntityId,
+                                request, response, userID, null, logoutResponse,
+                                IFSConstants.LOGOUT_SP_REDIRECT_PROFILE);
+                        } catch (Exception e) {
+                            // ignore adapter exception
+                            FSUtils.debug.error(
+                                "postSingleLogoutSuccess.SP/HTTP:", e);
+                        } 
+                           
+                    }
                 }
                 returnToPostLogout(IFSConstants.SAML_SUCCESS);
                 return new FSLogoutStatus(IFSConstants.SAML_SUCCESS);
@@ -307,7 +366,7 @@ public  class FSPreLogoutHandler {
      * @return <code>FSLogoutStatus</code> object to indicate the status of
      *  the logout process.
      */
-    public FSLogoutStatus processSingleLogoutRequest(
+    public FSLogoutStatus processHttpSingleLogoutRequest(
         HttpServletRequest request,
         HttpServletResponse response,
         Object ssoToken)
@@ -389,8 +448,6 @@ public  class FSPreLogoutHandler {
             FSUtils.debug.message("bHasAnyOtherProvider other than source : " +
                 bHasAnyOtherProvider);
         }
-        FSLogoutStatus bHandleStatus = new FSLogoutStatus(
-            IFSConstants.SAML_FAILURE);
         FSUtils.debug.message("FSPreLogout::creating FSSingleLogoutHandler");
         FSSingleLogoutHandler handlerObj = new FSSingleLogoutHandler();
         handlerObj.setHostedDescriptor(hostedDescriptor);
@@ -400,13 +457,12 @@ public  class FSPreLogoutHandler {
         handlerObj.setMetaAlias(metaAlias);
         //handlerObj.setRemoteDescriptor(remoteDescriptor);
         //handlerObj.setRemoteEntityId(remoteEntityID);
-        bHandleStatus = handlerObj.processSingleLogoutRequest(
+        return handlerObj.processHttpSingleLogoutRequest(
             response, request, reqLogout,
             sessionPartner, userID, remoteEntityID, sessionIndex, 
             isWMLAgent, relayState, 
             (hostedRole.equals(IFSConstants.SP) ? 
                 IFSConstants.IDP : IFSConstants.SP));
-        return bHandleStatus;
     }
     
     /**
@@ -467,8 +523,6 @@ public  class FSPreLogoutHandler {
                 bHasAnyOtherProvider);
         }
        
-        FSLogoutStatus bHandleStatus = new FSLogoutStatus(
-            IFSConstants.SAML_FAILURE);
         FSUtils.debug.message("creating FSSingleLogoutHandler");
         FSSingleLogoutHandler handlerObj = new FSSingleLogoutHandler();
         handlerObj.setHostedDescriptor(hostedDescriptor);
@@ -478,7 +532,7 @@ public  class FSPreLogoutHandler {
         handlerObj.setMetaAlias(metaAlias);
         //handlerObj.setRemoteDescriptor(remoteDescriptor);
         //handlerObj.setRemoteEntityId(remoteEntityID);
-        bHandleStatus = handlerObj.processSingleLogoutRequest(
+        return handlerObj.processSingleLogoutRequest(
             reqLogout,
             sessionPartner,
             userID,
@@ -487,7 +541,6 @@ public  class FSPreLogoutHandler {
             isWMLAgent,
             (hostedRole.equals(IFSConstants.SP)?
                 IFSConstants.IDP : IFSConstants.SP));
-        return bHandleStatus;
     }
     
     /**

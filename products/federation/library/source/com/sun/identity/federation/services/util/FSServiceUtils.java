@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.1 2006-10-30 23:14:38 qcheng Exp $
+ * $Id: FSServiceUtils.java,v 1.2 2007-01-10 06:29:36 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.security.AccessController;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -69,6 +71,7 @@ import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.federation.services.FSSPAuthenticationContextInfo;
 import com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
@@ -1130,4 +1133,38 @@ public class FSServiceUtils {
         }
         return ver;
     }
+
+    public static FederationSPAdapter getSPAdapter(
+        String hostEntityID, BaseConfigType hostSPConfig)
+    {
+        FSUtils.debug.message("FSServiceUtils.getSPAdapter");
+        if (hostSPConfig == null) {
+            FSUtils.debug.message("FSServiceUtils.getSPAdapter:null");
+            return null;
+        }
+        try {
+            String adapterName = IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                hostSPConfig, IFSConstants.FEDERATION_SP_ADAPTER);
+            List adapterEnv = IDFFMetaUtils.getAttributeValueFromConfig(
+                hostSPConfig, IFSConstants.FEDERATION_SP_ADAPTER_ENV);
+            if (adapterName != null && adapterName.length() != 0) {
+                Class adapterClass = Class.forName(adapterName.trim());
+                FederationSPAdapter adapterInstance = 
+                    (FederationSPAdapter) adapterClass.newInstance();
+                if (adapterEnv == null || adapterEnv.isEmpty()) {
+                    adapterInstance.initialize(
+                        hostEntityID, Collections.EMPTY_SET);
+                } else {
+                    Set newEnv = new HashSet();
+                    newEnv.addAll(adapterEnv);
+                    adapterInstance.initialize(hostEntityID, newEnv);
+                }
+                return adapterInstance;
+            }
+        } catch (Exception e) {
+          FSUtils.debug.error(
+              "FSServiceUtils.getSPAdapter: Unable to get provider", e);
+        }
+        return null;
+    } 
 }

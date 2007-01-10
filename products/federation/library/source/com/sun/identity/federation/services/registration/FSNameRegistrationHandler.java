@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationHandler.java,v 1.1 2006-10-30 23:14:34 qcheng Exp $
+ * $Id: FSNameRegistrationHandler.java,v 1.2 2007-01-10 06:29:34 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import com.sun.identity.federation.message.common.OldProvidedNameIdentifier;
 import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
@@ -104,6 +105,7 @@ public class FSNameRegistrationHandler {
     protected static String regisSource = "";
     protected String remoteEntityId = "";
     protected String hostedEntityId = "";
+    protected String hostedProviderRole = null;;
          
     /**
      * Constructor. Initializes FSAccountManager, meta Manager instance.
@@ -149,6 +151,14 @@ public class FSNameRegistrationHandler {
      */
     public void setHostedEntityId(String hostedId) {
         hostedEntityId = hostedId;
+    }
+
+    /**
+     * Sets hosted provider's role.
+     * @param hostedRole hosted provider's role
+     */
+    public void setHostedProviderRole(String hostedRole) {
+        this.hostedProviderRole = hostedRole;
     }
 
     /**
@@ -683,7 +693,6 @@ public class FSNameRegistrationHandler {
             } else {
                 FSRegistrationManager regisManager = 
                     FSRegistrationManager.getInstance(hostedEntityId);
-                        //hostedDescriptor.getProviderID());
                 HashMap valMap = regisManager.getRegistrationMap(relayState);
                 if (valMap == null) {
                     if (FSUtils.debug.messageEnabled()) {
@@ -693,6 +702,8 @@ public class FSNameRegistrationHandler {
                     returnLocallyAtSource(response,false);
                     return false;
                 } else {
+                    // remove from the registration manager map
+                    regisManager.removeRegistrationMapInfo(relayState);
                     regisMap = (HashMap) valMap.get("SSODetails");
                     HashMap returnMap = (HashMap) valMap.get("ReturnEntry");
                     oldAcctKey = (FSAccountFedInfoKey) returnMap.get(
@@ -724,6 +735,18 @@ public class FSNameRegistrationHandler {
                     regisSource = (String)returnMap.get("RegisSource");
                     returnURL = (String) returnMap.get(IFSConstants.LRURL);
                     boolean bStatus = doCommonRegistration();
+                    // Call SP Adapter for SP/IDP initiated HTTP profile
+                    if (bStatus && hostedProviderRole != null &&
+                        hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) 
+                    {
+                        if (FSUtils.debug.messageEnabled()) {
+                            FSUtils.debug.message("processRegResponse/HTTP, " +
+                                "call postRegisterNameIdentifier success");
+                        }
+                        callPostRegisterNameIdentifierSuccess(
+                            request, response, userID, null, regisResponse,
+                            IFSConstants.NAME_REGISTRATION_SP_HTTP_PROFILE);
+                    }
                     returnLocallyAtSource(response, bStatus);
                     return bStatus;
                 }
@@ -991,6 +1014,17 @@ public class FSNameRegistrationHandler {
                                             "doCommonRegistration returns " +
                                             bStatus);
                                     }
+                                    // Call SP Adapter
+                                    if (bStatus && hostedProviderRole != null &&
+                                        hostedProviderRole.equalsIgnoreCase(
+                                            IFSConstants.SP)) 
+                                    {
+                                        FSUtils.debug.message("doRemoteRegis");
+                                        callPostRegisterNameIdentifierSuccess(
+                                           request, response, userID,
+                                           regisRequest, regisResponse,
+                                           IFSConstants.NAME_REGISTRATION_SP_SOAP_PROFILE);
+                                    }
                                     returnLocallyAtSource(
                                         response, bStatus);
                                     return bStatus;
@@ -1185,6 +1219,15 @@ public class FSNameRegistrationHandler {
                     hostedEntityId,
                     relayState);
                 regisResponse.setMinorVersion(regisRequest.getMinorVersion());
+                // Call SP Adapter for SP/IDP initiated SOAP profile
+                if (hostedProviderRole != null &&
+                    hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) 
+                {
+                    FSUtils.debug.message("processRegistration IDP/HTTP");
+                    callPostRegisterNameIdentifierSuccess(
+                        request, response, userID, regisRequest, regisResponse,
+                        IFSConstants.NAME_REGISTRATION_IDP_HTTP_PROFILE);
+                }
             } catch (FSMsgException e) {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSNameRegistrationHandler::" +
@@ -1236,11 +1279,14 @@ public class FSNameRegistrationHandler {
      * @param regisRequest the name registration request received from 
      *  remote provider
      */
-    public FSNameRegistrationResponse processRegistrationRequest(
+    public FSNameRegistrationResponse processSOAPRegistrationRequest(
+        HttpServletRequest request,
+        HttpServletResponse response,
         FSNameRegistrationRequest regisRequest) 
     {
         relayState = regisRequest.getRelayState();
         try {
+            boolean regisSucceed = false;
             FSNameRegistrationResponse regisResponse = null;
             StatusCode statusCode;
             FSUtils.debug.message(
@@ -1301,6 +1347,7 @@ public class FSNameRegistrationHandler {
                                 new Status(statusCode),
                                 hostedEntityId,
                                 relayState);
+                             regisSucceed = true;
                         } catch (FSMsgException e) {
                             if (FSUtils.debug.messageEnabled()) {
                                 FSUtils.debug.message(
@@ -1384,6 +1431,13 @@ public class FSNameRegistrationHandler {
             }
             regisResponse.setID(IFSConstants.REGISTRATIONID);
             regisResponse.setMinorVersion(regisRequest.getMinorVersion());
+            if (regisSucceed && hostedProviderRole != null &&
+                hostedProviderRole.equalsIgnoreCase(IFSConstants.SP)) 
+            {
+                callPostRegisterNameIdentifierSuccess(request, response,
+                    userID, regisRequest, regisResponse,
+                    IFSConstants.NAME_REGISTRATION_IDP_SOAP_PROFILE);
+            }
             return regisResponse;  
         } catch (SAMLException e){
             if (FSUtils.debug.messageEnabled()) {
@@ -1945,5 +1999,33 @@ public class FSNameRegistrationHandler {
             FSUtils.debug.error("Error in sending registration response");
             return;
         }                
+    }
+
+    private void callPostRegisterNameIdentifierSuccess(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        String userID,
+        FSNameRegistrationRequest regRequest,
+        FSNameRegistrationResponse regResponse,
+        String regProfile) 
+    {
+        FederationSPAdapter spAdapter =
+            FSServiceUtils.getSPAdapter(hostedEntityId, hostedConfig);
+        if (spAdapter != null) {
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("processRegResponse, " +
+                    "call postRegisterNameIdentifier success");
+            }
+            try {
+                spAdapter.postRegisterNameIdentifierSuccess(
+                    hostedEntityId,
+                    request, response, userID, regRequest,
+                    regResponse, regProfile);
+            } catch (Exception e) {
+                // ignore adapter exception
+                FSUtils.debug.error("postRegisterNameIdentifierSuccess." +
+                    regProfile, e);
+            }
+        }
     }
 }
