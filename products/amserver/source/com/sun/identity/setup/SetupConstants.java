@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.4 2007-01-05 02:41:05 veiming Exp $
+ * $Id: SetupConstants.java,v 1.5 2007-01-10 00:42:42 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -323,5 +323,22 @@ public interface SetupConstants {
      */
     String CONFIG_VAR_DEFAULT_SHARED_KEY = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
 
+    /**
+     * Configuration Variable for service management root suffix with carat 
+     * suffix.
+     */
+    String SM_ROOT_SUFFIX_HAT = "SM_ROOT_SUFFIX_HAT";
+
+    /**
+     * Variable for default organization base suffix for service management 
+     * node.
+     */
+    String SM_CONFIG_BASEDN = "SM_CONFIG_BASEDN";
+
+    /**
+     * Configuration Variable for service management root suffix.
+     */
+    String SM_CONFIG_ROOT_SUFFIX = "SM_CONFIG_ROOT_SUFFIX";
+    
 
 }

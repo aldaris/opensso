@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.3 2006-12-08 21:02:34 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.4 2007-01-10 00:42:42 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,7 @@ import netscape.ldap.util.RDN;
 public class AMSetupDSConfig {
     private String dsManager;
     private String suffix;
+    private String smsuffix;
     private String dsHostName;
     private String dsPort;
     private String dsAdminPwd;
@@ -71,6 +72,7 @@ public class AMSetupDSConfig {
         Map map = ServicesDefaultValues.getDefaultValues();
         dsManager = (String)map.get(SetupConstants.CONFIG_VAR_DS_MGR_DN);
         suffix = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
+        smsuffix = (String)map.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX);
         dsHostName = (String)map.get(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
         dsPort = (String)map.get(
@@ -140,6 +142,13 @@ public class AMSetupDSConfig {
             results = ldc.search(baseDN, LDAPConnection.SCOPE_SUB, filter, 
                 attrs, false);
             LDAPEntry ldapEntry = results.next();
+            if (ldapEntry == null) {
+                filter = "cn=" + suffix;
+                results = ldc.search(baseDN, LDAPConnection.SCOPE_SUB, filter, 
+                    attrs, false);
+                ldapEntry = results.next();
+            }
+
             LDAPAttribute attr = ldapEntry.getAttribute(attrs[0]);
             String[] attrValues  = attr.getStringValueArray();
             dBName = attrValues[0];
@@ -172,6 +181,22 @@ public class AMSetupDSConfig {
             map.put(SetupConstants.RS_RDN, LDAPDN.escapeRDN(rdn)); 
             map.put(SetupConstants.DEFAULT_ORG, canonicalizedDN); 
             map.put(SetupConstants.ORG_BASE, canonicalizedDN);
+            if ((smsuffix != null) && (smsuffix.length() > 0)) { 
+                if (suffix.equalsIgnoreCase(smsuffix)) {
+                    map.put(SetupConstants.SM_CONFIG_BASEDN, canonicalizedDN);
+                    map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
+                        replaceDNDelimiter(escapedDN, "^"));
+                } else {
+                    smsuffix = smsuffix.trim();
+                    String smnormalizedDN = LDAPDN.normalize(smsuffix); 
+                    String smcanonicalizedDN = canonicalize(smnormalizedDN);
+                    String smescapedDN = 
+                        SMSSchema.escapeSpecialCharacters(smnormalizedDN);
+                    map.put(SetupConstants.SM_CONFIG_BASEDN, smcanonicalizedDN);
+                    map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
+                        replaceDNDelimiter(smescapedDN, "^"));
+                }
+            }
         }
     }
 
