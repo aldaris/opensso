@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.4 2006-12-13 20:18:48 veiming Exp $
+   $Id: configurator.jsp,v 1.5 2007-01-10 00:45:02 goodearth Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -419,6 +419,21 @@ onblur="javascript: if (this.disabled==0) this.className='Btn1'" onfocus="javasc
 </td>
 <td valign="top">
 <div class="ConTblCl2Div"><input value="dc=opensso,dc=java,dc=net" name="ROOT_SUFFIX" id="psLbl1" size="50" class="TxtFld"></div>
+
+</div>
+</td>
+</tr>
+
+<tr><td colspan=2>&nbsp;</td></tr>
+
+<!-- Root Suffix for Service Management-->
+<tr>
+<td valign="top">
+<div class="ConEmbTblCl1Div">
+<div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configsmsdatasuffix"/></span></div>
+</td>
+<td valign="top">
+<div class="ConTblCl2Div"><input value="dc=opensso,dc=java,dc=net" name="SM_CONFIG_ROOT_SUFFIX" id="psLbl1" size="50" class="TxtFld"></div>
 
 </div>
 </td>
