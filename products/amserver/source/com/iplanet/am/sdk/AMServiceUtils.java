@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceUtils.java,v 1.3 2006-12-15 21:40:41 kenwho Exp $
+ * $Id: AMServiceUtils.java,v 1.4 2007-01-10 00:48:05 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -241,7 +241,7 @@ public class AMServiceUtils {
                     token);
             ServiceConfig sc = scm.getOrganizationConfig(orgDN, null);
             DN theOrgDN = new DN(orgDN);
-            if (theOrgDN.equals(new DN(AMStoreConnection.rootSuffix))
+            if (theOrgDN.equals(new DN(AMStoreConnection.getAMSdkBaseDN()))
                     && sc != null) {
                 Map avPair = sc.getAttributes();
                 Set subConfigs = sc.getSubConfigNames();
