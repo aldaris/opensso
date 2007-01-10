@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.2 2006-12-08 21:02:39 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.3 2007-01-10 06:32:55 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -893,6 +893,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.FEDERATION_SP_ADAPTER + "\">\n" +
+                "            <Value>com.sun.identity.federation.plugins.FSDefaultSPAdapter</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + IFSConstants.FEDERATION_SP_ADAPTER_ENV + "\">\n" +
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +

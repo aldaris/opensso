@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.1 2006-10-30 23:18:07 qcheng Exp $
+ * $Id: FMSessionProvider.java,v 1.2 2007-01-10 06:32:56 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,11 +59,12 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.federation.plugins.FederationSPAdapter;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
 
 /**
@@ -177,6 +178,7 @@ public class FMSessionProvider implements SessionProvider {
         if (principalName == null || principalName.length() == 0) {
             throw new SessionException(bundle.getString("nullPrincipal"));
         }
+
         String authLevel = (String)info.get(AUTH_LEVEL);
 
         // Call auth module "Federation"
@@ -224,7 +226,24 @@ public class FMSessionProvider implements SessionProvider {
                 throw new SessionException(e.getMessage());
             }                
         } else if (ac.getStatus() == AuthContext.Status.FAILED) {
-            throw new SessionException(ac.getLoginException());
+            // TODO: test again when auth changes are done so the error code
+            // is set and passed over
+            AuthLoginException ale = ac.getLoginException();
+            String authError = ale.getErrorCode();
+            int failureCode = SessionException.AUTH_ERROR_NOT_DEFINED;
+            if (authError.equals(AMAuthErrorCode.AUTH_USER_INACTIVE)) {
+                failureCode = SessionException.AUTH_USER_INACTIVE;
+            } else if(authError.equals(AMAuthErrorCode.AUTH_USER_LOCKED)) {
+                failureCode = SessionException.AUTH_USER_LOCKED;
+            } else if(authError.equals(
+                AMAuthErrorCode.AUTH_ACCOUNT_EXPIRED))
+            {
+                failureCode = SessionException.AUTH_ACCOUNT_EXPIRED;
+            }
+            
+            SessionException se = new SessionException(ale);
+            se.setErrCode(failureCode);
+            throw se;
         } else {
             throw new SessionException(bundle.getString("loginFailed"));
         }
