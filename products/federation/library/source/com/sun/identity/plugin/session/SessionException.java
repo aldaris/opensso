@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionException.java,v 1.1 2006-10-30 23:15:30 qcheng Exp $
+ * $Id: SessionException.java,v 1.2 2007-01-10 06:31:15 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,16 @@ import com.sun.identity.shared.locale.L10NMessageImpl;
  */
 public class SessionException extends L10NMessageImpl {
 
-    private int code = -1;
+
+    /**
+     * Error codes.
+     */
+    public static int AUTH_ERROR_NOT_DEFINED = -1;
+    public static int AUTH_USER_INACTIVE = 1;
+    public static int AUTH_USER_LOCKED = 2;
+    public static int AUTH_ACCOUNT_EXPIRED = 3;
+
+    private int code = AUTH_ERROR_NOT_DEFINED;
 
     /**
      * Constructs a <code>SessionException</code> with a detailed
