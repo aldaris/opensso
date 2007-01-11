@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-11-04 00:52:33 subbae Exp $
+   $Id: build.xml,v 1.5 2007-01-11 23:21:46 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -81,11 +81,6 @@
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
                 <include name="opensso-installtools-launcher.jar" />
-            </fileset>
-            <fileset dir="${j2eeagents.appserver.v81.extlib.dir}">
-                <include name="appserv-ext.jar" />
-                <include name="appserv-rt.jar" />
-                <include name="j2ee.jar" />
             </fileset>
         </copy>
     </target>
