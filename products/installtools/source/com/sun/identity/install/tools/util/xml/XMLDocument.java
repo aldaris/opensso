@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLDocument.java,v 1.1 2006-09-28 07:38:02 rarcot Exp $
+ * $Id: XMLDocument.java,v 1.2 2007-01-11 23:12:27 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -881,21 +881,25 @@ public class XMLDocument implements IXMLUtilsConstants {
                             if (nextBoundedToken.getName().equals(elementName))
                             {
                                 if (nextBoundedToken.elementEnd()) {
-                                    boundCount--;
-                                    if (boundCount == 0) {
-                                        childElements = getElements(
-                                                innerTokens);
-                                        element = new XMLElement(this,
-                                                elementName, childElements);
-                                        element.setStartToken(token);
-                                        element.setEndToken(nextBoundedToken);
-                                        element.setAttributes(getAttributes(
-                                                token.getAttributeString(),
-                                                nextBoundedToken
-                                                    .getAttributeString()));
-                                        result.add(element);
-                                        count = i + 1;
-                                        break;
+                                    if(!nextBoundedToken.elementStart()) {
+                                        boundCount--;
+                                        if (boundCount == 0) {
+                                            childElements = getElements(
+                                                    innerTokens);
+                                            element = new XMLElement(this,
+                                                    elementName, childElements);
+                                            element.setStartToken(token);
+                                            element.setEndToken(nextBoundedToken);
+                                            element.setAttributes(getAttributes(
+                                                    token.getAttributeString(),
+                                                    nextBoundedToken
+                                                        .getAttributeString()));
+                                            result.add(element);
+                                            count = i + 1;
+                                            break;
+                                        } else {
+                                            innerTokens.add(nextToken);
+                                        }
                                     } else {
                                         innerTokens.add(nextToken);
                                     }
