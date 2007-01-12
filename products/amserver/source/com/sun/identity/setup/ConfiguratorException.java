@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguratorException.java,v 1.2 2007-01-05 02:41:05 veiming Exp $
+ * $Id: ConfiguratorException.java,v 1.3 2007-01-12 21:29:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,7 +123,11 @@ public class ConfiguratorException extends RuntimeException
             return getMessage();
         }
         String result = message;
-        if (bundleName != null && locale != null) {
+        if (bundleName != null) {
+            if (locale == null) {
+                locale = Locale.getDefault();
+            }
+
             bundle = ResourceBundle.getBundle(bundleName, locale);
             String mid = bundle.getString (errorCode);
             if ((args == null) || (args.length == 0)) {

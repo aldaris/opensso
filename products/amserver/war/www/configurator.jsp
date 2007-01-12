@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.5 2007-01-10 00:45:02 goodearth Exp $
+   $Id: configurator.jsp,v 1.6 2007-01-12 21:29:44 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -94,39 +94,40 @@ border="0" height="10" width="108" /></td></tr></table>
             response.sendRedirect(redirectURL);
             return;
         } else {
-	    out.println("<br>");
-	    %><config:message i18nKey="configurator.configprogress"/><%
-	    out.println("...<br>");
+            out.println("<br>");
+            %><config:message i18nKey="configurator.configprogress"/><%
+            out.println("...<br>");
             out.flush();
 
             try {
                 result = AMSetupServlet.processRequest(request, response);
             } catch (Exception e) {
+                out.println("<p>");
                 out.println("<b>" + e.getMessage() + "</b>");
-		out.println("<p>");
-	        %><config:message i18nKey="configurator.gotoConfiguratorJSP"/><%
-	        out.println("</p>");
+                out.println("<p>");
+                %><config:message i18nKey="configurator.gotoConfiguratorJSP"/><%
+                out.println("</p>");
             }
         }
 
         if (result) {
-	    out.println("<p>");
-	    %><config:message i18nKey="configurator.successstatus"/><%
-	    out.println("</p>");
+            out.println("<p>");
+            %><config:message i18nKey="configurator.successstatus"/><%
+            out.println("</p>");
             out.println("<script language=\"Javascript\">setTimeout('gotoLoginPage()', 5000);</script>\n");
             out.println("<p>");
             %><config:message i18nKey="configurator.redirect5"/><%
-	    out.println("</p>");
+            out.println("</p>");
         } else {
-	    out.println("<p>");
-	    %><config:message i18nKey="configurator.failurestatus"/><%
-	    out.println("</p>");
-	    out.println("<p>");
-	    %><config:message i18nKey='configurator.log' patterntype='message'>
+            out.println("<p>");
+            %><config:message i18nKey="configurator.failurestatus"/><%
+            out.println("</p>");
+            out.println("<p>");
+            %><config:message i18nKey='configurator.log' patterntype='message'>
                 <config:param index='0' arg='<%=basedir+deployuri+"/debug"%>'/>
-	      </config:message>
-	    <%
-	    out.println("</p>");
+              </config:message>
+            <%
+            out.println("</p>");
         }
         out.flush();
         return;
@@ -214,14 +215,14 @@ onblur="javascript: if (this.disabled==0) this.className='Btn1'" onfocus="javasc
     <!-- Main Label -->
     <tr>
         <td valign="top">
-	    <div class="ConFldSetLgdDiv"><config:message i18nKey="configurator.amsettings"/></div>
+            <div class="ConFldSetLgdDiv"><config:message i18nKey="configurator.amsettings"/></div>
         </td>
     </tr>
 
     <!-- Server Settings -->
     <tr>
             <td colspan="2" valign="top">
-	    <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.serversettings"/></span></div>
+            <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.serversettings"/></span></div>
             </td>
     </tr>
 
@@ -361,8 +362,8 @@ onblur="javascript: if (this.disabled==0) this.className='Btn1'" onfocus="javasc
     <tr>
         <td  valign="top">
             <span class="LblLev2Txt"><config:message i18nKey="configurator.type"/></span>
-	</td>
-	<td> 
+        </td>
+        <td> 
             <table title="" border="0" cellpadding="0" cellspacing="0">
 
 <!-- FLAT FILE CONFIGURATION SECTION -->

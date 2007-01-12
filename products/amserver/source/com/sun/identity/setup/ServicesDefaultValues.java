@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.7 2006-12-08 21:02:35 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.8 2007-01-12 21:29:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,16 +28,17 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.encode.Hash;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import netscape.ldap.util.DN;
 
@@ -49,7 +50,6 @@ public class ServicesDefaultValues {
     private static Set preappendSlash = new HashSet();
     private static Set trimSlash = new HashSet();
     private Map defValues = new HashMap();
-    private static java.util.Locale locale = null;
     
     static {
         preappendSlash.add(SetupConstants.CONFIG_VAR_PRODUCT_NAME);
@@ -79,8 +79,8 @@ public class ServicesDefaultValues {
     public static void setServiceConfigValues(
         HttpServletRequest request
     ) {
+        Locale locale = (Locale)request.getLocale();
         Enumeration requestEnum = request.getParameterNames();
-        setLocale(request);
         Map map = instance.defValues;
         while (requestEnum.hasMoreElements()) {
             String key = (String)requestEnum.nextElement();
@@ -95,7 +95,7 @@ public class ServicesDefaultValues {
             throw new ConfiguratorException("configurator.encryptkey",
                 null, locale);
         }
-        validatePassword();
+        validatePassword(locale);
         if (!isServiceURLValid()) {
             throw new ConfiguratorException("configurator.invalidhostname",
                 null, locale);
@@ -333,14 +333,14 @@ public class ServicesDefaultValues {
      * Validates Admin passwords.
      *
      */
-    private static void validatePassword() {
+    private static void validatePassword(Locale locale) {
         Map map = instance.defValues;
         String adminPwd = ((String)map.get(
             SetupConstants.CONFIG_VAR_ADMIN_PWD)).trim();
         String confirmAdminPwd = ((String)map.get(
             SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD)).trim();
 
-        if (isPasswordValid(adminPwd, confirmAdminPwd)) {
+        if (isPasswordValid(adminPwd, confirmAdminPwd, locale)) {
             SystemProperties.initializeProperties(
                 SetupConstants.ENC_PWD_PROPERTY, (((String) map.get(
                     SetupConstants.CONFIG_VAR_ENCRYPTION_KEY)).trim()));
@@ -354,7 +354,7 @@ public class ServicesDefaultValues {
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
             confirmAdminPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD)).trim();
-            if (isPasswordValid(adminPwd, confirmAdminPwd)) {
+            if (isPasswordValid(adminPwd, confirmAdminPwd, locale)) {
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
                 map.remove(SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD);
             }
@@ -378,9 +378,14 @@ public class ServicesDefaultValues {
      *
      * @param pwd  is the Admin password.
      * @param cPwd is the confirm Admin password.
+     * @param locale Locale of the HTTP Request.
      * @return <code>true</code> if password is valid.
      */
-    private static boolean isPasswordValid(String pwd, String cPwd) {
+    private static boolean isPasswordValid(
+        String pwd, 
+        String cPwd, 
+        Locale locale
+    ) {
         if ((pwd != null) && (pwd.length() > 7)) {
             if (!pwd.equals(cPwd)) {
                  throw new ConfiguratorException("configurator.nopasswdmatch",
@@ -447,9 +452,4 @@ public class ServicesDefaultValues {
         }
         return orig;
     }
-
-    private static void setLocale (HttpServletRequest request) {
-        locale = (java.util.Locale)request.getAttribute("LOCALE");
-    }
-
 }
