@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.2 2006-08-29 21:55:07 veiming Exp $
+ * $Id: LDAPConnectionPool.java,v 1.3 2007-01-12 00:49:06 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -243,11 +243,15 @@ public class LDAPConnectionPool {
      */
     public void destroy() {
         stayAlive = false;
-        cleanupThread.interrupt();
-        while (cleanupThread.isAlive()) {
-            try {
-                Thread.sleep(1000);
-            } catch(InterruptedException iex) {}
+        // if idle timeout property is not set, cleanupThread will be
+        // null. null checked here to avoid NPE.
+        if (cleanupThread != null) {
+            cleanupThread.interrupt();
+            while (cleanupThread.isAlive()) {
+                try {
+                    Thread.sleep(1000);
+                } catch(InterruptedException iex) {}
+            }
         }
         destroyPool(pool);
     }
@@ -655,11 +659,15 @@ public class LDAPConnectionPool {
             synchronized (deprecatedPool) {
                 deprecatedPool.addAll(pool);
                 stayAlive = false;
-                cleanupThread.interrupt();
-                while (cleanupThread.isAlive()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException iex) {}
+                // if idle timeout property is not set, cleanupThread will be
+                // null. null checked here to avoid NPE.
+                if (cleanupThread != null) {
+                    cleanupThread.interrupt();
+                    while (cleanupThread.isAlive()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException iex) {}
+                    }
                 }
                 
                 pool.clear();
