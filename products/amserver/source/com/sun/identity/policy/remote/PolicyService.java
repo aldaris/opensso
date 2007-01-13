@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyService.java,v 1.3 2006-08-25 21:21:12 veiming Exp $
+ * $Id: PolicyService.java,v 1.4 2007-01-13 01:53:31 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,7 +228,7 @@ public class PolicyService {
 
         try {
             doc = XMLUtils.getXMLDocument(
-                     new ByteArrayInputStream(xml.getBytes()));
+                     new ByteArrayInputStream(xml.getBytes("UTF-8")));
         } catch (Exception xe) {
             debug.error("PolicyService.parseXML(String): XML parsing error");
             throw new PolicyEvaluationException(ResBundleUtils.rbName,
