@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: serverconfig.xml,v 1.8 2006-12-15 01:09:12 goodearth Exp $
+   $Id: serverconfig.xml,v 1.9 2007-01-16 20:30:02 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,7 +39,7 @@
         </User>
         <User name="User2" type="admin">
             <DirDN>
-                @CONFIG_ADMINDN@
+                cn=dsameuser,ou=DSAME Users,@NORMALIZED_ORGBASE@
             </DirDN>
             <DirPassword>
                 @ENCADMINPASSWD@
