@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.3 2007-01-10 06:29:30 exu Exp $
+ * $Id: IFSConstants.java,v 1.4 2007-01-16 20:14:20 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -301,9 +301,18 @@ public interface IFSConstants {
      */
     public static final String SAML_SUCCESS = "samlp:Success";
     /**
-     * Status code: <code>samlp:Failure</code>  
+     * Status code: <code>samlp:Responder</code>  
      */
-    public static final String SAML_FAILURE = "samlp:Failure";
+    public static final String SAML_RESPONDER = "samlp:Responder";
+    /**
+     * Status code: <code>samlp:Requester</code>  
+     */
+    public static final String SAML_REQUESTER = "samlp:Requester";
+    /**
+     * Status code: <code>samlp:VersionMismatch</code>  
+     */
+    public static final String SAML_VERSION_MISMATCH = "samlp:VersionMismatch";
+
     /**
      * Liberty unsupported: <code>lib:Unsupported</code>
      */
@@ -1434,6 +1443,10 @@ public interface IFSConstants {
      * Logout status: Failure
      */
     public static final String LOGOUT_FAILURE="logoutFailure";
+    /**
+     * Logout status: No Session
+     */
+    public static final String LOGOUT_NO_SESSION="noSession";
     /**
      * boolean: <code>true</code>
      */

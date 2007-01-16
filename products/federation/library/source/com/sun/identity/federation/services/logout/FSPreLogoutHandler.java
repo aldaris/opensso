@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.2 2007-01-10 06:29:33 exu Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.3 2007-01-16 20:14:22 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -242,8 +242,6 @@ public  class FSPreLogoutHandler {
                     sessionIndex =
                         (String)providerMap.get(IFSConstants.SESSION_INDEX);
                     if (currentSessionProvider != null) {
-                        FSLogoutStatus bHandleStatus = new FSLogoutStatus(
-                            IFSConstants.SAML_FAILURE);
                         FSUtils.debug.message("creating IDP handler");
                         FSSingleLogoutHandler handlerObj =
                             new FSSingleLogoutHandler();
@@ -403,13 +401,13 @@ public  class FSPreLogoutHandler {
             FSUtils.debug.message("FSPrelogoutHandler::User Not found");
             FSLogoutUtil.returnToSource(response,
                             remoteDescriptor, 
-                            IFSConstants.SAML_FAILURE,
+                            IFSConstants.SAML_RESPONDER,
                             COMMON_ERROR_URL,
                             reqLogout.getMinorVersion(),
                             hostedConfig,
                             hostedEntityId,
                             userID);
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         }
         String acceptString = request.getHeader("Accept");
         if ((acceptString != null) &&
@@ -484,7 +482,7 @@ public  class FSPreLogoutHandler {
             hostedRole, hostedConfig, metaAlias);
         if (userID == null) {
             FSUtils.debug.error("User does not exist. Invalid request");
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
         }
 
         FSSessionManager sessionManager = 

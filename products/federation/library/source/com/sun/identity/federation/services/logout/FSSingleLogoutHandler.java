@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.3 2007-01-10 06:29:34 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.4 2007-01-16 20:14:23 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,17 +162,8 @@ public class FSSingleLogoutHandler {
                 remoteEntityId + " using profile " + strProfile);
         }
         
-        FSSessionManager sessionManager = 
-            FSSessionManager.getInstance(hostedEntityId);
-        FSSession session = sessionManager.getSession(ssoToken);
-        FSLogoutUtil.cleanSessionMapPartnerList(
-            userID, remoteEntityId, hostedEntityId, session);
-
-        FSUtils.debug.message(
-            "Out of cleanSessionMapPartnerList in FSSingleLogoutHandler");
-        FSLogoutStatus bLogoutStatus = new FSLogoutStatus(
-                                       IFSConstants.SAML_FAILURE);
-
+        FSUtils.debug.message("FSSingleLogoutHandler, in case 1");
+        FSLogoutStatus bLogoutStatus = null;
         if (strProfile.equals(IFSConstants.LOGOUT_SP_REDIRECT_PROFILE) ||
             strProfile.equals(IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE)) 
         {
@@ -181,7 +172,10 @@ public class FSSingleLogoutHandler {
         } else if (strProfile.equals(IFSConstants.LOGOUT_IDP_SOAP_PROFILE) ||
             strProfile.equals(IFSConstants.LOGOUT_SP_SOAP_PROFILE)) 
         {
-            FSUtils.debug.message("In SOAP profile");
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("In SOAP profile, current partner IDP? "
+                    + isCurrentProviderIDPRole);
+            }
             // This func should take care of initiating next
             // provider also as it has control
             bLogoutStatus = doIDPSoapProfile(remoteEntityId);
@@ -189,6 +183,9 @@ public class FSSingleLogoutHandler {
             !isCurrentProviderIDPRole) 
         {
             FSUtils.debug.message("In GET profile");
+            // HTTP GET is for IDP only, so always remove session partner
+            FSLogoutUtil.removeCurrentSessionPartner(hostedEntityId,
+                remoteEntityId, ssoToken, userID);
             bLogoutStatus = doHttpGet(remoteEntityId);
         } else {
             if (FSUtils.debug.messageEnabled()) {
@@ -200,7 +197,7 @@ public class FSSingleLogoutHandler {
             FSServiceUtils.returnLocallyAfterOperation(
                 response, LOGOUT_DONE_URL,false,
                 IFSConstants.LOGOUT_SUCCESS, IFSConstants.LOGOUT_FAILURE);
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         }
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Logout completed first round with status : "
@@ -208,8 +205,8 @@ public class FSSingleLogoutHandler {
         }
         // control will come here with error and without going
         // elsewhere in case of exception
-        if (bLogoutStatus.getStatus().equalsIgnoreCase(
-            IFSConstants.SAML_FAILURE))
+        if (!bLogoutStatus.getStatus().equalsIgnoreCase(
+            IFSConstants.SAML_SUCCESS))
         {
             FSServiceUtils.returnLocallyAfterOperation(
                 response, LOGOUT_DONE_URL, false,
@@ -224,15 +221,17 @@ public class FSSingleLogoutHandler {
      * next-in-line provider. In the case of HTTP GET/Redirect we send the
      * message to one provider and lose control. Here in SOAP profile 
      * <code>continueLogout</code> continues the logout process.
+     * @param isSuccess if true, means logout preformed successfully so far;
+     *     if false, means logout failed in one or more providers.
      */
-    private void continueLogout() {
+    private void continueLogout(boolean isSuccess) {
         FSUtils.debug.message(
             "Entered FSSingleLogoutHandler::continueLogout");
         if (FSLogoutUtil.liveConnectionsExist(userID, hostedEntityId)) 
         {
             FSUtils.debug.message("More liveConnectionsExist");
             HashMap providerMap = FSLogoutUtil.getCurrentProvider(
-                userID, hostedEntityId);
+                userID, hostedEntityId, ssoToken);
             if (providerMap != null) {
                 FSSessionPartner currentSessionProvider =
                     (FSSessionPartner)providerMap.get(
@@ -259,17 +258,12 @@ public class FSSingleLogoutHandler {
                     }
                     setRemoteDescriptor(currentDesc);
 
-                    // Clean session Map here of the providerId
+                    // Clean session Map
                     FSSessionManager sessionManager = 
                         FSSessionManager.getInstance(hostedEntityId);
                     FSSession session = sessionManager.getSession(
                         sessionManager.getSessionList(userID), sessionIndex); 
 
-                    FSLogoutUtil.cleanSessionMapPartnerList(
-                        userID,
-                        currentEntityId,
-                        hostedEntityId,
-                        session);
                     if (!supportSOAPProfile(remoteDescriptor)) {
                         if (FSUtils.debug.messageEnabled()) {
                             FSUtils.debug.message(
@@ -281,10 +275,20 @@ public class FSSingleLogoutHandler {
                                 LogUtil.LOGOUT_PROFILE_NOT_SUPPORTED,data);
                         return;
                     }
-                    FSUtils.debug.message("In SOAP profile");
+                    FSUtils.debug.message("FSSLOHandler, SOAP in case 2");
                     // This func should take care of initiating next
                     // provider also as it has control
-                    doIDPSoapProfile(currentEntityId);
+                    // remove session partner if status is success or 
+                    // this is IDP
+                    if ((doIDPSoapProfile(currentEntityId)).getStatus().
+                            equalsIgnoreCase(IFSConstants.SAML_SUCCESS) ||
+                        !isCurrentProviderIDPRole)
+                    {
+                        FSLogoutUtil.removeCurrentSessionPartner(
+                            hostedEntityId, currentEntityId,
+                            ssoToken, userID);
+                        FSUtils.debug.message("SOAP partner removed, case 3");
+                    }
                     return;
                 } else {
                     if (FSUtils.debug.messageEnabled()) {
@@ -321,13 +325,14 @@ public class FSSingleLogoutHandler {
                 return;
             }
         } else {
-            if (FSUtils.debug.messageEnabled()) {
-                FSUtils.debug.message("Reached else part in continuelogout" +
-                    "\nNo live connections, destroy user" +
-                    " session call destroyPrincipalSession");
+            FSUtils.debug.message("Reached else part in continuelogout");
+            // destroy session when there is no failed logout or this is IDP
+            // for SP does not logout local session in case IDP logout failed.
+            if (isSuccess || !isCurrentProviderIDPRole) {
+                FSUtils.debug.message("No live connections, destroy session");
+                FSLogoutUtil.destroyPrincipalSession(
+                    userID, hostedEntityId, sessionIndex, request, response);
             }
-            FSLogoutUtil.destroyPrincipalSession(
-                userID, hostedEntityId, sessionIndex, request, response);
             // Call SP Adapter postSingleLogoutSuccess for SP/SOAP
             callPostSingleLogoutSuccess(
                 respObj, IFSConstants.LOGOUT_SP_SOAP_PROFILE);
@@ -374,7 +379,7 @@ public class FSSingleLogoutHandler {
                 createSingleLogoutRequest(acctObj, sessionIndex);
             if (reqLogout == null) {
                 FSUtils.debug.message("Logout Request is null");
-                return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+                return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
             }
             reqLogout.setMinorVersion(getMinorVersion(remoteDescriptor));
             if (FSUtils.debug.messageEnabled()) {
@@ -398,7 +403,7 @@ public class FSSingleLogoutHandler {
                             " doHttpRedirect: couldn't obtain " +
                             "this site's cert alias.");
                     }
-                    return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+                    return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
                 }
                 urlEncodedRequest =
                     FSSignatureUtil.signAndReturnQueryString(
@@ -428,7 +433,7 @@ public class FSSingleLogoutHandler {
             FSUtils.debug.error("FSSingleLogoutHandler::" +
             "doHttpRedirect IOException:", e);
         }
-        return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+        return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
     }
     
     /**
@@ -635,7 +640,7 @@ public class FSSingleLogoutHandler {
         }catch(IOException e){
             FSUtils.debug.error(
                 "Error in performing HTTP GET for WML agent:", e);
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         }
     }
     
@@ -705,7 +710,7 @@ public class FSSingleLogoutHandler {
         } catch(IOException e){
             FSUtils.debug.error(
                 "Error in performing HTTP GET for regular agent");
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         }
     }
     
@@ -799,16 +804,29 @@ public class FSSingleLogoutHandler {
         {
             FSUtils.debug.message(
                 "SOAP first round went fine. Calling continue logout");
+            // remove current session partner in case of success
+            FSLogoutUtil.removeCurrentSessionPartner(hostedEntityId,
+                providerId, ssoToken, userID);
+            FSUtils.debug.message("SOAP partner removed in case of success");
         } else {
             FSUtils.debug.message("SOAP first round false. No continue logout");
+            // remove session partner if this is IDP
+            if (!isCurrentProviderIDPRole) {
+                FSLogoutUtil.removeCurrentSessionPartner(hostedEntityId,
+                    providerId, ssoToken, userID);
+            }
             logoutStatus = false;
         }
         if (!isHttpRedirect && (logoutStatus || !isCurrentProviderIDPRole)) {
-            continueLogout();
+            continueLogout(logoutStatus);
         }
         if (!logoutStatus) {
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
         } else {
+            // redirect in case of SOAP and successful logout
+            if (response != null && !isHttpRedirect) {
+                returnAfterCompletion();
+            }
             return bSoapStatus;
         }
     }
@@ -890,7 +908,7 @@ public class FSSingleLogoutHandler {
                                 "FSSOAPException in doSOAPProfile" +
                                 " Cannot send request", e);
                             return new FSLogoutStatus(
-                                IFSConstants.SAML_FAILURE);
+                                IFSConstants.SAML_RESPONDER);
                         }
                         if(retSOAPMessage != null) {
                             Element elt =
@@ -906,7 +924,7 @@ public class FSSingleLogoutHandler {
                                         IFSConstants.LOGOUT_SUCCESS,
                                         IFSConstants.LOGOUT_FAILURE);
                                     return new FSLogoutStatus(
-                                        IFSConstants.SAML_FAILURE);
+                                        IFSConstants.SAML_REQUESTER);
                                 }
                             }
                             this.requestLogout = reqLogout;
@@ -953,25 +971,12 @@ public class FSSingleLogoutHandler {
                                 return new FSLogoutStatus(
                                     IFSConstants.SAML_SUCCESS);
                             } else {
-                                if (statusString.equalsIgnoreCase(
-                                        IFSConstants.SAML_FAILURE) &&
-                                    secondLevelStatus == null) 
-                                {
-                                    if (FSUtils.debug.messageEnabled()) {
-                                        FSUtils.debug.message(
-                                            "FSSingleLogoutHandler: " +
-                                            " doSoapProfile returning failure");
-                                    }
-                                    return new FSLogoutStatus(
-                                        IFSConstants.SAML_FAILURE);
-                                } else {
-                                    if (FSUtils.debug.messageEnabled()) {
-                                        FSUtils.debug.message(
-                                            "FSSingleLogoutHandler:doSoap" +
-                                            "Profile in unsupported profile");
-                                    }
-                                    return doHttpRedirect(remoteEntityId);
+                                if (FSUtils.debug.messageEnabled()) {
+                                    FSUtils.debug.message(
+                                        "FSSingleLogoutHandler: " +
+                                        "SOAP Profile failure " + statusString);
                                 }
+                                return new FSLogoutStatus(statusString);
                             }
                         }
                     }
@@ -989,7 +994,7 @@ public class FSSingleLogoutHandler {
         } catch (Exception e){
             FSUtils.debug.error("In IOException of doSOAPProfile : " ,e);
         }
-        return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+        return new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
     }
     
     
@@ -1158,7 +1163,7 @@ public class FSSingleLogoutHandler {
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Entered FSSingleLogoutHandler::" +
-                " processSingleLogoutRequest - HTTP");
+                " processHttpSingleLogoutRequest - HTTP");
         }
 
         this.response = response;
@@ -1219,10 +1224,10 @@ public class FSSingleLogoutHandler {
                 isCurrentProviderIDPRole =
                     currentSessionProvider.getIsRoleIDP();
 
+                FSUtils.debug.message("FSSLOHandler, in case 3");
                 FSLogoutUtil.cleanSessionMapPartnerList(
                     userID, currentEntityId, hostedEntityId, session);
-                FSLogoutStatus bLogoutStatus = new FSLogoutStatus(
-                    IFSConstants.SAML_FAILURE);
+                FSLogoutStatus bLogoutStatus = null;
             
                 List profiles = 
                     remoteDescriptor.getSingleLogoutProtocolProfile();
@@ -1245,6 +1250,8 @@ public class FSSingleLogoutHandler {
                     FSUtils.debug.error("Provider " + currentEntityId +
                         "doesn't support HTTP profile.");
                     returnAfterCompletion();
+                    bLogoutStatus = new FSLogoutStatus(
+                        IFSConstants.SAML_RESPONDER);
                 }
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("Logout completed first round" +
@@ -1259,7 +1266,7 @@ public class FSSingleLogoutHandler {
             FSUtils.debug.message(
                 "Request not proper. Cannot proceed with single logout");
             returnAfterCompletion();
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
         }
     }
     
@@ -1321,6 +1328,7 @@ public class FSSingleLogoutHandler {
                 sessionManager.getSessionList(userID), 
                     sessionIndex);
 
+                FSUtils.debug.message("FSSLOHandler, process logout case 4");
                 FSLogoutUtil.cleanSessionMapPartnerList(
                     userID, currentEntityId, hostedEntityId, session);
 
@@ -1349,7 +1357,7 @@ public class FSSingleLogoutHandler {
                 FSUtils.debug.message("Request not proper " +
                 "Cannot proceed federation termination");
             }
-            return new FSLogoutStatus(IFSConstants.SAML_FAILURE);
+            return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
         }
     }
     

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogin.java,v 1.1 2006-10-30 23:14:07 qcheng Exp $
+ * $Id: FSPreLogin.java,v 1.2 2007-01-16 20:14:20 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -237,7 +237,7 @@ public class FSPreLogin {
                     + "meta manager is null. "
                     + "Cannot proceed so throwing error page");
                 throw new FSPreLoginException(
-                    "FSPreLogin:: could not get alliancemanager handle.");
+                    "FSPreLogin:: could not get meta manager handle.");
             }
             
             BaseConfigType hostedConfig = null;

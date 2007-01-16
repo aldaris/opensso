@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.3 2007-01-10 06:29:33 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.4 2007-01-16 20:14:21 exu Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,6 +449,12 @@ public abstract class FSSSOAndFedHandler {
                                 "FSSSOAndFedHandler.processPreAuthnSSO: " +
                                 "IDP is passive and user is not authenticated");
                         }
+                        noFedStatus = new Status(
+                            new StatusCode("samlp:Responder",
+                                new StatusCode("lib:NoPassive", null)),
+                            FSUtils.bundle.getString(
+                                "AuthnRequestProcessingFailed"), 
+                            null);
                         return false;
                     }
                 }
@@ -571,6 +577,12 @@ public abstract class FSSSOAndFedHandler {
                                     + " AuthnDecision engine"
                                     + " failed to take a decision");
                             }
+                            noFedStatus = new Status(
+                                new StatusCode("samlp:Responder",
+                                    new StatusCode("lib:NoAuthnContext", null)),
+                                FSUtils.bundle.getString(
+                                    "AuthnRequestProcessingFailed"),
+                                null);
                             return false;
                         } else {
                             loginURL = authnResult.getLoginURL();
@@ -1165,7 +1177,9 @@ public abstract class FSSSOAndFedHandler {
                                 LogUtil.SIGNATURE_VERIFICATION_FAILED,
                                 data);
                             status = new Status(
-                                new StatusCode("samlp:Responder"),
+                                new StatusCode("samlp:Responder",
+                                    new StatusCode(
+                                        "lib:UnsignedAuthnRequest", null)),
                                 message,
                                 null);
                             errResponse = new FSAuthnResponse(null, 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.2 2006-11-08 01:04:45 exu Exp $
+ * $Id: FSLogoutUtil.java,v 1.3 2007-01-16 20:14:22 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,6 +92,9 @@ public class FSLogoutUtil {
         }
         Vector sessionObjList = getSessionObjectList(
             userID, hostedEntityId, sessionIndex);
+        if (sessionObjList == null) {
+            return false;
+        }
         // Invalidate all such session ids 
         // session manager cleanup
         invalidateActiveSessionIds(sessionObjList, request, response);
@@ -1053,6 +1056,31 @@ public class FSLogoutUtil {
                 "FSSingleLogoutServlet:IDFFMetaException:", e);
             return;
         }
+    }
+
+    /**
+     * Removes current session partner from the session partner list.
+     * @param hostedEntityId id of the hosted provider
+     * @param remoteEntityId id of the remote provider
+     * @param ssoTOken session object of the principal who presently login
+     * @param userID id of the principal
+     */
+    public static void removeCurrentSessionPartner(
+        String hostedEntityId,
+        String remoteEntityId,
+        Object ssoToken,
+        String userID)
+    {
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSLogoutUtil.removeCSP, hosted=" +
+                hostedEntityId + ", remote=" + remoteEntityId +
+                ", userID=" + userID);
+        }
+        FSSessionManager sessionManager =
+            FSSessionManager.getInstance(hostedEntityId);
+        FSSession session = sessionManager.getSession(ssoToken);
+        FSLogoutUtil.cleanSessionMapPartnerList(
+            userID, remoteEntityId, hostedEntityId, session);
     }
 }
 

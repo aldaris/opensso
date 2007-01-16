@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.2 2007-01-10 06:29:36 exu Exp $
+ * $Id: FSServiceUtils.java,v 1.3 2007-01-16 20:14:23 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -442,7 +442,10 @@ public class FSServiceUtils {
             ByteArrayOutputStream str = new ByteArrayOutputStream();
             message.writeTo(str);
             String xml = str.toString();
-            System.out.println("Intermediate xml str: " + xml);
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message("FSSU.createSOAPDOM, Intermediate xml: "
+                    + xml);
+            }
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             DocumentBuilder db = dbf.newDocumentBuilder ();

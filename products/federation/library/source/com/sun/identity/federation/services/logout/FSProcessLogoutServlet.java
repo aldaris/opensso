@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSProcessLogoutServlet.java,v 1.2 2007-01-10 06:29:33 exu Exp $
+ * $Id: FSProcessLogoutServlet.java,v 1.3 2007-01-16 20:14:22 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,11 +198,16 @@ public class FSProcessLogoutServlet extends HttpServlet {
         if (ssoToken == null) {
             if (sourceCheck != null) {
                 if (sourceCheck.equalsIgnoreCase("local")) {
-                    // initiate logout
-                    FSServiceUtils.redirectForAuthentication(
-                        request,
-                        response, 
-                        providerAlias);
+                    // need to redirect to LogoutDone.jsp with
+                    // status=noSession
+                    if (FSUtils.debug.messageEnabled()) {
+                        FSUtils.debug.message("FSProcessLogoutServlet, " +
+                            "control where Source is local");
+                    }
+                    FSServiceUtils.returnLocallyAfterOperation(
+                        response, logoutDoneURL, false,
+                        IFSConstants.LOGOUT_SUCCESS,
+                        IFSConstants.LOGOUT_NO_SESSION);
                     return;
                 } else if (sourceCheck.equalsIgnoreCase("remote")){
                     // logout return
@@ -395,7 +400,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
             LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER,data);
             FSLogoutUtil.returnToSource(response, 
                 remoteDesc,
-                IFSConstants.SAML_FAILURE, commonErrorPage,
+                IFSConstants.SAML_RESPONDER, commonErrorPage,
                 minorVersion, hostedConfig, hostedEntityId, userID);
             return;
         }
@@ -414,7 +419,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 String[] data = { userID };
                 LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data);
                 FSLogoutUtil.returnToSource(response, remoteDesc, 
-                    IFSConstants.SAML_FAILURE, commonErrorPage,
+                    IFSConstants.SAML_REQUESTER, commonErrorPage,
                     minorVersion, hostedConfig, hostedEntityId, userID);
                 return;
             } catch(SAMLException e) {
@@ -425,11 +430,12 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 String[] data = { userID };
                 LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data);
                 FSLogoutUtil.returnToSource(response, remoteDesc,
-                    IFSConstants.SAML_FAILURE, commonErrorPage,
+                    IFSConstants.SAML_REQUESTER, commonErrorPage,
                     minorVersion, hostedConfig, hostedEntityId, userID);
                 return;
             }
         }
+        String errorStatus = IFSConstants.SAML_RESPONDER;
         if (bVerify) {
             // Check if trusted provider
             if (metaManager.isTrustedProvider(hostedEntityId,remoteEntityId)) {
@@ -476,7 +482,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                         FSLogoutUtil.returnToSource(
                             response,
                             remoteDesc, 
-                            IFSConstants.SAML_FAILURE,
+                            IFSConstants.SAML_RESPONDER,
                             commonErrorPage,
                             minorVersion,
                             hostedConfig,
@@ -505,7 +511,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                         // provider's return URL
                         FSLogoutUtil.returnToSource(
                             response, remoteDesc,
-                            IFSConstants.SAML_FAILURE, commonErrorPage,
+                            IFSConstants.SAML_RESPONDER, commonErrorPage,
                             minorVersion, hostedConfig, hostedEntityId,
                             userID);
                         return;
@@ -521,9 +527,10 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 "Cannot proceed federation Logout");
             String[] data = { userID };
             LogUtil.error(Level.INFO,LogUtil.INVALID_SIGNATURE, data);
+            errorStatus = IFSConstants.SAML_REQUESTER;
         }
         FSLogoutUtil.returnToSource(
-            response, remoteDesc, IFSConstants.SAML_FAILURE,
+            response, remoteDesc, errorStatus,
             commonErrorPage, minorVersion, hostedConfig, hostedEntityId,userID);
         return;
     }

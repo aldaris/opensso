@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSOAPReceiver.java,v 1.2 2007-01-10 06:29:32 exu Exp $
+ * $Id: FSSOAPReceiver.java,v 1.3 2007-01-16 20:14:21 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -721,7 +721,7 @@ public class FSSOAPReceiver extends HttpServlet {
                     SOAPMessage retSoapMessage = null;
                     if (map == null) {
                         StatusCode statusCode =
-                            new StatusCode(IFSConstants.SAML_FAILURE);
+                            new StatusCode(IFSConstants.SAML_RESPONDER);
                         Status status = new Status(statusCode);
                         resp = new FSLogoutResponse(responseID,
                                                     inResponseTo,
@@ -738,7 +738,7 @@ public class FSSOAPReceiver extends HttpServlet {
                             StatusCode secondLevelstatusCode = 
                                 new StatusCode(IFSConstants.SAML_UNSUPPORTED);
                             StatusCode statusCode = 
-                                new StatusCode(IFSConstants.SAML_FAILURE,
+                                new StatusCode(IFSConstants.SAML_RESPONDER,
                                                 secondLevelstatusCode);
                             Status status = new Status(statusCode);
                             resp = new FSLogoutResponse(responseID,

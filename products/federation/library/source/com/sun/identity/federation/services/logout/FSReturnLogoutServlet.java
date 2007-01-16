@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnLogoutServlet.java,v 1.2 2007-01-10 06:29:33 exu Exp $
+ * $Id: FSReturnLogoutServlet.java,v 1.3 2007-01-16 20:14:22 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,9 +140,10 @@ public class FSReturnLogoutServlet extends HttpServlet {
             return;
         }
         
+        Object ssoToken = null;
         try {
             SessionProvider sessionProvider = SessionManager.getProvider();
-            Object ssoToken = sessionProvider.getSession(request);
+            ssoToken = sessionProvider.getSession(request);
             if ((ssoToken == null) || (!sessionProvider.isValid(ssoToken))) {
                 FSUtils.debug.message(
                     "FSReturnLogoutRequest: Unable to get principal");
@@ -223,13 +224,13 @@ public class FSReturnLogoutServlet extends HttpServlet {
         String remoteEntityId = logoutResponse.getProviderId();
 
         ProviderDescriptorType remoteDesc = null;
-        boolean isIDP = false;
+        boolean isRemoteIDP = false;
         try {
             if (hostedRole.equalsIgnoreCase(IFSConstants.IDP)) {
                 remoteDesc = metaManager.getSPDescriptor(remoteEntityId);
             } else if (hostedRole.equalsIgnoreCase(IFSConstants.SP)) {
                 remoteDesc = metaManager.getIDPDescriptor(remoteEntityId);
-                isIDP = true;
+                isRemoteIDP = true;
             }
         } catch (IDFFMetaException e){
             if (FSUtils.debug.messageEnabled()) {
@@ -247,20 +248,29 @@ public class FSReturnLogoutServlet extends HttpServlet {
         if (FSServiceUtils.isSigningOn()) {
             try {
                 bVerify = verifyResponseSignature(
-                    request, remoteDesc, remoteEntityId, isIDP);
+                    request, remoteDesc, remoteEntityId, isRemoteIDP);
             } catch (SAMLException e){
                 bVerify = false;
             } catch (FSException e){
                 bVerify = false;
             }
         }
+
+        Status status = logoutResponse.getStatus();
+        String logoutStatus = status.getStatusCode().getValue();
+
+        // remove session partner in case of logout success or this is IDP
+        if (logoutStatus.equalsIgnoreCase(IFSConstants.SAML_SUCCESS) ||
+            !isRemoteIDP)
+        {
+            FSLogoutUtil.removeCurrentSessionPartner(
+                hostedEntityId, remoteEntityId, ssoToken, univId);
+        }
+
         if (bVerify) {
             // check the status on response and update entry
             // in ReturnSessionManager only if it is failure
-            Status status = logoutResponse.getStatus();
-            String logoutStatus = status.getStatusCode().getValue();
-
-            if (logoutStatus.equalsIgnoreCase(IFSConstants.SAML_FAILURE)) {
+            if (!logoutStatus.equalsIgnoreCase(IFSConstants.SAML_SUCCESS)) {
                 FSReturnSessionManager localManager =
                     FSReturnSessionManager.getInstance(hostedEntityId);
                 if (localManager != null) {
@@ -273,6 +283,13 @@ public class FSReturnLogoutServlet extends HttpServlet {
                 } else {
                     FSUtils.debug.message("Cannot get FSReturnSessionManager");
                 }
+                FSUtils.debug.error(
+                    "FSReturnLogoutServlet, failed logout response " + 
+                    logoutStatus);
+                String[] data = { univId };
+                LogUtil.error(Level.INFO, LogUtil.LOGOUT_FAILED, data);
+                FSLogoutUtil.sendErrorPage(request, response, providerAlias);
+                return;
             }
         } else {
             FSUtils.debug.error(
@@ -324,7 +341,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
      *  logout response
      * @param remoteDescriptor remote provider descriptor
      * @param remoteEntityId remote provider's entity id
-     * @param isIDP whether the remote provider is an IDP or not
+     * @param isRemoteIDP whether the remote provider is an IDP or not
      * @return <code>true</code> if the signature is verified; <code>null</code>
      *  otherwise.
      * @exception SAMLException, FSException
@@ -333,7 +350,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
         HttpServletRequest request,
         ProviderDescriptorType remoteDescriptor,
         String remoteEntityId,
-        boolean isIDP
+        boolean isRemoteIDP
     ) throws SAMLException, FSException 
     {
         FSUtils.debug.message(
@@ -341,7 +358,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
                     
         // Verify the signature on the request
         X509Certificate cert = KeyUtil.getVerificationCert(
-            remoteDescriptor, remoteEntityId, isIDP);
+            remoteDescriptor, remoteEntityId, isRemoteIDP);
         if (cert == null) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message(

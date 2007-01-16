@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceManager.java,v 1.1 2006-10-30 23:14:25 qcheng Exp $
+ * $Id: FSServiceManager.java,v 1.2 2007-01-16 20:14:21 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -428,7 +428,7 @@ public class FSServiceManager {
             } catch(IDFFMetaException e){
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSNameRegistrationHandler::Failed " +
-                        "to get remote descriptor");
+                        "to get remote descriptor:", e);
                 }
                 return null;
             }
