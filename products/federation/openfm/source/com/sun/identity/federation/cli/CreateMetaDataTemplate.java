@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.3 2007-01-10 06:32:55 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.4 2007-01-16 20:18:09 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -320,8 +320,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <SingleSignOnService\n" +
                 "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +"            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
                 "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
-                "            Location=\"" + url + "/SSOSoap" + maStr + "\"/>\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +"            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
                 "    </IDPSSODescriptor>\n"
                 );
     }
@@ -763,10 +762,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.DEFAULT_AUTHNCONTEXT + "\">\n" +
-                "            <Value>Password</Value>\n" +
+                "            <Value>" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.IDP_AUTHNCONTEXT_MAPPING + "\">\n" +
-                "            <Value>context=Password|key=Module|value=DataStore|level=1</Value>\n" +
+                "            <Value>context=" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "|key=Module|value=DataStore|level=1</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.ENABLE_AUTO_FEDERATION + "\">\n" +
                 "            <Value>false</Value>\n" +
@@ -875,10 +874,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            <Value></Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.DEFAULT_AUTHNCONTEXT + "\">\n" +
-                "            <Value>Password</Value>\n" +
+                "            <Value>" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.SP_AUTHNCONTEXT_MAPPING + "\">\n" +
-                "            <Value>context=Password|level=1</Value>\n" +
+                "            <Value>context=" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "|level=1</Value>\n" +
                 "        </Attribute>\n" +
                 "        <Attribute name=\"" + IFSConstants.ENABLE_AUTO_FEDERATION + "\">\n" +
                 "            <Value>false</Value>\n" +
