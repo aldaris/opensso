@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoDataStoreProvider.java,v 1.1 2006-10-30 23:18:06 qcheng Exp $
+ * $Id: IdRepoDataStoreProvider.java,v 1.2 2007-01-16 20:16:20 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -258,7 +259,7 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
                 + " DN=: " + amId.getDN()
                 + " univId=: " + IdUtils.getUniversalId(amId));
         }
-        return IdUtils.getUniversalId(amId);
+        return DNUtils.normalizeDN(IdUtils.getUniversalId(amId));
     }
 
     /**
