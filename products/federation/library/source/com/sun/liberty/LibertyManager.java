@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManager.java,v 1.1 2006-10-30 23:16:59 qcheng Exp $
+ * $Id: LibertyManager.java,v 1.2 2007-01-16 20:15:06 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -943,8 +943,12 @@ public class LibertyManager {
         
         try {
             FSLoginHelper loginHelper = new FSLoginHelper(request);
+            // get the authlevel key
+            HttpSession httpSession = request.getSession();
+            String authLevel = (String) httpSession.getAttribute(
+                IFSConstants.AUTH_LEVEL_KEY);
             Map retMap = loginHelper.createAuthnRequest(
-                headerMap, targetURL, null, metaAlias, null, true);
+                headerMap, targetURL, authLevel, metaAlias, null, true);
             if (retMap != null) {
                 String reqID = (String)retMap.get(IFSConstants.AUTH_REQUEST_ID);
                 if (debug.messageEnabled()) {
