@@ -20,7 +20,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfoconfig,v 1.1 2005-11-01 00:28:53 arvindp Exp $
+#$Id: amsfoconfig,v 1.2 2007-01-17 19:39:45 bhavnab Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -603,22 +603,6 @@ LoadConfigXML()
 	return ${AMSFSETUP_LOAD_FAILED}
     fi
     
-    #Load the platform server list xml file
-    CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${ADDPSLXML}"
-    WriteToLog " "
-    WriteToLog " "
-    WriteToLog "\t `${GETTEXT} 'Loading Platform Server List File...'`"
-    WriteToLog " "
-    $CMD 1>>${LOGFILE} 2>>${LOGFILE}
-    if [ $? = 0 ]
-    then
-	WriteToLog "\t `${GETTEXT} 'Platform Server List server entries loaded successfully.'`"
-	${RM} -f ${ADDPSLXML}
-    else
-	WriteToLog "\t `${GETTEXT} 'Failed to load Platform Server List server entries.'`"
-	return ${AMSFSETUP_LOAD_FAILED}
-    fi
-
     #Load the organization alias list xml file
     CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${ORGALIASXML}"
     WriteToLog " "
@@ -632,6 +616,22 @@ LoadConfigXML()
 	${RM} -f ${ORGALIASXML}
     else
 	WriteToLog "\t `${GETTEXT} 'Failed to load Organization Alias List entries.'`"
+	return ${AMSFSETUP_LOAD_FAILED}
+    fi
+
+    #Load the platform server list xml file
+    CMD="${AMADMIN} -u ${AMADMIN_ID} --password ${LDAPPSWD} -t ${ADDPSLXML}"
+    WriteToLog " "
+    WriteToLog " "
+    WriteToLog "\t `${GETTEXT} 'Loading Platform Server List File...'`"
+    WriteToLog " "
+    $CMD 1>>${LOGFILE} 2>>${LOGFILE}
+    if [ $? = 0 ]
+    then
+	WriteToLog "\t `${GETTEXT} 'Platform Server List server entries loaded successfully.'`"
+	${RM} -f ${ADDPSLXML}
+    else
+	WriteToLog "\t `${GETTEXT} 'Failed to load Platform Server List server entries.'`"
 	return ${AMSFSETUP_LOAD_FAILED}
     fi
     return ${VALID}

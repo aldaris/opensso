@@ -20,19 +20,21 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo,v 1.1 2005-11-01 00:28:52 arvindp Exp $
+# $Id: amsfo,v 1.2 2007-01-17 19:39:45 bhavnab Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
 
+CONF_FILE="/opt/SUNWam/lib/amsfo.conf"
+CONF_FILE_LINUX="/opt/sun/identity/lib/amsfo.conf"
+
 ### To Debug this script set AMDEBUG to true ####
 AMDEBUG=false
 
-CONF_FILE="/opt/SUNWam/lib/amsfo.conf"
 OS_ARCH=`/bin/uname -s`
 
 if [ "$OS_ARCH" = "Linux" ]; then
-        CONF_FILE="/opt/sun/identity/lib/amsfo.conf"
+    CONF_FILE=${CONF_FILE_LINUX}
 fi
 
 ##### sourceing amsfo config file #### 
@@ -40,6 +42,9 @@ fi
 
 
 AM_BIN_DIR=$AM_HOME_DIR/bin
+if [ "$OS_ARCH" = "Linux" ]; then
+    AM_BIN_DIR=$AM_HOME_LINUX/bin
+fi
 JMQ_BIN_DIR=/usr/bin
 JMQ_PID_FILE="$LOG_DIR/jmq.pid"
 AM_PID_FILE="$LOG_DIR/amdb.pid"
