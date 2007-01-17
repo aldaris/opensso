@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.1 2006-11-13 20:12:29 subbae Exp $
+   $Id: build_agent.xml,v 1.2 2007-01-17 23:15:17 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,6 +32,8 @@
         location="${webagents.basedir}/am/source"/>
     <property name="webagents.apache.src.dir" 
         location="${webagents.basedir}/agents/source/apache"/>
+    <property name="webagents.sjsws.src.dir" 
+        location="${webagents.basedir}/agents/source/sjsws"/>
     <!-- top level directory structure -->
     <property name="webagents.container.extlib.dir" 
         location="${webagents.basedir}/extlib"/>

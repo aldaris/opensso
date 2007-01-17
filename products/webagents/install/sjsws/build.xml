@@ -18,16 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-01-17 23:15:23 subbae Exp $
+   $Id: build.xml,v 1.1 2007-01-17 23:15:24 subbae Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<project name="open-source-web-agents-install-apache" default="build">
+<project name="open-source-web-agents-install-sjsws" default="build">
                 
-    <description>Open Web Single Sign-On Apache agent install</description>
+    <description>Open Web Single Sign-On SJSWS agent install</description>
     <!-- enforce invocation via top level build only -->
-    <fail message="*** Apache Agent may be built from top level only ***">
+    <fail message="*** SJSWS Agent may be built from top level only ***">
         <condition>
             <or>
                 <not><isset property="containername"/></not>
@@ -35,14 +35,13 @@
         </condition>
     </fail>
 
-    <property name="webagents.install.apache.src.dir" 
+    <property name="webagents.install.sjsws.src.dir" 
         location="${webagents.install.dir}/${containername}/source"/>
 
     <target name="build">
-        <javac destdir="${webagents.container.classes.dir}" 
-               source="1.4" target="1.4"
+        <javac destdir="${webagents.container.classes.dir}" source="1.4" target="1.4"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${webagents.install.apache.src.dir}"/>
+            <src path="${webagents.install.sjsws.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -53,13 +52,15 @@
             </fileset>
         </copy>
 
-        <jar destfile="${webagents.container.archive.dir}/apache_agent.jar" 
+        <jar destfile="${webagents.container.archive.dir}/sjsws_agent.jar" 
              basedir="${webagents.container.classes.dir}"/>
 
         <!-- 
              The following are the necessary copy statements for the
-             distribution of Apache agent bits archive
+             distribution of SJSWS agent bits archive
         -->
+
+
         <!-- Copy config files -->
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.install.dir}/${containername}/xml">
@@ -70,13 +71,9 @@
         <!-- Copy locale files -->
         <copy todir="${container.web_agent.locale.dir}">
             <fileset dir="${webagents.install.dir}/${containername}/resources">
-                <include name="apacheTools.properties"/>
+                <include name="sjswsTools.properties"/>
             </fileset>
         </copy>
-
-        <!-- Copy etc files -->
-        <copy file="${webagents.apache.src.dir}/dsame.conf"
-              tofile="${container.web_agent.etc.dir}/dsame.template"/>
 
         <!-- Copy install related jar files -->
         <copy todir="${container.web_agent.lib.dir}">
@@ -85,51 +82,53 @@
                 <include name="opensso-installtools.jar"/>
             </fileset>
             <fileset dir="${webagents.container.archive.dir}">
-                <include name="apache_agent.jar"/>
+                <include name="sjsws_agent.jar"/>
             </fileset>
         </copy>
 
-        <!-- Copy Apache agent c library-->
+        <!-- Copy SJSWS agent c library file -->
         <antcall target="copy-${build.os}-library"/>
 
-        <!-- Generate Apache agent install archive -->
-        <zip destfile="${webagents.dist.dir}/${containername}_v20_${build.os}_agent.zip"
-             basedir="${webagents.container.scratch.dir}"/>
-        <checksum file="${webagents.dist.dir}/${containername}_v20_${build.os}_agent.zip"
+        <!-- Generate SJSWS agent install archive -->
+        <zip destfile="${webagents.dist.dir}/${containername}_v70_${build.os}_agent.zip"
+             basedir="${webagents.container.scratch.dir}"
+        /> 
+        <checksum file="${webagents.dist.dir}/${containername}_v70_${build.os}_agent.zip"
             algorithm="SHA" fileext=".sha" />
 
     </target>
 
     <target name="copy-Linux-library">
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.so"/>
+            <fileset dir="${webagents.sjsws.src.dir}">
+                    <include name="libames6.so"/>
             </fileset>
         </copy>
     </target>
 
     <target name="copy-SunOS-library">
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.so"/>
+            <fileset dir="${webagents.sjsws.src.dir}">
+                    <include name="libames6.so"/>
             </fileset>
         </copy>
     </target>
 
     <target name="copy-SunOS_x86-library">
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.so"/>
+            <fileset dir="${webagents.sjsws.src.dir}">
+                    <include name="libames6.so"/>
             </fileset>
         </copy>
     </target>
 
     <target name="copy-WINNT-library">
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.dll"/>
+            <fileset dir="${webagents.sjsws.src.dir}">
+                    <include name="ames6.dll"/>
             </fileset>
         </copy>
+
     </target>
 
 </project>

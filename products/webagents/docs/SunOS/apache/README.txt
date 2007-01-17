@@ -21,7 +21,7 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.5 2006-11-13 20:12:32 subbae Exp $
+# $Id: README.txt,v 1.6 2007-01-17 23:15:20 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -202,10 +202,10 @@ Building Apache agent:
 
 Build generates agent installation bits in .zip format,
 in the built/dist/ directory. The agent installer archive
-name is in this format: <agent_name>_2.0.x_<OS>_agent.zip.
+name is in this format: <agent_name>_v20_<OS>_agent.zip.
 
     - <agent_name> : apache
     - <OS> : SunOS, Linux, WINNT, SunOS_x86
 
-Example: apache_2.0.x_SunOS_agent.zip
+Example: apache_v20_SunOS_agent.zip
 

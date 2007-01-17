@@ -21,28 +21,27 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.5 2007-01-17 23:15:21 subbae Exp $
+# $Id: README.txt,v 1.1 2007-01-17 23:15:21 subbae Exp $
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
 #
 %% Contents:
     %% 1. Build requirements
     %% 2. Library dependencies
-        %% 2.1 Sun Studio 11 Compiler for Solaris x86
+        %% 2.1 Sun Studio 11 Compiler for Solaris Sparc
         %% 2.2 Obtaining make-3.80
         %% 2.3 Obtaining LIBXML2 2.6.23
         %% 2.4 Obtaining NSS 3.11
         %% 2.5 Obtaining NSPR 4.6.1
 	%% 2.6 Obtaining libpthread, libCstd, and libCrun
-	%% 2.7 Download Apache Header files (if using Apache Agent)
+	%% 2.7 Download SJS Web Server 7.0 Header files 
         %% 2.8 Obtaining OpenSSO Agents Common Installer libraries
     %% 3. Building the workspace
 
 %% 1. Build requirements
 
-The OpenSSO - Web Agents workspace uses GNU Make as the build tool. You must 
-have GNU Make version 3.80 or above installed and available in your system path.
+The OpenSSO - Web Agents workspace uses GNU Make as the build tool. You must have GNU Make version 3.80 or above installed and available in your system path.
 
 Also Apache Ant is required to build the agent installer.
 The build scripts in this workspace use features not present in
@@ -64,7 +63,7 @@ the library vendor or distributor. Some of these libraries are available in
 source distribution form and must be built locally before they can be used. 
 The libraries needed for compiling OpenSSO sources are:
 
-        - Sun Studio 11 Compiler for Solaris x86
+        - Sun Studio 11 Compiler for Solaris Sparc
         - make 3.80
         - LIBXML2 2.6.23
         - NSS 3.11
@@ -82,9 +81,9 @@ must disregard those instructions and instead follow the ones provided by
 the library vendor or distributor in accordance with their terms and 
 conditions.
 
-%% 2.1 Sun Studio 11 Compiler for Solaris x86
+%% 2.1 Sun Studio 11 Compiler for Solaris Sparc
 
-The Sun Studio 11 for Solaris x86 is freely available from Sun downloads.
+The Sun Studio 11 for Solaris Sparc is freely available from Sun downloads. 
 Please check the below url:
 http://developers.sun.com/prodtech/cc/downloads/index.jsp
 
@@ -109,104 +108,83 @@ Compile the source:
 
 %% 2.3 Obtaining LIBXML2 2.6.23
 
-Follow these steps to obtain the LIBXML2:
+Follow these steps to obtain the LIBXML2: 
 
 2.3.1 Open the web page: ftp://xmlsoft.org/libxml2/
-2.3.2 Download the latest libxml2 source (e.g libxml2-2.6.23.tar.gz)
+2.3.2 Download the latest libxml2 source (libxml2-2.6.23.tar.gz)
 2.3.3 Uncompress the the archive.
 2.3.4 cd libxml2-2.6.23
-2.3.5 ./configure --prefix=<libxml2-install-dir>
-2.3.6 make
-2.3.7 make install
-2.3.8 cp <libxml2-install-dir>/include/libxml2/libxml/* <opensso_webagent>/extlib/SunOS_i86pc/libxml2/include/libxml2/libxml
-2.3.9 cp <libxml2-install-dir>/lib/* <opensso_webagent>/extlib/SunOS_i86pc/libxml2/lib
+2.3.4 ./configure --prefix=<libxml2-install-dir>
+2.3.5 make
+2.3.6 make install
+2.3.7 cp <libxml2-install-dir>/include/libxml2/libxml/* <opensso_webagent>/extlib/SunOS/libxml2/include/libxml2/libxml
+2.3.8 cp <libxml2-install-dir>/lib/* <opensso_webagent>/extlib/SunOS/libxml2/lib
 
-%n2.4 Obtaining NSS 3.11 
+%n2.4 Obtaining NSS 3.11
 
 Follow these steps to obtain the binaries:
 
-2.4.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_11_RTM/SunOS5.9_i86pc_OPT.OBJ/
+2.4.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_11_RTM/SunOS5.8_OPT.OBJ/
 2.4.2 Download nss-3.11.tar.gz.
 2.4.3 Uncompress the the archive.
-2.4.4 cp nss-3.11/bin/* <opensso_webagent>/extlib/SunOS_i86pc/nss/bin
-2.4.5 cp nss-3.11/include/* <opensso_webagent>/extlib/SunOS_i86pc/nss/include
-2.4.6 cp nss-3.11/lib/* <opensso_webagent>/extlib/SunOS_i86pc/nss/lib
+2.4.4 cp nss-3.11/bin/* <opensso_webagent>/extlib/SunOS/nss/bin
+2.4.5 cp nss-3.11/include/* <opensso_webagent>/extlib/SunOS/nss/include
+2.4.6 cp nss-3.11/lib/* <opensso_webagent>/extlib/SunOS/nss/lib
 
 
 %% 2.5 Obtaining  NSPR 4.6.1
 
 Follow these steps to obtain the binaries:
 
-2.5.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.6.1/SunOS5.8_i86pc_OPT.OBJ/
+2.5.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.6.1/SunOS5.8_OPT.OBJ/
 2.5.2 Download nspr-4.6.1.tar.gz.
-2.5.3 Uncompress the the archive.
-2.5.4 cp <nspr-install-dir>/include/*.h <opensso_webagent>/extlib/SunOS_i86pc/nspr/include
-2.5.5 cp -r <nspr-install-dir>/include/obsolete <opensso_webagent>/extlib/SunOS_i86pc/nspr/include
-2.5.6 cp -r <nspr-install-dir>/include/private <opensso_webagent>/extlib/SunOS_i86pc/nspr/include
-2.5.7 cp <nspr-install-dir>/lib/* <opensso_webagent>/extlib/SunOS_i86pc/nspr/lib
+2.5.3 Uncompress the the archive. 
+2.5.4 cp <nspr-install-dir>/include/*.h <opensso_webagent>/extlib/SunOS/nspr/include
+2.5.5 cp -r <nspr-install-dir>/include/obsolete <opensso_webagent>/extlib/SunOS/nspr/include
+2.5.6 cp -r <nspr-install-dir>/include/private <opensso_webagent>/extlib/SunOS/nspr/include
+2.5.7 cp <nspr-install-dir>/lib/* <opensso_webagent>/extlib/SunOS/nspr/lib
 
 %% 2.6 Obtaining libpthread, libCstd, and libCrun
 
 These will be available in /usr/lib in Solaris.
 
-%% 2.7 Download Apache Header files (if using Apache Agent)
+%% 2.7 Download SJS WS7.0 Header files
 
-2.7.1 Open the web page: http://httpd.apache.org/download.cgi
-2.7.2 Download httpd-2.0.55.tar.gz
-2.7.3 Uncompress the the archive. 
-2.7.4 cd http-2.0.55
-2.7.5 ./configure --prefix=<apache-install-dir>
-2.7.6 make
-2.7.7 make install
-2.7.8 cp <apache-install-dir>/include/* <opensso_webagent>/extlib/SunOS_i86pc/apache/include
-
+2.7.1 Open the web page: http://www.sun.com/software/download. Choose Web Server.
+2.7.2 Download WS7.0 install bits.
+2.7.3 Uncompress the the archive.
+2.7.4 Install the server.
+2.7.5 Goto server install directory.
+2.7.6 cp <webserver-install-dir>/include/* <opensso_webagent>/extlib/SunOS/sjsws/include
 
 %% 2.8 Obtaining OpenSSO Agents Common Installer libraries
 
-The OpenSSO Agents Common installer libraries opensso-installtools.jar and
-opensso-installtools-launcher.jar can be built from the OpenSSO Agents Common
-Installer workspace.
-
-Follow these steps to obtain the libraries:
-2.8.1 Check out the OpenSSO Agents Common installer workspace.
-2.8.2 Set JAVA_HOME to the location of JDK 1.5.
-2.8.3 At the root of the workspace, run: ant
-2.8.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar
-from the dist directory of the OpenSSO Agents Common installer workspace
-into extlib directory 
-
+opensso/products/installtools source code needs to be available in the same workspace.
+Building of OpenSSO Agents Common installer libraries opensso-installtools.jar and
+opensso-installtools-launcher.jar is integrated in the webagents/build.xml. 
+So no separate copy/build is required. 
 
 %% 3. Building the workspace
 
-3.1 cd <opensso_webagent>
-3.2 ant <agent-name>
+3.1 cd opensso/products/webagents
+3.2 ant sjsws
 
 ** Execute ant usage to get information about all the supported options.
 ** Make sure gmake is in the system PATH.
 
-Building Apache agent:
+Building SJS WS7 agent:
 
-     - ant apache : builds Apache agent. C code compiled in optimized mode.
-     - ant apache -Dbuild.debug=full     : builds Apache agent. C code compiled in debug mode.
-     - ant apache -Dbuild.debug=optimize : builds Apache agent. C code compiled in optimized mode.
+     - ant sjsws : builds SJS WS7 agent. C code compiled in optimized mode.
+     - ant sjsws -Dbuild.debug=full     : builds SJS WS7 agent. C code compiled in debug mode.
+     - ant sjsws -Dbuild.debug=optimize : builds SJS WS7 agent. C code compiled in optimized mode.
      - ant all    : builds all agents. C code compiled in optimized mode.
-
-3.3 Creation of build output directories such as
-        <opensso_webagent>/built
-        <opensso_webagent>/built/dist
-        <opensso_webagent>/bin
-        <opensso_webagent>/drop
-        <opensso_webagent>/include
-        <opensso_webagent>/samples
 
 3.4 Build output
 
-Build generates agent installation bits in .zip format,
+Build generates agent installation bits zip format,
 in the built/dist/ directory. The agent installer archive
-name is in this format: <agent_name>_v20_<OS>_agent.zip.
+name is in this format: sjsws_v70_<OS>_agent.zip.
 
-    - <agent_name> : apache
     - <OS> : SunOS, Linux, WINNT, SunOS_x86
 
-Example: apache_v20_SunOS_x86_agent.zip
-
+Example: sjsws_v70_SunOS_agent.zip

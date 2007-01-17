@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2006-11-13 20:12:29 subbae Exp $
+   $Id: build.xml,v 1.2 2007-01-17 23:15:17 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,7 +28,39 @@
     <description>Open Web Single Sign-On Web Agents</description>
 
     <import file="../products.xml" />
+    <import file="../installtools/installtools.xml" />
     <import file="webagents.xml" />
+
+    <tstamp>
+        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
+            unit="day"/>
+    </tstamp>
+
+   <condition property="build.os" value="Linux">
+        <os name="linux"/>
+    </condition>
+
+    <condition property="build.os" value="SunOS">
+        <and>
+            <os name="sunos"/>
+            <and>
+                <os arch="sparc"/>
+            </and>
+        </and>
+    </condition>
+
+    <condition property="build.os" value="SunOS_x86">
+        <and>
+            <os name="sunos"/>
+            <and>
+                <os arch="x86"/>
+            </and>
+        </and>
+    </condition>
+
+    <condition property="build.os" value="WINNT">
+        <os family="windows"/>
+    </condition>
 
     <!-- overridable properties -->
     <!-- build.debug is used for c code. valid values are: optimize, full -->
@@ -37,17 +69,20 @@
     <target name="preparebuild">
         <mkdir dir="${webagents.built.dir}"/>
         <mkdir dir="${webagents.dist.dir}"/>
+        <echo message="Dispatch to installtools to build install libraries"/>
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
     </target>
 
     <target name="clean">
         <echo message="Dispatch to clean"/>
-        <exec executable="gmake">
+        <exec executable="gmake" failonerror="true">
            <arg value="clean" />
         </exec>
     </target>
 
     <target name="all">
         <antcall target="apache" />
+        <antcall target="sjsws" />
     </target>
 
     <target name="apache" depends="preparebuild">
@@ -58,24 +93,33 @@
             target="all" inheritRefs="true"/>
     </target>
 
-    <target name="gmake" >
-        <echo message="Dispatch to compile of c code"/>
-        <exec executable="gmake">
+    <target name="sjsws" depends="preparebuild">
+        <echo message="Dispatch to SJSWS"/>
+        <property name="containername" value="sjsws"/>
+        <antcall target="gmake" inheritRefs="true"/>
+        <ant antfile="${webagents.basedir}/build_agent.xml" 
+            target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="gmake">
+        <echo message="Dispatch to compile of agent c code"/>
+        <exec executable="gmake" failonerror="true">
            <arg value="BUILD_DEBUG=${build.debug}" />
            <arg value="BUILD_AGENT=${containername}" />
         </exec>
     </target>
 
-    <target name="nightly" depends="all">
+    <target name="nightly">
         <filter token="DATE" value="${nightly.date}" />
+        <filter token="OS" value="${build.os}" />
+        <antcall target="prenightly" inheritRefs="true"/>
+        <antcall target="all" inheritRefs="true"/>
         <copy file="${webagents.docs.dir}/nightly.html" 
               tofile="${webagents.dist.dir}/index.html" filtering="true" />
+        <antcall target="postnightly" inheritRefs="true"/>
     </target>
 
-    <target name="prenightly">
-        <copy todir="${webagents.basedir}/extlib">
-            <fileset dir="${webagents.extlib.dir}"/>
-        </copy>
+    <target name="prenightly" depends="preparebuild">
         <copy todir="${webagents.basedir}/extlib" >
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
@@ -98,6 +142,7 @@
         <echo message=" all             : builds all the Web agents"/>
         <echo message=" clean           : deletes all the generated files"/>
         <echo message=" apache          : builds the Apache Web Server 2.0.x agent"/>
+        <echo message=" sjsws          : builds the Sun Java System Web Server 6.1/7.0 agent"/>
         <echo message=" usage           : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

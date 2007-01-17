@@ -259,7 +259,8 @@ am_status_t LogService::logMessage(const ServiceInfo& service,
 {
     am_status_t status = AM_SUCCESS;
     encodedMessage = NULL;
-    encodedMessage = (char *)malloc(message.size() * 4/3 + 1);
+    //The encoded log message needs to be in multiple of 4 bytes.
+    encodedMessage = (char *)malloc(((message.size() * 4/3 + 1)/4 + 1)*4 + 4);
     if(encodedMessage != NULL) {
 	encode_base64(message.c_str(), message.size(), encodedMessage);
     } else {
@@ -415,7 +416,8 @@ am_status_t LogService::addLogDetails(const std::string& logName,
 
     char *msg = NULL;
     std::string message = record.getLogMessage();
-    msg = (char *)malloc(message.size() * 4/3 + 1);
+    //The encoded log message needs to be in multiple of 4 bytes.
+    msg = (char *)malloc(((message.size() * 4/3 + 1)/4+1)*4 + 4);
     if(msg != NULL) {
 	encode_base64(message.c_str(), message.size(), msg);
     } else {

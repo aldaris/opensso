@@ -20,7 +20,7 @@
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
-# $Id: Makefile,v 1.3 2006-11-13 20:12:30 subbae Exp $
+# $Id: Makefile,v 1.4 2007-01-17 23:15:18 subbae Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -39,7 +39,7 @@ AGENT_COMPONENTS := \
 SUBDIRS := common
 
 ifeq ($(BUILD_AGENT),)
-BUILD_AGENT := apache 
+BUILD_AGENT := apache sjsws 
 endif
 
 ifeq ($(OS_ARCH), Linux)

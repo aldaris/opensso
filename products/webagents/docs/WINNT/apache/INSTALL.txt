@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.6 2006-11-13 20:12:33 subbae Exp $
+# $Id: INSTALL.txt,v 1.7 2007-01-17 23:15:22 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -43,7 +43,7 @@ Installation does the following:
 
 %% 1.1 Steps
 
-1.1.1 Extract  apache_2.0.x_SunOS_agent.zip installation bits.
+1.1.1 Extract  apache_v20_SunOS_agent.zip installation bits.
 1.1.2 Goto web_agents\apache_agent\bin
 1.1.3 Execute agentadmin --install
 1.1.4 Accept the license agreement terms
@@ -65,7 +65,7 @@ Installation does the following:
 
 Here is the sample of the above steps:
 
-[:C\]> unzip apache_2.0.x_SunOS_agent.zip
+[:C\]> unzip apache_v20_SunOS_agent.zip
 
 x web_agents
 x web_agents\apache_agents

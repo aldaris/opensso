@@ -21,9 +21,9 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.5 2007-01-17 23:15:20 subbae Exp $
+# $Id: README.txt,v 1.1 2007-01-17 23:15:20 subbae Exp $
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
 #
 %% Contents:
@@ -34,7 +34,7 @@ README file for Open Web Single Sign-On - Web Agents
         %% 2.3 Obtaining NSS 3.11
         %% 2.4 Obtaining NSPR 4.6.1
 	%% 2.5 Obtaining libpthread, libCstd, and libCrun
-	%% 2.6 Download Apache Header files (if using Apache Agent)
+	%% 2.6 Download SJS Web Server 7.0 Header files 
         %% 2.7 Obtaining OpenSSO Agents Common Installer libraries
     %% 3. Building the workspace
 
@@ -139,63 +139,44 @@ Follow these steps to obtain the binaries:
 
 These will be available in /usr/lib in Solaris.
 
-%% 2.6 Download Apache Header files (if using Apache Agent)
+%% 2.6 Download SJS WS7.0 Header files 
 
-2.6.1 Open the web page: http://httpd.apache.org/download.cgi
-2.6.2 Download httpd-2.0.55.tar.gz
+2.6.1 Open the web page: http://www.sun.com/download. Choose Web Server.
+2.6.2 Download WS7.0 install bits.
 2.6.3 Uncompress the the archive. 
-2.6.4 cd http-2.0.55
-2.6.5 ./configure --prefix=<apache-install-dir>
-2.6.6 make
-2.6.7 make install
-2.6.8 cp <apache-install-dir>/include/* <opensso_webagent>/extlib/Linux/apache/include
+2.6.4 Install the server.
+2.6.5 Goto server install directory.
+2.6.6 cp <webserver-install-dir>/include/* <opensso_webagent>/extlib/Linux/sjsws/include
 
 %% 2.7 Obtaining OpenSSO Agents Common Installer libraries
 
-The OpenSSO Agents Common installer libraries opensso-installtools.jar and
-opensso-installtools-launcher.jar can be built from the OpenSSO Agents Common
-Installer workspace.
-
-Follow these steps to obtain the libraries:
-2.7.1 Check out the OpenSSO Agents Common installer workspace.
-2.7.2 Set JAVA_HOME to the location of JDK 1.5.
-2.7.3 At the root of the workspace, run: ant
-2.7.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar
-from the dist directory of the OpenSSO Agents Common installer workspace
-into extlib directory
-
+opensso/products/installtools source code needs to be available in the same workspace.
+Building of OpenSSO Agents Common installer libraries opensso-installtools.jar and
+opensso-installtools-launcher.jar is integrated in the webagents/build.xml. So no separate copy/build
+is required.
 
 %% 3. Building the workspace
 
-3.1 cd <opensso_webagent>
-3.2 ant <agent-name> 
+3.1 cd opensso/products/webagents
+3.2 ant sjsws 
 
 ** Execute ant usage to get information about all the supported options.
 ** Make sure gmake is in the system PATH.
 
-Building Apache agent:
+Building SJS WS7 agent:
 
-     - ant apache : builds Apache agent. C code compiled in optimized mode.
-     - ant apache -Dbuild.debug=full     : builds Apache agent. C code compiled in debug mode.
-     - ant apache -Dbuild.debug=optimize : builds Apache agent. C code compiled in optimized mode.
+     - ant sjsws : builds SJS WS7 agent. C code compiled in optimized mode.
+     - ant sjsws -Dbuild.debug=full     : builds SJS WS7 agent. C code compiled in debug mode.
+     - ant sjsws -Dbuild.debug=optimize : builds SJS WS7 agent. C code compiled in optimized mode.
      - ant all    : builds all agents. C code compiled in optimized mode.
-
-3.3 Creation of build output directories such as
-        <opensso_webagent>/built
-        <opensso_webagent>/built/dist
-        <opensso_webagent>/bin
-        <opensso_webagent>/drop
-        <opensso_webagent>/include
-        <opensso_webagent>/samples
 
 3.4 Build output
 
 Build generates agent installation bits zip format,
 in the built/dist/ directory. The agent installer archive
-name is in this format: <agent_name>_v20_<OS>_agent.zip.
+name is in this format: sjsws_v70_<OS>_agent.zip.
 
-    - <agent_name> : apache
     - <OS> : SunOS, Linux, WINNT, SunOS_x86
 
-Example: apache_v20_Linux_agent.zip
+Example: sjsws_v70_Linux_agent.zip
 

@@ -18,9 +18,9 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.7 2007-01-17 23:15:21 subbae Exp $
+# $Id: INSTALL.txt,v 1.1 2007-01-17 23:15:21 subbae Exp $
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
 #
 ------------------------------------------------------------------------------
@@ -33,24 +33,24 @@ Installation instructions Open Web Single Sign-On - Web Agents
 
 %% 1. Agent Installation
 
-Please make sure that the Apache Server 2.0.55 is installed and running. Also
-make sure that the Apache Agent is compiled with steps indicated in README.txt.
+Please make sure that the SJS Web Server 7.0/6.x is installed and running. Also
+make sure that the SJS Web Server Agent is compiled with steps indicated in README.txt.
 
 Installation does the following:
 
-    - Creates the Apache Agent Instance Directory
+    - Creates the SJS Web Server Agent Instance Directory
     - Tag Swapping in AMAgent.properties file
-    - Updating Apache Server httpd.conf file
+    - Updating SJS Web Server's obj.conf, magnus.conf files
 
 %% 1.1 Steps
 
-1.1.1 Extract  apache_v20_SunOS_x86_agent.zip installation bits.
-1.1.2 Goto web_agents/apache_agent/bin
+1.1.1 Extract  sjsws_7.0_SunOS_agent.zip installation bits.
+1.1.2 Goto web_agents/sjsws_agent/bin
 1.1.3 Execute agentadmin --install
 1.1.4 Accept the license agreement terms
 1.1.5 Follow the installation interactions and provide these details:
 
-    - Apache Server Config Directory
+    - SJS Web Server Config Directory
     - Access Manager Services Hos
     - Access Manager Services port
     - Access Manager Services Protocol
@@ -64,53 +64,53 @@ Installation does the following:
 1.1.6 Restart the server
 
 
-Here is the sample of the above steps:
+Here is the sample of the above steps with Web Server 7.0 :
 
-[/opt]> unzip apache_v20_SunOS_x86_agent.zip
+[/opt]> unzip sjsws_7.0_SunOS_agent.zip
 
 x web_agents
-x web_agents/apache_agent
-x web_agents/apache_agent/bin
-x web_agents/apache_agent/bin/crypt_util
-x web_agents/apache_agent/bin/certutil
-x web_agents/apache_agent/bin/agentadmin
-x web_agents/apache_agent/bin/agentadmin.bat
-x web_agents/apache_agent/etc
-x web_agents/apache_agent/etc/dsame.template
-x web_agents/apache_agent/config
-x web_agents/apache_agent/config/AMAgent.template
-x web_agents/apache_agent/config/AMToolsConfig.properties
-x web_agents/apache_agent/config/configure.xml
-x web_agents/apache_agent/lib
-x web_agents/apache_agent/lib/libxml2.so
-x web_agents/apache_agent/lib/apache-install.jar
-x web_agents/apache_agent/lib/opensso-installtools.jar
-x web_agents/apache_agent/lib/opensso-installtools-launcher.jar
-x web_agents/apache_agent/lib/libamapc2.so
-x web_agents/apache_agent/jce
-x web_agents/apache_agent/jsse
-x web_agents/apache_agent/locale
-x web_agents/apache_agent/locale/amToolsMessages.properties
-x web_agents/apache_agent/locale/apacheTools.properties
-x web_agents/apache_agent/license.txt
-x web_agents/apache_agent/README
+x web_agents/sjsws_agent
+x web_agents/sjsws_agent/bin
+x web_agents/sjsws_agent/bin/crypt_util
+x web_agents/sjsws_agent/bin/certutil
+x web_agents/sjsws_agent/bin/agentadmin
+x web_agents/sjsws_agent/bin/agentadmin.bat
+x web_agents/sjsws_agent/etc
+x web_agents/sjsws_agent/etc/dsame.template
+x web_agents/sjsws_agent/config
+x web_agents/sjsws_agent/config/AMAgent.template
+x web_agents/sjsws_agent/config/AMToolsConfig.properties
+x web_agents/sjsws_agent/config/configure.xml
+x web_agents/sjsws_agent/lib
+x web_agents/sjsws_agent/lib/libxml2.so
+x web_agents/sjsws_agent/lib/sjsws-install.jar
+x web_agents/sjsws_agent/lib/opensso-installtools.jar
+x web_agents/sjsws_agent/lib/opensso-installtools-launcher.jar
+x web_agents/sjsws_agent/lib/libames6.so
+x web_agents/sjsws_agent/jce
+x web_agents/sjsws_agent/jsse
+x web_agents/sjsws_agent/locale
+x web_agents/sjsws_agent/locale/amToolsMessages.properties
+x web_agents/sjsws_agent/locale/sjswsTools.properties
+x web_agents/sjsws_agent/license.txt
+x web_agents/sjsws_agent/README
 
-[/opt]> cd web_agents/apache_agent/bin/
+[/opt]> cd web_agents/sjsws_agent/bin/
 
 [/opt]> chmod +x agentadmin crypt_util certutil
 
-[/opt/web_agents/apache_agent/bin/]> ./agentadmin --install
+[/opt/web_agents/sjsws_agent/bin/]> ./agentadmin --install
 
 Do you completely agree with all the terms and conditions of this License
 Agreement (yes/no): [no]: yes
 
 
 
-Enter the complete path to the directory which is used by Apache Server to
+Enter the complete path to the directory which is used by SJS Web Server to
 store its configuration Files. This directory uniquely identifies the
-Apache Server instance that is secured by this Agent.
+SJS Web Server instance that is secured by this Agent.
 [ ? : Help, ! : Exit ]
-Enter the Apache Server Config Directory Path [/opt/apache/conf]: /opt/apache2/conf
+Enter the SJS Web Server Config Directory Path []: /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config
 
 
 Enter the fully qualified host name of the server where Access Manager
@@ -169,7 +169,7 @@ Enter the path to the password file: /opt/password
 -----------------------------------------------
 SUMMARY OF YOUR RESPONSES
 -----------------------------------------------
-Apache Server Config Directory : /opt/apache2/conf
+SJS Web Server Config Directory : /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config
 Access Manager Services Host : am.host.com
 Access Manager Services Port : 8080
 Access Manager Services Protocol : http
@@ -196,26 +196,28 @@ Generating audit log file name ...DONE.
 
 Creating tag swapped AMAgent.properties file for instance Agent_001 ...DONE.
 
-Creating a backup for file /opt/apache2/conf/httpd.conf ...DONE.
+Creating a backup for file /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/obj.conf ...DONE.
 
-Adding Agent parameters to /opt/web_agents/apache_agent/Agent_001/config/dsame.conf file ...DONE.
+Adding Agent parameters to /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/obj.conf file ...DONE.
 
-Adding Agent parameters to /opt/apache2/conf/httpd.conf file ...DONE.
+Creating a backup for file /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/magnus.conf ...DONE.
+
+Adding Agent parameters to /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/magnus.conf file ...DONE.
 
 
 SUMMARY OF AGENT INSTALLATION
 -----------------------------
 Agent instance name: Agent_001
 Agent Configuration file location:
-/opt/web_agents/apache_agent/Agent_001/config/AMAgent.properties
+/opt/web_agents/sjsws_agent/Agent_001/config/AMAgent.properties
 Agent Audit directory location:
-/opt/web_agents/apache_agent/Agent_001/logs/audit
+/opt/web_agents/sjsws_agent/Agent_001/logs/audit
 Agent Debug directory location:
-/opt/web_agents/apache_agent/Agent_001/logs/debug
+/opt/web_agents/sjsws_agent/Agent_001/logs/debug
 
 
 Install log file location:
-/opt/web_agents/apache_agent/logs/audit/install.log
+/opt/web_agents/sjsws_agent/logs/audit/install.log
 
 Thank you for using Access Manager Policy Agent
 
@@ -225,7 +227,7 @@ Thank you for using Access Manager Policy Agent
 Use agentadmin --uninstall option to uninstall the agent. Uninstallation does
 the following:
 
-    - Unconfigures httpd.conf
+    - Unconfigures obj.conf, magnus.conf files.
     - Removes agent instance's config directory.
 
 To completely remove the agent installation files, go back to web_agents and
@@ -235,29 +237,29 @@ simply remove the directory.
 Here is the sample:
 
 
-[/opt/web_agents/apache_agent/bin]> ./agentadmin --uninstall
+[/opt/web_agents/sjsws_agent/bin]> ./agentadmin --uninstall
 
 
 
 ************************************************************************
-Welcome to the Access Manager Policy Agent for Apache Server If the Policy
+Welcome to the Access Manager Policy Agent for SJS Web Server If the Policy
 Agent is used with Federation Manager services, User needs to enter
 information relevant to Federation Manager.
 
 ************************************************************************
 
 
-Enter the complete path to the directory which is used by Apache Server to
+Enter the complete path to the directory which is used by SJS Web Server to
 store its configuration Files. This directory uniquely identifies the
-Apache Server instance that is secured by this Agent.
+SJS Web Server instance that is secured by this Agent.
 [ ? : Help, ! : Exit ]
-Enter the Apache Server Config Directory Path [/opt/apache/conf]: /opt/apache2/conf
+Enter the SJS Web Server Config Directory Path []: /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config
 
 
 -----------------------------------------------
 SUMMARY OF YOUR RESPONSES
 -----------------------------------------------
-Apache Server Config Directory : /opt/apache2/conf
+SJS Web Server Config Directory : /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config
 
 Verify your settings above and decide from the choices below.
 1. Continue with Uninstallation
@@ -267,12 +269,13 @@ Verify your settings above and decide from the choices below.
 Please make your selection [1]:
 
 Deleting the config directory
-/opt/web_agents/apache_agent/Agent_001/config ...DONE.
+/opt/web_agents/sjsws_agent/Agent_001/config ...DONE.
 
-Removing Agent parameters from /opt/apache2/conf/httpd.conf file ...DONE.
+Removing Agent parameters from /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/obj.conf file ...DONE.
 
+Removing Agent parameters from /var/opt/sun/SUNWwbsvr7/https-agent_hostname/config/magnus.conf file ...DONE.
 
 Uninstall log file location:
-/opt/web_agents/apache_agent/logs/audit/uninstall.log
+/opt/web_agents/sjsws_agent/logs/audit/uninstall.log
 
 Thank you for using Access Manager Policy Agent
