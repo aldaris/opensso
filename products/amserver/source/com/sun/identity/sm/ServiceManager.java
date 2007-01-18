@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.7 2006-08-25 21:21:30 veiming Exp $
+ * $Id: ServiceManager.java,v 1.8 2007-01-18 23:43:18 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -701,6 +701,7 @@ public class ServiceManager {
         PluginSchemaImpl.clearCache();
         ServiceInstanceImpl.clearCache();
         ServiceConfigImpl.clearCache();
+        OrgConfigViaAMSDK.clearCache();
 
         // Re-initialize the flags
         try {

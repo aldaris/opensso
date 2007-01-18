@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.10 2007-01-10 00:40:47 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.11 2007-01-18 23:43:18 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1669,8 +1669,8 @@ public class OrganizationConfigManager {
                                         getNamingAttrForOrg();
                                     }
                                     copyOrgEnabled = true;
-                                    break;
                                 }
+                                break;
                             }
                         }
                     }

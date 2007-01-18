@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.6 2007-01-09 19:39:19 manish_rustagi Exp $
+ * $Id: AuthContext.java,v 1.7 2007-01-18 23:43:19 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import javax.security.auth.callback.TextOutputCallback;
 import javax.security.auth.login.LoginException;
 
 import netscape.ldap.util.DN;
+import netscape.ldap.LDAPDN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SecureRandomManager;
@@ -844,7 +845,8 @@ public final class AuthContext extends Object {
         try {
             // Set Organization
             if (getOrganizationName() != null) {
-                token.setProperty("Organization", getOrganizationName());
+                token.setProperty(Constants.ORGANIZATION,
+                    getOrganizationName());
             }
 
             // Set Host name
@@ -873,9 +875,24 @@ public final class AuthContext extends Object {
             token.setProperty("AuthType", "ldap");
 
             // Set Principal
-            if (getPrincipal() != null) {
-                token.setProperty("Principal", getPrincipal().getName());
-            }
+             String principal = getPrincipal().getName();
+             if (principal != null) {
+                 token.setProperty("Principal", principal);
+                 // Set Universal Identifier
+                 String username = principal;
+                 if (DN.isDN(principal)) {
+                     // Get the username
+                     username = LDAPDN.explodeDN(principal, true)[0];
+                 }
+                 // Since internal auth will be used during install time
+                 // and during boot strap for users "dsame" and "amadmin"
+                 // the IdType will be hardcoded to User
+                 StringBuffer uuid = new StringBuffer(100);
+                 uuid.append("id=").append(username)
+                 .append(",ou=user,").append(getOrganizationName());
+                 token.setProperty(Constants.UNIVERSAL_IDENTIFIER,
+                     uuid.toString());
+             }
 
             // Set AuthLevel
             token.setProperty("AuthLevel", Integer.toString(0));
@@ -905,8 +922,8 @@ public final class AuthContext extends Object {
             }
 
         } catch (Exception e) {
-            if (authDebug.messageEnabled()) {
-                authDebug.message("getSSOToken: setProperty exception : ", e);
+            if (authDebug.warningEnabled()) {
+                authDebug.warning("getSSOToken: setProperty exception : ", e);
             }
         }
 

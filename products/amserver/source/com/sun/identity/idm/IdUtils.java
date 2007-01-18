@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.13 2007-01-09 18:53:48 manish_rustagi Exp $
+ * $Id: IdUtils.java,v 1.14 2007-01-18 23:43:17 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,16 +29,22 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
+import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.common.IDirectoryServices;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.OrgConfigViaAMSDK;
+
+
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
@@ -83,6 +89,21 @@ public final class IdUtils {
     private static String notificationId;
 
     private static ServiceConfigManager serviceConfigManager;
+    
+    // User naming attribute for AMSDK
+    private static String USER_NAMING_ATTR;
+    
+    // Organization naming attribute for AMSDK
+    private static String ORG_NAMING_ATTR;
+    
+    // SMS Root Suffix
+    private static String ROOT_SUFFIX;
+    
+    // DN pointing to the services node
+    private static String SERVICES_SUFFIX;
+    
+    // Special Users
+    private static Set specialUsers = new HashSet();
 
     static {
         initialize();
@@ -181,23 +202,25 @@ public final class IdUtils {
      * @throws SSOException if user's single sign on token is invalid.
      */
     public static AMIdentity getIdentity(SSOToken token)
-            throws IdRepoException, SSOException {
+        throws IdRepoException, SSOException {
+        AMIdentity identity;
         String principal = token.getProperty(Constants.UNIVERSAL_IDENTIFIER);
         if (principal == null) {
-            String dn = token.getPrincipal().getName();
-            if (dn == null || !DN.isDN(dn)) {
-                Object[] args = { principal };
-                throw new IdRepoException(IdRepoBundle.getString("215", args),
-                        "215", args);
+            // This could happen during co-existence with AM 6.x
+            // and SSOToken created by AM 6.x server. In this case
+            // the principal name would be the DN
+            principal = token.getPrincipal().getName();
+            if (principal == null || !DN.isDN(principal)) {
+                Object [] args = { principal };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                    "215", args);
             } else {
-                principal = "id=" + LDAPDN.explodeDN(dn, true)[0] + ",ou="
-                        + IdType.USER.getName() + ","
-                        + token.getProperty(Constants.ORGANIZATION)
-                        + ",amsdkdn=" + dn;
-
+                identity = getIdentity(token, principal);
             }
+        } else {
+            identity = getIdentity(token, principal);
         }
-        return getIdentity(token, principal);
+        return (identity);
     }
 
     /**
@@ -230,35 +253,7 @@ public final class IdUtils {
      */
     public static AMIdentity getIdentity(SSOToken token, String univId)
             throws IdRepoException {
-        if (univId.startsWith("id=")) {
-            // This is a universal id...
-            String pureId = univId;
-            String amsdkDN = null;
-            if (!DN.isDN(univId)) {
-                Object[] args = { univId };
-                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "215", 
-                        args);
-            }
-            int dnIndex = univId.indexOf(",amsdkdn=");
-            if (dnIndex > 0) {
-                pureId = univId.substring(0, dnIndex);
-                amsdkDN = univId.substring(dnIndex + 9);
-            }
-            DN dnObject = new DN(pureId);
-            String[] array = dnObject.explodeDN(true);
-            String name = array[0];
-            if (!supportedType(array[1])) {
-                Object[] args = { univId };
-                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "215", 
-                        args);
-            }
-            IdType type = new IdType(array[1]);
-            String orgName = dnObject.getParent().getParent().toRFCString();
-            return new AMIdentity(token, name, type, orgName, amsdkDN);
-        } else {
-            // this could be a AM SDK DN.
-            return getIdentity(token, univId, DNMapper.orgNameToDN("/"));
-        }
+        return (getIdentity(token, univId, null));
     }
 
     /**
@@ -275,59 +270,110 @@ public final class IdUtils {
      * exception while obtaining the identity object
      */
     public static AMIdentity getIdentity(SSOToken token, String amsdkdn,
-            String realm) throws IdRepoException {
-
+        String realm) throws IdRepoException {
         if (amsdkdn == null || !DN.isDN(amsdkdn)) {
-            // Invalid universal id
+            Object[] args = { amsdkdn };
+            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                "215", args));
+        }
+
+        // Try constructing the identity object
+        if (amsdkdn.toLowerCase().startsWith("id=")) {
+            try {
+                return (new AMIdentity(token, amsdkdn));
+            } catch (IdRepoException ide) {
+                // this could be a AMSDK DN. Follow the AMSDK rules
+                if (debug.messageEnabled()) {
+                    debug.message("IdUtils:getIdentity(token, " +
+                        amsdkdn + ") got exception: " + ide.getMessage() +
+                        "\n\tContinuing with AMSDK DN check");
+                }
+            }
+        }
+
+        // Since "amsdkdn is not a UUID, check if realm has AMSDK configured
+        if ((realm != null) && !OrgConfigViaAMSDK.isAMSDKConfigured(realm)) {
+            // Not configured for AMSDK, return
             return (null);
         }
 
+        // Check for Special Users
+        initializeSpecialUsers();
+        if (specialUsers.contains(DNUtils.normalizeDN(amsdkdn))) {
+            return (new AMIdentity(token, LDAPDN.explodeDN(amsdkdn, true)[0],
+                IdType.USER, ROOT_SUFFIX, amsdkdn));
+        }
+
+        // Initialize root realm suffix, org and user naming attributes
+        initializeForGetIdentity();
+
+        // Determine if the amsdkdn is valid. Obtain name & type
+        String name = null;
+        IdType type = null;
         try {
-            // Check if the DN is a valid AMSDK DN
-            if (ServiceManager.isCoexistenceMode()) {
-                // In coexistence/legacy mode, AM SDK is not configured but
-                // is always enabled by default
-                AMIdentity iden = getIdentityFromAMSDKDN(token, amsdkdn, realm);
-                return iden;
-            }
-            // Check if AMSDK is configured for the realm
-            ServiceConfig s = serviceConfigManager.getOrganizationConfig(realm,
-                    null);
-            if (s != null) {
-                Iterator items = s.getSubConfigNames().iterator();
-                while (items.hasNext()) {
-                    ServiceConfig sc1 = s.getSubConfig((String) items.next());
-                    if (sc1.getSchemaID().equalsIgnoreCase("amSDK")) {
-                        return getIdentityFromAMSDKDN(token, amsdkdn, realm);
-                    }
+            // Since we would using AMSDK, get AMDirectoryManager preload
+            // all the attributes and check if it exists
+            IDirectoryServices dsServices = 
+                AMDirectoryAccessFactory.getDirectoryServices();
+            // Preload/cache all the attributes assuming it is a user
+            // Mainly for performance reasons, since getObjectType would
+            // force multiple another directory lookup
+            try {
+                if (amsdkdn.startsWith(USER_NAMING_ATTR)) {
+                    dsServices.getAttributes(token, amsdkdn, AMObject.USER);
                 }
+            } catch (Exception e) {
+                // Ignore the exception and continue since this for cache
+            }
+
+            // Getting object type would use the cached attributes
+            int sdkType = dsServices.getObjectType(token, amsdkdn);
+
+            // Convert the sdkType to IdRepo type
+            type = getType(AMStoreConnection.getObjectName(sdkType));
+            name = AMConstants.CONTAINER_DEFAULT_TEMPLATE_ROLE;
+            if (!type.equals(IdType.REALM)) {
+                name = LDAPDN.explodeDN(amsdkdn, true)[0];
             }
         } catch (AMException ame) {
             // Debug the message and return null
             if (debug.messageEnabled()) {
-                debug.message("IdUtils.getIdentity: Unable to resolve "
-                        + "AMSDK DN: " + amsdkdn, ame);
+                debug.message("IdUtils.getIdentity: Unable to resolve " +
+                    "AMSDK DN: " + amsdkdn, ame);
             }
+            return (null);
         } catch (SSOException ssoe) {
             // Debug the message and return null
             if (debug.messageEnabled()) {
-                debug.message("IdUtils.getIdentity: Unable to resolve "
-                        + "AMSDK DN. Got SSOException", ssoe);
+                debug.message("IdUtils.getIdentity: Unable to resolve " +
+                    "AMSDK DN. Got SSOException", ssoe);
             }
-        } catch (IdRepoException ide) {
-            // Debug the message and return null
-            if (debug.messageEnabled()) {
-                debug.message("IdUtils.getIdentity: Unable to resolve "
-                        + "AMSDK DN. Got IdRepoException", ide);
-            }
-        } catch (SMSException smse) {
-            // Debug the message and return null
-            if (debug.messageEnabled()) {
-                debug.message("IdUtils.getIdentity: Unable to resolve "
-                        + "AMSDK DN. Got SMSException", smse);
-            }
+            return (null);
         }
-        return (null);
+
+        // Need to determine realm for amsdkdn
+        String srealm = ROOT_SUFFIX;
+        if (!amsdkdn.equals(ROOT_SUFFIX) &&
+            !amsdkdn.equals(SERVICES_SUFFIX)) {
+            // Need to get the object type and walk up the tree
+            int index = amsdkdn.indexOf(ORG_NAMING_ATTR);
+            if (index == 0) {
+                srealm = OrgConfigViaAMSDK.getRealmForAMSDK(amsdkdn, realm);
+            } else if (index > 0) {
+                srealm = OrgConfigViaAMSDK.getRealmForAMSDK(
+                    amsdkdn.substring(index), realm);
+            }
+            if (debug.messageEnabled()) {
+                debug.message("IdUtils.getIdentity:: amsdkdn=" +
+                    amsdkdn + " maps to realm=" + srealm);
+            }
+        } else if (amsdkdn.equals(SERVICES_SUFFIX)) {
+            // Since amsdkdn points to services node,
+            // it should be reset to root suffix
+            amsdkdn = ROOT_SUFFIX;
+        }
+
+        return (new AMIdentity(token, name, type, srealm, amsdkdn));
     }
 
     /**
@@ -583,31 +629,101 @@ public final class IdUtils {
      * @throws IdRepoException If there are repository related error conditions.
      */
     private static AMIdentity getIdentityFromAMSDKDN(SSOToken token,
-            String amsdkdn, String realm) throws AMException, SSOException,
-            IdRepoException {
-
-        // TODO: 
-        // FIXME: Avoid using AM SDK implementation to determine these if 
-        // possible.
-
-        // Since we would using AMSDK, get AMDirectoryManager preload
-        // all the attributes and check if it exists
+        String amsdkdn, String realm) throws AMException, SSOException,
+        IdRepoException {
+        // Since we would be using AMSDK obtain AMDirectoryManager
         IDirectoryServices dsServices = AMDirectoryAccessFactory
-                .getDirectoryServices();
-        // Just Preload all the attributes!
-        dsServices.getAttributes(token, amsdkdn, AMObject.USER);
+            .getDirectoryServices();
+        
+        // Preload/cache all the attributes assuming it is a user
+        try {
+            if (USER_NAMING_ATTR == null) {
+                try {
+                    USER_NAMING_ATTR = AMStoreConnection.getNamingAttribute(
+                        AMObject.USER).toLowerCase() + "=";
+                } catch (AMException ame) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("IdUtils: unable to get naming " +
+                            "attribute for user. Using \"uid\"");
+                    }
+                    USER_NAMING_ATTR = "uid=";
+                }
+            }
+            if (amsdkdn.startsWith(USER_NAMING_ATTR)) {
+                dsServices.getAttributes(token, amsdkdn, AMObject.USER);
+            }
+        } catch (Exception e) {
+            if (debug.messageEnabled()) {
+                debug.message("IdUtils.getIdentityFromAMSDKDN " +
+                    "Unable to get attributes for dn: " + amsdkdn);
+            }
+        }
+        
         // Getting object type would use the cached attributes
         int sdkType = dsServices.getObjectType(token, amsdkdn);
+        
         // Convert the sdkType to IdRepo type
         IdType type = getType(AMStoreConnection.getObjectName(sdkType));
-        String name = LDAPDN.explodeDN(amsdkdn, true)[0];
+        String name = AMConstants.CONTAINER_DEFAULT_TEMPLATE_ROLE;
+        if (!type.equals(IdType.REALM)) {
+            name = LDAPDN.explodeDN(amsdkdn, true)[0];
+        }
         if (ServiceManager.isCoexistenceMode()) {
             // Get the organization from the object dn
             realm = dsServices.getOrganizationDN(token, amsdkdn);
         }
+        // Write a debug message
+        if (debug.messageEnabled()) {
+            debug.message("IdUtils.getIdentityFromAMSDK: Name: " + name +
+                " Type: " + type + " Realm: " + realm + " dn: " + amsdkdn);
+        }
         return (new AMIdentity(token, name, type, realm, amsdkdn));
     }
 
+    private static void initializeForGetIdentity() {
+        // Initialize root realm, if not already initalized
+        if (ROOT_SUFFIX == null) {
+            ROOT_SUFFIX = SMSEntry.getRootSuffix();
+            StringBuffer sb = new StringBuffer(100);
+            sb.append(SMSEntry.SERVICES_RDN)
+                .append(SMSEntry.COMMA).append(ROOT_SUFFIX);
+            SERVICES_SUFFIX = DNUtils.normalizeDN(sb.toString());
+        }
+
+        // Initialize organization and user naming attributes
+        if ((ORG_NAMING_ATTR == null) || (USER_NAMING_ATTR == null)) {
+            try {
+                ORG_NAMING_ATTR = AMStoreConnection.getNamingAttribute(
+                    AMObject.ORGANIZATION).toLowerCase() + "=";
+                USER_NAMING_ATTR = AMStoreConnection.getNamingAttribute(
+                    AMObject.USER).toLowerCase() + "=";
+            } catch (AMException ame) {
+                if (debug.warningEnabled()) {
+                    debug.warning("IdUtils: unable to get naming " +
+                        "attribute for org/user. Using \"o\"/\"uid\"");
+                }
+                ORG_NAMING_ATTR = "o=";
+                USER_NAMING_ATTR = "uid=";
+            }
+        }
+    }
+
+    private static void initializeSpecialUsers() {
+        // Populate special users
+        if (specialUsers.isEmpty()) {
+            String susers = SystemProperties.get(
+                "com.sun.identity.authentication.special.users", "");
+            StringTokenizer st = new StringTokenizer(
+                susers, "|");
+            while (st.hasMoreTokens()) {
+                specialUsers.add(DNUtils.normalizeDN(st.nextToken()));
+            }
+            susers = SystemProperties.get(
+                "com.sun.identity.authentication.super.user", "");
+            specialUsers.add(DNUtils.normalizeDN(susers));
+        }
+    }
+    
     /**
      * Returns an IdRepoException based on an <code>AMException</code>
      * 
@@ -705,7 +821,6 @@ public final class IdUtils {
     // SMS service listener to reinitialize if IdRepo service changes
     static class IdUtilsListener implements com.sun.identity.sm.ServiceListener 
     {
-
         public void schemaChanged(String serviceName, String version) {
             if (serviceName.equalsIgnoreCase(IdConstants.REPO_SERVICE)) {
                 initialize();
@@ -728,5 +843,4 @@ public final class IdUtils {
             }
         }
     }
-
 }

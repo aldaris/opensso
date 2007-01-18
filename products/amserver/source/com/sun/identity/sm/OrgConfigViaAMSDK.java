@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.7 2007-01-10 00:40:48 goodearth Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.8 2007-01-18 23:43:18 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.idm.IdConstants;
+import com.sun.identity.common.DNUtils;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +49,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Vector;
+import netscape.ldap.util.DN;
+import netscape.ldap.util.RDN;
 
 // This class provides support for OrganizationConfigManager
 // in coexistence mode. This class interfaces with AMSDK
@@ -65,6 +70,8 @@ public class OrgConfigViaAMSDK {
     private AMOrganization parentOrgWithAdminToken;
 
     private ServiceConfig serviceConfig;
+    
+    private int objType;
 
     // permissions for the user token
     boolean hasReadPermissionOnly;
@@ -80,13 +87,14 @@ public class OrgConfigViaAMSDK {
     static final String IDREPO_SERVICE = "sunidentityrepositoryservice";
 
     static final String MAPPING_ATTR_NAME = "sunCoexistenceAttributeMapping";
-
-    // Admin token to perform operations if the user has
-    // realm permissions
-    private static SSOToken adminToken;
+    
+    // Cache of AMSDK organization names to SMS relam dn
+    static Map amsdkdn2realmname = new CaseInsensitiveHashMap();
+    
+    static Map amsdkConfiguredRealms = new CaseInsensitiveHashMap();
 
     // Debug & Locale
-    Debug debug = SMSEntry.debug;
+    static Debug debug = SMSEntry.debug;
 
     ResourceBundle bundle = SMSEntry.bundle;
 
@@ -94,6 +102,7 @@ public class OrgConfigViaAMSDK {
     static Map notMigratedAttributeMappings;
 
     static Map notMigratedReverseAttributeMappings;
+    
     static {
         if (!ServiceManager.isConfigMigratedTo70()) {
             notMigratedAttributeMappings = new CaseInsensitiveHashMap();
@@ -126,13 +135,12 @@ public class OrgConfigViaAMSDK {
         this.token = token;
         parentOrgName = orgName;
         this.smsOrgName = smsOrgName;
+        
         // Get admin SSOToken for operations to bypass ACIs and delegation
-        if (adminToken == null) {
-            adminToken = (SSOToken) AccessController
-                    .doPrivileged(AdminTokenAction.getInstance());
-        }
-        try {
+        SSOToken adminToken = (SSOToken) AccessController
+            .doPrivileged(AdminTokenAction.getInstance());
 
+        try {
             // Check if the user has realm privileges, if yes use
             // admin SSOToken to bypass directory ACIs
             if (checkRealmPermission(token, smsOrgName,
@@ -159,18 +167,16 @@ public class OrgConfigViaAMSDK {
                 newOrg = smsOrgName;
             }
 
-            if (ServiceManager.isConfigMigratedTo70()
-                    && (serviceConfig = (ServiceConfig) 
-                            attributeMappingServiceConfigs.get(orgName)) 
-                            == null) 
-            {
+            if (ServiceManager.isConfigMigratedTo70() &&
+                (serviceConfig = (ServiceConfig) attributeMappingServiceConfigs
+                .get(orgName)) == null) {
                 ServiceConfigManager scm = new ServiceConfigManager(
-                        IDREPO_SERVICE, adminToken);
+                    IDREPO_SERVICE, adminToken);
                 // Do we need to use internal token?
                 serviceConfig = scm.getOrganizationConfig(newOrg, null);
                 if (debug.messageEnabled()) {
                     debug.message("OrgConfigViaAMSDK::constructor"
-                            + ": serviceConfig" + serviceConfig);
+                        + ": serviceConfig" + serviceConfig);
                 }
                 attributeMappingServiceConfigs.put(orgName, serviceConfig);
             }
@@ -652,36 +658,36 @@ public class OrgConfigViaAMSDK {
 
     // Check to see if the user has realm permissions
     private boolean checkRealmPermission(SSOToken token, String realm,
-            Set action) {
+        Set action) {
         boolean answer = false;
         if (token != null) {
             try {
                 DelegationEvaluator de = new DelegationEvaluator();
                 DelegationPermission dp = new DelegationPermission(realm,
-                        com.sun.identity.sm.SMSEntry.REALM_SERVICE, "1.0", "*",
-                        "*", action, Collections.EMPTY_MAP);
+                    com.sun.identity.sm.SMSEntry.REALM_SERVICE, "1.0", "*",
+                    "*", action, Collections.EMPTY_MAP);
                 answer = de.isAllowed(token, dp, null);
             } catch (DelegationException dex) {
                 debug.error("OrgConfigViaAMSDK.checkRealmPermission: "
-                        + "Got Delegation Exception: ", dex);
+                    + "Got Delegation Exception: ", dex);
             } catch (SSOException ssoe) {
                 if (debug.messageEnabled()) {
                     debug.message("OrgConfigViaAMSDK.checkRealmPermission: "
-                            + "Invalid SSOToken: ", ssoe);
+                        + "Invalid SSOToken: ", ssoe);
                 }
             }
         }
         return (answer);
     }
-
+    
     static String getNamingAttrForOrg() {
         return AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATION);
     }
-
+    
     static String getNamingAttrForOrgUnit() {
         return AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATIONAL_UNIT);
     }
-
+    
     public Set getSDKAttributeValue(String key) {
         Set attrSet = new HashSet();
         try {
@@ -689,14 +695,292 @@ public class OrgConfigViaAMSDK {
         } catch (AMException ame) {
             if (debug.warningEnabled()) {
                 debug.warning("OrgConfigViaAMSDK::getSDKAttributeValue"
-                        + ": failed with AMException", ame);
+                    + ": failed with AMException", ame);
             }
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("OrgConfigViaAMSDK::getSDKAttributeValue"
-                        + ": failed with SSOException", ssoe);
+                    + ": failed with SSOException", ssoe);
             }
         }
         return (attrSet);
+    }
+    
+    /**
+     * Clears the cache
+     */
+    protected static void clearCache() {
+        attributeMappings = new CaseInsensitiveHashMap();
+        reverseAttributeMappings = new CaseInsensitiveHashMap();
+        amsdkdn2realmname = new CaseInsensitiveHashMap();
+        amsdkConfiguredRealms = new CaseInsensitiveHashMap();
+    }
+    
+    protected static void updateAMSDKConfiguredRealms(
+        String realm, boolean configured) {
+        if (!amsdkConfiguredRealms.keySet().contains(realm)) {
+            amsdkConfiguredRealms.put(realm, new Boolean(configured));
+        }
+    }
+    
+    /**
+     * Returns the true if AMSDK plugin is configured for the realm,
+     * else returns false.
+     */
+    public static boolean isAMSDKConfigured(String realm) {
+        if (ServiceManager.isCoexistenceMode()) {
+            return (true);
+        }
+        // Check the cache
+        realm = DNUtils.normalizeDN(realm);
+        Boolean answer = (Boolean) amsdkConfiguredRealms.get(realm);
+        if (answer == null) {
+            try {
+                SSOToken token = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                OrganizationConfigManagerImpl ocm =
+                    OrganizationConfigManagerImpl.getInstance(token, realm);
+                String orgname = getAmsdkdn(token, ocm);
+                answer = new Boolean(orgname != null);
+            } catch (SSOException ssoe) {
+                answer = new Boolean("false");
+            } catch (SMSException smse) {
+                answer = new Boolean("false");
+            }
+            // Update cache
+            amsdkConfiguredRealms.put(realm, answer);
+        }
+        return (answer.booleanValue());
+    }
+    
+    /**
+     * Returns the realm name that contains the AMSDK plugin with the
+     * given organization dn. The function optionally takes "inrealm"
+     * the realm, where the initial search would be done
+     * If not found, returns null.
+     */
+    public static String getRealmForAMSDK(String amsdkdn,
+        String inrealm) {
+        // If in legacy mode, return amsdkdn
+        if (ServiceManager.isCoexistenceMode()) {
+            return (amsdkdn);
+        }
+        String realm = inrealm;
+        // Check the cache
+        amsdkdn = DNUtils.normalizeDN(amsdkdn);
+        // if amsdk was not in DN format then normalizeDN will return null
+        if(amsdkdn == null) {
+            return null;
+        }
+        String orgname = (String) amsdkdn2realmname.get(amsdkdn);
+        if (orgname != null) {
+            if (debug.messageEnabled()) {
+                debug.message("OrgConfigViaAMSDK:getRealmForAMSDK " +
+                    "from cache: orgdn=" + amsdkdn + " realm=" + orgname);
+            }
+            return (orgname);
+        }
+        
+        // First check with "inrealm" and then with "amsdkdn"
+        OrganizationConfigManagerImpl ocm = null;
+        SSOToken token = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        try {
+            // Check inrealm first
+            if (inrealm != null) {
+                ocm = OrganizationConfigManagerImpl.getInstance(
+                    token, inrealm);
+                orgname = getAmsdkdn(token, ocm);
+            }
+            
+            // Need to check for the following conditions before
+            // using amsdkdn as the realm name to determine the
+            // AMSDK plugin organization name
+            // i) "inrealm" is null  (realm name is not provided)
+            // ii) orgname != null && !orgname.equals(realm)
+            //   (since orgname is not null, AMSDK has been configured
+            //   configured for the realm, but it does not match the
+            //   provided "amsdkdn", hence need to check for amsdkdn realm
+            // iii) !inrealm.equals(amsdkdn)
+            //   If same, the check has been done. No need to repeat
+            // iv) If the dn starts with ou then the realm for the orgUnit
+            //     is hidden. So first replace values of all ou's in the
+            //     amsdkdn and then find the realm for it.
+            if ((inrealm == null) ||
+                ((orgname != null) && !orgname.equals(realm)) ||
+                ((orgname != null) &&
+                !amsdkdn.equals(DNUtils.normalizeDN(inrealm)))) {
+                String dn = hideOrgUnits(amsdkdn);
+                ocm = OrganizationConfigManagerImpl.getInstance(
+                    token, dn);
+                orgname = getAmsdkdn(token, ocm);
+                if ((orgname != null) && orgname.equals(amsdkdn)) {
+                    realm = ocm.getOrgDN();
+                }
+            }
+        } catch (SMSException sme) {
+            // Ignore the exception, since the realm is not present
+            // and an explicit search would be done below
+        } catch (SSOException ssoe) {
+            // Ignore the exception, since the realm is not present
+            // and an explicit search would be done below
+        }
+        
+        if (realm != null) {
+            amsdkdn2realmname.put(amsdkdn, realm);
+            if (debug.messageEnabled()) {
+                debug.message("OrgConfigViaAMSDK:getRealmForAMSDK " +
+                    "first realm lookup: orgdn=" + amsdkdn +
+                    " realm=" + realm);
+            }
+        } else {
+            // If realm is still null, need to search the realm tree
+            try {
+                ocm = OrganizationConfigManagerImpl.getInstance(token, "/");
+                updateAmsdk2RealmNameCache(token, ocm, amsdkdn);
+                realm = (String) amsdkdn2realmname.get(amsdkdn);
+                if (debug.messageEnabled()) {
+                    debug.message("OrgConfigViaAMSDK:getRealmForAMSDK " +
+                        "full search orgdn=" + amsdkdn + " realm=" + realm);
+                }
+            } catch (SMSException e) {
+                if (debug.messageEnabled()) {
+                    debug.message("OrgConfigViaAMSDK:getRealmForAMSDK" +
+                        " Exception: ", e);
+                }
+            } catch (SSOException ssoe) {
+                if (debug.messageEnabled()) {
+                    debug.message("OrgConfigViaAMSDK:getRealmForAMSDK" +
+                        " SSException: ", ssoe);
+                }
+            }
+        }
+        return (realm);
+    }
+    
+    /**
+     * This method checks if the dn starts with org unit naming attr.
+     * If yes, then it replaces values of all ou's by prefixing
+     * SMSEntry.SUN_INTERNAL_REALM_NAME because all realms mapping to
+     * orgUnits are hidden.
+     * If the dn does not start with org unit naming attr then it is
+     * returned as-is.
+     * For example,
+     *      ou=X,ou=Y,o=DevSample,dc=red,dc=iplanet,dc=com
+     *      is replaced with
+     *      ou=sunamhiddenrealmX,ou=sunamhiddenrealmY,o=DevSample,dc=red,dc=iplanet,dc=com
+     *
+     * @param orgUnitDN String can not be null
+     */
+    private static String hideOrgUnits(String orgUnitDN) {
+        String ou = getNamingAttrForOrgUnit();
+        if(!orgUnitDN.startsWith(ou)) {
+            return orgUnitDN;
+        }
+        DN result = new DN();
+        result.setDNType(DN.RFC);
+        DN dn = new DN(orgUnitDN);
+        Vector rdns = dn.getRDNs();
+        for(Iterator iter = rdns.iterator();iter.hasNext();) {
+            String relDN = ((RDN)iter.next()).toString();
+            if(relDN.startsWith(ou)) {
+                relDN = relDN.replaceFirst(ou + SMSEntry.EQUALS,
+                    ou + SMSEntry.EQUALS + SMSEntry.SUN_INTERNAL_REALM_NAME);
+            }
+            result.addRDNToBack(new RDN(relDN));
+        }
+        return result.toRFCString();
+    }
+    
+    private static boolean updateAmsdk2RealmNameCache(SSOToken token,
+        OrganizationConfigManagerImpl ocm, String amsdkdn)
+        throws SMSException, SSOException {
+        boolean foundEntry = false;
+        // Get the AMSDK DN configured for the realm, update cache
+        String orgname = getAmsdkdn(token, ocm);
+        if (orgname != null) {
+            amsdkdn2realmname.put(orgname, ocm.getOrgDN());
+            if (orgname.equals(amsdkdn)) {
+                foundEntry = true;
+            }
+        }
+        
+        // Walk down the realm tree if entry is not found
+        if (!foundEntry) {
+            Set subRealmNames = ocm.getSubOrganizationNames(token);
+            if ((subRealmNames != null) && !subRealmNames.isEmpty()) {
+                for (Iterator realms = subRealmNames.iterator();
+                realms.hasNext();) {
+                    OrganizationConfigManagerImpl socm =
+                        OrganizationConfigManagerImpl.getInstance(
+                        token, "o=" + realms.next() + "," +
+                        ocm.getOrgDN());
+                    if ((foundEntry = updateAmsdk2RealmNameCache(
+                        token, socm, amsdkdn))) {
+                        break;
+                    }
+                }
+            }
+        }
+        return (foundEntry);
+    }
+    
+    public static String getAmsdkdn(SSOToken token,
+        OrganizationConfigManagerImpl ocm)
+        throws SMSException, SSOException {
+        if (ServiceManager.isCoexistenceMode()) {
+            return ocm.getOrgDN();
+        }
+        String orgdn = null;
+        // Get idrepo plugins and check for amsdkdn plugin
+        ServiceConfigManagerImpl sci = ServiceConfigManagerImpl
+            .getInstance(token, ServiceManager.REALM_SERVICE, "1.0");
+        if (sci != null) {
+            ServiceConfigImpl sc = sci.getOrganizationConfig(
+                token, ocm.getOrgDN(), null);
+            if (sc != null) {
+                Set plugins = sc.getSubConfigNames(token);
+                if (plugins != null && !plugins.isEmpty()) {
+                    for (Iterator items = plugins.iterator();
+                    items.hasNext();) {
+                        ServiceConfigImpl ssc = sc.getSubConfig(
+                            token, (String) items.next());
+                        if (ssc.getSchemaID().equalsIgnoreCase(
+                            IdConstants.AMSDK_PLUGIN_NAME)) {
+                            Map cMap = ssc.getAttributesForRead();
+                            if ((cMap != null) && !cMap.isEmpty()) {
+                                Set orgs = (Set) cMap.get("amSDKOrgName");
+                                if ((orgs != null) && !orgs.isEmpty()) {
+                                    orgdn = DNUtils.normalizeDN(
+                                        (String) orgs.iterator().next());
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return (orgdn);
+    }
+    
+    // Returns the organization type for AMSDK DN.
+    private int getObjectType() {
+        if (objType == 0) {
+            try {
+                AMStoreConnection amcom = new AMStoreConnection(
+                    (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance()));
+                objType = amcom.getAMObjectType(parentOrgName);
+            } catch(AMException ame) {
+                // set as organizational unit
+                objType = AMObject.ORGANIZATIONAL_UNIT;
+                debug.error("OrgConfigViaAMSDK: Unable to determine type");
+            } catch (SSOException ssoe) {
+                // set as organizational unit
+                objType = AMObject.ORGANIZATIONAL_UNIT;
+            }
+        }
+        return (objType);
     }
 }

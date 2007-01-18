@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.17 2006-12-13 02:01:43 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.18 2007-01-18 23:43:17 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,8 +93,6 @@ import netscape.ldap.util.DN;
 
 public final class AMIdentity {
 
-    private String univId;
-
     private String univIdWithoutDN;
 
     private SSOToken token;
@@ -120,8 +118,11 @@ public final class AMIdentity {
      *            Single sign on token of the user
      * @throws SSOException
      *             if user's single sign on token is invalid.
+     *     * @throws IdRepoException
+     *            if the single sign on token does not have a
+     *            a valid universal identifier
      */
-    public AMIdentity(SSOToken ssotoken) throws SSOException {
+    public AMIdentity(SSOToken ssotoken) throws SSOException, IdRepoException {
         this(ssotoken, ssotoken.getProperty(Constants.UNIVERSAL_IDENTIFIER));
     }
 
@@ -136,23 +137,46 @@ public final class AMIdentity {
      *            would be based on this user
      * @param universalId
      *            Universal Identifier of the identity.
+     *
+     * @throws IdRepoException
+     *            if the universal identifier is invalid
      * 
      */
-    public AMIdentity(SSOToken ssotoken, String universalId) {
-        univId = univIdWithoutDN = DNUtils.normalizeDN(universalId);
+    public AMIdentity(SSOToken ssotoken, String universalId)
+        throws IdRepoException {
+        this.token = ssotoken;
+        // Validate Universal ID
+        DN dnObject = null;
+        String[] array = null;
+        if ((universalId != null) &&
+            universalId.toLowerCase().startsWith("id=") &&
+            DN.isDN(universalId)) {
+            dnObject = new DN(universalId);
+            array = dnObject.explodeDN(true);
+        }
+        if ((array == null) || (array.length <3)) {
+            // Not a valid UUID since it should have the 
+            // name, type and realm components
+            Object args[] = { universalId };
+            throw (new IdRepoException(IdRepoBundle.getString(
+                "215", args), "215", args));
+        }
+        
+        // Valid UUID, construct rest of the parameters
+        univIdWithoutDN = (new DN(universalId)).toRFCString();
+        
         // Check for AMSDK DN
         int index;
-        if ((index = univId.indexOf(",amsdkdn=")) != -1) {
+        if ((index = univIdWithoutDN.toLowerCase().indexOf(
+            ",amsdkdn=")) != -1) {
             // obtain DN and univIdWithoutDN
-            univIdWithoutDN = univId.substring(0, index);
-            univDN = univId.substring(index + 9);
+            univDN = univIdWithoutDN.substring(index + 9);
+            univIdWithoutDN = univIdWithoutDN.substring(0, index);
+
         }
-        DN dnObject = new DN(universalId);
-        String[] array = dnObject.explodeDN(true);
         name = array[0];
         type = new IdType(array[1]);
         orgName = dnObject.getParent().getParent().toRFCString();
-        token = ssotoken;
     }
 
     /**
@@ -177,7 +201,9 @@ public final class AMIdentity {
         this.type = type;
         this.orgName = com.sun.identity.sm.DNMapper.orgNameToDN(orgName);
         this.token = token;
-        this.univDN = DNUtils.normalizeDN(amsdkdn);
+        if ((amsdkdn != null) && (amsdkdn.length() > 0)) {
+            this.univDN = (new DN(amsdkdn)).toRFCString();
+        }
         StringBuffer sb = new StringBuffer(100);
         if ((name != null) && (name.indexOf(',') != -1) &&
             DN.isDN(name)) {
@@ -188,13 +214,7 @@ public final class AMIdentity {
             sb.append("id=").append(name).append(",ou=").append(type.getName())
                     .append(",").append(this.orgName);
         }
-        univId = univIdWithoutDN = sb.toString();
-        if (amsdkdn != null) {
-            sb.append(",amsdkdn=").append(amsdkdn);
-            univId = sb.toString();
-        }
-        univIdWithoutDN = DNUtils.normalizeDN(univIdWithoutDN);
-        univId = DNUtils.normalizeDN(univId);
+        univIdWithoutDN = sb.toString();
     }
 
     // General APIs
@@ -921,7 +941,8 @@ public final class AMIdentity {
                 // Get UUID without amsdkdn for "membership" identity
                 String identityDN = identity.getUniversalId();
                 String amsdkdn = identity.getDN();
-                if (amsdkdn != null) {
+                if ((amsdkdn != null) &&
+                    (identityDN.toLowerCase().indexOf(",amsdkdn=") != -1)) {
                     identityDN = identityDN.substring(0, identityDN
                             .indexOf(amsdkdn) - 9);
                 }
@@ -1117,9 +1138,8 @@ public final class AMIdentity {
     public boolean equals(Object o) {
         if (o instanceof AMIdentity) {
             AMIdentity compareTo = (AMIdentity) o;
-            if (univId.equalsIgnoreCase(compareTo.univId)
-                    || univIdWithoutDN
-                            .equalsIgnoreCase(compareTo.univIdWithoutDN)) {
+            if (univIdWithoutDN.equalsIgnoreCase(
+                compareTo.univIdWithoutDN)) {
                 return true;
             } else if (univDN != null) {
                 // check if the amsdkdn match
@@ -1136,11 +1156,7 @@ public final class AMIdentity {
      * Non-javadoc, non-public methods
      */
     public int hashCode() {
-        if (univDN != null) {
-            return (univDN.toLowerCase().hashCode());
-        } else {
-            return (univId.toLowerCase().hashCode());
-        }
+        return (univIdWithoutDN.toLowerCase().hashCode());
     }
 
     /**
@@ -1167,7 +1183,7 @@ public final class AMIdentity {
      * @supported.api
      */
     public String getUniversalId() {
-        return univId;
+        return univIdWithoutDN;
     }
     
     /**
@@ -1178,7 +1194,7 @@ public final class AMIdentity {
      */
     public String toString() {
         StringBuffer sb = new StringBuffer(100);
-        sb.append("AMIdentity object: ").append(univId);
+        sb.append("AMIdentity object: ").append(univIdWithoutDN);
         if (univDN != null) {
             sb.append("AMSDKDN=").append(univDN);
         }
