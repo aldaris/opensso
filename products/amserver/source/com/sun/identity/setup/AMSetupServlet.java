@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.13 2007-01-05 02:41:04 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.14 2007-01-19 23:39:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,6 @@ import javax.servlet.http.HttpServletResponse;
  * configured status returned is always true.   
  */
 public class AMSetupServlet extends HttpServlet {
-    private ServletConfig config = null;
     private static ServletContext servletCtx = null;
     private static boolean isConfiguredFlag = false;
 
@@ -103,6 +102,7 @@ public class AMSetupServlet extends HttpServlet {
             servletCtx = config.getServletContext();
         }
         checkConfigProperties();
+        LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
     }
 
     /*
@@ -171,41 +171,7 @@ public class AMSetupServlet extends HttpServlet {
      * @return true if AM is already configured, false otherwise 
      */
     public static boolean checkInitState(ServletContext servletctx) {
-        try {
-            servletCtx = servletctx;
-            String bootstrap = getBootStrapFile();
-            FileReader frdr = new FileReader(bootstrap);
-            BufferedReader brdr = new BufferedReader(frdr);
-            String base =  brdr.readLine();
-            frdr.close();
-            File configFile = new File(base + "/" + 
-                SetupConstants.AMCONFIG_PROPERTIES);
-
-            Map map = ServicesDefaultValues.getDefaultValues();
-            String deployuri = (String)map.get(
-                SetupConstants.CONFIG_VAR_SERVER_URI);
-            File smsFile = new File(base + deployuri + "/" + SMS_STR);
-
-            if (configFile.exists() && smsFile.exists()) {
-                isConfiguredFlag = true;
-            }
-        } catch (FileNotFoundException fex) {
-            // no action required. The server is not configured yet.
-        } catch (IOException ioex) {
-            if (Debug.getInstance(SetupConstants.DEBUG_NAME).messageEnabled()) { 
-                Debug.getInstance(SetupConstants.DEBUG_NAME).message(
-                    "AMSetupServlet.checkInitState: " +
-                    "Exception in reading properties", ioex);
-            }
-        }
         return isConfiguredFlag;
-    }
-
-    /**
-     * Sets the configured flag 
-     */
-    public static void setConfigured(){
-        isConfiguredFlag = true;
     }
 
     /**
@@ -287,7 +253,7 @@ public class AMSetupServlet extends HttpServlet {
                  */
                 //createPasswordFiles(basedir, deployuri);
                 //createIdentitiesForWSSecurity(serverURL, deployuri);
-                setConfigured();
+                isConfiguredFlag = true;
                 LoginLogoutMapping.setProductInitialized(true);
                 return true;
             } else {      

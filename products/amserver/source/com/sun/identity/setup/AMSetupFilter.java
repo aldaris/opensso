@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.2 2006-11-22 01:01:24 ak138937 Exp $
+ * $Id: AMSetupFilter.java,v 1.3 2007-01-19 23:39:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,8 +121,7 @@ public final class AMSetupFilter implements Filter {
         setFilterConfig(filterConfig);
         servletCtx = filterConfig.getServletContext();
         initialized = AMSetupServlet.checkInitState(servletCtx); 
-        LoginLogoutMapping.setProductInitialized(initialized);
-         if (!initialized) {
+        if (!initialized) {
             //Set the encryption Key
             servletCtx.setAttribute("am.enc.pwd",
                 AMSetupServlet.getRandomString());
