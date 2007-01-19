@@ -18,66 +18,56 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Error.jsp,v 1.1 2006-10-30 23:17:15 qcheng Exp $
+   $Id: Error.jsp,v 1.2 2007-01-19 06:38:13 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
-
-
-
-
 
 <%@ page language="java" import="java.io.*,java.util.*,
 com.sun.liberty.LibertyManager"
 %>
 
 <%
-	String ERROR_URL = LibertyManager.getFedErrorKey();
-	String ERROR_REMARK = LibertyManager.getFedRemarkKey();
-        String providerAlias =
-                request.getParameter(LibertyManager.getMetaAliasKey());
-        String providerId = LibertyManager.getEntityID(providerAlias);
-        String providerRole = LibertyManager.getProviderRole(providerAlias);
-	String HOME_URI = null;
-	if (providerId != null) {
-		HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
-        }
+    String ERROR_URL = LibertyManager.getFedErrorKey();
+    String ERROR_REMARK = LibertyManager.getFedRemarkKey();
+    String providerAlias =
+        request.getParameter(LibertyManager.getMetaAliasKey());
+    String providerId = LibertyManager.getEntityID(providerAlias);
+    String providerRole = LibertyManager.getProviderRole(providerAlias);
+    String HOME_URI = null;
+    if (providerId != null) {
+        HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
+    }
 %>
-<HEAD>
-<title>Sun Java System Access Manager(Error)</title>
-</HEAD>
-<BODY BGCOLOR="#ffffff" LINK="#666699" VLINK="#666699" ALINK="#333366">
 <%@ include file="Header.jsp"%>
-<FONT FACE="PrimaSans BT, Verdana, sans-serif" SIZE="3">
-<TABLE BORDER="0" CELLPADDING="5" CELLSPACING="0" WIDTH="100%">
-<TR><TD NOWRAP><BR><FONT FACE="PrimaSans BT, Verdana, sans-serif" SIZE="3" >
-</TD></TR>
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
 <% if (request.getParameter(ERROR_URL) != null) { %>
+
 <tr>
- <td>
-   	Error : <i><%=request.getParameter(ERROR_URL)%></i>
- </td>
+<td>Error : <i><%=request.getParameter(ERROR_URL)%></i></td>
 </tr>
 <tr>
- <td>
-	Remark : <i><%=request.getParameter(ERROR_REMARK)%></i>
- </td>
+<td>Remark : <i><%=request.getParameter(ERROR_REMARK)%></i></td>
 </tr>
+
 <% } else { %>
-<B>Error occured during proccessing<B>.<br>Please contact your Service Provider.
+<tr>
+<td>
+<b>Error occured during proccessing</b>.
+<br>Please contact your Service Provider.
+</td>
+</tr>
 <%}%>
-</TABLE>
-</FONT>
-<P>
+</table>
+<p>
 <% if (HOME_URI == null){ %>
-	<A HREF="http://www.sun.com">Continue</A>
+    <a href="http://www.sun.com">Continue</a>
 <%}else {%>
-	<A HREF="<%=HOME_URI%>">Continue</A>
+    <a href="<%=HOME_URI%>">Continue</a>
 <% } %>
-<P>
+<p>
+
 <%@ include file="Footer.jsp"%>
-</BODY>
-</HTML>
 
 
 

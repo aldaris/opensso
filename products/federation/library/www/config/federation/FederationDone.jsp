@@ -18,70 +18,47 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FederationDone.jsp,v 1.1 2006-10-30 23:17:16 qcheng Exp $
+   $Id: FederationDone.jsp,v 1.2 2007-01-19 06:38:14 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-
-
-
-
 <%@ page language="java"
 import="com.sun.liberty.LibertyManager"
 %>
-<html>
-<head>
-<title>Sun Java System Access Manager(Federation status)</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="../../../fed_css/styles.css" type="text/css">
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="9" marginwidth="9"
-    topmargin="9" marginheight="9" >
-<br>
 <%@ include file="Header.jsp"%>
+<center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>
 <%
-	// Alias processing
-	String providerAlias =
-                request.getParameter(LibertyManager.getMetaAliasKey());
-	if (providerAlias == null || providerAlias.length() < 1)
-	{
-		response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-			"Provider Alias not found");
-		return;
-	}
-	String providerId = LibertyManager.getEntityID(providerAlias);
-        String providerRole = LibertyManager.getProviderRole(providerAlias);
-	String HOME_URI = "";
-	if (providerId != null) {
-		HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
-        } else {
-        response.sendError(response.SC_INTERNAL_SERVER_ERROR,"Not able to get Provider ID");
-        }
-	if (LibertyManager.isFederationCancelled(request)) {
-        %>
-	<p><b>The user has cancelled account federation.<br></b></p>
-	<% } else { %>
-	<p><b>Federation has been successfully completed with the remote provider.<br></b></p>
-	<p>
-        <% } if (HOME_URI == null){ %>
-            <a href="http://www.sun.com" >Continue</a>
-        <%}else {%>
-            <a href="<%=HOME_URI%>" >Continue </a>
-        <% } %>
-        </p>
-    </td>
-    </tr>
-</table>
+    // Alias processing
+    String providerAlias =
+        request.getParameter(LibertyManager.getMetaAliasKey());
+    if (providerAlias == null || providerAlias.length() < 1) {
+        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+            "Provider Alias not found");
+        return;
+    }
+
+    String providerId = LibertyManager.getEntityID(providerAlias);
+    String providerRole = LibertyManager.getProviderRole(providerAlias);
+    String HOME_URI = "";
+    if (providerId != null) {
+        HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
+    } else {
+        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+            "Not able to get Provider ID");
+    }
+    if (LibertyManager.isFederationCancelled(request)) {
+%>
+
+<p><b>The user has cancelled account federation.</b></p>
+<% } else { %>
+<p><b>Federation has been successfully completed with the remote provider.</b></p>
+<% } if (HOME_URI == null){ %>
+    <a href="http://www.sun.com">Continue</a>
+<% }else { %>
+    <a href="<%=HOME_URI%>">Continue </a>
+<% } %>
+</center>
 <%@ include file="Footer.jsp"%>
 
-</body>
-</html>

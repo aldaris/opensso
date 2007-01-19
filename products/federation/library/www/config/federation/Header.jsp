@@ -18,51 +18,47 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Header.jsp,v 1.1 2006-10-30 23:17:16 qcheng Exp $
+   $Id: Header.jsp,v 1.2 2007-01-19 06:38:14 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-
-
 <%@ page
 import="com.sun.identity.common.SystemConfigurationUtil"
 %>
-
+                                                                                
 <%
-    String deployuri = null;
-    deployuri = SystemConfigurationUtil.getProperty(
+    String deployuri = SystemConfigurationUtil.getProperty(
         "com.iplanet.am.services.deploymentDescriptor");
     if ((deployuri == null) || (deployuri.length() == 0)) {
-	deployuri = "../../..";
+        deployuri = "../../..";
     }
 %>
 
+
+
 <html>
 <head>
-<title>Sun Java System Access Manager (Header)</title>
+<title>Service Provider</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="<%= deployuri %>/fed_css/styles.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
+<body class="DefBdy">
+                                                                                
+<div class="MstDiv"><table width="100%" border="0" cellpadding="0" cellspacing="0" class="MstTblTop" title="">
+<tbody><tr>
+<td nowrap="nowrap">&nbsp;</td>
+<td nowrap="nowrap">&nbsp;</td>
+</tr></tbody></table>
+                                                                                
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="MstTblBot" title="">
+<tbody><tr>
+<td class="MstTdTtl" width="99%">
+<div class="MstDivTtl"><img name="ProdName" src="<%= deployuri %>/console/images/PrimaryProductName.png" alt="" /></div></td><td class="MstTdLogo" width="1%"><img name="RMRealm.mhCommon.BrandLogo" src="<%= deployuri %>/com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31" /></td></tr></tbody></table>
+<table class="MstTblEnd" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td><img name="RMRealm.mhCommon.EndorserLogo" src="<%= deployuri %>/com_sun_web_ui/images/masthead/masthead-sunname.gif" alt="Sun(TM) Microsystems, Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></table></div><div class="SkpMedGry1"><a name="SkipAnchor2089" id="SkipAnchor2089"></a></div>
+<div class="SkpMedGry1"><a href="#SkipAnchor4928"><img src="<%= deployuri %>/com_sun_web_ui/images/other/dot.gif" alt="Jump Over Tab Navigation Area. Current Selection is: Access Control" border="0" height="1" width="1" /></a></div>
+                                                                                
 
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="9" marginwidth="9"
-    topmargin="9" marginheight="9" >
-<br>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-    <tr>
-        <td width="110"><img src="<%= deployuri %>/fed_images/logo_sun.gif" width="110" height="82"></td>
-        <td><img src="<%= deployuri %>/fed_images/spacer.gif" width="9" height="1"></td>
-        <td valign="bottom" bgcolor="#ACACAC" width="100%">
-            <img src="<%= deployuri %>/fed_images/Identity_LogIn.gif">
-        </td>
-    </tr>
-
-    <tr>
-    <td colspan="3"><img src="<%= deployuri %>/fed_images/spacer.gif" width="1"
-	height="39"></td>
-    </tr>
-</table>
-</body>
-</html>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tr><td>
+<p>&nbsp;</p>

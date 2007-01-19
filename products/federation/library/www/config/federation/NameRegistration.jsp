@@ -18,53 +18,42 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: NameRegistration.jsp,v 1.1 2006-10-30 23:17:17 qcheng Exp $
+   $Id: NameRegistration.jsp,v 1.2 2007-01-19 06:38:15 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-
-
-
-
 <%@page language="java"
 import="com.sun.liberty.LibertyManager, java.util.Set, java.util.Iterator"
 %>
-<html>
-<head>
-<title>Sun Java System Access Manager(Registration)</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<!-- link to be set...
-<!- <link rel="stylesheet" href="../../../fed_css/styles.css" type="text/css" -->
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="9" marginwidth="9"
-      topmargin="9" marginheight="9" rightmargin="9">
-
 <%@include file="Header.jsp"%>
-<table width='100%' cellpadding='0' cellspacing='3'>
+
 <%
-    String providerAlias = request.getParameter(LibertyManager.getMetaAliasKey());
+    String providerAlias = request.getParameter(
+        LibertyManager.getMetaAliasKey());
     String providerID = LibertyManager.getEntityID(providerAlias);
     String providerRole = LibertyManager.getProviderRole(providerAlias);
     String homeURL = LibertyManager.getHomeURL(providerID, providerRole);
-    String preLoginURL =
-        LibertyManager.getPreLoginServletURL(providerID, providerRole, request);
+    String preLoginURL = LibertyManager.getPreLoginServletURL(
+        providerID, providerRole, request);
     String actionLocation = LibertyManager.getNameRegistrationURL(
-             providerID, providerRole, request);
+        providerID, providerRole, request);
     String gotoUrl = HttpUtils.getRequestURL(request).toString()
-		+ "?" + request.getQueryString();
+        + "?" + request.getQueryString();
     String userDN = LibertyManager.getUser(request);
-    String nameRegistrationDonePageURL = LibertyManager.
-            getNameRegistrationDonePageURL(providerID, providerRole, request);
-        String dest = nameRegistrationDonePageURL + "&regStatus=cancel";
-
+    String nameRegistrationDonePageURL = 
+        LibertyManager.getNameRegistrationDonePageURL(
+            providerID, providerRole, request);
+    String dest = nameRegistrationDonePageURL + "&regStatus=cancel";
 %>
-<SCRIPT language="javascript">
+
+<script language="javascript">
     function doCancel() {
         location.href="<%=dest%>";
     }
-</SCRIPT>
+</script>
+
+<center>
 <%
     if (providerAlias == null || providerAlias.length() <= 0) {
         response.sendError(response.SC_INTERNAL_SERVER_ERROR,
@@ -84,71 +73,67 @@ import="com.sun.liberty.LibertyManager, java.util.Set, java.util.Iterator"
         return;
     }
     try {
-	Set providerList = LibertyManager.getRegisteredProviders(
+        Set providerList = LibertyManager.getRegisteredProviders(
             userDN, providerID, providerRole);
-	if (providerList != null && !providerList.isEmpty()) {
+    if (providerList != null && !providerList.isEmpty()) {
 %>
-    <tr>
-	<form name="selectprovider" method="POST" action="<%= actionLocation%>">
-	<td class="loginText" align="center">
-            <b> Please select a remote provider to register with: </b>
-        </td>
-    </tr>
-    <tr>
-        <td class="loginText" align="center">
-            <SELECT name= <%=LibertyManager.getNameRegistrationProviderIDKey()%> size="1" >
+
+<form name="selectprovider" method="POST" action="<%= actionLocation%>">
+<table cellpadding='0' cellspacing='3'>
+<tr>
+<td align="center">
+    <b>Please select a remote provider to register with: </b>
+</td>
+</tr>
+<tr>
+    <td align="center">
+        <select name="<%=LibertyManager.getNameRegistrationProviderIDKey()%>"
+            size="1" >
 <%
-	Iterator iterProvider = providerList.iterator();
-	while (iterProvider.hasNext()) {
-            String providerId = (String) iterProvider.next();
+        Iterator iterProvider = providerList.iterator();
+        while (iterProvider.hasNext()) {
+            String providerId = (String)iterProvider.next();
 %>
-            <OPTION value="<%=providerId%>"><%=providerId%></OPTION>
+            <option value="<%=providerId%>"><%=providerId%></option>
 <%
         }
 %>
-            </SELECT>
-	</td>
-     </tr>
-     <tr>
-	<td colspan="3">&nbsp;</td>
-     </tr>
-     <tr>
-        <td><div align="center">
-            <input name="doIt" type="submit" value="submit">
-            <input name="button2" type="button" onClick='doCancel()' value="cancel">
-            </div>
-	</td>
-    </tr>
-<%  } else {
-%>
-    <B>User has no active registrations.</B>
-    <p>
-<%
-     if (homeURL == null) {
-%>
-    <a href="http://www.sun.com" > Continue</a>
-<%
-    } else {
-%>
-	<a href="<%=homeURL%>" > Continue</a>
+        </select>
+    </td>
+</tr>
 
-<%
-    }
-%>
-</p>
-<%
-    }
-    } catch(Exception ex){
-	response.sendRedirect(preLoginURL + "?goto=" +
-            java.net.URLEncoder.encode(gotoUrl));
-	return;
-    }
-%>
+</tr>
+<tr>
+    <td align="center">
+        <p>
+        <br />
+        <input name="doIt" type="submit" value="submit">
+        <input name="button2" type="button" onClick='doCancel()' value="cancel">
+        </p>
+    </td>
+</tr>
 </table>
+
+<%  } else { %>
+    <p><b>User has no active registrations.</b><p>
+
+    <% if (homeURL == null) { %>
+        <a href="http://www.sun.com">Continue</a>
+    <% } else { %>
+        <a href="<%=homeURL%>">Continue</a>
+    <% } %>
+    </p>
+<% }
+
+    } catch(Exception ex){
+        response.sendRedirect(preLoginURL + "?goto=" +
+            java.net.URLEncoder.encode(gotoUrl));
+        return;
+    }
+%>
+</center>
 <p>&nbsp</p>
 <%@ include file="Footer.jsp"%>
-</body>
-</html>
 
 
 

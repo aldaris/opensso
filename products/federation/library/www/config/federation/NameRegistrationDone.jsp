@@ -18,76 +18,54 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: NameRegistrationDone.jsp,v 1.1 2006-10-30 23:17:17 qcheng Exp $
+   $Id: NameRegistrationDone.jsp,v 1.2 2007-01-19 06:38:15 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-
-
-
-
 <%@ page language="java"
 import="com.sun.liberty.LibertyManager"
 %>
-<html>
-<head>
-<title>Sun Java System Access Manager(Registration Status)</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="../../../fed_css/styles.css" type="text/css">
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="9" marginwidth="9"
-    topmargin="9" marginheight="9" >
-<br>
 <%@ include file="Header.jsp"%>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<center>
 
-   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>
 <%
-	// Alias processing
-	String providerAlias =
-                request.getParameter(LibertyManager.getMetaAliasKey());
-	if (providerAlias == null || providerAlias.length() < 1)
-	{
-		response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-			"Provider Alias not found");
-		return;
-	}
-	String providerId = LibertyManager.getEntityID(providerAlias);
-        String providerRole = LibertyManager.getProviderRole(providerAlias);
-	String HOME_URI = "";
-	if (providerId != null) {
-		HOME_URI = LibertyManager.getHomeURL(
-                           providerId, providerRole);
-        }
-	if (LibertyManager.isNameRegistrationSuccess(request)) {
+    // Alias processing
+    String providerAlias =
+        request.getParameter(LibertyManager.getMetaAliasKey());
+    if (providerAlias == null || providerAlias.length() < 1) {
+        response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+            "Provider Alias not found");
+        return;
+    }
+    String providerId = LibertyManager.getEntityID(providerAlias);
+    String providerRole = LibertyManager.getProviderRole(providerAlias);
+    String HOME_URI = "";
+    if (providerId != null) {
+        HOME_URI = LibertyManager.getHomeURL(providerId, providerRole);
+    }
+    
+    if (LibertyManager.isNameRegistrationSuccess(request)) {
 %>
-	<p><b>The user has successfully registered with the provider.<br></b></p>
+       <p><b>The user has successfully registered with the provider.</b></p>
 <%
-	}else if (LibertyManager.isNameRegistrationCancelled(request)) {
+    } else if (LibertyManager.isNameRegistrationCancelled(request)) {
 %>
-	<p><b>The user has cancelled registration.<br></b></p>
-<%	} else {
+       <p><b>The user has cancelled registration.</b></p>
+<%  } else {
 %>
-	<p><b>Unable to register with the provider.<br></b></p>
-<%	}
+       <p><b>Unable to register with the provider.</b></p>
+<%  }
 %>
-	<p>
-        <% if (HOME_URI == null){ %>
-            <a href="http://www.sun.com" >Continue</a>
-        <%}else {%>
-            <a href="<%=HOME_URI%>" >Continue</a>
-        <% } %>
-        </p>
-    </td>
-    </tr>
-</table>
+
+<p>
+<% if (HOME_URI == null){ %>
+    <a href="http://www.sun.com">Continue</a>
+<% }else {%>
+    <a href="<%=HOME_URI%>">Continue</a>
+<% } %>
+</p>
+</center>
 <%@ include file="Footer.jsp"%>
 
-</body>
-</html>

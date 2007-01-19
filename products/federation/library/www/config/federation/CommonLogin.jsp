@@ -18,14 +18,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CommonLogin.jsp,v 1.1 2006-10-30 23:17:15 qcheng Exp $
+   $Id: CommonLogin.jsp,v 1.2 2007-01-19 06:38:13 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
-
-
-
-
 
 <%@ page language="java" import="java.util.*,
 com.sun.identity.saml.common.SAMLUtils,
@@ -33,11 +29,6 @@ com.sun.identity.shared.encode.Base64,
 com.sun.liberty.LibertyManager"
 %>
 
-<html>
-<head>
-<title>Sun Java System Access Manager(Common Login)</title>
-</head>
-<body topmargin="20" leftmargin="0">
 <%@ include file="Header.jsp"%>
 
 <p align="left">&nbsp;</p>
@@ -110,5 +101,3 @@ com.sun.liberty.LibertyManager"
   </tr>
 </table>
 <%@ include file="Footer.jsp"%>
-</body>
-</html>
