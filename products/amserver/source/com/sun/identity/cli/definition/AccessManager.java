@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.7 2006-11-16 22:15:09 veiming Exp $
+ * $Id: AccessManager.java,v 1.8 2007-01-20 06:45:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -518,7 +518,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "add|p|b|Set this flag to append the choice values to existing ones.",
+            "add|p|u|Set this flag to append the choice values to existing ones.",
             "subschemaname|c|s|Name of sub schema.",
             "datafile|D|s|Name of file that contains attribute values data.",
             "choicevalues|k|m|Choice value e.g. o102=Inactive."},
