@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.5 2007-01-09 19:41:30 manish_rustagi Exp $
+ * $Id: LogoutViewBean.java,v 1.6 2007-01-21 10:34:18 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.debug.Debug;
@@ -110,14 +110,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         }
         
         try {            
-            cookieSupported = au.checkForCookies(request);
-            client_type = au.getClientType(request);
+            cookieSupported = acu.checkForCookies(request);
+            client_type = acu.getClientType(request);
             ISLocaleContext localeContext = new ISLocaleContext();
             localeContext.setLocale(request);
             locale = localeContext.getLocale();
             SSOTokenManager manager = SSOTokenManager.getInstance();
-            SessionID sessionID = au.getSessionIDFromRequest(request);
-            SSOToken ssoToken = au.getExistingValidSSOToken(sessionID);
+            SessionID sessionID = acu.getSessionIDFromRequest(request);
+            SSOToken ssoToken = acu.getExistingValidSSOToken(sessionID);
             if (ssoToken != null) {
                 ssoTokenExists = true;
                 loginURL = (String)ssoToken.getProperty
@@ -127,8 +127,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 String strIndexType = (String)ssoToken.getProperty
                     (ISAuthConstants.INDEX_TYPE);
                 if (strIndexType != null) {
-                    indexType = au.getIndexType(strIndexType);
-                    indexName = au.getIndexName(ssoToken, indexType);
+                    indexType = acu.getIndexType(strIndexType);
+                    indexName = acu.getIndexName(ssoToken, indexType);
                 }
             }
             manager.destroyToken(ssoToken);
@@ -194,11 +194,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     private String getFileName(String fileName) {
         String relativeFileName = null;
         if (ssoTokenExists) {
-            relativeFileName = au.getFileName(fileName,locale.toString(),
+            relativeFileName = acu.getFileName(fileName,locale.toString(),
                 orgName,request,servletContext,indexType,indexName);
         } else {
             relativeFileName =
-            au.getDefaultFileName(request,fileName,locale,servletContext);
+            acu.getDefaultFileName(request,fileName,locale,servletContext);
         }
         if (logoutDebug.messageEnabled()) {
             logoutDebug.message("fileName is : " + fileName);
@@ -209,7 +209,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     }
     
     private void clearAllCookies() {
-        Set cookieDomainSet =  au.getCookieDomains();
+        Set cookieDomainSet =  acu.getCookieDomains();
 
         // No cookie domain specified in profile
         if (cookieDomainSet.isEmpty()) {
@@ -220,7 +220,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 clearAllCookiesByDomain((String)iter.next());
             }
         }
-        au.clearlbCookie(response);
+        acu.clearlbCookie(response);
         clearHostUrlCookie(response);
         Map serverCookieMap = null;
         if (storeCookies != null &&
@@ -228,17 +228,17 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             for (Iterator it = storeCookies.iterator();
                 it.hasNext();){
                 String cookieName = (String)it.next();
-                au.clearServerCookie(cookieName, response);
+                acu.clearServerCookie(cookieName, response);
             }
         }
     }
     
     private void clearAllCookiesByDomain(String cookieDomain) {
-        Cookie cookie = au.createCookie(LOGOUTCOOKIEVAULE, cookieDomain);
+        Cookie cookie = acu.createCookie(LOGOUTCOOKIEVAULE, cookieDomain);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-        if (au.getAuthCookieValue(request) != null) {
-            cookie = au.createCookie(AuthUtils.getAuthCookieName(),
+        if (acu.getAuthCookieValue(request) != null) {
+            cookie = acu.createCookie(AuthClientUtils.getAuthCookieName(),
                 LOGOUTCOOKIEVAULE, cookieDomain);
             cookie.setMaxAge(0);
             response.addCookie(cookie);
@@ -305,13 +305,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     /* returns the url encoded with the logout cookie string */
     
     private String appendLogoutCookie(String url) {
-        return AuthUtils.addLogoutCookieToURL(url,logoutCookie,cookieSupported);
+        return AuthClientUtils.addLogoutCookieToURL(
+            url,logoutCookie,cookieSupported);
     }
     
     /* Checks if request should use sendRedirect */
     private boolean doSendRedirect(String redirectURL) {
         return        ((redirectURL != null) && (redirectURL.length() != 0)
-        && (au.isGenericHTMLClient(clientType))) ;
+        && (acu.isGenericHTMLClient(clientType))) ;
         
     }
     

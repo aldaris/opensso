@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CompositeAdvices.java,v 1.2 2006-08-25 21:20:29 veiming Exp $
+ * $Id: CompositeAdvices.java,v 1.3 2007-01-21 10:34:23 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,10 @@ import javax.security.auth.callback.ChoiceCallback;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
+
+import com.sun.identity.policy.plugins.AuthSchemeCondition;
+import com.sun.identity.policy.plugins.AuthenticateToServiceCondition;
+import com.sun.identity.policy.plugins.AuthenticateToRealmCondition;
 
 /**
  * This class allows the authentication services of Access Manager to 
@@ -64,7 +68,8 @@ public class CompositeAdvices {
         AMResourceBundleCache.getInstance();
     java.util.ResourceBundle rb = null;
     Map moduleMap = null;
-    
+    int type;
+
     /**
      * Default class constructor for class
      * @param indexName authentication index name.
@@ -94,8 +99,29 @@ public class CompositeAdvices {
             }
             
             rb = amCache.getResBundle(ad.BUNDLE_NAME,userLocale);
-            Set moduleInstances = 
+            Map authInstances = 
             AuthUtils.processCompositeAdviceXML(indexName,orgDN,clientType);
+            Set moduleInstances = null;
+            if (authInstances.get(
+                AuthenticateToRealmCondition.
+                    AUTHENTICATE_TO_REALM_CONDITION_ADVICE) != null) {
+                this.type = AuthUtils.REALM;
+                moduleInstances = (Set)authInstances.get(
+                    AuthenticateToRealmCondition.
+                        AUTHENTICATE_TO_REALM_CONDITION_ADVICE);
+            } else if (authInstances.get(
+                AuthenticateToServiceCondition.
+                    AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE) != null) {
+                this.type = AuthUtils.SERVICE;
+                moduleInstances = (Set)authInstances.get(
+                    AuthenticateToServiceCondition.
+                        AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE);
+            } else if (authInstances.get(
+                AuthSchemeCondition.AUTH_SCHEME_CONDITION_ADVICE) != null) {
+                this.type = AuthUtils.MODULE;
+                moduleInstances = (Set)authInstances.get(
+                    AuthSchemeCondition.AUTH_SCHEME_CONDITION_ADVICE);
+            }
             if ((moduleInstances != null) && (!moduleInstances.isEmpty())) {
                 getAuthModulesConfig(moduleInstances);
             }
@@ -193,6 +219,15 @@ public class CompositeAdvices {
      */
     protected Map getModuleMap() {
         return moduleMap;
-    }       
+    }
+
+    /** 
+     * Returns a type indicating the type of authentication required.
+     *
+     * @return an integer type indicating the type of authentication required.
+     */
+    protected int getType() {
+        return type;
+    }   
 
 }

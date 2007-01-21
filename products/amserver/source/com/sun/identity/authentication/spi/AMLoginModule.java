@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.4 2007-01-09 18:57:33 manish_rustagi Exp $
+ * $Id: AMLoginModule.java,v 1.5 2007-01-21 10:34:25 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -374,6 +374,14 @@ public abstract class AMLoginModule implements LoginModule {
                 hc.getNegotiationHeaderName(),
                 hc.getNegotiationHeaderValue(),
                 hc.getNegotiationCode());
+                extCallbacks.add(copy[i]);
+            } else if (original[i] instanceof RedirectCallback) {
+                RedirectCallback rc = (RedirectCallback) original[i];
+                copy[i] = new RedirectCallback(rc.getRedirectUrl(),
+                rc.getRedirectData(),
+                rc.getMethod(),
+                rc.getStatusParameter(),
+                rc.getRedirectBackUrlCookieName());
                 extCallbacks.add(copy[i]);
             } else {
                 debug.error("unknown callback " + original[i]);

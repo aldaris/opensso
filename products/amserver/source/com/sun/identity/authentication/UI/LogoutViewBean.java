@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.4 2006-08-25 21:20:08 veiming Exp $
+ * $Id: LogoutViewBean.java,v 1.5 2007-01-21 10:34:14 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -517,6 +517,8 @@ public class LogoutViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
+    public static AuthUtils au = new AuthUtils();
+
     /** Default page name */
     public static final String PAGE_NAME="Logout";
     

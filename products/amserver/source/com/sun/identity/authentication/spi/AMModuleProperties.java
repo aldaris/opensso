@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.3 2006-12-18 22:01:20 manish_rustagi Exp $
+ * $Id: AMModuleProperties.java,v 1.4 2007-01-21 10:34:26 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -373,40 +373,75 @@ class AMModuleProperties {
                         }
                         callbacks[p] = new LanguageCallback();
                         p++;
-                } else if (nodeName.equals(AuthXMLTags.HTTP_CALLBACK)) {
-                        String header = null;
-                        String negotiation = null;
-                        String code = null;
-                        sub = node.getFirstChild();
-                        for (; sub!=null; sub=sub.getNextSibling()) {
-                            String tmpStr = sub.getNodeName();
-                            if (tmpStr.equals(AuthXMLTags.HTTP_HEADER)) {
-                                header = sub.getFirstChild().getNodeValue();
-                            } else if (tmpStr.equals(AuthXMLTags.HTTP_NEGO)) {
-                                negotiation= sub.getFirstChild().getNodeValue();
-                            } else if (tmpStr.equals(AuthXMLTags.HTTP_CODE)) {
-                                code = sub.getFirstChild().getNodeValue();
-                            }
+		} else if (nodeName.equals(AuthXMLTags.HTTP_CALLBACK)) {
+			String header = null;
+			String negotiation = null;
+			String code = null;
+			sub = node.getFirstChild();
+			for (; sub!=null; sub=sub.getNextSibling()) {
+			    String tmpStr = sub.getNodeName();
+			    if (tmpStr.equals(AuthXMLTags.HTTP_HEADER)) {
+				header = sub.getFirstChild().getNodeValue();
+			    } else if (tmpStr.equals(AuthXMLTags.HTTP_NEGO)) {
+				negotiation= sub.getFirstChild().getNodeValue();
+			    } else if (tmpStr.equals(AuthXMLTags.HTTP_CODE)) {
+				code = sub.getFirstChild().getNodeValue();
+			    }
+			}
+			callbacks[p]= new HttpCallback(header,negotiation,code);
+			p++;
+		} else if (nodeName.equals(AuthXMLTags.REDIRECT_CALLBACK)) {
+			String redirectUrl = null;
+                        String statusParameter = null;
+                        String redirectBackUrlCookie = null;
+			Map redirectData = new HashMap();
+			String method = 
+                            getAttribute(node, AuthXMLTags.REDIRECT_METHOD);
+			sub = node.getFirstChild();
+			for (; sub!=null; sub=sub.getNextSibling()) {
+			    String tmpStr = sub.getNodeName();                            
+			    if (tmpStr.equals(AuthXMLTags.REDIRECT_URL)) {
+				redirectUrl = 
+                                    sub.getFirstChild().getNodeValue();                                
+			    } else if (tmpStr.equals(
+                                        AuthXMLTags.REDIRECT_STATUS_PARAM)) {
+				statusParameter = 
+                                    sub.getFirstChild().getNodeValue();                                
+			    } else if (tmpStr.equals(
+                                        AuthXMLTags.REDIRECT_BACK_URL_COOKIE)) {
+				redirectBackUrlCookie = 
+                                    sub.getFirstChild().getNodeValue();                                
+			    } else if (tmpStr.equals(
+                                        AuthXMLTags.REDIRECT_DATA)) {
+                                String name = null;
+                                String value = null;                                
+				Node ss = sub.getFirstChild().getNextSibling();                         
+                                String tmpStrName = ss.getNodeName();                                
+                                if (tmpStrName.equals("Name")) {
+                                    name = ss.getFirstChild().getNodeValue();                                    
+                                }                                 
+                                ss = ss.getNextSibling().getNextSibling();
+                                String tmpStrValue = ss.getNodeName();                                
+                                if (tmpStrValue.equals("Value")) {
+                                    value = ss.getFirstChild().getNodeValue();                                    
+                                }                                
+                                redirectData.put(name,value);                                
+			    }
+			}
+                        if (debug.messageEnabled()) {
+                            debug.message("redirectUrl : " + redirectUrl);
+                            debug.message("statusParameter : " 
+                                + statusParameter);
+                            debug.message("redirectBackUrlCookie : " 
+                                + redirectBackUrlCookie);
+                            debug.message("redirectData : " + redirectData);
+                            debug.message("method : " + method);
                         }
-                        callbacks[p]= new HttpCallback(header,negotiation,code);
-                        tmp = getAttribute(node, "isRequired");
-                        if (tmp != null) {
-                            if (tmp.equals("true")) {
-                                require.add("true");
-                            } else {
-                                require.add("");
-                            }
-                        } else {
-                            require.add("");
-                        }
-                        tmp = getAttribute(node, "attribute");
-                        if (tmp!=null) {
-                            attribute.add(tmp);
-                        } else {
-                            attribute.add("");
-                        }
-                        p++;
-                }
+			callbacks[p]= 
+                            new RedirectCallback(redirectUrl,redirectData,
+                                method);			
+			p++;
+		}
 
                 break;
             }//end of element

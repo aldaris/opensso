@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.8 2007-01-09 19:42:40 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.9 2007-01-21 10:34:13 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,11 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.spi.RedirectCallback;
+import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.shared.locale.L10NMessageImpl;
@@ -270,7 +273,6 @@ public class LoginViewBean extends AuthViewBeanBase {
         
         SessionID sessionID = null;
         try {
-            boolean newOrgExist = false;
             boolean isBackPost = false;
             // if the request is a GET then iPlanetAMDirectoryPro cookie
             // will be used to retrieve the session for session upgrade
@@ -450,6 +452,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message(
                             "Login failure, current session destroyed!");
                     } else if (ac.getStatus()==AuthContext.Status.SUCCESS) {
+                        response.setHeader("X-AuthErrorCode", "0");
                         if (ac.getLoginState().getForceFlag()) {
                             if (loginDebug.messageEnabled()) {
                                 loginDebug.message("Forced Auth Succeed."
@@ -530,6 +533,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 loginDebug.message("Previous AC : " + prevAC);
             }
             if (ac.getStatus() == AuthContext.Status.SUCCESS) {
+                response.setHeader("X-AuthErrorCode", "0");
                 if (ac.getLoginState().getForceFlag()) {
                     if (loginDebug.messageEnabled()) {
                         loginDebug.message("Forced Auth Succeed. "
@@ -849,7 +853,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                     if (callbacks[i] instanceof HttpCallback) {
                         processHttpCallback((HttpCallback)callbacks[i]);
                         return;
-                    } else if (!bAuthLevel) {
+                    } else if (callbacks[i] instanceof RedirectCallback) {
+                        processRedirectCallback((RedirectCallback)callbacks[i]);
+                        return;
+                    } else if (!bAuthLevel && !newOrgExist) {
                         // Auth Level login will never do one page login.
                         if (callbacks[i] instanceof NameCallback) {
                             if (reqDataHash.get(TOKEN
@@ -967,10 +974,9 @@ public class LoginViewBean extends AuthViewBeanBase {
             new Object[]{e.getMessage()});
         }
     }
-    
+
+    // Process 'HttpCallback' initiated by Authentication module
     private void processHttpCallback(HttpCallback hc) throws Exception{
-        AuthContext.IndexType prevIndexType = au.getPrevIndexType(ac);
-        
         String auth = request.getHeader(hc.getAuthorizationHeader());
         if (auth != null && auth.length() != 0) {
             loginDebug.message("Found authorization header.");
@@ -991,7 +997,58 @@ public class LoginViewBean extends AuthViewBeanBase {
             response.sendError(hc.getNegotiationCode());
         }
     }
-    
+
+    // Process 'RedirectCallback' initiated by Authentication module
+    private void processRedirectCallback(RedirectCallback rc) throws Exception {                
+        String status = request.getParameter(rc.getStatusParameter()); 
+        clearCookie(rc.getRedirectBackUrlCookieName());
+        if (status != null && status.length() != 0) {
+            loginDebug.message("Found Status parameter."); 
+            rc.setStatus(status);
+            onePageLogin = true;
+            processLoginDisplay();
+        } else {
+            if (loginDebug.messageEnabled()){
+                loginDebug.message("Redirect to external web site...");
+                loginDebug.message(
+                "RedirectUrl : " + rc.getRedirectUrl() +
+                ", RedirectMethod : " + rc.getMethod() +
+                ", RedirectData : " + rc.getRedirectData());
+            }            
+                        
+	    forward = false;
+            
+            String qString = 
+                AuthUtils.getQueryStrFromParameters(rc.getRedirectData());
+            
+            String requestURL = request.getRequestURL().toString();
+            String requestURI = request.getRequestURI();
+            int index = requestURL.indexOf(requestURI);
+            String redirectBackServerCookieValue = null;
+            if (index != -1) {
+                redirectBackServerCookieValue = requestURL.substring(0, index) 
+                    + loginURL;
+            }
+            // Create Cookie
+            try {
+                au.setRedirectBackServerCookie(
+                    rc.getRedirectBackUrlCookieName(), 
+                    redirectBackServerCookieValue, 
+                    response);
+            } catch (Exception e) {
+                if (loginDebug.messageEnabled()){
+                    loginDebug.message("Cound not set RedirectBackUrlCookie!" 
+                        + e.toString());
+                }
+            }
+                 
+            StringBuffer redirectUrl = new StringBuffer(rc.getRedirectUrl());
+            if (qString != null && qString.length() != 0) {
+                redirectUrl.append(qString);
+            }
+            response.sendRedirect(redirectUrl.toString());
+        }
+    } 
     
     protected void processLoginDisplay() throws Exception {
         loginDebug.message("In processLoginDisplay()");
@@ -1165,8 +1222,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                         + " & selected button index : " + selectedIndex);
                     }
                 } else if (callbacks[i] instanceof PagePropertiesCallback) {
-                    PagePropertiesCallback ppc =
-                        (PagePropertiesCallback)callbacks[i];
+                    PagePropertiesCallback ppc = (PagePropertiesCallback) callbacks[i];
+                } else if (callbacks[i] instanceof RedirectCallback) {
+                    RedirectCallback rc = (RedirectCallback) callbacks[i];
+                    String status = 
+                        request.getParameter(rc.getStatusParameter()); 
+                    clearCookie(rc.getRedirectBackUrlCookieName());
+                    loginDebug.message("Redirect callback : set status");                        
+                    rc.setStatus(status);
                 }
             }
             
@@ -1182,21 +1245,46 @@ public class LoginViewBean extends AuthViewBeanBase {
             (indexType == AuthContext.IndexType.COMPOSITE_ADVICE)) {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("In processLoginDisplay(), Index type" +
-                    " is Auth Level or Composite Advice and selected module is:"
-                    + choice);
+                    " is Auth Level or Composite Advice and selected Module " + 
+                    "or Service is : " + choice);
                 }
-                indexType = AuthContext.IndexType.MODULE_INSTANCE;
-                indexName = choice;
-                if (choice == null) {
-                    indexName="LDAP";
+                indexName = AMAuthUtils.getDataFromRealmQualifiedData(choice);
+                String qualifiedRealm = 
+                    AMAuthUtils.getRealmFromRealmQualifiedData(choice);
+                String orgDN = null;
+                if ((qualifiedRealm != null) && (qualifiedRealm.length() != 0)) {
+                    orgDN = DNMapper.orgNameToDN(qualifiedRealm);
+                    ac.setOrgDN(orgDN);
+                }
+
+                int type = au.getCompositeAdviceType(ac);
+                
+                if (type == AuthUtils.MODULE) {
+                    indexType = AuthContext.IndexType.MODULE_INSTANCE;
+                } else if (type == AuthUtils.SERVICE) {
+                    indexType = AuthContext.IndexType.SERVICE;
+                } else if (type == AuthUtils.REALM) {
+                    indexType = AuthContext.IndexType.SERVICE;
+                    orgDN = DNMapper.orgNameToDN(choice);
+                    indexName = au.getOrgConfiguredAuthenticationChain(orgDN);
+                    ac.setOrgDN(orgDN);
+                } else {
+                    indexType = AuthContext.IndexType.MODULE_INSTANCE;
                 }
                 
                 bAuthLevel = true;
                 
-                if ( indexName != null ) {
+                if ((indexName != null) && 
+                    (indexType == AuthContext.IndexType.MODULE_INSTANCE)){
                     if (indexName.equalsIgnoreCase("Application")) {
                         onePageLogin = true;
                     }
+                }
+                
+                if (loginDebug.messageEnabled()) {
+                    loginDebug.message("Index type : " + indexType);
+                    loginDebug.message("Index name : " + indexName);
+                    loginDebug.message("qualified orgDN : " + orgDN);
                 }
                 
                 getLoginDisplay();
@@ -1216,6 +1304,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                     for (int i = 0; i < callbacks.length; i++) {
                         if (callbacks[i] instanceof HttpCallback) {
                             processHttpCallback((HttpCallback)callbacks[i]);
+                            return;
+                        } else if (callbacks[i] instanceof RedirectCallback) {
+                            processRedirectCallback(
+                                (RedirectCallback)callbacks[i]);
                             return;
                         }
                     }
@@ -1359,7 +1451,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     // Method to prepare 'login' method parameters from request object data
     protected void prepareLoginParams() {
         loginDebug.message("begin prepareLoginParams");
-        
+        String reqModule = (String) reqDataHash.get("module");
         if ( reqDataHash.get("user") != null ) {
             indexType = AuthContext.IndexType.USER;
             indexName = (String)reqDataHash.get("user");
@@ -1369,9 +1461,18 @@ public class LoginViewBean extends AuthViewBeanBase {
         } else if ( reqDataHash.get("service") != null ) {
             indexType = AuthContext.IndexType.SERVICE;
             indexName = (String)reqDataHash.get("service");
-        } else if ( reqDataHash.get("module") != null ) {
+        } else if ( (reqModule != null) && 
+            (reqModule.length() != 0) && 
+            (!reqModule.equalsIgnoreCase("null")) ) {
             indexType = AuthContext.IndexType.MODULE_INSTANCE;
-            indexName = (String)reqDataHash.get("module");
+            String encoded = (String) reqDataHash.get("encoded");
+            String new_org = (String) reqDataHash.get("new_org");
+            if ((new_org != null && new_org.equals("true")) &&
+                (encoded != null && encoded.equals("true"))){
+                indexName = au.getBase64DecodedValue(reqModule);
+            } else {
+                indexName = reqModule;
+            }
             // Application auth is always 0 page login
             if ( indexName != null ) {
                 if (indexName.equalsIgnoreCase("Application")) {
@@ -1665,6 +1766,8 @@ public class LoginViewBean extends AuthViewBeanBase {
             loginDebug.message("Error Template = " + errorTemplate);
             loginDebug.message("Error Code = " + errorCode);
         }
+
+        response.setHeader("X-AuthErrorCode", "-1");
     }
     
     // Method to retrieve filename
@@ -1907,7 +2010,8 @@ public class LoginViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
-    
+    public static AuthUtils au = new AuthUtils();
+
     /** Page name for login */
     public static final String PAGE_NAME="Login";
     /** Result value */
@@ -1957,6 +2061,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     private boolean forward = true;
     private boolean newOrg = false;
     private boolean bHttpBasic = false;
+    private boolean newOrgExist = false;
     HttpServletRequest request;
     HttpServletResponse response;
     Cookie cookie;

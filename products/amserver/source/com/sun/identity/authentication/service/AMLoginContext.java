@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.3 2007-01-09 19:01:36 manish_rustagi Exp $
+ * $Id: AMLoginContext.java,v 1.4 2007-01-21 10:34:21 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,9 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.MessageLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import java.security.Principal;
@@ -86,6 +88,7 @@ public class AMLoginContext {
     private static Debug debug = ad.debug;
     
     String configName; // jaas configuration name.
+    String orgDN = null;
     javax.security.auth.login.LoginContext lc = null;
     com.sun.identity.authentication.jaas.LoginContext jlc = null;
     LoginStatus st;
@@ -220,30 +223,41 @@ public class AMLoginContext {
         }
 
         
-        String orgDN = loginState.getOrgDN();
+        if ((authContext.getOrgDN() != null) && 
+            ((authContext.getOrgDN()).length() != 0)){
+            this.orgDN = authContext.getOrgDN();
+            loginState.setQualifiedOrgDN(this.orgDN);
+        } else {
+            this.orgDN = loginState.getOrgDN();
+        }
         clientType = loginState.getClientType();
+
+        if (debug.messageEnabled()) {
+            debug.message("orgDN : " + orgDN);
+            debug.message("clientType : " + clientType);
+        }
         
         AuthContext.IndexType prevIndexType = loginState.getIndexType();
         // get the previous index type and check if it was
         // level based auth. If yes then retreive the
         // key for the localized module name and
         // set that as the indexName
-        if ((prevIndexType != null &&
-        (prevIndexType == AuthContext.IndexType.LEVEL ||
-        prevIndexType == AuthContext.IndexType.COMPOSITE_ADVICE)) &&
-        (indexType == AuthContext.IndexType.MODULE_INSTANCE)) {
-            
-            indexName = loginState.getModuleName(indexName);
-            
+        if (prevIndexType != null &&
+            (prevIndexType == AuthContext.IndexType.LEVEL ||
+            prevIndexType == AuthContext.IndexType.COMPOSITE_ADVICE)) {
             // this is saved for HTTP callback processing.
             loginState.setPreviousIndexType(prevIndexType);
+            //if (indexType == AuthContext.IndexType.MODULE_INSTANCE) {
+            //    indexName = loginState.getModuleName(indexName);
+            //}
         }
+
         loginState.setIndexType(indexType);
         loginState.setIndexName(indexName);
         
         // do required processing for diff. indexTypes
         try {
-            if (processIndexType(indexType,indexName)) {
+            if (processIndexType(indexType,indexName,orgDN)) {
                 return;
             }
         } catch (AuthLoginException le) {
@@ -448,7 +462,7 @@ public class AMLoginContext {
                         }
                         
                         updateLoginState(
-                            loginState,indexType,indexName,configName);
+                            loginState,indexType,indexName,configName,orgDN);
                         //activate session
                         boolean sessionActivated = 
                             loginState.activateSession(subject, authContext);
@@ -566,10 +580,10 @@ public class AMLoginContext {
                 // succeeded but framework failed to validate the
                 // user, in this case populate with all module user
                 // successfully authenticated as.
-                loginState.setFailureModuleList(getSuccessModuleString());
+                loginState.setFailureModuleList(getSuccessModuleString(orgDN));
                 
             } else {
-                loginState.setFailureModuleList(getFailureModuleList());
+                loginState.setFailureModuleList(getFailureModuleList(orgDN));
             }
             loginState.logFailed(logFailedMessage,logFailedError);
             setErrorMsgAndTemplate();
@@ -1141,23 +1155,48 @@ public class AMLoginContext {
         String clientType
     ) throws AuthException {
         String moduleName = null;
-        java.util.Locale loc = com.sun.identity.shared.locale.Locale.getLocale(
-            loginState.getLocale());
+        java.util.Locale loc = com.iplanet.am.util.Locale.getLocale(
+        loginState.getLocale());
         CompositeAdvices compositeAdvice = new CompositeAdvices(indexName,orgDN,
-            clientType,loc);
+        clientType,loc);
         int numberOfModules = compositeAdvice.getNumberOfAuthModules();
         if (debug.messageEnabled()) {
-            debug.message("number of Modules : " + numberOfModules);
+            debug.message("processCompositeAdvice:number of Modules/Services : " 
+                + numberOfModules);
         }
+        loginState.setCompositeAdviceType(compositeAdvice.getType());
         
         if (numberOfModules <= 0) {
             loginState.logFailed(bundle.getString("noConfig"));
-            throw new AuthException(
-                AMAuthErrorCode.AUTH_CONFIG_NOT_FOUND, null);
+            throw new AuthException(AMAuthErrorCode.AUTH_CONFIG_NOT_FOUND, null);
         } else if (numberOfModules == 1) {
-            this.indexType = AuthContext.IndexType.MODULE_INSTANCE;
+            this.indexName = AMAuthUtils.getDataFromRealmQualifiedData(
+                compositeAdvice.getModuleName());
+            String qualifiedRealm = 
+                AMAuthUtils.getRealmFromRealmQualifiedData(
+                    compositeAdvice.getModuleName());            
+            if ((qualifiedRealm != null) && (qualifiedRealm.length() != 0)) {
+                this.orgDN = DNMapper.orgNameToDN(qualifiedRealm);
+                loginState.setQualifiedOrgDN(this.orgDN);
+            }
+            if (compositeAdvice.getType() == AuthUtils.MODULE) {
+                this.indexType = AuthContext.IndexType.MODULE_INSTANCE;
+            } else if (compositeAdvice.getType() == AuthUtils.SERVICE) {
+                this.indexType = AuthContext.IndexType.SERVICE;
+            } else if (compositeAdvice.getType() == AuthUtils.REALM) {                
+                this.orgDN = DNMapper.orgNameToDN(compositeAdvice.getModuleName());
+                loginState.setQualifiedOrgDN(this.orgDN);
+                this.indexName = au.getOrgConfiguredAuthenticationChain(this.orgDN);
+                this.indexType = AuthContext.IndexType.SERVICE;
+            }
             loginState.setIndexType(this.indexType);
-            this.indexName = compositeAdvice.getModuleName();
+            loginState.setIndexName(this.indexName);
+            if (debug.messageEnabled()) {
+                debug.message("processCompositeAdvice:indexType : " 
+                    + this.indexType);
+                debug.message("processCompositeAdvice:indexName : " 
+                    + this.indexName);
+            }
             return false;
         } else {
             try {
@@ -1180,7 +1219,8 @@ public class AMLoginContext {
         LoginState loginState,
         AuthContext.IndexType indexType,
         String indexName,
-        String configName) {
+        String configName,
+        String orgDN) {
         // set authLevel in LoginState
         
         String authLevel;
@@ -1191,7 +1231,7 @@ public class AMLoginContext {
             // config component will return the max level in case
             // of multiple authentication.
             //authLevel=AMAuthConfigUtils.getAuthLevel(configName);
-            authLevel = getAuthLevel();
+            authLevel = getAuthLevel(orgDN);
         }
         
         loginState.setAuthLevel(authLevel);
@@ -1202,7 +1242,7 @@ public class AMLoginContext {
         if (indexType == AuthContext.IndexType.MODULE_INSTANCE) {
             moduleName = indexName;
         } else {
-            moduleName = getSuccessModuleString();
+            moduleName = getSuccessModuleString(orgDN);
         }
         
         if (debug.messageEnabled()) {
@@ -1419,18 +1459,18 @@ public class AMLoginContext {
      * gets the level for each module in the list
      * the highest level will be set.
      */
-    String getAuthLevel() {
+    String getAuthLevel(String orgDN) {
+        
         AMAuthLevelManager levelManager = AMAuthLevelManager.getInstance();
         int maxLevel = Integer.MIN_VALUE;
         if (moduleSet == null || moduleSet.isEmpty()) {
-            moduleSet = getSuccessModuleSet();
+            moduleSet = getSuccessModuleSet(orgDN);
         }
         Iterator mIterator = moduleSet.iterator();
         while (mIterator.hasNext()) {
             String moduleName =  (String) mIterator.next();
             int authLevel = levelManager.getLevelForModule(moduleName,
-            loginState.getOrgDN(),
-            loginState.defaultAuthLevel);
+            orgDN, loginState.defaultAuthLevel);
             if (authLevel > maxLevel)  {
                 maxLevel = authLevel;
             }
@@ -1452,11 +1492,12 @@ public class AMLoginContext {
      * this methods gets the configuration list for a given configName
      * retreives all module names which have option REQUIRED , REQUISITE
      */
-    Set getSuccessModuleSet() {
+    Set getSuccessModuleSet(String orgDN) {
         
         try {
             Set successModuleSet = loginState.getSuccessModuleSet();
-            moduleSet = getModuleFromAuthConfiguration(successModuleSet);
+            moduleSet = 
+                getModuleFromAuthConfiguration(successModuleSet,orgDN);
             
             if (debug.messageEnabled()) {
                 debug.message("ModuleSet is : " + moduleSet);
@@ -1508,12 +1549,12 @@ public class AMLoginContext {
      */
     boolean processIndexType(
         AuthContext.IndexType indexType,
-        String indexName
+        String indexName, String orgDN
     ) throws AuthLoginException {
         boolean ignoreProfile = false;
         AuthContext.IndexType previousType = loginState.getPreviousIndexType();
         
-        String orgDN = DNUtils.normalizeDN(loginState.getOrgDN());
+        String normOrgDN = DNUtils.normalizeDN(orgDN);
         if ((previousType != AuthContext.IndexType.LEVEL &&
         previousType != AuthContext.IndexType.COMPOSITE_ADVICE) ||
         indexType != AuthContext.IndexType.MODULE_INSTANCE) {
@@ -1530,9 +1571,8 @@ public class AMLoginContext {
                         isTokenValid = true;
                     }
                 } catch (Exception e) {
-                    debug.message(
-                        "ERROR processIndexType/SSOToken validation - "
-                            + e.toString());
+                    debug.message("ERROR processIndexType/SSOToken validation - "
+                    + e.toString());
                 }
                 
                 if (!isTokenValid) {
@@ -1541,12 +1581,12 @@ public class AMLoginContext {
                     String orgParam = AuthUtils.getOrgParam(requestHash);
                     String queryOrg = AuthUtils.getQueryOrgName(hreq, orgParam);
                     String newOrgDN = DNUtils.normalizeDN(
-                        au.getOrganizationDN(queryOrg,true,hreq));
+				au.getOrganizationDN(queryOrg,true,hreq));
                     if (debug.messageEnabled()){
                         debug.message("orgDN from existing auth context: " +
                         orgDN + ", orgDN from query string: " + newOrgDN);
                     }
-                    if (orgDN != null && !orgDN.equals(newOrgDN)) {
+                    if (normOrgDN != null && !normOrgDN.equals(newOrgDN)) {
                         st.setStatus(LoginStatus.AUTH_RESET);
                         loginState.setErrorCode(AMAuthErrorCode.AUTH_ERROR);
                         setErrorMsgAndTemplate();
@@ -1563,9 +1603,7 @@ public class AMLoginContext {
             // if is multiple modules are found then return
             // else continue with login process
             try {
-                if (processCompositeAdvice(
-                    indexType,indexName,orgDN,clientType)
-                ) {
+                if (processCompositeAdvice(indexType,indexName,orgDN,clientType)) {
                     debug.message("multiple modules found");
                     return true;
                 } else {
@@ -1713,7 +1751,7 @@ public class AMLoginContext {
             return;
         }
         
-        updateLoginState(loginState,indexType,indexName,configName);
+        updateLoginState(loginState,indexType,indexName,configName,orgDN);
         Subject subject = new Subject();
         Principal userPrincipal = new UserPrincipal(indexName);
         subject.getPrincipals().add(userPrincipal);
@@ -1797,11 +1835,12 @@ public class AMLoginContext {
      * @return set of configured auth module with control flag REQUIRED and
      *         REQUISITE are returned
      */
-    private Set getModuleFromAuthConfiguration(Set moduleListSet) {
+    private Set getModuleFromAuthConfiguration(Set moduleListSet, 
+                                               String orgDN) {
         Configuration config = Configuration.getConfiguration();
         if (configName == null) {
             configName = getConfigName(indexType,indexName,
-            loginState.getOrgDN(),
+            orgDN,
             loginState.getClientType());
         }
         AppConfigurationEntry[] moduleList =
@@ -1835,12 +1874,13 @@ public class AMLoginContext {
     }
     
     /* return the failure module list */
-    String getFailureModuleList() {
+    String getFailureModuleList(String orgDN) {
         
         String moduleList=ISAuthConstants.EMPTY_STRING;
         try {
             Set failureModuleSet = loginState.getFailureModuleSet();
-            Set moduleSet = getModuleFromAuthConfiguration(failureModuleSet);
+            Set moduleSet = 
+                getModuleFromAuthConfiguration(failureModuleSet,orgDN);
             
             if (debug.messageEnabled()) {
                 debug.message("ModuleSet is : " + moduleSet);
@@ -1874,9 +1914,9 @@ public class AMLoginContext {
     }
     
     /* Returns the successful list of modules names */
-    String getSuccessModuleString() {
+    String getSuccessModuleString(String orgDN) {
         if (moduleSet == null || moduleSet.isEmpty()) {
-            moduleSet = getSuccessModuleSet();
+            moduleSet = getSuccessModuleSet(orgDN);
         }
         return getModuleString(moduleSet);
     }

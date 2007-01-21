@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.4 2006-08-25 21:20:13 veiming Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.5 2007-01-21 10:34:16 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -106,7 +107,7 @@ public class AuthExceptionViewBean extends
                 ac = (AuthContext) session.getAttribute("AuthContext");
                 orgName = (String) session.getAttribute("OrgName");
                 indexType =
-                    au.getIndexType((String) session.getAttribute("IndexType"));
+                    acu.getIndexType((String) session.getAttribute("IndexType"));
                 indexName = (String) session.getAttribute("IndexName");
             }
             
@@ -145,10 +146,10 @@ public class AuthExceptionViewBean extends
         // I18N get resource bundle
         rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
         if (rb == null) {
-            return au.getFileName("Exception.jsp",locale.toString(),orgName,
+            return acu.getFileName("Exception.jsp",locale.toString(),orgName,
             request,servletContext,indexType,indexName);
         } else {
-            return au.getFileName("authException.jsp",locale.toString(),orgName,
+            return acu.getFileName("authException.jsp",locale.toString(),orgName,
             request,servletContext,indexType,indexName);
         }
     }
@@ -168,7 +169,7 @@ public class AuthExceptionViewBean extends
         } else if (name.equals(TXT_GOTO_LOGIN_AFTER_FAIL)) {
             return new StaticTextField(this, name, "");
         } else if (name.equals(URL_LOGIN)) { // non-cookie support
-            String loginURL = au.encodeURL(LOGINURL, request, ac);
+            String loginURL = acu.encodeURL(LOGINURL, request, ac);
             return new StaticTextField(this, name, loginURL);
         } else if (name.equals(HTML_TITLE_AUTH_EXCEPTION)) {
             String exceptionTitle = rb.getString("htmlTitle_AuthException");
@@ -191,26 +192,26 @@ public class AuthExceptionViewBean extends
      */
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException {
-        SessionID sessionID = au.getSessionIDFromRequest(request);
+        SessionID sessionID = acu.getSessionIDFromRequest(request);
         try {
             String cookieDomain = null;
-            Set cookieDomainSet = au.getCookieDomains();
+            Set cookieDomainSet = acu.getCookieDomains();
             Cookie cookie;
             setPageEncoding(request,response);
 
             // No cookie domain specified in profile
             if (cookieDomainSet.isEmpty()) {
-                cookie = au.getLogoutCookie(sessionID, null);
+                cookie = acu.getLogoutCookie(sessionID, null);
                 response.addCookie(cookie);
             } else {
                 Iterator iter = cookieDomainSet.iterator();
                 while (iter.hasNext()) {
                     cookieDomain = (String)iter.next();
-                    cookie = au.getLogoutCookie(sessionID, cookieDomain);
+                    cookie = acu.getLogoutCookie(sessionID, cookieDomain);
                     response.addCookie(cookie);
                 }
             }
-            au.clearlbCookie(response);
+            acu.clearlbCookie(response);
             ResultVal = rb.getString("uncaught_exception");
             
         }catch (Exception e) {

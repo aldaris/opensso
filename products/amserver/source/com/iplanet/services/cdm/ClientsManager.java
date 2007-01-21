@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientsManager.java,v 1.3 2006-02-27 06:49:38 veiming Exp $
+ * $Id: ClientsManager.java,v 1.4 2007-01-21 10:34:10 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,25 +81,34 @@ public class ClientsManager {
         return client;
     }
 
-    /**
-     * Get a Client instance for the default client type
-     * 
-     * @return The Client instance corresponding to the default client type
-     * @supported.api
+    /** 
+     * Returns a Client instance for the default client type 
+     * @return The Client instance corresponding to the default client type 
+     *
+     * iPlanet-PUBLIC-METHOD
      */
     public static Client getDefaultInstance() {
-        String def = clientTypesManager.getDefaultClientType();
-        return clientTypesManager.getClientInstance(def);
+        String def = (clientTypesManager != null) ? 
+            clientTypesManager.getDefaultClientType() : "genericHTML";
+        Client client = (clientTypesManager != null) ?
+            clientTypesManager.getClientInstance(def) : null;
+        
+        return client;
     }
 
-    /**
-     * Returns an iterator of Client objects for all known client types.
-     * 
+    /** 
+     * Returns an iterator of Client objects for all known client types. 
      * @return Iterator of Client objects
-     * @supported.api
+     *
+     * iPlanet-PUBLIC-METHOD
      */
     public static Iterator getAllInstances() {
-        Map allInstances = clientTypesManager.getAllClientInstances();
-        return allInstances.values().iterator();
+        Map allInstances = (clientTypesManager != null) ?
+            clientTypesManager.getAllClientInstances() : null;
+        if (allInstances != null) {
+            return allInstances.values().iterator();
+        } else {
+            return null;
+        }
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.11 2006-12-15 00:53:00 goodearth Exp $
+ * $Id: AuthD.java,v 1.12 2007-01-21 10:34:22 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.ServiceConfig;
 import java.io.IOException;
 import java.security.AccessController;
 import java.util.Collections;
@@ -74,6 +75,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import netscape.ldap.util.DN;
+import com.iplanet.am.util.Misc;
 
 /**
  * This class is used to initialize the Authentication service and retrieve 
@@ -258,9 +260,6 @@ public class AuthD  {
         try {
             rootSuffix = defaultOrg = ServiceManager.getBaseDN();
             initAuthSessions();
-            // only for backward compatibilty support
-            // for retrieving user container DN and usernaming attr.
-            // not use this anywhere else.
             initAuthServiceGlobalSettings();
             initPlatformServiceGlobalSettings();
             initSessionServiceDynamicSettings();
@@ -788,7 +787,9 @@ public class AuthD  {
     }
  
     /**
-     * Return connection for AM store
+     * Returns connection for AM store.
+     * Only used for backward compatibilty support,
+     * for retrieving user container DN and usernaming attr.
      * @return connection for AM store
      */
     public AMStoreConnection getSDK() {
@@ -1407,5 +1408,30 @@ public class AuthD  {
      */
     public static boolean isHttpSessionUsed() {
         return useHttpSession;
+    }
+
+    /**
+     * Returns the authentication service or chain configured for the
+     * given organization.
+     *
+     * @param orgDN organization DN.
+     * @return the authentication service or chain configured for the
+     * given organization.
+     */
+    public String getOrgConfiguredAuthenticationChain(String orgDN) {
+        String orgAuthConfig = null;
+        try {
+            OrganizationConfigManager orgConfigMgr =
+                getOrgConfigManager(orgDN);
+            ServiceConfig svcConfig =
+                orgConfigMgr.getServiceConfig(
+                    ISAuthConstants.AUTH_SERVICE_NAME);
+            Map attrs = svcConfig.getAttributes();
+            orgAuthConfig = Misc.getMapAttr(attrs,
+                ISAuthConstants.AUTHCONFIG_ORG);
+        } catch (Exception e) {
+            debug.error("Error in getOrgConfiguredAuthenticationChain : ", e);
+        }
+        return orgAuthConfig;
     }
 }

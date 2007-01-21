@@ -17,223 +17,158 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.12 2007-01-09 19:01:36 manish_rustagi Exp $
+ * $Id: AuthUtils.java,v 1.13 2007-01-21 10:34:22 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
+
 package com.sun.identity.authentication.service;
 
-import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.Misc;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.service.InternalSession;
-import com.iplanet.dpro.session.share.SessionEncodeURL;
-import com.iplanet.services.cdm.AuthClient;
-import com.iplanet.services.cdm.Client;
-import com.iplanet.services.cdm.ClientsManager;
-import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.services.util.Crypt;
-import com.iplanet.sso.SSOException;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.IOException;
+
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.net.MalformedURLException;
+import java.net.HttpURLConnection;
+
+import java.security.AccessController;
+import java.security.Principal;
+
+import javax.security.auth.Subject;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.callback.Callback;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
+
+import netscape.ldap.util.DN;
+
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOException;
+
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.share.SessionEncodeURL;
+import com.iplanet.dpro.session.service.SessionService;
+import com.sun.identity.session.util.SessionUtils;
+
+import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.AMClientDetector;
+import com.iplanet.am.util.AMURLEncDec;
+import com.iplanet.am.util.Locale;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.am.util.Stats;
+import com.iplanet.am.util.Misc;
+import com.sun.identity.common.Constants;
+
+import com.iplanet.services.cdm.Client;
+import com.iplanet.services.cdm.AuthClient;
+import com.iplanet.services.cdm.ClientsManager;
+import com.iplanet.services.util.Crypt;
+import com.iplanet.services.util.CookieUtils;
+import com.iplanet.services.naming.WebtopNaming;
+
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.EncodeAction;
+
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.config.AMAuthLevelManager;
+import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.authentication.util.AMAuthUtils;
+import com.sun.identity.authentication.client.AuthClientUtils;
+
+import com.sun.identity.common.ResourceLookup;
+import com.sun.identity.common.Constants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.FQDNUtils;
-import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.RequestUtils;
-import com.sun.identity.common.ResourceLookup;
-import com.sun.identity.idm.IdUtils;
-import com.sun.identity.policy.PolicyUtils;
-import com.sun.identity.policy.plugins.AuthSchemeCondition;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.EncodeAction;
-import com.sun.identity.session.util.SessionUtils;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.encode.CookieUtils;
-import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.locale.Locale;
-import com.sun.identity.shared.xml.XMLUtils;
-import com.sun.identity.sm.SMSEntry;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.security.AccessController;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import com.sun.identity.common.ISLocaleContext;
 
-/**
- * This class has utility methods for domain cookie management, URL formatting, 
- * getting handle to AuthContext and LoginState objects, retrieving and 
- * validation session from session identifier, retrieving the client types 
- * attribute fields that determines the client type , etc.
- */
-public class AuthUtils {
-    /**
-     * Default client type
-     */
-    public static final String  DEFAULT_CLIENT_TYPE ="genericHTML";
-    private static final String  DEFAULT_CONTENT_TYPE="text/html";
-    private static final String  DEFAULT_FILE_PATH="html";
-    private static final String  DSAME_VERSION="7.0";
-    /**
-     * Error message
-     */
-    public static final String ERROR_MESSAGE = "Error_Message";
-    /**
-     * Error template
-     */
-    public static final String ERROR_TEMPLATE = "Error_Template";
-    /**
-     * Message delemeter
-     */
-    public static final String MSG_DELIMITER= "|";
-    /**
-     * Auth resource bundle name
-     */
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.DNMapper;
+
+import com.sun.identity.policy.PolicyUtils;
+import com.sun.identity.policy.plugins.AuthLevelCondition;
+import com.sun.identity.policy.plugins.AuthSchemeCondition;
+import com.sun.identity.policy.plugins.AuthenticateToServiceCondition;
+import com.sun.identity.policy.plugins.AuthenticateToRealmCondition;
+
+public class AuthUtils extends AuthClientUtils {
+    
     public static final String BUNDLE_NAME="amAuth";
     
-    private static boolean setRequestEncoding = false;
+    /**
+     * Authentication type for Realm based authentication after
+     * Composite Advices
+     */
+    public static final int REALM = 1;
+    
+    /**
+     * Authentication type for Service based authentication after 
+     * Composite Advices
+     */
+    public static final int SERVICE = 2;
+    
+    /**
+     * Authentication type for Module based authentication after 
+     * Composite Advices
+     */
+    public static final int MODULE = 3;
+    
     
     private static ArrayList pureJAASModuleClasses = new ArrayList();
     private static ArrayList ISModuleClasses = new ArrayList();
-    private static AMClientDetector clientDetector;
-    private static Client defaultClient;
-    private static FQDNUtils fqdnUtils;
     private static Hashtable moduleService = new Hashtable();
     private static ResourceBundle bundle;
-    private static final boolean urlRewriteInPath = Boolean.valueOf(
-        SystemProperties.get(Constants.REWRITE_AS_PATH,"")).booleanValue();
-
-    private static final String templatePath =
-        Constants.FILE_SEPARATOR + ISAuthConstants.CONFIG_DIR +
-        Constants.FILE_SEPARATOR + ISAuthConstants.AUTH_DIR;
-    private static final String rootSuffix = SMSEntry.getRootSuffix();
-    
-    // dsame version
-    private static String dsameVersion =
-        SystemProperties.get(Constants.AM_VERSION,DSAME_VERSION);
-    
-    /* Constants.AM_COOKIE_NAME is the AM Cookie which
-     * gets set when the user has authenticated
-     */
-    private static String cookieName = SystemProperties.get(
-        Constants.AM_COOKIE_NAME);
-    
-    /* Constants.AM_AUTH_COOKIE_NAME is the Auth Cookie which
-     * gets set during the authentication process.
-     */
-    private static String authCookieName = SystemProperties.get(
-        Constants.AM_AUTH_COOKIE_NAME, ISAuthConstants.AUTH_COOKIE_NAME);
-    private static String loadBalanceCookieName = null;
-    private static String persistentCookieName = SystemProperties.get(
-        Constants.AM_PCOOKIE_NAME);
-    private static String loadBalanceCookieValue = SystemProperties.get(
-        Constants.AM_LB_COOKIE_VALUE);
-    private static String serviceURI = SystemProperties.get(
-        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) + "/UI/Login";
-    
-    // Name of the webcontainer
-    private static String webContainer = SystemProperties.get(
-        Constants.IDENTITY_WEB_CONTAINER);
-    private static String serverURL = null;
-    static Debug utilDebug = Debug.getInstance("amAuthUtils");
-    
-    static {
-        // Initialzing variables
-        String installTime = 
-        SystemProperties.get(AdminTokenAction.AMADMIN_MODE, "false");
-        if (installTime.equalsIgnoreCase("false")) {
-            clientDetector = new AMClientDetector();
-            if (isClientDetectionEnabled()) {
-                defaultClient = ClientsManager.getDefaultInstance();
-            }
-        }
-        fqdnUtils = new FQDNUtils();
-        bundle = Locale.getInstallResourceBundle(BUNDLE_NAME);
-        if (webContainer != null && webContainer.length() > 0) {
-            if (webContainer.indexOf("BEA") >= 0 ||
-                webContainer.indexOf("IBM5.1") >= 0 ) {
-                setRequestEncoding = true;
-            }
-        }
-        
-        if(WebtopNaming.isServerMode()) {
-            loadBalanceCookieName =
-                SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
-        } else { 
-            loadBalanceCookieName =
-                SystemProperties.get(Constants.AM_LB_COOKIE_NAME);
-        }
-        
-        String proto = SystemProperties.get(Constants.DISTAUTH_SERVER_PROTOCOL);
-        String host = null;
-        String port = null;
-        if (proto != null && proto.length() != 0 ) {
-            host = SystemProperties.get(Constants.DISTAUTH_SERVER_HOST);
-            port = SystemProperties.get(Constants.DISTAUTH_SERVER_PORT);
-        } else {
-            proto = SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-            host = SystemProperties.get(Constants.AM_SERVER_HOST);
-            port = SystemProperties.get(Constants.AM_SERVER_PORT);
-        }
-        serverURL = proto + "://" + host + ":" + port;
-    }
-    
-    /**
-     * Creates <code>AuthUtils</code> object
-     */
+    static Debug utilDebug = Debug.getInstance("amAuthUtils");    
+   
     public AuthUtils() {
         utilDebug.message("AuthUtil: constructor");
     }
     
     /* retrieve session */
-    /**
-     * Returns session associated with <code>AuthContextLocal</code> object
-     * @param authContext auth context has session
-     * @return session associated with <code>AuthContextLocal</code> object
-     */
-    public InternalSession getSession(AuthContextLocal authContext) {
-        InternalSession sess = getLoginState(authContext).getSession();
+    public com.iplanet.dpro.session.service.InternalSession
+    getSession(AuthContextLocal authContext) {
+        
+        com.iplanet.dpro.session.service.InternalSession sess =
+        getLoginState(authContext).getSession();
         if (utilDebug.messageEnabled()) {
             utilDebug.message("returning session : " + sess);
         }
@@ -251,48 +186,40 @@ public class AuthUtils {
      * on error throws AuthException
      */
     
-    /**
-     * Returns the <code>AuthContext</code> Handle for the Request.
-     *
-     * @param request HTTP Servlet Request.
-     * @param response HTTP Servlet Response.
-     * @param sid Session ID for this request.
-     * @param isSessionUpgrade
-     * @param isBackPost
-     * @return <code>AuthContextLocal</code> object
-     * @throws AuthException
+    /** Returns the AuthContext Handle for the Request.
+     *  @param request, HttpServletRequest
+     *  @param response, HttpServletResponse
+     *  @param sid, SessionID for this request
+     *  @param isSessionUpgrade, a boolean
+     *  @param isBackPost, a boolean
+     *  @return AuthContextLocal object
      */
     public static AuthContextLocal getAuthContext(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        SessionID sid,
-        boolean isSessionUpgrade,
-        boolean isBackPost
-    ) throws AuthException {
-        return getAuthContext(request, response, sid, isSessionUpgrade,
-            isBackPost, false);
+    HttpServletRequest request,
+    HttpServletResponse response,
+    SessionID sid,
+    boolean isSessionUpgrade,
+    boolean isBackPost) throws AuthException {
+        return getAuthContext(request,response,sid,
+                              isSessionUpgrade,isBackPost,false);
     }
     
-    /**
-     * Returns the <code>AuthContext</code> Handle for the Request.
-     *
-     * @param request HTTP Servlet Request.
-     * @param response HTTP Servlet Response.
-     * @param sid Session ID for this request.
-     * @param isSessionUpgrade
-     * @param isBackPost
-     * @param isLogout
-     * @return <code>AuthContextLocal</code> object.
-     * @throws AuthException
+    /** Returns the AuthContext Handle for the Request.
+     *  @param request, HttpServletRequest
+     *  @param response, HttpServletResponse
+     *  @param sid, SessionID for this request
+     *  @param isSessionUpgrade, a boolean
+     *  @param isBackPost, a boolean
+     *  @param isLogout, a boolean
+     *  @return AuthContextLocal object
      */
     public static AuthContextLocal getAuthContext(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        SessionID sid,
-        boolean isSessionUpgrade,
-        boolean isBackPost,
-        boolean isLogout
-    ) throws AuthException {
+    HttpServletRequest request,
+    HttpServletResponse response,
+    SessionID sid,
+    boolean isSessionUpgrade,
+    boolean isBackPost,
+    boolean isLogout) throws AuthException {
         utilDebug.message("In AuthUtils:getAuthContext");
         Hashtable dataHash;
         AuthContextLocal authContext = null;
@@ -307,15 +234,16 @@ public class AuthUtils {
             // in size.
             authContext = retrieveAuthContext(request, sid);
             if (utilDebug.messageEnabled()) {
-                utilDebug.message("AuthUtil:getAuthContext:sid is.. .: " + sid);
-                utilDebug.message("AuthUtil:getAuthContext:authContext is.. .: "
+                utilDebug.message("AuthUtil:getAuthContext:sid is.. .: " 
+                                  + sid);
+                utilDebug.message("AuthUtil:getAuthContext:authContext is..: "
                 + authContext);
             }
             
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("isSessionUpgrade  :" + isSessionUpgrade);
-                utilDebug.message(
-                    "BACK with Request method POST : " + isBackPost);
+                utilDebug.message("BACK with Request method POST : " 
+                                  + isBackPost);
             }
             
             if ((authContext == null)  && (isLogout)) {
@@ -336,7 +264,7 @@ public class AuthUtils {
                     loginState.createAuthContext(request,response,sid,dataHash);
                     authContext.setLoginState(loginState);
                     String queryOrg =
-                        getQueryOrgName(request,getOrgParam(dataHash));
+                    getQueryOrgName(request,getOrgParam(dataHash));
                     if (utilDebug.messageEnabled()) {
                         utilDebug.message("query org is .. : "+ queryOrg);
                     }
@@ -349,21 +277,18 @@ public class AuthUtils {
                     throw new AuthException(ae);
                 }
             } else {
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message(
-                        "getAuthContext: found existing request.");
-                }
-
+                utilDebug.message("getAuthContext: found existing request.");
+                
                 authContext = processAuthContext(authContext,request,
-                                                   response,dataHash,sid);
-                loginState = getLoginState(authContext);
-                loginState.setRequestType(false);
+				response,dataHash,sid);
+				loginState = getLoginState(authContext);
+				loginState.setRequestType(false);
             }
             
         } catch (Exception ee) {
             if (utilDebug.messageEnabled()) {
-                utilDebug.message(
-                    "Error creating AuthContextLocal : " + ee.getMessage());
+                utilDebug.message("Error creating AuthContextLocal : " 
+                                  + ee.getMessage());
             }
             
             throw new AuthException(ee);
@@ -376,13 +301,12 @@ public class AuthUtils {
     // processAuthContext checks for arg=newsession in the HttpServletRequest
     // if request has arg=newsession then destroy session and create a new
     // AuthContextLocal object.
-    static AuthContextLocal processAuthContext(
-        AuthContextLocal authContext,
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Hashtable dataHash,
-        SessionID sid
-    ) throws AuthException {
+    
+    static AuthContextLocal processAuthContext(AuthContextLocal authContext,
+    HttpServletRequest request,
+    HttpServletResponse response,
+    Hashtable dataHash,
+    SessionID sid) throws AuthException {
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
         
@@ -444,57 +368,16 @@ public class AuthUtils {
         }
         return authContext;
     }
-
-    /**
-     * Returns <code>LoginState</code> object associated with 
-     * <code>AuthContext</code>
-     * @param authContext auth context has <code>LoginState</code>
-     * @return <code>LoginState</code> object associated with 
-     * <code>AuthContext</code>
-     */
+    
     public static LoginState getLoginState(AuthContextLocal authContext) {
+        
         LoginState loginState = null;
         if (authContext != null) {
             loginState = authContext.getLoginState();
         }
         return loginState;
-    }
-    
-    /**
-     * Parses request parameters in <code>HttpServletRequest</code> object
-     * @param request <code>HttpServletRequest</code> has parameters
-     * @return <code>Hashtable</code> of request parameters
-     */
-    public static Hashtable parseRequestParameters(HttpServletRequest request) {
-        Enumeration requestEnum = request.getParameterNames();
-        return decodeHash(request,requestEnum);
-    }
-    
-    private static Hashtable decodeHash(
-        HttpServletRequest request,
-        Enumeration names) {
-        Hashtable data = new Hashtable();
-        String enc = request.getParameter("gx_charset");
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("AuthUtils::decodeHash:enc = "+enc);
-        }
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            String value = request.getParameter(name);
-            if (setRequestEncoding) {
-                data.put(name, Locale.URLDecodeField(value, enc,AuthD.debug));
-            } else {
-                data.put(name, value);
-            }
-        } // while
-        return data;
-    }
-    
-    /**
-     * Returns request parameters in auth context
-     * @param authContext auth context has request parameters 
-     * @return <code>Hashtable</code> of parameters
-     */
+    }       
+   
     public Hashtable getRequestParameters(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         if (loginState != null) {
@@ -504,15 +387,10 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Returns the sid from the authh context object
-     * @param authContext auth context has sid
-     * @return the sid from the authh context object
-     * @throws AuthException if it fails to retrieve sid
-     */
+    // retrieve the sid from the LoginState object
     public static String getSidString(AuthContextLocal authContext)
-            throws AuthException {
-        InternalSession sess = null;
+    throws AuthException {
+        com.iplanet.dpro.session.service.InternalSession sess = null;
         String sidString = null;
         try {
             if (authContext != null) {
@@ -528,25 +406,25 @@ public class AuthUtils {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Error retreiving sid.. :" + e.getMessage());
             }
-            /// no need to have error code since the method where this is called
-            /// generates AUTH_ERROR
+            // no need to have error code since the method where this is called
+            // generates AUTH_ERROR
             throw new AuthException("noSid", new Object[] {e.getMessage()});
         }
         return sidString;
     }
     
-    /**
-     * Returns the Cookie object created based on the <code>cookieName</code>,
-     * Session ID and <code>cookieDomain</code>. If Session is in Invalid State
-     * then cookie is created with Authentication Cookie Name , if
-     * Active/Inactive Session state Access Manager Cookie Name will be used
-     * to create cookie.
+    /** Returns the Cookie object created based on
+     *  the cookieName , Session ID and cookieDomain.
+     *  If Session is in Invalid State then cookie is created
+     *  with Auth Cookie Name , if Active/Inactive Session
+     *  state AM Cookie Name will be used to create cookie.
      *
-     * @param ac Authentication context object.
-     *@param cookieDomain the cookie domain for creating cookie.
-     * @return Cookie object
+     *  @param ac, the AuthContext object
+     *	@param cookieDomain, the cookie domain for creating cookie
+     *  @return cookie, the Cookie object
      */
     public Cookie getCookieString(AuthContextLocal ac,String cookieDomain) {
+        
         Cookie cookie=null;
         String cookieName = getCookieName();
         try {
@@ -568,14 +446,13 @@ public class AuthUtils {
         return cookie;
     }
     
-    /**
-     * Returns the Logout cookie.
-     *
-     * @param ac Authentication Context object.
-     * @param cookieDomain Cookie domain.
-     * @return Logout cookie.
+    /** Returns the Logout cookie.
+     *  @param ac, the AuthContextLocal object
+     *  @param cookieDomain, the cookieDomain
+     *  @return Cookie, the Logout cookie .
      */
-    public Cookie getLogoutCookie(AuthContextLocal ac, String cookieDomain) {
+    public Cookie getLogoutCookie(AuthContextLocal ac,
+    String cookieDomain) {
         LoginState loginState = getLoginState(ac);
         SessionID sid = loginState.getSid();
         String logoutCookieString = getLogoutCookieString(sid);
@@ -584,73 +461,7 @@ public class AuthUtils {
         return logoutCookie;
     }
     
-    /**
-     * Returns the Logout cookie.
-     *
-     * @param sid Session ID.
-     * @param cookieDomain Cookie domain.
-     * @return Logout cookie string.
-     */
-    public Cookie getLogoutCookie(SessionID sid,String cookieDomain) {
-        String logoutCookieString = getLogoutCookieString(sid);
-        Cookie logoutCookie = createCookie(logoutCookieString,cookieDomain);
-        logoutCookie.setMaxAge(0);
-        return logoutCookie;
-    }
-    
-    
-    /**
-     * Returns the encrpted Logout cookie string.
-     * The format of this cookie is:
-     * <code>LOGOUT@protocol@servername@serverport@sessiondomain</code>
-     *
-     * @param sid Session ID.
-     * @return Logout cookie string.
-     */
-    public static String getLogoutCookieString(SessionID sid) {
-        String logout_cookie = null;
-        try {
-            logout_cookie = (String) AccessController.doPrivileged(
-            new EncodeAction(
-            "LOGOUT" + "@" +
-            sid.getSessionServerProtocol() + "@" +
-            sid.getSessionServer() + "@" +
-            sid.getSessionServerPort() + "@" +
-            sid.getSessionDomain(), Crypt.getHardcodedKeyEncryptor()));
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Logout cookie : " + logout_cookie);
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error creating cookie : " + e.getMessage());
-            }
-        }
-        return logout_cookie ;
-    }
-    
-    /**
-     * Returns Cookie to be set in the response.
-     *
-     * @param cookieValue Value of cookie.
-     * @param cookieDomain Domain for which cookie will be set.
-     * @return Cookie object.
-     */
-    public Cookie createCookie(String cookieValue, String cookieDomain) {
-        
-        String cookieName = getCookieName();
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("cookieName : " + cookieName);
-            utilDebug.message("cookieValue : " + cookieValue);
-            utilDebug.message("cookieDomain : " + cookieDomain);
-        }
-        return createCookie(cookieName,cookieValue,cookieDomain);
-    }
-
-    /**
-     * Returns true if request is new.
-     * @param ac auth context to be checked for new request
-     * @return <code>true</code> if it has new request
-     */
+    // returns true if request is new else false.    
     public boolean isNewRequest(AuthContextLocal ac) {
         
         LoginState loginState = getLoginState(ac);
@@ -667,11 +478,7 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Returns url for login success
-     * @param authContext auth context to be checked for login success
-     * @return url for login success
-     */
+    /* return the successful login url */
     public String getLoginSuccessURL(AuthContextLocal authContext) {
         String successURL = null;
         LoginState loginState = getLoginState(authContext);
@@ -683,11 +490,7 @@ public class AuthUtils {
         return successURL;
     }
     
-    /**
-     * Returns url for login failure
-     * @param authContext auth context to be checked for login failure
-     * @return url for login failure
-     */
+    /* return the failed login url */
     public String getLoginFailedURL(AuthContextLocal authContext) {
         
         try {
@@ -697,13 +500,13 @@ public class AuthUtils {
             }
             String loginFailedURL=loginState.getFailureLoginURL();
             if (utilDebug.messageEnabled()) {
-                utilDebug.message(
-                    "AuthUtils: getLoginFailedURL "+ loginFailedURL);
+                utilDebug.message("AuthUtils: getLoginFailedURL "
+                                  + loginFailedURL);
             }
             
             // remove the loginstate/authContext from the hashtable
             //removeLoginStateFromHash(authContext);
-            //       destroySession(authContext);
+            //	destroySession(authContext);
             return loginFailedURL;
         } catch (Exception e) {
             utilDebug.message("Exception " , e);
@@ -711,19 +514,17 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Returns filename  - will use FileLookUp API
+    
+    /* return filename  - will use FileLookUp API
      * for UI only - this returns the relative path
-     * @param authContext 
-     * @param fileName
-     * @return filename 
      */
     public String getFileName(AuthContextLocal authContext,String fileName) {
         
         LoginState loginState = getLoginState(authContext);
         String relFileName = null;
         if (loginState != null) {
-            relFileName = getLoginState(authContext).getFileName(fileName);
+            relFileName =
+            getLoginState(authContext).getFileName(fileName);
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getFileName:AuthUtilsFile name is :"
@@ -732,24 +533,13 @@ public class AuthUtils {
         return relFileName;
     }
     
-    /**
-     * Returns status of Inet domain for given auth context
-     * @param authContext auth context to be tested
-     * @return <code>true</code> if organization is active
-     */
     public boolean getInetDomainStatus(AuthContextLocal authContext) {
         return getLoginState(authContext).getInetDomainStatus();
     }
     
-    /**
-     * Check if new session arg exists
-     * @param dataHash <code>Hashtable</code> object has newsession
-     * @param sid <code>SessionID</code> object gets searched
-     * @return <code>true</code> if new session arg exists
-     */
     public static boolean newSessionArgExists(
-        Hashtable dataHash,
-        SessionID sid) {
+        Hashtable dataHash, SessionID sid) {
+
         String arg = (String)dataHash.get("arg");
         if (arg != null && arg.equals("newsession")) {
             if (retrieveAuthContext(sid) != null) {
@@ -761,13 +551,6 @@ public class AuthUtils {
         return false;
     }
     
-    /**
-     * Encode url
-     * @param url url to get encoded
-     * @param authContext auth context associated with url
-     * @param response <code>HttpServletResponse</code> associated with url
-     * @return encoded url
-     */
     public String encodeURL(String url,
     AuthContextLocal authContext,
     HttpServletResponse response) {
@@ -789,11 +572,7 @@ public class AuthUtils {
         return encodedURL;
     }
     
-    /**
-     * Returns <code>Locale</code> for given authContext
-     * @param authContext to get checked for <code>Locale</code>
-     * @return <code>Locale</code> associated with given authContext
-     */
+    // return the locale
     public String getLocale(AuthContextLocal authContext) {
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
@@ -808,32 +587,8 @@ public class AuthUtils {
         }
         
         return loginState.getLocale();
-    }
-    
-    /**
-     * Returns queried organization name in <code>HttpServletRequest</code> 
-     * object.
-     * @param request <code>HttpServletRequest</code> object to be checked.
-     * @param org organization name to get checked from request
-     * @return queried organization name in <code>HttpServletRequest</code> 
-     * object.
-     */
-    public static String getQueryOrgName(HttpServletRequest request,
-    String org) {
-        String queryOrg = null;
-        if ((org != null) && (org.length() != 0)) {
-            queryOrg = org;
-        } else {
-            if (request != null) {
-                queryOrg = request.getServerName();
-            }
-        }
-        if (utilDebug.messageEnabled()){
-            utilDebug.message("queryOrg is :" + queryOrg);
-        }
-        return queryOrg;
-    }
-    
+    }   
+   
     static void destroySession(LoginState loginState) {
         try {
             if (loginState != null) {
@@ -844,44 +599,19 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Destroys session associated with auth context
-     * @param authContext auth context has session
-     */
     public void destroySession(AuthContextLocal authContext) {
         if (authContext != null) {
             LoginState loginState = getLoginState(authContext);
             destroySession(loginState);
         }
-    }
-    
-    /**
-     * Prints cookies in the request
-     * use for debugging purposes
-     * @param req <code>HttpServletRequest</code> object has cookie
+    }    
+   
+    /** Returns ture if the session has timed out or the page has timed out
+     *  otherwise false.
+     *  @param authContext , the authcontext object for the request
+     *  @return true if timed out else false.
      */
-    public static void printCookies(HttpServletRequest req) {
-        Cookie ck[] = req.getCookies();
-        if (ck == null) {
-            utilDebug.message("No Cookie in header");
-            return;
-        }
-        for (int i = 0; i < ck.length; ++i) {
-            if ( utilDebug.messageEnabled()) {
-                utilDebug.message("Received Cookie:" + ck[i].getName() + " = " +
-                ck[i].getValue());
-            }
-        }
-    }
     
-    /**
-     * Returns <code>true</code> if the session has timed out or the page has
-     * timed out.
-     *
-     * @param authContext Authentication context object for the request.
-     * @return <code>true</code> if the session has timed out or the page has
-     *         timed out.
-     */
     public boolean sessionTimedOut(AuthContextLocal authContext) {
         boolean timedOut = false;
         
@@ -907,92 +637,32 @@ public class AuthUtils {
             }
         }
         return timedOut;
-    }
-
-    /**
-     * Prints reqParameters in <code>Hashtable</code> object
-     * @param reqParameters <code>Hashtable</code> object has parameters
-     */
-    public static void printHash(Hashtable reqParameters) {
-        try {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("AuthRequest: In printHash" + reqParameters);
-            }
-            if (reqParameters == null) {
-                return;
-            }
-            Enumeration Edata = reqParameters.keys();
-            while (Edata.hasMoreElements()) {
-                Object key =  Edata.nextElement();
-                Object value = reqParameters.get(key);
-                utilDebug.message("printHash Key is : " + key);
-                if (value instanceof String[]) {
-                    String tmp[] = (String[])value;
-                    for (int ii=0; ii < tmp.length; ii++) {
-                        if (utilDebug.messageEnabled()) {
-                            utilDebug.message("printHash : String[] keyname ("+
-                                key + ") = " + tmp[ii]);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.warning("Exception: printHash :" , e);
-            }
-        }
-    }
-    
-    /**
-     * Returns the value of argument iPSPCookie entered on the URL
-     * @param authContext auth context to be checked
-     * @return <code>true</code> if persistent cookie is enabled
-     */
+    }    
+   
+    /* return the value of argument iPSPCookie entered on the URL */
     public boolean isPersistentCookieOn(AuthContextLocal authContext) {
         return getLoginState(authContext).isPersistentCookieOn();
     }
     
-    /**
-     * Returns persistent cookie setting from core auth profile
-     * @param authContext auth context to be checked
-     * @return <code>true</code> if persistent cookie is enabled
-     */
+    /* retrieve persistent cookie setting from core auth profile */
     public boolean getPersistentCookieMode(AuthContextLocal authContext) {
         return getLoginState(authContext).getPersistentCookieMode();
     }
     
-    /**
-     * Return persistent cookie
-     * @param authContext auth context to be checked
-     * @param cookieDomain cookie domain associated with auth context
-     * @return persistent cookie associated with auth context
-     */
+    /* return persistent cookie */
     public Cookie getPersistentCookieString(AuthContextLocal authContext,
     String cookieDomain ) {
         return null;
     }
     
-    /**
-     * Returns the persistent cookie associated with auth context
-     * @param authContext auth context to be checked for pcookie
-     * @return the persistent cookie associated with auth context
-     */
+    /* returns the username from the persistent cookie */
     public String searchPersistentCookie(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         return loginState.searchPersistentCookie();
     }
     
-    /**
-     * Creates persistent cookie
-     * @param authContext auth context associated with pcookie
-     * @param cookieDomain cookie domain associated with auth context
-     * @return pcookie associated with auth context
-     * @throws AuthException if it fails to create pcookie
-     */
-    public Cookie createPersistentCookie(
-        AuthContextLocal authContext,
-        String cookieDomain
-    ) throws AuthException {
+    public Cookie createPersistentCookie(AuthContextLocal authContext,
+    String cookieDomain) throws AuthException {
         Cookie pCookie=null;
         try {
             if (utilDebug.messageEnabled()) {
@@ -1007,19 +677,8 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Creates lb cookie
-     * @param authContext auth context associated with lb cookie
-     * @param cookieDomain cookie domain associated with auth context
-     * @param persist <code>true</code> if it is persistent
-     * @return pcookie associated with auth context
-     * @throws AuthException if it fails to create pcookie
-     */
-    public Cookie createlbCookie(
-        AuthContextLocal authContext,
-        String cookieDomain,
-        boolean persist
-    ) throws AuthException {
+    public Cookie createlbCookie(AuthContextLocal authContext,
+    String cookieDomain, boolean persist) throws AuthException {
         Cookie lbCookie=null;
         try {
             if (utilDebug.messageEnabled()) {
@@ -1035,16 +694,8 @@ public class AuthUtils {
         
     }
     
-    /**
-     * Sets lb cookie to <code>HttpServletResponse</code> object
-     * @param authContext auth context associated with lb cookie
-     * @param response <code>true</code> if it is persistent
-     * @throws AuthException if it fails to create pcookie
-     */
-    public void setlbCookie(
-        AuthContextLocal authContext,
-        HttpServletResponse response
-    ) throws AuthException {
+    public void setlbCookie(AuthContextLocal authContext,
+    HttpServletResponse response) throws AuthException {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
             Set domains = getCookieDomains();
@@ -1058,74 +709,15 @@ public class AuthUtils {
                 response.addCookie(createlbCookie(authContext, null, false));
             }
         }
-    }
-    
+    }     
+  
     /**
-     * Sets lb cookie to <code>HttpServletResponse</code> object
-     * @param response <code>true</code> if it is persistent
-     * @throws AuthException if it fails to retrieve cookie
+     * called by UI if the username returned by
+     * searchPersistentCookie is null
+     * clear persistent cookie  in the request
      */
-    public void setlbCookie(HttpServletResponse response) throws AuthException {
-        String cookieName = getlbCookieName();
-        if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
-            if (!domains.isEmpty()) {
-                for (Iterator it = domains.iterator(); it.hasNext(); ) {
-                    String domain = (String)it.next();
-                    Cookie cookie = createlbCookie(domain);
-                    response.addCookie(cookie);
-                }
-            } else {
-                response.addCookie(createlbCookie(null));
-            }
-        }
-    }
-    
-    /**
-     * Creates a Cookie with the cookieName , cookieValue for
-     * the cookie domains specified.
-     *
-     * @param cookieName is the name of the cookie.
-     * @param cookieValue is the value fo the cookie.
-     * @param cookieDomain for which the cookie is to be set.
-     * @return the cookie object.
-     */
-    public Cookie createCookie(
-        String cookieName,
-        String cookieValue,
-        String cookieDomain) {
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("cookieName   : " + cookieName);
-            utilDebug.message("cookieValue  : " + cookieValue);
-            utilDebug.message("cookieDomain : " + cookieDomain);
-        }
-        
-        Cookie cookie = null;
-        try {
-            // hardcoded need to read from attribute and set cookie
-            // for all domains
-            cookie = CookieUtils.newCookie(cookieName, cookieValue,
-            "/", cookieDomain);
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error creating cookie. : " + e.getMessage());
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("createCookie Cookie is set : " + cookie);
-        }
-        return cookie;
-    }
-    
-    /**
-     * Creates new persistent cookie with given domain and auth context
-     * @param cookieDomain cookie domain for cookie
-     * @param authContext auth context associated with new cookie
-     * @return new cookie
-     */
-    public Cookie clearPersistentCookie(
-        String cookieDomain,
-        AuthContextLocal authContext) {
+    public Cookie clearPersistentCookie(String cookieDomain,
+    AuthContextLocal authContext) {
         String pCookieValue = LoginState.encodePCookie();
         int maxAge = 0;
         
@@ -1133,37 +725,29 @@ public class AuthUtils {
         pCookieValue,maxAge,cookieDomain);
         
         return clearPCookie;
-    }
-    
-    /**
-     * Creates new lb cookie with given <code>HttpServletResponse</code>response
-     * @param response <code>HttpServletResponse</code> response object 
-     *        associated with ne wlb cookie
-     */
-    public void clearlbCookie(HttpServletResponse response){
-        String cookieName = getlbCookieName();
-        utilDebug.message("clear lb cookie: " + cookieName);
-        if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
-            if (!domains.isEmpty()) {
-                for (Iterator it = domains.iterator(); it.hasNext(); ) {
-                    String domain = (String)it.next();
-                    Cookie cookie =
-                    createPersistentCookie(cookieName, "LOGOUT", 0, domain);
-                    response.addCookie(cookie);
-                }
-            } else {
-                response.addCookie(
-                createPersistentCookie(cookieName, "LOGOUT", 0, null));
+    }    
+   
+    /* return the indexType for this request */
+    public int getCompositeAdviceType(AuthContextLocal authContext) {
+        int type = 0;
+        try {            
+            LoginState loginState = getLoginState(authContext);            
+            if (loginState != null) {
+                type = loginState.getCompositeAdviceType();
+            }
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("in getCompositeAdviceType, type : " + type);
+            }            
+        } catch (Exception e) {
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("Error in getCompositeAdviceType : " 
+                    + e.toString());
             }
         }
+        return type;
     }
     
-    /**
-     * Returns the indexType for auth context object
-     * @param authContext auth context that has indexType
-     * @return IndexType from given auth context
-     */
+    /* return the indexType for this request */
     public AuthContext.IndexType getIndexType(AuthContextLocal authContext) {
         
         try {
@@ -1178,16 +762,14 @@ public class AuthUtils {
             }
             return indexType;
         } catch (Exception e) {
-            utilDebug.message("ERROR in getIndexType : " , e);
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("Error in getIndexType : " + e.toString());
+            }
             return null;
         }
     }
-
-    /**
-     * Returns the indexName for auth context object
-     * @param authContext auth context that has indexName
-     * @return IndexName from given auth context
-     */
+    
+    /* return the indexName for this request */
     public String getIndexName(AuthContextLocal authContext) {
         
         try {
@@ -1208,13 +790,7 @@ public class AuthUtils {
             return null;
         }
     }
-
     
-    /**
-     * Returns array of Callback that are associated with given auth context
-     * @param authContext auth context that has array of Callback
-     * @return array of Callback that are associated with given auth context
-     */
     public Callback[] getRecdCallback(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         Callback[] recdCallback = null;
@@ -1225,9 +801,8 @@ public class AuthUtils {
         if ( recdCallback != null ) {
             if (utilDebug.messageEnabled()) {
                 for (int i = 0; i < recdCallback.length; i++) {
-                    utilDebug.message(
-                        "in getRecdCallback, recdCallback[" + i + "] :"
-                        + recdCallback[i]);
+                    utilDebug.message("in getRecdCallback, recdCallback[" 
+                                      + i + "] :" + recdCallback[i]);
                 }
             }
         }
@@ -1236,38 +811,15 @@ public class AuthUtils {
         }
         
         return recdCallback;
-    }
+    }    
     
-    /**
-     * Returns the the error message for given error code
-     * @param errorCode error code
-     * @return the the error message for given error code
+    /** Returns the resource based on the default values
+     * @param request , Reference to HttpServletRequest object
+     * @param fileName, name of the file
+     * @return a String, path to the resource.
      */
-    public String getErrorMessage(String errorCode) {
-        String errorMessage = getErrorVal(errorCode,ERROR_MESSAGE);
-        return errorMessage;
-    }
-    
-    /**
-     * Returns the the error template for the error code
-     * @param errorCode 
-     * @return the the error template for the error code
-     */
-    public String getErrorTemplate(String errorCode) {
-        String errorTemplate = getErrorVal(errorCode,ERROR_TEMPLATE);
-        return errorTemplate;
-    }
-    
-    /**
-     * Returns the resource based on the default values.
-     *
-     * @param request Reference to HTTP Servlet Request object.
-     * @param fileName Name of the file
-     * @return Path to the resource.
-     */
-    public String getDefaultFileName(
-        HttpServletRequest request,
-        String fileName) {
+    public String getDefaultFileName(HttpServletRequest request,
+    String fileName) {
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
         
@@ -1282,8 +834,9 @@ public class AuthUtils {
             fileRoot,locale,null,filePath,fileName,
             templatePath,true);
         } catch (Exception e) {
-            templateFile = templatePath + fileRoot +
-                Constants.FILE_SEPARATOR + fileName;
+            templateFile = new StringBuffer().append(templatePath)
+            .append(fileRoot).append(Constants.FILE_SEPARATOR)
+            .append(fileName).toString();
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getDefaultFileName:templateFile is :" +
@@ -1292,11 +845,7 @@ public class AuthUtils {
         return templateFile;
     }
     
-    /**
-     * Returns the orgDN for given <code>AuthContextLocal</code> object
-     * @param authContext to get checked
-     * @return the orgDN for given <code>AuthContextLocal</code> object
-     */
+    /* returns the orgDN for the request */
     public String getOrgDN(AuthContextLocal authContext) {
         String orgDN = null;
         LoginState loginState = getLoginState(authContext);
@@ -1309,112 +858,65 @@ public class AuthUtils {
         return orgDN;
     }
     
-    /**
-     * Returns auth context for given organization
-     * @param orgName for new auth context
-     * @return auth context for given organization
-     * @throws AuthException if it fails to create <code>AuthContext</code>
-     */
+    /* create auth context for org */
     public static AuthContextLocal getAuthContext(String orgName)
-            throws AuthException {
+    throws AuthException {
         return getAuthContext(orgName,"0",false, null);
     }
     
-    /**
-     * Returns auth context for given organization and sessionID
-     * @param orgName for new auth context
-     * @param sessionID for new auth context
-     * @return auth context for given organization and sessionID
-     * @throws AuthException if it fails to create <code>AuthContext</code>
-     */
-    public static AuthContextLocal getAuthContext(
-        String orgName,
-        String sessionID
-    ) throws AuthException {
+    public static AuthContextLocal getAuthContext(String orgName,
+    String sessionID) throws AuthException {
         return getAuthContext(orgName,sessionID,false, null);
     }
     
-    /**
-     * Returns auth context for given organization and sessionID
-     * @param orgName for new auth context
-     * @param req <code>HttpServletRequest</code> object has session 
-     *        for new auth context
-     * @return auth context for given organization and session in request
-     * @throws AuthException if it fails to create <code>AuthContext</code>
-     */
-    public static AuthContextLocal getAuthContext(
-        String orgName,
-        HttpServletRequest req
-    ) throws AuthException {
+    public static AuthContextLocal getAuthContext(String orgName,
+    HttpServletRequest req) throws AuthException {
         return getAuthContext(orgName, "0", false, req);
     }
     
-    /**
-     * Returns auth context for given organization and sessionID
-     * @param orgName for new auth context
-     * @param sessionID for new auth context
-     * @param logout Logout request - if yes then no session.
-     * @return auth context for given organization and session in request
-     * @throws AuthException if it fails to create <code>AuthContext</code>
-     */
-    public static AuthContextLocal getAuthContext(
-        String orgName,
-        String sessionID,
-        boolean logout
-    ) throws AuthException {
+    public static AuthContextLocal getAuthContext(String orgName,
+    String sessionID, boolean logout) throws AuthException {
         return getAuthContext(orgName, sessionID, logout, null);
     }
     
-    /**
-     * Returns auth context for given <code>HttpServletRequest</code> object
-     * and sessionID.
-     * @param req for new auth context
-     * @param sessionID for new auth context
-     * @return auth context for given organization and session in request
-     * @throws AuthException if it fails to create <code>AuthContext</code>
-     */
-    public static AuthContextLocal getAuthContext(
-        HttpServletRequest req,
-        String sessionID
-    ) throws AuthException {
+    public static AuthContextLocal getAuthContext(HttpServletRequest req,
+    String sessionID) throws AuthException {
         return getAuthContext(null, sessionID, false, req);
     }
     
-     /** Returns the AuthContext Handle for the Request.
-      *  @param orgName OrganizationName in request
-      *  @param sessionID Session ID for this request
-      *  @param isLogout a boolean which is true if it is a Logout request
-      *  @param req HttpServletRequest
-      *  @return AuthContextLocal object
-      */
-     public static AuthContextLocal getAuthContext(String orgName,
-         String sessionID, boolean isLogout, HttpServletRequest req)
-         throws AuthException {
-         return getAuthContext(orgName, sessionID, false, req, null, null);
-     }
-    
-    /**
-     * Creates authentication context for organization and session ID, if
-     * <code>sessionupgrade</code> then save the previous authentication
-     * context and create new authentication context.
-     *
-     * @param orgName organization name to login too
-     * @param sessionID sessionID of the request - "0" if new request
-     * @param isLogout Logout request - if yes then no session.
-     * @param req HTTP Servlet Request.
-     * @param indexType Index Type
-     * @param indexName Index Name
-     * @return the created authentication context.
-     * @throws AuthException if it fails to create <code>AuthContext</code>
+    /** Returns the AuthContext Handle for the Request.
+     *  @param orgName OrganizationName in request
+     *  @param sessionID Session ID for this request
+     *  @param isLogout a boolean which is true if it is a Logout request
+     *  @param req HttpServletRequest
+     *  @return AuthContextLocal object
      */
-    public static AuthContextLocal getAuthContext(
-        String orgName,
-        String sessionID,
-        boolean isLogout,
-        HttpServletRequest req,
-        String indexType,
-        String indexName
-    ) throws AuthException {
+    public static AuthContextLocal getAuthContext(String orgName,
+    String sessionID, boolean isLogout, HttpServletRequest req)
+    throws AuthException {
+        return getAuthContext(orgName, sessionID, false, req, null, null);
+    }
+    
+    /* create auth context for org  and sid, if sessionupgrade then
+     * save the previous authcontext and create new authcontext
+     * orgName - organization name to login too
+     * sessionId - sessionID of the request - "0" if new request
+     * isLogout - is this a logout request - if yes then no session
+     * upgrade  - this is the case where session is VALID so need
+     * to use this flag to determine if session upgrade is needed.
+     * this is used mainly for Logout/Abort.
+     *  @param orgName OrganizationName in request
+     *  @param sessionID Session ID for this request
+     *  @param isLogout a boolean which is true if it is a Logout request
+     *  @param req HttpServletRequest
+     *  @param indexType Index Type
+     *  @param indexName Index Name
+     *  @return AuthContextLocal object
+     */
+    public static AuthContextLocal getAuthContext(String orgName,
+    String sessionID, boolean isLogout, HttpServletRequest req,
+    String indexType, String indexName)
+    throws AuthException {
         AuthContextLocal authContext = null;
         SessionID sid = null;
         LoginState loginState = null;
@@ -1461,8 +963,7 @@ public class AuthUtils {
                         }
                     }
                     if (utilDebug.messageEnabled()) {
-                        utilDebug.message(
-                            "session upgrade is : "+ sessionUpgrade);
+                        utilDebug.message("session upgrade is : "+ sessionUpgrade);
                     }
                 }
             }
@@ -1470,10 +971,9 @@ public class AuthUtils {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("AuthUtil:getAuthContext:sid is.. .: " + sid);
                 utilDebug.message("AuthUtil:getAuthContext:authContext is.. .: "
-                    + authContext);
-                utilDebug.message(
-                    "AuthUtil:getAuthContext:sessionUpgrade is.. .: "
-                    + sessionUpgrade);
+                + authContext);
+                utilDebug.message("AuthUtil:getAuthContext:sessionUpgrade is.. .: "
+                + sessionUpgrade);
             }
             
             if ((orgName == null) && (authContext == null)) {
@@ -1481,8 +981,7 @@ public class AuthUtils {
                 throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
             }
             
-            if ((orgName != null) && ((authContext ==null) || (sessionUpgrade))
-            ) {
+            if ((orgName != null) && ((authContext ==null) || (sessionUpgrade))) {
                 try {
                     loginState = new LoginState();
                     if (sessionUpgrade) {
@@ -1508,10 +1007,9 @@ public class AuthUtils {
                 // update loginState
                 try {
                     com.iplanet.dpro.session.service.InternalSession
-                    requestSess = AuthD.getSession(sessionID);
+                    requestSess = ad.getSession(sessionID);
                     if (utilDebug.messageEnabled()) {
-                        utilDebug.message(
-                            "AuthUtil :Session is .. : " + requestSess);
+                        utilDebug.message("AuthUtil :Session is .. : " + requestSess);
                     }
                     loginState = getLoginState(authContext);
                     loginState.setSession(requestSess);
@@ -1529,8 +1027,7 @@ public class AuthUtils {
             
         } catch (Exception ee) {
             if (utilDebug.messageEnabled()) {
-                utilDebug.message(
-                    "Error creating AuthContextLocal 2: " + ee.getMessage());
+                utilDebug.message("Creating AuthContextLocal 2: ", ee);
             }
             
             throw new AuthException(ee);
@@ -1539,57 +1036,37 @@ public class AuthUtils {
     }
     
     /**
-     * Returns a set of authentication modules whose authentication
-     * level equals to or greater than the specified authentication Level. If
-     * no such module exists, an empty set will be returned.
-     *
-     * @param authLevel authentication level.
-     * @param organizationDN  DN for the organization.
-     * @param clientType Client type, e.g. <code>genericHTML</code>.
-     * @return Set of authentication modules whose authentication level equals
-     *         to or greater that the specified authentication Level.
+     * This method returns a set of authentication modules whose authentication
+     * level equals to or greater than the specified authLevel. If no such
+     * module exists, an empty set will be returned.
+     * @param    authLevl    Integer auth level.
+     * @param    organizationDN    DN for the organization.
+     * @param    clientType    Client type, e.g. "genericHTML".
+     * @return    Set    Set of authentication modules whose authentication
+     *    level equals to or greater that the specified authLevel.
      */
-    public static Set getAuthModules(
-        int authLevel,
-        String organizationDN,
-        String clientType) {
+    public static Set getAuthModules(int authLevel,
+    String organizationDN,
+    String clientType) {
         return AMAuthLevelManager.getInstance().getModulesForLevel(authLevel,
         organizationDN, clientType);
     }
     
-    /**
-     * Returns the previous authcontext for given <code>AuthContextLocal</code>
-     *  object.
-     * @param authContext auth context previous authcontext
-     * @return the previous authcontext for given <code>AuthContextLocal</code>
-     *  object.
-     */
+    /* return the previous authcontext */
     public AuthContextLocal getPrevAuthContext(AuthContextLocal authContext) {
         LoginState loginState = getLoginState(authContext);
         AuthContextLocal oldAuthContext = loginState.getPrevAuthContext();
         return oldAuthContext;
     }
     
-    /**
-     * Returns the previous LoginState for the authconext 
-     * @param oldAuthContext old auth context associated with 
-     *        <code>LoginState</code> object
-     * @return <code>LoginState</code> object associated with given authconext 
-     */
+    /* return the LoginState for the authconext */
     public LoginState getPrevLoginState(AuthContextLocal oldAuthContext) {
         return getLoginState(oldAuthContext);
     }
     
-    /**
-     * Returns the auth context based on the <code>SessionID</code> object.
-     * @param sid <code>SessionID</code> object associated with auth context
-     * @return <code>AuthContextLocal</code> object associated with given
-     *         <code>SessionID</code> object
-     * @throws AuthException if it fails to create with given 
-     *         <code>SessionID</code> object
-     */
+    /* retreive the authcontext based on the req */
     public AuthContextLocal getOrigAuthContext(SessionID sid)
-            throws AuthException {
+    throws AuthException {
         AuthContextLocal authContext = null;
         // initialize auth service.
         AuthD ad = AuthD.getAuth();
@@ -1625,11 +1102,7 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Check if the session is active for given <code>AuthContextLocal</code>
-     * @param oldAuthContext auth context has associated session
-     * @return <code>true</code> if associated session is active
-     */
+    /* check if the session is active */
     public boolean isSessionActive(AuthContextLocal oldAuthContext) {
         try {
             com.iplanet.dpro.session.service.InternalSession sess =
@@ -1653,16 +1126,9 @@ public class AuthUtils {
         }
     }
     
-    /**
-     * Returns session property for give property name from 
-     * <code>AuthContextLocal</code> object
-     * @param property session property name to return
-     * @param oldAuthContext auth context object has sessionproperty
-     * @return session property value for given property name
-     */
-    public String getSessionProperty(
-        String property,
-        AuthContextLocal oldAuthContext) {
+    /* retreive session property */
+    public String getSessionProperty(String property,
+    AuthContextLocal oldAuthContext) {
         String value = null;
         try {
             com.iplanet.dpro.session.service.InternalSession sess =
@@ -1676,11 +1142,7 @@ public class AuthUtils {
         return value;
     }
     
-    /**
-     * Returns session upgrade for given <code>AuthContextLocal</code> object
-     * @param authContext auth context object to get checked
-     * @return <code>true</code> if session upgrade for given auth context
-     */
+    /* return session upgrade - true or false */
     public boolean isSessionUpgrade(AuthContextLocal authContext) {
         boolean isSessionUpgrade = false;
         LoginState loginState =  getLoginState(authContext);
@@ -1690,11 +1152,6 @@ public class AuthUtils {
         return isSessionUpgrade;
     }
     
-    /**
-     * Sets true or false for given <code>AuthContextLocal</code> object
-     * @param ac auth context to be set CookieSupported flag
-     * @param flag true if CookieSupported is true
-     */
     public void setCookieSupported(AuthContextLocal ac, boolean flag) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
@@ -1707,12 +1164,6 @@ public class AuthUtils {
         loginState.setCookieSupported(flag);
     }
     
-    /**
-     * Returns CookieSupported flag for given 
-     * <code>AuthContextLocal</code> object
-     * @param ac auth context to be checked for CookieSupported flag
-     * @return <code>true</code> if CookieSupported is true
-     */
     public boolean isCookieSupported(AuthContextLocal ac) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
@@ -1721,13 +1172,6 @@ public class AuthUtils {
         return loginState.isCookieSupported();
     }
     
-    /**
-     * Returns true if cookie is set for given <code>AuthContextLocal</code> 
-     * object.
-     * @param ac auth context to be checked for cookie
-     * @return <code>true</code> if cookie is set for given 
-     * <code>AuthContextLocal</code> object.
-     */
     public boolean isCookieSet(AuthContextLocal ac) {
         LoginState loginState =  getLoginState(ac);
         if (loginState==null) {
@@ -1736,14 +1180,16 @@ public class AuthUtils {
         return loginState.isCookieSet();
     }
     
-    /**
-     * Returns <code>true</code> if cookies found in the request.
+    /** Checks for cookies in the request, returns true
+     *  if cookies found in the request else false.
      *
-     * @param req HTTP Servlet Request.
-     * @param ac Authentication Context.
-     * @return <code>true</code> if cookies found in request.
+     *  @param req, the HttpServletRequest
+     *  @param ac, the AuthContext object
+     *  @return a boolean,true if cookies found in request else false
      */
-    public boolean checkForCookies(HttpServletRequest req, AuthContextLocal ac){
+    public boolean checkForCookies(HttpServletRequest req, 
+                                   AuthContextLocal ac) {
+        
         LoginState loginState =  getLoginState(ac);
         if (loginState!=null) {
             utilDebug.message("set cookieSet to false.");
@@ -1755,28 +1201,8 @@ public class AuthUtils {
         (CookieUtils.getCookieValueFromReq(req,getAuthCookieName()) != null)
         ||
         (CookieUtils.getCookieValueFromReq(req,getCookieName()) !=null));
-    }
-    
-    /**
-     * Checks if <code>HttpServletRequest</code> object has configured name of
-     * cookie.
-     * @param req <code>HttpServletRequest</code> to get checked for cookie name
-     * @return <code>true</code> if <code>HttpServletRequest</code> object 
-     * has configured name of cookie.
-     */
-    public static boolean checkForCookies(HttpServletRequest req) {
-        // came here if cookie not found , return false
-        return (
-        (CookieUtils.getCookieValueFromReq(req,getAuthCookieName()) != null)
-        ||
-        (CookieUtils.getCookieValueFromReq(req,getCookieName()) !=null));
-    }
-    
-    /**
-     * Returns login url for given <code>AuthContextLocal</code> object.
-     * @param authContext auth context to be checked for url 
-     * @return login url for given <code>AuthContextLocal</code> object.
-     */
+    }    
+   
     public String getLoginURL(AuthContextLocal authContext) {
         LoginState loginState =  getLoginState(authContext);
         if (loginState==null) {
@@ -1785,106 +1211,17 @@ public class AuthUtils {
         return loginState.getLoginURL();
     }
     
-    /**
-     * Returns the flag indicating a request "forward" after
-     * successful authentication.      
-     *
-     * @param authContext AuthContextLocal object
-     * @param req HttpServletRequest object
-     * @return the boolean flag.
-     */
-    public boolean isForwardSuccess(AuthContextLocal authContext, 
-        HttpServletRequest req) {
-        boolean isForward = forwardSuccessExists(req);
-        if (!isForward) {
-            LoginState loginState = getLoginState(authContext);
-            if (loginState != null) {
-                isForward = loginState.isForwardSuccess();
-            } 
-        }
-        return isForward;
-    }
-    
-    /**
-     * Returns <code>true</code> if the request has the
-     * <code>forward=true</code> query parameter.
-     *
-     * @param req HttpServletRequest object
-     * @return <code>true</code> if this parameter is present.
-     */
-    public boolean forwardSuccessExists(HttpServletRequest req) {
-        String forward = req.getParameter("forward");
-        boolean isForward =
-            (forward != null) && forward.equals("true");
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("forwardSuccessExists : "+ isForward);
-        }
-        return isForward;
-    }
-
-    /**
-     * Returns <code>AuthContextLocal</code> object for <code>SessionID</code>
-     * object.
-     * @param sid <code>SessionID</code> object for 
-     * <code>AuthContextLocal</code> object.
-     * @return <code>AuthContextLocal</code> object associated with given sid.
-     */
     public static AuthContextLocal getAuthContextFromHash(SessionID sid) {
         AuthContextLocal authContext = null;
         if (sid != null) {
             authContext = retrieveAuthContext(sid);
         }
         return authContext;
-    }
+    }  
     
-    /**
-     * Returns Original Redirect URL for Auth to redirect the Login request
-     * @param request <code>HttpServletRequest</code> object to be checked for
-     *        Redirect URL.
-     * @param sessID sessionID to be checked if valid
-     * @return Original Redirect URL for Auth to redirect the Login request
-     */
-    public String getOrigRedirectURL(HttpServletRequest request,
-    SessionID sessID) {
-        try {
-            String sidString = null;
-            if (sessID != null) {
-                sidString = sessID.toString();
-            }
-            SSOTokenManager manager = SSOTokenManager.getInstance();
-            SSOToken ssoToken = manager.createSSOToken(sidString);
-            if (manager.isValidToken(ssoToken)) {
-                utilDebug.message("Valid SSOToken");
-                String origRedirectURL = ssoToken.getProperty("successURL");
-                String gotoURL = request.getParameter("goto");
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message(
-                        "Original successURL : " + origRedirectURL);
-                    utilDebug.message("Request gotoURL : " + gotoURL);
-                }
-                if ((gotoURL != null) && (gotoURL.length() != 0)){
-                    origRedirectURL = gotoURL;
-                }
-                return origRedirectURL;
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error in getOrigRedirectURL:"+ e.toString());
-            }
-            return null;
-        }
-        return null;
-    }
-    
-    /**
-     * Returns array of callbacks per Page state
-     * @param authContext auth context object to be checked for callbacks
-     * @param pageState page state to be checked for callbacks
-     * @return array of callbacks per Page state
-     */
-    public Callback[] getCallbacksPerState(
-        AuthContextLocal authContext,
-        String pageState) {
+    // Gets Callbacks per Page state
+    public Callback[] getCallbacksPerState(AuthContextLocal authContext, 
+                                           String pageState) {
         LoginState loginState = getLoginState(authContext);
         Callback[] recdCallback = null;
         if (loginState != null) {
@@ -1893,9 +1230,8 @@ public class AuthUtils {
         if ( recdCallback != null ) {
             if (utilDebug.messageEnabled()) {
                 for (int i = 0; i < recdCallback.length; i++) {
-                    utilDebug.message(
-                        "in getCallbacksPerState, recdCallback[" + i + "] :"
-                        + recdCallback[i]);
+                    utilDebug.message("in getCallbacksPerState, recdCallback[" 
+                                      + i + "] :" + recdCallback[i]);
                 }
             }
         }
@@ -1905,17 +1241,9 @@ public class AuthUtils {
         return recdCallback;
     }
     
-    /**
-     * Sets callbacks per Page state
-     * @param authContext <code>AuthContextLocal</code> object to be set 
-     *        callbacks
-     * @param pageState page state to be set with callbacks
-     * @param callbacks to be set in <code>AuthContextLocal</code> object
-     */
-    public void setCallbacksPerState(
-        AuthContextLocal authContext,
-        String pageState,
-        Callback[] callbacks) {
+    // Sets (saves) Callbacks per Page state
+    public void setCallbacksPerState(AuthContextLocal authContext,
+    String pageState, Callback[] callbacks) {
         LoginState loginState = getLoginState(authContext);
         
         if (loginState != null) {
@@ -1924,61 +1252,15 @@ public class AuthUtils {
         if ( callbacks != null ) {
             if (utilDebug.messageEnabled()) {
                 for (int i = 0; i < callbacks.length; i++) {
-                    utilDebug.message(
-                        "in setCallbacksPerState, callbacks[" + i + "] :"
-                        + callbacks[i]);
+                    utilDebug.message("in setCallbacksPerState, callbacks[" 
+                                      + i + "] :" + callbacks[i]);
                 }
             }
         }
         else {
             utilDebug.message("in setCallbacksPerState, callbacks is null");
         }
-    }
-    
-    /**
-     * Adds Logout cookie to URL.
-     *
-     * @param url The URL to be rewritten with the logout cookie.
-     * @param logoutCookie Logout cookie String.
-     * @param isCookieSupported <code>true</code> if cookie is supported.
-     * @return a URL with the logout cookie appended to the URL.
-     */
-    public static String addLogoutCookieToURL(
-        String url,
-        String logoutCookie,
-        boolean isCookieSupported) {
-        String logoutURL = null;
-        if ((logoutCookie == null) || (isCookieSupported)) {
-            logoutURL = url;
-        } else {
-            
-            StringBuffer cookieString = new StringBuffer();
-            
-            cookieString.append(URLEncDec.encode(getCookieName()))
-                .append("=").append(URLEncDec.encode(logoutCookie));
-            
-            StringBuffer encodedURL = new StringBuffer();
-            if (url.indexOf("?") != -1) {
-                cookieString.insert(0,"&amp;");
-            } else {
-                cookieString.insert(0,"?");
-            }
-            
-            cookieString.insert(0,url);
-            logoutURL = cookieString.toString();
-            
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("cookieString is : "+ cookieString);
-            }
-        }
-        
-        /*if (utilDebug.messageEnabled()) {
-         *  utilDebug.message("logoutURL is : "+ logoutURL);
-         *}
-         */
-        
-        return logoutURL;
-    }
+    }    
     
     /**
      * Returns the SessionID . This is required to added the
@@ -1987,14 +1269,13 @@ public class AuthUtils {
      * the authcontext object is there otherwise retrieve from
      * the request object.
      *
-     * @param authContext Authentication context which is handle to the
-     *        authentication service.
-     * @param request HTTP Servlet Request.
-     * @return the Session ID.
+     * @param authContext  is the AuthContext which is
+     * 	    handle to the auth service
+     * @param request is the HttpServletRequest object
+     * @return returns the SessionID
      */
-    public SessionID getSidValue(
-        AuthContextLocal authContext,
-        HttpServletRequest request) {
+    public SessionID getSidValue(AuthContextLocal authContext,
+    HttpServletRequest request) {
         SessionID sessionId = null;
         if (authContext != null)  {
             utilDebug.message("AuthContext is not null");
@@ -2020,20 +1301,22 @@ public class AuthUtils {
     }
     
     /**
-     * Returns <code>true</code> if cookie is supported.
-     * the value is retrieved from the authentication service if a
-     * handle on the authentication context object is there otherwise
-     * check the HTTP Servlet Request object to see if the
-     * Access Manager cookie is in the request header.
+     * Returns true if cookie is supported otherwise false.
+     * the value is retrieved from the auth service if a
+     * handle on the auth context object is there otherwise
+     * check the HttpServletRequest object to see if the
+     * Access Manager cookie is in the request header
      *
-     * @param authContext is the handle to the authentication service
-     *             for the request.
-     * @param request HTTP Servlet Request for the request.
-     * @return <code>true</code> if cookie is supported.
+     * @param authContext is the handle to the auth service
+     *	                  for the request
+     * @param request is the HttpServletRequest Object for the
+     *	              request
+     *
+     * @return boolean value indicating whether cookie is supported
+     *	       or not.
      */
-    public boolean isCookieSupported(
-        AuthContextLocal authContext,
-        HttpServletRequest request) {
+    public boolean isCookieSupported(AuthContextLocal authContext,
+    HttpServletRequest request) {
         boolean cookieSupported;
         if (authContext != null)  {
             utilDebug.message("AuthContext is not null");
@@ -2051,9 +1334,8 @@ public class AuthUtils {
     /**
      * Returns the previous index type after module is selected in authlevel
      * or composite advices.
-     *
-     * @param ac Authentication Context instance.
-     * @return Previous index type.
+     * @param ac the is the AuthContextLocal instance.
+     * @return AuthContext.IndexType.
      */
     public AuthContext.IndexType getPrevIndexType(AuthContextLocal ac) {
         LoginState loginState = getLoginState(ac);
@@ -2067,17 +1349,12 @@ public class AuthUtils {
     /**
      * Returns whether the auth module is or the auth chain contains pure JAAS
      * module(s).
-     *
-     * @param configName Configuratoin name.
-     * @param amlc
+     * @param configName a string of the configuratoin name.
      * @return 1 for pure JAAS module; -1 for module(s) provided by IS only.
-     * @throws AuthLoginException if it fails to check 
-     *         <code>AMLoginContext</code>
      */
     public static int isPureJAASModulePresent(
-        String configName,
-        AMLoginContext amlc
-    ) throws AuthLoginException {
+    String configName, AMLoginContext amlc)
+    throws AuthLoginException {
         
         if (AuthD.enforceJAASThread) {
             return 1;
@@ -2113,7 +1390,7 @@ public class AuthUtils {
             }
             
             try {
-                Object classObject = Class.forName(className, true,
+                Object classObject = Class.forName(className,true,
                     Thread.currentThread().getContextClassLoader()
                     ).newInstance();
                 if (classObject instanceof AMLoginModule) {
@@ -2156,11 +1433,9 @@ public class AuthUtils {
     }
     
     /**
-     * Returns the module service name in either
-     * <code>iplanet-am-auth format&lt;module.toLowerCase()>Service(old)</code>
-     * or <code>sunAMAuth<module>Service format(new)</code>.
-     * @param moduleName module name for configured module service name
-     * @return Module service name.
+     * Get the module service name in either
+     * iplanet-am-auth format<module.toLowerCase()>Service(old) or
+     * sunAMAuth<module>Service format(new).
      */
     public static String getModuleServiceName(String moduleName) {
         String serviceName = (String) moduleService.get(moduleName);
@@ -2178,11 +1453,7 @@ public class AuthUtils {
         }
         return serviceName;
     }
-   
-    /**
-     * Returns Auth service revision number 
-     * @return Auth service revision number 
-     */
+    
     public static int getAuthRevisionNumber(){
         try {
             SSOToken token = (SSOToken) AccessController.doPrivileged(
@@ -2196,78 +1467,17 @@ public class AuthUtils {
             }
         }
         return 0;
-    }
-    
-    /**
-     * Returns the Session ID for the request.
-     * The cookie in the request for invalid sessions is in authentication
-     * cookie, <code>com.iplanet.am.auth.cookie</code>,  and for
-     * active/inactive sessions in <code>com.iplanet.am.cookie</code>.
-     *
-     * @param request HTTP Servlet Request.
-     * @return Session ID for this request.
+    }       
+   
+    /** Returns successURL for this request.
+     *  If goto parameter is in the current request then returns
+     *  the goto parameter else returns the successURL set in the valid session
+     *  @param request, the HttpServletRequest
+     *  @param authContext,AuthContext for this request.
+     *  @param successURL, a String
      */
-    private static SessionID getSidFromCookie(HttpServletRequest request) {
-        SessionID sessionID = null;
-        /// get auth cookie
-        String authCookieName = getAuthCookieName();
-        String sidValue =
-        CookieUtils.getCookieValueFromReq(request,authCookieName);
-        if (sidValue == null) {
-            sidValue =
-            SessionEncodeURL.getSidFromURL(request,authCookieName);
-        }
-        if (sidValue != null) {
-            sessionID = new SessionID(sidValue);
-            utilDebug.message("sidValue from Auth Cookie");
-        }
-        return sessionID;
-    }
-    
-    /**
-     * Returns the Session ID for this request. If Authentication Cookie and
-     * Valid AM Cookie are there and request method is GET then use Valid
-     * AM Cookie else use Auth Cookie. The cookie in the request for invalid
-     * sessions is in authentication cookie,
-     * <code>com.iplanet.am.auth.cookie</code>, and for active/inactive
-     * sessions in <code>com.iplanet.am.cookie</code>.
-     *
-     *  @param request HTTP Servlet Request.
-     *  @return Session ID for this request.
-     */
-    public SessionID getSessionIDFromRequest(HttpServletRequest request) {
-        boolean isGetRequest= (request !=null &&
-        request.getMethod().equalsIgnoreCase("GET"));
-        SessionID amCookieSid = new SessionID(request);
-        SessionID authCookieSid = getSidFromCookie(request);
-        SessionID sessionID;
-        if (authCookieSid == null) {
-            sessionID = amCookieSid;
-        } else {
-            if (isGetRequest) {
-                sessionID = amCookieSid;
-            } else {
-                sessionID = authCookieSid;
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("AuthUtils:returning sessionID:" + sessionID);
-        }
-        return sessionID;
-    }
-    
-    /**
-     * Returns success URL for this request.
-     * If goto parameter is in the current request then returns the goto
-     * parameter else returns the success URL set in the valid session.
-     *
-     * @param request HTTP Servlet Request.
-     * @param authContext Authentication Context for this request.
-     * @return Success URL.
-     */
-    public String getSuccessURL(
-        HttpServletRequest request,
-        AuthContextLocal authContext) {
+    public String getSuccessURL(HttpServletRequest request,
+    AuthContextLocal authContext) {
         String successURL = null;
         if (request != null) {
             successURL = request.getParameter("goto");
@@ -2281,318 +1491,75 @@ public class AuthUtils {
                 successURL =
                 getLoginState(authContext).getConfiguredSuccessLoginURL();
             }
+        } else {
+            String encoded = request.getParameter("encoded");
+            if (encoded != null && encoded.equals("true")) {
+                successURL = getBase64DecodedValue(successURL);
+            }
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getSuccessURL : " + successURL);
         }
         return successURL;
-    }
+    }              
     
-    /**
-     * Returns <code>true</code> if the request has the
-     * <code>arg=newsession</code> query parameter.
-     *
-     * @param reqDataHash
-     * @return <code>true</code> if this parameter is present.
-     */
-    public boolean newSessionArgExists(Hashtable reqDataHash) {
-        String arg = (String) reqDataHash.get("arg");
-        boolean newSessionArgExists =
-        (arg != null) && arg.equals("newsession");
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("newSessionArgExists : " + newSessionArgExists);
-        }
-        return newSessionArgExists;
-    }
-
-    /**
-     * Returns true if the request has the ForceAuth=<code>true</code>
-     * query parameter or composite advise.
-     *
-     * @return true if this parameter is present otherwise false.
-     */
-    public static boolean forceAuthFlagExists(Hashtable reqDataHash) {
-        String force = (String) reqDataHash.get("ForceAuth");
-        boolean forceFlag = (Boolean.valueOf(force)).booleanValue();
-        if (utilDebug.messageEnabled()) {
-             utilDebug.message("AuthUtils.forceFlagExists : " + forceFlag);
-        }
-        if (forceFlag == false) {
-            if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
-                String tmp = (String)reqDataHash.
-                    get(Constants.COMPOSITE_ADVICE);
-                forceFlag =
-                checkForForcedAuth(tmp);
-            }
-        }
-        return forceFlag;
-    }
-
-    /**
-     * Returns true if the composite Advice has the ForceAuth element
-     *
-     * @return true if this parameter is present otherwise false.
-     */
-    public static boolean checkForForcedAuth(String xmlCompositeAdvice) {
-        boolean returnForcedAuth = false;
-        try {
-            String decodedAdviceXML = URLDecoder.decode(xmlCompositeAdvice);
-            Map adviceMap = PolicyUtils.parseAdvicesXML(decodedAdviceXML);
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("AuthUtils.checkForForcedAuth : decoded XML "
-                    +"= " + decodedAdviceXML);
-                utilDebug.message("AuthUtils.checkForForcedAuth : result Map = "
-                + adviceMap);
-            }
-            if (adviceMap != null) {
-                if (adviceMap.containsKey(AuthSchemeCondition.
-                    FORCE_AUTH_ADVICE)) {
-                    returnForcedAuth = true;
-                }
-            }
-        } catch  (com.sun.identity.policy.PolicyException polExp) {
-            utilDebug.error("AuthUtils.checkForForcedAuth : Error in "
-                + "Policy  XML parsing ",polExp );
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("AuthUtils.checkForForcedAuth: returnForcedAuth"+
-                "= " + returnForcedAuth);
-        }
-        return returnForcedAuth;
-    }
-    
-    /**
-     * Returns the AuthContext.IndexType for given string index type value
-     * @param strIndexType string index type value
-     * @return the AuthContext.IndexType for given string index type value
-     */
-    public AuthContext.IndexType getIndexType(String strIndexType) {
-        AuthContext.IndexType indexType = null;
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getIndexType : strIndexType = " + strIndexType);
-        }
-        if (strIndexType != null) {
-            if (strIndexType.equalsIgnoreCase("user")) {
-                indexType = AuthContext.IndexType.USER;
-            } else if (strIndexType.equalsIgnoreCase("role")) {
-                indexType = AuthContext.IndexType.ROLE;
-            } else if (strIndexType.equalsIgnoreCase("service")) {
-                indexType = AuthContext.IndexType.SERVICE;
-            } else if (strIndexType.equalsIgnoreCase("module_instance")) {
-                indexType = AuthContext.IndexType.MODULE_INSTANCE;
-            } else if (strIndexType.equalsIgnoreCase("level")) {
-                indexType = AuthContext.IndexType.LEVEL;
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getIndexType : IndexType = " + indexType);
-        }
-        return indexType;
-    }
-    
-    /**
-     * Returns the index name given index type from the existing valid session
-     * @param ssoToken ssotoken has valid session
-     * @param indexType index type gets retrieved from ssotoken
-     * @return the index name given index type from the existing valid session
-     */
-    public String getIndexName(
-        SSOToken ssoToken,
-        AuthContext.IndexType indexType) {
-        String indexName = "";
-        try {
-            if (indexType == AuthContext.IndexType.USER) {
-                indexName = ssoToken.getProperty("UserToken");
-            } else if (indexType == AuthContext.IndexType.ROLE) {
-                indexName = ssoToken.getProperty("Role");
-            } else if (indexType == AuthContext.IndexType.SERVICE) {
-                indexName = ssoToken.getProperty("Service");
-            } else if (indexType == AuthContext.IndexType.MODULE_INSTANCE) {
-                indexName =getLatestIndexName(ssoToken.getProperty("AuthType"));
-            } else if (indexType == AuthContext.IndexType.LEVEL) {
-                indexName = ssoToken.getProperty("AuthLevel");
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error in getIndexName :"+ e.toString());
-            }
-            return indexName;
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getIndexName : IndexType = " + indexType);
-            utilDebug.message("getIndexName : IndexName = " + indexName);
-        }
-        return indexName;
-    }
-    
-    // Get the first or latest index name from the string of index names
-    // separated by "|".
-    private String getLatestIndexName(String indexName) {
-        String firstIndexName = indexName;
-        if (indexName != null) {
-            StringTokenizer st = new StringTokenizer(indexName,"|");
-            if (st.hasMoreTokens()) {
-                firstIndexName = (String)st.nextToken();
-            }
-        }
-        return firstIndexName;
-    }
-    
-    // search value in the String
-    private static boolean isContain(String value, String key) {
-        if (value == null) {
-            return false;
-        }
-        try {
-            if (value.indexOf("|") != -1) {
-                StringTokenizer st = new StringTokenizer(value, "|");
-                while (st.hasMoreTokens()) {
-                    if ((st.nextToken()).equals(key)) {
-                        return true;
-                    }
-                }
-            } else {
-                if (value.trim().equals(key.trim())) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            utilDebug.error("error : " + e.toString());
-        }
-        return false;
-    }
-    
-    /**
-     * Checks if this is Session Upgrade case for given ssoToken and request 
-     * parameters
-     * @param ssoToken ssotoken object to get checked for session upgrade
-     * @param reqDataHash hash object has request parameters
-     * @return <code>true</code> if this is Session Upgrade case for given 
-     * ssoToken and request parameters
-     */
-    public static boolean checkSessionUpgrade(SSOToken ssoToken,Hashtable reqDataHash){
-        utilDebug.message("Check Session upgrade!");
-        String tmp = null;
-        String value = null;
-        boolean upgrade = false;
-        try {
-            if (reqDataHash.get("user")!=null) {
-                tmp = (String) reqDataHash.get("user");
-                value = ssoToken.getProperty("UserToken");
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message("user : " + tmp);
-                    utilDebug.message("userToken : " + value);
-                }
-                if (!tmp.equals(value)) {
-                    upgrade = true;
-                }
-            } else if (reqDataHash.get("role")!=null) {
-                tmp = (String) reqDataHash.get("role");
-                value = ssoToken.getProperty("Role");
-                if (!isContain(value, tmp)) {
-                    upgrade = true;
-                }
-            } else if (reqDataHash.get("service")!=null) {
-                tmp = (String) reqDataHash.get("service");
-                value = ssoToken.getProperty("Service");
-                if (!isContain(value, tmp)) {
-                    upgrade = true;
-                }
-            } else if (reqDataHash.get("module")!=null) {
-                tmp = (String) reqDataHash.get("module");
-                value = ssoToken.getProperty("AuthType");
-                if (!isContain(value, tmp)) {
-                    upgrade = true;
-                }
-            } else if (reqDataHash.get("authlevel")!=null) {
-                int i = Integer.parseInt((String)reqDataHash.get("authlevel"));
-                if (i>Integer.parseInt(ssoToken.getProperty("AuthLevel"))) {
-                    upgrade = true;
-                }
-            } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
-                tmp = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
-                String orgName = ssoToken.getProperty("Organization");
-                String clientType = ssoToken.getProperty("clientType");
-                Set moduleInstances =
-                processCompositeAdviceXML(tmp, orgName, clientType);
-                value = ssoToken.getProperty("AuthType");
-                if ((moduleInstances != null) && (!moduleInstances.isEmpty())) {
-                    Iterator iter = moduleInstances.iterator();
-                    while (iter.hasNext()) {
-                        // get the module instance name
-                        String moduleName = (String) iter.next();
-                        if (!isContain(value, moduleName)) {
-                            upgrade = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            utilDebug.message("Exception in checkSessionUpgrade : " + e);
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Check session upgrade : " + upgrade);
-        }
-        return upgrade;
-    }
-    
-    /**
-     * Returns the set of Module instances resulting from a 'composite advice'
-     * for given compositeAdvice and orgDN, clientType
-     * @param xmlCompositeAdvice composite advice in xml
-     * @param orgDN organization DN for module instances 
-     * @param clientType client type for module instances 
-     * @return the set of Module instances resulting from a 'composite advice'
-     */
-    public static Set processCompositeAdviceXML(
-        String xmlCompositeAdvice,
-        String orgDN,
-        String clientType) {
+    // Returns the set of Module instances resulting from a 'composite advice'
+    public static Map processCompositeAdviceXML(String xmlCompositeAdvice,
+    String orgDN, String clientType) {
+        Map returnAuthInstances = null;
         Set returnModuleInstances = null;
         try {
-            String decodedAdviceXML = URLEncDec.decode(xmlCompositeAdvice);
-            Map adviceMap = parseAdvicesXML(decodedAdviceXML);
+            String decodedAdviceXML = AMURLEncDec.decode(xmlCompositeAdvice);
+            Map adviceMap = PolicyUtils.parseAdvicesXML(decodedAdviceXML);
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("processCompositeAdviceXML - decoded XML : "
                 + decodedAdviceXML);
                 utilDebug.message("processCompositeAdviceXML - result Map : "
                 + adviceMap);
             }
-            if (adviceMap != null) {
+            if ((adviceMap != null) && (!adviceMap.isEmpty())) {
+                returnAuthInstances = new HashMap();
                 returnModuleInstances = new HashSet();
                 Set keySet = adviceMap.keySet();
                 Iterator keyIter = keySet.iterator();
                 while (keyIter.hasNext()) {
                     String name = (String)keyIter.next();
                     Set values = (Set)adviceMap.get(name);
-                    if (name.equals(
-                        Constants.AUTH_SCHEME_CONDITION_ADVICE)
-                    ) {
+                    if (name.equals(AuthenticateToRealmCondition.
+                        AUTHENTICATE_TO_REALM_CONDITION_ADVICE)) {
+                        //returnAuthInstances = Collections.EMPTY_MAP;
+                        returnAuthInstances.put(name, values);
+                        break;
+                    } else if (name.equals(AuthenticateToServiceCondition.
+                        AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE)) {
+                        returnAuthInstances.put(name, values);                        
+                    } else if (name.equals(AuthSchemeCondition.
+                        AUTH_SCHEME_CONDITION_ADVICE)) {
                         returnModuleInstances.addAll(values);
-                    }
-                    if (name.equals(
-                        Constants.AUTH_LEVEL_CONDITION_ADVICE)
-                    ) {
+                    } else if (name.equals(AuthLevelCondition.
+                        AUTH_LEVEL_CONDITION_ADVICE)) {
                         Set newAuthLevelModules =
-                        processAuthLevelCondition(values,orgDN,clientType);
+                            processAuthLevelCondition(values,orgDN,clientType);
                         returnModuleInstances.addAll(newAuthLevelModules);
-                    }
+                    }                    
+                }
+                if (returnAuthInstances.isEmpty()) {
+                    returnAuthInstances.put(
+                        AuthSchemeCondition.AUTH_SCHEME_CONDITION_ADVICE, 
+                            returnModuleInstances);
                 }
             }
         } catch (Exception e) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Error in processCompositeAdviceXML : "
-                + e.toString());
+                , e);
             }
         }
         if (utilDebug.messageEnabled()) {
-            utilDebug.message(
-                "processCompositeAdviceXML - returnModuleInstances : "
-            + returnModuleInstances);
+            utilDebug.message("processCompositeAdviceXML - " + 
+                "returnAuthInstances : " + returnAuthInstances);
         }
-        return returnModuleInstances;
+        return returnAuthInstances;
     }
     
     // Returns the set of module instances having lowest auth level from a
@@ -2605,1248 +1572,90 @@ public class AuthUtils {
         }
         Set returnModuleInstances = Collections.EMPTY_SET;
         try {
-            if (authLevelvalues != null) {
+            if ((authLevelvalues != null) && (!authLevelvalues.isEmpty())) {
                 // First get the lowest auth level value from a given set
                 int minAuthlevel = Integer.MAX_VALUE;
+                String qualifiedRealm = null;
+                String qualifiedOrgDN = null;
                 Iterator iter = authLevelvalues.iterator();
                 while (iter.hasNext()) {
-                    //get the localized value
-                    String strAuthLevel = (String) iter.next();
+                    //get the Realm qualified Auth Level value
+                    String realmQualifiedAuthLevel = (String) iter.next();
+                    String strAuthLevel = 
+                        AMAuthUtils.getDataFromRealmQualifiedData(
+                            realmQualifiedAuthLevel);                    
                     try {
-                        int authLevel = Integer.parseInt(strAuthLevel);
+                        int authLevel = Integer.parseInt(strAuthLevel);                        
                         if (authLevel < minAuthlevel) {
                             minAuthlevel = authLevel;
+                            qualifiedRealm = 
+                                AMAuthUtils.getRealmFromRealmQualifiedData(
+                                    realmQualifiedAuthLevel);
+                            qualifiedOrgDN = null;
+                            if ((qualifiedRealm != null) && 
+                                (qualifiedRealm.length() != 0)) {
+                                qualifiedOrgDN = DNMapper.orgNameToDN(
+                                    qualifiedRealm);
+                            }
+                            if (utilDebug.messageEnabled()) {
+                                utilDebug.message("qualifiedRealm : " 
+                                    + qualifiedRealm);
+                                utilDebug.message("qualifiedOrgDN : " 
+                                    + qualifiedOrgDN);
+                            }
                         }
                     } catch (Exception nex) {
                         continue;
                     }
                 }
-                returnModuleInstances = getAuthModules(
-                    minAuthlevel, orgDN, clientType);
+
+                if ((qualifiedOrgDN != null) && (qualifiedOrgDN.length() != 0)) {
+                    Set moduleInstances = 
+                        getAuthModules(minAuthlevel,qualifiedOrgDN,clientType);
+                    if (utilDebug.messageEnabled()) {
+                        utilDebug.message("moduleInstances : " 
+                            + moduleInstances);
+                    }
+                    if ((moduleInstances != null) && 
+                        (!moduleInstances.isEmpty())) {
+
+                        returnModuleInstances = new HashSet();
+                        Iterator iterInstances = moduleInstances.iterator();
+                        while (iterInstances.hasNext()) {
+                            //get the module instance value
+                            String moduleInstance = 
+                                (String) iterInstances.next();                            
+                            String realmQualifiedModuleInstance = 
+                                AMAuthUtils.toRealmQualifiedAuthnData(
+                                    qualifiedRealm,moduleInstance);                            
+                            returnModuleInstances.add(
+                                realmQualifiedModuleInstance);                            
+                        }
+                    }
+                } else {
+                    returnModuleInstances = 
+                        getAuthModules(minAuthlevel,orgDN,clientType);
+                }
+
                 if (utilDebug.messageEnabled()) {
-                    utilDebug.message(
-                        "processAuthLevelCondition - returnModuleInstances : "
-                        + returnModuleInstances + " for auth level : "
-                        + minAuthlevel);
+                    utilDebug.message("processAuthLevelCondition - " + 
+                        "returnModuleInstances : " + returnModuleInstances + 
+                            " for auth level : " + minAuthlevel);
                 }
             }
         } catch (Exception e) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Error in processAuthLevelCondition : "
-                + e.toString());
+                , e);
             }
         }
         return returnModuleInstances;
-    }
-    
-    /**
-     * Check if client detection is enabled
-     * @return <code>true</code> if client detection is enabled
-     */
-    public static boolean isClientDetectionEnabled() {
-        boolean clientDetectionEnabled = false;
-        
-        if (clientDetector != null) {
-            String detectionEnabled = clientDetector.detectionEnabled();
-            clientDetectionEnabled = detectionEnabled.equalsIgnoreCase("true");
-        } else {
-            utilDebug.message("getClientDetector,Service does not exist");
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message(
-                "clientDetectionEnabled = " + clientDetectionEnabled);
-        }
-        return clientDetectionEnabled;
-    }
-    
-    /**
-     * Returns the client type. If client detection is enabled then client type
-     * is determined by the <code>ClientDetector</code> class otherwise
-     * <code>defaultClientType</code> set in
-     * <code>iplanet-am-client-detection-default-client-type</code>
-     * is assumed to be the client type.
-     *
-     * @param req HTTP Servlet Request.
-     * @return client type.
-     */
-    public String getClientType(HttpServletRequest req) {
-        if (isClientDetectionEnabled() && (clientDetector != null)) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("clienttype = "
-                +clientDetector.getClientType(req));
-            }
-            return clientDetector.getClientType(req);
-        }
-        return getDefaultClientType();
-    }
-    
-    /**
-     * Returns default client.
-     *
-     * @return default client.
-     */
-    public static String getDefaultClientType() {
-        String defaultClientType = DEFAULT_CLIENT_TYPE;
-        if (defaultClient != null) {
-            try {
-                defaultClientType = defaultClient.getClientType();
-                // add observer, so auth will be notified if the client changed
-                // defClient.addObserver(this);
-            } catch (Exception e) {
-                utilDebug.error("getDefaultClientType Error : " + e.toString());
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getDefaultClientType, ClientType = " +
-            defaultClientType);
-        }
-        return defaultClientType;
-    }
-    
-    /**
-     * Returns the client Object associated with a clientType
-     * default instance is returned if the instance could not be found
-     * @param clientType for client Object 
-     * @return the client Object associated with a clientType
-     */
-    private Client getClientInstance(String clientType) {
-        if (!clientType.equals(getDefaultClientType())) {
-            try {
-                return AuthClient.getInstance(clientType,null);
-            } catch (Exception ce) {
-                utilDebug.warning("getClientInstance()" , ce);
-            }
-        }
-        return defaultClient;
-    }
-    
-    /**
-     * Returns the requested property from clientData (example fileIdentifer).
-     *
-     * @param clientType
-     * @param property
-     * @return the requested property from clientData.
-     */
-    private String getProperty(String clientType, String property) {
-        
-        try {
-            return getClientInstance(clientType).getProperty(property);
-        } catch (Exception ce) {
-            // which means we did not get the client Property
-            utilDebug.warning("Error retrieving Client Data : " + property + 
-                ce.toString());
-            // if this was not the default client type then lets
-            // try to get the default client Property
-            return getDefaultProperty(property);
-        }
-    }
-    
-    /**
-     * Returns the requested property for default client.
-     *
-     * @param property
-     * @return the requested property for default client.
-     */
-    public String getDefaultProperty(String property) {
-        try {
-            return defaultClient.getProperty(property);
-        } catch (Exception ce) {
-            utilDebug.warning("Could not get " + property + ce.toString());
-        }
-        return null;
-    }
-    
-    /**
-     * Returns the charset associated with the client type.
-     * @param clientType client type for charset
-     * @param locale for charset
-     * @return the charset associated with the client type.
-     */
-    public String getCharSet(String clientType,java.util.Locale locale) {
-        String charset = Client.CDM_DEFAULT_CHARSET;
-        try {
-            charset = getClientInstance(clientType).getCharset(locale);
-        } catch (Exception ce) {
-            // which means we did not get the client locale
-            utilDebug.warning("Error retrieving Client Data : " + locale + 
-                ce.toString());            
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Charset from Client is : " + charset);
-        }
-        return charset;
-    }
-    
-    /**
-     * Returns the file path associated with a client type.
-     *
-     * @param clientType Client Type.
-     * @return the file path associated with a client type.
-     */
-    public String getFilePath(String clientType) {
-        String filePath = getProperty(clientType,"filePath");
-        return (filePath == null) ? DEFAULT_FILE_PATH : filePath;
-    }
-    
-    /**
-     * Returns the content type associated with a client type
-     * if no content type found then return the default.
-     *
-     * @param clientType Client Type.
-     * @return The content type associated with a client type.
-     */
-    public String getContentType(String clientType) {
-        String contentType = getProperty(clientType,"contentType");
-        return (contentType == null) ? DEFAULT_CONTENT_TYPE : contentType;
-    }
-    
-    /**
-     * Returns "cookieSupport" if cookies are supported for given clientType
-     *
-     * @param clientType client type to check for cookie support
-     * @return "cookieSupport" if cookies are supported for given clientType
-     */
-    public String getCookieSupport(String clientType) {
-        String cookieSup = getProperty(clientType,"cookieSupport");
-        return cookieSup;
-    }
-    
-    /**
-     * Returns <code>true</code> if this client is an HTML client.
-     *
-     * @param clientType
-     * @return <code>true</code> if this client is an HTML client.
-     */
-    public boolean isGenericHTMLClient(String clientType) {
-        String type = getProperty(clientType,"genericHTML");
-        return (type == null) || type.equals("true");
-    }  
-   
-    /**
-     * Returns <code>true</code> if <code>cookieSupport</code> is set or
-     * <code>cookieDetection</code> mode has been detected .This is used to
-     * determine whether cookie should be set in response or not.
-     *
-     * @param clientType client type to check if cookie is supported
-     * @return <code>true</code> if cookie is supported for given client type
-     */
-    public boolean isSetCookie(String clientType) {
-        boolean setCookie = setCookieVal(clientType, "true");
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("setCookie : " + setCookie);
-        }
-        
-        return setCookie;
-    }
-    
-   /**
-    * Returns <code>true</code> if the cookie detect is set, cookie support
-    * values to determine if cookie should be rewritten or set.
-    *
-    * @param clientType client type to check if the cookie detect is set
-    * @param value 
-    * @return <code>true</code> if the cookie detect is set
-    */
-    public boolean setCookieVal(String clientType, String value) {
-        String cookieSupport = getCookieSupport(clientType);
-        boolean cookieDetect = getCookieDetect(cookieSupport);
-        
-        boolean cookieSup =  ((cookieSupport !=null) &&
-        (cookieSupport.equalsIgnoreCase(value) ||
-        cookieSupport.equalsIgnoreCase(
-        ISAuthConstants.COOKIE_DETECT_PROPERTY)));
-        boolean setCookie = (cookieSup || cookieDetect) ;
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("cookieSupport : " + cookieSupport);
-            utilDebug.message("cookieDetect : " + cookieDetect);
-            utilDebug.message(" setCookie is : " +  setCookie);
-        }
-        
-        return setCookie;
-    }
-    
-    /**
-     * Returns <code>true</code> if <code>cookieDetect</code> mode.
-     *
-     * @param cookieSupport <code>true</code> if cookie is supported.
-     * @return <code>true</code> if cookie detect mode.
-     */
-    public boolean getCookieDetect(String cookieSupport) {
-        boolean cookieDetect
-        = ((cookieSupport == null) ||
-        (cookieSupport.equalsIgnoreCase(
-        ISAuthConstants.COOKIE_DETECT_PROPERTY)));
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("CookieDetect : " + cookieDetect);
-        }
-        return cookieDetect;
-    }
-    
-    /**
-     * Returns the client URL from the String passed URL passed is in the
-     * format <code>clientType | URL</code>.
-     *
-     * @param urlString URL.
-     * @param index Position of delimiter "|".
-     * @param request <code>HttpServletRequest</code> object to be compared with
-     *        urlString URL.
-     * @return Client URL.
-     */
-    public String getClientURLFromString(
-        String urlString,
-        int index,
-        HttpServletRequest request) {
-        String clientURL = null;
-        if (urlString != null) {
-            String clientTypeInUrl = urlString.substring(0,index);
-            if ((clientTypeInUrl != null) &&
-            (clientTypeInUrl.equals(getClientType(request)))) {
-                if (urlString.length() > index) {
-                    clientURL = urlString.substring(index+1);
-                }
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Client URL is :" + clientURL);
-        }
-        return clientURL;
-    }
-    
-   /**
-    * Returns <code>true</code> if <code>cookieSupport</code> is false and
-    * cookie Detect mode (which is rewrite as well as set cookie the first
-    * time). This determines whether URL should be rewritten or not.
-    *
-    * @param clientType
-    * @return <code>true</code> if <code>cookieSupport</code> is false
-    */
-    public boolean isUrlRewrite(String clientType) {
-        
-        boolean rewriteURL = setCookieVal(clientType,"false");
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("rewriteURL : " + rewriteURL);
-        }
-        
-        return rewriteURL;
-    }
-    
-    /**
-     * Returns DSAME Version
-     * @return DSAME Version
-     */
-    public static String getDSAMEVersion() {
-        return dsameVersion;
-    }
-    
-    /**Returns the Auth Cookie Name.
-     *
-     * @return authCookieName, a String,the auth cookie name.
-     */
-    public static String getAuthCookieName() {
-        return authCookieName;
-    }
-    
-    /**
-     * Returns configured cookie name
-     * @return configured cookie name
-     */
-    public static String getCookieName() {
-        return cookieName;
-    }
-    
-    /**
-     * Returns configured Persistent Cookie Name
-     * @return configured Persistent Cookie Name
-     */
-    public static String getPersistentCookieName() {
-        return persistentCookieName;
-    }
-    
-    /**
-     * Returns configured LB Cookie Name
-     * @return configured LB Cookie Name
-     */
-    public static String getlbCookieName() {
-        return loadBalanceCookieName;
-    }
-    
-    /**
-     * Returns configured LB Cookie Value
-     * @return configured LB Cookie Value
-     */
-    public static String getlbCookieValue() {
-        try {
-            return WebtopNaming.getAMServerID();
-        } catch (Exception e) {
-            utilDebug.error("getlbCookieValue - Failed to get Server ID "
-                + e.toString());
-            return null;
-        }
-    }
-
-    /**
-     * Returns configured set of cookie domains
-     * @return configured set of cookie domains
-     */
-    public Set getCookieDomains() {
-        Set cookieDomains = Collections.EMPTY_SET;
-        try {
-            SSOToken token = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            try {
-                ServiceSchemaManager scm  = new ServiceSchemaManager(
-                "iPlanetAMPlatformService",token);
-                ServiceSchema psc = scm.getGlobalSchema();
-                Map attrs = psc.getAttributeDefaults();
-                cookieDomains =
-                (Set)attrs.get(ISAuthConstants.PLATFORM_COOKIE_DOMAIN_ATTR);
-            } catch (SMSException ex) {
-                // Ignore the exception and leave cookieDomains empty;
-                utilDebug.message("getCookieDomains - SMSException ");
-            }
-            if (cookieDomains == null) {
-                cookieDomains = Collections.EMPTY_SET;
-            }
-        } catch (SSOException ex) {
-            // unable to get SSOToken
-            utilDebug.message("getCookieDomains - SSOException ");
-        }
-        if (utilDebug.messageEnabled() && (!cookieDomains.isEmpty())) {
-            utilDebug.message("CookieDomains : ");
-            Iterator iter = cookieDomains.iterator();
-            while (iter.hasNext()) {
-                utilDebug.message("  " + (String)iter.next());
-            }
-        }
-        return cookieDomains;
-    }
-    
-    /**
-     * Returns the organization DN. The organization DN is deteremined based on
-     * the query parameters <code>org</code> OR <code>domain</code> OR
-     * the server host name. For backward compatibility the organization name
-     * will be determined from <code>requestURI</code> in the case where either
-     * query params OR server host name are not valid and organization DN
-     * cannot be found.
-     * <p>
-     * The orgDN is determined based on and in order,by the SDK:
-     * <pre>
-     * 1. OrgDN - organization dn.
-     * 2. Domain - check if org is a domain by trying to get
-     *    domain component
-     * 3  Org path- check if the orgName passed is a path (eg."/suborg1")
-     * 4. URL - check if the orgName passed is a DNS alias (URL).
-     * 5. If no orgDN is found null is returned.
-     * </pre>
-     *
-     * @param orgParam org or domain query param, or the server host name.
-     * @param noQueryParam <code>true</code> if the request did not have query.
-     * @param request HTTP Servlet Request object.
-     * @return  Organization DN.
-     */
-    public String getOrganizationDN(
-        String orgParam,
-        boolean noQueryParam,
-        HttpServletRequest request) {
-        String orgName = null;
-        SSOToken token = (SSOToken) AccessController.doPrivileged(
-        AdminTokenAction.getInstance());
-        
-        // try to get the host name if org or domain Param is null
-        try {
-            orgName = IdUtils.getOrganization(token,orgParam);
-            if ((orgName != null) && (orgName.length() != 0)) {
-                orgName = orgName.toLowerCase();
-            }
-        } catch (Exception oe) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Could not get orgName : ",oe);
-            }
-        }
-        
-        // if orgName is null then match the DNS Alias Name
-        // to the full url ie. proto:/server/amserver/UI/Login
-        // This is for backward compatibility
-        
-        if (((orgName == null) || orgName.length() == 0) && (noQueryParam)) {
-            if (request != null) {
-                String url = request.getRequestURL().toString();
-                int index  = url.indexOf(";");
-                if (index != -1) {
-                    orgParam = stripPort(url.substring(0,index));
-                } else {
-                    orgParam = stripPort(url);
-                }
-                
-                try {
-                    orgName = IdUtils.getOrganization(token,orgParam);
-                } catch (Exception e) {
-                    if (utilDebug.messageEnabled()) {
-                        utilDebug.message(
-                            "Could not get orgName : " + orgParam, e);
-                    }
-                }
-            }
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getOrganizationDN : orgParam... :" + orgParam);
-            utilDebug.message("getOrganizationDN : orgDN ... :" + orgName);
-        }
-        return orgName;
-    }
-    
-    /**
-     * Returns the organization parameter and determines the organization
-     * DN based on query parameters. The organization DN is determined based on
-     * the query parameters <code>org</code> OR <code>domain</code> OR
-     * the server host name. For backward compatibility the organization name
-     * will be determined from <code>requestURI</code> in the case where either
-     * query params OR server host name are not valid and orgDN cannot be found.
-     * The <code>orgDN</code> is determined based on and in order,by the SDK:
-     * <pre>
-     * 1. OrgDN - organization dn.
-     * 2. Domain - check if org is a domain by trying to get
-     *    domain component
-     * 3  Org path- check if the orgName passed is a path (eg."/suborg1")
-     * 4. URL - check if the orgName passed is a DNS alias (URL).
-     * 5. If no orgDN is found null is returned.
-     * </pre>
-     *
-     * @param request HTTP Servlet Request object.
-     * @param requestHash Map of the query parameters.
-     * @return Organization DN.
-     */
-    public String getDomainNameByRequest(
-        HttpServletRequest request,
-        Hashtable requestHash) {
-        boolean noQueryParam=false;
-        
-        String orgParam = getOrgParam(requestHash);
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("orgParam is.. :" + orgParam);
-        }
-        
-        // try to get the host name if org or domain Param is null
-        if ((orgParam == null) || (orgParam.length() == 0)) {
-            noQueryParam= true;
-            orgParam = request.getServerName();
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Hostname : " + orgParam);
-            }
-        }
-        String orgDN = getOrganizationDN(orgParam,noQueryParam,request);
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("orgDN is " + orgDN);
-        }
-        
-        return orgDN;
-    }
-    
-    /**
-     * Returns the organization or domain parameter passed as a query in the
-     * request.
-     *
-     * @param requestHash Map of query parameters.
-     * @return Organization or domain parameter.
-     */
-    public static String getOrgParam(Hashtable requestHash) {
-        String orgParam = null;
-        if ((requestHash != null) && !requestHash.isEmpty()) {
-            orgParam = (String) requestHash.get(ISAuthConstants.DOMAIN_PARAM);
-            if ((orgParam == null) || (orgParam.length() == 0)) {
-                orgParam = (String)requestHash.get(ISAuthConstants.ORG_PARAM);
-            }
-            if ((orgParam == null) || (orgParam.length() == 0)) {
-                orgParam = (String)requestHash.get(ISAuthConstants.REALM_PARAM);
-            }
-        }
-        return orgParam;
-    }
-    
-    String stripPort(String in) {
-        try {
-            URL url = new URL(in);
-            return (url.getProtocol() + "://" + url.getHost()+ url.getFile());
-        } catch (MalformedURLException ex) {
-            return in;
-        }
-    }
-    
-    /**
-     * Returns <code>true</code> if the host name entered in the URL is valid.
-     *
-     * @param hostName Host name.
-     * @return <code>true</code> if the host name entered in the URL is valid.
-     */
-    public static boolean isValidFQDNRequest(String hostName) {
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("hostName is : " + hostName);
-        }
-        
-        boolean retVal = fqdnUtils.isHostnameValid(hostName);
-        
-        if (retVal) {
-            utilDebug.message("hostname  and fqdnDefault match returning true");
-        } else {
-            utilDebug.message("hostname and fqdnDefault don't match");
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("retVal is : " + retVal);
-        }
-        return retVal;
-    }
-    
-    /**
-     * Returns the valid hostname from the fqdn map and
-     * constructs the correct url. the request will be forwarded to the new url
-     * @param partialHostName partial host name has to be completed with fqdn
-     *        information.
-     * @param servletRequest
-     * @return the valid hostname from the fqdn map and constructs the correct 
-     *         url. the request will be forwarded to the new url
-     */
-    public static String getValidFQDNResource(
-        String partialHostName,
-        HttpServletRequest servletRequest) {
-        // get mapping from table
-        if(utilDebug.messageEnabled()) {
-            utilDebug.message("Get mapping for " + partialHostName);
-        }
-        
-        String validHostName =
-        fqdnUtils.getFullyQualifiedHostName(partialHostName);
-        
-        if (validHostName == null) {
-            validHostName = partialHostName;
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("fully qualified hostname :"+ validHostName);
-        }
-        
-        String requestURL = constructURL(validHostName,servletRequest);
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Request URL :"+ requestURL);
-        }
-        return requestURL;
-    }
-    
-    /**
-     * Returns the host name from the servlet request's host header or
-     * get it using servletRequest:getServerName() in the case
-     * where host header is not found
-     * @param servletRequest <code>HttpServletRequest</code> object to get
-     *        host name
-     * @return the host name from the servlet request
-     */
-    public static String getHostName(HttpServletRequest servletRequest) {
-        // get the host header
-        String hostname = servletRequest.getHeader("host");
-        if (hostname != null) {
-            int i = hostname.indexOf(":");
-            if (i != -1) {
-                hostname = hostname.substring(0,i);
-            }
-        } else {
-            hostname = servletRequest.getServerName();
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Returning host name : " + hostname);
-        }
-        return hostname;
-        
-    }
-    
-    /* construct the url */
-    static String constructURL(
-        String validHostName,
-        HttpServletRequest servletRequest) {
-        String scheme =
-        RequestUtils.getRedirectProtocol(
-            servletRequest.getScheme(),validHostName);
-        int port = servletRequest.getServerPort();
-        String requestURI = servletRequest.getRequestURI();
-        String queryString = servletRequest.getQueryString();
-        
-        StringBuffer urlBuffer = new StringBuffer();
-        urlBuffer.append(scheme).append("://")
-        .append(validHostName).append(":")
-        .append(port).append(requestURI);
-        
-        if (queryString != null) {
-            urlBuffer.append("?")
-            .append(queryString);
-        }
-        
-        String urlString = urlBuffer.toString();
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("returning new url : " + urlString);
-        }
-        
-        return urlString;
-    }
-    
-    /**
-     * Returns login url for given <code>HttpServletRequest</code> object
-     * @param request <code>HttpServletRequest</code> object to retrieve 
-     *        login url
-     * @return login url for given <code>HttpServletRequest</code> object
-     */
-    public String constructLoginURL(HttpServletRequest request) {
-        StringBuffer loginURL = new StringBuffer(serviceURI);
-        String qString = request.getQueryString();
-        if ((qString != null) && (qString.length() != 0)) {
-            loginURL.append("?");
-            loginURL.append(qString);
-        }
-        return (loginURL.toString());
-    }
-    
-    /**
-     * Returns valid <code>SSOToken</code> object for given 
-     * <code>SessionID</code> object.
-     * @param sessID for ssotoken
-     * @return  valid <code>SSOToken</code> object for given 
-     * <code>SessionID</code> object.
-     */
-    public SSOToken getExistingValidSSOToken(SessionID sessID) {
-        SSOToken ssoToken = null;
-        try {
-            if (sessID != null) {
-                String sidString = sessID.toString();
-                SSOTokenManager manager = SSOTokenManager.getInstance();
-                SSOToken currentToken = manager.createSSOToken(sidString);
-                if (manager.isValidToken(currentToken)) {
-                    ssoToken = currentToken;
-                }
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message(
-                    "Error in getExistingValidSSOToken :"+ e.toString());
-            }
-            return ssoToken;
-        }
-        return ssoToken;
-    }
-    
-    /**
-     * Returns error value for given errorCode and type
-     * @param errorCode for error value
-     * @param type for error value
-     * @return error value for given errorCode and type
-     */
-    public String getErrorVal(String errorCode,String type) {
-        String errorMsg=null;
-        String templateName=null;
-        String resProperty = bundle.getString(errorCode);
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("errorCod is.. : " + errorCode);
-            utilDebug.message("resProperty is.. : " + resProperty);
-        }
-        if ((resProperty != null) && (resProperty.length() != 0)) {
-            int commaIndex = resProperty.indexOf(MSG_DELIMITER);
-            if (commaIndex != -1) {
-                templateName = resProperty.substring(
-                    commaIndex+1,resProperty.length());
-                errorMsg = resProperty.substring(0,commaIndex);
-            } else {
-                errorMsg = resProperty;
-            }
-        }
-        
-        if (type.equals(ERROR_MESSAGE)) {
-            return errorMsg;
-        } else if (type.equals(ERROR_TEMPLATE)) {
-            return templateName;
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * Check if cookie is supported for given <code>HttpServletRequest</code>
-     * object.
-     * @param req <code>HttpServletRequest</code> object to be checked for 
-     *        cookie.
-     * @return <code>true</code> if cookie is supported for given 
-     * <code>HttpServletRequest</code> object.
-     */
-    public boolean isCookieSupported(HttpServletRequest req) {
-        boolean cookieSupported = true;
-        String cookieSupport = getCookieSupport(getClientType(req));
-        if ((cookieSupport != null) && cookieSupport.equals("false")){
-            cookieSupported = false;
-        }
-        return cookieSupported;
-    }
-    
-    /**
-     * Check if cookie is set for given <code>HttpServletRequest</code>
-     * object.
-     * @param req <code>HttpServletRequest</code> object to be checked for 
-     *        cookie.
-     * @return <code>true</code> if cookie is set for given 
-     * <code>HttpServletRequest</code> object.
-     */
-    public boolean isCookieSet(HttpServletRequest req) {
-        boolean cookieSet = false;
-        String cookieSupport = getCookieSupport(getClientType(req));
-        boolean cookieDetect = getCookieDetect(cookieSupport);
-        if (isClientDetectionEnabled() && cookieDetect) {
-            cookieSet = true;
-        }
-        return cookieSet;
-    }
-    
-    /**
-     * Creates Persistent Cookie with given name, value, etc.
-     * @param name cookie name
-     * @param value cookie value
-     * @param maxAge cookie max age
-     * @param cookieDomain  cookie domain
-     * @return Persistent Cookie with given name, value, etc.
-     */
-    public static Cookie createPersistentCookie(
-        String name,
-        String value,
-        int maxAge,
-        String cookieDomain) {
-        Cookie pCookie = CookieUtils.newCookie(name, value, "/", cookieDomain);
-        if (maxAge >= 0) {
-            pCookie.setMaxAge(maxAge);
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("pCookie is.. :" + pCookie);
-        }
-        
-        return pCookie;
-    }
-
-    /**
-     * Creates LB Cookie with given cookie domain
-     * @param cookieDomain  cookie domain
-     * @return LB Cookie with given cookie domain
-     * @throws AuthException if it fails to create cookie
-     */
-    public Cookie createlbCookie(String cookieDomain) throws AuthException {
-        Cookie lbCookie = null;
-        try {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("cookieDomain : " + cookieDomain);
-            }
-            String cookieName = getlbCookieName();
-            String cookieValue = getlbCookieValue();
-            lbCookie = createPersistentCookie(
-                cookieName, cookieValue, -1, cookieDomain);
-            return lbCookie;
-        } catch (Exception e) {
-            utilDebug.message("Unable to create Load Balance Cookie");
-            throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
-        }
-    }
-    
-    /**
-     * Returns the Cookie object created based on  the cookie Name, Session ID
-     * and cookie domain. If authentication context status is not
-     * <code>SUCCESS</code> then cookie is created with Authentication Cookie
-     * Name, else Access Manager Cookie Name will be used to create cookie.
-     *
-     * @param ac Authentication Context object.
-     * @param cookieDomain Cookie domain for creating cookie.
-     * @return Created Cookie.
-     */
-    public Cookie getCookieString(AuthContext ac, String cookieDomain) {
-        Cookie cookie = null;
-        String cookieName = getAuthCookieName();
-        String cookieValue = serverURL + serviceURI;
-        try {
-            if (ac.getStatus() == AuthContext.Status.SUCCESS) {
-                cookieName = getCookieName();
-                cookieValue = ac.getAuthIdentifier();
-                utilDebug.message("Create AM cookie");
-            }
-            cookie = createCookie(cookieName,cookieValue,cookieDomain);
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error getCookieString : " + e.getMessage());
-            }
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Cookie is : " + cookie);
-        }
-        return cookie;
-    }
-    
-    /**
-     * Returns URL with the cookie value in the URL.
-     * The cookie in the rewritten url will have the access manager cookie if
-     * session is active/inactive and authentication cookie if session is
-     * invalid
-     *
-     * @param url URL.
-     * @param request HTTP Servlet Request.
-     * @param ac Authentication Context object.
-     * @return the encoded URL.
-     */
-    public String encodeURL(
-        String url,
-        HttpServletRequest request,
-        AuthContext ac) {
-        if (isCookieSupported(request)) {
-            return url;
-        }
-        
-        String cookieName = getAuthCookieName();
-        if (ac.getStatus() == AuthContext.Status.SUCCESS) {
-            cookieName = getCookieName();
-        }
-        
-        String encodedURL = url;
-        if (urlRewriteInPath) {
-            encodedURL = encodeURL(url, SessionUtils.SEMICOLON, false,
-                cookieName, ac.getAuthIdentifier());
-        } else {
-            encodedURL = encodeURL(url, SessionUtils.QUERY, true, cookieName,
-                ac.getAuthIdentifier());
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("encodeURL : URL = " + url +
-            ", \nRewritten URL = " + encodedURL);
-        }
-        return (encodedURL);
-    }
-    
-    private String encodeURL(
-        String url,
-        short encodingScheme,
-        boolean escape,
-        String cookieName,
-        String strSessionID) {
-        String encodedURL = url;
-        String cookieStr = SessionEncodeURL.createCookieString(
-            cookieName, strSessionID);
-        encodedURL = SessionEncodeURL.encodeURL(cookieStr,url,
-        encodingScheme,escape);
-        return encodedURL;
-    }
-    
-    /**
-     * Returns the resource based on the default values.
-     *
-     * @param request Reference to HTTP Servlet Request object.
-     * @param fileName Name of the file.
-     * @param locale Locale
-     * @param servletContext Servlet context for server.
-     * @return Path to the resource.
-     */
-    public String getDefaultFileName(
-        HttpServletRequest request,
-        String fileName,
-        java.util.Locale locale,
-        ServletContext servletContext) {
-        String strlocale = "";
-        if (locale != null) {
-            strlocale = locale.toString();
-        }
-        String filePath = getFilePath(getClientType(request));
-        String fileRoot = ISAuthConstants.DEFAULT_DIR;
-        
-        String templateFile = null;
-        try {
-            templateFile = ResourceLookup.getFirstExisting(
-                servletContext, fileRoot, strlocale, null, filePath, fileName,
-                templatePath, true);
-        } catch (Exception e) {
-            templateFile = templatePath + fileRoot +
-                Constants.FILE_SEPARATOR + fileName;
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getDefaultFileName:templateFile is :" +
-            templateFile);
-        }
-        return templateFile;
-    }
-    
-    /**
-     * Returns the root suffix example <code>o=isp</code>.
-     *
-     * @return Root suffix.
-     */
-    public String getRootSuffix() {
-        // rootSuffix is already normalized in SMSEntry
-        return rootSuffix;
-    }
-    
-   /* get the root dir to start lookup from./<default org>
-    * default is /default
-    */
-    private String getFileRoot() {
-        String fileRoot = ISAuthConstants.DEFAULT_DIR;
-        String rootOrgName = DNUtils.DNtoName(rootSuffix);
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("rootOrgName is : " + rootOrgName);
-        }
-        if (rootOrgName != null) {
-            fileRoot = rootOrgName;
-        }
-        return fileRoot;
-    }
-    
-    /* insert chartset in the filename */
-    private String getCharsetFileName(String fileName) {
-        ISLocaleContext localeContext = new ISLocaleContext();
-        String charset = localeContext.getMIMECharset();
-        if (fileName == null) {
-            return null;
-        }
-        
-        int i = fileName.indexOf(".");
-        String charsetFilename = null;
-        if (i != -1) {
-            charsetFilename = fileName.substring(0, i) + "_" + charset +
-            fileName.substring(i);
-        } else {
-            charsetFilename = fileName + "_" + charset;
-        }
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("charsetFilename is : "+ charsetFilename);
-        }
-        return charsetFilename;
-    }
-    
-    /**
-     * Returns the resource (file) using resource lookup
-     * @param fileRoot
-     * @param localeName
-     * @param orgFilePath
-     * @param filePath
-     * @param filename
-     * @param templatePath
-     * @param servletContext
-     * @param request
-     * @return the resource (file) using resource lookup
-     */
-    public String getResourceLocation(
-        String fileRoot,
-        String localeName,
-        String orgFilePath,
-        String filePath,
-        String filename,
-        String templatePath,
-        ServletContext servletContext,
-        HttpServletRequest request) {
-        String resourceName = null;
-        String clientType = getClientType(request);
-        if ((clientType != null) &&
-        (!clientType.equals(getDefaultClientType()))) {
-            // non-HTML client
-            String charsetFileName = getCharsetFileName(filename);
-            resourceName =
-            ResourceLookup.getFirstExisting(servletContext,fileRoot,
-            localeName,orgFilePath,
-            filePath,charsetFileName,
-            templatePath,true);
-        }
-        if (resourceName == null) {
-            resourceName = ResourceLookup.getFirstExisting(servletContext,
-            fileRoot,localeName,
-            orgFilePath,
-            filePath,filename,
-            templatePath,true);
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("Resource is.. " + resourceName);
-        }
-        return resourceName;
-    }
-    
-    /**
-     * Returns the filePath parameter for FileLookUp
-     * filePath = indexName (service name) + clientPath (eg. html).
-     * @param request
-     * @param indexType
-     * @param indexName
-     * @return the filePath parameter for FileLookUp
-     * filePath = indexName (service name) + clientPath (eg. html).
-     */
-    public String getFilePath(
-        HttpServletRequest request,
-        AuthContext.IndexType indexType,
-        String indexName) {
-        String filePath = getFilePath(getClientType(request));
-        String serviceName = null;
-        StringBuffer filePathBuffer = new StringBuffer();
-        // only if index name is service type then need it
-        // as part of the filePath since  service can have
-        // have different auth template
-        
-        if ((indexType != null) &&
-        (indexType.equals(AuthContext.IndexType.SERVICE))) {
-            serviceName = indexName;
-        }
-        
-        if ((filePath == null) && (serviceName == null)) {
-            return null;
-        }
-        
-        if ((filePath != null) && (filePath.length() > 0))  {
-            filePathBuffer.append(Constants.FILE_SEPARATOR).append(filePath);
-        }
-        
-        if ((serviceName != null) && (serviceName.length() >0)) {
-            filePathBuffer.append(Constants.FILE_SEPARATOR).append(serviceName);
-        }
-        
-        String newFilePath = filePathBuffer.toString();
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("FilePath is.. :" + newFilePath);
-        }
-        
-        return newFilePath;
-    }
-    
-    /* retrieves the org path to search resource
-     * eg. if orgDN = o=org1,o=org11,o=org12,dc=iplanet,dc=com
-     * then orgFilePath will be org12/org11/org1
-     */
-    String getOrgFilePath(String orgDN) {
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("getOrgFilePath : orgDN is: " + orgDN);
-        }
-        String normOrgDN = DNUtils.normalizeDN(orgDN);
-        String orgPath = null;
-        
-        if (normOrgDN != null) {
-            StringBuffer orgFilePath = new StringBuffer();
-            String remOrgDN = normOrgDN;
-            String orgName = null;
-            while ((remOrgDN != null) && (remOrgDN.length() != 0)
-            && !remOrgDN.equals(getRootSuffix())) {
-                orgName = DNUtils.DNtoName(remOrgDN);
-                orgFilePath = orgFilePath.insert(
-                    0, Constants.FILE_SEPARATOR + orgName);
-                int i = remOrgDN.indexOf(",");
-                if (i != -1) {
-                    remOrgDN = remOrgDN.substring(i+1);
-                }
-                if (utilDebug.messageEnabled()){
-                    utilDebug.message("remOrgDN is : "+ remOrgDN);
-                }
-            }
-            orgPath = orgFilePath.toString();
-        }
-        
-        if (utilDebug.messageEnabled()){
-            utilDebug.message("getOrgFilePath: orgPath is : " + orgPath);
-        }
-        return orgPath;
-    }
-    
-    /**
-     * Returns the File name based on the given input values.
-     *
-     * @param fileName Name of the file.
-     * @param localeName Locale Name.
-     * @param orgDN Organization DN.
-     * @param servletRequest HTTP Servlet Request object.
-     * @param servletContext Servlet context for server.
-     * @param indexType Authentication context index type.
-     * @param indexName Index name associated with the index type.
-     * @return File name of the resource.
-     */
-    public String getFileName(
-        String fileName,
-        String localeName,
-        String orgDN,
-        HttpServletRequest servletRequest,
-        ServletContext servletContext,
-        AuthContext.IndexType indexType,
-        String indexName) {
-        String fileRoot = getFileRoot();
-        String templateFile = null;
-        try {
-            // get the filePath  Client filePath + serviceName
-            String filePath = getFilePath(servletRequest,indexType,indexName);
-            String orgFilePath = getOrgFilePath(orgDN);
-            
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message(
-                    "Calling ResourceLookup: filename = " + fileName +
-                    ", defaultOrg = " + fileRoot + ", locale = " + localeName +
-                    ", filePath = " + filePath + ", orgPath = " + orgFilePath);
-            }
-            
-            templateFile = getResourceLocation(fileRoot,localeName,orgFilePath,
-            filePath,fileName,templatePath,servletContext,servletRequest);
-        } catch (Exception e) {
-            utilDebug.message("Error getting File : " + e.getMessage());
-            templateFile = templatePath + Constants.FILE_SEPARATOR +
-                ISAuthConstants.DEFAULT_DIR + Constants.FILE_SEPARATOR +
-                fileName;
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("File/Resource is : " + templateFile);
-        }
-        return templateFile;
-    }
-    
-    /**
-     * Returns Auth Cookie Value for given <code>HttpServletRequest</code>
-     *  object
-     * @param req <code>HttpServletRequest</code> object to be check for cookie
-     * @return Auth Cookie Value for given <code>HttpServletRequest</code> 
-     *  object
-     */
-    public String getAuthCookieValue(HttpServletRequest req) {
-        return CookieUtils.getCookieValueFromReq(req,getAuthCookieName());
-    }
-
-    /**
-     * Returns domain name for given requestHash
-     * @param requestHash <code>Hashtable</code> object to be checked for
-     *        domain name.
-     * @return domain name for given requestHash
-     */
-    public String getDomainNameByRequest(Hashtable requestHash) {
-        String orgParam = getOrgParam(requestHash);
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("orgParam is.. :" + orgParam);
-        }
-        // try to get the host name if org or domain Param is null
-        if ((orgParam == null) || (orgParam.length() == 0)) {
-            orgParam = "/";
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("defaultOrg : " + orgParam);
-            }
-        }
-        String orgDN = getOrganizationDN(orgParam,false,null);
-        
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("orgDN is " + orgDN);
-        }
-        return orgDN;
-    }
-    
-    
+    }                                                                                                        
+      
     // returns AuthContextLocal object from Session object identified by 'sid'.
     // if not found then check it in the HttpSession.
     private static AuthContextLocal retrieveAuthContext(
-        HttpServletRequest req,
-        SessionID sid) {
+    HttpServletRequest req, SessionID sid) {
         AuthContextLocal acLocal = null;        
         if (req != null && AuthD.isHttpSessionUsed()) {
             HttpSession hs = req.getSession(false);
@@ -3882,10 +1691,8 @@ public class AuthUtils {
     }
     
     /**
-     * Removes the <code>AuthContextLocal</code> object in the Session object
-     * identified by <code>sid</code>.
-     *
-     * @param sid Session ID.
+     * Removes the AuthContextLocal object in the Session object identified
+     * by the SessionID object parameter 'sid'.
      */
     public static void removeAuthContext(SessionID sid) {
         com.iplanet.dpro.session.service.InternalSession is =
@@ -3893,447 +1700,19 @@ public class AuthUtils {
         if (is != null) {
             is.removeObject(ISAuthConstants.AUTH_CONTEXT_OBJ);
         }
-    }
+    }           
     
     /**
-     * Check whether the request is coming to the server who created the
-     * original Auth request or session
-     * @param cookieURL
-     * @param isServer 
-     * @return <code>true</code> if the request is coming to the server 
-     *   who created the original Auth request or session
-     */
-    public boolean isLocalServer(String cookieURL, boolean isServer) {
-        boolean local = false;
-        try {
-            String urlStr   = serverURL + serviceURI;
-
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("This server URL : " + urlStr);
-                utilDebug.message("Server URL from cookie : " + cookieURL);
-            }
-
-            if ((urlStr != null) && (cookieURL != null) &&
-                (cookieURL.equalsIgnoreCase(urlStr))) {
-                local = true;
-            }
-            if (!local && isServer && (cookieURL != null)) {
-                int uriIndex = cookieURL.indexOf(serviceURI);
-                String tmpCookieURL = cookieURL;
-                if (uriIndex != -1) {
-                    tmpCookieURL = cookieURL.substring(0,uriIndex);
-                }
-                Vector platformList = WebtopNaming.getPlatformServerList();
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message("search CookieURL : " + tmpCookieURL);
-                    utilDebug.message("platform server List : " + platformList);
-                }
-                // if cookie URL is not in the Platform server list then
-                // consider as new authentication for that local server
-                if (!platformList.contains(tmpCookieURL)) {
-                    local = true;
-                }
-            }
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Error isLocalServer : " + e.getMessage());
-            }
-        }
-        return local;
-    }
-
-    /**
-     * Checks hether the request is coming to the server who created the
-     * original Auth request or session
-     * @param cookieURL
-     * @param inputURI the URI to be apended toserver URL
-     * @return <code>true</code> if is local server,<code>false</code>otherwise
-     * 
-     */
-    public boolean isLocalServer(String cookieURL, String inputURI) {
-        int uriIndex = cookieURL.indexOf(inputURI);
-        String tmpCookieURL = cookieURL;
-        if (uriIndex != -1) {
-            tmpCookieURL = cookieURL.substring(0,uriIndex);
-        }
-        return isLocalServer(tmpCookieURL+serviceURI, true);
-    }
-    
-    /**
-     * Sends the request to the original authentication server and receives
-     * the result data.
+     * Returns the authentication service or chain configured for the
+     * given organization.
      *
-     * @param request HTTP Servlet Request to be sent.
-     * @param response HTTP Servlet Response to be received.
-     * @param cookieURL URL of the original authentication server to be
-     *        connected.
-     *
-     * @return Map of the result data from the original server's response.
+     * @param orgDN organization DN.
+     * @return the authentication service or chain configured for the
+     * given organization.
      */
-    public HashMap sendAuthRequestToOrigServer(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        String cookieURL) {
-        HashMap origRequestData = new HashMap();
-        
-        // Print request Headers
-        if (utilDebug.messageEnabled()) {
-            Enumeration requestHeaders = request.getHeaderNames();
-            while (requestHeaders.hasMoreElements()) {
-                String name = (String) requestHeaders.nextElement();
-                Enumeration value = (Enumeration)request.getHeaders(name);
-                utilDebug.message("Header name = " + name + " Value = " +
-                value);
-            } // w
-        }
-        
-        // Open URL connection
-        HttpURLConnection conn = null;
-        OutputStream  out = null;
-        String strCookies = null;
-        try {
-            URL authURL = new URL(cookieURL);
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Connecting to : " + authURL);
-            }
-            conn = (HttpURLConnection)authURL.openConnection();
-            conn.setDoOutput( true );
-            conn.setUseCaches( false );
-            conn.setRequestMethod("POST");
-            conn.setFollowRedirects(false);
-            conn.setInstanceFollowRedirects(false);
-            
-            // replay cookies
-            strCookies = getCookiesString(request);
-            if (strCookies != null) {
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message("Sending cookies : " + strCookies);
-                }
-                conn.setRequestProperty("Cookie", strCookies);
-            }
-            conn.setRequestProperty(
-                "Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty(
-                "Content-Length", request.getHeader("content-length"));
-            conn.setRequestProperty("Host", request.getHeader("host"));
-            
-            // Sending Output to Original Auth server...
-            utilDebug.message("SENDING DATA ... ");
-            String in_requestData = getFormData(request);
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Request data : " + in_requestData);
-            }
-            out = conn.getOutputStream();
-            PrintWriter pw = new PrintWriter(out);
-            pw.print(in_requestData); // here we "send" the request body
-            pw.flush();
-            pw.close();
-            
-            // Receiving input from Original Auth server...
-            utilDebug.message("RECEIVING DATA ... ");
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("Response Code: " + conn.getResponseCode());
-                utilDebug.message("Response Message: "
-                + conn.getResponseMessage());
-                utilDebug.message("Follow redirect : "
-                + conn.getFollowRedirects());
-            }
-            
-            // Check response code
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                
-                // Input from Original servlet...
-                StringBuffer in_buf = new StringBuffer();
-                BufferedReader in = new BufferedReader(
-                new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                int len;
-                char[] buf = new char[1024];
-                while((len = in.read(buf,0,buf.length)) != -1) {
-                    in_buf.append(buf,0,len);
-                }
-                String in_string = in_buf.toString();
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message("Received response data : " + in_string);
-                }
-                origRequestData.put("OUTPUT_DATA",in_string);
-                
-            } else {
-                utilDebug.message("Response code NOT OK");
-            }
-            
-            String client_type = conn.getHeaderField("AM_CLIENT_TYPE");
-            if (client_type != null) {
-                origRequestData.put("AM_CLIENT_TYPE", client_type);
-            }
-            String redirect_url = conn.getHeaderField("Location");
-            if (redirect_url != null) {
-                origRequestData.put("AM_REDIRECT_URL", redirect_url);
-            }
-            
-            // retrieves cookies from the response
-            Map headers = conn.getHeaderFields();
-            processCookies(headers, response);
-            
-            out.flush();
-            
-        } catch (Exception e) {
-            if (utilDebug.messageEnabled()) {
-                utilDebug.message("send exception : " , e);
-            }
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ioe) {
-                    if (utilDebug.messageEnabled()) {
-                        utilDebug.message("send IOException : "
-                        + ioe.toString());
-                    }
-                }
-            }
-        }
-        
-        return origRequestData;
-    }
-    
-    // Gets the request form data in the form of string
-    private String getFormData(HttpServletRequest request) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("");
-        Enumeration requestEnum = request.getParameterNames();
-        while (requestEnum.hasMoreElements()) {
-            String name = (String) requestEnum.nextElement();
-            String value = request.getParameter(name);
-            buffer.append(URLEncDec.encode(name));
-            buffer.append('=');
-            buffer.append(URLEncDec.encode(value));
-            if (requestEnum.hasMoreElements()) {
-                buffer.append('&');
-            }
-        }
-        return (buffer.toString());
-    }
-    
-    // parses the cookies from the response header and adds them in
-    // the HTTP response.
-    private void processCookies(Map headers, HttpServletResponse response) {
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("processCookies : headers : " + headers);
-        }
-        
-        if (headers == null || headers.isEmpty()) {
-            return;
-        }
-        
-        for (Iterator hrs = headers.entrySet().iterator(); hrs.hasNext();) {
-            Map.Entry me = (Map.Entry)hrs.next();
-            String key = (String) me.getKey();
-            if (key != null && (key.equalsIgnoreCase("Set-cookie") ||
-                (key.equalsIgnoreCase("Cookie")))) {
-                List list = (List)me.getValue();
-                if (list == null || list.isEmpty()) {
-                    continue;
-                }
-                Cookie cookie = null;
-                String domain = null;
-                String path = null;
-                for (Iterator it = list.iterator(); it.hasNext(); ) {
-                    String cookieStr = (String)it.next();
-                    if (utilDebug.messageEnabled()) {
-                        utilDebug.message("processCookies : cookie : "
-                        + cookieStr);
-                    }
-                    StringTokenizer stz = new StringTokenizer(cookieStr, ";");
-                    if (stz.hasMoreTokens()) {
-                        String nameValue = (String)stz.nextToken();
-                        int index = nameValue.indexOf("=");
-                        if (index == -1) {
-                            continue;
-                        }
-                        String tmpName = nameValue.substring(0, index).trim();
-                        String value = nameValue.substring(index + 1);
-                        Set domains = getCookieDomains();
-                        if (!domains.isEmpty()) {
-                            for (Iterator itcd = domains.iterator();
-                            itcd.hasNext(); ) {
-                                domain = (String)itcd.next();
-                                cookie = createCookie(tmpName, value, domain);
-                                response.addCookie(cookie);
-                            }
-                        } else {
-                            cookie = createCookie(tmpName, value, null);
-                            response.addCookie(cookie);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // Get cookies string from HTTP request object
-    private String getCookiesString(HttpServletRequest request) {
-        Cookie cookies[] = request.getCookies();
-        StringBuffer cookieStr = null;
-        String strCookies = null;
-        // Process Cookies
-        if (cookies != null) {
-            for (int nCookie = 0; nCookie < cookies.length; nCookie++) {
-                if (utilDebug.messageEnabled()) {
-                    utilDebug.message("Cookie name = "
-                    + cookies[nCookie].getName());
-                    utilDebug.message("Cookie value = "
-                    + cookies[nCookie].getValue());
-                }
-                if (cookieStr == null) {
-                    cookieStr = new StringBuffer();
-                } else {
-                    cookieStr.append(";");
-                }
-                cookieStr.append(cookies[nCookie].getName())
-                .append("=")
-                .append(cookies[nCookie].getValue());
-            }
-        }
-        if (cookieStr != null) {
-            strCookies = cookieStr.toString();
-        }
-        return strCookies;
-    }
-
-
-    /**
-     * Parses an XML string representation of policy advices and 
-     * returns a Map of advices.  The keys of returned map would be advice name 
-     * keys. Each key is a String object. The values against each key is a 
-     * Set of String(s) of advice values
-     *
-     * @param advicesXML XML string representation of policy advices conforming
-     * to the following DTD. The input string may not be validated against the 
-     * dtd for performance reasons.  
-
-         <!-- This DTD defines the Advices that could be included in
-        ActionDecision nested in PolicyDecision. Agents would post this
-        Advices to authentication service URL
-
-        Unique Declaration name for DOCTYPE tag:
-                  "iPlanet Policy Advices Interface 1.0 DTD"
-        -->
-
-
-        <!ELEMENT    AttributeValuePair    (Attribute, Value*) >
-
-
-        <!-- Attribute defines the attribute name i.e., a configuration
-             parameter.
-        -->
-        <!ELEMENT    Attribute     EMPTY >
-        <!ATTLIST    Attribute 
-              name    NMTOKEN    #REQUIRED 
-        >
-
-
-        <!-- Value element represents a value string.
-        -->
-        <!ELEMENT    Value    ( #PCDATA ) >
-
-
-        <!-- Advices element provides some additional info which may help the 
-             client could use to influence the policy decision
-        -->
-        <!ELEMENT    Advices   ( AttributeValuePair+ ) >
-
-     *
-     * @return the map of policy advices parsed from the passed in advicesXML
-     *         If the passed in advicesXML is null, null would be returned
-
-     */
-    public static Map parseAdvicesXML(String advicesXML) {
-
-        if(utilDebug.messageEnabled()) {
-            utilDebug.message("parseAdvicesXML():"
-                    + " entering, advicesXML= " + advicesXML);
-        }
-
-        Map advices = null;
-        if (advicesXML != null) {
-            Document document = XMLUtils.toDOMDocument(advicesXML,
-                                                       utilDebug);
-            if (document != null) {
-                Node advicesNode 
-                    = XMLUtils.getRootNode(
-                        document, Constants.ADVICES_TAG_NAME);
-                if (advicesNode != null) {
-                    advices = XMLUtils.parseAttributeValuePairTags(
-                        advicesNode);
-                } else {
-                    utilDebug.message(
-                        "parseAdvicesXML():advicesNode is null");
-                }
-            } else {
-                utilDebug.message("parseAdvicesXML(): document is null");
-            }
-        }
-
-        if(utilDebug.messageEnabled()) {
-            utilDebug.message("parseAdvicesXML():" +
-                               " returning, advices= " + advices);
-        }
-
-        return advices;
-    }
-
-    /**
-    * Sets server cookie to <code>HttpServletResponse</code> object
-    * @param aCookie auth context associated with lb cookie
-    * @param response <code>true</code> if it is persistent
-    * @throws AuthException if it fails to create pcookie
-    */
-    public void setServerCookie(Cookie aCookie, HttpServletResponse response)
-        throws AuthException {
-        String cookieName = aCookie.getName();
-        String cookieValue = aCookie.getValue();
-        if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
-            if (!domains.isEmpty()) {
-                for (Iterator it = domains.iterator(); it.hasNext(); ) {
-                    String domain = (String)it.next();
-                    Cookie cookie = createCookie(cookieName, cookieValue,
-                        domain);
-                    response.addCookie(cookie);
-                }
-            } else {
-                response.addCookie(createCookie(cookieName,cookieValue,null));
-            }
-        }
-    } 
-
-    /**
-    * Creates new server cookie with 0 max age given
-    * <code>HttpServletResponse</code>response and <code>Cookie</code>
-    * @param aCookie auth context associated with lb cookie
-    * @param response <code>HttpServletResponse</code> response object
-    */
-    public void clearServerCookie(String cookieName,
-        HttpServletResponse response){
-        if (utilDebug.messageEnabled()) {
-	    utilDebug.message("In clear server Cookie = " +  cookieName);
-        }
-        if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
-            if (!domains.isEmpty()) {
-                for (Iterator it = domains.iterator(); it.hasNext(); ) {
-                    String domain = (String)it.next();
-                    Cookie cookie =
-                    createPersistentCookie(cookieName, "LOGOUT", 0, domain);
-                    response.addCookie(cookie);
-                    utilDebug.message("In clear server Cookie added cookie");
-                }
-            } else {
-                response.addCookie(
-                createPersistentCookie(cookieName, "LOGOUT", 0, null));
-                utilDebug.message("In clear server added cookie no domain");
-            }
-        }
+    public String getOrgConfiguredAuthenticationChain(String orgDN) {
+        AuthD ad = AuthD.getAuth();
+        return ad.getOrgConfiguredAuthenticationChain(orgDN);
     }
 
     /**
@@ -4344,7 +1723,7 @@ public class AuthUtils {
      public String getRemoteSecurityEnabled() throws AuthException {
          ServiceSchema schema = null;
          try {
-             SSOToken dUserToken = (SSOToken) AccessController.doPrivileged(
+             SSOToken dUserToken = (SSOToken) AccessController.doPrivileged (
                  AdminTokenAction.getInstance());
              ServiceSchemaManager scm = new ServiceSchemaManager(
                  "iPlanetAMAuthService", dUserToken);
@@ -4364,4 +1743,42 @@ public class AuthUtils {
          }
          return securityEnabled;   
      }
+
+     /**
+      * Returns the flag indicating a request "forward" after
+      * successful authentication.
+      *
+      * @param authContext AuthContextLocal object
+      * @param req HttpServletRequest object
+      * @return the boolean flag.
+      */
+     public boolean isForwardSuccess(AuthContextLocal authContext,
+         HttpServletRequest req) {
+         boolean isForward = forwardSuccessExists(req);
+         if (!isForward) {
+             LoginState loginState = getLoginState(authContext);
+             if (loginState != null) {
+                 isForward = loginState.isForwardSuccess();
+             }
+         }
+         return isForward;
+     }
+
+     /**
+      * Returns <code>true</code> if the request has the
+      * <code>forward=true</code> query parameter.
+      *
+      * @param req HttpServletRequest object
+      * @return <code>true</code> if this parameter is present.
+      */
+     public boolean forwardSuccessExists(HttpServletRequest req) {
+         String forward = req.getParameter("forward");
+         boolean isForward =
+             (forward != null) && forward.equals("true");
+         if (utilDebug.messageEnabled()) {
+             utilDebug.message("forwardSuccessExists : "+ isForward);
+         }
+         return isForward;
+     }
+
 }

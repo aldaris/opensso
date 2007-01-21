@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.3 2006-09-14 22:29:52 pawand Exp $
+ * $Id: Application.java,v 1.4 2007-01-21 10:34:19 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -213,7 +213,6 @@ public class Application extends AMLoginModule {
         
         if (userName != null && (userName.length() != 0)) {
             if (internalAuth(userName, userPassword)) {
-                userTokenId = userName;
                 if (debug.messageEnabled()){
                     debug.message(
                         "Internal Auth is successful : User = " + userTokenId);
@@ -499,6 +498,7 @@ public class Application extends AMLoginModule {
             AuthContext ac = new AuthContext(new AuthPrincipal(userName),
             userPassword.toCharArray());
             if (ac.getLoginStatus() == AuthContext.AUTH_SUCCESS) {
+                userTokenId = ac.getSSOToken().getPrincipal().getName();
                 debug.message("InternalAuth is successful");
                 ac.logout();
                 return true;

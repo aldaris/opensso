@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.3 2006-08-25 21:20:14 veiming Exp $
+ * $Id: LoginServlet.java,v 1.4 2007-01-21 10:34:16 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestContextImpl;
 import com.iplanet.jato.ViewBeanManager;
-import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import com.sun.identity.common.RequestUtils;
@@ -91,11 +91,11 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
             throw new CompleteRequestException();
         }
         
-        AuthUtils au = new AuthUtils();
+        AuthClientUtils acu = new AuthClientUtils();
         
         // Check whether this is the correct server to accept the client
         // response.
-        String authCookieValue = au.getAuthCookieValue(request);
+        String authCookieValue = acu.getAuthCookieValue(request);
         if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
             (!authCookieValue.equalsIgnoreCase("LOGOUT"))) {
             //if cookie server does not match to this local server then
@@ -105,11 +105,11 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
             }
             
             if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
-                    (!au.isLocalServer(authCookieValue, false))) {
+                    (!acu.isLocalServer(authCookieValue, false))) {
                 debug.message("Routing the request to Original Auth server");
                 try {
                     HashMap origRequestData =
-                        au.sendAuthRequestToOrigServer(
+                        acu.sendAuthRequestToOrigServer(
                             request,response,authCookieValue);
 
                     if (debug.messageEnabled()) {
@@ -127,7 +127,7 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
                             (String)origRequestData.get("AM_CLIENT_TYPE");
                     }
                     if (((redirect_url != null) && !redirect_url.equals("")) &&
-                        au.isGenericHTMLClient(clientType)) {
+                        acu.isGenericHTMLClient(clientType)) {
                         debug.message("Redirecting the response");
                         response.sendRedirect(redirect_url);
                     }

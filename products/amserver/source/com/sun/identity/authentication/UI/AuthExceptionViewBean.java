@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.4 2006-08-25 21:20:06 veiming Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.5 2007-01-21 10:34:12 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
@@ -309,6 +310,10 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
+
+    public static AuthUtils au = new AuthUtils();
+    static AuthD ad = AuthD.getAuth();
+
     /**
      * Page name for auth exception.
      */
@@ -332,7 +337,6 @@ public class AuthExceptionViewBean extends AuthViewBeanBase {
      * Resource bundle
      */
     public ResourceBundle rb = null;
-    static AuthD ad = AuthD.getAuth();
     
     /**
      * Property name for url login.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthUtils.java,v 1.4 2007-01-09 06:52:39 veiming Exp $
+ * $Id: AMAuthUtils.java,v 1.5 2007-01-21 10:34:28 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getAuthenticatedRealms(SSOToken token)
-            throws SSOException {
+    throws SSOException {
         Set returnRealms = new HashSet();
         String ssoRealm = token.getProperty(ISAuthConstants.ORGANIZATION);
         returnRealms.add(DNMapper.orgNameToRealmName(ssoRealm));
@@ -92,7 +92,7 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getAuthenticatedSchemes(SSOToken token)
-            throws SSOException {
+    throws SSOException {
         return (parseData(token.getProperty(ISAuthConstants.AUTH_TYPE), false));
     }
     
@@ -104,7 +104,7 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getAuthenticatedServices(SSOToken token)
-            throws SSOException {
+    throws SSOException {
         return (parseData(token.getProperty(ISAuthConstants.SERVICE), false));
     }
     
@@ -116,7 +116,7 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getAuthenticatedLevels(SSOToken token)
-            throws SSOException {
+    throws SSOException {
         return (parseData(token.getProperty(ISAuthConstants.AUTH_LEVEL),false));
     }
     
@@ -129,8 +129,9 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getRealmQualifiedAuthenticatedSchemes(SSOToken token)
-            throws SSOException {
-        return (parseRealmData(token.getProperty(ISAuthConstants.AUTH_TYPE)));
+    throws SSOException {
+        return (parseRealmData(token.getProperty(ISAuthConstants.AUTH_TYPE),
+            token.getProperty(ISAuthConstants.ORGANIZATION)));
     }
     
     /**
@@ -142,8 +143,9 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getRealmQualifiedAuthenticatedServices(SSOToken token)
-            throws SSOException {
-        return (parseRealmData(token.getProperty(ISAuthConstants.SERVICE)));
+    throws SSOException {
+        return (parseRealmData(token.getProperty(ISAuthConstants.SERVICE),
+            token.getProperty(ISAuthConstants.ORGANIZATION)));
     }
     
     /**
@@ -156,8 +158,9 @@ public class AMAuthUtils {
      * @throws SSOException if <code>token.getProperty()</code> fails.
      */
     public static Set getRealmQualifiedAuthenticatedLevels(SSOToken token)
-            throws SSOException {
-        return (parseRealmData(token.getProperty(ISAuthConstants.AUTH_LEVEL)));
+    throws SSOException {
+        return (parseRealmData(token.getProperty(ISAuthConstants.AUTH_LEVEL),
+            token.getProperty(ISAuthConstants.ORGANIZATION)));
     }
     
     /**
@@ -185,7 +188,7 @@ public class AMAuthUtils {
      * @return String representing realm name.
      */
     public static String getRealmFromRealmQualifiedData(
-        String realmQualifedData) {
+    String realmQualifedData) {
         String realm = null;
         if (realmQualifedData != null && realmQualifedData.length() != 0) {
             int index = realmQualifedData.indexOf(ISAuthConstants.COLON);
@@ -210,7 +213,7 @@ public class AMAuthUtils {
      * scheme or authentication level or service.
      */
     public static String getDataFromRealmQualifiedData(
-        String realmQualifedData) {
+    String realmQualifedData){
         String data = null;
         if (realmQualifedData != null && realmQualifedData.length() != 0) {
             int index = realmQualifedData.indexOf(ISAuthConstants.COLON);
@@ -275,17 +278,26 @@ public class AMAuthUtils {
      *
      * @param data Realm qualified data. This could be Realm
      * qualified authentication scheme or authentication level or service.
+     * @param orgDN SSOToken's org DN.
      * @return the set of all authenticated realm qualified Scheme names or
      * levels or Service names.
      */
-    private static Set parseRealmData(String data) {
+    private static Set parseRealmData(String data, String orgDN) {
         Set returnData = Collections.EMPTY_SET;
+        String realm = DNMapper.orgNameToRealmName(orgDN);
         if (data != null && data.length() != 0) {
             StringTokenizer stz = new StringTokenizer(data,
             ISAuthConstants.PIPE_SEPARATOR);
             returnData = new HashSet();
             while (stz.hasMoreTokens()) {
-                returnData.add((String)stz.nextToken());
+                String realmData = (String)stz.nextToken();
+                if (realmData != null && realmData.length() != 0) {
+                    int index = realmData.indexOf(ISAuthConstants.COLON);
+                    if (index == -1) {
+                        realmData = toRealmQualifiedAuthnData(realm, realmData);
+                   }
+                   returnData.add(realmData);
+                }
             }
         }
         if (utilDebug.messageEnabled()) {

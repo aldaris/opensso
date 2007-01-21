@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.5 2007-01-09 19:44:00 manish_rustagi Exp $
+ * $Id: AuthContext.java,v 1.6 2007-01-21 10:34:11 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.service.AuthException;
-import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -567,10 +566,11 @@ public class AuthContext extends Object implements java.io.Serializable {
         if (localFlag) {
             try {
                 if (ssoTokenID == null) {
-                    acLocal = AuthUtils.getAuthContext(organizationName);
+                    acLocal = com.sun.identity.authentication.service.AuthUtils.
+                        getAuthContext(organizationName);
                 } else {
-                    acLocal = AuthUtils.getAuthContext(
-                        organizationName, ssoTokenID);
+                    acLocal = com.sun.identity.authentication.service.AuthUtils.
+                        getAuthContext(organizationName, ssoTokenID);
                 }
                 acLocal.login(indexType, indexName, pCookie);
             } catch (AuthException e) {

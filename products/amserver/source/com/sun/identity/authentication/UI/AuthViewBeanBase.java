@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.4 2007-01-09 19:42:40 manish_rustagi Exp $
+ * $Id: AuthViewBeanBase.java,v 1.5 2007-01-21 10:34:13 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.ViewBeanBase;
 import com.iplanet.jato.view.html.StaticTextField;
-import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.Constants;
 import java.io.IOException;
@@ -43,6 +43,10 @@ import java.util.Set;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
+import java.net.MalformedURLException;
+import com.iplanet.services.util.Base64;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class is a default implementation of <code>ViewBean</code> auth UI.
@@ -81,8 +85,8 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     protected void setPageEncoding(HttpServletRequest request,
     HttpServletResponse response) {
         /** Set the codeset of the page **/
-        String client_type = au.getClientType(request);
-        String content_type = au.getContentType(client_type);
+        String client_type = acu.getClientType(request);
+        String content_type = acu.getContentType(client_type);
         
         accLocale = fallbackLocale;
         if (accLocale == null) {
@@ -91,7 +95,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             accLocale = localeContext.getLocale();
         }
         
-        String charset = au.getCharSet(client_type, accLocale);
+        String charset = acu.getCharSet(client_type, accLocale);
         response.setContentType(content_type+";charset="+charset);
         String jCharset = BrowserEncoding.mapHttp2JavaCharset(charset);
         if (loginDebug.messageEnabled()) {
@@ -132,7 +136,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             
             // Create Cookie
             try {
-                Cookie cookie = au.createCookie(hostUrlCookieName,
+                Cookie cookie = acu.createCookie(hostUrlCookieName,
                 hostUrlCookieValue, hostUrlCookieDomain);
                 response.addCookie(cookie);
             } catch (Exception e) {
@@ -147,7 +151,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
         if (isSessionHijackingEnabled) {
             // Create Cookie
             try {
-                Cookie cookie = au.createCookie(hostUrlCookieName,
+                Cookie cookie = acu.createCookie(hostUrlCookieName,
                 LOGOUTCOOKIEVAULE, hostUrlCookieDomain);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
@@ -155,6 +159,118 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
                 loginDebug.message("Cound not clear HostUrl Cookie!", e);
             }
         }
+    }
+
+    /** 
+     * Returns the validated and Base64 ecoded URL value.
+     * @param inputURL input URL string value 
+     * @param encoded value of "encoded" parameter to tell wheather 
+     * the inputURL is already encoded or not
+     * @param request HttpServletRequest object
+     * @return a String the validated and Base64 ecoded URL value
+     */
+    public String getValidatedInputURL(String inputURL, String encoded, 
+        HttpServletRequest request) {
+        String returnURL = "";
+        if ((inputURL != null) && (inputURL.length() != 0) && 
+            (!inputURL.equalsIgnoreCase("null"))){
+            if ((encoded == null) || (encoded.length() == 0) || 
+                (encoded.equals("false"))) {
+                returnURL = getEncodedInputURL(inputURL, request);
+            } else {
+                try {
+                    String msg = new String(Base64.decode(inputURL), "UTF-8");
+                    returnURL = inputURL;
+                } catch (RuntimeException rtex) {
+                    loginDebug.warning(
+                        "getValidatedInputURL:RuntimeException");                
+                } catch (UnsupportedEncodingException ueex) {
+                    loginDebug.warning("getValidatedInputURL:" + 
+                                       "UnsupportedEncodingException");                
+                }  
+            }
+        }
+
+        if (loginDebug.messageEnabled()) {
+            loginDebug.message("getValidatedInputURL:returnURL : " 
+                               + returnURL);
+        }
+        return returnURL;
+    }
+
+    /** 
+     * Returns the Base64 ecoded URL value.
+     * @param inputURL input URL string value
+     * @param request HttpServletRequest object
+     * @return a String the Base64 ecoded URL value
+     */
+    private String getEncodedInputURL(String inputURL, 
+        HttpServletRequest request) {
+        String returnURL = inputURL;
+        try {
+            URL url = new URL(inputURL);
+        } catch (MalformedURLException mfe) {
+            loginDebug.warning("Input URL is not standard www URL.");
+            String requestURL = request.getRequestURL().toString();
+            String requestURI = request.getRequestURI();
+            int index = requestURL.indexOf(requestURI);
+            String newURL = null;
+            if (index != -1) {
+                newURL = requestURL.substring(0, index) + inputURL;
+            } else {
+                index = requestURL.indexOf(serviceUri);
+                if (index != -1) {
+                    newURL = requestURL.substring(0, index) + inputURL;
+                }
+            }
+            try {
+                URL url = new URL(newURL);
+            } catch (MalformedURLException mfe1) {
+                loginDebug.warning("Relative URL is not standard www URL.");
+                returnURL = "";                
+            }
+        }
+        
+        if ((returnURL != null) && (returnURL.length() != 0)) {
+            try {            
+                returnURL = Base64.encode(returnURL.getBytes("UTF-8"));                        
+            } catch (UnsupportedEncodingException ueex) {
+                loginDebug.warning("getEncodedInputURL:" + 
+                    "UnsupportedEncodingException");
+                returnURL = "";
+            }
+        }
+        
+        if (loginDebug.messageEnabled()) {
+            loginDebug.message("getEncodedInputURL:returnURL : " + returnURL);
+        }
+        return returnURL;
+    }
+
+    /** 
+     * Returns the Base64 ecoded URL value.
+     * @param inputValue input string value
+     * @return a String the Base64 ecoded URL value
+     */
+    public String getEncodedInputValue(String inputValue) {
+        String returnValue = "";
+        
+        if ((inputValue != null) && (inputValue.length() != 0) && 
+            (!inputValue.equalsIgnoreCase("null"))) {        
+            try {                
+                returnValue = Base64.encode(inputValue.getBytes("UTF-8"));                            
+            } catch (UnsupportedEncodingException ueex) {
+                loginDebug.warning("getEncodedInputValue:" + 
+                               "UnsupportedEncodingException");            
+            }
+        }
+
+        if (loginDebug.messageEnabled()) {
+            loginDebug.message("getEncodedInputValue:returnValue : " 
+                + returnValue);
+        }
+
+        return returnValue;
     }
     
     /**
@@ -208,7 +324,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     /**
      * AuthUtils object.
      */
-    public static AuthUtils au = new AuthUtils();
+    public static AuthClientUtils acu = new AuthClientUtils();
     
     private static boolean isSessionHijackingEnabled =
     Boolean.valueOf(SystemProperties.get(

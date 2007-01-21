@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.9 2007-01-09 19:01:36 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.10 2007-01-21 10:34:24 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.spi.AuthenticationException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.admin.AdminInterfaceUtils;
@@ -211,7 +212,6 @@ public class LoginState {
     private SSOToken oldSSOToken = null;
     private boolean forceAuth;
     boolean sessionUpgrade = false;
-    int upgradeAuthLevel = 0;
     String loginURL = null;
     long pageTimeOut = 60;
     long lastCallbackSent = 0;
@@ -300,6 +300,7 @@ public class LoginState {
     String userAuthConfig = "";
     String orgAuthConfig = null;
     String orgAdminAuthConfig = null;
+    String roleAuthConfig = null;
     Set orgPostLoginClassSet = Collections.EMPTY_SET;
     Map serviceAttributesMap = new HashMap();
     String moduleErrorMessage = null;
@@ -326,6 +327,9 @@ public class LoginState {
     AMIdentityRepository amIdRepo = null;
     private static boolean messageEnabled;
     private static String serverURL = null;
+
+    int compositeAdviceType;
+    String qualifiedOrgDN = null;
     
     // Variable indicating a request "forward" after 
     // authentication success
@@ -1092,7 +1096,7 @@ public class LoginState {
                 try {
                     oldSSOToken = oldLoginState.getSSOToken();
                 } catch (SSOException ssoExp) {
-                    ad.debug.warning("LoginState.setSessionProperties : "
+                    debug.warning("LoginState.setSessionProperties : "
                         + "cannot get old SSO Token",ssoExp);
                 }
             }
@@ -1200,8 +1204,8 @@ public class LoginState {
         }
         
         try {
-            if ((isApplicationModule() && ad.isSpecialUser(userDN)) ||
-            isAgent(amIdentityUser)) {
+            if ((isApplicationModule(authMethName) && 
+                ad.isSpecialUser(userDN)) || isAgent(amIdentityUser)) {
                 debug.message(
                     "setSessionProperties for non-expiring session");
                 session.setClientID(token);
@@ -1259,12 +1263,15 @@ public class LoginState {
                     session.putProperty(ISAuthConstants.ROLE, indexName);
                 }
             }
-            if ((indexType == AuthContext.IndexType.SERVICE)
-            && (indexName != null)) {
-                if (!sessionUpgrade) {
-                    session.putProperty(ISAuthConstants.SERVICE, indexName);
+
+            if (!sessionUpgrade) {
+                String finalAuthConfig = getAuthConfigName(indexType, indexName);
+                if ((finalAuthConfig != null) && (
+                    finalAuthConfig.length() != 0)){
+                    session.putProperty(ISAuthConstants.SERVICE,
+                        finalAuthConfig);
                 }
-            }
+            }            
             
             // Set Attribute Map for Authentication module
             AuthenticationPrincipalDataRetriever principalDataRetriever =
@@ -1728,7 +1735,7 @@ public class LoginState {
             }
             // If the module is "Application" then do not create user profile
             
-            if (isApplicationModule()) {
+            if (isApplicationModule(authMethName)) {
                 debug.message("No profile created for Application module");
                 return false;
             }
@@ -2221,13 +2228,12 @@ public class LoginState {
         // retreive the tokens from the subject
         try {
             boolean gotUserProfile=true;
-            if (ignoreUserProfile || 
-                (isApplicationModule() && ad.isSpecialUser(userDN))) {
+            if (((ignoreUserProfile && !isApplicationModule(indexName))) || 
+                (isApplicationModule(indexName) && ad.isSuperAdmin(userDN))) {
                 if (ad.isSuperAdmin(userDN)) {
-                    amIdentityUser = ad.getIdentity(
-                        IdType.USER,userDN,getOrgDN());
+                    amIdentityUser = ad.getIdentity(IdType.USER,userDN,getOrgDN());
                 } else {
-                    amIdentityUser =
+                    amIdentityUser = 
                         new AMIdentity(null,userDN,IdType.USER,getOrgDN(),null);
                 }
                 userDN = getUserDN(amIdentityUser);
@@ -3248,7 +3254,12 @@ public class LoginState {
     void setGoToURL() {
         String arg = (String)requestHash.get("goto");
         if (arg != null && arg.length() != 0) {
-            gotoURL=arg;
+            String encoded = servletRequest.getParameter("encoded");
+            if (encoded != null && encoded.equals("true")) {
+                gotoURL = au.getBase64DecodedValue(arg);
+            } else {
+                gotoURL = arg;
+            }
         }
     }
     
@@ -3258,7 +3269,12 @@ public class LoginState {
     void setGoToOnFailURL() {
         String arg = (String)requestHash.get("gotoOnFail");
         if (arg != null && arg.length() != 0) {
-            gotoOnFailURL=arg;
+            String encoded = servletRequest.getParameter("encoded");
+            if (encoded != null && encoded.equals("true")) {
+                gotoOnFailURL = au.getBase64DecodedValue(arg);
+            } else {
+                gotoOnFailURL = arg;
+            }
         }
     }
 
@@ -3268,7 +3284,6 @@ public class LoginState {
      * @return success login URL.
      */
     public String getSuccessLoginURL() {
-        /* this method for UI, called from AuthUtils */
         String post_process_goto = null;
         if (session != null) {
            post_process_goto = session.getProperty(
@@ -3281,11 +3296,15 @@ public class LoginState {
         String currentGoto = (servletRequest == null)?
         null: servletRequest.getParameter("goto");
         if (messageEnabled) {
-            debug.message("currentGoto : " + currentGoto);
+            ad.debug.message("currentGoto : " + currentGoto);
         }
         String fqdnURL = null;
         if ((currentGoto != null) && (currentGoto.length() != 0) &&
         (!currentGoto.equalsIgnoreCase("null"))) {
+            String encoded = servletRequest.getParameter("encoded");
+            if (encoded != null && encoded.equals("true")) {
+                currentGoto = au.getBase64DecodedValue(currentGoto);
+            }
             fqdnURL = ad.processURL(currentGoto, servletRequest);
         } else if ((fqdnURL == null) || (fqdnURL.length() == 0))  {
             fqdnURL = ad.processURL(successLoginURL, servletRequest);
@@ -3293,9 +3312,11 @@ public class LoginState {
         
         String encodedSuccessURL = encodeURL(fqdnURL,servletResponse,true);
         if (messageEnabled) {
-            debug.message("get fqdnURL : " + fqdnURL);
-            debug.message("get successLoginURL : " + successLoginURL);
-            debug.message("get encodedSuccessURL : " + encodedSuccessURL);
+            ad.debug.message("get fqdnURL : " + fqdnURL);
+            ad.debug.message("get successLoginURL : " 
+                             + successLoginURL);
+            ad.debug.message("get encodedSuccessURL : " 
+                             + encodedSuccessURL);
         }
         return encodedSuccessURL;
     }
@@ -3361,14 +3382,15 @@ public class LoginState {
                 ISAuthConstants.AUTHSERVICE_REVISION7_0){
                     roleAttributeMap = amIdentityRole.getServiceAttributes(
                     ISAuthConstants.AUTHCONFIG_SERVICE_NAME);
-                }
-                else {
+                } else {
                     Map roleServiceAttrMap = amIdentityRole.
                     getServiceAttributes(
                     ISAuthConstants.AUTHCONFIG_SERVICE_NAME);
                     String serviceName =(String)((Set)roleServiceAttrMap.get(
                     AMAuthConfigUtils.ATTR_NAME)).iterator().next();
-                    if (!serviceName.equals(ISAuthConstants.BLANK)) {
+                    if ((serviceName != null) && 
+                        (!serviceName.equals(ISAuthConstants.BLANK))) {
+                        roleAuthConfig = serviceName;
                         roleAttributeMap = getServiceAttributes(serviceName);
                     }
                 }
@@ -4467,6 +4489,13 @@ public class LoginState {
     
     void sessionUpgrade() {
         // set the larger authlevel
+        LoginState oldLoginState = AuthUtils.getLoginState(oldAuthContext);
+        InternalSession oldSession = null;
+        
+        if (oldLoginState != null) {
+            oldSession = oldLoginState.getSession();
+        }
+        
         if (oldSession == null) {
             return;
         }
@@ -4474,9 +4503,11 @@ public class LoginState {
         upgradeAllProperties(oldSession);
         
         int prevAuthLevel = 0;
-        try {
-            prevAuthLevel = Integer.parseInt(
+        String upgradeAuthLevel = null;
+        String strPrevAuthLevel = AMAuthUtils.getDataFromRealmQualifiedData(
             (String)oldSession.getProperty("AuthLevel"));
+        try {
+            prevAuthLevel = Integer.parseInt(strPrevAuthLevel);
         } catch (NumberFormatException e) {
             debug.error("AuthLevel from session property bad format");
         }
@@ -4486,28 +4517,42 @@ public class LoginState {
         }
         
         if (prevAuthLevel > authLevel) {
-            upgradeAuthLevel = prevAuthLevel;
+            upgradeAuthLevel = new Integer(prevAuthLevel).toString();
         } else {
-            upgradeAuthLevel = authLevel;
+            upgradeAuthLevel = new Integer(authLevel).toString();
+        }
+        
+        if ((qualifiedOrgDN != null) && (qualifiedOrgDN.length() != 0)) {                
+            upgradeAuthLevel = AMAuthUtils.toRealmQualifiedAuthnData(
+                    DNMapper.orgNameToRealmName(qualifiedOrgDN), 
+                        upgradeAuthLevel);                
         }
         
         // update service name if indextype is service
-        
         String prevServiceName = oldSession.getProperty("Service");
         String upgradeServiceName = prevServiceName;
         String newServiceName = null;
-        if (indexType == AuthContext.IndexType.SERVICE) {
-            newServiceName = indexName;
+        newServiceName = getAuthConfigName(indexType, indexName);
+            
+        if ((newServiceName != null) && (newServiceName.length() != 0)) {
+            if ((qualifiedOrgDN != null) 
+                && (qualifiedOrgDN.length() != 0)) {                
+                newServiceName = AMAuthUtils.toRealmQualifiedAuthnData(
+                    DNMapper.orgNameToRealmName(qualifiedOrgDN), 
+                        newServiceName);                
+            }
             if (prevServiceName != null) {
                 upgradeServiceName = prevServiceName;
-                if ((indexName != null) &&
-                (prevServiceName.indexOf(indexName) == -1)) {
-                    upgradeServiceName = indexName + "|" + prevServiceName;
+                if ((newServiceName != null) &&
+                (prevServiceName.indexOf(newServiceName) == -1)) {
+                    upgradeServiceName = newServiceName + "|" + 
+                        prevServiceName;
                 }
             } else {
-                upgradeServiceName = indexName ;
+                upgradeServiceName = newServiceName ;
             }
         }
+        
         
         // update role if indexType is role
         
@@ -4529,8 +4574,12 @@ public class LoginState {
         
         String prevModuleList = oldSession.getProperty("AuthType");
         String newModuleList =  authMethName;
+        if ((qualifiedOrgDN != null) && (qualifiedOrgDN.length() != 0)) {
+            newModuleList = getRealmQualifiedModulesList(
+                DNMapper.orgNameToRealmName(qualifiedOrgDN), authMethName);            
+        }
         if (messageEnabled) {
-            debug.message("authMethName (newModuleList) : " + authMethName);
+            debug.message("newModuleList : " + newModuleList);
             debug.message("prevModuleList : " + prevModuleList);
         }
         String upgradeModuleList = null;
@@ -4546,11 +4595,9 @@ public class LoginState {
             debug.message("oldAuthLevel : " + prevAuthLevel);
             debug.message("newAuthLevel : " + authLevel);
             debug.message("upgradeAuthLevel : " + upgradeAuthLevel);
-            debug.message("prevServiceName : " + prevServiceName);
-            debug.message("newServiceName : " + newServiceName);
+            debug.message("prevServiceName : " + prevServiceName);            
             debug.message("upgradeServiceName : " + upgradeServiceName);
             debug.message("preRoleName : " + prevRoleName);
-            debug.message("newRoleName : " + upgradeRoleName);
             debug.message("upgradeRoleName : " + upgradeRoleName);
             debug.message("prevModuleList: " + prevModuleList);
             debug.message("newModuleList: " + newModuleList);
@@ -4558,8 +4605,7 @@ public class LoginState {
         }
         
         
-        updateSessionProperty(
-            "AuthLevel",new Integer(upgradeAuthLevel).toString());
+        updateSessionProperty("AuthLevel",upgradeAuthLevel);
         updateSessionProperty("AuthType",upgradeModuleList);
         updateSessionProperty("Service",upgradeServiceName);
         updateSessionProperty("Role",upgradeRoleName);
@@ -4577,6 +4623,37 @@ public class LoginState {
         } else {
             oldSession.putProperty(property,value);
         }
+    }
+
+    /* Get realm qualified modules list */
+    String getRealmQualifiedModulesList(String realm,String oldModulesList) {
+        if (messageEnabled) {
+            debug.message("getRealmQualifiedModulesList:realm : " 
+                + realm);
+            debug.message("getRealmQualifiedModulesList:oldModulesList : " 
+                + oldModulesList);
+        }
+        
+        StringBuffer sb = new StringBuffer();          
+        StringTokenizer st = new StringTokenizer(oldModulesList,"|");
+        while (st.hasMoreTokens()) {
+            String module = (String)st.nextToken();
+            sb.append(AMAuthUtils.toRealmQualifiedAuthnData(realm,module))
+            .append("|");           
+        }
+        
+        String realmQualifiedModulesList = sb.toString();
+        int i = realmQualifiedModulesList.lastIndexOf("|");
+        if (i != -1) {
+            realmQualifiedModulesList = 
+                realmQualifiedModulesList.substring(0,i);
+        }
+        
+        if (messageEnabled) {
+            debug.message("RealmQualifiedModulesList is : " 
+                + realmQualifiedModulesList);
+        }
+        return realmQualifiedModulesList;
     }
     
     /* compare old session property and new session property */
@@ -5225,16 +5302,18 @@ public class LoginState {
     }
     
     /**
-     * Returns <code>true</code> if module is Application.
-     *
-     * @return <code>true</code> if module is Application.
+     * Checks if module is Application.
+     * @param moduleName is the module name to be compared with 
+     * Application module name.
+     * @return true if module is Application else false.
      */
-    private boolean isApplicationModule() {
-        boolean isApp = (authMethName != null) &&
-            (authMethName.equalsIgnoreCase(ISAuthConstants.APPLICATION_MODULE));
+    private boolean isApplicationModule(String moduleName) {
+        boolean isApp = (moduleName != null) &&
+        (moduleName.equalsIgnoreCase(
+        ISAuthConstants.APPLICATION_MODULE));
         
-        if (messageEnabled) {
-            debug.message("is Application Module : " + isApp);
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("is Application Module : " + isApp);
         }
         return isApp;
     }
@@ -5652,15 +5731,15 @@ public class LoginState {
             pattern="*";
             avPairs= toAvPairMap(aliasAttrNames, userTokenID);
             if (messageEnabled) {
-                ad.debug.message("Search for Filter (avPairs) :" + avPairs);
-                ad.debug.message("userTokenID : " + userTokenID);
-                ad.debug.message("userDN : " + userDN);
-                ad.debug.message("idType :" + idType);
-                ad.debug.message("pattern :" + pattern);                
-                ad.debug.message("isRecursive :" + isRecursive);
-                ad.debug.message("maxResults :" + maxResults);
-                ad.debug.message("maxTime :" + maxTime);
-                ad.debug.message("returnSet :" + returnSet);
+                debug.message("Search for Filter (avPairs) :" + avPairs);
+                debug.message("userTokenID : " + userTokenID);
+                debug.message("userDN : " + userDN);
+                debug.message("idType :" + idType);
+                debug.message("pattern :" + pattern);                
+                debug.message("isRecursive :" + isRecursive);
+                debug.message("maxResults :" + maxResults);
+                debug.message("maxTime :" + maxTime);
+                debug.message("returnSet :" + returnSet);
             }
             Set resultAlias = Collections.EMPTY_SET;
             try {
@@ -5674,7 +5753,7 @@ public class LoginState {
                     (!userDN.equalsIgnoreCase(userTokenID))) {
                     avPairs= toAvPairMap(aliasAttrNames, userDN);
                     if (messageEnabled) {
-                        ad.debug.message("Search for Filter (avPairs) " + 
+                        debug.message("Search for Filter (avPairs) " + 
                         "with userDN : " + avPairs);
                     }
                     idsc.setMaxResults(maxResults);
@@ -5757,5 +5836,83 @@ public class LoginState {
             debug.message("getUserUniversalId:universalId : " + universalId);
         }
         return universalId;
+    }
+
+    /**
+     * Sets the type of authentication to be used after Composite Advices.
+     *
+     * @param type Type of authentication.
+     *
+     */
+    public void setCompositeAdviceType(int type) {
+        this.compositeAdviceType = type;
+    }
+    
+    /**
+     * Returns the type of authentication to be used after Composite Advices.
+     * 
+     * @return an integer type indicating the type of authentication required.
+     *
+     */
+    public int getCompositeAdviceType() {
+        return compositeAdviceType;
+    }
+    
+    /**
+     * Sets the qualified OrgDN for Policy conditions 
+     * to be used after Composite Advices.
+     *
+     * @param qualifiedOrgDN qualifiedOrgDN for Policy conditions.
+     *
+     */
+    public void setQualifiedOrgDN(String qualifiedOrgDN) {
+        this.qualifiedOrgDN = qualifiedOrgDN;
+    }
+    
+    /**
+     * Returns the Authentication configuration / Authentication 
+     * chain name used for current authentication process.
+     * 
+     * @param indexType AuthContext.IndexType
+     * @param indexName Index Name for AuthContext.IndexType  
+     *
+     */
+    String getAuthConfigName(AuthContext.IndexType indexType,
+    String indexName) {                
+        String finalAuthConfigName = null;        
+        if (indexType == AuthContext.IndexType.ROLE) {      
+            finalAuthConfigName = roleAuthConfig;
+        } else if (indexType == AuthContext.IndexType.SERVICE) {
+            if (indexName.equals(ISAuthConstants.CONSOLE_SERVICE)) {
+                if (AuthD.revisionNumber >= ISAuthConstants.
+                AUTHSERVICE_REVISION7_0) {
+                    if ((orgAdminAuthConfig != null) && 
+                    (!orgAdminAuthConfig.equals(ISAuthConstants.BLANK))) {
+                        finalAuthConfigName = orgAdminAuthConfig;
+                    }
+                }
+            } else {
+                finalAuthConfigName = indexName;
+            }
+        } else if ((indexType == AuthContext.IndexType.USER) && 
+          (AuthD.revisionNumber >= ISAuthConstants.AUTHSERVICE_REVISION7_0)) {
+            if (((userAuthConfig != null) && (!userAuthConfig.equals(
+            ISAuthConstants.BLANK)))){
+                 finalAuthConfigName = userAuthConfig;
+            }
+        } else if ((AuthD.revisionNumber >= ISAuthConstants.
+          AUTHSERVICE_REVISION7_0) && (indexType == null)) {
+            if ((orgAuthConfig != null) && (!orgAuthConfig.
+            equals(ISAuthConstants.BLANK)))  {
+                finalAuthConfigName = orgAuthConfig;
+            }
+        }
+
+        if (messageEnabled){
+            debug.message("getAuthConfigName:finalAuthConfigName = " 
+                + finalAuthConfigName);
+        }
+
+        return finalAuthConfigName;
     }
 }

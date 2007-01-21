@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.4 2007-01-09 19:04:23 manish_rustagi Exp $
+ * $Id: AuthContextLocal.java,v 1.5 2007-01-21 10:34:20 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,7 +148,11 @@ public final class AuthContextLocal extends Object
      * character array for password
      */
     protected char[] password;
+    
     private LoginState loginState = null;
+
+    private String orgDN = null;
+    
     /**
      * Holds information about submittion of requirements
      */
@@ -833,6 +837,22 @@ public final class AuthContextLocal extends Object
      */
     public LoginState getLoginState() {
         return loginState;
+    }
+
+    /**
+     * Sets the Organization DN
+     * @param orgDN Organization DN
+     */
+    public void setOrgDN(String orgDN) {
+        this.orgDN = orgDN;
+    }
+
+    /**
+     * Returns the Organization DN
+     * @return the Organization DN 
+     */
+    public String getOrgDN() {
+        return orgDN;
     }
 
     /**

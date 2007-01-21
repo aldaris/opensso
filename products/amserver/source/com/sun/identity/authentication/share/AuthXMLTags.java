@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.2 2007-01-09 18:58:33 manish_rustagi Exp $
+ * $Id: AuthXMLTags.java,v 1.3 2007-01-21 10:34:25 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,6 +112,13 @@ public interface AuthXMLTags {
     public static final String HTTP_HEADER = "HttpHeader";
     public static final String HTTP_NEGO = "Negotiation";
     public static final String HTTP_CODE = "HttpErrorCode";
+
+    public static final String REDIRECT_CALLBACK = "RedirectCallback";
+    public static final String REDIRECT_URL = "RedirectUrl";
+    public static final String REDIRECT_DATA = "RedirectData";
+    public static final String REDIRECT_STATUS_PARAM = "RedirectStatusParam";
+    public static final String REDIRECT_BACK_URL_COOKIE = "RedirectBackUrlCookie";
+    public static final String REDIRECT_METHOD = "method";
     
     /**
      * Predefined xml tags and statements.

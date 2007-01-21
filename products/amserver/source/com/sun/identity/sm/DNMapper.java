@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.8 2006-12-19 00:40:48 goodearth Exp $
+ * $Id: DNMapper.java,v 1.9 2007-01-21 10:34:29 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -245,7 +245,8 @@ public class DNMapper {
      * @return DN format "/" separated realm name of organization name.
      */
     public static String orgNameToRealmName(String orgName) {
-        String answer = "/";
+	StringBuffer answer = new StringBuffer(100);
+            answer.append("/");
         if (orgName != null && orgName.length() != 0
                 && !orgName.equalsIgnoreCase(SMSEntry.baseDN)
                 && !orgName.equalsIgnoreCase(serviceDN) && DN.isDN(orgName)) {
@@ -263,11 +264,11 @@ public class DNMapper {
             } else if (orgdnlc.endsWith(SMSEntry.baseDN)) {
                 returnSet = SMSEntry.parseResult(resultSet, serviceDN, true);
             }
-            if (returnSet != null && !returnSet.isEmpty()) {
-                answer = (String) returnSet.iterator().next();
-            }
-        }
-        return (answer);
+	    if (returnSet != null && !returnSet.isEmpty()) {
+		answer.append(returnSet.iterator().next().toString());
+	    }
+	}
+	return (answer.toString());
     }
 
     /*

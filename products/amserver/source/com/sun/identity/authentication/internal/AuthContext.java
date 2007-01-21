@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.7 2007-01-18 23:43:19 arviranga Exp $
+ * $Id: AuthContext.java,v 1.8 2007-01-21 10:34:18 mrudul_uchil Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -237,8 +237,7 @@ public final class AuthContext extends Object {
                     .getString("com.iplanet.auth.invalid-password")));
 
         AuthSubject subject = new AuthSubject();
-        subject.getPrincipals().add(principal);
-
+        
         if (orgName != null)
             organizationName = orgName;
         reset(subject);
