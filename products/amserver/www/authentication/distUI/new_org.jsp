@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: new_org.jsp,v 1.2 2006-01-30 20:58:51 veiming Exp $
+   $Id: new_org.jsp,v 1.3 2007-01-21 10:26:48 mrudul_uchil Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -41,6 +41,23 @@
 
 <% 
 String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI);
+String encoded = "false";
+String orgValue = request.getParameter("realm");
+if ((orgValue == null) || (orgValue.length() == 0)) {
+    orgValue = request.getParameter("org");
+}
+if ((orgValue == null) || (orgValue.length() == 0)) {
+    orgValue = request.getParameter("domain");
+}
+orgValue = (String) viewBean.getEncodedInputValue(orgValue);
+String moduleValue = (String) viewBean.getEncodedInputValue(request.getParameter("module"));
+String gotoURL = (String) viewBean.getValidatedInputURL(
+    request.getParameter("goto"), request.getParameter("encoded"), request);
+if (((orgValue != null) && (orgValue.length() != 0)) ||
+    ((moduleValue != null) && (moduleValue.length() != 0)) ||
+    ((gotoURL != null) && (gotoURL.length() != 0))) {
+    encoded = "true";
+}
 %>
 
 <link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
@@ -180,7 +197,11 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
       <td>&nbsp;</td>
     </tr>
   </table>
-<input type="hidden" name="org" value="<%= request.getParameter("org") %>">
+<input type="hidden" name="org" value="<%= orgValue %>">
+<input type="hidden" name="module" value="<%= moduleValue %>">
+<input type="hidden" name="goto" value="<%= gotoURL %>">
+<input type="hidden" name="encoded" value="<%= encoded %>">
+<input type="hidden" name="new_org" value="true">
 </auth:form>
 </body>
 

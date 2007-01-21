@@ -234,7 +234,7 @@ com/sun/identity/authentication/spi/DSAMECallbackInterface.class
 com/sun/identity/authentication/spi/InvalidPasswordException.class
 com/sun/identity/authentication/share/AuthXMLTags.class
 com/sun/identity/authentication/share/AuthXMLUtils.class
-com/sun/identity/authentication/service/AuthUtils.class
+com/sun/identity/authentication/client/AuthClientUtils.class
 com/sun/identity/authentication/service/AuthException.class
 com/sun/identity/authentication/service/SSOTokenPrincipal.class
 com/sun/identity/authentication/service/ConfiguredAuthServices.class

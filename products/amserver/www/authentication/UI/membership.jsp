@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: membership.jsp,v 1.3 2007-01-09 18:50:20 manish_rustagi Exp $
+   $Id: membership.jsp,v 1.4 2007-01-21 10:26:45 mrudul_uchil Exp $
                                                                                 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -41,6 +41,12 @@
 
 <% 
 String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI);
+String encoded = "false";
+String gotoURL = (String) viewBean.getValidatedInputURL(
+    request.getParameter("goto"), request.getParameter("encoded"), request);
+if ((gotoURL != null) && (gotoURL.length() != 0)) {
+    encoded = "true";
+}
 %>
 
 <link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
@@ -363,7 +369,8 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
     document.write("<input name=\"IDButton"  + "\" type=\"hidden\">");        
     }
 </script>
-<input type="hidden" name="goto" value="<%= request.getParameter("goto") %>">
+<input type="hidden" name="goto" value="<%= gotoURL %>">
+<input type="hidden" name="encoded" value="<%= encoded %>">
 </auth:form>
 </jato:content>
 
