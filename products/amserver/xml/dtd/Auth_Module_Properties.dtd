@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Auth_Module_Properties.dtd,v 1.1 2006-08-29 07:52:09 veiming Exp $
+    $Id: Auth_Module_Properties.dtd,v 1.2 2007-01-21 10:25:47 mrudul_uchil Exp $
 
     Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,7 +58,7 @@
     authentication process (in case it is 'true'). -->
 <!ELEMENT       Callbacks       ( NameCallback | PasswordCallback | 
                                 ChoiceCallback | ConfirmationCallback |
-                                HttpCallback )* >
+				                HttpCallback | RedirectCallback )* >
 <!ATTLIST       Callbacks
         length          NMTOKEN                 #REQUIRED
         order           NMTOKEN                 #REQUIRED
@@ -123,6 +123,32 @@
      protocol based handshaking negotiation. -->
 <!ELEMENT        HttpCallback        (HttpHeader, Negotiation, HttpErrorCode)>
 
+
+<!-- RedirectCallback element is used by the authentication module when 
+     redirect to a particulat URL is required with specific redirect data. -->
+<!ELEMENT	RedirectCallback	( RedirectUrl | RedirectData* | 
+                                          RedirectStatusParam | 
+                                          RedirectBackUrlCookie ) >
+<!ATTLIST       RedirectCallback
+        method      ( get | post )        "get"
+>
+
+<!-- RedirectUrl element is used in RedirectCallback. -->
+<!ELEMENT	RedirectUrl	( #PCDATA ) >
+
+<!-- RedirectStatusParam element is used in RedirectCallback. -->
+<!ELEMENT	RedirectStatusParam	( #PCDATA ) >
+
+<!-- RedirectBackUrlCookie element is used in RedirectCallback. -->
+<!ELEMENT	RedirectBackUrlCookie	( #PCDATA ) >
+
+<!-- RedirectData element is used in RedirectCallback as 
+     Name / Value pair data. -->
+<!ELEMENT	RedirectData	( Name, Value ) >
+
+<!-- Name element will be used by the RedirectCallback to send name/value pair
+     as part of the RedirectData element. -->
+<!ELEMENT       Name           ( #PCDATA ) > 
 
 <!-- Prompt element will be used by the module to request the
     client to display the prompt. -->
