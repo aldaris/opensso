@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSignatureProvider.java,v 1.1 2006-10-30 23:14:39 qcheng Exp $
+ * $Id: FSSignatureProvider.java,v 1.2 2007-01-22 23:19:16 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.federation.common.*;
 public class FSSignatureProvider implements SignatureProviderSPI {
 
     private KeyProvider keystore = null;
+    private static String rsaProviderName = null;
 
     /**
      * Default Constructor.
@@ -139,7 +140,7 @@ public class FSSignatureProvider implements SignatureProviderSPI {
             }
             Signature sig = Signature.getInstance(algorithm);
             if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA)) {
-                sig = Signature.getInstance(algorithm, "SunRsaSign");
+                sig = getSignatureWithRSA();
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSSignatureProvider.signBuffer: "
                         + sig.getProvider().getName());
@@ -167,7 +168,31 @@ public class FSSignatureProvider implements SignatureProviderSPI {
         }
     }
 
-                
+    private Signature getSignatureWithRSA()
+        throws NoSuchAlgorithmException, NoSuchProviderException 
+    {
+        Signature sig = null;
+        if (rsaProviderName == null) {
+            Provider[] ps = Security.getProviders();
+            for (int i=0; i<ps.length; i++) {
+                try {
+                    sig = Signature.getInstance(
+                        IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA, ps[i]);
+                    rsaProviderName = ps[i].getName();
+                    break;
+                } catch (NoSuchAlgorithmException nsa) {
+                }
+            }
+        } else {
+            sig = Signature.getInstance(
+                IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA, rsaProviderName);
+        }
+        if (sig == null) {
+            throw new NoSuchProviderException();
+        }
+        return sig;
+    }
+
     /**
      * Verifies the signature of a signed string.
      * @param data string whose signature to be verified 
@@ -216,7 +241,7 @@ public class FSSignatureProvider implements SignatureProviderSPI {
             }
             Signature sig = Signature.getInstance(algorithm);    
             if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA)) {
-                sig = Signature.getInstance(algorithm, "SunRsaSign");
+                sig = getSignatureWithRSA();
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSSignatureProvider.verifySignature:"
                         + sig.getProvider().getName());
