@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2006-11-01 19:57:05 qcheng Exp $
+   $Id: configure.jsp,v 1.3 2007-01-22 23:20:45 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -180,7 +180,7 @@
 
 
                     // [START] Create Circle of Trust
-                    Set<String> providers = new HashSet<String>();
+                    Set providers = new HashSet();
                     providers.add(hostedIDPEntityID);
                     providers.add(remoteSPEntityID);
                     CircleOfTrustManager cotManager = 
