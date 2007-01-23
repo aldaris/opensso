@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.4 2006-12-15 01:10:48 goodearth Exp $
+   $Id: idRepoService.xml,v 1.5 2007-01-23 23:04:06 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2205,6 +2205,34 @@
                         i18nKey="a3020">
                         <DefaultValues>
                             <Value>@CONFIG_DIR@/idRepo/flatfiles</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunFilesMonitorForChanges"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a3022">
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunFilesMonitoringTime"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a3024">
+                        <DefaultValues>
+                            <Value>1</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunFilesObjectClasses"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a3026">
+                        <DefaultValues>
+                            <Value>inetorgperson</Value>
+                            <Value>inetuser</Value>
+                            <Value>organizationalperson</Value>
+                            <Value>person</Value>
+                            <Value>top</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesPasswordAttr"
