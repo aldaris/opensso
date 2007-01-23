@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.12 2006-10-27 17:18:10 veiming Exp $
+ * $Id: FilesRepo.java,v 1.13 2007-01-23 23:03:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,26 +67,29 @@ import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SchemaType;
 
-/*******************************************************************************
- * FilesRepo stores identity information in flat files using java.io.File
- * classes. The directory structure is organized as follows: The root directory
- * is specified by the system property "com.sun.identity.idm.files.rootDir".
+/**
+ * This class stores identity information in flat files using
+ * <code>java.io.File</code> classes. The directory structure is organized as
+ * follows: The root directory is specified by the instance configuration
+ * parameter <code>"sunFilesIdRepoDirectory"</code>. If not specified, it
+ * defaults to <code>"/var/opt/SUNWam/idm/flatfiles"</code>.
  * Under the root directory are sub-directories for each identity type (i.e.,
- * users, roles, agenets, etc). In these sub-directories an identity is stored
+ * users, roles, agents, etc). In these sub-directories an identity is stored
  * as a propertries file.
- ******************************************************************************/
-
+ */
 public class FilesRepo extends IdRepo {
     // Class name
     public static final String NAME = 
         "com.sun.identity.idm.plugins.files.FilesRepo";
 
-    // Debug
     public static final Debug debug = Debug.getInstance("amIdRepoFiles");
 
     // SMS Configurations
     // Root directory
     public static final String DIRECTORY = "sunFilesIdRepoDirectory";
+
+    // User object classes
+    public static final String OBJECTCLASS = "sunFilesObjectClasses";
 
     // Password attribute
     public static final String PASSWORD = "sunFilesPasswordAttr";
@@ -100,14 +103,28 @@ public class FilesRepo extends IdRepo {
     // Attributes to be encrypted
     public static final String ENCRYPT = "sunFilesEncryptAttrs";
 
+    // Attribute to enable cache update
+    public static final String UPDATE_CACHE = "sunFilesMonitorForChanges";
+
+    // Attribute to define cache update time
+    public static final String UPDATE_CACHE_TIME = "sunFilesMonitoringTime";
+
     // Objectclass attribute
     public static final String OC = "objectclass";
 
     // Supported operations
-    private static Map supportedOps = new HashMap();
+    private static Map supportedOps = new CaseInsensitiveHashMap();
 
     // Cache of Identity objects
-    private static Map identityCache = new HashMap();
+    private static Map identityCache = new CaseInsensitiveHashMap();
+
+    // Cache of time last modified identity objects
+    private Map identityTimeCache = new HashMap();
+
+    // Flag to run a daemon thread to validate the cache
+    boolean cacheUpdateEnabled;
+    int updateCacheInterval;
+
 
     // Default directory to store identity data
     private String directory = "/var/opt/SUNWam/idm/flatfiles";
@@ -119,6 +136,9 @@ public class FilesRepo extends IdRepo {
     private String statusAttribute = "inetUserStatus";
     private String statusActive = "Active";
     private String statusInactive = "Inactive";
+
+    // User objectclasses attribute
+    Set userOCs;
 
     // Role membership attribute
     private String roleMembershipAttribute = "nsRoleDN";
@@ -168,9 +188,16 @@ public class FilesRepo extends IdRepo {
 
         // Get password attribute
         set = (Set) configParams.get(PASSWORD);
-        if (set != null && !set.isEmpty()) {
-            passwordAttribute = (String) set.iterator().next();
+        if ((set != null) && !set.isEmpty()) {
+            passwordAttribute = (String)set.iterator().next();
         }
+
+        // Get objectclass attribute
+        userOCs = (Set) configParams.get(OBJECTCLASS);
+        if (userOCs == null) {
+            userOCs = Collections.EMPTY_SET;
+        }
+
         // Get status attribute
         set = (Set) configParams.get(STATUS);
         if (set != null && !set.isEmpty()) {
@@ -187,12 +214,36 @@ public class FilesRepo extends IdRepo {
             encryptAttributes.addAll(set);
         }
 
+        // Flag to update cache
+        set = (Set) configParams.get(UPDATE_CACHE);
+        if ((set != null) && !set.isEmpty()) {
+            String value = (String) set.iterator().next();
+            if (value.equalsIgnoreCase("true")) {
+                cacheUpdateEnabled = true;
+                set = (Set) configParams.get(UPDATE_CACHE_TIME);
+                if ((set != null) && !set.isEmpty()) {
+                    value = (String) set.iterator().next();
+                    try {
+                        updateCacheInterval = Integer.parseInt(
+                            value);
+                     } catch (NumberFormatException nfe) {
+                        // Default to 10 minutes
+                        updateCacheInterval = 10;
+                     }
+                }
+                (new CacheUpdateThread(this)).start();
+            }
+        }
+
         if (debug.messageEnabled()) {
-            debug.message("FlatFiles: Root dir: " + directory
-                    + "\n\tPassword Attr: " + passwordAttribute
-                    + "\n\tStatus Attr: " + statusAttribute
-                    + "\n\tAttrs Hashed: " + hashAttributes
-                    + "\n\tAttrs Encyrpted: " + encryptAttributes);
+            debug.message("FlatFiles: Root dir: " + directory +
+                "\n\tUser Objectclasses: " + userOCs +
+                "\n\tPassword Attr: " + passwordAttribute +
+                "\n\tStatus Attr: " + statusAttribute +
+                "\n\tAttrs Hashed: " + hashAttributes +
+                "\n\tAttrs Encyrpted: " + encryptAttributes +
+                "\n\tUpdate Cache: " + cacheUpdateEnabled +
+                "\n\tUpdate Interval: " + updateCacheInterval);
         }
     }
 
@@ -270,9 +321,19 @@ public class FilesRepo extends IdRepo {
             // Check if identity exists
             File file = constructFile(directory, type, name);
             if (!file.exists()) {
+                // If type is user, add the configured object classes
+                CaseInsensitiveHashMap nAttrs =
+                    new CaseInsensitiveHashMap(attrMap);
+                Set ocs = (Set) nAttrs.get(OC);
+                if (ocs == null) {
+                    nAttrs.put(OC, userOCs);
+                } else {
+                    CaseInsensitiveHashSet ocv =new CaseInsensitiveHashSet(ocs);
+                    ocv.addAll(userOCs);
+                }
                 // Create the identity
-                attrMap = processAttributes(attrMap, hashAttributes,
-                        encryptAttributes);
+                attrMap = processAttributes(nAttrs, hashAttributes,
+                    encryptAttributes);
                 writeFile(file, attrMap);
                 // %%% Send notification (must be via a different thread)
                 if (repoListener != null) {
@@ -282,14 +343,14 @@ public class FilesRepo extends IdRepo {
             } else {
                 // throw exception
                 String args[] = { file.getAbsolutePath() };
-                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "310",
-                        args));
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "310",
+                    args);
             }
         } else {
             Object args[] = { NAME, IdOperation.SERVICE.getName(),
-                    type.getName() };
+                type.getName() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args);
+                "305", args);
         }
         return (name);
     }
@@ -303,7 +364,7 @@ public class FilesRepo extends IdRepo {
     public void delete(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error("FilesRepo.delete: throwing initialization exception");
             throw (initializationException);
         }
         File file = constructFile(directory, type, name);
@@ -320,11 +381,12 @@ public class FilesRepo extends IdRepo {
     public Set getAssignedServices(SSOToken token, IdType type, String name,
             Map mapOfServicesAndOCs) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: GetAssignedService called: " + name
-                    + "\n\tmapOfServicesAndOCs=" + mapOfServicesAndOCs);
+            debug.message("FilesRepo.getAssignedService called: " + name
+                + "\n\tmapOfServicesAndOCs=" + mapOfServicesAndOCs);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+            "FilesRepo.getAssignedServices: throwing initialization exception");
             throw (initializationException);
         }
 
@@ -360,11 +422,12 @@ public class FilesRepo extends IdRepo {
     public Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: getAttributes called: " + name
+            debug.message("FilesRepo.getAttributes called: " + name
                     + "\n\treturn attributes=" + attrNames);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+                "FilesRepo.getAttributes: throwing initialization exception");
             throw (initializationException);
         }
 
@@ -441,9 +504,13 @@ public class FilesRepo extends IdRepo {
      *      com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
      *      java.lang.String, java.util.Map, boolean)
      */
-    public void setBinaryAttributes(SSOToken token, IdType type, String name,
-            Map attributes, boolean isAdd) throws IdRepoException, SSOException 
-    {
+    public void setBinaryAttributes(
+        SSOToken token,
+        IdType type,
+        String name,
+        Map attributes,
+        boolean isAdd
+    ) throws IdRepoException, SSOException {
         if (attributes == null) {
             return;
         }
@@ -474,23 +541,26 @@ public class FilesRepo extends IdRepo {
      *      com.sun.identity.idm.IdType, java.lang.String,
      *      com.sun.identity.idm.IdType)
      */
-    public Set getMembers(SSOToken token, IdType type, String name,
-            IdType membersType) throws IdRepoException, SSOException {
+    public Set getMembers(
+        SSOToken token,
+        IdType type,
+        String name,
+        IdType membersType
+    ) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: getMembers called" + type + ": " + name
-                    + ": " + membersType);
+            debug.message("FilesRepo.getMembers called" + type + ": " + name +
+                ": " + membersType);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+                "FilesRepo.getMembers: throwing initialization exception");
             throw (initializationException);
         }
 
         // Memers can be returned for roles and groups
         if (!type.equals(IdType.ROLE) && !type.equals(IdType.GROUP)) {
-            if (debug.messageEnabled()) {
-                debug.message("FilesRepo:getMembers supported for "
-                        + "roles and groups");
-            }
+            debug.message(
+                "FilesRepo.getMembers supported for roles and groups");
             throw new IdRepoException(IdRepoBundle.getString("203"), "203");
         }
 
@@ -523,12 +593,12 @@ public class FilesRepo extends IdRepo {
             RepoSearchResults allUsers = search(token, membersType, "*", 0, 0,
                     returnAttrs, false, IdRepo.OR_MOD, null, false);
             Map userAttributes = null;
-            if (allUsers != null
-                    && (userAttributes = allUsers.getResultAttributes()) != 
-                        null) {
-                for (Iterator items = userAttributes.keySet().iterator(); items
-                        .hasNext();) {
-                    String sname = (String) items.next();
+            if ((allUsers != null) &&
+                ((userAttributes = allUsers.getResultAttributes()) != null)
+            ) {
+                for (Iterator i = userAttributes.keySet().iterator();
+                    i.hasNext(); ) {
+                    String sname = (String)i.next();
                     Map attrs = (Map) userAttributes.get(sname);
                     // Check if user belongs to the role
                     Set roles = (Set) attrs.get(roleMembershipAttribute);
@@ -539,10 +609,9 @@ public class FilesRepo extends IdRepo {
             }
         } else {
             // throw unsupported operation exception
-            Object args[] = { NAME, IdOperation.READ.getName(), type.getName() 
-                    };
+            Object args[] = {NAME, IdOperation.READ.getName(), type.getName()};
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args);
+                "305", args);
         }
         return (results);
     }
@@ -557,20 +626,19 @@ public class FilesRepo extends IdRepo {
     public Set getMemberships(SSOToken token, IdType type, String name,
             IdType membershipType) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: getMemberships called" + type + ": "
-                    + name + ": " + membershipType);
+            debug.message("FilesRepo.getMemberships called " + type + ": " +
+                name + ": " + membershipType);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+                "FilesRepo.getMemeberships: throwing initialization exception");
             throw (initializationException);
         }
 
         // Memerships can be returned for users and agents
         if (!type.equals(IdType.USER) && !type.equals(IdType.AGENT)) {
-            if (debug.messageEnabled()) {
-                debug.message("FilesRepo:getMemberships supported for "
-                        + "users and agents");
-            }
+            debug.message(
+                "FilesRepo:getMemberships supported for users and agents");
             Object args[] = { NAME };
             throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args));
         }
@@ -595,13 +663,13 @@ public class FilesRepo extends IdRepo {
             RepoSearchResults allGroups = search(token, membershipType, "*", 0,
                     0, returnAttrs, false, IdRepo.OR_MOD, null, false);
             Map groupAttrs = null;
-            if (allGroups != null
-                    && (groupAttrs = allGroups.getResultAttributes()) != null) {
+            if ((allGroups != null) &&
+                ((groupAttrs = allGroups.getResultAttributes()) != null)
+            ) {
                 // Prefix name with IdType
                 name = type.getName() + name;
-                for (Iterator items = groupAttrs.keySet().iterator(); items
-                        .hasNext();) {
-                    String sname = (String) items.next();
+                for (Iterator i = groupAttrs.keySet().iterator(); i.hasNext();){
+                    String sname = (String)i.next();
                     Map attrs = (Map) groupAttrs.get(sname);
                     Set ids = (Set) attrs.get(groupMembersAttribute);
                     if (ids != null && ids.contains(name)) {
@@ -612,9 +680,9 @@ public class FilesRepo extends IdRepo {
         } else {
             // throw unsupported operation exception
             Object args[] = { NAME, IdOperation.READ.getName(),
-                    membershipType.getName() };
+                membershipType.getName() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args);
+                "305", args);
         }
         return (results);
 
@@ -631,16 +699,18 @@ public class FilesRepo extends IdRepo {
             String serviceName, Set attrNames) throws IdRepoException,
             SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: get serviceAttributes called: " + name
-                    + "\n\t" + serviceName + "=" + attrNames);
+            debug.message("FilesRepo.getServiceAttributes called. " + name +
+                "\n\t" + serviceName + "=" + attrNames);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+           "FilesRepo.getServiceAttributes: throwing initialization exception");
             throw (initializationException);
         }
 
-        if (!type.equals(IdType.USER) && !type.equals(IdType.ROLE)
-                && !type.equals(IdType.REALM)) {
+        if (!type.equals(IdType.USER) && !type.equals(IdType.ROLE) &&
+            !type.equals(IdType.REALM)
+        ) {
             // Unsupported Operation
             Object args[] = { NAME, IdOperation.SERVICE.getName() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
@@ -729,35 +799,33 @@ public class FilesRepo extends IdRepo {
             Set members, IdType membersType, int operation)
             throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: modifyMemberShip called " + type
-                    + "; name= " + name + "; members= " + members
-                    + "; membersType= " + membersType + "; operation= "
-                    + operation);
+            debug.message("FilesRepo.modifyMemberShip called. " + type +
+                "; name= " + name + "; members= " + members +
+                "; membersType= " + membersType + "; operation= " + operation);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+               "FilesRepo.modifyMemberShip: throwing initialization exception");
             throw (initializationException);
         }
-        if (members == null || members.isEmpty()) {
-            if (debug.messageEnabled()) {
-                debug.message("FilesRepo.modifyMemberShip: "
-                        + "Members set is empty");
-            }
+        if ((members == null) || members.isEmpty()) {
+            debug.message("FilesRepo.modifyMemberShip: Members set is empty");
             throw new IdRepoException(IdRepoBundle.getString("201"), "201");
         }
         if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo.modifyMembership: "
-                        + "Membership to users and agents is not supported");
+                debug.message("FilesRepo.modifyMemberShip: "
+                    + "Membership to users and agents is not supported");
             }
             throw new IdRepoException(IdRepoBundle.getString("203"), "203");
         }
-        if (!membersType.equals(IdType.USER)
-                && !membersType.equals(IdType.AGENT)) {
+        if (!membersType.equals(IdType.USER) &&
+            !membersType.equals(IdType.AGENT)
+        ) {
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo.modifyMembership: A non user/agent " 
-                        + "type cannot  be made a member of any identity"
-                        + membersType.getName());
+                debug.message("FilesRepo.modifyMemberShip: A non user/agent " +
+                    "type cannot  be made a member of any identity" +
+                    membersType.getName());
             }
             Object[] args = { NAME };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
@@ -823,16 +891,18 @@ public class FilesRepo extends IdRepo {
             String serviceName, SchemaType sType, Map attrMap)
             throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: Modify service called: " + name + "\n\t"
-                    + serviceName + "=" + attrMap + "\n\tSchema=" + sType);
+            debug.message("FilesRepo.modifyService called: " + name + "\n\t" +
+                serviceName + "=" + attrMap + "\n\tSchema=" + sType);
         }
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error(
+                "FilesRepo.modifyService: throwing initialization exception");
             throw (initializationException);
         }
 
-        if (type.equals(IdType.USER) || type.equals(IdType.ROLE)
-                || type.equals(IdType.REALM)) {
+        if (type.equals(IdType.USER) || type.equals(IdType.ROLE) ||
+            type.equals(IdType.REALM)
+        ) {
             // Set the attributes
             assignService(token, type, name, serviceName, sType, attrMap);
         } else {
@@ -886,8 +956,14 @@ public class FilesRepo extends IdRepo {
             boolean returnAllAttrs, int filterOp, Map avPairs, 
             boolean recursive) throws IdRepoException, SSOException {
         if (initializationException != null) {
-            debug.error("FilesRepo: throwing initialization exception");
+            debug.error("FilesRepo.search: throwing initialization exception");
             throw (initializationException);
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo:search pattern=" + pattern +
+                " type=" + type + " returnAttrs=" + returnAttrs +
+                " filter= " + filterOp + " matchAttrs= " + avPairs);
         }
 
         // Directory to start the search
@@ -907,11 +983,14 @@ public class FilesRepo extends IdRepo {
                 Set attrNames = new CaseInsensitiveHashSet();
                 attrNames.addAll(allAttrs.keySet());
                 boolean addResult = (filterOp == IdRepo.AND_MOD);
-                for (Iterator items = avPairs.keySet().iterator(); items
-                        .hasNext();) {
-                    String attrName = (String) items.next();
-                    Set attrValue = (Set) avPairs.get(attrName);
-                    if (attrValue == null || attrValue.isEmpty()) {
+                for (Iterator items = avPairs.keySet().iterator();
+                    items.hasNext();
+                ) {
+                    String attrName = (String)items.next();
+                    Set attrValue = (Set)avPairs.get(attrName);
+                    if ((attrValue == null) || attrValue.isEmpty() ||
+                        attrValue.contains("*")
+                    ) {
                         // Check if the attribute is present
                         if (attrNames.contains(attrName)) {
                             if (filterOp == IdRepo.OR_MOD) {
@@ -957,8 +1036,11 @@ public class FilesRepo extends IdRepo {
                 resultsWithAttrs.put(item, Collections.EMPTY_MAP);
             } else {
                 resultsWithAttrs.put(item, getAttributes(token, type, item,
-                        returnAttrs));
+                    returnAttrs));
             }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo:search results: " + results);
         }
         return (new RepoSearchResults(results, RepoSearchResults.SUCCESS,
                 resultsWithAttrs, type));
@@ -971,9 +1053,16 @@ public class FilesRepo extends IdRepo {
      *      com.sun.identity.idm.IdType, java.lang.String, java.util.Map,
      *      boolean, int, int, java.util.Set)
      */
-    public RepoSearchResults search(SSOToken token, IdType type,
-            String pattern, Map avPairs, boolean recursive, int maxResults,
-            int maxTime, Set returnAttrs) throws IdRepoException, SSOException {
+    public RepoSearchResults search(
+        SSOToken token,
+        IdType type,
+        String pattern,
+        Map avPairs,
+        boolean recursive,
+        int maxResults,
+        int maxTime,
+        Set returnAttrs
+    ) throws IdRepoException, SSOException {
         return (search(token, type, pattern, maxTime, maxResults, returnAttrs,
                 (returnAttrs == null), OR_MOD, avPairs, recursive));
     }
@@ -985,13 +1074,16 @@ public class FilesRepo extends IdRepo {
      *      com.sun.identity.idm.IdType, java.lang.String, java.util.Map,
      *      boolean)
      */
-    public void setAttributes(SSOToken token, IdType type, String name,
-            Map attributes, boolean isAdd) throws IdRepoException, SSOException 
-    {
+    public void setAttributes(
+        SSOToken token,
+        IdType type,
+        String name,
+        Map attributes,
+        boolean isAdd
+    ) throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo:setAttributs for " + type + " " + name
-                    + "\n\tAttributes=" + attributes.keySet() + " isAdd="
-                    + isAdd);
+            debug.message("FilesRepo.setAttributes for " + type + " " + name +
+                "\n\tAttributes=" + attributes.keySet() + " isAdd=" + isAdd);
         }
         if (initializationException != null) {
             debug.error("FilesRepo: throwing initialization exception");
@@ -1009,8 +1101,9 @@ public class FilesRepo extends IdRepo {
         if (!isAdd) {
             answer.putAll(attributes);
         } else {
-            for (Iterator items = attributes.keySet().iterator(); items
-                    .hasNext();) {
+            for (Iterator items = attributes.keySet().iterator();
+                items.hasNext();
+            ) {
                 Object key = items.next();
                 Set value = (Set) answer.get(key);
                 if (value != null) {
@@ -1042,8 +1135,8 @@ public class FilesRepo extends IdRepo {
             String serviceName, Map attrMap) throws IdRepoException,
             SSOException {
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: Uasssign service called: " + name
-                    + "\n\t" + serviceName + "=" + attrMap);
+            debug.message("FilesRepo.unassignService called: " + name +
+                "\n\t" + serviceName + "=" + attrMap);
         }
         if (initializationException != null) {
             debug.error("FilesRepo: throwing initialization exception");
@@ -1059,8 +1152,9 @@ public class FilesRepo extends IdRepo {
         CaseInsensitiveHashMap sAttrs = new CaseInsensitiveHashMap();
         sAttrs.putAll(attrMap);
         Set serviceOCs = (Set) sAttrs.remove(OC);
-        if (objectclasses != null && !objectclasses.isEmpty()
-                && serviceOCs != null) {
+        if ((objectclasses != null) && !objectclasses.isEmpty() &&
+            (serviceOCs != null)
+        ) {
             objectclasses.removeAll(serviceOCs);
             setAttributes(token, type, name, attrs, false);
         }
@@ -1150,8 +1244,8 @@ public class FilesRepo extends IdRepo {
         supportedOps.put(IdType.ROLE, Collections.unmodifiableSet(nopSet));
         supportedOps.put(IdType.REALM, Collections.unmodifiableSet(nopSet));
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo: loadSupportedOps  called"
-                    + "\n\tsupportedOps=" + supportedOps.toString());
+            debug.message("FilesRepo.loadSupportedOps called" +
+                "\n\tsupportedOps=" + supportedOps.toString());
         }
     }
 
@@ -1168,8 +1262,8 @@ public class FilesRepo extends IdRepo {
             String[] args = { NAME, name };
             throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));
         }
-        return ("files://FilesRepo/" + type.getName() + "/" + dns.iterator()
-                .next().toString());
+        return ("files://FilesRepo/" + type.getName() + "/" +
+            dns.iterator().next().toString());
     }
 
     public boolean supportsAuthentication() {
@@ -1191,12 +1285,11 @@ public class FilesRepo extends IdRepo {
             if (credentials[i] instanceof NameCallback) {
                 username = ((NameCallback) credentials[i]).getName();
                 if (debug.messageEnabled()) {
-                    debug.message("FilesRepo:authenticate username: "
-                            + username);
+                    debug.message("FilesRepo:authenticate username: " +
+                        username);
                 }
             } else if (credentials[i] instanceof PasswordCallback) {
-                char[] passwd = ((PasswordCallback) credentials[i])
-                        .getPassword();
+                char[] passwd =((PasswordCallback)credentials[i]).getPassword();
                 if (passwd != null) {
                     password = new String(passwd);
                     debug.message("FilesRepo:authN passwd present");
@@ -1215,13 +1308,11 @@ public class FilesRepo extends IdRepo {
             attrs = searchForAuthN(IdType.AGENT, username);
         }
         
-        if (attrs == null || attrs.isEmpty()
-                || !attrs.containsKey(passwordAttribute)) {
-            // Cound not find user or agent, return false
-            if (debug.messageEnabled()) {
-                debug.message("FilesRepo:authenticate did not found " +
-                    "user/agent");
-            }
+        if ((attrs == null) || attrs.isEmpty() ||
+            !attrs.containsKey(passwordAttribute)
+        ) {
+            // Could not find user or agent, return false
+            debug.message("FilesRepo:authenticate did not found user/agent");
             return (false);
         }
         Set storedPasswords = (Set) attrs.get(passwordAttribute);
@@ -1236,8 +1327,8 @@ public class FilesRepo extends IdRepo {
             password = Hash.hash(password);
         }
         if (debug.messageEnabled()) {
-            debug.message("FilesRepo:authenticate AuthN of " + username + "="
-                    + password.equals(storedPassword));
+            debug.message("FilesRepo:authenticate AuthN of " + username + "=" +
+                password.equals(storedPassword));
         }
         return (password.equals(storedPassword));
     }
@@ -1264,23 +1355,27 @@ public class FilesRepo extends IdRepo {
         return attributes;
     }
 
+    public void shutdown() {
+        updateCacheInterval = 0;
+    }
+
     // -----------------------------------------------
-    // static methods to manage directory structure
+    // private methods to manage directory structure
     // -----------------------------------------------
     // Methods for cache management
 
     // Initialize, read and write methods
-    static void initDir(String rootDir) throws IdRepoException {
+    void initDir(String rootDir) throws IdRepoException {
         // Check if roor dir exists, if not create
         File root = new File(rootDir);
         if (!root.exists() && !root.mkdirs()) {
             // Unable to create the directory
             Object args[] = { root.getAbsolutePath() };
-            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "309", args));
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "309", args);
         } else if (!root.isDirectory()) {
             // Not a directory
             Object args[] = { root.getAbsolutePath() };
-            throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "308", args));
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "308", args);
         }
         // Check sub-directories
         Set types = supportedOps.keySet();
@@ -1290,13 +1385,13 @@ public class FilesRepo extends IdRepo {
             if (!dir.exists() && !dir.mkdir()) {
                 // Unable to create the directory
                 String args[] = { dir.getAbsolutePath() };
-                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "309",
-                        args));
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "309",
+                    args);
             } else if (!dir.isDirectory()) {
                 // Not a directory
                 String args[] = { dir.getAbsolutePath() };
-                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "308",
-                        args));
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "308",
+                    args);
             }
             if (subDir.equals(IdType.REALM.getName())) {
                 // Create realm ContainerDefaultTemplateRole
@@ -1310,30 +1405,29 @@ public class FilesRepo extends IdRepo {
 
     }
 
-    static File constructFile(String rootDir, IdType type, String name) {
+    File constructFile(String rootDir, IdType type, String name) {
         // Construct file name
         File root = new File(rootDir);
         File subDir = new File(root, type.getName());
         return (new File(subDir, name));
     }
 
-    static void writeFile(File file, Map values) throws IdRepoException {
-        writeFile(file.getAbsolutePath(), values);
-    }
-
-    static void writeFile(String fileName, Map values) throws IdRepoException {
+    void writeFile(File file, Map values) throws IdRepoException {
         // Convert Map to AttributeValuePairs and write to file
         PrintWriter pw = null;
+        String fileName = file.getAbsolutePath();
         try {
             SOAPClient client = new SOAPClient();
             String encodedMap = client.encodeMap("result", values);
             pw = new PrintWriter(new FileOutputStream(fileName));
             pw.println(encodedMap);
             // update the cache
+            identityCache.put(fileName, values);
+            identityTimeCache.put(fileName, new Long(file.lastModified()));
             identityCache.put(fileName.toLowerCase(), values);
         } catch (IOException e) {
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo: error writing file: " + fileName, e);
+                debug.message("FilesRepo.writeFile: file = " + fileName, e);
             }
             String[] args = { NAME, fileName };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args);
@@ -1344,18 +1438,14 @@ public class FilesRepo extends IdRepo {
         }
     }
 
-    static Map readFile(File file) throws IdRepoException {
-        Map answer = readFile(file.getAbsolutePath());
-        if (answer == null) {
-            answer = Collections.EMPTY_MAP;
-        }
-        return (answer);
-    }
-
-    static Map readFile(String fileName) throws IdRepoException {
-        Map answer = null;
-        String cacheName = fileName.toLowerCase();
-        if ((answer = (Map) identityCache.get(cacheName)) != null) {
+    Map readFile(File file) throws IdRepoException {
+        Map answer = Collections.EMPTY_MAP;
+        String fileName = file.getAbsolutePath();
+        // Check in cache & if time is curent
+        Long lastModified = (Long) identityTimeCache.get(fileName);
+        if ((lastModified != null) &&
+            (lastModified.longValue() == file.lastModified()) &&
+            ((answer = (Map) identityCache.get(fileName)) != null)) {
             return (answer);
         }
         BufferedReader br = null;
@@ -1379,17 +1469,19 @@ public class FilesRepo extends IdRepo {
                 answer.put(key, nvalue);
             }
             // Add to cache
-            identityCache.put(cacheName, answer);
+            identityTimeCache.put(fileName, new Long(file.lastModified()));
+            identityCache.put(fileName, answer);
         } catch (FileNotFoundException fn) {
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo: file not found: " + fileName);
+                debug.message("FilesRepo.readFile: file not found: " +fileName);
             }
             String[] args = { NAME, fileName };
-            throw (new FilesRepoEntryNotFoundException(IdRepoBundle.BUNDLE_NAME,
-                    "220", args));                        
+            throw new FilesRepoEntryNotFoundException(IdRepoBundle.BUNDLE_NAME,
+                "220", args);
         } catch (IOException e) {
             if (debug.messageEnabled()) {
-                debug.message("FilesRepo: error reading file: " + fileName, e);
+                debug.message("FilesRepo.readFile: error reading file: " +
+                    fileName, e);
             }
             String[] args = { NAME, fileName };
             throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME, "220", args));
@@ -1399,7 +1491,8 @@ public class FilesRepo extends IdRepo {
                     br.close();
                 } catch (IOException e) {
                     if (debug.warningEnabled()) {
-                        debug.warning("FilesRepo: read error: " + fileName, e);
+                        debug.warning(
+                            "FilesRepo.redFile: read error: " + fileName, e);
                     }
                 }
             }
@@ -1407,8 +1500,8 @@ public class FilesRepo extends IdRepo {
         return (answer);
     }
 
-    static void clearCache() {
-        identityCache = new HashMap();
+    public static void clearCache() {
+        identityCache = new CaseInsensitiveHashMap();
     }
 
     static Map processAttributes(Map attrs, Set hashAttrs, Set encAttrs) {
@@ -1425,13 +1518,13 @@ public class FilesRepo extends IdRepo {
             } else if (encAttrs.contains(key)) {
                 try {
                     for (Iterator i = ovalue.iterator(); i.hasNext();) {
-                        nvalue.add((String) AccessController
-                                .doPrivileged(new EncodeAction((String) i
-                                        .next())));
+                        nvalue.add((String)AccessController.doPrivileged(
+                            new EncodeAction((String)i.next())));
                     }
                 } catch (Throwable e) {
                     // Printing the attribute value could be security issue
-                    debug.error("FilesRepo: unable to encode", e);
+                    debug.error(
+                        "FilesRepo.processAttributes: unable to encode", e);
                 }
             } else {
                 nvalue.addAll(ovalue);
@@ -1453,9 +1546,8 @@ public class FilesRepo extends IdRepo {
                 Set nvalue = new CaseInsensitiveHashSet();
                 for (Iterator i = ovalue.iterator(); i.hasNext();) {
                     try {
-                        nvalue.add((String) AccessController
-                                .doPrivileged(new DecodeAction((String) i
-                                        .next())));
+                        nvalue.add((String)AccessController.doPrivileged(
+                            new DecodeAction((String)i.next())));
                     } catch (Throwable e) {
                         // Printing the attribute value could be security issue
                         debug.error("FilesRepo: unable to decode", e);
@@ -1509,6 +1601,60 @@ public class FilesRepo extends IdRepo {
                 return (true);
             } else {
                 return (pattern.matcher(name.toLowerCase()).matches());
+            }
+        }
+    }
+
+    // Cache update thread
+    class CacheUpdateThread extends Thread {
+        FilesRepo repo;
+
+        CacheUpdateThread(FilesRepo r) {
+            repo = r;
+            debug.message("CacheUpdateThread initialized");
+        }
+
+        public void run() {
+            while (true) {
+                try {
+                    sleep(repo.updateCacheInterval*60*1000);
+                    if (repo.updateCacheInterval == 0) {
+                        break;
+                    }
+                    // Get the file name and check the time stamps
+                    Set fileNames = new HashSet(
+                        repo.identityTimeCache.keySet());
+                    for (Iterator i = fileNames.iterator(); i.hasNext();) {
+                        String fileName = i.next().toString();
+                        Long lastModified =
+                            (Long) repo.identityTimeCache.get(fileName);
+                        File file = new File(fileName);
+                        if (!file.exists() || (lastModified.longValue() !=
+                            file.lastModified())) {
+                            if (debug.messageEnabled()) {
+                                debug.message("CacheUpdateThread: " +
+                                    "File modified: " + fileName);
+                            }
+                            identityCache.remove(fileName);
+                            repo.identityTimeCache.remove(fileName);
+                            // Send notification
+                            repo.repoListener.objectChanged(file.getName(),
+                                AMEvent.OBJECT_CHANGED,
+                                repo.repoListener.getConfigMap());
+                            if (debug.messageEnabled()) {
+                                debug.message("CacheUpdateThread: " +
+                                    "Notification Sent: " + fileName);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    if (debug.messageEnabled()) {
+                        debug.message("CacheUpdateThread Exception", e);
+                    }
+                }
+            }
+            if (debug.messageEnabled()) {
+                debug.message("CacheUpdateThread exiting");
             }
         }
     }
