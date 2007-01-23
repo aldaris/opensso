@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.4 2007-01-16 20:18:09 exu Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.5 2007-01-23 06:46:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.federation.cli;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.COTConstants;
@@ -74,6 +75,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String port;
     private String deploymentURI;
     private String realm = "/";
+    private boolean isWebBased;
     
     /**
      * Creates Meta Data Template.
@@ -104,14 +106,23 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
     private void handleSAML2Request(RequestContext rc)
     throws CLIException {
-        buildConfigTemplate();
-        buildDescriptorTemplate();
+        if (!isWebBased || (extendedData != null)) {
+            buildConfigTemplate();
+        }
+
+        if (!isWebBased || (metadata != null)) {
+            buildDescriptorTemplate();
+        }
     }
     
     private void handleIDFFRequest(RequestContext rc)
     throws CLIException {
-        buildIDFFConfigTemplate();
-        buildIDFFDescriptorTemplate();
+        if (!isWebBased || (extendedData != null)) {
+            buildIDFFConfigTemplate();
+        }
+        if (!isWebBased || (metadata != null)) {
+            buildIDFFDescriptorTemplate();
+        }
     }
     
     private void getOptions() {
@@ -128,7 +139,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
         port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
         deploymentURI = SystemPropertiesManager.get(
-                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        String webURL = getCommandManager().getWebEnabledURL();
+        isWebBased = (webURL != null) && (webURL.trim().length() > 0);
     }
     
     private void normalizeOptions() {
@@ -409,10 +422,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void buildConfigTemplate()
-    throws CLIException {
+        throws CLIException {
         Writer pw = null;
         try {
-            if ((extendedData != null) && (extendedData.length() > 0)) {
+            if (!isWebBased && (extendedData != null) &&
+                (extendedData.length() > 0)
+            ) {
                 pw = new PrintWriter(new FileWriter(extendedData));
             } else {
                 pw = new StringWriter();

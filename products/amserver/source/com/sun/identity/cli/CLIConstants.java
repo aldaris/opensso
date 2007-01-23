@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.2 2006-07-17 18:10:58 veiming Exp $
+ * $Id: CLIConstants.java,v 1.3 2007-01-23 06:45:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,6 +105,18 @@ public interface CLIConstants {
      * e.g. subcmd-version=Print Version of this tool.
      */
     String PREFIX_SUBCMD_RES = "subcmd-";
+
+    /**
+     * Flag to indicate that an argument/option is to be displayed as
+     * textarea in web based CLI.
+     */
+    String FLAG_WEB_UI_TEXTAREA = "t";
+
+    /**
+     * Flag to indicate that an argument/option is to be displayed as
+     * checkbox in web based CLI.
+     */
+    String FLAG_WEB_UI_CHECKBOX = "c";
 
     /**
      * Flag to indicate that an argument/option is unary.

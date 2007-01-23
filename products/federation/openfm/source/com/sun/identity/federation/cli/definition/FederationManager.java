@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.1 2006-10-30 23:18:02 qcheng Exp $
+ * $Id: FederationManager.java,v 1.2 2007-01-23 06:46:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,7 +162,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "add|p|b|Set this flag to append the choice values to existing ones.",
+            "add|p|u|Set this flag to append the choice values to existing ones.",
             "subschemaname|c|s|Name of sub schema.",
             "datafile|D|s|Name of file that contains attribute values data.",
             "choicevalues|k|m|Choice value e.g. o102=Inactive."},
@@ -213,8 +213,8 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "metadata|m|s|Specify file name for the standard metadata to be created.",
-            "extended|x|s|Specify file name for the standard metadata to be created.",
+            "metadata|m|s|c|Specify file name for the standard metadata to be created.",
+            "extended|x|s|c|Specify file name for the standard metadata to be created.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm>/<unique string without /> for non-root realm or /<unique string without /> for root realm.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm>/<unique string without /> for non-root realm or /<unique string without /> for root realm.",
             "spscertalias|a|s|Service provider signing certificate alias",
@@ -241,8 +241,8 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "metadata|m|s|Specify file name for the standard metadata to be imported.",
-            "extended|x|s|Specify file name for the extended entity configuration to be imported.",
+            "metadata|m|s|t|Specify file name for the standard metadata to be imported.",
+            "extended|x|s|t|Specify file name for the extended entity configuration to be imported.",
             "cot|t|s|Specify name of the Circle of Trust this entity belongs.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
@@ -261,9 +261,9 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|r|s|Realm where data resides",
-            "sign|g|b|Set this flag to sign the metadata",
-            "metadata|m|s|Metadata",
-            "extended|x|s|Extended data",
+            "sign|g|u|Set this flag to sign the metadata",
+            "metadata|m|s|c|Metadata",
+            "extended|x|s|c|Extended data",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "export-entity-exception-no-datafile=Missing export files, metadata or extended option needs to be set.",
@@ -284,7 +284,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|r|s|Realm where data resides",
-            "extendedonly|x|b|Set to flag to delete only extended data.",
+            "extendedonly|x|u|Set to flag to delete only extended data.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "delete-entity-config-deleted=Configuration is deleted for entity, {0}.",

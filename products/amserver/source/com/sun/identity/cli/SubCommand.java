@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.4 2006-12-08 21:02:21 veiming Exp $
+ * $Id: SubCommand.java,v 1.5 2007-01-23 06:45:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,8 @@ public class SubCommand {
     private Map optionNameToShortName = new HashMap();
     private Set unaryOptionNames = new HashSet();
     private Set singleOptionNames = new HashSet();
+    private Set textAreaUI = new HashSet();
+    private Set checkboxUI = new HashSet();
 
     private static Set reservedLongOptionNames = new HashSet();
     private static Set reservedShortOptionNames = new HashSet();
@@ -468,6 +470,15 @@ public class SubCommand {
             boolean unary = type.equals(CLIConstants.FLAG_UNARY);
             boolean single = type.equals(CLIConstants.FLAG_SINGLE);
 
+            if (t.countTokens() == 2) {
+                String webUI = t.nextToken();
+                if (webUI.equals(CLIConstants.FLAG_WEB_UI_TEXTAREA)) {
+                    textAreaUI.add(name);
+                } else if (webUI.equals(CLIConstants.FLAG_WEB_UI_CHECKBOX)) {
+                    checkboxUI.add(name);
+                } 
+            }
+
             if (reservedLongOptionNames.contains(name)) {
                 Object[] params = {name, this.name};
                 throw new CLIException(MessageFormat.format(
@@ -555,5 +566,29 @@ public class SubCommand {
      */
     public boolean isBinaryOption(String cmdName) {
         return singleOptionNames.contains(cmdName);        
+    }
+
+    /**
+     * Returns <code>true</code> if option is to be displayed as text area in
+     * web based CLI.
+     *
+     * @param opt Name of option.
+     * @return <code>true</code> if option is to be displayed as text area.
+     */
+    public boolean textareaUI(String opt) {
+        String shortName = getShortOptionName(opt);
+        return !shortName.equals(shortName.toLowerCase()) ||
+            textAreaUI.contains(opt);
+    }
+
+    /**
+     * Returns <code>true</code> if option is to be displayed as checkbox in
+     * web based CLI.
+     *
+     * @param opt Name of option.
+     * @return <code>true</code> if option is to be displayed as checkbox.
+     */
+    public boolean checkboxUI(String opt) {
+        return isUnaryOption(opt) || checkboxUI.contains(opt);
     }
 }

@@ -18,9 +18,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amadm.jsp,v 1.4 2007-01-23 06:45:35 veiming Exp $
+   $Id: fmadm.jsp,v 1.1 2007-01-23 06:46:45 veiming Exp $
   
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page import="com.sun.identity.cli.*" %>
@@ -31,7 +31,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Java(TM) System Access Manager</title>
+    <title>Open Federation</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
 
@@ -102,7 +102,7 @@
         }
         buff.append(cmd.getDescription())
             .append("<br /><br />");
-        buff.append("<form action=\"amadm.jsp?cmd=")
+        buff.append("<form action=\"fmadm.jsp?cmd=")
             .append(cmdName)
             .append("&submit=\" method=\"post\" ")
             .append("onSubmit=\"selectListBoxes(this)\">");
@@ -219,9 +219,9 @@ try {
     env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
     env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
     env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
-        "com.sun.identity.cli.AccessManager");
-    env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "amadm");
-    env.put(CLIConstants.WEB_ENABLED_URL, "amadm.jsp");
+        "com.sun.identity.federation.cli.FederationManager");
+    env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "fmadm");
+    env.put(CLIConstants.WEB_ENABLED_URL, "fmadm.jsp");
     cmdMgr = new CommandManager(env);
 } catch (Exception e) {
     out.println(e);
@@ -258,7 +258,7 @@ try {
        
         String cmdName = request.getParameter("cmd");
         if (cmdName != null) {
-            out.println("<a href=\"amadm.jsp\">" +
+            out.println("<a href=\"fmadm.jsp\">" +
                 cmdMgr.getResourceBundle().getString(
                     "web-interface-goto-main-page") + "</a><br /><br />");
             String submit = request.getParameter("submit");
@@ -316,7 +316,7 @@ try {
 
         outputWriter.clearBuffer();
     } catch (SSOException e) {
-        response.sendRedirect("UI/Login?goto=../amadm.jsp");
+        response.sendRedirect("UI/Login?goto=../fmadm.jsp");
     } catch (CLIException e) {
         out.println(e);
     }

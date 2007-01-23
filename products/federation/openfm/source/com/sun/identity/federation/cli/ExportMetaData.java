@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.1 2006-10-30 23:18:00 qcheng Exp $
+ * $Id: ExportMetaData.java,v 1.2 2007-01-23 06:46:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -69,6 +70,7 @@ public class ExportMetaData extends AuthenticatedCommand {
     private boolean sign;
     private String metadata;
     private String extendedData;
+    private boolean isWebBase;
 
     /**
      * Exports Meta Data.
@@ -85,6 +87,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         sign = isOptionSet(ARGUMENT_SIGN);
         metadata = getStringOptionValue(ARGUMENT_METADATA);
         extendedData = getStringOptionValue(ARGUMENT_EXTENDED_DATA);
+        String webURL = getCommandManager().getWebEnabledURL();
+        isWebBase = (webURL != null) && (webURL.trim().length() > 0);
 
         if ((metadata == null) && (extendedData == null)) {
             throw new CLIException(
@@ -138,7 +142,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException
     {
         PrintWriter pw = null;
-        Object[] objs = {metadata};
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
 
         try {
             SAML2MetaManager metaManager = new SAML2MetaManager();
@@ -164,8 +169,13 @@ public class ExportMetaData extends AuthenticatedCommand {
                 return;
             } else {
                 String xmlstr = XMLUtils.print(doc);
-                pw = new PrintWriter(new FileWriter(metadata));
-                pw.print(xmlstr);
+
+                if (isWebBase) {
+                    getOutputWriter().printlnMessage(xmlstr);
+                } else {
+                    pw = new PrintWriter(new FileWriter(metadata));
+                    pw.print(xmlstr);
+                }
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                         "export-entity-export-descriptor-succeeded"), objs));
@@ -195,7 +205,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException
     {
         PrintWriter pw = null;
-        Object[] objs = {metadata};
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
 
         try {
             IDFFMetaManager metaManager = new IDFFMetaManager(
@@ -227,8 +238,14 @@ public class ExportMetaData extends AuthenticatedCommand {
                 return;
             } else {
                 String xmlstr = XMLUtils.print(doc);
-                pw = new PrintWriter(new FileWriter(metadata));
-                pw.print(xmlstr);
+
+                if (isWebBase) {
+                    getOutputWriter().printlnMessage(xmlstr);
+                } else {
+                    pw = new PrintWriter(new FileWriter(metadata));
+                    pw.print(xmlstr);
+                }
+
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                         "export-entity-export-descriptor-succeeded"), objs));
@@ -253,7 +270,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException
     {
         PrintWriter pw = null;
-        Object[] objs = {metadata};
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
         Object[] objs2 = {entityID, realm};
         
         try {
@@ -268,8 +286,14 @@ public class ExportMetaData extends AuthenticatedCommand {
             
             String xmlstr = SAML2MetaUtils.convertJAXBToString(descriptor);
             xmlstr = SAML2MetaSecurityUtils.formatBase64BinaryElement(xmlstr);
-            pw = new PrintWriter(new FileWriter(metadata));
-            pw.print(xmlstr);
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(xmlstr);
+            } else {
+                pw = new PrintWriter(new FileWriter(metadata));
+                pw.print(xmlstr);
+            }
+
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString(
                 "export-entity-export-descriptor-succeeded"), objs));
@@ -304,7 +328,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException
     {
         PrintWriter pw = null;
-        Object[] objs = {metadata};
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
         Object[] objs2 = {entityID, realm};
         
         try {
@@ -320,8 +345,13 @@ public class ExportMetaData extends AuthenticatedCommand {
             
             String xmlstr = IDFFMetaUtils.convertJAXBToString(descriptor);
             xmlstr = SAML2MetaSecurityUtils.formatBase64BinaryElement(xmlstr);
-            pw = new PrintWriter(new FileWriter(metadata));
-            pw.print(xmlstr);
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(xmlstr);
+            } else {
+                pw = new PrintWriter(new FileWriter(metadata));
+                pw.print(xmlstr);
+            }
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString(
                 "export-entity-export-descriptor-succeeded"), objs));
@@ -356,7 +386,8 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException
     {
         OutputStream os = null;
-        Object[] objs = {extendedData};
+        String out = (isWebBase) ? "web" : extendedData;
+        Object[] objs = {out};
         Object[] objs2 = {entityID, realm};
         
         try {
@@ -369,9 +400,18 @@ public class ExportMetaData extends AuthenticatedCommand {
                     "export-entity-exception-entity-config-not-exist"),
                     objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
-            
-            os = new FileOutputStream(extendedData);
+            if (isWebBase) {
+                os =  new ByteArrayOutputStream();
+            } else {
+                os = new FileOutputStream(extendedData);
+            }
+
             SAML2MetaUtils.convertJAXBToOutputStream(config, os);
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(os.toString());
+            }
+
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString(
                 "export-entity-export-config-succeeded"), objs));
@@ -407,7 +447,8 @@ public class ExportMetaData extends AuthenticatedCommand {
     private void runIDFFExportExtended()
         throws CLIException {
         OutputStream os = null;
-        Object[] objs = {extendedData};
+        String out = (isWebBase) ? "web" : extendedData;
+        Object[] objs = {out};
         Object[] objs2 = {entityID, realm};
         
         try {
@@ -421,9 +462,15 @@ public class ExportMetaData extends AuthenticatedCommand {
                     objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
             
-            os = new FileOutputStream(extendedData);
             String xmlString = IDFFMetaUtils.convertJAXBToString(config);
-            os.write(xmlString.getBytes());
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(xmlString);
+            } else {
+                os = new FileOutputStream(extendedData);
+                os.write(xmlString.getBytes());
+            }
+
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString(
                 "export-entity-export-config-succeeded"), objs));

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.4 2006-12-08 21:02:31 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.5 2007-01-23 06:45:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * This class generates a CLI Definition class from another annotated class.
@@ -190,12 +189,8 @@ public class CLIDefinitionGenerator {
     ) {
         for (Iterator i = options.iterator(); i.hasNext(); ) {
             String option = (String)i.next();
-            StringTokenizer t = new StringTokenizer(option, "|");
-            String opt = t.nextToken();
-            String shortOpt = t.nextToken();
-            String optionType = t.nextToken();
-            String description = t.nextToken();
-
+            String opt = option.substring(0, option.indexOf('|'));
+            String description = option.substring(option.lastIndexOf('|') +1);
             rbOut.println(prefix + opt + "=" + description);
         }
     }

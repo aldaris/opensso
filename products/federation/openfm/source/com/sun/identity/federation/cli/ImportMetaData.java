@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.1 2006-10-30 23:18:00 qcheng Exp $
+ * $Id: ImportMetaData.java,v 1.2 2007-01-23 06:46:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
@@ -66,6 +67,7 @@ public class ImportMetaData extends AuthenticatedCommand {
     private String cot;
     private String realm = "/";
     private String spec;
+    private boolean webAccess;
 
     /**
      * Imports Meta Data.
@@ -86,6 +88,10 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("import-entity-exception-no-datafile"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
+
+        CommandManager mgr = getCommandManager();
+        String url = mgr.getWebEnabledURL();
+        webAccess = (url != null) && (url.length() > 0);
         
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
@@ -158,13 +164,21 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws SAML2MetaException, CLIException
     {
         InputStream is = null;
-        Object[] objs = { metadata };
+        String out = (webAccess) ? "web" : metadata;
+        Object[] objs = { out };
         String entityID = null;
         
         try {
-            is = new FileInputStream(metadata);
-            Document doc = XMLUtils.toDOMDocument(is, debug);
-            Object obj = SAML2MetaUtils.convertNodeToJAXB(doc);
+            Object obj;
+            Document doc;
+            if (webAccess) {
+                obj = SAML2MetaUtils.convertStringToJAXB(metadata);
+                doc = XMLUtils.toDOMDocument(metadata, debug);
+            } else {
+                is = new FileInputStream(metadata);
+                doc = XMLUtils.toDOMDocument(is, debug);
+                obj = SAML2MetaUtils.convertNodeToJAXB(doc);
+            }
 
             if (obj instanceof EntityDescriptorElement) {
                 EntityDescriptorElement descriptor =
@@ -207,13 +221,19 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws IDFFMetaException, CLIException
     {
         InputStream is = null;
-        Object[] objs = { metadata };
+        String out = (webAccess) ? "web" : metadata;
+        Object[] objs = { out };
         String entityID = null;
         
         try {
-            is = new FileInputStream(metadata);
-            Document doc = XMLUtils.toDOMDocument(is, debug);
-            Object obj = IDFFMetaUtils.convertNodeToJAXB(doc);
+            Object obj;
+            if (webAccess) {
+                obj = IDFFMetaUtils.convertStringToJAXB(metadata);
+            } else {
+                is = new FileInputStream(metadata);
+                Document doc = XMLUtils.toDOMDocument(is, debug);
+                obj = IDFFMetaUtils.convertNodeToJAXB(doc);
+            }
 
             if (obj instanceof
                 com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement) {
@@ -260,11 +280,19 @@ public class ImportMetaData extends AuthenticatedCommand {
     private void importExtendedData(SAML2MetaManager metaManager)
         throws SAML2MetaException, CLIException
     {
-        Object[] objs = {extendedData};
+        String out = (webAccess) ? "web" : extendedData;
+        Object[] objs = { out };
         InputStream is = null;
+
         try {
-            is = new FileInputStream(extendedData);
-            Object obj = SAML2MetaUtils.convertInputStreamToJAXB(is);
+            Object obj = null;
+            if (webAccess) {
+                obj = SAML2MetaUtils.convertStringToJAXB(extendedData);
+            } else {
+                is = new FileInputStream(extendedData);
+                obj = SAML2MetaUtils.convertInputStreamToJAXB(is);
+            }
+
             if (obj instanceof EntityConfigElement) {
                 metaManager.createEntityConfig(realm,
                     (EntityConfigElement)obj);
@@ -302,12 +330,19 @@ public class ImportMetaData extends AuthenticatedCommand {
         IDFFMetaManager metaManager,
         String entityID
     ) throws IDFFMetaException, CLIException {
-        Object[] objs = {extendedData};
-        FileInputStream is = null;
+        String out = (webAccess) ? "web" : extendedData;
+        Object[] objs = { out };
+
         try {
-            is = new FileInputStream(extendedData);
-            Object obj = IDFFMetaUtils.convertStringToJAXB(
-                getFileContent(extendedData));
+            Object obj;
+
+            if (webAccess) {
+                obj = IDFFMetaUtils.convertStringToJAXB(extendedData);
+            } else {
+                obj = IDFFMetaUtils.convertStringToJAXB(
+                    getFileContent(extendedData));
+            }
+
             if (obj instanceof 
                com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
             ) {
@@ -333,14 +368,6 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        } finally {
-            if (is !=null ) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    //do not if the file cannot be closed.
-                }
-            }
         }
     }
 
