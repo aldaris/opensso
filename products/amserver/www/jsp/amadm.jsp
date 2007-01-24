@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amadm.jsp,v 1.4 2007-01-23 06:45:35 veiming Exp $
+   $Id: amadm.jsp,v 1.5 2007-01-24 02:29:03 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -151,7 +151,7 @@
             } else if (cmd.checkboxUI(opt)) {
                 buff.append("<td><input type=\"checkbox\" name=\"")
                     .append(opt)
-                    .append("\" value=\"\" />");
+                    .append("\" value=\"true\" />");
             } else if (cmd.isBinaryOption(opt)) {
                 if (opt.indexOf("password") == -1) {
                     buff.append("<td><input type=\"text\" name=\"")
