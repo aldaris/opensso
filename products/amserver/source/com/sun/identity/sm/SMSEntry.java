@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.14 2006-12-15 01:18:18 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.15 2007-01-24 23:21:30 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,7 +341,7 @@ public class SMSEntry implements Cloneable {
      * Constructor for a persistent SMS object given an authenticated SSOToken
      * and DN. The entry is read from the directory.
      */
-    SMSEntry(SSOToken token, String dn) throws SSOException, SMSException {
+    public SMSEntry(SSOToken token, String dn) throws SSOException, SMSException {
         if (initializationException != null)
             throw (initializationException);
         ssoToken = token;
@@ -362,11 +362,11 @@ public class SMSEntry implements Cloneable {
      * returned from the cached attribute set. It is not read from the
      * directory.
      */
-    String[] getAttributeValues(String attrName) {
+    public String[] getAttributeValues(String attrName) {
         return getAttributeValues(attrName, false);
     }
 
-    String[] getAttributeValues(String attrName, boolean ignoreCache) {
+    public String[] getAttributeValues(String attrName, boolean ignoreCache) {
         if (ignoreCache || !cacheSMSEntries) {
             try {
                 read();
@@ -388,7 +388,7 @@ public class SMSEntry implements Cloneable {
      * Adds the attribute value to the given attribute name. It is stored
      * locally and is not written to the directory.
      */
-    void addAttribute(String attrName, String value) throws SMSException {
+    public void addAttribute(String attrName, String value) throws SMSException {
         Set attrValues = null;
         if (attrSet == null) {
             attrSet = new CaseInsensitiveHashMap();
@@ -425,7 +425,7 @@ public class SMSEntry implements Cloneable {
      * Set the attribute values. <code>save()</code> must be called to make
      * the changes persistant
      */
-    void setAttribute(String attrName, String[] attrValues) {
+    public void setAttribute(String attrName, String[] attrValues) {
         // Attribute Values to be Set and BasicAttribute
         Set attrs = new HashSet();
         BasicAttribute ba = new BasicAttribute(attrName);
@@ -449,11 +449,46 @@ public class SMSEntry implements Cloneable {
         // Update attrset
         attrSet.put(attrName, attrs);
     }
-
+    
+    /**
+     * Modify the attribute values. <code>save()</code> must be called to make
+     * the changes persistant. This does not affect the existing attributes
+     * already read.
+     */
+    public void modifyAttributes(ModificationItem[] modItems) {
+        if (modSet == null) {
+            modSet = new HashSet();
+        }
+        for (int i = 0; (modItems != null) && (i < modItems.length); i++) {
+            modSet.add(modItems[i]);
+        }
+    }
+   
+    /**
+     * Set the attributes. <code>save()</code> must be called to make
+     * the changes persistant
+     */
+    public void setAttributes(Map attributes) {
+        // Obtain attribute names and values and set them
+        if (!(attributes == null) && !attributes.isEmpty()) {
+            Iterator attrNames = attributes.keySet().iterator();
+            while (attrNames.hasNext()) {
+                String attrName = (String) attrNames.next();
+                Set values = (Set) attributes.get(attrName);
+                String[] attrValues = null;
+                if ((values != null) && !values.isEmpty()) {
+                    attrValues = new String[values.size()];
+                    attrValues = (String[]) values.toArray(attrValues);
+                }
+                setAttribute(attrName, attrValues);
+            }
+        }
+    }
+    
     /**
      * Remove the attribute value from the attribute.
      */
-    void removeAttribute(String attrName, String value) throws SMSException {
+    public void removeAttribute(String attrName, String value) throws SMSException {
         Set attr = null;
         if ((attrSet == null) || ((attr = (Set) attrSet.get(attrName)) == null)
                 || (!attr.contains(value))) {
@@ -477,7 +512,7 @@ public class SMSEntry implements Cloneable {
     /**
      * Remove the attribute from the entry.
      */
-    void removeAttribute(String attrName) throws SMSException {
+    public void removeAttribute(String attrName) throws SMSException {
         Set attribute = (Set) attrSet.get(attrName);
         if (attribute == null) {
             throw (new SMSException(new LDAPException(bundle
@@ -498,7 +533,7 @@ public class SMSEntry implements Cloneable {
     /**
      * Checks if the attribute value exists in the attribute
      */
-    boolean containsAttrValue(String attrName, String attrValue) {
+    public boolean containsAttrValue(String attrName, String attrValue) {
         if (attrSet != null) {
             Set attr = (Set) attrSet.get(attrName);
             if (attr != null) {
@@ -548,7 +583,7 @@ public class SMSEntry implements Cloneable {
      * Save the modification(s) to the object. Save the changes made so far to
      * the datastore.
      */
-    void save() throws SSOException, SMSException {
+    public void save() throws SSOException, SMSException {
         if (readOnly) {
             if (debug.warningEnabled()) {
                 debug.warning("SMSEntry: Attempted to save an entry that "
@@ -600,7 +635,7 @@ public class SMSEntry implements Cloneable {
     /**
      * Delete the entry in the datastore. This will delete sub-entries also!
      */
-    void delete() throws SMSException, SSOException {
+    public void delete() throws SMSException, SSOException {
         if (readOnly) {
             if (debug.warningEnabled()) {
                 debug.warning("SMSEntry: Attempted to delete an entry that "
@@ -659,11 +694,36 @@ public class SMSEntry implements Cloneable {
     Set searchSubOrgNames(SSOToken token, String filter, int numOfEntries,
             boolean sortResults, boolean ascendingOrder, boolean recursive)
             throws SMSException, SSOException {
-
+        // If backend has proxy enabled, check for delegation
+        // permissions and use admin token. Also if JAXRPC is used,
+        // permission is checked at the server.
+        if (backendProxyEnabled && !SMSJAXRPCObjectFlg) {
+            if (isAllowed(token, normalizedDN, readActionSet)) {
+                if (adminSSOToken == null) {
+                    adminSSOToken = (SSOToken) 
+                    AccessController.doPrivileged(
+                            com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
+                }
+                token = adminSSOToken;
+            }
+        } else if (!SMSJAXRPCObjectFlg) {
+            // Check for delegation permission throws exception if
+            // permission is denied
+            getDelegationPermission(token, normalizedDN, readActionSet);
+        }
+        
         Set resultSet = smsObject.searchSubOrgNames(token, dn, filter,
                 numOfEntries, sortResults, ascendingOrder, recursive);
+        
+        // Check for remote client using JAX-RPC
+        if (SMSJAXRPCObjectFlg) {
+            // Since this is a JAX-RPC call, the permission checking and
+            // parsing would be done at the server
+            return (resultSet);
+        }
 
-        // Check for read permissions
+        // Server side. Check for read permissions
         Set allowedSet = new OrderedSet();
         for (Iterator items = resultSet.iterator(); items.hasNext();) {
             String item = (String) items.next();
@@ -680,23 +740,13 @@ public class SMSEntry implements Cloneable {
         return (answer);
     }
 
-    /**
-     * Returns the sub-entries. Returns a set of sub-entry names (rdns). The
-     * paramter <code>numOfEntries</code> identifies the number of entries to
-     * return, if <code>0</code> returns all the entries.
-     */
-    Set subEntries(String filter, int numOfEntries, boolean sortResults,
-            boolean ascendingOrder) throws SMSException, SSOException {
-        return (subEntries(ssoToken, filter, numOfEntries, sortResults,
-                ascendingOrder));
-    }
-
     Set subEntries(SSOToken token, String filter, int numOfEntries,
             boolean sortResults, boolean ascendingOrder) throws SMSException,
             SSOException {
         // If backend has proxy enabled, check for delegation
-        // permissions and use admin token
-        if (backendProxyEnabled) {
+        // permissions and use admin token. If remote, permission
+        // check will be done at the server
+        if (backendProxyEnabled && !SMSJAXRPCObjectFlg) {
             if (isAllowed(token, normalizedDN, readActionSet)) {
                 if (adminSSOToken == null) {
                     adminSSOToken = (SSOToken) 
@@ -706,13 +756,21 @@ public class SMSEntry implements Cloneable {
                 }
                 token = adminSSOToken;
             }
-        } else {
+        } else if (!SMSJAXRPCObjectFlg) {
             // Check for delegation permission throws exception if
             // permission is denied
             getDelegationPermission(token, normalizedDN, readActionSet);
         }
         Set subEntries = smsObject.subEntries(token, dn, filter, numOfEntries,
                 sortResults, ascendingOrder);
+        
+        // Check for remote client using JAX-RPC
+        if (SMSJAXRPCObjectFlg) {
+            // Since this is a JAX-RPC call, the permission checking and
+            // parsing would be done at the server
+            return (subEntries);
+        }
+        
         // Need to check if the user has permissions before returning
         Set answer = new OrderedSet();
         for (Iterator items = subEntries.iterator(); items.hasNext();) {
@@ -723,13 +781,14 @@ public class SMSEntry implements Cloneable {
         }
         return (answer);
     }
-
+    
     Set schemaSubEntries(SSOToken token, String filter, String sidFilter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
         // If backend has proxy enabled, check for delegation
-        // permissions and use admin token
-        if (backendProxyEnabled) {
+        // permissions and use admin token. Also if JAXRPC is used,
+        // permission is checked at the server.
+        if (backendProxyEnabled && !SMSJAXRPCObjectFlg) {
             if (isAllowed(token, normalizedDN, readActionSet)) {
                 if (adminSSOToken == null) {
                     adminSSOToken = (SSOToken) 
@@ -739,13 +798,21 @@ public class SMSEntry implements Cloneable {
                 }
                 token = adminSSOToken;
             }
-        } else {
+        } else if (!SMSJAXRPCObjectFlg) {
             // Check for delegation permission throws exception if
             // permission is denied
             getDelegationPermission(token, normalizedDN, readActionSet);
         }
         Set subEntries = smsObject.schemaSubEntries(token, dn, filter,
                 sidFilter, numOfEntries, sortResults, ascendingOrder);
+        
+        // Check for remote client using JAX-RPC
+        if (SMSJAXRPCObjectFlg) {
+            // Since this is a JAX-RPC call, the permission checking and
+            // parsing would be done at the server
+            return (subEntries);
+        }
+        
         // Need to check if the user has permissions before returning
         Set answer = new OrderedSet();
         for (Iterator items = subEntries.iterator(); items.hasNext();) {
@@ -756,7 +823,7 @@ public class SMSEntry implements Cloneable {
         }
         return (answer);
     }
-
+    
     /**
      * Returns the Orgnization Names. Returns a set of organization names. The
      * paramter <code>numOfEntries</code> identifies the number of entries to
@@ -764,14 +831,38 @@ public class SMSEntry implements Cloneable {
      * <code>recursive</code> determines if to return one level of entries
      * beneath the entryDN or all the entries till the leaf node.
      */
-
     Set searchOrganizationNames(SSOToken token, int numOfEntries,
             boolean sortResults, boolean ascendingOrder, String serviceName,
             String attrName, Set values) throws SMSException, SSOException {
-
+        // If backend has proxy enabled, check for delegation
+        // permissions and use admin token. Also if JAXRPC is used,
+        // permission is checked at the server.
+        if (backendProxyEnabled && !SMSJAXRPCObjectFlg) {
+            if (isAllowed(token, normalizedDN, readActionSet)) {
+                if (adminSSOToken == null) {
+                    adminSSOToken = (SSOToken) 
+                    AccessController.doPrivileged(
+                            com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
+                }
+                token = adminSSOToken;
+            }
+        } else if (!SMSJAXRPCObjectFlg) {
+            // Check for delegation permission throws exception if
+            // permission is denied
+            getDelegationPermission(token, normalizedDN, readActionSet);
+        }
+        
         Set resultSet = smsObject.searchOrganizationNames(token, dn,
                 numOfEntries, sortResults, ascendingOrder, serviceName,
                 attrName, values);
+        
+        // Check for remote client using JAX-RPC
+        if (SMSJAXRPCObjectFlg) {
+            // Since this is a JAX-RPC call, the permission checking and
+            // parsing would be done at the server
+            return (resultSet);
+        }
 
         // Check for read permissions
         Set allowedSet = new OrderedSet();
@@ -793,6 +884,24 @@ public class SMSEntry implements Cloneable {
         return answer;
     }
 
+    /**
+     * Returns the DNs that match the filter. The search is performed from the
+     * root suffix ie., DN. It searchs for SMS objects only.
+     */
+    public static Set search(SSOToken token, String dn, String filter)
+        throws SMSException {
+        // Since this is full recusive search, need to check
+        // if the user has write permissions
+        isAllowedByDelegation(token, dn, modifyActionSet);
+        try {
+            return smsObject.search(token, dn, filter);
+        } catch (SSOException ssoe) {
+            debug.error("SMSEntry: Search ERROR: " + filter, ssoe);
+            throw new SMSException(bundle.getString("sms-error-in-searching"),
+                    ssoe, "sms-error-in-searching");
+        }
+    }
+        
     /**
      * Returns the DNs that match the filter. The search is performed from the
      * root suffix ie., DN. It searchs for SMS objects only.
@@ -953,7 +1062,7 @@ public class SMSEntry implements Cloneable {
     /**
      * Returns <code>true</code> if the entry does not exist in the data store
      */
-    boolean isNewEntry() {
+    public boolean isNewEntry() {
         return (newEntry);
     }
 

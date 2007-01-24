@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.1 2006-12-14 00:59:41 arviranga Exp $
+ * $Id: RealmTest.java,v 1.2 2007-01-24 23:21:31 arviranga Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.test.common.TestBase;
 import java.util.Collections;
+import java.util.Set;
 import org.testng.annotations.Test;
 
 /**
@@ -72,6 +73,30 @@ public class RealmTest extends TestBase {
             ocm = new OrganizationConfigManager(token, "/");
             ocm.createSubOrganization(realm, Collections.EMPTY_MAP);
             ocm.createSubOrganization(realm, Collections.EMPTY_MAP);
+        } finally {
+            if (ocm != null) {
+                ocm.deleteSubOrganization(realm, true);
+            }
+        }
+    }
+    
+    /**
+     * Test case for Issue #230. Unable to get sub realms using remote
+     */
+    @Test(groups = {"api"})
+    public void verifyJAXRPC() throws SMSException, SSOException {
+        String realm = "sm-issue-230-for-remote";
+        OrganizationConfigManager ocm =
+            new OrganizationConfigManager(getAdminSSOToken(), "/");
+        try {
+            // Create an organization
+            ocm.createSubOrganization(realm, Collections.EMPTY_MAP);
+            // Search for sub-organizations
+            Set realms = ocm.getSubOrganizationNames();
+            // Check if the realm exists
+            if (!realms.contains(realm)) {
+                throw (new SMSException("issue 230 failed"));
+            }
         } finally {
             if (ocm != null) {
                 ocm.deleteSubOrganization(realm, true);

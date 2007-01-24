@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.9 2006-12-20 23:06:18 rarcot Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.10 2007-01-24 23:21:32 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,15 +60,12 @@ import com.sun.identity.sm.CachedSMSEntry;
 import com.sun.identity.sm.CachedSubEntries;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSUtils;
 
 public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
     static Debug debug = SMSEntry.debug;
-
-    static SMSObject smsObject = SMSEntry.getSMSObject();
 
     static Map notificationURLs = new HashMap();
 
@@ -106,7 +103,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                         + "Unable to get SSO Token Manager");
                 initializationError = ssoe;
             }
-            synchronized (smsObject) {
+            synchronized (notificationURLs) {
                 if (!initialized) {
                     try {
                         SMSEntry.registerCallbackHandler(null, this);
@@ -184,9 +181,9 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::create dn: " + objName);
         }
-        smsObject.create(getToken(tokenID), objName, attributes);
-        // Send notifications
-        SMSEntry.notifyObjectChanged(objName, SMSObjectListener.ADD);
+        SMSEntry entry = new SMSEntry(getToken(tokenID), objName);
+        entry.setAttributes(attributes);
+        entry.save();
     }
 
     /**
@@ -197,9 +194,9 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::modify dn: " + objName);
         }
-        smsObject.modify(getToken(tokenID), objName, getModItems(mods));
-        // Send notifications
-        SMSEntry.notifyObjectChanged(objName, SMSObjectListener.MODIFY);
+        SMSEntry entry = new SMSEntry(getToken(tokenID), objName);
+        entry.modifyAttributes(getModItems(mods));
+        entry.save();
     }
 
     /**
@@ -210,9 +207,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::delete dn: " + objName);
         }
-        smsObject.delete(getToken(tokenID), objName);
-        // Send notifications
-        SMSEntry.notifyObjectChanged(objName, SMSObjectListener.DELETE);
+        SMSEntry entry = new SMSEntry(getToken(tokenID), objName);
+        entry.delete();
     }
 
     /**
@@ -227,9 +223,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::searchSubOrgNames dn: " + dn);
         }
-        
         CachedSubEntries ce = CachedSubEntries.getInstance(
-                getToken(tokenID), dn);
+            getToken(tokenID), dn);
         return (ce.searchSubOrgNames(getToken(tokenID), filter, recursive));
     }
 
@@ -298,7 +293,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             debug.message("SMSJAXRPCObjectImpl::search dn: " + startDN
                     + " filter: " + filter);
         }
-        return (smsObject.search(getToken(tokenID), startDN, filter));
+        return (SMSEntry.search(getToken(tokenID), startDN, filter));
     }
 
     /**
@@ -309,7 +304,15 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::exists dn: " + objName);
         }
-        return (smsObject.entryExists(getToken(tokenID), objName));
+        boolean entryExists = false;
+        try {
+            CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
+                objName, null);
+            entryExists = !(ce.getSMSEntry().isNewEntry());
+        } catch (SMSException smse) {
+            // Ignore the exception
+        }
+        return (entryExists);
     }
 
     /**
@@ -318,7 +321,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public String getRootSuffix() throws RemoteException {
         if (baseDN == null) {
-            baseDN = smsObject.getRootSuffix();
+            baseDN = SMSEntry.getRootSuffix();
         }
         return (baseDN);
     }
@@ -329,7 +332,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public String getAMSdkBaseDN() throws RemoteException {
         if (amsdkbaseDN == null) {
-            amsdkbaseDN = smsObject.getAMSdkBaseDN();
+            amsdkbaseDN = SMSEntry.getAMSdkBaseDN();
         }
         return (amsdkbaseDN);
     }
