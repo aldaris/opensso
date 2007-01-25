@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.36 2006-12-18 21:55:22 manish_rustagi Exp $
+   $Id: build.xml,v 1.37 2007-01-25 20:24:02 kevinserwin Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,7 +35,11 @@
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
-
+    
+    <tstamp>
+        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
+            unit="day"/>
+    </tstamp>
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${amserver.classes.dir}"/>
@@ -291,6 +295,24 @@
         <ant antfile="${amserver.distauth.dir}/build.xml" inheritRefs="true"/>
     </target>
 
+    <target name="update-index" depends="nightly">   
+       <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <filter token="DATE" value="${nightly.date}" />
+          <echo>$${nightly.date}=${nightly.date}</echo>
+          
+          
+        <copy file="${amserver.docs.dir}/nightly.html" tofile="${amserver.dist.dir}/index.html" filtering="true" />
+        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.dist.dir}" />
+            <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/amserver/index.html" />
+        </java>
+    </target>
+    
     <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples,distauth,unittest">
         <antcall target="jars" />
         <antcall target="war" />
@@ -300,13 +322,7 @@
         </tstamp>
 
         <filter token="DATE" value="${nightly.date}" />
-        <copy file="${amserver.docs.dir}/nightly.html" tofile="${amserver.dist.dir}/index.html" filtering="true" />
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath refid="build.class.path"/>
-            <arg value="${amserver.dist.dir}" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/amserver/index.html" />
-        </java>
+         <echo>$$(nightly.date)=$(nightly.date)</echo>
 
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
             tofile="${amserver.dist.dir}/opensso-sharedlib.jar" />

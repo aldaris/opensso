@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2006-11-15 22:26:13 subbae Exp $
+   $Id: build.xml,v 1.9 2007-01-25 20:24:16 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,6 +47,12 @@
         <antcall target="j2ee-agents-nightly" />
     </target>
 
+    <target name="update-index" depends="amserver-nightly">
+        <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
+            target="update-index" />
+        <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
+    </target>
+    
     <target name="amserver-nightly">
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="nightly" />
@@ -54,7 +60,7 @@
         <copy todir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
             <fileset dir="${amserver.dist.dir}"/>
         </copy>
-        <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
+
     </target>
 
     <target name="fedlibrary-nightly">
