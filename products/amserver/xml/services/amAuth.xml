@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.4 2007-01-09 18:45:41 manish_rustagi Exp $
+    $Id: amAuth.xml,v 1.5 2007-01-25 00:45:07 pawand Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -288,7 +288,7 @@
                     syntax="string"
                     i18nKey="a133">
                     <DefaultValues>
-                        <Value>@SUCCESS_REDIRECT_URL@</Value>
+                        <Value>/@SERVER_URI@/console</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-login-failure-url"
