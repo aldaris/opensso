@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.8 2007-01-12 21:29:44 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.9 2007-01-25 00:42:47 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,12 +199,6 @@ public class ServicesDefaultValues {
                     map.put(SetupConstants.CONFIG_VAR_SERVER_PORT, port);
                     map.put(SetupConstants.CONFIG_VAR_SERVER_URL, 
                         protocol + "://" + hostName + ":" + port);
-                    String deployuri = (String)map.get(
-                        SetupConstants.CONFIG_VAR_SERVER_URI);
-                    map.put(SetupConstants.CONFIG_VAR_SUCCESS_REDIRECT_URL, 
-                        protocol + "://" + hostName + ":" + port + 
-                            deployuri + "/base/AMAdminFrame");
-
                 } else {
                     valid = false;
                 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.5 2007-01-10 00:42:42 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.6 2007-01-25 00:42:48 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,11 +218,6 @@ public interface SetupConstants {
      * Configuration Variable for server URL.
      */
     String CONFIG_VAR_SERVER_URL = "SERVER_URL";
-
-    /**
-     * Configuration Variable for login success redirect URL.
-     */
-    String CONFIG_VAR_SUCCESS_REDIRECT_URL = "SUCCESS_REDIRECT_URL";
 
     /**
      * Configuration Variable for encryption key.
