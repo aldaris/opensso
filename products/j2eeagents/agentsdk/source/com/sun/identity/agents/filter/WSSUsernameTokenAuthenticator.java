@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUsernameTokenAuthenticator.java,v 1.1 2006-09-28 23:35:29 huacui Exp $
+ * $Id: WSSUsernameTokenAuthenticator.java,v 1.2 2007-01-25 20:46:21 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ import com.sun.identity.agents.common.SSOValidationResult;
 import com.sun.identity.agents.util.TransportToken;
 import com.sun.identity.authentication.AuthContext;
 /**
- * @author arvind
+ * @author 
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates

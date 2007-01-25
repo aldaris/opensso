@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.1 2006-09-28 23:13:12 huacui Exp $
+# $Id: AMAgent.template,v 1.2 2007-01-25 20:50:13 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -77,12 +77,24 @@ com.sun.identity.agents.j2ee.login.url[0]=@LOGIN_URL_0@
 #
 com.sun.identity.agents.j2ee.cdsso.login.url[0]=@CDSSO_URL_0@
 
+
 #
-# Specifies if the failover sequence for Login URLs or CDSSO URLs should be
-# prioritized as definied in the list with the lowest index having the highest
-# priority.
+# LOGIN URL or CDSSO URLs PROPERTIES
+#   - login.url.prioritized: specifies if the failover sequence for Login URLs 
+#     or CDSSO URLs should be prioritized as defined in the list with the lowest 
+#     index having the highest priority.
+#   - login.url.probe.enabled: specifies if agent will check the availability 
+#     of these urls before redirecting to them. 
+#     Default value is true for backward compability, but suggests to set it
+#     to false (server will not be checked) in production deployment where agent
+#     often can not access login url directly.
+#   - login.url.probe.timeout: this is the connect timeout value in milliseconds 
+#     when login.url.probe.enabled is set to true (or server will be checked).
+# Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.j2ee.login.url.prioritized=true
+com.sun.identity.agents.config.login.url.prioritized = true
+com.sun.identity.agents.config.login.url.probe.enabled = true
+com.sun.identity.agents.config.login.url.probe.timeout = 2000 
 
 #
 # Specifies a skew factor (time in seconds) to be used by the Agent to 

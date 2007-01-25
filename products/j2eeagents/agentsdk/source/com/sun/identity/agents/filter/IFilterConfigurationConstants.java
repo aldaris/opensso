@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.1 2006-09-28 23:32:03 huacui Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.2 2007-01-25 20:46:20 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,12 @@ public interface IFilterConfigurationConstants {
     
     public static final String CONFIG_LOGIN_URL_PRIORITIZED = 
         "login.url.prioritized";
+
+    public static final String CONFIG_LOGIN_URL_PROBE_ENABLED =
+        "login.url.probe.enabled";
+
+    public static final String CONFIG_LOGIN_URL_PROBE_TIMEOUT =
+        "login.url.probe.timeout";
     
     public static final String CONFIG_LOGIN_ATTEMPT_LIMIT =
         "login.attempt.limit";
@@ -56,6 +62,23 @@ public interface IFilterConfigurationConstants {
     public static final String CONFIG_COOKIE_RESET_DOMAINS = "cookie.reset.domain";
     
     public static final String CONFIG_COOKIE_RESET_PATHS = "cookie.reset.path";
+
+    public static final String CONFIG_CDSSO_ENABLED = "cdsso.enable";
+    
+    public static final String CONFIG_CDSSO_REDIRECT_URI =
+        "cdsso.redirect.uri";
+    
+    public static final String CONFIG_CDSSO_COOKIE_NAME =
+        "cdsso.cookie.name";
+    
+    public static final String CONFIG_CDSSO_CDC_SERVLET_URL =
+        "cdsso.cdcservlet.url"; 
+    
+    public static final String CONFIG_CDSSO_CLOCK_SKEW =
+        "cdsso.clock.skew";
+    
+    public static final String CONFIG_CDSSO_TRUSTED_ID_PROVIDER = 
+        "cdsso.trusted.id.provider";
     
     public static final String CONFIG_ENTRY_URI_MAP =
         "entry.uri";
@@ -226,6 +249,11 @@ public interface IFilterConfigurationConstants {
     public static final String DEFAULT_USERID_PROP_NAME = "UserToken";
     
     public static final int DEFAULT_LOGIN_ATTEMPT_LIMIT = 0;
+
+    public static final String DEFAULT_CDSSO_COOKIE_NAME =
+        "amFilterCDSSORequest";
+    
+    public static final int DEFAULT_CDSSO_CLOCK_SKEW = 0;
     
     public static final boolean DEFAULT_LOGOUT_INTROSPECT_ENABLE = false;
     

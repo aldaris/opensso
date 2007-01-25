@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.1 2006-09-28 23:29:21 huacui Exp $
+ * $Id: AmFilter.java,v 1.2 2007-01-25 20:46:20 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -264,7 +264,7 @@ public class AmFilter extends AgentBase
 
     private void initResultHandlers() throws AgentException {
         ArrayList handlers = ServiceFactory.getFilterResultHandlers(
-              getManager(), getSSOContext(), getFilterMode());
+              getManager(), getSSOContext(), getFilterMode(), isCDSSOEnabled());
         
         if (isLogMessageEnabled())  {
             logMessage("AmFilter: Applicable result handlers are: "
@@ -296,7 +296,7 @@ public class AmFilter extends AgentBase
 
     private void initSelfRedirectTaskHandlers() throws AgentException {
         ArrayList handlers = ServiceFactory.getFilterSelfRedirectTaskHandlers(
-              getManager(), getSSOContext(), getFilterMode());
+              getManager(), getSSOContext(), getFilterMode(), isCDSSOEnabled());
         if (isLogMessageEnabled()) {
             logMessage("AmFilter: Applicable self-redirect handlers: "
                     + handlers);
@@ -331,7 +331,7 @@ public class AmFilter extends AgentBase
 
     private void initInboundTaskHandlers() throws AgentException {
         ArrayList handlers = ServiceFactory.getFilterInboundTaskHandlers(
-             getManager(), getSSOContext(), getFilterMode());
+             getManager(), getSSOContext(), getFilterMode(), isCDSSOEnabled());
         if (isLogMessageEnabled()) {
             logMessage("AmFilter: Applicable handlers are: " + handlers);
         }
@@ -402,12 +402,29 @@ public class AmFilter extends AgentBase
     }
 
     private void initSSOContext(CommonFactory cf) throws AgentException {
+        setCDSSOEnabledFlag(getConfigurationBoolean(CONFIG_CDSSO_ENABLED));
         ISSOContext ssoContext = null;
+        if (isCDSSOEnabled()) {
             ssoContext =
+                ServiceFactory.getCDSSOContext(getManager(), getFilterMode());
+        } else {
+            ssoContext = 
                 ServiceFactory.getSSOContext(getManager(), getFilterMode());
+        }
         
         setSSOContext(ssoContext);
     }
+    
+    protected boolean isCDSSOEnabled() {
+        return _cdssoEnabledFlag;
+    }
+
+    private void setCDSSOEnabledFlag(boolean flag) {
+        _cdssoEnabledFlag = flag;
+        if (isLogMessageEnabled()) {
+            logMessage("AmFilter: CDSSO enabled: " + _cdssoEnabledFlag);
+        }
+    }    
     
     private ISSOContext getSSOContext() {
         return _ssoContext;
@@ -419,14 +436,21 @@ public class AmFilter extends AgentBase
             logMessage("AmFilter: sso context is: " + _ssoContext);
         }
     }
-    
+
     private void initLoginURLFailoverHelper(CommonFactory cf) 
     throws AgentException 
     {
         String[] loginURLs = getConfigurationStrings(CONFIG_LOGIN_URL);
         boolean isPrioritized = getConfigurationBoolean(
                 CONFIG_LOGIN_URL_PRIORITIZED);
-        setLoginURLFailoverHelper(cf.newURLFailoverHelper(isPrioritized, 
+        boolean probeEnabled = getConfigurationBoolean(
+                CONFIG_LOGIN_URL_PROBE_ENABLED, true);
+        long    timeout = getConfigurationLong(
+                CONFIG_LOGIN_URL_PROBE_TIMEOUT, 2000);
+        setLoginURLFailoverHelper(cf.newURLFailoverHelper(
+                probeEnabled,
+                isPrioritized, 
+                timeout,
                 loginURLs));
     }
     
@@ -595,6 +619,7 @@ public class AmFilter extends AgentBase
     private IAmFilterTaskHandler[] _selfRedirectTaskHandler;
     private IAmFilterResultHandler[] _resultHandler;
     private boolean _defaultRefererInitialized;
+    private boolean _cdssoEnabledFlag;
     private AmFilterMode _filterMode = AmFilterMode.MODE_ALL;
     private String _accessDeniedURI;
     private HashSet _formLoginList;

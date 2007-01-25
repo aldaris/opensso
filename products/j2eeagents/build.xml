@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-01-11 23:21:46 huacui Exp $
+   $Id: build.xml,v 1.6 2007-01-25 20:50:47 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -77,6 +77,9 @@
         <copy todir="${j2eeagents.basedir}/appserver/v81/extlib" >
             <fileset dir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
                 <include name="amclientsdk.jar" />
+            </fileset>
+            <fileset dir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
+                <include name="fmclientsdk.jar" />
             </fileset>
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
