@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceResolver.java,v 1.1 2006-09-28 23:22:59 huacui Exp $
+ * $Id: ServiceResolver.java,v 1.2 2007-01-25 20:41:45 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.agents.common.ApplicationSSOTokenProvider;
 import com.sun.identity.agents.common.CookieResetHelper;
 import com.sun.identity.agents.common.FQDNHelper;
 import com.sun.identity.agents.common.HttpServletRequestHelper;
+import com.sun.identity.agents.common.LibertyAuthnResponseHelper;
 import com.sun.identity.agents.common.NotenforcedIPHelper;
 import com.sun.identity.agents.common.NotenforcedURIHelper;
 import com.sun.identity.agents.common.PatternMatcher;
@@ -44,6 +45,10 @@ import com.sun.identity.agents.filter.AmJ2EESSOCache;
 import com.sun.identity.agents.filter.AmWebSSOCache;
 import com.sun.identity.agents.filter.ApplicationLogoutHandler;
 import com.sun.identity.agents.filter.AuditResultHandler;
+import com.sun.identity.agents.filter.CDSSOContext;
+import com.sun.identity.agents.filter.CDSSOResultTaskHandler;
+import com.sun.identity.agents.filter.CDSSOTaskHandler;
+import com.sun.identity.agents.filter.CDSSOURLPolicyTaskHandler;
 import com.sun.identity.agents.filter.ErrorPageTaskHandler;
 import com.sun.identity.agents.filter.FQDNTaskHandler;
 import com.sun.identity.agents.filter.FormLoginTaskHandler;
@@ -130,6 +135,10 @@ public abstract class ServiceResolver {
         return URLFailoverHelper.class.getName();
     }
     
+    public String getLibertyAuthnResponseHelperImpl() {
+        return LibertyAuthnResponseHelper.class.getName();
+    }
+
     public String getSSOTokenValidatorImpl() {
         return SSOTokenValidator.class.getName();
     }
@@ -172,6 +181,10 @@ public abstract class ServiceResolver {
         return SSOContext.class.getName();
     }
     
+    public String getCDSSOContextImpl() {
+        return CDSSOContext.class.getName();
+    }
+
     public String getAmSSOCacheImpl() {
         String result = null;
         if (isEJBContextAvailable()) {
@@ -222,21 +235,25 @@ public abstract class ServiceResolver {
         return NotenforcedListTaskHandler.class.getName();
     }
     
-    public ArrayList getFirstCustomInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getFirstCustomInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         return new ArrayList();
     }
     
-    public ArrayList getLastCustomInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getLastCustomInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         return new ArrayList();
     }
     
-    public ArrayList getPrimaryInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getPrimaryInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         ArrayList result = new ArrayList();
         result.add(getNotificationTaskHandlerImpl());
         return result;
     }
     
-    public ArrayList getPreSSOCommonInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getPreSSOCommonInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         ArrayList result = new ArrayList();
         result.add(getPortCheckTaskHandlerImpl());
         result.add(getFQDNTaskHandlerImpl());
@@ -248,18 +265,34 @@ public abstract class ServiceResolver {
         return result;
     }
     
-    
     public String getSSOTaskHandlerImpl() {
         return SSOTaskHandler.class.getName();
     }
     
-    public ArrayList getSSOCommonInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getSSOCommonInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         ArrayList handlers = new ArrayList();
         handlers.add(getSSOTaskHandlerImpl());
         
         return handlers;
     }
 
+    public String getCDSSOTaskHandlerImpl() {
+        return CDSSOTaskHandler.class.getName();
+    }
+    
+    public String getCDSSOResultTaskHandlerImpl() {
+        return CDSSOResultTaskHandler.class.getName();
+    }
+
+    public ArrayList getCDSSOCommonInboundTaskHandlerImpls(AmFilterMode mode, 
+            boolean cdssoEnabled) {
+        ArrayList handlers = new ArrayList();
+        handlers.add(getCDSSOResultTaskHandlerImpl());
+        handlers.add(getCDSSOTaskHandlerImpl());
+
+        return handlers;
+    }
     
     public String getApplicationLogoutHandlerImpl() {
         return ApplicationLogoutHandler.class.getName();
@@ -277,8 +310,8 @@ public abstract class ServiceResolver {
         return ResponseHeadersTaskHandler.class.getName();
     }
     
-    public ArrayList getPostSSOCommonInboundTaskHandlerImpls(
-            AmFilterMode mode) {
+    public ArrayList getPostSSOCommonInboundTaskHandlerImpls(AmFilterMode mode,
+            boolean cdssoEnabled) {
         ArrayList handlers = new ArrayList();
         handlers.add(getApplicationLogoutHandlerImpl());
         handlers.add(getProfileAttributeTaskHandlerImpl());
@@ -287,37 +320,52 @@ public abstract class ServiceResolver {
         
         return handlers;
     }
-    
-    public ArrayList getCommonInboundTaskHandlers(AmFilterMode mode) 
+
+    public ArrayList getCommonInboundTaskHandlers(AmFilterMode mode, 
+            boolean cdssoEnabled) 
     {
         ArrayList handlers = new ArrayList();        
         if (!mode.equals(AmFilterMode.MODE_NONE)) {
-            handlers.addAll(getPreSSOCommonInboundTaskHandlerImpls(mode));
-            handlers.addAll(getSSOCommonInboundTaskHandlerImpls(mode));
-            handlers.addAll(getPostSSOCommonInboundTaskHandlerImpls(mode));
+            handlers.addAll(getPreSSOCommonInboundTaskHandlerImpls(
+                    mode, cdssoEnabled));
+            if (cdssoEnabled) {
+                handlers.addAll(getCDSSOCommonInboundTaskHandlerImpls(
+                        mode, cdssoEnabled));
+            } else {
+                handlers.addAll(getSSOCommonInboundTaskHandlerImpls(
+                        mode, cdssoEnabled));
             }
+            handlers.addAll(getPostSSOCommonInboundTaskHandlerImpls(
+                    mode, cdssoEnabled));
+        }
         
         return handlers;
     }
     
-    public ArrayList getFilterInboundTaskHandlerImpls(AmFilterMode mode) {
+    public ArrayList getFilterInboundTaskHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled) {
         ArrayList handlers = new ArrayList();
-        handlers.addAll(getFirstCustomInboundTaskHandlerImpls(mode));
-        handlers.addAll(getPrimaryInboundTaskHandlerImpls(mode));
-        handlers.addAll(getCommonInboundTaskHandlers(mode));
+        handlers.addAll(getFirstCustomInboundTaskHandlerImpls(mode,cdssoEnabled));
+        handlers.addAll(getPrimaryInboundTaskHandlerImpls(mode,cdssoEnabled));
+        handlers.addAll(getCommonInboundTaskHandlers(mode,cdssoEnabled));
         switch(mode.getIntValue()) {
                 case AmFilterMode.INT_MODE_J2EE_POLICY:
-                    handlers.addAll(getJ2EEPolicyTaskHandlerImpls(mode));
+                    handlers.addAll(getJ2EEPolicyTaskHandlerImpls(
+                            mode, cdssoEnabled));
                     break;
                 case AmFilterMode.INT_MODE_URL_POLICY:
-                    handlers.addAll(getURLPolicyTaskHandlerImpls(mode));
+                    handlers.addAll(getURLPolicyTaskHandlerImpls(
+                            mode, cdssoEnabled));
                     break;
                 case AmFilterMode.INT_MODE_ALL:
-                    handlers.addAll(getJ2EEPolicyTaskHandlerImpls(mode));
-                        handlers.addAll(getURLPolicyTaskHandlerImpls(mode));
+                    handlers.addAll(getJ2EEPolicyTaskHandlerImpls(
+                            mode, cdssoEnabled));
+                        handlers.addAll(getURLPolicyTaskHandlerImpls(
+                            mode, cdssoEnabled));
                     break;
         }
-        handlers.addAll(getLastCustomInboundTaskHandlerImpls(mode));
+        handlers.addAll(getLastCustomInboundTaskHandlerImpls(
+                            mode, cdssoEnabled));
         return handlers;
     }
         
@@ -337,7 +385,8 @@ public abstract class ServiceResolver {
         return LocalAuthTaskHandler.class.getName();
     }
     
-    public ArrayList getJ2EEPolicyTaskHandlerImpls(AmFilterMode modeboolean) 
+    public ArrayList getJ2EEPolicyTaskHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled)
     {
         ArrayList handlers = new ArrayList();
         handlers.add(getErrorPageTaskHandlerImpl());
@@ -355,15 +404,24 @@ public abstract class ServiceResolver {
     public String getResponseAttributeTaskHandlerImpl() {
         return ResponseAttributeTaskHandler.class.getName();
     }
-    
-    public ArrayList getURLPolicyTaskHandlerImpls(AmFilterMode mode) 
+
+    public ArrayList getURLPolicyTaskHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled) 
     {
         ArrayList handlers = new ArrayList();
+        if (cdssoEnabled) {
+            handlers.add(getCDSSOURLPolicyTaskHandlerImpl());
+        } else {
             handlers.add(getURLPolicyTaskHandlerImpl());
+        }
         handlers.add(getResponseAttributeTaskHandlerImpl());
         return handlers;
     }
 
+    public String getCDSSOURLPolicyTaskHandlerImpl() {
+        return CDSSOURLPolicyTaskHandler.class.getName();
+    }
+    
     public String getRedirectCheckResultHandlerImpl() {
         return RedirectCheckResultHandler.class.getName();
     }
@@ -372,20 +430,23 @@ public abstract class ServiceResolver {
         return AuditResultHandler.class.getName();
     }
     
-    public ArrayList getFirstCustomResultHandlerImpls(AmFilterMode mode) {
+    public ArrayList getFirstCustomResultHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled) {
         return new ArrayList();
     }
     
-    public ArrayList getLastCustomResultHandlerImpls(AmFilterMode mode) {
+    public ArrayList getLastCustomResultHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled) {
         return new ArrayList();
     }
     
-    public ArrayList getFilterResultHandlerImpls(AmFilterMode mode) {        
+    public ArrayList getFilterResultHandlerImpls(
+            AmFilterMode mode, boolean cdssoEnabled) {
         ArrayList handlers = new ArrayList();
-        handlers.addAll(getFirstCustomResultHandlerImpls(mode));
+        handlers.addAll(getFirstCustomResultHandlerImpls(mode,cdssoEnabled));
         handlers.add(getRedirectCheckResultHandlerImpl());
         handlers.add(getAuditResultHandlerImpl());
-        handlers.addAll(getLastCustomResultHandlerImpls(mode));
+        handlers.addAll(getLastCustomResultHandlerImpls(mode,cdssoEnabled));
         return handlers;
     }
     
@@ -394,26 +455,28 @@ public abstract class ServiceResolver {
     }
     
     public ArrayList getFirstCustomSelfRedirectTaskHandlerImpls(
-            AmFilterMode mode)
+            AmFilterMode mode, boolean cdssoEnabled)
     {
         return new ArrayList();
     }
     
     public ArrayList getLastCustomSelfRedirectTaskHandlerImpls(
-            AmFilterMode mode)
+            AmFilterMode mode, boolean cdssoEnabled)
     {
         return new ArrayList();
     }
     
     public ArrayList getFilterSelfRedirectTaskHandlerImpls(
-            AmFilterMode mode) 
+            AmFilterMode mode, boolean cdssoEnabled)
     {
         ArrayList handlers = new ArrayList();
-        handlers.addAll(getFirstCustomSelfRedirectTaskHandlerImpls(mode));
+        handlers.addAll(getFirstCustomSelfRedirectTaskHandlerImpls(
+                mode, cdssoEnabled));
         if (!mode.equals(AmFilterMode.MODE_NONE)) {
             handlers.add(getOutboundLegacyUserAgentTaskHandlerImpl());
         }
-        handlers.addAll(getLastCustomSelfRedirectTaskHandlerImpls(mode));
+        handlers.addAll(getLastCustomSelfRedirectTaskHandlerImpls(
+                mode, cdssoEnabled));
         return handlers;
     }
     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceFactory.java,v 1.1 2006-09-28 23:22:54 huacui Exp $
+ * $Id: ServiceFactory.java,v 1.2 2007-01-25 20:41:45 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.agents.filter.IAmFilter;
 import com.sun.identity.agents.filter.IAmFilterResultHandler;
 import com.sun.identity.agents.filter.IAmFilterTaskHandler;
 import com.sun.identity.agents.filter.IAmSSOCache;
+import com.sun.identity.agents.filter.ICDSSOContext;
 import com.sun.identity.agents.filter.ISSOContext;
 import com.sun.identity.agents.log.IAmAgentLocalLog;
 import com.sun.identity.agents.log.IAmAgentLog;
@@ -65,12 +66,12 @@ public class ServiceFactory {
     }
     
     public static ArrayList getFilterInboundTaskHandlers(Manager manager, 
-           ISSOContext context, AmFilterMode mode) 
+           ISSOContext context, AmFilterMode mode, boolean cdssoEnabled) 
     throws AgentException 
     {
         ArrayList result = new ArrayList();
         ArrayList impls = getResolver().getFilterInboundTaskHandlerImpls(
-                mode);
+                mode, cdssoEnabled);
         if (impls != null && impls.size() > 0) {
             try {
                 Iterator it = impls.iterator();
@@ -91,12 +92,12 @@ public class ServiceFactory {
     }
         
     public static ArrayList getFilterSelfRedirectTaskHandlers(Manager manager, 
-            ISSOContext context, AmFilterMode mode) 
+            ISSOContext context, AmFilterMode mode, boolean cdssoEnabled) 
     throws AgentException 
     {
         ArrayList result = new ArrayList();
         ArrayList impls = getResolver().getFilterSelfRedirectTaskHandlerImpls(
-                mode);
+                mode, cdssoEnabled);
         if (impls != null && impls.size() > 0) {
             try {
                 Iterator it = impls.iterator();
@@ -117,10 +118,12 @@ public class ServiceFactory {
     }
     
     public static ArrayList getFilterResultHandlers(Manager manager,
-            ISSOContext context, AmFilterMode mode) throws AgentException 
+            ISSOContext context, AmFilterMode mode, boolean cdssoEnabled) 
+    throws AgentException 
     {
         ArrayList result = new ArrayList();
-        ArrayList impls = getResolver().getFilterResultHandlerImpls(mode);
+        ArrayList impls = getResolver().getFilterResultHandlerImpls(
+            mode, cdssoEnabled);
         if (impls != null && impls.size() > 0) {
             try {
                 Iterator it = impls.iterator();
@@ -168,6 +171,22 @@ public class ServiceFactory {
         }
         return result;
     }
+
+    public static ICDSSOContext getCDSSOContext(Manager manager, 
+            AmFilterMode filterMode) throws AgentException 
+    {
+        ICDSSOContext result = null;
+        String className = getResolver().getCDSSOContextImpl();
+        try {
+            result = (ICDSSOContext) getServiceInstance(manager, className);
+            result.initialize(filterMode);
+        } catch (Exception ex) {
+            throw new AgentException("Unable to load ICDSSOContext: " 
+                    + className, ex);
+        }
+        return result;
+    }
+    
     
     public static IAmSSOCache getAmSSOCache(Manager manager) 
                     throws AgentException {

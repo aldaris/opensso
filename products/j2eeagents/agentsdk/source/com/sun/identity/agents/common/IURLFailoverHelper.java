@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IURLFailoverHelper.java,v 1.1 2006-09-28 23:25:25 huacui Exp $
+ * $Id: IURLFailoverHelper.java,v 1.2 2007-01-25 20:42:32 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,11 @@ import com.sun.identity.agents.arch.AgentException;
  * The interface for URLFailoverHelper
  */
 public interface IURLFailoverHelper {
-    public abstract void initiailze(boolean isPrioritized, String[] urlList)
-            throws AgentException;
+    public abstract void initiailze(
+            boolean probeEnabled, 
+            boolean isPrioritized, 
+            long timeout,
+            String[] urlList) throws AgentException;
 
     public abstract String getAvailableURL() throws AgentException;
 }

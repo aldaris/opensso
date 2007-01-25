@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLFailoverHelper.java,v 1.1 2006-09-28 23:26:09 huacui Exp $
+ * $Id: URLFailoverHelper.java,v 1.2 2007-01-25 20:42:32 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,8 +28,10 @@ package com.sun.identity.agents.common;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.io.IOException;
 
 import com.sun.identity.agents.arch.AgentException;
+import com.sun.identity.agents.arch.AgentServerErrorException;
 import com.sun.identity.agents.arch.Module;
 import com.sun.identity.agents.arch.SurrogateBase;
 
@@ -45,8 +47,11 @@ public class URLFailoverHelper extends SurrogateBase
         super(module);
     }
 
-    public void initiailze(boolean isPrioritized, String[] urlList)
-            throws AgentException {
+    public void initiailze(
+                boolean probeEnabled, 
+                boolean isPrioritized, 
+                long timeout,
+                String[] urlList) throws AgentException {
         if(urlList.length == 1) {
             if(isLogWarningEnabled()) {
                 logWarning("URLFailoverHelper: Only one URL is specified, "
@@ -56,6 +61,8 @@ public class URLFailoverHelper extends SurrogateBase
             markDisabled();
         }
         setPrioritized(isPrioritized);
+        setProbeEnabled(probeEnabled);
+        setTimeout(timeout);
         setURLList(urlList);
     }
 
@@ -157,47 +164,16 @@ public class URLFailoverHelper extends SurrogateBase
 
     private boolean isAvailable(String url) {
 
-        boolean result = false;
-        HttpURLConnection conn = null;
-        try {
-            if(isLogMessageEnabled()) {
-                logMessage("URLFailoverHelper: Checking if " + url
-                           + " is available");
-            }
-
-            conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.connect();
-
-            result = true;
-
-            if(isLogMessageEnabled()) {
-                logMessage("URLFailoverHelper: URL " + url + " is available");
-            }
-        } catch(Exception ex) {
-            if(isLogWarningEnabled()) {
-                logWarning("URLFailoverHelper: the url " + url
-                           + " is not available", ex);
-            }
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.disconnect();
-                    if (isLogMessageEnabled()) {
-                        logMessage("URLFailoverHelper: disconnected the "
-                                + "connection for availability check");
-                    }
-                } catch (Exception ex2) {
-                    if (isLogWarningEnabled()) {
-                        logWarning("URLFailoverHelper: failed to disconnect "
-                                + "connection for availability check", ex2);
-                    }
-                }
-            }
+        boolean result = true;
+       
+        if (isProbeEnabled()) {
+       
+            ServerMonitor monitor = new ServerMonitor(url);
+            result = monitor.isAvailable();
         }
-
         return result;
     }
-
+    
     /**
      * Method setCurrentIndex
      *
@@ -274,6 +250,23 @@ public class URLFailoverHelper extends SurrogateBase
         return _isPrioritized;
     }
 
+    private void setProbeEnabled(boolean probeEnabled) {
+        _probeEnabled = probeEnabled;
+    }
+    
+    private boolean isProbeEnabled() {
+        return _probeEnabled;
+    }
+    
+    private void setTimeout(long timeout) {
+        _timeout = timeout;
+    }
+    
+    private long getTimeout() {
+        return _timeout;
+    }
+    
+
     /**
      * Method isEnabled
      *
@@ -294,8 +287,72 @@ public class URLFailoverHelper extends SurrogateBase
         _disabled = true;
     }
 
+    /*
+     * This is a Runnable class used to proble login url's availablity.
+     * It simulates adding a timeout value for HttpURLConnection.connect().
+     * Since only JDK1.5 adds URLConnection.setConnectTimeout(), we can not 
+     * use setConnectTimeout now until Agent can use JDK1.5.
+     */
+    class ServerMonitor implements Runnable {
+        private boolean isAvailable = false;
+        private String url = null;
+
+        public ServerMonitor (String url) {
+            this.url = url;
+        }
+
+        public boolean isAvailable () {
+
+            try { 
+                long timeout = getTimeout();
+                Thread thread = new Thread(this);
+                thread.start();
+                thread.join(timeout);
+
+                if (thread.isAlive()) {
+                    thread.interrupt();
+                }
+
+            } catch (InterruptedException ex) {
+                if(isLogWarningEnabled()) {
+                   logWarning("URLFailoverHelper: the url " + url
+                               + " is not available", ex);
+                }  
+            }
+
+            return this.isAvailable;
+        }
+
+        public void run() {
+            HttpURLConnection connection = null;
+
+            try {
+                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.connect();
+                isAvailable  = true;
+
+            } catch (IOException ex) {
+                if(isLogWarningEnabled()) {
+                    logWarning("URLFailoverHelper: the url " + url
+                               + " is not available", ex);
+                }
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                    if (isLogMessageEnabled()) {
+                        logMessage(
+                           "URLFailoverHelper: disconnected the "
+                            + "connection for availability check");
+                    }
+                }
+            }
+        }
+    }    
+    
     private String[] _urlList;
     private int      _index    = 0;
     private boolean  _disabled = false;
     private boolean _isPrioritized = false;
+    private boolean _probeEnabled = false;
+    private long _timeout = 2000;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonFactory.java,v 1.1 2006-09-28 23:24:15 huacui Exp $
+ * $Id: CommonFactory.java,v 1.2 2007-01-25 20:42:32 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,15 +92,36 @@ public class CommonFactory {
         }
         return result;
     }
+
+    public ILibertyAuthnResponseHelper newLibertyAuthnResponseHelper(
+            int skewFactor) throws AgentException 
+    {
+        ILibertyAuthnResponseHelper result = null;
+        String className = getResolver().getLibertyAuthnResponseHelperImpl();
+        try {
+            result = (ILibertyAuthnResponseHelper) getObject(className);
+            result.initialize(skewFactor);
+        } catch (Exception ex) {
+            throw new AgentException(
+                    "Unable to initialize IURLFailoverHelper: "
+                    + className, ex);
+        }        
+        return result;
+    }
     
+
     public IURLFailoverHelper newURLFailoverHelper(
-            boolean isPrioritized, String[] urlList)
-            throws AgentException {
+            boolean probeEnabled,
+            boolean isPrioritized, 
+            long timeout, 
+            String[] urlList) 
+    	throws AgentException
+    {
         IURLFailoverHelper result = null;
         String className = getResolver().getURLFailoverHelperImpl();
         try {
             result = (IURLFailoverHelper) getObject(className);
-            result.initiailze(isPrioritized, urlList);
+            result.initiailze(probeEnabled, isPrioritized, timeout, urlList);
         } catch (Exception ex) {
             throw new AgentException(
                     "Unable to initialize IURLFailoverHelper: "
@@ -108,6 +129,7 @@ public class CommonFactory {
         }
         return result;
     }
+    
     
     public IHttpServletRequestHelper newServletRequestHelper(
             String dateFormatString, Map attributeMap)
