@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amadm.jsp,v 1.5 2007-01-24 02:29:03 veiming Exp $
+   $Id: amadm.jsp,v 1.6 2007-01-26 22:03:19 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -265,6 +265,7 @@ try {
             if (submit == null) {
                 out.println(autogenUI(cmdName));
             } else {
+                SubCommand cmd = cmdMgr.getSubCommand(cmdName);
                 List list = new ArrayList();
                 Map map = request.getParameterMap();
                 for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
@@ -273,18 +274,22 @@ try {
                         !key.endsWith("lblb")
                     ) {
                         String[] values = (String[])map.get(key);
-                        List temp = new ArrayList();
-                        for (int j = 0; j < values.length; j++) {
-                            String str = values[j];
-                            str = str.trim();
-                            if (str.length() > 0) {
-                                temp.add(str);
-                            }
-                        }
-
-                        if (!temp.isEmpty()) {
+                        if (cmd.isUnaryOption(key)) {
                             list.add("--" + key);
-                            list.addAll(temp);
+                        } else {
+                            List temp = new ArrayList();
+                            for (int j = 0; j < values.length; j++) {
+                                String str = values[j];
+                                str = str.trim();
+                                if (str.length() > 0) {
+                                    temp.add(str);
+                                }
+                            }
+
+                            if (!temp.isEmpty()) {
+                                list.add("--" + key);
+                                list.addAll(temp);
+                            }
                         }
                     }
                 }
