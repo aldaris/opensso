@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2007-01-25 20:24:16 kevinserwin Exp $
+   $Id: build.xml,v 1.10 2007-01-29 17:38:00 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,7 +47,7 @@
         <antcall target="j2ee-agents-nightly" />
     </target>
 
-    <target name="update-index" depends="amserver-nightly">
+    <target name="update-am-index" depends="amserver-nightly">
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="update-index" />
         <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
@@ -63,16 +63,7 @@
 
     </target>
 
-    <target name="fedlibrary-nightly">
-        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
-            todir="${library.extlib.dir}"  />
-
-        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
-            target="nightly" />
-        <mkdir dir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}" />
-        <copy todir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}">
-            <fileset dir="${fedlibrary.dist.dir}"/>
-        </copy>
+    <target name="update-fmlib-index" depends="fedlibrary-nightly">
         <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
             <classpath>
                 <pathelement location="${amserver.classes.dir}" />
@@ -83,7 +74,31 @@
         </java>
         <move file="${prd.nightly.dist.dir}/fedlibrary/top.index.html" tofile="${prd.nightly.dist.dir}/fedlibrary/index.html" />
     </target>
+    
+    <target name="fedlibrary-nightly">
+        <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
+            todir="${library.extlib.dir}"  />
 
+        <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="nightly" />
+        <mkdir dir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}" />
+        <copy todir="${prd.nightly.dist.dir}/fedlibrary/${nightly.date}">
+            <fileset dir="${fedlibrary.dist.dir}"/>
+        </copy>
+   </target>
+
+    <target name="update-openfm-index" depends="openfm-nightly">
+        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+            <classpath>
+                <pathelement location="${amserver.classes.dir}" />
+            </classpath>
+            <arg value="${prd.nightly.dist.dir}/openfm" />
+            <arg value="${nightly.date}" />
+            <arg value="http://download.java.net/general/opensso/nightly/openfm/index.html" />
+        </java>
+        <move file="${prd.nightly.dist.dir}/openfm/top.index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
+    </target>
+        
     <target name="openfm-nightly">
         <copy file="${amserver.dist.dir}/opensso.jar"
             todir="${openfm.extlib.dir}"  />
@@ -100,23 +115,10 @@
         <copy todir="${prd.nightly.dist.dir}/openfm/${nightly.date}">
             <fileset dir="${fm.dist.dir}"/>
         </copy>
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath>
-                <pathelement location="${amserver.classes.dir}" />
-            </classpath>
-            <arg value="${prd.nightly.dist.dir}/openfm" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/openfm/index.html" />
-        </java>
-        <move file="${prd.nightly.dist.dir}/openfm/top.index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
     </target>
-
-    <target name="j2ee-agents-nightly">
-        <mkdir dir="${prd.nightly.dist.dir}/j2eeagents/${nightly.date}" />
-        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="prenightly" />
-        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
-        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="postnightly" />
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
+    
+     <target name="update-j2ee-index" depends="j2ee-agents-nightly">   
+            <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
             <classpath>
                 <pathelement location="${amserver.classes.dir}" />
             </classpath>
@@ -125,6 +127,14 @@
             <arg value="http://download.java.net/general/opensso/nightly/j2eeagents/index.html" />
         </java>
         <move file="${prd.nightly.dist.dir}/j2eeagents/top.index.html" tofile="${prd.nightly.dist.dir}/j2eeagents/index.html" />
+    </target>
+    
+    <target name="j2ee-agents-nightly">
+        <mkdir dir="${prd.nightly.dist.dir}/j2eeagents/${nightly.date}" />
+        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="prenightly" />
+        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="nightly" />
+        <ant antfile="${j2eeagents.basedir}/build.xml" inheritRefs="true" target="postnightly" />
+
     </target>
 
     <target name="clean">
