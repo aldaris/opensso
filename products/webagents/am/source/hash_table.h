@@ -195,6 +195,7 @@ private:
 
         EntryType find(const std::string& key)
 	{
+            ScopeLock myLock(lock);
 	    typename std::list<EntryType>::iterator iter;
 	    EntryType retVal;
 

@@ -683,16 +683,17 @@ PolicyService::sendNotificationMsg(bool addOrRemove,
 	XMLElement element = policyTree.getRootElement();
 	std::string version;
 	std::string revisionStr;
-	    char rev[10] = {'\0'};
+	char rev[10] = {'\0'};
+        revision = 0;
 
-	if(element.isNamed(POLICY_SERVICE)) {
-	    if(element.getAttributeValue(VERSION_STR, version) &&
+        if(element.isNamed(POLICY_SERVICE)) {
+            if(element.getAttributeValue(VERSION_STR, version) &&
 	       std::strcmp(version.c_str(), POLICY_SERVICE_VERSION) == 0) {
-		element.getAttributeValue(REVISION_STR, revisionStr);
-				if (!revisionStr.empty()) {
+	        element.getAttributeValue(REVISION_STR, revisionStr);
+                if (!revisionStr.empty()) {
                     strcpy(rev, revisionStr.c_str());
                     // get revision of server
-                    PR_snprintf(rev, sizeof(rev), "%d", revision);
+                    revision=atoi(rev);
                 }
 
 		std::string requestId;
@@ -719,6 +720,7 @@ PolicyService::sendNotificationMsg(bool addOrRemove,
 	    }
 	}
     }
+    Log::log(logModule, Log::LOG_INFO,"Policy decision revision number: %d",revision);
     Log::log(logModule, Log::LOG_INFO,
 	     "PolicyService::sendMsgToPolicyListener: "
 	     "Successfully (de)registered for notification.");

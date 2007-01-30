@@ -44,8 +44,8 @@ void rc5_destroy(rc5_ctx *);
 void rc5_key(rc5_ctx *, u_char *, int);
 int rc5_encrypt(rc5_ctx *, u_char *, int);
 int rc5_decrypt(rc5_ctx *, u_char *, int);
-void encode_base64(const char*, size_t, char*);
-int decode_base64(const char *, char *);
+extern void encode_base64(const char*, size_t, char*);
+extern int decode_base64(const char *, char *);
 int encrypt_base64(const char *, char *);
 int decrypt_base64(const char *,char *);
 
@@ -234,7 +234,7 @@ rc5_key(rc5_ctx *c, u_char *key, int keylen) {
 
 
 
-void
+extern void
 encode_base64(const char *p, size_t in_size, char *c) {
     unsigned short cx=0xffff;
     size_t loop = 0;
@@ -294,7 +294,7 @@ getindex(char x) {
     return i;
 }
 
-int 
+extern int 
 decode_base64(const char *c, char *p) {
     int len = 0;
     int i =0;

@@ -154,6 +154,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OVERRIDE_PORT_OLD AM_WEB_PROPERTY_PREFIX_OLD  "overridePort"
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL AM_WEB_PROPERTY_PREFIX  "override_notification.url"
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL_OLD AM_WEB_PROPERTY_PREFIX_OLD  "overrideNotificationUrl"
+#define AM_WEB_ENCODE_URL_SPECIAL_CHARS AM_WEB_PROPERTY_PREFIX  "encode_url_special_chars.enable"
 
 #define AM_COMMON_IGNORE_PATH_INFO    AM_WEB_PROPERTY_PREFIX "ignore_path_info"
 #define AM_COMMON_CLIENT_IP_CHECK_ENABLED_PROPERTY   AM_WEB_PROPERTY_PREFIX "client.ip.check.enable"
@@ -191,6 +192,9 @@ AM_BEGIN_EXTERN_C
 #define AM_DOMINO_CHECK_NAME_DB_PROPERTY_OLD  AM_DOMINO_PROPERTY_PREFIX "checkNameDatabase"
 #define AM_WEB_CONNECTION_TIMEOUT AM_WEB_PROPERTY_PREFIX "connection_timeout"
 #define AM_WEB_AUTHTYPE_IN_IIS6_AGENT AM_WEB_PROPERTY_PREFIX  "iis.auth_type"
+#define AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY AM_COMMON_PROPERTY_PREFIX "replaypasswd.key"
+#define AM_WEB_FILTER_PRIORITY AM_WEB_PROPERTY_PREFIX  "iis.filter_priority"
+
 
 /*
  * Enough space to hold PRTime key in a string
@@ -1088,6 +1092,9 @@ AM_WEB_EXPORT char * am_web_get_am_revision_number();
  * Method to get the value of user id param
  */
 AM_WEB_EXPORT const char * am_web_get_user_id_param();
+
+AM_WEB_EXPORT void am_web_clear_attributes_map(am_policy_result_t *result);
+
 
 AM_END_EXTERN_C 
 

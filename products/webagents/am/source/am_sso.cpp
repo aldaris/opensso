@@ -540,8 +540,8 @@ am_sso_get_property(const am_sso_token_handle_t sso_token_handle,
     } else {
 	retVal = 0;
 	Log::log(ssoHdlModule, Log::LOG_ERROR,
-		 "am_sso_get_property(): "
-		 "One or more input parameters has an invalid value.");
+		 "am_sso_get_property(): Key %s not found in property.",
+		 property_key);
     }
     return retVal;
 }

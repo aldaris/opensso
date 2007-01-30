@@ -97,6 +97,10 @@ USING_PRIVATE_NAMESPACE
 #define	AUTH_LEVEL_KEY			"AuthLevelConditionAdvice"
 #define	AUTH_LEVEL_URL_PREFIX		"&authlevel="
 #define	AUTH_LEVEL_URL_PREFIX_LEN	(sizeof(AUTH_LEVEL_URL_PREFIX) - 1)
+#define AUTH_REALM_KEY                  "AuthenticateToRealmConditionAdvice"
+#define AUTH_REALM_URL_PREFIX           "&realm="
+#define AUTH_REALM_URL_PREFIX_LEN       (sizeof(AUTH_REALM_URL_PREFIX) - 1)
+
 
 /*
  * How long to wait in attempting to connect to an Access Manager AUTH server.
@@ -253,6 +257,8 @@ typedef struct cookie_info_list {
 #define COOKIE_INFO_INITIALIZER {NULL, NULL, NULL, NULL, NULL, AM_FALSE}
 #define COOKIE_INFO_LIST_INITIALIZER {0, COOKIE_INFO_PTR_NULL}
 
+#define IIS_FILTER_PRIORITY  "DEFAULT"
+
 extern "C" int decrypt_base64(const char *, char *);
 extern "C" int decode_base64(const char *, char *);
 
@@ -314,6 +320,8 @@ typedef struct agent_info_t {
     unsigned log_access_type;
     PRBool denyOnLogFailure;
     PRBool convert_mbyte;
+    PRBool encode_url_special_chars;
+
     PRBool override_protocol;	// whether to override protocol in request url
     PRBool override_host;	// whether to override host in request url
     PRBool override_port;	// whether to override port in request url
@@ -325,6 +333,8 @@ typedef struct agent_info_t {
 	const char *authtype;   //value of authtype in IIS6 agent
     PRBool override_host_port;	// used by Proxy agent
     char *am_revision_number;	// AM revision number
+    const char *iis6_replaypasswd_key; // IIS6 replay passwd key
+    const char *filter_priority; //IIS 5 filter priority
 } agent_info_t;
 
 static agent_info_t agent_info = {
@@ -379,6 +389,8 @@ static agent_info_t agent_info = {
     (unsigned int)-1,	    // log_access_type
     AM_FALSE,		    // denyOnLogFailure
     AM_FALSE,		    // convert_mbyte
+    AM_FALSE,               // encode_url_special_chars
+
     AM_FALSE,		    // override_protocol
     AM_FALSE,		    // override_host
     AM_FALSE,		    // override_port
@@ -388,7 +400,9 @@ static agent_info_t agent_info = {
     AM_FALSE,		    // used by ignore_server_check
     NULL,                    // authtype in iis agent
     AM_FALSE,		    // used by Proxy agent
-    NULL		    // AM revision number
+    NULL,		    // AM revision number
+    NULL,                   // IIS6 Replay passwd key
+    IIS_FILTER_PRIORITY     // IIS5 default priority
 };
 
 /**
@@ -508,6 +522,26 @@ void populate_am_resource_traits(am_resource_traits_t &rsrcTraits) {
     rsrcTraits.canonicalize = &am_policy_resource_canonicalize;
     rsrcTraits.str_free = &free;
     return;
+}
+
+void encode_url( const char *orig_url, char *dest_url)
+{
+    int i, ucnt;
+    char p_enc = '%';
+    char buffer[4];
+    for(i=0; i < strlen(orig_url); i++) {
+        ucnt = orig_url[i];
+        if (( ucnt >  32) && ( ucnt < 127))  {
+           strncat(dest_url, &orig_url[i], 1);
+        } else {
+           if ( ucnt < 0 ) ucnt += 256;
+              if (ucnt < 32)
+                 sprintf(buffer, "%c0%X", p_enc, ucnt);
+              else
+                 sprintf(buffer, "%c%X", p_enc, ucnt);
+        }
+    }
+    strncat(dest_url, buffer, strlen(buffer));
 }
 
 static void cleanup_cookie_info_list(cookie_info_list_t *cookie_list)
@@ -717,14 +751,15 @@ static void cleanup_properties(agent_info_t *info_ptr)
 	info_ptr->agent_server_url.host = NULL;
     }
 
-	if (info_ptr->notification_url) {
-		free((void *)info_ptr->notification_url);
-		info_ptr->notification_url = NULL;
-	}
-	if (info_ptr->am_revision_number) {
-		free((void *)info_ptr->am_revision_number);
-		info_ptr->am_revision_number = NULL;
-	}
+    if (info_ptr->notification_url) {
+        free((void *)info_ptr->notification_url);
+        info_ptr->notification_url = NULL;
+    }
+    if (info_ptr->am_revision_number) {
+        free((void *)info_ptr->am_revision_number);
+        info_ptr->am_revision_number = NULL;
+    }
+    info_ptr->iis6_replaypasswd_key = NULL;
 }
 
 static am_bool_t is_server_alive(const url_info_t *info_ptr)
@@ -1362,6 +1397,7 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
     const char *authLogType_default = LOG_TYPE_NONE;
     bool urlstatssl = false;
     bool urlstatnonssl = false;
+    const char *filterPriority_default=IIS_FILTER_PRIORITY;
 
     cleanup_properties(info_ptr);
 
@@ -1783,6 +1819,15 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
 							   &info_ptr->convert_mbyte);
      }
 
+     if (AM_SUCCESS == status) {
+        parameter = AM_WEB_ENCODE_URL_SPECIAL_CHARS;
+        status = am_properties_get_boolean_with_default(info_ptr->properties,
+                                                           parameter,
+                                                           AM_FALSE,
+                                                           &info_ptr->encode_url_special_chars);
+     }
+
+
      /* Get notenforced_client_IP_address */
     if (AM_SUCCESS == status) {
     const char *not_enforced_ipstr;
@@ -2035,6 +2080,26 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
                                                  "dsame", &(info_ptr->authtype));	 
  	 
      }
+
+    /* Get iis6 replay passwd key if defined */
+    if (AM_SUCCESS == status) {
+        function_name = "am_properties_get";
+        parameter = AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY;
+        status = am_properties_get_with_default(info_ptr->properties, parameter,
+                                   NULL, &info_ptr->iis6_replaypasswd_key);
+    }
+
+   /* Get the IIS5 filter priority param  */
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_FILTER_PRIORITY;
+        status = am_properties_get_with_default(info_ptr->properties,
+                            parameter, filterPriority_default,
+                            &info_ptr->filter_priority);
+        am_web_log_info("Default priority => %s : Actual priority  => %s",
+                            filterPriority_default,info_ptr->filter_priority);
+
+    }
+
 
     // get proxy's override_host_port
     if (AM_SUCCESS == status) {
@@ -3107,11 +3172,15 @@ am_web_is_access_allowed(const char *sso_token,
     const char *rmtUsr = NULL;
     std::string queryToken;
     am_bool_t isNotEnforced = AM_FALSE;
+    am_bool_t ignorePolicyResult = AM_FALSE;
     const char *url = NULL;
     std::string normalizedURL;
     std::string pInfo;
     am_bool_t isLogoutURL = AM_FALSE;
     am_status_t log_status = AM_SUCCESS;
+    char * encodedUrl = NULL;
+    unsigned int encodedUrlSize = 0;
+
     
     // The following two variables gets used in cookieless mode
     char *urlSSOToken = NULL;    //sso_token present in the url
@@ -3313,6 +3382,36 @@ am_web_is_access_allowed(const char *sso_token,
 		  am_web_log_debug("URL = %s is in notenforced list and ldap "
                                    "attribute mode is NONE", url); 
             } else {
+                if (agent_info.encode_url_special_chars == AM_TRUE ) {
+                    encodedUrlSize = (strlen(url)+1)*4;
+                    encodedUrl = (char *) malloc (encodedUrlSize);
+
+                    // Check url for special chars
+                    if (encodedUrl != NULL) {
+                        bool url_spl_flag = false;
+                        memset(encodedUrl, 0, encodedUrlSize);
+                        for(int i = 0; i < strlen(url); i++) {
+                           if (( url[i] <  32) || ( url[i] > 127))  {
+                               url_spl_flag = true;
+                           }
+                        }
+                        if (url_spl_flag) {
+                            encode_url(url, encodedUrl);
+                            am_web_log_debug("original URL = %s",url);
+                            url = encodedUrl;
+                            am_web_log_debug("encoded URL = %s",encodedUrl);
+                        }
+                    } else {
+                        am_web_log_error("%s: failed to allocate"
+                                         "%d bytes for encodedUrl",encodedUrlSize);
+                    }
+                }
+
+                if (AM_TRUE == isNotEnforced ||
+                    AM_TRUE == agent_info.do_sso_only) {
+                        ignorePolicyResult = AM_TRUE;
+                }
+   
 		agent_info.am_revision_number = (char *)malloc(AM_REVISION_LEN);
 		eval_status = am_policy_evaluate_ignore_url_notenforced(
 						 agent_info.policy_handle,
@@ -3321,7 +3420,7 @@ am_web_is_access_allowed(const char *sso_token,
 						 reinterpret_cast<am_map_t>
 					          (&action_results_map),
 						 result,
-						 isNotEnforced,
+						 ignorePolicyResult,
 					        &agent_info.am_revision_number);
 
 		// if eval policy success, check policy decision in the result 
@@ -3482,7 +3581,10 @@ am_web_is_access_allowed(const char *sso_token,
 	}
     }
     
-    am_web_free_memory(modifiedURL);
+    if(encodedUrl)
+        am_web_free_memory(encodedUrl);
+    if(modifiedURL)
+        am_web_free_memory(modifiedURL);
     am_web_log_info("%s(%s, %s) returning status: %s.",
 		    thisfunc, url, action_name, am_status_to_string(status));
     return status;
@@ -3941,9 +4043,17 @@ am_web_get_url_to_redirect(am_status_t status,
 			auth_advice_url_prefix_len = AUTH_LEVEL_URL_PREFIX_LEN;
 			auth_advice_value_len = strlen(auth_advice_value);
 		    } else {
-			auth_advice_value = "";
-			am_web_log_debug("%s: advice_map contains no "
+                        auth_advice_value = am_map_find_first_value(advice_map,
+                                                            AUTH_REALM_KEY);
+                        if (NULL != auth_advice_value) {
+                            auth_advice_url_prefix = AUTH_REALM_URL_PREFIX;
+                            auth_advice_url_prefix_len = AUTH_REALM_URL_PREFIX_LEN;
+                            auth_advice_value_len = strlen(auth_advice_value);
+                         } else {
+			    auth_advice_value = "";
+			    am_web_log_debug("%s: advice_map contains no "
 					 "Auth-related advices", thisfunc);
+                         }
 		    }
 		}
 	    }
@@ -4308,82 +4418,6 @@ am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
     return status;
 }
 
-/* 
- * Function which puts the profile, session and response attributes into
- * either headerAttributesMap or cookieAttributesMap based on their 
- * respective modes. All key-value pairs in headerAttributesMap will be
- * set as http headers and all key-value pairs in cookieAttributesMap will
- * be set as cookies
- *
- */
-am_status_t merge_attributes_maps(am_map_t attr_map, 
-                                  am_map_t headerAttributesMap,
-                                  am_map_t cookieAttributesMap,  
-                                  set_user_attrs_mode_t userAttrsMode,
-                                  const char* attrType)
-{
-     const char *thisfunc = "merge_attributes_map()";
-     am_status_t retVal = AM_SUCCESS;
-     std::string valuesSeparator(attrMultiValueSeparator);
-
-     if (attr_map != AM_MAP_NULL) { 
-          const KeyValueMap &attrs = 
-               *(reinterpret_cast<const KeyValueMap *> (attr_map));
-
-          KeyValueMap::const_iterator iter = attrs.begin();
-          for(;(iter != attrs.end()) && (retVal == AM_SUCCESS); iter++) {
-            const KeyValueMap::key_type &keyRef = iter->first;
-            std::string key(keyRef.c_str());
-            std::string value; 
-            const char* mapValue = NULL;
-            const KeyValueMap::mapped_type &valueRef = iter->second;
-            if (!strcmp(attrType, responseAttributes)) {
-                // Required during cookie reset
-                attrList.push_back(key);
-            }
-            for(std::size_t i = 0; i < valueRef.size(); ++i) {
-               value.append(valueRef[i]);
-            }
-            if (!key.empty() && !value.empty()) {
-               if (userAttrsMode == SET_ATTRS_AS_HEADER) {
-                  const char *mapValue = am_map_find_first_value(
-                                          headerAttributesMap, key.c_str());
-                  if (mapValue != NULL) {
-                     std::string existValue(mapValue);
-                     am_map_erase(headerAttributesMap, key.c_str());
-                     value.append(valuesSeparator);
-                     value.append(existValue);
-                  }
-                  retVal = am_map_insert(headerAttributesMap, key.c_str(),
-                                         value.c_str(), AM_FALSE);
-                  if (retVal != AM_SUCCESS) {
-                     am_web_log_error("%s: Unable to insert map into "
-                                      "headerAttributesMap", thisfunc);
-                  }
-                } else if (userAttrsMode == SET_ATTRS_AS_COOKIE) {
-                         const char *mapValue = am_map_find_first_value(
-                                                  cookieAttributesMap,
-                                                  key.c_str());
-                         if (mapValue != NULL) {
-                             std::string existValue(mapValue);
-                             am_map_erase(cookieAttributesMap, key.c_str());
-                             value.append(valuesSeparator);
-                             value.append(existValue);
-                          }
-                          retVal = am_map_insert(cookieAttributesMap,
-                                              key.c_str(), value.c_str(), 
-                                              AM_FALSE);
-                          if (retVal != AM_SUCCESS) {
-                                 am_web_log_error("%s: Unable to insert map "
-                                    "into cookieAttributesMap", thisfunc);
-                          }
-                   }
-               }    
-           }
-     }
-     return retVal;
-}
-
 /*
  * NOTE - This function is deprecated. It is replaced by  
  * am_web_result_attr_map_set() below and is here only for backwards 
@@ -4422,88 +4456,53 @@ am_web_result_attr_map_set(
 {
     const char *thisfunc = "am_web_result_attr_map_set()";
     am_status_t retVal = AM_SUCCESS;
-    am_status_t headerMapVal = AM_SUCCESS;
-    am_status_t cookieMapVal = AM_SUCCESS;
     char str[2048];
     char * new_str = NULL;
     unsigned int new_str_size = 0;
     unsigned int new_str_free = 0;
 
-    am_map_t headerAttributesMap = NULL;
-    am_map_t cookieAttributesMap = NULL;
+    am_map_t attrMap = NULL;
+    const char* mode  = "NONE";
 
     if(result == NULL || setFunc == NULL) {
        retVal = AM_INVALID_ARGUMENT;
     }
-    else if ((result->attr_profile_map == AM_MAP_NULL) && 
-             (result->attr_session_map == AM_MAP_NULL) && 
+    else if ((result->attr_profile_map == AM_MAP_NULL) &&
+             (result->attr_session_map == AM_MAP_NULL) &&
              (result->attr_response_map == AM_MAP_NULL)) {
                 am_web_log_info("%s: No profile or session or response"
-                                " attributes to be set as headers or cookies", 
+                                " attributes to be set as headers or cookies",
                                 thisfunc);
     }
     else {
-         if ((setUserProfileAttrsMode == SET_ATTRS_AS_HEADER) ||
-             (setUserSessionAttrsMode == SET_ATTRS_AS_HEADER) ||
-             (setUserResponseAttrsMode == SET_ATTRS_AS_HEADER)) {
-                 headerMapVal = am_map_create(&headerAttributesMap);
-         }
-         if ((setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) ||
-             (setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE) ||
-             (setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE)) {
-                 cookieMapVal = am_map_create(&cookieAttributesMap);
-         }
-
-         if ((headerMapVal == AM_SUCCESS) && (cookieMapVal == AM_SUCCESS)) {
-            // Put the profile attributes into either the headerAttributesMap
-            // or the cookiesAttributesMap
-            if (result->attr_profile_map != AM_MAP_NULL) {
-               if (setUserProfileAttrsMode == SET_ATTRS_AS_HEADER) {
-                   headerAttributesMap = result->attr_profile_map;
-               } else if (setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) {
-                   cookieAttributesMap = result->attr_profile_map;
-               }
-            }
-
-            // Put the session attributes into either the headerAttributesMap 
-            // or the cookiesAttributesMap
-            retVal = merge_attributes_maps(result->attr_session_map, 
-                                           headerAttributesMap,
-                                           cookieAttributesMap, 
-                                           setUserSessionAttrsMode,
-                                           sessionAttributes);
-            if (retVal != AM_SUCCESS) {
-               am_web_log_error("%s: Error while merging session attributes "
-                                "map", thisfunc);
-            }
-
-            // Put the response attributes into either the 
-            // headerAttributesMap or the cookiesAttributesMap
-            retVal = merge_attributes_maps(result->attr_response_map, 
-                                           headerAttributesMap,
-                                           cookieAttributesMap, 
-                                           setUserResponseAttrsMode,
-                                           responseAttributes);
-            if (retVal != AM_SUCCESS) {
-                am_web_log_error("%s: Error while merging response attributes"
-                                 "map", thisfunc);
-            }
-           } else {
-            am_web_log_error("%s: Unable to create profile attribute map and",
-                             " cookies attributes map", thisfunc);
-          }
+        for (int i=0; i<3; i++) {
+	      switch (i) {
+		  case 0:
+		       attrMap = result->attr_profile_map;
+		       mode = profileMode;
+		       break;
+		  case 1:
+		       attrMap = result->attr_session_map;
+		       mode = sessionMode;
+		       break;
+		  case 2:
+		       attrMap = result->attr_response_map;
+		       mode = responseMode;
+		       break;
+                  default:
+		       break;
+              }
 
           try {
-             // All the name-value pairs in headerAttributesMap need to 
-             // be set as headers
-             if (am_map_size(headerAttributesMap) > 0) {
-                const KeyValueMap &headerAttrs = 
+             // set attributes as headers
+	     if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_HEADER)) { 
+                const KeyValueMap &headerAttrs =
                       *(reinterpret_cast<const KeyValueMap *>
-                          (headerAttributesMap));
-                am_web_log_max_debug("%s: Now setting %u header attributes.", 
+                          (attrMap));
+                am_web_log_max_debug("%s: Now setting %u header attributes.",
                           thisfunc, headerAttrs.size());
                 KeyValueMap::const_iterator iter_header = headerAttrs.begin();
-                for(;(iter_header != headerAttrs.end()) && 
+                for(;(iter_header != headerAttrs.end()) &&
                                 (retVal == AM_SUCCESS); iter_header++) {
                   std::string values;
                   am_status_t set_sts = AM_SUCCESS;
@@ -4512,22 +4511,22 @@ am_web_result_attr_map_set(
                     "%s: User attribute is %s.", thisfunc, keyRef.c_str());
 
                   // Clear the header
-                  std::string hdr_or_cookie_name_s(keyRef.c_str()); 
-                  const char * hdr_or_cookie_name = 
+                  std::string hdr_or_cookie_name_s(keyRef.c_str());
+                  const char * hdr_or_cookie_name =
                                              hdr_or_cookie_name_s.c_str();
                   if (setFunc != NULL) {
                      set_sts = setFunc(hdr_or_cookie_name, NULL, args);
                      if (set_sts != AM_SUCCESS) {
-                         am_web_log_warning("%s: Error %s clearing header %s", 
-                                            thisfunc, 
+                         am_web_log_warning("%s: Error %s clearing header %s",
+                                            thisfunc,
                                             am_status_to_string(set_sts),
                                             hdr_or_cookie_name);
                      }
                    }
 
-                   const KeyValueMap::mapped_type &valueRef = 
+                   const KeyValueMap::mapped_type &valueRef =
                                                       iter_header->second;
-                   am_web_log_max_debug("%s: Iterating over %u values.", 
+                   am_web_log_max_debug("%s: Iterating over %u values.",
                                         thisfunc, valueRef.size());
 
                    for(std::size_t i = 0; i < valueRef.size(); ++i) {
@@ -4535,8 +4534,8 @@ am_web_result_attr_map_set(
                       PUSH_BACK_CHAR(values, ',');
                    }
 
-                   /* we say > 1 below becoz, the last extra ',' is at 
-                    * least one char.  so we need more that that to 
+                   /* we say > 1 below becoz, the last extra ',' is at
+                    * least one char.  so we need more that that to
                     * set header.
                     */
                     if(values.size() > 1) {
@@ -4550,16 +4549,16 @@ am_web_result_attr_map_set(
                          if (new_str_size  > 2048) {
                             new_str_free = 1;
                             new_str = (char *) malloc (new_str_size);
-                         } else { 
+                         } else {
                             new_str = str;
                          }
                        }
                        if (agent_info.convert_mbyte == AM_TRUE ) {
-                           Log::log(agent_info.log_module, 
+                           Log::log(agent_info.log_module,
                                     Log::LOG_MAX_DEBUG,
                                     "i18n encoding in native ");
                            if (new_str != NULL) {
-                               mbyte_to_wchar(values.c_str(), new_str, 
+                               mbyte_to_wchar(values.c_str(), new_str,
                                               new_str_size);
                                retVal = setFunc(keyRef.c_str(), new_str, args);
                            } else {
@@ -4568,29 +4567,28 @@ am_web_result_attr_map_set(
                                                 new_str_size);
                           }
                        } else {
-                              Log::log(agent_info.log_module, 
+                              Log::log(agent_info.log_module,
                                        Log::LOG_MAX_DEBUG,
                                        "i18n encoding in utf-8 ");
                               retVal = setFunc(keyRef.c_str(), values.c_str(),
                                                args);
-                      } 
+                      }
                      }
                      if (new_str_free == 1) {
                         free(new_str);
                      }
                    }
-                } 
+                }
 
-                // All the name-value pairs in cookieAttributesMap need to 
-			    // be set as cookies
-                if (am_map_size(cookieAttributesMap) > 0) {
-                  const KeyValueMap &cookieAttrs = 
+		// set attributes as cookies
+	        if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) { 
+                  const KeyValueMap &cookieAttrs =
                          *(reinterpret_cast<const KeyValueMap *>
-                           (cookieAttributesMap));
+                           (attrMap));
 
                   am_web_log_max_debug("%s: Now setting %u cookie attributes.",
                                         thisfunc, cookieAttrs.size());
-                  KeyValueMap::const_iterator iter_cookie = 
+                  KeyValueMap::const_iterator iter_cookie =
                                                     cookieAttrs.begin();
                   for(;(iter_cookie != cookieAttrs.end()) &&
                             (retVal == AM_SUCCESS); iter_cookie++) {
@@ -4598,10 +4596,10 @@ am_web_result_attr_map_set(
                     am_status_t set_sts = AM_SUCCESS;
                     const KeyValueMap::key_type &keyRef = iter_cookie->first;
                     Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
-                             "%s: User attribute is %s.", thisfunc, 
+                             "%s: User attribute is %s.", thisfunc,
                              keyRef.c_str());
-                    std::string hdr_or_cookie_name_s(keyRef.c_str()); 
-                    const char * hdr_or_cookie_name = 
+                    std::string hdr_or_cookie_name_s(keyRef.c_str());
+                    const char * hdr_or_cookie_name =
                                  hdr_or_cookie_name_s.c_str();
 
                     // Clear that cookie
@@ -4620,11 +4618,11 @@ am_web_result_attr_map_set(
                     cookie_hdr = (char*)(buildSetCookieHeader(&clear_cookie));
 
                     if (set_cookie_in_response != NULL) {
-                      set_sts =  set_cookie_in_response(cookie_hdr, args); 
+                      set_sts =  set_cookie_in_response(cookie_hdr, args);
                       if (set_sts != AM_SUCCESS) {
                          am_web_log_warning("%s: Error %s clearing "
-                                            "cookie %s in response header", 
-                                            thisfunc, 
+                                            "cookie %s in response header",
+                                            thisfunc,
                                             am_status_to_string(set_sts),
                                             hdr_or_cookie_name);
                       }
@@ -4633,8 +4631,8 @@ am_web_result_attr_map_set(
                        set_sts = set_header_attr_as_cookie(cookie_hdr,args);
                       if (set_sts != AM_SUCCESS) {
                          am_web_log_warning("%s: Error %s clearing "
-                                            "cookie %s in request headers", 
-                                            thisfunc, 
+                                            "cookie %s in request headers",
+                                            thisfunc,
                                             am_status_to_string(set_sts),
                                             hdr_or_cookie_name);
                       }
@@ -4644,9 +4642,9 @@ am_web_result_attr_map_set(
                     }
 
                     // Set the new value to the cookie
-                    const KeyValueMap::mapped_type &valueRef = 
+                    const KeyValueMap::mapped_type &valueRef =
                                                    iter_cookie->second;
-                    am_web_log_max_debug("%s: Iterating over %u values.", 
+                    am_web_log_max_debug("%s: Iterating over %u values.",
                                                   thisfunc, valueRef.size());
                     for(std::size_t i = 0; i < valueRef.size(); ++i) {
                        values.append(valueRef[i]);
@@ -4664,19 +4662,19 @@ am_web_result_attr_map_set(
                                "function. %d", thisfunc);
 
                        cookie_name.append(const_cast<char*>(keyRef.c_str()));
-                       attr_cookie.name = 
+                       attr_cookie.name =
                             const_cast<char*>(cookie_name.c_str());
                        attr_cookie.value = const_cast<char*>(values.c_str());
                        attr_cookie.domain = NULL;
-                       attr_cookie.max_age = 
+                       attr_cookie.max_age =
                            const_cast<char*>(attrCookieMaxAge);
                        attr_cookie.path = const_cast<char*>("/");
                        cookie_header =
                            (char*)(buildSetCookieHeader(&attr_cookie));
                        if (cookie_header != NULL) {
                           if (set_cookie_in_response != NULL) {
-                             retVal =  set_cookie_in_response(cookie_header, 
-                                                              args); 
+                             retVal =  set_cookie_in_response(cookie_header,
+                                                              args);
                           } else {
                              Log::log(agent_info.log_module, Log::LOG_INFO,
                                       "%s: response header setting function "
@@ -4697,27 +4695,29 @@ am_web_result_attr_map_set(
                                      "attribute:%s",thisfunc, keyRef.c_str());
                        }
                      }
-                   }
+                 }
              } catch (std::bad_alloc& exb) {
                   retVal = AM_NO_MEMORY;
              } catch (std::exception& exs) {
-                  am_web_log_error("%s: Exception encountered: %s.", thisfunc, 
+                  am_web_log_error("%s: Exception encountered: %s.", thisfunc,
                                    exs.what());
                   retVal = AM_FAILURE;
              } catch (...) {
-                  am_web_log_error("%s: Unknown exception encountered.", 
+                  am_web_log_error("%s: Unknown exception encountered.",
                                    thisfunc);
                   retVal = AM_FAILURE;
              }
+        }
 
              if (retVal == AM_SUCCESS) {
                 Log::log(agent_info.log_module, Log::LOG_DEBUG,
-                    "%s: Successfully set all header attributes.", thisfunc);
+                    "%s: Successfully set all attributes.", thisfunc);
              } else {
                 Log::log(agent_info.log_module, Log::LOG_ERROR,
-                    "%s: Error while setting header attributes: %s",
+                    "%s: Error while setting attributes: %s",
                     thisfunc, am_status_to_string(retVal));
              }
+    
     }
     return retVal;
 }
@@ -6393,17 +6393,17 @@ process_cdsso(
     return sts;
 }
 
-/* 
- * this function does what am_web_result_attr_map_set() does 
+/*
+ * this function does what am_web_result_attr_map_set() does
  * but uses the new function as arguments since am_web_result_attr_map_set
  * only takes one set of args for all functions.
  * If configured sets the user's profile, session and response attributes
  * as headers or cookies based on their respective modes.
  * Returns AM_SUCCESS if setting all attributes returned successfully.
- * If an error is encountered, other attributes are still set, and 
+ * If an error is encountered, other attributes are still set, and
  * the first (if any) failure status encountered is returned.
- */ 
-static am_status_t 
+ */
+static am_status_t
 set_user_attributes(am_policy_result_t *result,
 			 am_web_request_params_t *req_params,
 			 am_web_request_func_t *req_func)
@@ -6411,10 +6411,8 @@ set_user_attributes(am_policy_result_t *result,
      const char *thisfunc = "set_user_attributes()";
      am_status_t sts = AM_SUCCESS;
      am_status_t set_sts = AM_SUCCESS;
-     am_map_t headerAttributesMap = NULL;
-     am_map_t cookieAttributesMap = NULL;
-     am_status_t headerMapVal = AM_SUCCESS;
-     am_status_t cookieMapVal = AM_SUCCESS;
+     am_map_t attrMap = NULL;
+     const char* mode  = "NONE";
 
      // check arguments.
      if (result == NULL || req_params == NULL || req_func == NULL) {
@@ -6426,38 +6424,39 @@ set_user_attributes(am_policy_result_t *result,
               (SET_ATTRS_NONE == setUserSessionAttrsMode) &&
               (SET_ATTRS_NONE == setUserResponseAttrsMode)) {
                 am_web_log_debug("%s: set user attributes option set to none.",
-                                  thisfunc); 
+                                  thisfunc);
                 sts = AM_SUCCESS;
      }
      // if no attributes in result, we're done.
      else if ((result->attr_profile_map == AM_MAP_NULL) &&
              (result->attr_session_map == AM_MAP_NULL) &&
              (result->attr_response_map == AM_MAP_NULL)) {
-               am_web_log_info("%s: No user LDAP attributes found.", thisfunc);
+               am_web_log_info("%s: All attributes maps are null. Nothing to set ",
+			       thisfunc);
                sts = AM_SUCCESS;
     }
-    // if set user LDAP attribute option is headers and set 
+    // if set user LDAP attribute option is headers and set
     // request headers is null, return.
-    else if (((SET_ATTRS_AS_HEADER == setUserProfileAttrsMode) || 
+    else if (((SET_ATTRS_AS_HEADER == setUserProfileAttrsMode) ||
     		 (SET_ATTRS_AS_HEADER == setUserSessionAttrsMode) ||
     		 (SET_ATTRS_AS_HEADER == setUserResponseAttrsMode)) &&
                    NULL == req_func->set_header_in_request.func) {
               am_web_log_warning("%s: set user attributes option is "
-                                 "HEADER but no set request header " 
-				                 "function is provided. ", thisfunc);
+                                 "HEADER but no set request header "
+                                 "function is provided. ", thisfunc);
               sts = AM_NOT_FOUND;
     }
-    // if set user LDAP attribute cookies option is "cookie" and 
+    // if set user LDAP attribute cookies option is "cookie" and
     // functions are not provided to set cookie, log a warning.
     else if (((SET_ATTRS_AS_COOKIE == setUserProfileAttrsMode) ||
               (SET_ATTRS_AS_COOKIE == setUserSessionAttrsMode) ||
               (SET_ATTRS_AS_COOKIE == setUserResponseAttrsMode)) &&
-                (NULL == req_func->set_header_in_request.func || 
+                (NULL == req_func->set_header_in_request.func ||
                  NULL == req_func->add_header_in_response.func)) {
               am_web_log_warning("%s: set user attributes option is "
                                  "COOKIE but no function provided "
-					             "to either set cookie in request "
-				                 "response is provided. ", thisfunc);
+                                 "to either set cookie in request "
+                                 "response is provided. ", thisfunc);
               sts = AM_NOT_FOUND;
     }
     // now go do it.
@@ -6476,7 +6475,7 @@ set_user_attributes(am_policy_result_t *result,
          if (cookie_header_val != NULL) {
             std::list<std::string>::const_iterator attr_iter;
             std::list<std::string>::const_iterator attr_end=attrList.end();
-            for(attr_iter = attrList.begin(); attr_iter != attr_end; 
+            for(attr_iter = attrList.begin(); attr_iter != attr_end;
                                               attr_iter++) {
                const char * header_name = (*attr_iter).c_str();
                if ((SET_ATTRS_AS_HEADER == setUserProfileAttrsMode) ||
@@ -6494,7 +6493,7 @@ set_user_attributes(am_policy_result_t *result,
                 else if ((SET_ATTRS_AS_COOKIE == setUserProfileAttrsMode) ||
                          (SET_ATTRS_AS_COOKIE == setUserSessionAttrsMode) ||
                          (SET_ATTRS_AS_COOKIE == setUserResponseAttrsMode)) {
-                     // for cookie, remove all cookies of the same name 
+                     // for cookie, remove all cookies of the same name
                      // in the cookie header.
                      std::string cookie_name(attrCookiePrefix);
                      cookie_name.append(*attr_iter);
@@ -6507,8 +6506,8 @@ set_user_attributes(am_policy_result_t *result,
                      // set cookie in request and response.
                      set_sts = set_cookie_in_request_and_response(
                                &cookie_info, req_params, req_func, false);
-                     am_web_log_debug("%s: clear cookie %s returned %s", 
-                                     thisfunc, cookie_info.name, 
+                     am_web_log_debug("%s: clear cookie %s returned %s",
+                                     thisfunc, cookie_info.name,
                                      am_status_to_name(sts));
                      if (set_sts != AM_SUCCESS && sts == AM_SUCCESS) {
                          sts = set_sts;
@@ -6516,61 +6515,29 @@ set_user_attributes(am_policy_result_t *result,
                  }
               }
           }
-          if ((setUserProfileAttrsMode == SET_ATTRS_AS_HEADER) ||
-               (setUserSessionAttrsMode == SET_ATTRS_AS_HEADER) ||
-               (setUserResponseAttrsMode == SET_ATTRS_AS_HEADER)) {
-                     headerMapVal = am_map_create(&headerAttributesMap);
-          }
-          if ((setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE) ||
-              (setUserSessionAttrsMode == SET_ATTRS_AS_COOKIE) ||
-              (setUserResponseAttrsMode == SET_ATTRS_AS_COOKIE)) {
-                     cookieMapVal = am_map_create(&cookieAttributesMap);
-          }
 
-          if ((headerMapVal == AM_SUCCESS)&& (cookieMapVal == AM_SUCCESS)){
-              // Put the profile attributes into either the 
-              // headerAttributesMap or the cookiesAttributesMap
-              if (result->attr_profile_map != AM_MAP_NULL) {
-                 if (setUserProfileAttrsMode == SET_ATTRS_AS_HEADER) {
-                     headerAttributesMap = result->attr_profile_map;
-                 } else if (setUserProfileAttrsMode == SET_ATTRS_AS_COOKIE){
-                     cookieAttributesMap = result->attr_profile_map;
-                 }
-              }
-
-              // Put the session attributes into either the 
-              // headerAttributesMap or the cookiesAttributesMap
-              sts = merge_attributes_maps(result->attr_session_map, 
-                                          headerAttributesMap,
-                                          cookieAttributesMap, 
-                                          setUserSessionAttrsMode,
-                                          sessionAttributes);
-              if (sts != AM_SUCCESS) {
-                     am_web_log_error("%s: Error while merging session "
-                                      "attributes map", thisfunc);
-              }
-
-              // Put the response attributes into either the 
-              // headerAttributesMap or the cookiesAttributesMap
-              sts = merge_attributes_maps(result->attr_response_map, 
-                                          headerAttributesMap,
-                                          cookieAttributesMap, 
-                                          setUserResponseAttrsMode,
-                                          responseAttributes);
-              if (sts != AM_SUCCESS) {
-                  am_web_log_error("%s: Error while merging response "
-                                   "attributes map", thisfunc);
-              }
-		    } else {
-                am_web_log_error("%s: Unable to create profile attribute "
-                                 "map and cookies attributes map", thisfunc);
-            }
-
-            if (am_map_size(headerAttributesMap) > 0) {
+        for (int i=0; i<3; i++) {
+	      switch (i) {
+		  case 0:
+		       attrMap = result->attr_profile_map;
+		       mode = profileMode;
+		       break;
+		  case 1:
+		       attrMap = result->attr_session_map;
+		       mode = sessionMode;
+		       break;
+		  case 2:
+		       attrMap = result->attr_response_map;
+		       mode = responseMode;
+		       break;
+                  default:
+		       break;
+             }
+	     if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_HEADER)) { 
                // set the new values.
                const KeyValueMap &headerAttrs =
 		                         *(reinterpret_cast<const KeyValueMap *>
-			                     (headerAttributesMap));
+			                     (attrMap));
                // loop through all attributes from policy result.
                KeyValueMap::const_iterator iter = headerAttrs.begin();
                for (;(iter != headerAttrs.end()); iter++) {
@@ -6583,7 +6550,7 @@ set_user_attributes(am_policy_result_t *result,
                   Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
 			           "%s: For user attribute %s, iterating over %u values.",
 			           thisfunc, key, num_values);
-		
+
                   // put each value into "val1,val2,val3.." format
                   if (num_values > 0) {
                      values.append(valuesRef[i++]);
@@ -6594,21 +6561,22 @@ set_user_attributes(am_policy_result_t *result,
                    }
                    set_sts = req_func->set_header_in_request.func(
 				                       req_func->set_header_in_request.args,
-                                       key, values.c_str()); 
+                                       key, values.c_str());
                    am_web_log_debug("%s: set request header key %s, "
-                                     "value %s, returned %s", thisfunc, key, 
+                                     "value %s, returned %s", thisfunc, key,
                                      values.c_str(), am_status_to_name(sts));
                   if (set_sts != AM_SUCCESS && sts == AM_SUCCESS) {
                       sts = set_sts;
                   }
                 }
-		     }
+            }
 
-             if (am_map_size(cookieAttributesMap) > 0) {
+            // set attributes as cookies
+            if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) { 
                 // set the new values.
                 const KeyValueMap &cookieAttrs =
                       *(reinterpret_cast<const KeyValueMap *>
-                        (cookieAttributesMap));
+                        (attrMap));
                 KeyValueMap::const_iterator iter = cookieAttrs.begin();
                 for(;(iter != cookieAttrs.end()); iter++) {
                    std::size_t i = 0;
@@ -6620,7 +6588,7 @@ set_user_attributes(am_policy_result_t *result,
                    Log::log(agent_info.log_module, Log::LOG_MAX_DEBUG,
                       "%s: For user attribute %s, iterating over %u values.",
                       thisfunc, key, num_values);
-     
+
                    // put each value into "val1,val2,val3.." format
                    if (num_values > 0) {
                       values.append(valuesRef[i++]);
@@ -6642,36 +6610,35 @@ set_user_attributes(am_policy_result_t *result,
                    set_sts = set_cookie_in_request_and_response(
                              &cookie_info, req_params, req_func, false);
                    am_web_log_debug("%s: set cookie %s, value %s in header, "
-                                    "returned %s", thisfunc, key, 
+                                    "returned %s", thisfunc, key,
                                     values.c_str(), am_status_to_name(sts));
                    if (set_sts != AM_SUCCESS && sts == AM_SUCCESS) {
                        sts = set_sts;
                    }
                  }
-              } 
+            }
              // now set the cookie header.
              set_sts = req_func->set_header_in_request.func(
                             req_func->set_header_in_request.args,
                             "Cookie", (char *)req_params->reserved);
-             am_web_log_debug("%s:set cookie header %s in request returned %s", 
-                             thisfunc, req_params->reserved, 
+             am_web_log_debug("%s:set cookie header %s in request returned %s",
+                             thisfunc, req_params->reserved,
                              am_status_to_string(set_sts));
-          }
-          catch (std::bad_alloc& exb) {
-             am_web_log_error("%s: Bad alloc exception encountered: %s.", 
+        }
+     } catch (std::bad_alloc& exb) {
+             am_web_log_error("%s: Bad alloc exception encountered: %s.",
                               thisfunc, exb.what());
              sts = AM_NO_MEMORY;
-          }
-          catch (std::exception& exs) {
-             am_web_log_error("%s: Exception encountered: %s.", 
+     } catch (std::exception& exs) {
+             am_web_log_error("%s: Exception encountered: %s.",
                               thisfunc, exs.what());
              sts = AM_FAILURE;
-          }
-          catch (...) {
+     } catch (...) {
             am_web_log_error("%s: Unknown exception encountered.",thisfunc);
             sts = AM_FAILURE;
           }
-     } 
+     }
+
      return sts;
 }
 
@@ -6975,6 +6942,8 @@ process_request(am_web_request_params_t *req_params,
 	    am_map_destroy(env_map);
 	    env_map = NULL;
 	}
+
+        am_web_clear_attributes_map(&policy_result);
 	am_policy_result_destroy(&policy_result);
 	if (req_params->reserved != NULL) {
 	    free(req_params->reserved);
@@ -7185,6 +7154,27 @@ am_web_set_cookie(char *cookie_header, const char *set_cookie_value,
     return sts;
 }
 
+/*
+ * Clear all the attribute maps.
+ */
+extern "C" AM_WEB_EXPORT void
+am_web_clear_attributes_map(am_policy_result_t *result)
+{
+    // Free up all the maps
+    if (result->attr_profile_map != AM_MAP_NULL) {
+        am_map_destroy(result->attr_profile_map);
+        result->attr_profile_map = AM_MAP_NULL;
+    }
+    if (result->attr_session_map != AM_MAP_NULL) {
+        am_map_destroy(result->attr_session_map);
+        result->attr_session_map = AM_MAP_NULL;
+    }
+    if (result->attr_response_map != AM_MAP_NULL) {
+        am_map_destroy(result->attr_response_map);
+        result->attr_response_map = AM_MAP_NULL;
+    }
+}
+
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_build_advice_response(const am_policy_result_t *policy_result,
 			     const char *redirect_url,
@@ -7243,6 +7233,35 @@ extern "C" AM_WEB_EXPORT char *
 am_web_get_am_revision_number() {
     return agent_info.am_revision_number;
 }
+
+#if defined(WINNT)
+extern "C" AM_WEB_EXPORT DWORD
+am_web_get_iis_filter_priority() {
+
+    DWORD priorityFlag =0;
+    const char *amAgentPriorityflag =agent_info.filter_priority;
+    if(strncasecmp(amAgentPriorityflag ,"DEFAULT",7) == 0)
+        priorityFlag = 0x00020000;
+    else if(strncasecmp(amAgentPriorityflag ,"MEDIUM",6) == 0)
+        priorityFlag = 0x00040000;
+    else if(strncasecmp(amAgentPriorityflag,"HIGH",4) == 0)
+        priorityFlag=0x00080000;
+    else if(strncasecmp(amAgentPriorityflag,"LOW",3) == 0)
+        priorityFlag=0x00020000;
+
+    return priorityFlag;
+}
+#endif
+
+/*
+ * Method to get the IIS6 agent replay passwd key
+ *
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_get_iis6_replaypasswd_key() {
+    return agent_info.iis6_replaypasswd_key;
+}
+
 #if defined(WINNT)
 AM_BEGIN_EXTERN_C
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {

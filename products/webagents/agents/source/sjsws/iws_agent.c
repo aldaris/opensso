@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.1 2007-01-17 23:15:18 subbae Exp $
+ * $Id: iws_agent.c,v 1.2 2007-01-30 21:11:49 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -1050,6 +1050,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 	break;
     }
 
+    am_web_clear_attributes_map(&result);
     am_policy_result_destroy(&result);
     am_web_free_memory(dpro_cookie);
     am_web_free_memory(request_url);

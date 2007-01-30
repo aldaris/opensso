@@ -1077,7 +1077,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	  if(resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    if (uPolicyEntry->getTree(rootRes,false) == NULL) {
 	      update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	           mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
+	           mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, true);
 	      Log::log(logID, Log::LOG_WARNING,
 	              "%s:Result size is %d,tree not present for %s", func,
 	              results.size(),resName.c_str());
@@ -1166,6 +1166,14 @@ Service::getPolicyResult(const char *userSSOToken,
 	    Log::log(logID, Log::LOG_MAX_DEBUG,
 		     "Service::getPolicyResult(): "
 		     "Advice string constructed: [%s]", adviceStr.c_str());
+            // No need to cache the policy decision when it has an advice
+            // Remove the entry from the policy cache
+            Log::log(logID, Log::LOG_MAX_DEBUG,
+                     "Service::getPolicyResult(): "
+                     "Removing the policy decision which has advice "
+                     "from the policy cache");
+            policyTable.remove(ssoToken.getString());
+
 	} else {
 	    Log::log(logID, Log::LOG_DEBUG,
 		     "Service::getPolicyResult(): "
@@ -1282,8 +1290,8 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
     // do policy
     string xmlData;
     PolicyEntryRefCntPtr tmpPolicyEntry = policyTable.find(ssoTok.getString());
-   if (!tmpPolicyEntry) {
-    if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
+    if (!tmpPolicyEntry || refetchPolicy) {
+        if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
 					       policyEntry->getSSOToken(),
 					       policyEntry->cookies,
 					       sessionInfo,

@@ -205,8 +205,12 @@ void URL::parseURLStrNew(const std::string &urlString,
     if (port_ptr != NULL && 
 	    (uri_ptr != NULL && uri_ptr <= port_ptr) || 
 	    (query_ptr != NULL && query_ptr <= port_ptr)) {
-	throw InternalException(func, "Invalid character ':' in URL", 
-			        AM_INVALID_RESOURCE_FORMAT);
+        // Commented below as this is causing an exception when URL doesn't
+        // contain a port(in case of default port) and if there is a colon in query string
+        //      throw InternalException(func, "Invalid character ':' in URL",
+        //                              AM_INVALID_RESOURCE_FORMAT);
+        port_ptr = NULL; //as there is no port mentioned in URL.
+
     }
     
     //Commented this check as this is causing an exception
