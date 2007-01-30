@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.3 2007-01-22 23:20:45 exu Exp $
+   $Id: configure.jsp,v 1.4 2007-01-30 21:23:31 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -34,7 +34,7 @@
 %>
 
 <%@ include file="../header.jsp"%>
-<%@ include file="../cli.jsp"%>
+<%@ include file="../../cli.jsp"%>
 <%@ page
     import="com.sun.identity.federation.meta.IDFFMetaException,
         com.sun.identity.federation.meta.IDFFMetaManager,

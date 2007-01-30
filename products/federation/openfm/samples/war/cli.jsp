@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: cli.jsp,v 1.1 2006-10-30 23:17:51 qcheng Exp $
+   $Id: cli.jsp,v 1.1 2007-01-30 21:23:30 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>

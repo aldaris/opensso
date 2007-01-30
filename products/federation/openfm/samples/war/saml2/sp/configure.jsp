@@ -3,13 +3,13 @@
    of the Common Development and Distribution License
    (the License). You may not use this file except in
    compliance with the License.
-                                                                                                                                  
+
    You can obtain a copy of the License at
    https://opensso.dev.java.net/public/CDDLv1.0.html or
    opensso/legal/CDDLv1.0.txt
    See the License for the specific language governing
    permission and limitations under the License.
-                                                                                                                                  
+
    When distributing Covered Code, include this CDDL
    Header Notice in each file and include the License file
    at opensso/legal/CDDLv1.0.txt.
@@ -18,16 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.4 2007-01-30 21:23:31 bina Exp $
+   $Id: configure.jsp,v 1.1 2007-01-30 21:23:33 bina Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <html>
 <head>
 <title>Configure Service Provider</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" type="text/css" href="../../../com_sun_web_ui/css/css_ns6up.css" />
+<link rel="stylesheet" type="text/css" href="../../../com_sun_web_ui/css/css_ns6up.css"/>
 
 <%
     String errorMsg = null;
@@ -36,15 +36,17 @@
 <%@ include file="../header.jsp"%>
 <%@ include file="../../cli.jsp"%>
 <%@ page
-    import="com.sun.identity.federation.meta.IDFFMetaException,
-        com.sun.identity.federation.meta.IDFFMetaManager,
-        com.sun.identity.federation.meta.IDFFMetaUtils,
-        com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement,
-        com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement,
+    import="com.sun.identity.saml2.meta.SAML2MetaException,
+        com.sun.identity.saml2.common.SAML2Utils,
+        com.sun.identity.saml2.meta.SAML2MetaManager,
+        com.sun.identity.saml2.meta.SAML2MetaUtils,
+        com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement,
+        com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement,
         com.sun.identity.cot.CircleOfTrustDescriptor,
         com.sun.identity.cot.CircleOfTrustManager,
         com.sun.identity.cot.COTConstants,
         java.util.HashSet,
+        java.util.List,
         java.util.Set"
 %>
 <%
@@ -59,7 +61,7 @@
     boolean configured = false;
     String hostedSPEntityID = null;
     String remoteIDPEntityID = null;
-    String SAMPLE_COT_NAME = "sampleidffcot";
+    String SAMPLE_COT_NAME = "samplesaml2cot";
     if ((localAuthUrl == null) && (errorMsg == null)) {
         String proto = request.getParameter("proto");
         String host = request.getParameter("host");
@@ -83,24 +85,41 @@
 
                 try {
                     // [START] Make a call to CLI to get the meta data template
-                    String entityName = baseURL;
+                    String entityName = baseHost;
+                    //String entityName = baseURL;
+                    //String entityName = host;
+                    hostedSPEntityID=entityName;
+                    SAML2MetaManager metaManager = new SAML2MetaManager();
+                    List spEntityList = 
+                        metaManager.getAllHostedServiceProviderEntities("/");
+                    boolean spExists =  
+                        ((spEntityList != null && !spEntityList.isEmpty()) 
+                          && spEntityList.contains(entityName)) ;
+                          
+                    CLIRequest req = null;
+                    String result = null;
+                    int metaStartIdx=0;
+                    int extendedStartIdx=0;
+                    int extendedEndIdx = 0;
+                    int metaEndIdx=0;
+                    String endEntityDescriptorTag=null;
+                    String metaXML =  null;
+                    if (!spExists) {
                     String[] args = {"create-metadata-template", 
-                        "--spec", "idff",
                         "--entityid", entityName,
                         "--serviceprovider", "/sp"};
-                    CLIRequest req = new CLIRequest(null, args, ssoToken);
+                    req = new CLIRequest(null, args, ssoToken);
                     cmdManager.addToRequestQueue(req);
                     cmdManager.serviceRequestQueue();
-                    String result = outputWriter.getMessages();
+                    result = outputWriter.getMessages();
                     // [END] Make a call to CLI to get the meta data template
 
-
                     // [START] Parse the output of CLI to get metadata XML
-                    String endEntityDescriptorTag = "</EntityDescriptor>";
-                    int metaStartIdx = result.indexOf("<EntityDescriptor");
-                    int metaEndIdx = result.indexOf(endEntityDescriptorTag,
+                    endEntityDescriptorTag = "</EntityDescriptor>";
+                    metaStartIdx = result.indexOf("<EntityDescriptor");
+                    metaEndIdx = result.indexOf(endEntityDescriptorTag,
                         metaStartIdx);
-                    String metaXML = result.substring(metaStartIdx, metaEndIdx +
+                    metaXML = result.substring(metaStartIdx, metaEndIdx +
                         endEntityDescriptorTag.length() +1);
                     // [END] Parse the output of CLI to get metadata XML
 
@@ -114,32 +133,30 @@
                         extendEndIdx + endEntityConfigTag.length() + 1);
                     // [END] Parse the output of CLI to get extended data XML
                    
-                    // [START] modify extended config to set providerHomePageURL
-                    int exStartIdx = extendedXML.indexOf(
-                        "<Attribute name=\"providerHomePageURL\">");
-                    int exValueIdx = extendedXML.indexOf("<Value>",
-                        exStartIdx);
-                    extendedXML = extendedXML.substring(0, exValueIdx + 7) +
-                        baseURL + "/samples/idff/sp/index.jsp" +
-                        extendedXML.substring(exValueIdx + 7);
-                    // [END] modify extended config to set providerHomePageURL
-
                     // [START] Import these XMLs
-                    IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
+                    //SAML2MetaManager metaManager = new SAML2MetaManager();
                     EntityDescriptorElement descriptor =
                         (EntityDescriptorElement)
-                            IDFFMetaUtils.convertStringToJAXB(metaXML);
-                    hostedSPEntityID = entityName;
-                    metaManager.createEntityDescriptor(descriptor);
+                            SAML2MetaUtils.convertStringToJAXB(metaXML);
+                    //hostedSPEntityID = entityName;
+                    hostedSPEntityID = descriptor.getEntityID();
+                    metaManager.createEntityDescriptor(defaultOrg,descriptor);
 
                     EntityConfigElement extendConfigElm = (EntityConfigElement)
-                        IDFFMetaUtils.convertStringToJAXB(extendedXML);
-                    metaManager.createEntityConfig(extendConfigElm);
+                        SAML2MetaUtils.convertStringToJAXB(extendedXML);
+                    metaManager.createEntityConfig(defaultOrg,extendConfigElm);
                     // [END] Import these XMLs
-                    
+                    }
+
+                    List idpEntityList = 
+                        metaManager.getAllRemoteIdentityProviderEntities("/");
+                    boolean idpExists =  ((idpEntityList != null 
+                                         && !idpEntityList.isEmpty()) 
+                                         && idpEntityList.contains(host)) ;
+                    remoteIDPEntityID = host;
+                    if (!idpExists) {
                     // [START] Make a call to CLI to get IDP meta data template
                     String[] args2 = {"create-metadata-template", 
-                        "--spec", "idff",
                         "--entityid", entityName,
                         "--identityprovider", "/idp"};
                     outputWriter = new StringOutputWriter();
@@ -170,31 +187,23 @@
                         deploymenturi);
                     EntityDescriptorElement idpDescriptor =
                         (EntityDescriptorElement)
-                            IDFFMetaUtils.convertStringToJAXB(idpMetaXML);
-                    remoteIDPEntityID = idpDescriptor.getProviderID();
-                    metaManager.createEntityDescriptor(idpDescriptor);
+                            SAML2MetaUtils.convertStringToJAXB(idpMetaXML);
+                    remoteIDPEntityID = idpDescriptor.getEntityID();
+                    metaManager.createEntityDescriptor(
+                                                   defaultOrg,idpDescriptor);
                     // [END] Swap protocol, host, port and deployment URI
                     //       to form IDP metadata XML and import it
 
-                    
+                    } 
                     // [START] Create Circle of Trust
-                    Set providers = new HashSet();
-                    providers.add(hostedSPEntityID);
-                    providers.add(remoteIDPEntityID);
-                    CircleOfTrustManager cotManager = new 
-                        CircleOfTrustManager();
-                    cotManager.createCircleOfTrust("/",
-                        new CircleOfTrustDescriptor(SAMPLE_COT_NAME,
-                            COTConstants.IDFF, COTConstants.ACTIVE, "", 
-                            null, null, providers));
-                    // [END] Create Circle of Trust
-                    
+                    createCircleOfTrust(SAMPLE_COT_NAME,hostedSPEntityID,
+                                        remoteIDPEntityID);
                     configured = true;
                 } catch (Exception clie) {
                     errorMsg = clie.getMessage();
                 }
             } else {
-                errorMsg = "Required fields are missing.";
+                    errorMsg = "Required fields are missing.";
             }
         }
     }
@@ -219,6 +228,12 @@
 <tr><td>
 
 <%
+    if (!loggedIn) {
+  %>
+   <p>&nbsp;</p>
+    You have not logged in. Click <a href=<%= baseURL+"/UI/Login?goto="+baseURL+"/"+baseURI %>>here</a> to login .
+ <% 
+    } else { 
     if (!configured) {
 %>
 
@@ -285,6 +300,7 @@ Circle of Trust <%= SAMPLE_COT_NAME %> is created.
 Service Provider is configured. Click <a href="../index.html">here</a> to return
 to main page.
 <%
+}
 }
 %>
 
