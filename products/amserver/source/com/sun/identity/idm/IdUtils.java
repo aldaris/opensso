@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.14 2007-01-18 23:43:17 arviranga Exp $
+ * $Id: IdUtils.java,v 1.15 2007-01-31 06:06:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -243,13 +243,10 @@ public final class IdUtils {
      * Returns an <code>AMIdentity</code> object, if provided with a string 
      * identifier for the object.
      * 
-     * @param token
-     *            Single sign on token of the user.
-     * @param univId
-     *            String represenation of the identity.
+     * @param token SSOToken of the administrator
+     * @param univId String represenation of the identity.
      * @return Identity object
-     * @throws IdRepoException
-     *             if the identifier provided is wrong.
+     * @throws IdRepoException if the identifier provided is wrong.
      */
     public static AMIdentity getIdentity(SSOToken token, String univId)
             throws IdRepoException {
