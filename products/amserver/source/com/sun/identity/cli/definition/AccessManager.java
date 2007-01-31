@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.9 2007-01-31 01:36:15 veiming Exp $
+ * $Id: AccessManager.java,v 1.10 2007-01-31 06:04:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1198,7 +1198,7 @@ public class AccessManager {
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
-            "idtype|t|s|Type of Identity such as User, Role and Group."},
+            "idtype|t|s|Type of Identity such Role and Group."},
         optionAliases={},
         macro="authentication",
         optionalOptions={},
@@ -1214,7 +1214,7 @@ public class AccessManager {
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
-            "idtype|t|s|Type of Identity such as User, Role and Group.",
+            "idtype|t|s|Type of Identity such as Role and Group.",
             "privileges|g|m|Name of privileges to be added."},
         optionAliases={},
         macro="authentication",
@@ -1230,7 +1230,7 @@ public class AccessManager {
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
-            "idtype|t|s|Type of Identity such as User, Role and Group.",
+            "idtype|t|s|Type of Identity such as Role and Group.",
             "privileges|g|m|Name of privileges to be removed."},
         optionAliases={},
         macro="authentication",
