@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CollectionHelper.java,v 1.2 2006-12-08 21:02:40 veiming Exp $
+ * $Id: CollectionHelper.java,v 1.3 2007-01-31 19:09:21 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,7 +129,15 @@ public class CollectionHelper {
     public static String getServerMapAttr(Map map, String attrName) {
         String result = null;
         Set attrValues = (Set)map.get(attrName);
-        
+
+        if (attrValues.size() == 1) {
+            Iterator iter = attrValues.iterator();
+            String strServer = (String)iter.next();
+            if (strServer != null) {
+                strServer = strServer.trim();
+            }
+            return strServer;
+        }
         if ((attrValues != null) && !attrValues.isEmpty()) {
             for (Iterator i = attrValues.iterator();
                 i.hasNext() && (result == null);
