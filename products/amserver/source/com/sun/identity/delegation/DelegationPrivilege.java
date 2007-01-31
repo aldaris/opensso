@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilege.java,v 1.5 2006-08-25 21:20:42 veiming Exp $
+ * $Id: DelegationPrivilege.java,v 1.6 2007-01-31 06:05:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,6 @@ public class DelegationPrivilege {
      * @throws DelegationException if unable to create <code>
      *         DelegationPrivilege</code> instance.
      */
-
     public DelegationPrivilege(String name, Set subjects, String orgName) 
         throws DelegationException 
     {
@@ -111,7 +110,7 @@ public class DelegationPrivilege {
                             "Getting org privileges; org=" + orgName);
                     }
                     priv = DelegationUtils.getPrivilegeConfig(
-                               orgName, name, false);
+                        orgName, name, false);
                 } catch (DelegationException de) {
                     if (debug.messageEnabled()) {
                         debug.message("DelegationPrivilege: privilege " + 
@@ -120,20 +119,23 @@ public class DelegationPrivilege {
                     priv = null;
                 }
                 if (priv == null) {
-                    if (debug.messageEnabled()) {
-                        debug.message("DelegationPrivilege: " + 
-                            "Getting global privileges");
-                    }
+                    debug.message(
+                        "DelegationPrivilege<init>: Getting global privileges");
                     try {
-                        priv = DelegationUtils.getPrivilegeConfig(null, 
-                                                     name, true);
+                        priv = DelegationUtils.getPrivilegeConfig(
+                            null, name, true);
                     } catch (DelegationException de) {
-                        debug.error("DelegationPrivilege: privilege " +
-                         name + " is not defined in any configuration.", de);
+                        debug.error("DelegationPrivilege<init>: privilege " +
+                            name + " is not defined in any configuration.", de);
                         String[] objs = {name};
                         throw new DelegationException(ResBundleUtils.rbName,
                             "privilege_not_configured", objs, null);
                     }
+                }
+                if (priv == null) {
+                    String[] objs = {name};
+                    throw new DelegationException(ResBundleUtils.rbName,
+                        "privilege_not_configured", objs, null);
                 }
                      
                 // get the permission names defined in the privilege 
@@ -144,10 +146,10 @@ public class DelegationPrivilege {
                 }
     
                 permNames = (Set)attrs.get(
-                             DelegationManager.LIST_OF_PERMISSIONS);
+                    DelegationManager.LIST_OF_PERMISSIONS);
                 if ((permNames == null) || permNames.isEmpty()) {
                     throw new DelegationException(ResBundleUtils.rbName, 
-                      "no_permission_defined_in_the_privilege", null, null);
+                        "no_permission_defined_in_the_privilege", null, null);
                 }
             } else {
                 permNames = new HashSet();
@@ -251,7 +253,6 @@ public class DelegationPrivilege {
             throw new DelegationException(sse);
         }
     }
-
 
     /**
      * Returns the privilege name in the privilege
