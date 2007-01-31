@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSubConfiguration.java,v 1.2 2006-12-08 21:02:27 veiming Exp $
+ * $Id: AddSubConfiguration.java,v 1.3 2007-01-31 01:37:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,20 @@ public class AddSubConfiguration extends SchemaCommand {
             ServiceConfigManager scm = new ServiceConfigManager(
                 serviceName, adminSSOToken);
             ServiceConfig sc = scm.getGlobalConfig(null);
+
+            if (sc == null) {
+                String[] args = {subConfigName, serviceName,
+                    "no global configiration"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_ADD_SUB_CONFIGURATION", args);
+                String[] ar = {serviceName};
+                String message = MessageFormat.format(
+                    getResourceString("add-sub-configuration-no-global-config"),
+                    ar);
+                throw new CLIException(message,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+
             addSubConfig(sc, subConfigName, subConfigId, attrValues);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SUB_CONFIGURATION", params);
