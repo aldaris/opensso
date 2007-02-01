@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.5 2006-12-14 00:06:09 beomsuk Exp $
+ * $Id: SOAPClient.java,v 1.6 2007-02-01 23:23:09 arviranga Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,24 +82,11 @@ public class SOAPClient {
     // Instance variables
     String serviceName;
     
-    String url;
+    // URL that will be used for JAXRPC calls
+    String serviceUrl;
     
     // Variables for direct URLs
     String urls[];
-    
-    // Variables for managing exceptions
-    String exceptionClassName, exceptionMessage, exceptionCode,
-        smsExceptionCode;
-    
-    int ldapErrorCode;
-    
-    String resourceBundleName, errorString;
-    
-    Set messageArgs;
-    
-    Exception exception;
-    
-    boolean isException;
     
     /**
      * Constructor for applications that would like to dynamically set the SOAP
@@ -133,7 +120,7 @@ public class SOAPClient {
 
     /**
      * Performs a raw SOAP call with "message" as the SOAP data
-     * and response is returned as <code>StringBuffer</code>
+     * and response is returned as <code>InputStream</code>
      */
     public InputStream call(String message, String lbcookie, String cookies)
            throws Exception {
@@ -144,20 +131,22 @@ public class SOAPClient {
                 cookies = cookies + ";" + lbcookie;
             }
         }
-        return call(message, cookies);
+        return (call(message, cookies).getResponse());
     }
     
     /**
      * Performs a raw SOAP call with "message" as the SOAP data and response is
-     * returned as <code>StringBuffer</code>
+     * returned as <code>SOAPResponseObject</code>
      */
-    private InputStream call(String message, String cookies) throws Exception {
+    private SOAPResponseObject call(String message, String cookies) throws Exception {
         if (debug.messageEnabled()) {
             debug.message("SOAP Client: Message being sent:" + message);
         }
         // Setup the connection, support for failover
+        String url = serviceUrl;
         InputStream in_buf = null;
         boolean done = false;
+        boolean isException = false;
         int urlIndex = 0;
         while (!done) {
             // Check for a valid URL, if not find one
@@ -173,11 +162,37 @@ public class SOAPClient {
                         }
                         throw (new RemoteException("no-server-found"));
                     }
-                    url = urls[urlIndex++];
+                    serviceUrl = url = urls[urlIndex++];
                 } else {
                     // This function throws RemoteException
                     // if no servers are found
-                    url = JAXRPCHelper.getValidURL(serviceName);
+                    boolean validServerFound = false;
+                    try {
+                        if ((serviceUrl = url =
+                            JAXRPCHelper.getValidURL(serviceName))
+                            != null) {
+                            validServerFound = true;
+                        }
+                    } catch (RemoteException re) {
+                        // This exception is thrown only when there
+                        // are no available server
+                    }
+                    if (!validServerFound) {
+			// It is possible the WebtopNaming has not recognized
+			// server is down and removed from the list.
+			// Retry 3 times
+			if (++urlIndex > 3) {
+                            debug.error("SOAPClient::call() no valid servers");
+                            throw (new RemoteException("no-server-found"));
+			}
+                        // Sleep for 1 second, and try again
+			try {
+                            Thread.sleep(1000);
+			} catch (InterruptedException ie) {
+                            // Ignore the exception and continue
+			}
+                        continue;
+                    }
                 }
             }
             
@@ -251,7 +266,7 @@ public class SOAPClient {
                 + data);
             in_buf = new ByteArrayInputStream(data.getBytes("UTF-8"));
         }
-        return (in_buf);
+        return (new SOAPResponseObject(in_buf, isException));
     }
     
     /**
@@ -261,7 +276,7 @@ public class SOAPClient {
      * Returns an object on success, else throws an <code>Exception
      * </code>.
      */
-    public synchronized Object send(String functionName, Object params[],
+    public Object send(String functionName, Object params[],
          String lbcookie, String cookies) throws Exception {
         return (send(encodeMessage(functionName, params), lbcookie, cookies));
     }
@@ -273,12 +288,12 @@ public class SOAPClient {
      * Returns an object on success, else throws an <code>Exception
      * </code>.
      */
-    public synchronized Object send(String functionName, Object param,
+    public Object send(String functionName, Object param,
          String lbcookie, String cookies) throws Exception {
         return (send(encodeMessage(functionName, param), lbcookie, cookies));
     }
 
-    public synchronized Object send(String message, String lbcookie, 
+    public Object send(String message, String lbcookie, 
         String cookies) throws Exception {
         /*** TODO
          * If token is null try to user APPSSOToken
@@ -301,19 +316,11 @@ public class SOAPClient {
      * an <code>Exception
      * </code>.
      */
-    private synchronized Object send(String message, String cookies)
+    private Object send(String message, String cookies)
     throws Exception {
-        // Initialize variables
-        exceptionClassName = exceptionMessage = null;
-        resourceBundleName = exceptionCode = null;
-        smsExceptionCode = null;
-        messageArgs = null;
-        errorString = null;
-        ldapErrorCode = 0;
-        isException = false;
-        
         // Send the SOAP request and get the response
-        InputStream in_buf = call(message, cookies);
+        SOAPResponseObject response = call(message, cookies);
+        InputStream in_buf = response.getResponse();
         
         // Decode the output. Parse the document using SAX
         SOAPContentHandler handler = new SOAPContentHandler();
@@ -340,15 +347,15 @@ public class SOAPClient {
         }
         
         // Check for exceptions
-        if (isException) {
-            throw (exception);
+        if (response.isException()) {
+            throw (handler.getException());
         }
         
         return (handler.getObject());
     }
     
     public void setURL(String url) {
-        this.url = url;
+        serviceUrl = url;
     }
     
     void setURLs(String[] urls) {
@@ -509,7 +516,7 @@ public class SOAPClient {
      * name <code>function</code> that takes the parameters
      * <code>params</code> as its arguments.
      */
-    public synchronized String encodeMessage(String function, Object[] params) {
+    public String encodeMessage(String function, Object[] params) {
         int index = 1;
         StringBuffer sb = new StringBuffer(1000);
         sb.append(ENVELOPE).append(HEADSTART).append(HEADEND).append(ENV_BODY);
@@ -598,6 +605,20 @@ public class SOAPClient {
         
         List list, currentList;
         
+        // Variables for managing exception
+        String exceptionClassName, exceptionMessage, exceptionCode,
+            smsExceptionCode;
+        
+        int ldapErrorCode;
+        
+        String resourceBundleName, errorString;
+        
+        Set messageArgs;
+        
+        Exception exception;
+        
+        boolean isException;
+        
         protected SOAPContentHandler() {
             types = new LinkedList();
             maps = new LinkedList();
@@ -606,6 +627,10 @@ public class SOAPClient {
         
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
+        }
+        
+        protected Exception getException() {
+            return (exception);
         }
         
         public void startElement(String namespaceURI, String localName,
@@ -935,6 +960,26 @@ public class SOAPClient {
         
         public void warning(SAXParseException spe) throws SAXParseException {
             // Parser warning can be ignored
+        }
+    }
+    
+    class SOAPResponseObject {
+        
+        private InputStream response;
+        
+        private boolean exception;
+        
+        SOAPResponseObject(InputStream is, boolean exception) {
+            response = is;
+            this.exception = exception;
+        }
+        
+        InputStream getResponse() {
+            return (response);
+        }
+        
+        boolean isException() {
+            return (exception);
         }
     }
     
