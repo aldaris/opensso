@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.5 2007-01-23 23:04:06 veiming Exp $
+   $Id: idRepoService.xml,v 1.6 2007-02-01 21:26:25 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2204,7 +2204,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a3020">
                         <DefaultValues>
-                            <Value>@CONFIG_DIR@/idRepo/flatfiles</Value>
+                            <Value>@BASE_DIR@/@SERVER_URI@/idRepo/flatfiles</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunFilesMonitorForChanges"
