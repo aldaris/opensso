@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLogTest.java,v 1.1 2007-01-13 16:58:03 bigfatrat Exp $
+ * $Id: AMLogTest.java,v 1.2 2007-02-01 05:49:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,12 @@ import com.sun.identity.log.LogReader;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.QueryElement;
-
 import com.sun.identity.shared.test.CollectionUtils;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SchemaType;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.test.common.FileHelper;
 import com.sun.identity.test.common.TestBase;
 
@@ -143,12 +147,11 @@ public class AMLogTest extends TestBase {
      */
     @Parameters({"logtest-log-location", "logtest-logname"})
     @BeforeTest(groups = {"api-adminwrite", "api-adminread"})
-    public void setup(
-        String logLoc,
-        String logFName
-    ) throws Exception {
+    public void setup(String logLoc, String logFName)
+        throws Exception {
         Object[] params = {theRealm, logLoc, logFName};
         entering("setup", params);
+        setbufferSizer("OFF", "1");
 
         try {
             lmgr.readConfiguration();
@@ -165,7 +168,7 @@ public class AMLogTest extends TestBase {
             logPath = loggingLocation + "/" + logName;
             File f1 = new File(logPath);
             if (f1.exists() && (f1.length() > 0)) {
-                      f1.delete();
+                f1.delete();
             }
 
             logger = (Logger)Logger.getLogger(logFName);
@@ -177,6 +180,29 @@ public class AMLogTest extends TestBase {
 
         exiting("setup");
     }
+
+    private void setbufferSizer(String statusVal, String buffSize)
+        throws SSOException, SMSException {
+        SSOToken adminSSOToken = getAdminSSOToken();
+        ServiceSchemaManager mgr = new ServiceSchemaManager(
+            "iPlanetAMLoggingService", adminSSOToken);
+        ServiceSchema globalSchema = mgr.getSchema(SchemaType.GLOBAL);
+        {
+            AttributeSchema status = globalSchema.getAttributeSchema(
+                "iplanet-am-logging-time-buffering-status");
+            Set<String> set = new HashSet<String>(2);
+            set.add(statusVal);
+            status.setDefaultValues(set);
+        }
+        {
+            AttributeSchema bufferSize = globalSchema.getAttributeSchema(
+                "iplanet-am-logging-buffer-size");
+            Set<String> set = new HashSet<String>(2);
+            set.add(buffSize);
+            bufferSize.setDefaultValues(set);
+        }
+    }
+
 
     /**
      *  need:
@@ -289,14 +315,12 @@ public class AMLogTest extends TestBase {
      *          then this test will fail (more than expected records
      *          retrieved).
      */
-
     @Parameters({"logtest-logname",
                  "logwrite-number-of-records"})
-    @Test(groups = {"api-adminread"})
-    public void readAdminLogRecord(
-        String rLogName,
-        String rNumRecs
-    ) throws AMLogException {
+    @Test(groups = {"api-adminread"},
+          dependsOnMethods = {"writeAdminLogRecord"})
+    public void readAdminLogRecord(String rLogName, String rNumRecs)
+        throws AMLogException {
 
         /*
          *  since "regular" user SSOToken stuff doesn't seem to work,
@@ -323,8 +347,7 @@ public class AMLogTest extends TestBase {
     }
 
     private void readAllRecords(String fileName, SSOToken ssot, int numRecsExp)
-        throws AMLogException
-    {
+        throws AMLogException {
         int numRecs = 0;
         try {
             String[][] result = LogReader.read(fileName, ssot);
@@ -342,6 +365,7 @@ public class AMLogTest extends TestBase {
             throw new AMLogException("readAllRecords:Exception: " +
                 e.getMessage());
         }
+
         // first record has the column names
         if (numRecs != (numRecsExp + 1)) {
             throw new AMLogException("Number of records read (" +
@@ -425,7 +449,6 @@ public class AMLogTest extends TestBase {
             throw new AMLogException("readLogQuery:Exception: " +
                 e.getMessage());
         }
-//        printResults (result);
         if (numRecs != (recsWritten + 1)) {
             throw new AMLogException("Number of records read test 1 (" +
                 numRecs + ") doesn't match expected (" +
@@ -460,7 +483,6 @@ public class AMLogTest extends TestBase {
             throw new AMLogException("readLogQuery:Exception: " +
                 e.getMessage());
         }
-//        printResults (result);
         if (numRecs != 3) {
             throw new AMLogException("Number of records read test 2 (" +
                 (numRecs-1) + ") doesn't match expected (2)");
@@ -513,7 +535,6 @@ public class AMLogTest extends TestBase {
             throw new AMLogException("readLogQuery:Exception: " +
                 e.getMessage());
         }
-//        printResults (result);
         if (numRecs != 2) {
             throw new AMLogException("Number of records read test 3 (" +
                 (numRecs-1) + ") doesn't match expected (1)");
@@ -565,7 +586,6 @@ public class AMLogTest extends TestBase {
             throw new AMLogException("readLogQuery:Exception: " +
                 e.getMessage());
         }
-//        printResults (result);
         if (numRecs != 4) {
             throw new AMLogException("Number of records read test 4 (" +
                 (numRecs-1) + ") doesn't match expected (3)");
@@ -656,9 +676,9 @@ public class AMLogTest extends TestBase {
      */
     @Parameters({})
     @AfterTest(groups = {"api-adminwrite", "api-adminread"})
-    public void tearDown(
-    ) {
-
+    public void tearDown()
+        throws Exception {
+        setbufferSizer("ON", "60");
     }
 
     /**

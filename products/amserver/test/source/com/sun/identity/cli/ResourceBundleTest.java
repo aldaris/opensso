@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBundleTest.java,v 1.2 2006-10-09 17:57:36 veiming Exp $
+ * $Id: ResourceBundleTest.java,v 1.3 2007-02-01 05:49:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class ResourceBundleTest extends TestBase{
     }
     
     @Parameters ({"bundle-name", "bundle-file-name", "locale"})
-    @Test(groups = {"cli-resource-bundle"})
+    @Test(groups = {"cli-resource-bundle", "add-resource-bundle"})
     public void addResourceBundle(
         String bundleName, 
         String fileName, 
@@ -102,7 +102,7 @@ public class ResourceBundleTest extends TestBase{
     }
 
     @Parameters ({"bundle-name", "locale"})
-    @Test(groups = {"cli-resource-bundle"},
+    @Test(groups = {"cli-resource-bundle", "list-resource-bundle"},
         dependsOnMethods = {"addResourceBundle"})
     public void getResourceBundle(String bundleName, String locale) 
         throws CLIException {
@@ -127,7 +127,7 @@ public class ResourceBundleTest extends TestBase{
     }
 
     @Parameters ({"bundle-name", "locale"})
-    @Test(groups = {"cli-resource-bundle"}, 
+    @Test(groups = {"cli-resource-bundle", "remove-resource-bundle"}, 
         dependsOnMethods = {"getResourceBundle"})
     public void removeResourceBundle(String bundleName, String locale) 
         throws CLIException, SSOException {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaTest.java,v 1.2 2006-10-09 17:57:37 veiming Exp $
+ * $Id: SchemaTest.java,v 1.3 2007-02-01 05:49:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,7 +165,7 @@ public class SchemaTest extends TestBase {
         }
     }
 
-    @Test(groups = {"schema", "delete-service"},
+    @Test(groups = {"schema", "delete-service", "issue76"},
         dependsOnMethods = {"loadMultipleServices"}
     )
     public void deleteMultipleServices() {
@@ -574,7 +574,7 @@ public class SchemaTest extends TestBase {
         }
     }
     
-    @Test(groups = {"schema", "get-revision-number"})
+    @Test(groups = {"schema", "set-revision-number", "get-revision-number"})
     public void setGetServiceRevisionNumber()
         throws CLIException, SMSException, SSOException {
         entering("setGetServiceRevisionNumber", null);
@@ -690,32 +690,20 @@ public class SchemaTest extends TestBase {
 
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
         cmdManager.addToRequestQueue(req);
-        
-        try {
-            cmdManager.serviceRequestQueue();
-            ServiceSchemaManager mgr = new ServiceSchemaManager(
-                TEST_SERVICE, getAdminSSOToken());
-            ServiceSchema serviceSchema = mgr.getGlobalSchema();
+        cmdManager.serviceRequestQueue();
+        ServiceSchemaManager mgr = new ServiceSchemaManager(
+            TEST_SERVICE, getAdminSSOToken());
+        ServiceSchema serviceSchema = mgr.getGlobalSchema();
 
-            if (subschema.length() > 0) {
-                serviceSchema = serviceSchema.getSubSchema(subschema);
-            }
-            
-            AttributeSchema as = serviceSchema.getAttributeSchema("mock-add");
-            Set values = as.getDefaultValues();
-            assert (values.size() == 1);
-            assert (values.contains("test1"));
-            exiting("addAttributeDefaultValues");
-        } catch (CLIException e) {
-            this.log(Level.SEVERE, "addAttributeDefaultValues", e.getMessage());
-            throw e;
-        } catch (SMSException e) {
-            this.log(Level.SEVERE, "addAttributeDefaultValues", e.getMessage());
-            throw e;
-        } catch (SSOException e) {
-            this.log(Level.SEVERE, "addAttributeDefaultValues", e.getMessage());
-            throw e;
+        if (subschema.length() > 0) {
+            serviceSchema = serviceSchema.getSubSchema(subschema);
         }
+            
+        AttributeSchema as = serviceSchema.getAttributeSchema("mock-add");
+        Set values = as.getDefaultValues();
+        assert (values.size() == 1);
+        assert (values.contains("test1"));
+        exiting("addAttributeDefaultValues");
     }
 
     @Parameters({"subschema"})

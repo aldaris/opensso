@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.3 2006-10-10 07:40:06 veiming Exp $
+ * $Id: RealmTest.java,v 1.4 2007-02-01 05:49:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.cli.realm;
 
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIRequest;
@@ -34,6 +35,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.policy.NameNotFoundException;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
@@ -57,7 +59,7 @@ public class RealmTest extends TestBase{
     private static DevNullOutputWriter outputWriter = new DevNullOutputWriter();
 
     /**
-     * Creates a new instance of <code>CLIFrameworkTest</code>
+     * Creates a new instance of <code>RealmTest</code>
      */
     public RealmTest() {
         super("CLI");
@@ -70,7 +72,7 @@ public class RealmTest extends TestBase{
     public void suiteSetup()
         throws CLIException {
         Map<String, Object> env = new HashMap<String, Object>();
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "testclifw");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "amadm");
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.cli.AccessManager");
         env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
@@ -78,7 +80,7 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm"})
-    @BeforeTest(groups = {"cli-realm"})
+    @BeforeTest(groups = {"cli-realm", "create-realm"})
     public void createRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
@@ -104,7 +106,7 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"parent-realm"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "list-realms"})
     public void listRealms(String parentRealm)
         throws CLIException, SMSException {
         String[] param = {parentRealm};
@@ -123,7 +125,7 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "list-realm-assignable-services"})
     public void getAssignableServicesInRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
@@ -140,7 +142,7 @@ public class RealmTest extends TestBase{
     }
  
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "show-realm-services"})
     public void getAssignedServicesInRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
@@ -157,7 +159,7 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm", "service-name", "attribute-value"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "add-service-realm"})
     public void assignedServiceToRealm(
         String realm,
         String serviceName,
@@ -186,7 +188,7 @@ public class RealmTest extends TestBase{
     }
 
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "get-realm"})
     public void getRealmAttributeValues(String realm)
         throws CLIException {
         String[] param = {realm};
@@ -206,7 +208,7 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm"},
+    @Test(groups = {"cli-realm", "set-realm-attributes"},
         dependsOnMethods = {"removeRealmAttribute"})
     public void setRealmAttributeValues(String realm)
         throws CLIException, SMSException, SSOException {
@@ -235,7 +237,7 @@ public class RealmTest extends TestBase{
     }  
     
     @Parameters ({"realm"})
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "delete-realm-attribute"})
     public void removeRealmAttribute(String realm)
         throws CLIException, SMSException, SSOException {
         String[] param = {realm};
@@ -262,7 +264,7 @@ public class RealmTest extends TestBase{
         exiting("removeRealmAttribute");
     }  
     
-    @Test(groups = {"cli-realm"})
+    @Test(groups = {"cli-realm", "create-policies"})
     public void createPolicy()
         throws CLIException, PolicyException, SSOException {
         entering("createPolicy", null);
@@ -281,10 +283,11 @@ public class RealmTest extends TestBase{
         PolicyManager pm = new PolicyManager(getAdminSSOToken(), "/");
         Policy p = pm.getPolicy("clipolicy");
         assert (p != null);
-        exiting("createPolicy");        
+        exiting("createPolicy");    
     }
     
-    @Test(groups = {"cli-realm"}, dependsOnMethods = {"createPolicy"})
+    @Test(groups = {"cli-realm", "list-policies"},
+        dependsOnMethods = {"createPolicy"})
     public void getPolicy()
         throws CLIException, PolicyException, SSOException {
         entering("getPolicy", null);
@@ -300,8 +303,8 @@ public class RealmTest extends TestBase{
         exiting("getPolicy");        
     }
 
-    @Test(groups = {"cli-realm"}, dependsOnMethods = {"getPolicy"},
-        expectedExceptions = {PolicyException.class})
+    @Test(groups = {"cli-realm", "delete-policies"},
+        dependsOnMethods = {"getPolicy"})
     public void deletePolicy()
         throws CLIException, PolicyException, SSOException {
         entering("deletePolicy", null);
@@ -314,18 +317,24 @@ public class RealmTest extends TestBase{
             "clipolicy"
         };
 
-        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        SSOToken adminSSOToken = getAdminSSOToken();
+        CLIRequest req = new CLIRequest(null, args, adminSSOToken);
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();
         
-        PolicyManager pm = new PolicyManager(getAdminSSOToken(), "/");
-        Policy p = pm.getPolicy("clipolicy");
-        assert (p == null);
+        PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+        try {
+            Policy p = pm.getPolicy("clipolicy");
+            assert (p == null);
+        } catch (NameNotFoundException e) {
+            // do nothing
+        }
+
         exiting("deletePolicy");        
     }
     
     @Parameters ({"realm", "service-name"})
-    @Test(groups = {"cli-realm", "services"}, 
+    @Test(groups = {"cli-realm", "services", "show-realm-service-attributes"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void getServiceAttribute(String realm, String serviceName)
         throws CLIException {
@@ -347,7 +356,7 @@ public class RealmTest extends TestBase{
 
     
     @Parameters ({"realm", "service-name", "modify-attribute-value"})
-    @Test(groups = {"cli-realm", "services"}, 
+    @Test(groups = {"cli-realm", "services", "set-service-attribute"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void setServiceAttribute(
         String realm,
@@ -388,7 +397,8 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm", "service-name", "attribute-value"})
-    @Test(groups = {"cli-realm"}, dependsOnGroups = {"services"})
+    @Test(groups = {"cli-realm", "remove-service-realm"},
+        dependsOnGroups = {"services"})
     public void unassignServiceFromRealm(
         String realm,
         String serviceName,
@@ -417,8 +427,7 @@ public class RealmTest extends TestBase{
     }
     
     @Parameters ({"realm"})
-    @AfterTest(groups = {"cli-realm"})
-    @Test(expectedExceptions = {SMSException.class})
+    @AfterTest(groups = {"cli-realm", "delete-realm"})
     public void deleteRealm(String realm)
         throws CLIException, SMSException {
         String[] param = {realm};
@@ -435,7 +444,9 @@ public class RealmTest extends TestBase{
         String parentRealm = RealmUtils.getParentRealm(realm);
         String realmName = RealmUtils.getChildRealm(realm);
         OrganizationConfigManager ocm = new OrganizationConfigManager(
-            getAdminSSOToken(), realm);
+            getAdminSSOToken(), parentRealm);
+        Set results = ocm.getSubOrganizationNames(realmName, false);
+        assert (results.isEmpty());
         exiting("deleteRealm");
     }
 }
