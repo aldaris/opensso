@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.2 2006-11-16 22:15:09 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.3 2007-02-02 18:05:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,8 @@ import java.util.logging.Level;
  * This command searches for Identities.
  */
 public class SearchIdentities extends IdentityCommand {
-    private static final String ARGUMENT_FILTER = "filter";
-    private static final String ARGUMENT_RECURSIVE = "recursive";
+    static final String ARGUMENT_FILTER = "filter";
+    static final String ARGUMENT_RECURSIVE = "recursive";
 
     /**
      * Services a Commandline Request.

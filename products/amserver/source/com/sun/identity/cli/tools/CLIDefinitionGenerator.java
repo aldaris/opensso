@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.5 2007-01-23 06:45:03 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.6 2007-02-02 18:05:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,10 @@ public class CLIDefinitionGenerator {
         if (field != null) {
             ResourceStrings resStrings = field.getAnnotation(
                 ResourceStrings.class);
-            rbOut.println(resStrings.string());
+            List list = toList(resStrings.string());
+            for (Iterator i = list.iterator(); i.hasNext(); ) {
+                rbOut.println((String)i.next());
+            }
         }
     }
 

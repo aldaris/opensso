@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: cli-testng.xml,v 1.3 2006-09-26 20:27:32 veiming Exp $
+   $Id: cli-testng.xml,v 1.4 2007-02-02 18:05:37 veiming Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -103,6 +103,19 @@
         </groups>
         <classes>
             <class name="com.sun.identity.cli.realm.RealmTest"/>
+        </classes>
+    </test>
+    <test name="CLI IdRepo">
+        <parameter name="realm" value="/" />
+        <parameter name="uid" value="devtestidrepo" />
+        <parameter name="attrs" value="sn=Test cn=Dev userpassword=x inetuserstatus=Active" />
+        <groups>
+            <run>
+                <include name="cli-idrepo" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.cli.idrepo.IdRepoTest"/>
         </classes>
     </test>
 </suite>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.2 2006-08-25 21:21:23 veiming Exp $
+ * $Id: AttributeValidator.java,v 1.3 2007-02-02 18:05:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -281,6 +281,11 @@ class AttributeValidator {
             if (size == 0) {
                 return (true);
             }
+
+            if ((array == null) || (array.length == 0)) {
+                return false;
+            }
+
             Iterator it = values.iterator();
             int arraySize = array.length;
             while (it.hasNext()) {

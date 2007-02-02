@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaTest.java,v 1.3 2007-02-01 05:49:01 veiming Exp $
+ * $Id: SchemaTest.java,v 1.4 2007-02-02 18:05:37 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.cli.schema;
 
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIRequest;
@@ -48,7 +49,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -608,7 +608,7 @@ public class SchemaTest extends TestBase {
     }
 
     @Parameters({"subschema"})
-    @Test(groups = {"schema", "add-attribute", "subschema"})
+    @Test(groups = {"schema", "add-attributes", "subschema"})
     public void addAttributeSchema(String subschema) 
         throws CLIException, SMSException, SSOException {
         Object[] params = {subschema};
@@ -617,7 +617,7 @@ public class SchemaTest extends TestBase {
         String[] args = (subschema.length() > 0) ?
             new String[9] : new String[7];
 
-        args[0] = "add-attribute";
+        args[0] = "add-attributes";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
         args[2] = TEST_SERVICE;
         args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
@@ -706,6 +706,105 @@ public class SchemaTest extends TestBase {
         exiting("addAttributeDefaultValues");
     }
 
+    @Parameters({"subschema"})
+    @Test(groups = {"schema", "add-attribute-default-values", "attribute-schema-ops",
+        "subschema"},
+        dependsOnMethods = {"addAttributeDefaultValues"}
+    )
+    public void deleteAttributeDefaultValues(String subschema) 
+        throws CLIException, SMSException, SSOException {
+        Object[] params = {subschema};
+        entering("deleteAttributeDefaultValues", params);
+        String[] args = (subschema.length() == 0) 
+            ? new String[9] : new String[11];
+        args[0] = "delete-attribute-default-values";
+        args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
+        args[2] = TEST_SERVICE;
+        args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
+        args[4] = "global";
+        args[5] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.ATTRIBUTE_SCHEMA;
+        args[6] = "mock-add";
+        args[7] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.DEFAULT_VALUES;
+        args[8] = "test1";
+
+        if (subschema.length() > 0) {
+            args[9] = CLIConstants.PREFIX_ARGUMENT_LONG +
+                IArgument.SUBSCHEMA_NAME;
+            args[10] = subschema;
+        }
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        ServiceSchemaManager mgr = new ServiceSchemaManager(
+            TEST_SERVICE, getAdminSSOToken());
+        ServiceSchema serviceSchema = mgr.getGlobalSchema();
+
+        if (subschema.length() > 0) {
+            serviceSchema = serviceSchema.getSubSchema(subschema);
+        }
+            
+        AttributeSchema as = serviceSchema.getAttributeSchema("mock-add");
+        Set values = as.getDefaultValues();
+        assert (!values.contains("test1"));
+        exiting("deleteAttributeDefaultValues");
+    }
+    
+    @Parameters({"subschema"})
+    @Test(groups = {"schema", "set-attribute-defaults", "attribute-schema-ops",
+        "subschema"},
+        dependsOnMethods = {"deleteAttributeDefaultValues"}
+    )
+    public void setAttributeDefaults(String subschema) 
+        throws CLIException, SMSException, SSOException {
+        Object[] params = {subschema};
+        entering("setAttributeDefaults", params);
+
+        SSOToken adminSSOToken = getAdminSSOToken();
+        ServiceSchemaManager mgr = new ServiceSchemaManager(
+            TEST_SERVICE, adminSSOToken);
+        ServiceSchema serviceSchema = mgr.getGlobalSchema();
+        if (subschema.length() > 0) {
+            serviceSchema = serviceSchema.getSubSchema(subschema);
+        }
+        AttributeSchema as = serviceSchema.getAttributeSchema("mock-add");
+        as.addChoiceValue("testx", "testx");
+        as.addChoiceValue("testy", "testy");
+        
+        String[] args = (subschema.length() == 0) 
+            ? new String[8] : new String[10];
+        args[0] = "set-attribute-defaults";
+        args[1] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME;
+        args[2] = TEST_SERVICE;
+        args[3] = CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SCHEMA_TYPE;
+        args[4] = "global";
+        args[5] = CLIConstants.PREFIX_ARGUMENT_LONG +IArgument.ATTRIBUTE_VALUES;
+        args[6] = "mock-add=testx";
+        args[7] = "mock-add=testy";
+
+        if (subschema.length() > 0) {
+            args[8] = CLIConstants.PREFIX_ARGUMENT_LONG +
+                IArgument.SUBSCHEMA_NAME;
+            args[9] = subschema;
+        }
+
+        CLIRequest req = new CLIRequest(null, args, adminSSOToken);
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        mgr = new ServiceSchemaManager(TEST_SERVICE, adminSSOToken);
+        serviceSchema = mgr.getGlobalSchema();
+        if (subschema.length() > 0) {
+            serviceSchema = serviceSchema.getSubSchema(subschema);
+        }
+            
+        as = serviceSchema.getAttributeSchema("mock-add");
+        Set defaultValues = as.getDefaultValues();
+        assert (defaultValues.size() == 2);
+        assert (defaultValues.contains("testx"));
+        assert (defaultValues.contains("testy"));
+        exiting("setAttributeDefaults");
+    }
+    
     @Parameters({"subschema"})
     @Test(groups = {"schema", "set-attribute-view-bean-url",
         "attribute-schema-ops", "subschema"},

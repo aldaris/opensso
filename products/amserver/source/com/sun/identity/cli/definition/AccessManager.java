@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.10 2007-01-31 06:04:11 veiming Exp $
+ * $Id: AccessManager.java,v 1.11 2007-02-02 18:05:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -199,7 +199,7 @@ public class AccessManager {
         resourceStrings={
             "attribute-schema-added=Attribute schema is added.",
             "add-attribute-schema-failed=Attribute schema is not added."})
-    private String add_attribute;
+    private String add_attributes;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.SMSMigration",
@@ -369,7 +369,7 @@ public class AccessManager {
         resourceStrings={
             "modify-service-of-realm-succeed=Service, {0} under {1} is modified.",
             "modify-service-of-realm-not-assigned=Service, {1} is not modified because it is not added to {0}."})
-    private String set_service_attribute;
+    private String set_service_attributes;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmAddAttributeValues",
@@ -1139,6 +1139,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "idrepo-assign-service-succeed={3} is added to identity {2} of type, {1} in realm, {0}."})
@@ -1174,7 +1175,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
             "idrepo-modify-service-succeed=Attribute values of service, {3} of identity {2} of type, {1} in realm, {0} is modified."})
-    private String set_identity_service_attribute;
+    private String set_identity_service_attributes;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.SetAttributeValues",

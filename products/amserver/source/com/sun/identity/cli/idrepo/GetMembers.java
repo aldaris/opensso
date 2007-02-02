@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetMembers.java,v 1.1 2006-05-31 21:49:51 veiming Exp $
+ * $Id: GetMembers.java,v 1.2 2007-02-02 18:05:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,8 @@ import java.util.logging.Level;
  * This command gets the members of an identity.
  */
 public class GetMembers extends IdentityCommand {
-    private final String ARGUMENT_MEMBERSHIP_IDTYPE = "membershipidtype";
+    static final String ARGUMENT_MEMBERSHIP_IDTYPE = "membershipidtype";
+
     /**
      * Services a Commandline Request.
      *

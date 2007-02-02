@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.2 2006-12-08 21:02:23 veiming Exp $
+ * $Id: GetAttributes.java,v 1.3 2007-02-02 18:05:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,6 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
@@ -69,8 +68,6 @@ public class GetAttributes extends IdentityCommand {
         String[] params = {realm, type, idName};
 
         try {
-            AMIdentityRepository amir = new AMIdentityRepository(
-                adminSSOToken, realm);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_IDREPO_GET_ATTRIBUTES", params);
             AMIdentity amid = new AMIdentity(

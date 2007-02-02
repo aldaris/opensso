@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StubTemplate.java,v 1.1 2006-12-08 21:02:32 veiming Exp $
+ * $Id: StubTemplate.java,v 1.2 2007-02-02 18:05:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,7 @@ public class StubTemplate {
         "    public String version;\n" + 
         "    public List subCommands = new ArrayList();\n" +
         "\n" +
-        "    public @className@() {" +
+        "    public @className@() {\n" +
         "        rbName = \"@resourcebundle@\";\n" +
         "        version = \"@version@\";\n" +
         "        @subcommand@" +

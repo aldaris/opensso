@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.12 2006-12-13 02:01:43 kenwho Exp $
+ * $Id: AMIdentityRepository.java,v 1.13 2007-02-02 18:05:35 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -441,26 +441,22 @@ public final class AMIdentityRepository {
     /**
      * @supported.api
      * 
-     * Deletes identities. The Set passed is a set of AMIdentity objects.
+     * Deletes identities. The Set passed is a set of <code>AMIdentity</code>
+     * objects.
      * 
      * This method is only valid for:
-     * 
      * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
      * <li> {@link IdType#REALM IdType.REALM} </li>
      * <li> (@link IdType#USER IdType.USER} </li>
      * </ol>
      * 
-     * @param type
-     *            Type of Identity to be deleted.
-     * @param identities
-     *            Set of AMIdentity objects to be deleted
-     * @throws IdRepoException
-     *             if there are repository related error conditions.
-     * @throws SSOException
-     *             if user's single sign on token is invalid.
+     * @param type Type of Identity to be deleted.
+     * @param identities Set of <code>AMIdentity</code> objects to be deleted.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
      * @deprecated As of release AM 7.1, replaced by
-     *             {@link #deleteIdentities(Set identities)}
+     *             {@link #deleteIdentities(Set)}
      */
     public void deleteIdentities(IdType type, Set identities)
             throws IdRepoException, SSOException {
@@ -470,22 +466,19 @@ public final class AMIdentityRepository {
     /**
      * @supported.api
      * 
-     * Deletes identities. The Set passed is a set of AMIdentity objects.
+     * Deletes identities. The Set passed is a set of <code>AMIdentity</code>
+     * objects.
      * 
      * This method is only valid for:
-     *
      * <ol>
      * <li> {@link IdType#AGENT IdType.AGENT} </li>
      * <li> {@link IdType#REALM IdType.REALM} </li>
      * <li> (@link IdType#USER  IdType.USER}  </li>
      * </ol>
      * 
-     * @param identities
-     *            Set of AMIDentity objects to be deleted
-     * @throws IdRepoException
-     *             if there are repository related error conditions.
-     * @throws SSOException
-     *             if user's single sign on token is invalid.
+     * @param identities Set of <code>AMIdentity</code> objects to be deleted
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException if user's single sign on token is invalid.
      */
     public void deleteIdentities(Set identities) throws IdRepoException,
             SSOException {

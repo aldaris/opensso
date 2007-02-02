@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityCommand.java,v 1.1 2006-05-31 21:49:52 veiming Exp $
+ * $Id: IdentityCommand.java,v 1.2 2007-02-02 18:05:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,12 +62,12 @@ public abstract class IdentityCommand extends AuthenticatedCommand {
     /**
      * Member identity name argument name.
      */
-    public final String ARGUMENT_MEMBER_IDNAME = "memberidname";
+    public static final String ARGUMENT_MEMBER_IDNAME = "memberidname";
 
     /**
      * Member identity type argument name.
      */
-    public final String ARGUMENT_MEMBER_IDTYPE = "memberidtype";
+    public static final String ARGUMENT_MEMBER_IDTYPE = "memberidtype";
 
     /**
      * Services a Commandline Request.

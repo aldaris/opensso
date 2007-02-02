@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommandStub.java,v 1.1 2006-12-08 21:02:32 veiming Exp $
+ * $Id: SubCommandStub.java,v 1.2 2007-02-02 18:05:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,9 +34,9 @@ import java.util.List;
 public class SubCommandStub {
     public String name;
     public String implClassName;
-    public List mandatoryOptions;
-    public List optionalOptions;
-    public List aliasOptions;
+    public List<String> mandatoryOptions;
+    public List<String> optionalOptions;
+    public List<String> aliasOptions;
 
     /**
      * Constructs an instance of <code>SubCommandStub</code>.
@@ -47,7 +47,13 @@ public class SubCommandStub {
      * @param o List of optional options (pipe separated format).
      * @param a List of options aliases (pipe separated format).
      */
-    public SubCommandStub(String name, String impl, List m, List o, List a) {
+    public SubCommandStub(
+        String name,
+        String impl,
+        List<String> m, 
+        List<String> o,
+        List<String> a
+    ) {
         this.name = name;
         this.implClassName = impl;
         mandatoryOptions = m;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.4 2007-02-01 05:49:00 veiming Exp $
+ * $Id: RealmTest.java,v 1.5 2007-02-02 18:05:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -356,7 +356,7 @@ public class RealmTest extends TestBase{
 
     
     @Parameters ({"realm", "service-name", "modify-attribute-value"})
-    @Test(groups = {"cli-realm", "services", "set-service-attribute"}, 
+    @Test(groups = {"cli-realm", "services", "set-service-attributes"}, 
         dependsOnMethods = {"assignedServiceToRealm"})
     public void setServiceAttribute(
         String realm,
@@ -366,7 +366,7 @@ public class RealmTest extends TestBase{
         String[] param = {realm};
         entering("setServiceAttribute", param);
         String[] args = {
-            "set-service-attribute",
+            "set-service-attributes",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
@@ -395,7 +395,39 @@ public class RealmTest extends TestBase{
         assert (result.equals(value));
         exiting("setServiceAttribute");
     }
-    
+
+    @Parameters ({"realm"})
+    @Test(groups = {"cli-realm", "add-realm-attributes"}, 
+        dependsOnMethods = {"assignedServiceToRealm"})
+    public void addRealmAttribute(String realm)
+        throws CLIException, IdRepoException, SMSException, SSOException {        
+        String[] param = {realm};
+        entering("addRealmAttribute", param);
+        String[] args = {
+            "add-realm-attributes",
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
+            realm,
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.SERVICE_NAME,
+            "sunIdentityRepositoryService",
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.ATTRIBUTE_VALUES,
+            "sunOrganizationAliases=dummy"
+        };
+        
+        SSOToken adminSSOToken = getAdminSSOToken();
+        CLIRequest req = new CLIRequest(null, args, adminSSOToken);
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            adminSSOToken, realm);
+        Map map = orgMgr.getAttributes("sunIdentityRepositoryService");
+        Set values = (Set)map.get("sunOrganizationAliases");
+        assert(values.contains("dummy"));
+        values.remove("dummy");
+        orgMgr.setAttributes("sunIdentityRepositoryService", map);
+        exiting("addRealmAttribute");
+    }
+
     @Parameters ({"realm", "service-name", "attribute-value"})
     @Test(groups = {"cli-realm", "remove-service-realm"},
         dependsOnGroups = {"services"})
