@@ -1,0 +1,200 @@
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: opensso-common.xml,v 1.1 2007-02-06 19:55:35 rmisra Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project>
+    <target name="moveDebugFiles" depends="init-common">
+        <move file="./test_env.txt" todir="${base.report.dir}"/>
+        <move file="./logs" todir="${base.report.dir}"/>
+        <move todir="${base.report.dir}">
+          <fileset dir="./">
+            <include name="**/*.output"/>
+          </fileset>
+        </move>
+    </target>
+
+    <target name="report" if="REPORT_DIR" depends="init-common">
+        <mkdir dir="${REPORT_DIR}/${EXECUTION_MODE}/${hostname}_${os.arch}_${osname}_${current.timestamp}"/>
+        <copy todir="${REPORT_DIR}/${EXECUTION_MODE}/${hostname}_${os.arch}_${osname}_${current.timestamp}">
+            <fileset dir="${base.report.dir}"/>
+        </copy>
+    </target>
+
+    <target name="check-cond" depends="init-common">
+      <condition property="cond-is-true">
+        <and>
+          <isset property="EXECUTION_MODE"/>
+        </and>
+      </condition>
+
+      <fail message="*** EXECUTION_MODE not set ***">
+        <condition>
+          <not><isset property="EXECUTION_MODE"/></not>
+        </condition>
+      </fail>
+    </target>
+
+    <target name="clean-all" depends="check-cond" if="cond-is-true">
+        <!-- <echo message="check-cond:${cond-is-true}"/> -->
+        <echo message="Cleaning all output, built and reports files and directories..."/>
+        <delete dir="./built" failonerror="false"/>
+        <delete dir="${debug.dir}" failonerror="false"/>
+        <delete dir="./docs/reports" failonerror="false"/>
+    </target>
+
+    <!--  compile  -->
+    <target name="compile-all" depends="clean-all" if="cond-is-true">
+        <mkdir dir="${built.classes.dir}"/>
+        <mkdir dir="${debug.dir}"/>
+        <echo message="Compiling test source files"/>
+        <!-- <echo message="classpath: ${client.cp}"/> -->
+        <javac destdir="${built.classes.dir}"
+        debug="on"
+        failonerror="false">
+	    <src path="./source"/>
+            <classpath refid="client.classpath"/>
+        </javac>
+    </target>
+
+    <!--  execute  -->
+    <target name="execute-all" depends="compile-all" if="cond-is-true">
+        <!-- <echo message="client.classpath=${client.cp}"/> -->
+        <echo message="execution.mode=${EXECUTION_MODE}"/>
+
+        <java classname="com.sun.identity.qatest.setup.ClientConfigCreator">
+            <classpath>
+                <pathelement path="${res.dir}" />
+                <pathelement path="${built.classes.dir}" />
+            </classpath>
+            <arg value="${OPENSSO_HOME}" />
+            <arg value="${QATEST_HOME}" />
+        </java>
+            
+        <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpath="${testng.classpath}"/>
+        <testng classpathref="client.classpath"
+        outputdir="${base.report.dir}">
+            <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-*-testng.xml"/>
+        </testng>
+    </target>
+
+<target name="execute-module" depends="compile-all" if="cond-is-true">
+        <!-- <echo message="client.classpath=${client.cp}"/> -->
+        <echo message="execution.mode=${EXECUTION_MODE}"/>
+        <echo message="execution.module=${TEST_MODULE}"/>
+
+        <java classname="com.sun.identity.qatest.setup.ClientConfigCreator">
+            <classpath>
+                <pathelement path="${res.dir}" />
+                <pathelement path="${built.classes.dir}" />
+            </classpath>
+            <arg value="${OPENSSO_HOME}" />
+            <arg value="${QATEST_HOME}" />
+        </java>
+
+        <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpath="${testng.classpath}"/>
+        <testng classpathref="client.classpath"
+        outputdir="${base.report.dir}">
+            <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-${TEST_MODULE}-testng.xml"/>
+        </testng>
+    </target>
+
+    <!-- Display Testbase Runtime Environment -->
+    <target name="print-test-env-start">    
+        <tstamp >
+            <format property="start.time" pattern="d-MMMM-yyyy hh:mm aa"/>
+        </tstamp>
+
+        <echo message="file name - ${test.env.outfile}"/>
+        <echo file="${test.env.outfile}">
+                      *** Access Manager TestBase Runtime Environment ***
+        ----------------------------------------------------------------------------
+        </echo>  
+        <echo file="${test.env.outfile}" append="yes">
+        Start Time=[
+          ${start.time}
+        ]
+    
+        TestBase=[
+           Execution Mode[EXECUTION_MODE]  :${EXECUTION_MODE}	
+           Report Directory[REPORT_DIR]    :${REPORT_DIR}
+        ]
+      
+        Platform=[
+           Machine:${hostname}
+           OS     :${osname}
+           Version:${os.version}
+           Arch   :${os.arch}
+        ]
+    
+        Java Platform=[
+           Path[JAVA_HOME]:${JAVA_HOME}
+           Version        :${java.version}
+           VM             :${java.vm.vendor}
+        ]
+    
+        ANT=[
+           Version           :${ant.version}
+           Path[env.ANT_HOME]:${env.ANT_HOME}
+           OPTS[env.ANT_OPTS]:${env.ANT_OPTS}
+        ]
+    
+        USER=[
+           Name:${user.name}
+           Home:${user.home}
+           Dir :${user.dir}
+        ]
+
+        </echo>
+        <concat>
+          <filelist dir="." files="${test.env.outfile}"/>
+        </concat>
+    </target>
+
+    <target name="print-test-env-end">
+        <tstamp >
+            <format property="end.time" pattern="d-MMMM-yyyy hh:mm aa"/>
+        </tstamp>
+
+        <echo file="${test.env.outfile}" append="yes">
+            End Time=[
+              ${end.time}
+            ]
+        </echo>
+    </target>
+
+    <!-- 
+    Description: Target to send email  and mainly used for sending results.
+    Usage: Override the mail.subject, mail.to, mail.from and mail.file properties in the lower built files.
+    -->
+    <target name="sendmail-common" depends="init-common">
+	    <mail   mailhost="${mail.host}"
+		mailport="${mail.port}"
+                subject="${mail.subject}"
+		tolist="${mail.to}"
+		from="${mail.from}"
+		messagemimetype="${mail.mime.type}"
+		messagefile="${mail.file}">
+	    </mail>
+    </target>
+</project>

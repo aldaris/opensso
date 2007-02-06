@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: build.xml,v 1.1 2007-02-06 19:55:31 rmisra Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="am" default="usage" basedir=".">
+
+    <import file="./build.properties"/>
+    <import file="./xml/ant/opensso-properties.xml"/>
+    <import file="./xml/ant/opensso-common.xml"/>
+
+    <target name="all">
+	<record name="${EXECUTION_MODE}.output" action="start"/>
+        <echo message="So you are using ${EXECUTION_MODE} install"/>
+        <echo message="So you are executing all modules"/>
+	<antcall target="print-test-env-start"/>
+	<antcall target="execute-all" />
+	<antcall target="print-test-env-end"/>
+	<antcall target="moveDebugFiles"/>
+	<antcall target="report"/>
+	<record name="${EXECUTION_MODE}.output" action="stop"/>
+    </target>
+
+    <target name="module">
+        <record name="${TEST_MODULE}.output" action="start"/>
+        <echo message="So you are using ${EXECUTION_MODE} install"/>
+        <echo message="So you are executing module ${TEST_MODULE}"/>
+        <antcall target="print-test-env-start"/>
+        <antcall target="execute-module"/>
+        <antcall target="print-test-env-end"/>
+	<antcall target="moveDebugFiles"/>
+	<antcall target="report"/>
+        <record name="${TEST_MODULE}.output" action="stop"/>
+    </target>
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available:"/>
+        <echo message=" "/>
+        <echo message=" all     : Executes all tests depending upon the execution mode"/>
+        <echo message=" module  : Executes tests for a module"/>
+        <echo message=" usage   : Displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" Before executing any target"/>
+        <echo message=" note    : Ensure all properties are set in build.properties"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+</project>
