@@ -259,6 +259,7 @@ com/sun/identity/shared/jaxrpc/SOAPClient.class
 com/sun/identity/shared/jaxrpc/SOAPClientException.class
 com/sun/identity/shared/jaxrpc/SOAPClient$SOAPContentHandler.class
 com/sun/identity/shared/jaxrpc/SOAPClient$SOAPErrorHandler.class
+com/sun/identity/shared/jaxrpc/SOAPClient$SOAPResponseObject.class
 com/sun/identity/shared/jaxrpc/JAXRPCHelper.class
 com/sun/identity/jaxrpc/JAXRPCUtil.class
 com/sun/identity/entity/EntityException.class
