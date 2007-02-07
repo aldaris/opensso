@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedTabController.java,v 1.2 2007-02-07 21:48:27 jonnelson Exp $
+ * $Id: FedTabController.java,v 1.3 2007-02-07 22:39:38 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ public class FedTabController
 {
     private static FedTabController privateInstance = new FedTabController();
 
-    private static FEDERATION_ENABLED = 
+    private static String FEDERATION_ENABLED = 
         "iplanet-am-admin-console-liberty-enabled";
 
     static {
