@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.6 2007-02-01 23:23:09 arviranga Exp $
+ * $Id: SOAPClient.java,v 1.7 2007-02-07 21:40:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -323,7 +323,8 @@ public class SOAPClient {
         InputStream in_buf = response.getResponse();
         
         // Decode the output. Parse the document using SAX
-        SOAPContentHandler handler = new SOAPContentHandler();
+        SOAPContentHandler handler = new SOAPContentHandler(
+            response.isException());
         try {
             SAXParserFactory saxFactory = SAXParserFactory.newInstance();
             saxFactory.setNamespaceAware(true);
@@ -478,7 +479,7 @@ public class SOAPClient {
         sb.append(DECODE_HEADER);
         sb.append(xmlMap);
         sb.append(DECODE_FOOTER);
-        SOAPContentHandler handler = new SOAPContentHandler();
+        SOAPContentHandler handler = new SOAPContentHandler(false);
         try {
             SAXParserFactory saxFactory = SAXParserFactory.newInstance();
             saxFactory.setNamespaceAware(true);
@@ -619,7 +620,8 @@ public class SOAPClient {
         
         boolean isException;
         
-        protected SOAPContentHandler() {
+        protected SOAPContentHandler(boolean isException) {
+            this.isException = isException;
             types = new LinkedList();
             maps = new LinkedList();
             keys = new LinkedList();

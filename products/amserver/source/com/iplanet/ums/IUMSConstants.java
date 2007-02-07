@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IUMSConstants.java,v 1.1 2005-11-01 00:30:37 arvindp Exp $
+ * $Id: IUMSConstants.java,v 1.2 2007-02-07 21:39:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -329,7 +329,7 @@ public interface IUMSConstants {
         "sms-EVENT_NOTIFICATION_FAILED";
 
     public static final String SMS_UNKNOWN_EXCEPTION_OCCURRED = 
-        "sms-UNKNOWN_EXCEPTION_OCCURRED";
+        "sms-UNKNOWN_EXCEPTION_OCCURED";
 
     public static final String SMS_XML_PARSER_EXCEPTION =
         "sms-XML_PARSER_EXCEPTION";

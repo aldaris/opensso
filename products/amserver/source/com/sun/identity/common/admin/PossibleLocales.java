@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PossibleLocales.java,v 1.2 2006-08-29 21:55:08 veiming Exp $
+ * $Id: PossibleLocales.java,v 1.3 2007-02-07 21:39:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,12 +29,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import com.iplanet.am.util.AdminUtils;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ChoiceValues;
@@ -42,6 +39,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
 
 /**
  * This class provides a set of possible locales.
@@ -153,13 +151,11 @@ public class PossibleLocales extends ChoiceValues {
             try {
                 mgr = new ServiceSchemaManager(G11N_SERVICE_NAME, ssoToken);
             } catch (SSOException ssoe) {
-                debug
-                        .error("PossibleLocales.getG11NServiceSchemaManager",
-                                ssoe);
+                debug.error("PossibleLocales.getG11NServiceSchemaManager",
+                     ssoe);
             } catch (SMSException smse) {
-                debug
-                        .error("PossibleLocales.getG11NServiceSchemaManager",
-                                smse);
+                debug.error("PossibleLocales.getG11NServiceSchemaManager",
+                     smse);
             }
         }
 
@@ -167,18 +163,7 @@ public class PossibleLocales extends ChoiceValues {
     }
 
     private static SSOToken getAdminSSOToken() {
-        SSOToken adminToken = null;
-
-        try {
-            SSOTokenManager mgr = SSOTokenManager.getInstance();
-            String adminDN = AdminUtils.getAdminDN();
-            String adminPassword = new String(AdminUtils.getAdminPassword());
-            adminToken = mgr.createSSOToken(new AuthPrincipal(adminDN),
-                    adminPassword);
-        } catch (SSOException ssoe) {
-            debug.warning("PossibleLocales.getAdminSSOToken", ssoe);
-        }
-
-        return adminToken;
+        return (SSOToken)AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
     }
 }
