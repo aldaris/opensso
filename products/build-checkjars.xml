@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-checkjars.xml,v 1.1 2006-09-20 19:14:43 veiming Exp $
+   $Id: build-checkjars.xml,v 1.2 2007-02-07 14:51:41 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,8 +29,6 @@
 
     <available file="${extlib.dir}/activation.jar" type="file" 
         property="activation.jar.present"/>
-    <available file="${extlib.dir}/console.jar" type="file" 
-        property="console.jar.present" />
     <available file="${extlib.dir}/db.jar" type="file" 
         property="db.jar.present"/>
     <available file="${extlib.dir}/j2ee.jar" type="file" 
@@ -57,7 +55,6 @@
 	<condition property="extlib.jar.exists">
 	    <and>
             <isset property="activation.jar.present" />
-            <isset property="console.jar.present" />
             <isset property="db.jar.present" />
             <isset property="j2ee.jar.present" />
             <isset property="jaxb.api.jar.present" />
@@ -75,11 +72,6 @@
     <fail message="*** missing ${extlib.dir}/activation.jar ***">
         <condition>
             <not><isset property="activation.jar.present" /></not>
-        </condition>
-    </fail>
-    <fail message="*** missing ${extlib.dir}/console.jar ***">
-        <condition>
-            <not><isset property="console.jar.present" /></not>
         </condition>
     </fail>
     <fail message="*** missing  ${extlib.dir}/db.jar ***">
