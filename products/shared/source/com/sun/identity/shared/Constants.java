@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.4 2006-12-13 20:53:50 beomsuk Exp $
+ * $Id: Constants.java,v 1.5 2007-02-07 20:20:05 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -956,4 +956,41 @@ public interface Constants {
      * Naming Response.
      */
     public static final String NAMING_AM_LB_COOKIE = "am_load_balancer_cookie";
+
+    /**
+     *  Property string for Site Monitoring thread polling interval
+     */
+    public static final String MONITORING_INTERVAL = 
+	          "com.sun.identity.sitemonitor.interval";
+    /**
+     *  Property string for URL Checker Target URL
+     */
+    public static final String URLCHECKER_TARGET_URL = 
+	          "com.sun.identity.urlchecker.targeturl";
+    /**
+     *  Property string for URL Checker Target URL
+     */
+    public static final String URLCHECKER_INVALIDATE_INTERVAL = 
+	          "com.sun.identity.urlchecker.invalidate.interval";
+    /**
+     *  Property string for URL Checker Sleep Interval
+     */
+    public static final String URLCHECKER_SLEEP_INTERVAL = 
+	          "com.sun.identity.urlchecker.sleep.interval";
+    /**
+     *  Property string for Site Monitor Class name
+     */
+    public static final String SITE_MONITOR_CLASS = 
+	          "com.sun.identity.sitemonitor.class";
+    /**
+     *  Property string for Site Status Check Class name
+     */
+    public static final String SITE_STATUS_CHECK_CLASS = 
+	          "com.sun.identity.sitemonitor.SiteStatusCheck.class";
+
+    /**
+     *  Property string for Site Status Check timeout
+     */
+    public static final String MONITORING_TIMEOUT = 
+	          "com.sun.identity.sitemonitor.timeout";
 }
