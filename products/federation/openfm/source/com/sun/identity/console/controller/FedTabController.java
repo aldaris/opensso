@@ -17,22 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedTabController.java,v 1.1 2006-11-30 00:44:50 veiming Exp $
+ * $Id: FedTabController.java,v 1.2 2007-02-07 21:48:27 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.controller;
 
-import com.sun.identity.console.base.model.AMAdminConstants;
-
 /**
- * This class determines whether to show/hide th federation tab.
+ * This class determines whether to show/hide the federation tab.
  */
 public class FedTabController
     extends TabControllerBase
 {
     private static FedTabController privateInstance = new FedTabController();
+
+    private static FEDERATION_ENABLED = 
+        "iplanet-am-admin-console-liberty-enabled";
 
     static {
 	privateInstance.addListener();
@@ -49,6 +50,6 @@ public class FedTabController
     }
 
     protected String getConfigAttribute() {
-	return AMAdminConstants.CONSOLE_FED_ENABLED_ATTR;
+	return FEDERATION_ENABLED;
     }
 }
