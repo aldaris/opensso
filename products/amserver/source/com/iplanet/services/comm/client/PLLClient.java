@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLClient.java,v 1.3 2006-08-25 21:19:49 veiming Exp $
+ * $Id: PLLClient.java,v 1.4 2007-02-07 20:23:43 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,8 @@ package com.iplanet.services.comm.client;
 import com.iplanet.services.comm.share.PLLBundle;
 import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.ResponseSet;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.services.naming.WebtopNaming.SiteMonitor;
 import com.sun.identity.shared.debug.Debug;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -127,6 +129,12 @@ public class PLLClient {
         HttpURLConnection conn = null;
         OutputStream out = null;
         try {
+            if ((SiteMonitor.keepMonitoring == true) && 
+                !SiteMonitor.isAvailable(url)) {
+                debug.error("Site " + url.toString() + " is down.");
+                throw new SendRequestException("Site is down.");
+            }
+    	    
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setUseCaches(false);

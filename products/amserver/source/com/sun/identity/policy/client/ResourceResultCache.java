@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.5 2006-12-22 03:40:12 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.6 2007-02-07 20:26:20 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -306,7 +306,6 @@ class ResourceResultCache implements SSOTokenListener {
                 resourceResults, resourceName, resourceComparator, serviceName);
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.getPolicyDecision():"
-                    + "appToken=" + appToken.getPrincipal().getName() 
                     + ":serviceName=" + serviceName 
                     + ":token=" + token.getPrincipal().getName() 
                     + ":resourceName=" + resourceName 
@@ -377,7 +376,6 @@ class ResourceResultCache implements SSOTokenListener {
         Set resourceResults = null;
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.getResourceResults():"
-                    + "appToken=" + appToken.getPrincipal().getName() 
                     + ":serviceName=" + serviceName 
                     + ":token=" + token.getPrincipal().getName() 
                     + ":resourceName=" + resourceName 
@@ -530,7 +528,6 @@ class ResourceResultCache implements SSOTokenListener {
         resourceResults = (Set)(results[0]);
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.getResourceResults("
-                    + appToken.getPrincipal().getName() + "," 
                     + serviceName + ","
                     + token.getPrincipal().getName() + "," 
                     + resourceName + ","
@@ -573,7 +570,6 @@ class ResourceResultCache implements SSOTokenListener {
             URL policyServiceUrl = getPolicyServiceURL(token);
             if (debug.messageEnabled()) {
                 debug.message("ResourceResultCache.getResultsFromServer():"
-                        + "appToken=" + appToken.getPrincipal().getName() 
                         + ":serviceName=" + serviceName 
                         + ":token=" + token.getPrincipal().getName() 
                         + ":resourceName=" + resourceName 

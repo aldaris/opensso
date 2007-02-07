@@ -163,6 +163,10 @@ com/iplanet/services/comm/https/ApprovalCallback.class
 com/iplanet/services/comm/https/JSSPasswordCallback.class
 com/iplanet/services/naming/WebtopNaming.class
 com/iplanet/services/naming/WebtopNaming$SiteMonitor.class
+com/iplanet/services/naming/WebtopNaming$SiteStatusCheck.class
+com/iplanet/services/naming/SiteStatusCheckThreadImpl.class
+com/iplanet/services/naming/SiteStatusCheckThreadImpl$URLChecker.class
+com/iplanet/services/naming/SiteStatusCheckThreadImpl$URLStatus.class
 com/iplanet/services/naming/share/NamingRequest.class
 com/iplanet/services/naming/share/NamingResponse.class
 com/iplanet/services/naming/share/NamingResponseParser.class

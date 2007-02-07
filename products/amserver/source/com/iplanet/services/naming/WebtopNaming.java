@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.3 2006-08-25 21:19:55 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.4 2007-02-07 20:24:58 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.naming;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -76,6 +77,8 @@ public class WebtopNaming {
 
     private static String namingServiceURL[] = null;
 
+    private static Vector platformServerIDs = new Vector();
+
     protected static Debug debug = Debug.getInstance("amNaming");
 
     private static boolean serverMode = false;
@@ -86,10 +89,7 @@ public class WebtopNaming {
 
     private static String amServerPort = null;
 
-    private static final String IGNORE_NAMING_SERVICE = 
-        "com.iplanet.am.naming.ignoreNamingService";
-
-    private static boolean ignoreNaming = false;
+    private static SiteMonitor monitorThread = null;
 
     static {
         serverMode = Boolean.valueOf(
@@ -131,14 +131,12 @@ public class WebtopNaming {
     }
 
     private static void initializeNamingService() {
-        ignoreNaming = Boolean.valueOf(
-                SystemProperties.get(IGNORE_NAMING_SERVICE, "false"))
-                .booleanValue()
-                & !isServerMode();
-
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
+            if ((isServerMode() == false) && (namingServiceURL.length > 1)) {
+                startSiteMonitor(namingServiceURL);
+            }
         } catch (Exception ex) {
             debug.error("Failed to initialize naming service", ex);
         }
@@ -191,12 +189,6 @@ public class WebtopNaming {
                     || port.length() == 0) {
                 throw new Exception(NamingBundle.getString("noServiceURL")
                         + service);
-            }
-
-            if (ignoreNaming) {
-                protocol = amServerProtocol;
-                host = amServer;
-                port = amServerPort;
             }
 
             if (namingTable == null) {
@@ -264,22 +256,27 @@ public class WebtopNaming {
                 getNamingProfile(false);
             }
 
-            String name = "iplanet-am-naming-" + service.toLowerCase() + "-url";
-            String url = (String) namingTable.get(name);
+            String name = "iplanet-am-naming-" + service.toLowerCase() + "-url";            String url = (String)namingTable.get(name);
             if (url != null) {
                 allurls = new Vector();
-                if (url.indexOf("%") != -1) {
-                    Vector servers = SiteMonitor.getAvailableSites();
-                    Iterator it = servers.iterator();
-                    while (it.hasNext()) {
-                        String server = getServerFromID((String) it.next());
-                        URL serverURL = new URL(server);
-                        allurls.add(getServiceURL(service, serverURL
-                                .getProtocol(), serverURL.getHost(), String
-                                .valueOf(serverURL.getPort())));
-                    }
+                if (monitorThread == null) {
+                    allurls.add(getServiceURL(service, amServerProtocol,
+                                      amServer, amServerPort));
                 } else {
-                    allurls.add(new URL(url));
+                    if (url.indexOf("%") != -1) {
+                        Vector servers =  SiteMonitor.getAvailableSites();
+                        Iterator it = servers.iterator();
+                        while (it.hasNext()) {
+                            String server = getServerFromID((String)it.next());
+                            URL serverURL = new URL(server);
+                            allurls.add(getServiceURL(service,
+                                      serverURL.getProtocol(),
+                                      serverURL.getHost(),
+                                      String.valueOf(serverURL.getPort())));
+                        }
+                    } else {
+                        allurls.add(new URL(url));
+                    }
                 }
             }
 
@@ -297,9 +294,14 @@ public class WebtopNaming {
      * any change in server list dynamically at the server side.
      */
     public static Vector getPlatformServerList() throws Exception {
-        getNamingProfile(true);
-        return platformServers;
+         return getPlatformServerList(true);
     }
+
+     public static Vector getPlatformServerList(boolean update)
+             throws Exception {
+         getNamingProfile(update);
+         return platformServers;
+     }
 
     /**
      * This method returns key value from a hashtable, ignoring the case of the
@@ -323,13 +325,23 @@ public class WebtopNaming {
      * list for a corresponding server. One use of this function is to keep this
      * server id in our session id.
      */
-    public static String getServerID(String protocol, String host, String port)
-            throws ServerEntryNotFoundException {
+    public static String getServerID(String protocol,
+                                     String host,
+                                     String port)
+        throws ServerEntryNotFoundException {
+        return getServerID(protocol, host, port, true);
+    }
+
+    public static String getServerID(String protocol, 
+                                     String host, 
+                                     String port,
+                                     boolean updatetbl)
+        throws ServerEntryNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
-            if (protocol == null || host == null || port == null
-                    || protocol.length() == 0 || host.length() == 0
-                    || port.length() == 0) {
+            if (protocol == null || host == null || port == null ||
+                protocol.length() == 0 || host.length() == 0 ||
+                port.length() == 0) {
                 throw new Exception(NamingBundle.getString("noServerID"));
             }
 
@@ -338,15 +350,16 @@ public class WebtopNaming {
             if (serverIdTable != null) {
                 serverID = getValueFromTable(serverIdTable, server);
             }
-            // update the naming table and as well as server id table
-            // if it can not find it
-            if (serverID == null) {
+            //update the naming table and as well as server id table
+            //if it can not find it
+            if (( serverID == null ) && (updatetbl == true)) {
                 getNamingProfile(true);
                 serverID = getValueFromTable(serverIdTable, server);
             }
+
             if (serverID == null) {
-                throw new ServerEntryNotFoundException(NamingBundle
-                        .getString("noServerID"));
+                throw new ServerEntryNotFoundException(
+                    NamingBundle.getString("noServerID"));
             }
             return serverID;
         } catch (Exception e) {
@@ -379,6 +392,14 @@ public class WebtopNaming {
             throw new ServerEntryNotFoundException(e);
         }
         return server;
+    }
+
+    public static Vector getAllServerIDs() throws Exception  {
+        if (namingTable == null) {
+            getNamingProfile(false);
+        }
+
+        return platformServerIDs;
     }
 
     /**
@@ -544,6 +565,15 @@ public class WebtopNaming {
                 amServer);
         SystemProperties.initializeProperties(Constants.AM_SERVER_PORT,
                 amServerPort);
+        if (debug.messageEnabled()) {
+            debug.message("Server Properties are changed : ");
+            debug.message(Constants.AM_SERVER_PROTOCOL + " : "
+                    + SystemProperties.get(Constants.AM_SERVER_PROTOCOL, null));            
+            debug.message(Constants.AM_SERVER_HOST + " : "
+                    + SystemProperties.get(Constants.AM_SERVER_HOST, null));
+            debug.message(Constants.AM_SERVER_PORT + " : "
+                    + SystemProperties.get(Constants.AM_SERVER_PORT, null));
+        }
     }
 
     private static Hashtable getNamingTable(URL nameurl) throws Exception {
@@ -617,10 +647,13 @@ public class WebtopNaming {
         }
         updateServerIdMappings();
         updateSiteIdMappings();
+        updatePlatformServerIDs();
 
         if (debug.messageEnabled()) {
             debug.message("Naming table -> " + namingTable.toString());
             debug.message("Platform Servers -> " + platformServers.toString());
+            debug.message("Platform Server IDs -> "
+                          + platformServerIDs.toString());
         }
     }
 
@@ -676,6 +709,20 @@ public class WebtopNaming {
         return;
     }
 
+    private static void updatePlatformServerIDs()
+        throws MalformedURLException, ServerEntryNotFoundException {
+        Iterator it = platformServers.iterator();
+        while (it.hasNext()) {
+            String plaformURL = (String) it.next();
+            URL url = new URL(plaformURL);
+            String serverID = getServerID(url.getProtocol(), url.getHost(),
+                Integer.toString(url.getPort()));
+            if (platformServerIDs.contains(serverID) == false) {
+                platformServerIDs.add(serverID);
+            }
+        }
+    }
+
     private static void validate(String protocol, String host, String port)
             throws URLNotFoundException {
         String server = (protocol + "://" + host + ":" + port).toLowerCase();
@@ -717,24 +764,18 @@ public class WebtopNaming {
             // Initilaize the list of naming URLs
             ArrayList urlList = new ArrayList();
 
-            // Check for naming service URL in system propertied
-            String systemNamingURL = System
-                    .getProperty(Constants.AM_NAMING_URL);
-            if (systemNamingURL != null) {
-                urlList.add(systemNamingURL);
-            }
-
             // Get the naming service URLs from properties files
-            String configURLListString = SystemProperties
-                    .get(Constants.AM_NAMING_URL);
+            String configURLListString =
+                               SystemProperties.get(Constants.AM_NAMING_URL);
             if (configURLListString != null) {
-                StringTokenizer stok = new StringTokenizer(configURLListString);
+                StringTokenizer stok = new StringTokenizer(configURLListString);                
                 while (stok.hasMoreTokens()) {
                     String nextURL = stok.nextToken();
                     if (urlList.contains(nextURL)) {
                         if (debug.warningEnabled()) {
-                            debug.warning("Duplicate naming service URL " +
-                                  "specified "+ nextURL + ", will be ignored.");
+                            debug.warning(
+                                "Duplicate naming service URL specified "
+                                + nextURL + ", will be ignored.");
                         }
                     } else {
                         urlList.add(nextURL);
@@ -743,8 +784,8 @@ public class WebtopNaming {
             }
 
             if (urlList.size() == 0) {
-                throw new Exception(NamingBundle
-                        .getString("noNamingServiceURL"));
+                throw new Exception(
+                    NamingBundle.getString("noNamingServiceURL"));
             } else {
                 if (debug.messageEnabled()) {
                     debug.message("Naming service URL list: " + urlList);
@@ -752,135 +793,301 @@ public class WebtopNaming {
             }
 
             namingServiceURL = new String[urlList.size()];
-            System.arraycopy(urlList.toArray(), 0, namingServiceURL, 0, urlList
-                    .size());
-
-            // Start naming service monitor if more than 1 naming URLs are found
-            if (!isServerMode() && (urlList.size() > 1)) {
-                Thread monitorThread = new Thread(new SiteMonitor());
-                monitorThread.setDaemon(true);
-                monitorThread.setPriority(Thread.MIN_PRIORITY);
-                monitorThread.start();
-            } else {
-                if (debug.messageEnabled()) {
-                    debug.message("Only one naming service URL specified."
-                            + " NamingServiceMonitor will be disabled.");
-                }
-            }
+            System.arraycopy(urlList.toArray(), 0, namingServiceURL, 0,
+                urlList.size());
         }
 
         return namingServiceURL;
     }
 
-    static class SiteMonitor implements Runnable {
-
-        static final String MONITORING_INTERVAL = 
-            "com.sun.identity.sitemonitor.interval";
-
-        static long sleepInterval;
-
-        static Vector availableSiteList = new Vector();
-
-        static String currentSiteID = null;
-
-        static {
-            try {
-                sleepInterval = Long.valueOf(
-                        SystemProperties.get(MONITORING_INTERVAL, "100000"))
-                        .longValue();
-                updateNamingTable();
-                currentSiteID = getServerID(amServerProtocol, amServer,
-                        amServerPort);
-            } catch (Exception e) {
-                debug.message("SiteMonitor initialization failed : ", e);
-            }
+    private static synchronized void startSiteMonitor(String[] urlList) {
+        // Site monitor is already started.
+        if (monitorThread != null) {
+            return;
         }
 
-        SiteMonitor() {
-        }
-
-        public void run() {
-            String serverid = null;
-            Vector siteList = new Vector();
-
+        // Start naming service monitor if more than 1 naming URLs are found
+        if (urlList.length > 1) {
+            monitorThread = new SiteMonitor(urlList);
+            monitorThread.setDaemon(true);
+            monitorThread.setPriority(Thread.MIN_PRIORITY);
+            monitorThread.start();
+        } else {
             if (debug.messageEnabled()) {
-                debug.message("SiteMonitor started");
+                debug.message("Only one naming service URL specified."
+                    + " NamingServiceMonitor will be disabled.");
             }
-
-            while (true) {
-                siteList.clear();
-                for (int i = 0; i < namingServiceURL.length; i++) {
-                    if (debug.messageEnabled()) {
-                        debug.message("SiteMonitor: checking availability of "
-                                + namingServiceURL[i]);
-                    }
-
-                    try {
-                        URL siteurl = new URL(namingServiceURL[i]);
-                        siteurl.openConnection().connect();
-                        serverid = getServerID(siteurl.getProtocol(), siteurl
-                                .getHost(), String.valueOf(siteurl.getPort()));
-                        siteList.add(serverid);
-
-                        if (debug.messageEnabled()) {
-                            debug.message("SiteMonitor: " + namingServiceURL[i]
-                                    + " available...");
-                        }
-                    } catch (Exception ex) {
-                        if (debug.messageEnabled()) {
-                            debug.message("SiteMonitor: Site URL "
-                                    + namingServiceURL[i]
-                                    + " is not available.", ex);
-                        }
-                    }
-                }
-
-                updateSiteList(siteList);
-                updateCurrentSite(siteList);
-                Sleep();
-            }
-        }
-
-        static void Sleep() {
-            try {
-                Thread.sleep(sleepInterval);
-            } catch (InterruptedException ex) {
-                debug.error("SiteMonitor: monitor interrupted", ex);
-            }
-            return;
-        }
-
-        static Vector getAvailableSites() {
-            Vector sites = null;
-
-            synchronized (availableSiteList) {
-                sites = availableSiteList;
-            }
-            return sites;
-        }
-
-        void updateSiteList(Vector list) {
-            synchronized (availableSiteList) {
-                availableSiteList = list;
-            }
-
-            return;
-        }
-
-        void updateCurrentSite(Vector list) {
-            String sid = (String) list.firstElement();
-            if (!currentSiteID.equalsIgnoreCase(sid)) {
-                try {
-                    currentSiteID = sid;
-                    String serverurl = getServerFromID(currentSiteID);
-                    updateServerProperties(new URL(serverurl));
-                } catch (Exception e) {
-                    debug.error("SiteMonitor: ", e);
-                }
-            }
-
-            return;
         }
     }
 
+    static public void removeFailedSite(String server) {
+        if (monitorThread != null) {
+            try {
+                URL url = new URL(server);
+                removeFailedSite(url);
+            } catch (MalformedURLException e) {
+                debug.error("Server URL is not valid : ", e);
+            }
+        }
+
+        return;
+    }
+
+    static public void removeFailedSite(URL url) {
+        if (monitorThread != null) {
+            try {
+                String serverid = getServerID(url.getProtocol(),
+                                     url.getHost(),
+                                     String.valueOf(url.getPort()));
+                SiteMonitor.removeFailedSite(serverid);
+            } catch (ServerEntryNotFoundException e) {
+                debug.error("Can not find server ID : ", e);
+            }
+        }
+
+        return;
+    }
+
+static public class SiteMonitor extends Thread {
+    static long sleepInterval;
+    static Vector availableSiteList = new Vector();
+    static String currentSiteID = null;
+    static SiteStatusCheck siteChecker = null;
+    static String[] siteUrlList = null;
+    static public boolean keepMonitoring = false;
+
+    static {
+        try {
+            String checkClass =
+                SystemProperties.get(Constants.SITE_STATUS_CHECK_CLASS,
+                    "com.iplanet.services.naming.SiteStatusCheckThreadImpl");
+            if (debug.messageEnabled()) {
+                debug.message("SiteMonitor : SiteStatusCheck class = "
+                        + checkClass);
+            }
+            siteChecker =
+                (SiteStatusCheck) Class.forName(checkClass).newInstance();
+            sleepInterval = Long.valueOf(SystemProperties.
+                    get(Constants.MONITORING_INTERVAL, "60000")).longValue();
+            getNamingProfile(false);
+            currentSiteID =
+                getServerID(amServerProtocol, amServer, amServerPort);
+        } catch (Exception e) {
+            debug.message("SiteMonitor initialization failed : ", e);
+        }
+    }
+
+    public SiteMonitor(String[] urlList) {
+        siteUrlList = urlList;
+    }
+
+    public void run() {
+        if (debug.messageEnabled()) {
+            debug.message("SiteMonitor started");
+        }
+        keepMonitoring = true;
+        while(keepMonitoring) {
+            try {
+                runCheckValidSite();
+                Sleep();
+            } catch (Exception e) {
+                debug.error("SiteMonitor run failed : ", e);
+            }
+        }
+    }
+
+    static void runCheckValidSite() {
+        Vector siteList = checkAvailableSiteList();
+        updateSiteList(siteList);
+        updateCurrentSite(siteList);
+    }
+
+    public static boolean checkSiteStatus(URL siteurl) {
+        return siteChecker.doCheckSiteStatus(siteurl);
+    }
+
+    private static Vector checkAvailableSiteList() {
+        Vector siteList = new Vector();
+        for (int i = 0; i < siteUrlList.length; i++) {
+            try {
+                URL siteurl = new URL(siteUrlList[i]);
+                if (siteChecker.doCheckSiteStatus(siteurl) == false) {
+                    continue;
+                }
+
+                String serverid = getServerID(siteurl.getProtocol(),
+                                       siteurl.getHost(),
+                               String.valueOf(siteurl.getPort()));
+                siteList.add(serverid);
+            } catch (MalformedURLException ex) {
+                if (debug.messageEnabled()) {
+                    debug.message("SiteMonitor: Site URL "
+                         + siteUrlList[i] + " is not valid.", ex);
+                }
+            } catch (ServerEntryNotFoundException ex) {
+                if (debug.messageEnabled()) {
+                    debug.message("SiteMonitor: Site URL "
+                         + siteUrlList[i] + " is not available.", ex);
+                }
+            }
+        }
+
+        return siteList;
+    }
+
+    static void Sleep() {
+        try {
+            Thread.sleep(sleepInterval);
+        } catch (InterruptedException ex) {
+            debug.error("SiteMonitor: monitor interrupted", ex);
+        }
+        return;
+    }
+
+    public static boolean isAvailable(URL url) throws Exception {
+        if ((namingTable == null) || (keepMonitoring == false)) {
+            return true;
+        }
+
+        String serverID = null;
+        try {
+            serverID = getServerID(url.getProtocol(), url.getHost(),
+                Integer.toString(url.getPort()), false);
+        } catch (ServerEntryNotFoundException e) {
+            if (debug.messageEnabled()) {
+                debug.message("URL is not part of AM setup.");
+            }
+            return true;
+        }
+
+        Vector sites = getAvailableSites();
+        boolean available = false;
+        Iterator it = sites.iterator();
+        while (it.hasNext()) {
+            String server = (String)it.next();
+            if (serverID.equalsIgnoreCase(server)) {
+                available = true;
+                break;
+            }
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("In SiteMonitor.isAvailable()");
+            if (available) {
+                debug.message("SiteID " + url.toString() + " is UP.");
+            } else {
+                debug.message("SiteID " + url.toString() + " is DOWN.");
+            }
+        }
+
+        return available;
+    }
+    
+    public static boolean isCurrentSite(URL url) throws Exception {
+        if ((namingTable == null) || !keepMonitoring) {
+            return true;
+        }
+
+        String serverID = null;
+        try {
+            serverID = getServerID(url.getProtocol(), url.getHost(),
+                Integer.toString(url.getPort()), false);
+        } catch (ServerEntryNotFoundException e) {
+            if (debug.messageEnabled()) {
+                debug.message("URL is not part of AM setup.");
+            }
+            return true;
+        }
+
+        Vector sites = getAvailableSites();
+        boolean isCurrent = false;
+        if (!sites.isEmpty()) {
+            String serverid = (String)sites.firstElement();
+            if (serverid != null) {
+                isCurrent = serverid.equalsIgnoreCase(serverID);
+            }
+        }
+
+        return isCurrent;
+    }
+
+    static Vector getAvailableSites() throws Exception {
+        Vector sites = null;
+        if (availableSiteList.size() == 0) {
+            String[] namingURLs = getNamingServiceURL();
+            for (int i = 0; i < namingURLs.length; i++) {
+                URL url = new URL(namingURLs[i]);
+                availableSiteList.add(getServerID(url.getProtocol(),
+                                                  url.getHost(),
+                                  String.valueOf(url.getPort())));
+            }
+
+            updateCurrentSite(availableSiteList);
+        }
+
+        sites = new Vector(availableSiteList);
+        if (debug.messageEnabled()) {
+            debug.message("In SiteMonitor.getAvailableSites()");
+            debug.message("availableSiteList : " + sites.toString());
+        }
+
+        return sites;
+    }
+
+    static void removeFailedSite(String site) {
+        if ((keepMonitoring == true) && (availableSiteList.contains(site))) {
+            availableSiteList.remove(site);
+        }
+
+        return;
+    }
+
+    private static void updateSiteList(Vector list) {
+        availableSiteList = list;
+
+        if (debug.messageEnabled()) {
+            debug.message("In SiteMonitor.updateSiteList()");
+            debug.message("availableSiteList : "
+                    + availableSiteList.toString());
+        }
+        return;
+    }
+
+    private static void updateCurrentSite(Vector list) {
+        if (isServerMode() == true) {
+            return;
+        }
+
+        if ((list == null) || (list.size() == 0)) {
+            return;
+        }
+
+        String sid = (String)list.firstElement();
+        if (!currentSiteID.equalsIgnoreCase(sid)) {
+            if (debug.messageEnabled()) {
+                debug.message("Invoke updateServerProperties() : " +
+                        "Server properties are changed for service failover");
+            }
+
+            try {
+                currentSiteID = sid;
+                String serverurl = getServerFromID(currentSiteID);
+                updateServerProperties(new URL(serverurl));
+            } catch (Exception e) {
+                debug.error("SiteMonitor: ", e);
+            }
+        }
+
+        return;
+    }
+}
+
+/**
+ * The interface <code>SiteStatusCheck</code> provides
+ * method that will be used by SiteMonitor to check each site is alive.
+ * Each implementation class has to implement doCheckSiteStatus method.
+ */
+public interface SiteStatusCheck {
+    public boolean doCheckSiteStatus(URL siteurl);
+}
 }
