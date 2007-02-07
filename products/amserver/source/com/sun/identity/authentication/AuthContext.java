@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.6 2007-01-21 10:34:11 mrudul_uchil Exp $
+ * $Id: AuthContext.java,v 1.7 2007-02-07 20:25:40 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,11 +94,11 @@ import org.w3c.dom.NodeList;
  * @supported.api
  */
 public class AuthContext extends Object implements java.io.Serializable {
-    private static String   server_proto =
+    private String   server_proto =
         SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-    private static String   server_host  =
+    private String   server_host  =
         SystemProperties.get(Constants.AM_SERVER_HOST);
-    private static String   server_port  =
+    private String   server_port  =
         SystemProperties.get(Constants.AM_SERVER_PORT);
     private static final String amAuthContext        = "amAuthContext";
     
@@ -475,6 +475,10 @@ public class AuthContext extends Object implements java.io.Serializable {
                     server_host, server_port);
             }
             if (authServiceURL != null) {
+            	if (authDebug.messageEnabled()) {
+            	    authDebug.message("AuthContext.login : runLogin against "
+            		    + authServiceURL);
+            	}
                 runLogin(indexType, indexName, params, pCookie);
                 return;
             }
