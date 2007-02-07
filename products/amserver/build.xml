@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.37 2007-01-25 20:24:02 kevinserwin Exp $
+   $Id: build.xml,v 1.38 2007-02-07 17:35:07 jonnelson Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
     <path id="build.class.path">
         <pathelement location="${amserver.classes.dir}"/>
         <pathelement location="${sharedlib.classes.dir}"/>
-        <fileset dir="${jsflockhart.dir}/lib">
+        <fileset dir="${lockhart.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
         <fileset dir="${extlib.dir}">
@@ -75,6 +75,12 @@
             <exclude name="**/com/sun/identity/cli/definition/*.java"/>
         </javac>
         <antcall target="jaxrpc" />
+
+        <copy todir="${amserver.console.classes.dir}">
+	    <fileset dir="${amserver.console.xml.dir}/components">
+		<include name="*.xml"/>
+	    </fileset>
+        </copy>
 
         <copy todir="${amserver.built.res.dir}">
             <fileset dir="${amserver.config.res.dir}">
@@ -257,10 +263,6 @@
         <delete dir="${amserver.classes.dir}/jaxrpc"/>
         <delete dir="${amserver.classes.dir}"/>
         <delete dir="${amserver.built.dir}"/>
-    </target>
-   
-    <target name="jsf-war" depends="build,prepXML">
-        <ant antfile="${amserver.warbase.dir}/build-jsf.xml" inheritRefs="true"/>
     </target>
    
     <target name="war" depends="build,prepXML">
