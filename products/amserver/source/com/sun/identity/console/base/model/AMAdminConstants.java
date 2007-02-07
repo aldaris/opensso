@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.2 2006-11-30 00:44:43 veiming Exp $
+ * $Id: AMAdminConstants.java,v 1.3 2007-02-07 20:19:40 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base.model;
+
+/* - NEED NOT LOG - */
 
 /**
  * This interface contains a set of constants used by console classes.
@@ -31,12 +33,77 @@ public interface AMAdminConstants {
     /**
      * Console Debug file name
      */
-    String CONSOLE_DEBUG_FILENAME = "jsfConsole";
+    String CONSOLE_DEBUG_FILENAME = "amConsole";
+
+    /**
+     *  Current Realm Location
+     */
+    String CURRENT_REALM = "currentRealm";
+
+    /**
+     *  DN of the object profile currently being viewed in the UM console.
+     */
+    String CURRENT_PROFILE = "CurrentProfileView";
+
+    /** 
+     * The current organization location in the directory management view 
+     */
+    String CURRENT_ORG = "currentOrganization";
+
+    /**
+     *  Previous Realm Location
+     */
+    String PREVIOUS_REALM = "previousRealm";
+
+    /** 
+     * Current service being edited in role view
+     */
+    String SERVICE_NAME = "currentServiceName";
+
+    /**
+     * Page session attribute to track page trail.
+     */
+    String PG_SESSION_INIT_PAGETRAIL = "initPageTrail";
+
+    /**
+     * User Service
+     */
+    String USER_SERVICE = "iPlanetAMUserService";
+
+    /**
+     * SAML Service
+     */
+    String SAML_SERVICE = "iPlanetAMSAMLService";
+
+    /**
+     * Core Authentication Service
+     */
+    String CORE_AUTH_SERVICE = "iPlanetAMAuthService";
+
+    /**
+     * Locale SSO Token property
+     */
+    String SSO_TOKEN_LOCALE_ATTRIBUTE_NAME = "Locale";
+
+    /**
+     * Organization SSO Token property
+     */
+    String SSO_TOKEN_ORGANIZATION_ATTRIBUTE_NAME = "Organization";
+
+    /**
+     * Client detection module content type property name
+     */
+    String CDM_CONTENT_TYPE_PROPERTY_NAME = "contentType";
 
     /**
      * Default resource bundle name
      */
-    String DEFAULT_RESOURCE_BUNDLE = "jsfConsole";
+    String DEFAULT_RB = "amConsole";
+
+    /**
+     * <code>amSDK</code> Debug file name
+     */
+    String AMSDK_DEBUG_FILENAME = "amSDK";
 
     /**
      * Login URL
@@ -47,6 +114,209 @@ public interface AMAdminConstants {
      * Logout URL
      */
     String URL_LOGOUT = "/UI/Logout";
+
+    /**
+     * Active value.
+     */
+    String STRING_ACTIVE = "Active";
+
+    /**
+     * Active value.
+     */  
+    String STRING_INACTIVE = "Inactive";
+
+    /**
+     * Required attribute value in any attribute.
+     */
+    String REQUIRED_ATTRIBUTE = "required";
+
+    /**
+     * Option attribute value in any attribute.
+     */
+    String OPTIONAL_ATTRIBUTE = "optional";
+
+    /**
+     * Administrator display attribute value in any attribute.
+     */
+    String ADMIN_DISPLAY_ATTRIBUTE = "adminDisplay";
+
+    /**
+     * Literal false string.
+     */
+    String STRING_FALSE = "false";
+
+    /**
+     * String used for passing choices 
+     */
+     String CHOICES = "choices";
+
+    /**
+     * String used for passing choice values
+     */
+     String VALUES = "values";
+
+     /**
+      * Operation name for add service to realm.
+      */
+    String OPERATION_ADD = "add";
+
+     /**
+      * Operation name for edit service to realm.
+      */
+    String OPERATION_EDIT = "edit";
+
+    /**
+     * Last tab visited before opening a profile object.
+     */
+    String PREVIOUS_TAB_ID = "PreviousTabID";
+
+    /**
+     * Realm node identifier.
+     */
+    int REALM_NODE_ID = 1;
+
+    /**
+     * Subjects node identifier.
+     */
+    int SUBJECTS_NODE_ID = 7;
+
+    /**
+     * Last tab visited before opening a profile object.
+     */
+    String PREVIOUS_ORGANIZATION = "PreviousOrganization";
+
+    /**
+     * Component name for dynamic link.
+     */
+    String DYN_LINK_COMPONENT_NAME = "dynLink";
+
+    /**
+     * Password Reset Service Name.
+     */
+    String PW_RESET_SERVICE = "iPlanetAMPasswordResetService";
+
+    /**
+     * User password attribute name.
+     */
+    String ATTR_USER_PASSWORD = "userpassword";
+
+    /**                                         
+     * User status attribute name.
+     */
+    String ATTR_USER_STATUS = "inetuserstatus";
+
+    /**
+     * User resource offering attribute name.
+     */
+    String ATTR_USER_RESOURCE_OFFERING = "sunIdentityServerDiscoEntries";
+
+    /**
+     * Discovery service name.
+     */
+    String DISCOVERY_SERVICE = "sunIdentityServerDiscoveryService";
+
+    /**
+     * Discovery service's Server Dynamic Discovery Entry attribute name.
+     */
+    String DISCOVERY_SERVICE_NAME_DYNAMIC_DISCO_ENTRIES =
+        "sunIdentityServerDynamicDiscoEntries";
+
+    /**
+     * Discovery service's Server Bootstrapping Discovery Entry attribute name.
+     */
+    String DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF =
+        "sunIdentityServerBootstrappingDiscoEntry";
+
+    /**
+     * Discovery service's Provider Resource ID Mapper attribute name.
+     */
+    String DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER =
+        "sunIdentityServerDiscoProviderResourceIDMapper";
+
+    /**
+     * Discovery service's Provider Resource ID Mapper attribute's provider Id.
+     */
+    String DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER_PROVIDER_ID =
+        "providerid";
+
+    /**
+     * Discovery service's Provider Resource ID Mapper attribute's Id Mapper.
+     */
+    String DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER_ID_MAPPER =
+        "idmapper";
+
+    /**
+     * Authentication Configuration service name.
+     */
+    String AUTH_CONFIG_SERVICE = "iPlanetAMAuthConfiguration";
+
+    /**
+     * Policy Configuration service name.
+     */
+    String POLICY_SERVICE = "iPlanetAMPolicyConfigService";
+
+    /** 
+     * User Search key 
+     */
+    String CONSOLE_USER_SEARCH_KEY =
+        "iplanet-am-admin-console-user-search-key";
+
+    /** 
+     * User Search Result return key 
+     */
+    String CONSOLE_USER_SEARCH_RETURN_KEY =
+        "iplanet-am-admin-console-user-return-attribute";
+
+    /**
+     * Federation Provider Configuration service name.
+     */
+    String DEFAULT_ORGANIZATION =
+        "com.iplanet.am.defaultOrg";
+    
+    /**
+     * Adminstration Console service name.
+     */
+    String ADMIN_CONSOLE_SERVICE =
+        "iPlanetAMAdminConsoleService";
+
+    String CONSOLE_LOCATION_DN =
+        "com-iplanet-am-console-location-dn";
+
+    int DEFAULT_SEARCH_TIMEOUT = 5;
+
+
+    /** plain text password attribute */
+    String PASSWORD = "iPlanetPlainTextPassword";
+
+    /** encrypted password attribute */
+    String ENCRYPTED = "iPlanetEncryptedPassword";
+
+    String G11N_SERVICE_NAME = "iPlanetG11NSettings";
+
+    /** Common Name format attribute in Globalization service. */
+    String G11N_SERIVCE_COMMON_NAME_FORMAT =
+        "sun-identity-g11n-settings-common-name-format";
+
+    /**
+     * Preferred Locale attribute name in user service
+     */
+    String USER_SERVICE_PREFERRED_LOCALE = "preferredlocale";
+
+    /** 
+     * Customized Organization JSP directory 
+     */
+    String CONSOLE_ORG_CUSTOM_JSP_DIRECTORY = 
+        "iplanet-am-admin-console-custom-jsp-dir";
+
+    /**
+     * ID Repo Service Name.
+     */
+    String IDREPO_SERVICE_NAME = "sunIdentityRepositoryService";
+
+    /**
+     * Platform Service.
+     */
+    String PLATFORM_SERVICE = "iPlanetAMPlatformService";
 
     /**
      * Read permission.
@@ -64,13 +334,19 @@ public interface AMAdminConstants {
     String PERMISSION_DELEGATE = "DELEGATE";
 
     /**
-     * Adminstration Console service name.
+     * Name of the calling viewbean. Used to return to the previous view
      */
-    String ADMIN_CONSOLE_SERVICE = "iPlanetAMAdminConsoleService";
+    String SAVE_VB_NAME = "returnToViewBean";
 
     /**
-     * Federation Managemenet Enable Attribute Name. This attribute is found in
-     * Administration Console Service.
+     * Name of selected response provider in Policy Configuration Service.
      */
-    String CONSOLE_FED_ENABLED_ATTR ="iplanet-am-admin-console-liberty-enabled";
+    String POLICY_SELECTED_RESPONSE_PROVIDER =
+        "iplanet-am-policy-selected-responseproviders";
+
+    /**
+     * Role Display Options Attribute Name.
+     */
+    String ROLE_DISPLAY_OPTION_ATTRIBUTE_NAME =
+        "iplanet-am-role-display-options";
 }

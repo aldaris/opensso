@@ -17,20 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessControlModel.java,v 1.1 2006-11-30 00:44:43 veiming Exp $
+ * $Id: AccessControlModel.java,v 1.2 2007-02-07 20:19:44 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
 
 package com.sun.identity.console.base.model;
 
 import java.util.Set;
 
-/**
- * This interface defines the method for view access of a tab in 
- * Administration Console.
- */
+/* - NEED NOT LOG - */
+
 public interface AccessControlModel {
     String ANY_SERVICE = "ANY_SERVICE";
 
@@ -44,8 +41,8 @@ public interface AccessControlModel {
      * @return true if a page can be viewed.
      */
     boolean canView(
-	Set permissions,
-	String accessLevel,
-	String realmName,
-	boolean delegateUI);
+        Set permissions,
+        String accessLevel,
+        String realmName,
+        boolean delegateUI);
 }

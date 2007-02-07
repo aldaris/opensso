@@ -17,13 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFormatUtils.java,v 1.1 2006-11-16 04:31:08 veiming Exp $
+ * $Id: AMFormatUtils.java,v 1.2 2007-02-07 20:19:41 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base.model;
 
+import com.iplanet.jato.view.html.OptionList;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.sm.SMSEntry;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +41,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import netscape.ldap.util.DN;
+import netscape.ldap.util.RDN;
+import netscape.ldap.LDAPDN;
 
 /**
  * <code>AMFormatUtils</code> provides a set of formating methods
@@ -41,24 +51,6 @@ import java.util.Set;
 public class AMFormatUtils
     implements AMAdminConstants
 {
-    /**
-     * Sorts a set of attributes by the <code>i18n</code> key for each entry.
-     * The attributes passed in are of type <code>AMAttributeSchema</code>.
-     *
-     * @param unordered set of attributes.
-     * @param userLocale locale of current user.
-     * @return list of attribute schemas ordered by their <code>i18n</code>
-     *         keys.
-     */
-    public static List sortAttributes(Set unordered, Locale userLocale) {
-        Collator collator = Collator.getInstance(userLocale);
-        AttributeI18NKeyComparator c = new AttributeI18NKeyComparator(
-            collator);
-        List ordered = new ArrayList(unordered);
-        Collections.sort(ordered, c);
-        return ordered;
-    }
-
     /**
      * Sorts items in a set.
      *
@@ -68,6 +60,7 @@ public class AMFormatUtils
      */
     public static List sortItems(Collection collection, Locale locale) {
         List sorted = Collections.EMPTY_LIST;
+
         if ((collection != null) && !collection.isEmpty()) {
             sorted = new ArrayList(collection);
             Collator collator = Collator.getInstance(locale);
@@ -85,6 +78,7 @@ public class AMFormatUtils
      */
     public static Map reverseStringMap(Map map) {
         Map mapReverse = Collections.EMPTY_MAP;
+
         if ((map != null) && !map.isEmpty()) {
             mapReverse = new HashMap(map.size() *2);
             for (Iterator iter = map.keySet().iterator(); iter.hasNext(); ) {
@@ -93,6 +87,57 @@ public class AMFormatUtils
             }
         }
         return mapReverse;
+    }
+
+    /**
+     * Sorts keys in a map.
+     *
+     * @param map to sort.
+     * @param locale of user.
+     * @return a list of sorted keys.
+     */
+    public static List sortKeyInMap(Map map, Locale locale) {
+        List sorted = Collections.EMPTY_LIST;
+        if ((map != null) && !map.isEmpty()) {
+            sorted = sortItems(map.keySet(), locale);
+        }
+        return sorted;
+    }
+
+    /**
+     * Returns an option list of sorted label.
+     *
+     * @param map Map of value to its label.
+     * @param locale Locale of user.
+     * @return an option list of sorted label.
+     */
+    public static OptionList getSortedOptionList(Map map, Locale locale) {
+        OptionList optionList = new OptionList();
+        Map reversed = reverseStringMap(map);
+        List sorted = sortItems(reversed.keySet(), locale);
+
+        for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
+            String label = (String)iter.next();
+            optionList.add(label, (String)reversed.get(label));
+        }
+
+        return optionList;
+    }
+
+    /**
+     * Gets relative distinguished name
+     *
+     * @param model
+     * @param dn - distinguished name
+     * @return name of relative distinguished name
+     */
+    public static String DNToName(AMModel model, String dn) {
+        String ret = dn;
+        if (DN.isDN(dn)) {
+            String [] comps = LDAPDN.explodeDN(dn, true);
+            ret = comps[0];
+        }
+        return ret;
     }
 
     /**
@@ -107,7 +152,7 @@ public class AMFormatUtils
 
         if ((map != null) && !map.isEmpty()) {
             Map mapReverse = reverseStringMap(map);
-            List sortedKey = sortItems(mapReverse.keySet(), locale);
+            List sortedKey = sortKeyInMap(mapReverse, locale);
             listSorted = new ArrayList(sortedKey.size());
             Iterator iter = sortedKey.iterator();
 
@@ -143,5 +188,91 @@ public class AMFormatUtils
         }
 
         return originalString;
+    }
+
+    /**
+     * Returns a string of comma separated strings that are contained in a set.
+     *
+     * @param set Set of strings.
+     */
+    public static String toCommaSeparatedFormat(Set set) {
+        StringBuffer buff = new StringBuffer();
+        boolean firstEntry = true;
+        for (Iterator iter = set.iterator(); iter.hasNext(); ) {
+            if (!firstEntry) {
+                buff.append(", ");
+            } else {
+                firstEntry = false;
+            }
+            buff.append((String)iter.next());
+        }
+        return buff.toString();
+    }
+
+    /**
+     * Returns the display name of an <code>AMIdentity</code>.
+     * a dispalyable format.
+     * For example:
+     *    cn=Static-1_ou=Groups_dc=sun_dc=com
+     * would be dispalyed as
+     *    Static-1 Administrator
+     *
+     * This will be used by the Privileges tab and Entity Subject tab views.
+     *
+     * @param model handle to AMModel interface.
+     * @param universalId Universal Id of Entity object.
+     * @returns the display name of an <code>AMIdentity</code>.
+     */
+    public static String getIdentityDisplayName(
+        AMModel model,
+        String universalId
+    ) {
+        String name = "";
+        try {
+            name = getIdentityDisplayName(model,
+                IdUtils.getIdentity(model.getUserSSOToken(), universalId));
+        } catch (IdRepoException e) {
+            AMModelBase.debug.warning("AMFormatUtils.getIdentityDisplayName " +
+                "Could not get display name returning universalId " 
+                + universalId);
+          }
+        return name;
+    }
+
+    /**
+     * Returns the display name of an <code>AMIdentity</code>.
+     * a dispalyable format.
+     * For example:
+     *    cn=Static-1_ou=Groups_dc=sun_dc=com
+     * would be dispalyed as
+     *    Static-1 Administrator
+     *
+     * This will be used by the Privileges tab and Entity Subject tab views.
+     *
+     * @param model handle to AMModel interface.
+     * @param entity Entity object.
+     * @returns the display name of an <code>AMIdentity</code>.
+     */
+    public static String getIdentityDisplayName(
+        AMModel model, 
+        AMIdentity entity
+    ) {
+        String name = entity.getName();
+        IdType type = entity.getType();
+
+        if (type.equals(IdType.ROLE) || type.equals(IdType.FILTEREDROLE)) {
+            String dn = name.replaceAll("_", ",");
+            if (DN.isDN(dn)) {
+                if (dn.endsWith(SMSEntry.getRootSuffix())) {
+                    String[] rdns = LDAPDN.explodeDN(dn, true);
+                    name = rdns[0] + " " + model.getLocalizedString(
+                        "admin_suffix.name");
+                }
+            }
+        } else if (type.equals(IdType.USER)) {
+            name = model.getUserDisplayName(entity);
+        }
+
+        return name;
     }
 }

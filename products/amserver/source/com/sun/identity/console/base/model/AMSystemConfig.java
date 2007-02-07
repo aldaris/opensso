@@ -17,15 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSystemConfig.java,v 1.1 2006-11-16 04:31:09 veiming Exp $
+ * $Id: AMSystemConfig.java,v 1.2 2007-02-07 20:19:44 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base.model;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.Constants;
+
+import netscape.ldap.LDAPDN;
+import netscape.ldap.util.DN;
+import netscape.ldap.util.RDN;
+
+/* - NEED NOT LOG - */
 
 /**
  * <code>AMSystemConfig</code> is contains system configuration information
@@ -34,43 +40,82 @@ public class AMSystemConfig
     implements AMAdminConstants 
 {
     /** 
-     * Server deployment URI
+     * Server deployment URI 
      */
     public static String serverDeploymentURI =
         SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
-    /**
-     * Console deployment URI
+    /**   
+     * Console deployment URI 
      */
     public static String consoleDeploymentURI =
         SystemProperties.get(Constants.AM_CONSOLE_DEPLOYMENT_DESCRIPTOR);
 
-    /**
+    /** 
      * Server protocol
      */
     public static String serverProtocol = SystemProperties.get(
         Constants.AM_SERVER_PROTOCOL);
 
-    /**
+    /** 
      * Server host name
      */
     public static String serverHost = SystemProperties.get(
         Constants.AM_SERVER_HOST);
 
-    /**
-     * Server port name
+    /** 
+     * Server port name 
      */
     public static String serverPort = SystemProperties.get(
         Constants.AM_SERVER_PORT);
 
-    /**
+    /** 
      * Server URL
      */
     public static String serverURL = serverProtocol + "://" + serverHost + ":"
         + serverPort;
 
-    /**
-     * Version of the product.
+    /** 
+     * Determines if console is remote 
      */
-    public static String version = SystemProperties.get(Constants.AM_VERSION);
+    public static boolean isConsoleRemote = Boolean.valueOf(
+        SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
+
+    /** 
+     * default organization 
+     */
+    public static String defaultOrg =
+        normalizeString(SystemProperties.get(DEFAULT_ORGANIZATION));
+
+    /** 
+     * version 
+     */
+    public static String version =
+        normalizeString(SystemProperties.get(Constants.AM_VERSION));
+
+    /** 
+     * Root Suffix 
+     */
+    public static String rootSuffix =
+        normalizeString(SystemProperties.get(Constants.AM_ROOT_SUFFIX));
+
+    private static String normalizeString(String tmp) {
+        if (tmp != null) {
+            // parse string to remove any extraneous space
+            String[] dns = LDAPDN.explodeDN(tmp, false);
+            if ((dns != null) && (dns.length > 0)) {
+                int len = dns.length -1;
+                DN root = new DN(dns[len]);
+
+                for (int i = len -1; i >= 0; --i) {
+                    root.addRDN(new RDN(dns[i]));
+                }
+
+                tmp = root.toString();
+            }
+        } else {
+            tmp = "";
+        }
+        return tmp;
+    }
 }

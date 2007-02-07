@@ -17,21 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonNameGenerator.java,v 1.1 2006-11-16 04:31:08 veiming Exp $
+ * $Id: AMCommonNameGenerator.java,v 1.2 2007-02-07 20:19:41 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base.model;
 
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SchemaType;
@@ -40,28 +39,26 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.SMSException;
-import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+/* - NEED NOT LOG - */
+
 /**
  * <code>AMCommonNameGenerator</code> is a singleton class that generates
- * the common name for a user from the attribute values stored in the 
- * users profile.  The format of the generated name is specified  by the
- * Globalization Service attribute Common Name Format.
+ * common name for an user.
  */
 public class AMCommonNameGenerator
     implements AMAdminConstants, ServiceListener
 {
-    private static final String G11N_SERVICE_NAME = "iPlanetG11NSettings";
-    private static final String G11N_SERIVCE_COMMON_NAME_FORMAT =
-        "sun-identity-g11n-settings-common-name-format";
+    private static SSOToken adminSSOToken =
+        AMAdminUtils.getSuperAdminSSOToken();
+
     private static final String DEFAULT_FORMAT =
         "{givenname} {initials} {sn}";
 
@@ -81,9 +78,6 @@ public class AMCommonNameGenerator
     }
 
     private void initialize() {
-        SSOToken adminSSOToken = (SSOToken)
-            AccessController.doPrivileged(AdminTokenAction.getInstance());
-
         try {
             serviceSchemaManager = new ServiceSchemaManager(
                 G11N_SERVICE_NAME, adminSSOToken);
@@ -99,7 +93,7 @@ public class AMCommonNameGenerator
     }
 
     /**
-     * Returns an instance of Common Name generator.
+     * Gets an instance of Common Name generator.
      *
      * @return an instance of Common Name generator.
      */
@@ -114,17 +108,23 @@ public class AMCommonNameGenerator
      * <code>{givenname} {initials} {sn}</code>.  This method replaces these
      * tokens with attributes values from <code>userInfoMap</code>.
      *
+     * @param universalId Universal Id of user.
      * @param model of the view bean.
-     * @param locale Locale of the request.
      * @return common name for user.
      */
-    public String generateCommonName(AMModel model, Locale locale) {
-        String univId = model.getUniversalID();
+    public String generateCommonName(String univId, AMModel model)
+    {
         String commonName = "";
         Map userInfoMap = getUserAttributeValues(univId);
 
         if ((userInfoMap != null) && !userInfoMap.isEmpty()) {
-            String localeStr = locale.toString();
+            String localeStr = AMAdminUtils.getFirstElement(
+                (Set)userInfoMap.get(USER_SERVICE_PREFERRED_LOCALE));
+
+            if ((localeStr == null) || (localeStr.trim().length() == 0)) {
+                localeStr = model.getUserLocale().toString();
+            }
+
             String format = getCommonNameFormat(localeStr, model);
             Set tokens = getTokens(format);
             Map mapAttrValue = getAttributeValues(userInfoMap, tokens);
@@ -168,9 +168,6 @@ public class AMCommonNameGenerator
 
     private Map getUserAttributeValues(String univId) {
         Map values = null;
-        SSOToken adminSSOToken = (SSOToken)
-            AccessController.doPrivileged(AdminTokenAction.getInstance());
-
         try {
             AMIdentity amid = IdUtils.getIdentity(adminSSOToken, univId);
             if (amid != null) {
@@ -180,7 +177,6 @@ public class AMCommonNameGenerator
                 values = new HashMap(map.size() *2);
 
                 /*
-                * 20050520 Dennis
                 * Need to get the attribute name to the proper case.
                 * SDK makes them all lowercased
                 */
@@ -194,11 +190,11 @@ public class AMCommonNameGenerator
                 }
             }
         } catch (SSOException e) {
-            debug.error("AMCommonNameGenerator.getUserAttributeValues", e);
+            debug.warning("AMCommonNameGenerator.getUserAttributeValues", e);
         } catch (SMSException e) {
-            debug.error("AMCommonNameGenerator.getUserAttributeValues", e);
+            debug.warning("AMCommonNameGenerator.getUserAttributeValues", e);
         } catch (IdRepoException e) {
-            debug.error("AMCommonNameGenerator.getUserAttributeValues", e);
+            debug.warning("AMCommonNameGenerator.getUserAttributeValues", e);
         }
         return (values != null) ? values : Collections.EMPTY_MAP;
     }
@@ -206,9 +202,6 @@ public class AMCommonNameGenerator
     private Map getAttributeSchemaExactNames(String idType)
         throws SMSException, SSOException, IdRepoException
     {
-        SSOToken adminSSOToken = (SSOToken)
-            AccessController.doPrivileged(AdminTokenAction.getInstance());
-
         Map mapping = new HashMap();
         String serviceName = IdUtils.getServiceName(IdUtils.getType(idType));
         if (serviceName != null) {
@@ -291,8 +284,6 @@ public class AMCommonNameGenerator
      * @return map of locale to formats
      */
     private Map addFormats(String realm) {
-        SSOToken adminSSOToken = (SSOToken)
-            AccessController.doPrivileged(AdminTokenAction.getInstance());
         Set values = null;
         Map map = null;
 
@@ -302,12 +293,12 @@ public class AMCommonNameGenerator
             AMIdentity realmIdentity = repo.getRealmIdentity();
             Set servicesFromIdRepo = realmIdentity.getAssignedServices();
 
-            if (servicesFromIdRepo.contains(G11N_SERVICE_NAME))
-            {
+            if (servicesFromIdRepo.contains(G11N_SERVICE_NAME)) {
                 map = realmIdentity.getServiceAttributes(G11N_SERVICE_NAME);
             } else {
                 OrganizationConfigManager orgCfgMgr =
-                    new OrganizationConfigManager(adminSSOToken, realm);
+                    new OrganizationConfigManager(
+                        adminSSOToken, realm);
                 map = orgCfgMgr.getServiceAttributes(G11N_SERVICE_NAME);
             }
         } catch (SSOException e) {
@@ -376,10 +367,10 @@ public class AMCommonNameGenerator
      * Returns a map of common name formats.
      */
     public Map getFormats(AMModel model) {
-        String startRealm = model.getStartRealm();
-        Map map = (Map)mapRealmToFormat.get(startRealm);
+        String startDN = model.getStartDN();
+        Map map = (Map)mapRealmToFormat.get(startDN);
         if (map == null) {
-            map = addFormats(startRealm);
+            map = addFormats(startDN);
         }
         return map;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleException.java,v 1.1 2006-11-30 00:44:44 veiming Exp $
+ * $Id: ConsoleException.java,v 1.2 2007-02-07 20:19:45 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,7 @@ public class ConsoleException extends Exception {
     }
  
     /**
-     * Returns error list.
+     * Returns error list set in the current exception.
      *
      * @return error list.
      */

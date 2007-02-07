@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeI18NKeyComparator.java,v 1.1 2006-11-16 04:31:09 veiming Exp $
+ * $Id: AttributeI18NKeyComparator.java,v 1.2 2007-02-07 20:19:45 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.base.model;

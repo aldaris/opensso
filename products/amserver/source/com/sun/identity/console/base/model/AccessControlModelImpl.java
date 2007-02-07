@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessControlModelImpl.java,v 1.1 2006-11-30 00:44:44 veiming Exp $
+ * $Id: AccessControlModelImpl.java,v 1.2 2007-02-07 20:19:44 jonnelson Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
 
 package com.sun.identity.console.base.model;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
@@ -40,22 +40,20 @@ import java.util.Iterator;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * This class determines if a tab is view-able by an user/administrator.
- */
+/* - NEED NOT LOG - */
+
 public class AccessControlModelImpl
     implements AccessControlModel
 {
-    private static final String GLOBAL_TAB = "global";
+    private static SSOToken adminSSOToken =
+        (SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance());
     private SSOToken ssoToken = null;
     private Set serviceNames;
 
-    /**
-     * Creates a new instance of <code>AccessControlModelImpl</code>
-     *
-     * @param req HTTP Servlet Request object which is used to get the 
-     *        principal's SSO token.
-     */
+    public AccessControlModelImpl(SSOToken ssoToken) {
+        this.ssoToken = ssoToken;
+    }
+
     public AccessControlModelImpl(HttpServletRequest req) {
         try {
             ssoToken = AMAuthUtils.getSSOToken(req);
@@ -67,66 +65,64 @@ public class AccessControlModelImpl
     /**
      * Returns true if a page can be viewed.
      *
-     * @param serviceNames Set of services that user can have access to.
+     * @param permissions Permissions associated to the page.
      * @param accessLevel Level of access i.e. either global or realm level.
      * @param realmName Currently view realm Name.
      * @param delegateUI true if this is a delegation administration page.
      * @return true if a page can be viewed.
      */
     public boolean canView(
-        Set serviceNames,
+        Set permissions,
         String accessLevel,
         String realmName,
         boolean delegateUI
     ) {
-        if (ssoToken == null) {
-            return false;
-        }
+        boolean canView = false;
+        if (ssoToken != null) {
+            if (permissions.isEmpty()) {
+                canView = true;
+            } else {
+                try {
+                    DelegationEvaluator delegationEvaluator =
+                        new DelegationEvaluator();
+                    DelegationPermission delegationPermission =
+                        new DelegationPermission();
+                    delegationPermission.setVersion("*");
+                    delegationPermission.setSubConfigName("default");
 
-        /*
-         * if no service names are passed, assume the user can view the page
-         * otherwise we need to check the delegation serviceNames.
-         */
-        boolean canView = serviceNames.isEmpty();
-        if (!canView) {
-            try {
-                DelegationEvaluator delegationEvaluator =
-                    new DelegationEvaluator();
-                DelegationPermission delegationPermission =
-                    new DelegationPermission();
-                delegationPermission.setVersion("*");
-                delegationPermission.setSubConfigName("default");
-
-                // set organization name to root for global tab
-                if ((accessLevel != null) && accessLevel.equals(GLOBAL_TAB)) {
-                    delegationPermission.setConfigType(accessLevel);
-                    delegationPermission.setOrganizationName("/");
-                } else {
-                    delegationPermission.setOrganizationName(realmName);
-                }
-
-                if (delegateUI) {
-                    Set actions = new HashSet();
-                    actions.add(AMAdminConstants.PERMISSION_DELEGATE);
-                    delegationPermission.setActions(actions);
-                    canView = delegationEvaluator.isAllowed(
-                        ssoToken, delegationPermission, Collections.EMPTY_MAP);
-                }
-
-                if (!delegateUI || canView) {
-                    for (Iterator i = serviceNames.iterator();
-                        i.hasNext() && !canView;
+                    if ((accessLevel != null) &&
+                        (accessLevel.trim().length() > 0)
                     ) {
-                        String serviceName = (String)i.next();
-                        canView = hasPermission(
-                            delegationEvaluator, delegationPermission,
-                            serviceName, AMAdminConstants.PERMISSION_READ);
+                        delegationPermission.setConfigType(accessLevel);
+                        delegationPermission.setOrganizationName("/");
+                    } else {
+                        delegationPermission.setOrganizationName(realmName);
                     }
+
+                    if (delegateUI) {
+                        Set actions = new HashSet();
+                        actions.add(AMAdminConstants.PERMISSION_DELEGATE);
+                        delegationPermission.setActions(actions);
+                        canView = delegationEvaluator.isAllowed(
+                            ssoToken, delegationPermission,
+                            Collections.EMPTY_MAP);
+                    }
+
+                    if (!delegateUI || canView) {
+                        for (Iterator i = permissions.iterator();
+                            i.hasNext() && !canView;
+                        ) {
+                            String serviceName = (String)i.next();
+                            canView = hasPermission(
+                                delegationEvaluator, delegationPermission,
+                                serviceName, AMAdminConstants.PERMISSION_READ);
+                        }
+                    }
+                } catch (DelegationException e) {
+                    AMModelBase.debug.error("AccessControlModelImpl.canView", e);
+                } catch (SSOException e) {
+                    AMModelBase.debug.error("AccessControlModelImpl.canView", e);
                 }
-            } catch (DelegationException e) {
-                AMModelBase.debug.error("AccessControlModelImpl.canView", e);
-            } catch (SSOException e) {
-                AMModelBase.debug.error("AccessControlModelImpl.canView", e);
             }
         }
 
@@ -162,17 +158,13 @@ public class AccessControlModelImpl
 
     private Set getServiceNames() {
         if (serviceNames == null) {
-            SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
             try {
                 ServiceManager sm = new ServiceManager(adminSSOToken);
                 serviceNames = sm.getServiceNames();
             } catch (SSOException e) {
-                AMModelBase.debug.error(
-                    "AccessControlModelImpl.getServiceNames", e);
+                AMModelBase.debug.error("AccessControlModelImpl.getServiceNames", e);
             } catch (SMSException e) {
-                AMModelBase.debug.error(
-                    "AccessControlModelImpl.getServiceNames", e);
+                AMModelBase.debug.error("AccessControlModelImpl.getServiceNames", e);
             }
         }
         return serviceNames;
