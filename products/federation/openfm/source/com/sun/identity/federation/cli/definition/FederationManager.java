@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.2 2007-01-23 06:46:09 veiming Exp $
+ * $Id: FederationManager.java,v 1.3 2007-02-07 22:47:10 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -389,7 +389,7 @@ public class FederationManager {
             "realm|r|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "add-circle-of-trust-member-succeeded=Entity, {1} is added to the circle of trust, {0}."})
+            "add-circle-of-trust-member-succeeded=Entity, {2} is added to the circle of trust, {1}, in realm {3}."})
     private String add_circle_of_trust_member;
 
 }
