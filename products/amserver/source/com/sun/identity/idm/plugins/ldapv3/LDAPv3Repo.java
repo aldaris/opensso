@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.14 2006-10-26 20:52:45 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.15 2007-02-08 01:52:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2456,14 +2456,14 @@ public class LDAPv3Repo extends IdRepo {
                 debug.message("LDAPv3Repo.modifyMemberShip: Members set " +
                         "is empty");
             }
-            throw new IdRepoException(IdRepoBundle.getString("201"), "201");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
         if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo.modifyMembership: Memberhsip " +
                         "to users and agents is not supported");
             }
-            throw new IdRepoException(IdRepoBundle.getString("203"), "203");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "203", null);
         }
         if (!membersType.equals(IdType.USER)) {
             if (debug.messageEnabled()) {
@@ -2472,8 +2472,7 @@ public class LDAPv3Repo extends IdRepo {
                                 + membersType.getName());
             }
             Object[] args = { CLASS_NAME };
-            throw new IdRepoException(IdRepoBundle.getString("206", args),
-                    "206", args);
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
         }
 
         checkConnPool();
@@ -2512,7 +2511,7 @@ public class LDAPv3Repo extends IdRepo {
                     + name + attrNames);
         }
         if (attrNames == null || attrNames.isEmpty()) {
-            throw new IdRepoException(IdRepoBundle.getString("201"), "201");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
         Set predefinedAttr = null;
@@ -2890,7 +2889,7 @@ public class LDAPv3Repo extends IdRepo {
                 debug.message("LDAPv3Repo: setAttributes. Attributes " +
                         "are empty");
             }
-            throw new IdRepoException(IdRepoBundle.getString("201"), "201");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
         checkConnPool();
         String eDN = getDN(type, name);
@@ -2967,7 +2966,7 @@ public class LDAPv3Repo extends IdRepo {
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: setAttributes. LdapModSet is empty");
             }
-            throw new IdRepoException(IdRepoBundle.getString("201"), "201");
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
         // For user objects, need to check if all objectclasses are present
