@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: fmadm.jsp,v 1.3 2007-01-26 22:02:58 veiming Exp $
+   $Id: fmadm.jsp,v 1.4 2007-02-08 19:09:18 veiming Exp $
   
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -91,9 +91,10 @@
         throws Exception {
         ResourceBundle rb = cmdMgr.getResourceBundle();
         StringBuffer buff = new StringBuffer();
+        String[] paramCmdName = {cmdName};
 
         buff.append(MessageFormat.format(rb.getString("web-interface-cmd-name"),
-            cmdName))
+            paramCmdName))
             .append("<br />");
         SubCommand cmd = cmdMgr.getSubCommand(cmdName);
         if (cmd == null) {
@@ -208,8 +209,8 @@
     }
     
     private static String escapeTags(String html) {
-        html = html.replace("&", "&amp;");
-        return html.replace("<", "&lt;");
+        html = html.replaceAll("&", "&amp;");
+        return html.replaceAll("<", "&lt;");
     }
 %>
 
