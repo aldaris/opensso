@@ -52,6 +52,10 @@
 		<param-name>jato:com.sun.identity.authentication.UI.*:moduleURL</param-name>
 		<param-value>../UI</param-value>
 	</context-param>
+        <context-param>
+            <param-name>jato:com.sun.identity.password.ui.*:moduleURL</param-name>
+            <param-value>../ui</param-value>
+        </context-param>
 
 	<context-param>
 		<param-name>jato:enforceStrictSessionTimeout1</param-name>
@@ -160,7 +164,11 @@
         <servlet>
                 <servlet-name>WebCLI</servlet-name>
                 <servlet-class>com.sun.identity.cli.WebCLI</servlet-class>
-	</servlet>	
+	</servlet>
+        <servlet>
+            <servlet-name>PWResetServlet</servlet-name>
+            <servlet-class>com.sun.identity.password.ui.PWResetServlet</servlet-class>
+        </servlet>
 
 	<servlet>
                 <servlet-name>notificationservice</servlet-name>
@@ -236,6 +244,11 @@
 		<servlet-name>LoginServlet</servlet-name>
 		<url-pattern>/UI/*</url-pattern>
 	</servlet-mapping>	
+        <servlet-mapping>
+            <servlet-name>PWResetServlet</servlet-name>
+            <url-pattern>/ui/*</url-pattern>
+        </servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>GatewayServlet</servlet-name>
 		<url-pattern>/gateway</url-pattern>

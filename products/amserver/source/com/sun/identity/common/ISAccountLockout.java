@@ -17,28 +17,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.7 2006-08-29 21:55:06 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.8 2007-02-09 22:14:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
-import java.util.*;
-import java.io.*;
-import java.text.*;
-import com.iplanet.am.sdk.*;
+import com.iplanet.am.util.AMSendMail;
 import javax.mail.MessagingException;
-import com.iplanet.am.util.*;
-import com.sun.identity.idm.*;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.spi.AMAuthCallBackImpl;
 import com.sun.identity.authentication.spi.AMAuthCallBackException;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.shared.debug.Debug;
-
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class ISAccountLockout {
-    
     private static final String USER_STATUS_ATTR="inetuserstatus";
     private static final String USER_ACTIVE ="Active";
     private static final String USER_INACTIVE ="Inactive";
@@ -51,8 +55,8 @@ public class ISAccountLockout {
         "sunAMAuthAccountLockout";
     private static final String INVALID_ATTEMPTS_XML_ATTR =
         "sunAMAuthInvalidAttemptsData";
-
-   // XML related variables 
+    
+    // XML related variables
     private static final String BEGIN_XML="<InvalidPassword>";
     private static final String INVALID_PASS_COUNT_BEGIN ="<InvalidCount>";
     private static final String INVALID_PASS_COUNT_END ="</InvalidCount>";
@@ -86,9 +90,9 @@ public class ISAccountLockout {
      * up.
      *
      * @param failureLockoutMode a boolean indicating whether account locking
-     *        is enabled or not
+     *        is enabled or not.
      * @param failureLockoutTime a long which is the interval in minutes
-     *        between 2 failed attempts
+     *        between 2 failed attempts.
      * @param failureLockoutCount an integer indicating the number of allowed
      *        failed attempts before account will be locked.
      * @param lockoutNotification a String , email address to notify when
@@ -97,23 +101,23 @@ public class ISAccountLockout {
      *        which user will be warned about the remaining failed attempts
      *        before account will be locked.
      * @param lockoutAttrName a String , name of attribute to be used for
-     *        account locking
+     *        account locking.
      * @param lockoutAttrValue a String , value of lockoutAttrName to be used
-     *        for account locking
+     *        for account locking.
      * @param lockoutFailureDuration a long, lockout duration in minutes
-     *        used for memory locking
-     * @param bundleName a String, name of the resource bundle
+     *        used for memory locking.
+     * @param bundleName a String, name of the resource bundle.
      */
-    
     public ISAccountLockout(boolean failureLockoutMode,
-    long failureLockoutTime,
-    int failureLockoutCount,
-    String lockoutNotification,
-    int lockoutUserWarning,
-    String lockoutAttrName,
-    String lockoutAttrValue,
-    long lockoutFailureDuration,
-    String bundleName) {
+        long failureLockoutTime,
+        int failureLockoutCount,
+        String lockoutNotification,
+        int lockoutUserWarning,
+        String lockoutAttrName,
+        String lockoutAttrValue,
+        long lockoutFailureDuration,
+        String bundleName
+    ) {
         this.failureLockoutMode = failureLockoutMode;
         this.failureLockoutTime = failureLockoutTime;
         this.failureLockoutCount = failureLockoutCount;
@@ -122,9 +126,11 @@ public class ISAccountLockout {
         this.lockoutAttrName = lockoutAttrName;
         this.lockoutAttrValue = lockoutAttrValue;
         this.failureLockoutDuration = lockoutFailureDuration;
+        
         if (lockoutFailureDuration > 0) {
             memoryLocking = true;
         }
+        
         this.bundleName = bundleName;
     }
     
@@ -135,24 +141,23 @@ public class ISAccountLockout {
      */
     public boolean isLockoutEnabled() {
         return (failureLockoutMode && failureLockoutCount > 0
-        && failureLockoutTime > 0);
+            && failureLockoutTime > 0);
     }
-
-    public boolean getStoreInvalidAttemptsInDS () {
+    
+    public boolean getStoreInvalidAttemptsInDS() {
         return storeInvalidAttemptsInDS;
     }
-
-    public void setStoreInvalidAttemptsInDS (boolean aStoreInvalidAttemptsInDS
-    ) {
+    
+    public void setStoreInvalidAttemptsInDS(boolean aStoreInvalidAttemptsInDS) {
         storeInvalidAttemptsInDS = aStoreInvalidAttemptsInDS;
     }
-
+    
     /**
-     * Returns true if memory locking mode is enabled otherwise false.
+     * Returns <code>true</code> if memory locking mode is enabled.
      * Memory locking mode is enabled when the failureLockoutDuration
      * is greater then zero.
      *
-     * @return true if memory locking is enabled else false
+     * @return <code>true</code> if memory locking is enabled.
      */
     public boolean isMemoryLocking() {
         return memoryLocking;
@@ -167,47 +172,55 @@ public class ISAccountLockout {
      * @return updated user lockout information
      */
     public int invalidPasswd(String userDN, String userName,
-    AMIdentity amIdentity, AccountLockoutInfo acInfo) {
+        AMIdentity amIdentity, AccountLockoutInfo acInfo) {
         if (acInfo == null) {
             acInfo = new AccountLockoutInfo();
             loginFailHash.put(userDN,acInfo);
         }
+        
         if (debug.messageEnabled()) {
             debug.message(
                 "ISAccountLockout.invalidPasswd with userDN, AMIdentity");
             debug.message("userDN : " + userDN);
         }
+        
         long now = System.currentTimeMillis();
-        int fail_count = acInfo.getFailCount(); 
-        long lastFailTime = acInfo.getLastFailTime(); 
+        int fail_count = acInfo.getFailCount() +1;
+        long lastFailTime = acInfo.getLastFailTime();
         long lockedAt = acInfo.getLockoutAt();
-        fail_count = fail_count +1;
-        if (( (lastFailTime + failureLockoutTime) > now) && 
-        (fail_count == failureLockoutCount)) {
+        
+        if (((lastFailTime + failureLockoutTime) > now) &&
+            (fail_count == failureLockoutCount)
+        ) {
             lockedAt = now;
-        } 
+        }
+        
         if (storeInvalidAttemptsInDS) {
             Map attrMap = new HashMap();
             Set invalidAttempts = new HashSet();
             String invalidXML = createInvalidAttemptsXML(
                 fail_count,now,lockedAt);
             invalidAttempts.add(invalidXML);
+            
             if (debug.messageEnabled()) {
-                debug.message("Invalid Attempt XML being inserted= "
-                +invalidXML);
+                debug.message("ISAccountLockout.invalidPasswd: " + 
+                    "Invalid Attempt XML being inserted= " + invalidXML);
             }
-            attrMap.put(INVALID_ATTEMPTS_XML_ATTR,invalidAttempts);
+            
+            attrMap.put(INVALID_ATTEMPTS_XML_ATTR, invalidAttempts);
+            
             try {
                 setLockoutObjectClass(amIdentity);
                 amIdentity.setAttributes(attrMap);
                 amIdentity.store();
-                debug.message("Stored Invalid Attempt XML ");
-            } catch (Exception idExp) {
-                debug.error("Idrepo exception while storing identity attribute"
-                ,idExp);
+                debug.message(
+                "ISAccountLockout.invalidPasswd: Stored Invalid Attempt XML");
+            } catch (Exception e) {
+                debug.error("ISAccountLockout.invalidPasswd", e);
                 return -1;
             }
         }
+        
         acInfo.setLastFailTime(now);
         acInfo.setFailCount(fail_count);
         acInfo.setLockoutAt(lockedAt);
@@ -219,46 +232,45 @@ public class ISAccountLockout {
         if (fail_count == failureLockoutCount) {
             if (!memoryLocking) {
                 inactivateUserAccount(amIdentity);
-            } 
+            }
             try {
                 sendLockOutNotice(userName);
-                // The callback implementation instance is retrieved for
-                // the user's organization. This will be used to notify the
-                // custom plug-ins that a certain event occured on an account.
+                /*
+                 * The callback implementation instance is retrieved for
+                 * the user's organization. This will be used to notify the
+                 * custom plug-ins that a certain event occured on an account.
+                 */
                 callbackImpl = AMAuthCallBackImpl.getInstance(
-                amIdentity.getRealm());
-                // Requesting callback to plugin for
-                // account lockout event.
-                callbackImpl.processedAccounttLockout(
-                new Long(now), userName);
-                } catch (AMAuthCallBackException acbe) {
-                    if (debug.getState() >= debug.ERROR) {
-                        debug.error("ISAccountLockout invalidPasswd : " +
+                    amIdentity.getRealm());
+                // Requesting callback to plugin for account lockout event.
+                callbackImpl.processedAccounttLockout(new Long(now), userName);
+            } catch (AMAuthCallBackException e) {
+                if (debug.getState() >= debug.ERROR) {
+                    debug.error("ISAccountLockout invalidPasswd : " +
                         "error getting callback implementation " +
-                        "instance or error from callback " +
-                        "module", acbe);
-                    }
-                } catch(Exception ex) {
-                    debug.message("Error activating account/sending"
-                    + "notification ", ex);
+                        "instance or error from callback module", e);
                 }
+            } catch(Exception ex) {
+                debug.message("Error activating account/sending"
+                    + "notification ", ex);
+            }
         }
         
         setWarningCount(fail_count,failureLockoutCount);
         return userWarningCount;
     }
-
+    
     public AccountLockoutInfo getAcInfo(String userDN, AMIdentity amIdentity) {
-        AccountLockoutInfo acInfo = null; 
+        AccountLockoutInfo acInfo = null;
         if (storeInvalidAttemptsInDS) {
             acInfo =  new AccountLockoutInfo();
             Set attrValueSet = Collections.EMPTY_SET;
+            
             try {
                 attrValueSet = amIdentity.getAttribute(
                     INVALID_ATTEMPTS_XML_ATTR);
-            } catch (Exception idExp) {
-                debug.error(
-                    "Idrepo exception while getting identity attribute");
+            } catch (Exception e) {
+                debug.error("ISAccoutLockout.getAcInfo", e);
                 return null;
             }
             String xmlFromDS = null;
@@ -269,26 +281,29 @@ public class ISAccountLockout {
             int invalid_attempts = 0;
             long last_failed = 0;
             long locked_out_at = 0;
-            if ((xmlFromDS != null) && (xmlFromDS.length() !=0) && 
-                (xmlFromDS.indexOf(BEGIN_XML) != -1)) {
+            
+            if ((xmlFromDS != null) && (xmlFromDS.length() !=0) &&
+                (xmlFromDS.indexOf(BEGIN_XML) != -1)
+            ) {
                 String invalid_attempts_str = getElement(xmlFromDS,
-                INVALID_PASS_COUNT_BEGIN,INVALID_PASS_COUNT_END);
+                    INVALID_PASS_COUNT_BEGIN,INVALID_PASS_COUNT_END);
                 invalid_attempts = Integer.parseInt(invalid_attempts_str);
                 String last_failed_str = getElement(xmlFromDS,
-                LAST_FAILED_BEGIN, LAST_FAILED_END);
+                    LAST_FAILED_BEGIN, LAST_FAILED_END);
                 last_failed = Long.parseLong(last_failed_str);
                 String locked_out_at_str = getElement(xmlFromDS,
-                LOCKEDOUT_AT_BEGIN, LOCKEDOUT_AT_END);
+                    LOCKEDOUT_AT_BEGIN, LOCKEDOUT_AT_END);
                 locked_out_at = Long.parseLong(locked_out_at_str);
-
             }
-
+            
             acInfo.setLastFailTime(last_failed);
             acInfo.setFailCount(invalid_attempts);
             acInfo.setLockoutAt(locked_out_at);
+            
             if (locked_out_at > 0) {
                 acInfo.setLockout(true);
             }
+            
             setWarningCount(invalid_attempts,failureLockoutCount);
             acInfo.setWarningCount(userWarningCount);
         } else {
@@ -296,23 +311,22 @@ public class ISAccountLockout {
         }
         return acInfo;
     }
-
+    
     /**
-      * Sets Lockout Object Class Attribute in <code>AMIdentity</code> Object
-      * if it's not already present.
-      *
-      * @param amIdentity the user object.
-      */
-
+     * Sets Lockout Object Class Attribute in <code>AMIdentity</code> Object
+     * if it's not already present.
+     *
+     * @param amIdentity the user object.
+     */
     private void setLockoutObjectClass(AMIdentity amIdentity) {
         try {
-            Set attrValueSetObjectClass = amIdentity.
-            getAttribute("objectClass");
+            Set attrValueSetObjectClass =amIdentity.getAttribute("objectClass");
+            
             if ((attrValueSetObjectClass != null) &&
                 (!attrValueSetObjectClass.contains
-                (INVALID_ATTEMPTS_XML_OBJECT_CLASS))) {
-                attrValueSetObjectClass.
-                    add(INVALID_ATTEMPTS_XML_OBJECT_CLASS);
+                (INVALID_ATTEMPTS_XML_OBJECT_CLASS))
+            ) {
+                attrValueSetObjectClass.add(INVALID_ATTEMPTS_XML_OBJECT_CLASS);
                 Map map = new HashMap(2);
                 map.put("ObjectClass", attrValueSetObjectClass);
                 amIdentity.setAttributes(map);
@@ -329,23 +343,25 @@ public class ISAccountLockout {
      * updates the accountInfo object with the user information and count of
      * failed authentication attempts.
      *
-     * @param  AMUser , user object
-     * @param  user lockout information object
-     * @return updated user lockout information
+     * @param amIdentity user object.
+     * @param acInfo lockout information object.
+     * @return updated user lockout information.
      */
-    public AccountLockoutInfo invalidPasswd(AMUser amUser,
-    AccountLockoutInfo acInfo) {
-        String userDN = amUser.getDN();
-        if (debug.messageEnabled()) {
-            debug.message("ISAccountLockout::invalidPasswd with AMUser");
-            debug.message("userDN : " + userDN);
-            debug.message("acinfo : " + acInfo);
-        }
-        
+    public AccountLockoutInfo invalidPasswd(
+        AMIdentity amIdentity,
+        AccountLockoutInfo acInfo
+    ) {
+        return invalidPasswdEx(amIdentity, acInfo);
+    }
+    
+    private AccountLockoutInfo invalidPasswdEx(
+        Object subject,
+        AccountLockoutInfo acInfo
+    ) {
         long now = System.currentTimeMillis();
         if (acInfo == null) {
             // first failure. store key
-            debug.message("First failure... :" );
+            debug.message("ISAccountLockout.invalidPasswdEx: First failure." );
             acInfo = new AccountLockoutInfo();
             acInfo.setLastFailTime(now);
         }
@@ -356,68 +372,42 @@ public class ISAccountLockout {
             long lastFailTime = acInfo.getLastFailTime();
             failCount = acInfo.getFailCount();
             long failureLockoutInterval = failureLockoutTime;
+            
             if ( (lastFailTime + failureLockoutInterval) > now) {
-                if (failCount >= failureLockoutCount-1) {
+                failCount++;
+                acInfo.setFailCount(failCount);
+                
+                if (failCount >= failureLockoutCount) {
                     // lock out the user.
-                    failCount++;
-                    acInfo.setFailCount(failCount);
                     acInfo.setLockoutAt(now);
-                    if (failureLockoutDuration > 0) {
-                        acInfo.setLockout(true);
-                    } else {
-                        acInfo.setLockout(false);
-                    }
-                    try {
-                        if (debug.messageEnabled()) {
-                            debug.message("lock outuser: userDN=" + userDN);
-                            debug.message("failCount =" +failCount);
-                            debug.message("failureLockoutCount=" +
-                            failureLockoutCount);
-                        }
-                        if (amUser != null) {
-                            if (failCount == failureLockoutCount) {
-                                String notifyUser = null;
-                                if (!memoryLocking) {
-                                    inactivateUserAccount(amUser);
-                                } 
-                                notifyUser = acInfo.getUserToken();
-                                // send email
-                                if (notifyUser == null) {
-                                    notifyUser = userDN;
-                                }
-                                sendLockOutNotice(notifyUser);
+                    acInfo.setLockout(failureLockoutDuration > 0);
+                    
+                    if (subject != null) {
+                        if (failCount == failureLockoutCount) {
+                            String notifyUser = null;
+                            if (!memoryLocking) {
+                                inactivateUserAccount((AMIdentity)subject);
                             }
+                            notifyUser = acInfo.getUserToken();
+                            if (notifyUser == null) {
+                                notifyUser = ((AMIdentity)subject).getUniversalId();
+                            }
+                            sendLockOutNotice(notifyUser);
                         }
-                    } catch(Exception ex) {
-                        debug.message("Error activating account/sending"
-                        + "notification ", ex);
                     }
-                } else {
-                    // up the count.
-                    failCount++;
-                    acInfo.setFailCount(failCount);
                 }
             } else {
-                // restart time and count.
                 debug.message("restart time and count");
                 acInfo.setFailCount(1);
                 acInfo.setLastFailTime(now);
                 failCount = 1;
             }
         }
-        //
+        
         //  failureLockoutCount = number of failures before lockout
         //  lockoutUserWarning = number of failures before warning user
         //  of impending lockout
-        
-        if (debug.messageEnabled()) {
-            debug.message("InvalidPasswd: user: userDN =" + userDN +
-            "\n\tfailCount = " + failCount +
-            "\n\tloginFailureLockoutCount = " + failureLockoutCount +
-            "\n\tloginLockoutUserWarning = " + lockoutUserWarning);
-        }
-        
-        setWarningCount(failCount,failureLockoutCount);
+        setWarningCount(failCount, failureLockoutCount);
         acInfo.setWarningCount(userWarningCount);
         return acInfo;
     }
@@ -428,21 +418,18 @@ public class ISAccountLockout {
      * the userDN information of the user whose account is
      * locked.
      *
-     * @param userDN , distinguished name of the user
+     * @param userDN Distinguished name of the user
      */
-    
     public void sendLockOutNotice(String userDN)  {
-        if (debug.messageEnabled()) {
-            debug.message("sendLockOutNotice to : " + userDN);
-        }
         if (lockoutNotification != null) {
             AMSendMail sm = new AMSendMail();
-            StringTokenizer emailTokens =
-            new StringTokenizer(lockoutNotification, SPACE_DELIM);
+            StringTokenizer emailTokens = new StringTokenizer(
+                lockoutNotification, SPACE_DELIM);
             StringBuffer sb = new StringBuffer();
+            
             while(emailTokens.hasMoreTokens()) {
-                StringTokenizer stz2 =
-                new StringTokenizer(emailTokens.nextToken(), PIPE_DELIM);
+                StringTokenizer stz2 = new StringTokenizer(
+                    emailTokens.nextToken(), PIPE_DELIM);
                 String[] toAddress = { stz2.nextToken() } ;
                 String locale = null;
                 String charset = null;
@@ -454,46 +441,49 @@ public class ISAccountLockout {
                 }
                 
                 ResourceBundle rb =
-                com.iplanet.am.util.Locale.getResourceBundle(bundleName,
-                locale);
-                
+                    com.sun.identity.shared.locale.Locale.getResourceBundle(
+                        bundleName, locale);
                 String fromAddress = rb.getString(FROM_ADDRESS);
                 String emailSubject = rb.getString(EMAIL_SUBJECT);
                 String obj[] = { userDN };
                 String emailMsg = MessageFormat.format(
                     rb.getString(EMAIL_MESSAGE), (Object[])obj);
+                
                 if ( debug.messageEnabled()) {
-                    debug.message("sendLockOutNotice:lockoutNotification="
-                        + lockoutNotification + " toAddress=" +toAddress);
+                    debug.message("ISAccountLockout.sendLockOutNotice:" +
+                        " lockoutNotification = " + lockoutNotification + 
+                        " toAddress = " +toAddress);
                 }
                 
                 try {
                     sm.postMail(toAddress, emailSubject, emailMsg,
-                    fromAddress, charset);
+                        fromAddress, charset);
                 } catch (MessagingException ex) {
                     debug.error("cannot email lockout notification:token ", ex);
                 }
-            } // end while
-        } // end if
+            }
+        }
     }
     
     /**
-     * Checks if user's account is locked based on the user's lockout info.
+     * Returns <code>true</code> if account is locked. Checks if user's account 
+     * is locked based on the user's lockout info.
      * This method is for memory locking. If this method returns false
      * then the account is unlocked ie. the memory lock duration has
      * elapsed. Callers of this method must update their account lock
      * hash if the account is unlocked.
      *
-     * @param lockout info for the user
-     * @return true if account is locked else false
+     * @param acInfo Lockout info for the user.
+     * @return <code>true</code> if account is locked.
      */
-    
     public boolean isLockedOut(AccountLockoutInfo acInfo) {
         // has this user been locked out.
         boolean isLockedOut = acInfo.isLockout();
+        
         if (debug.messageEnabled()) {
-            debug.message("isLockedOut : " + isLockedOut);
+            debug.message("ISAccoutLockout.isLockedOut : " + isLockedOut);
         }
+        
         if ((acInfo != null) && isLockedOut) {
             // get the time of locked out.
             // add loginFailureLockoutDuration
@@ -506,10 +496,10 @@ public class ISAccountLockout {
                 // exceeded lockout time. unlock and return false..
                 if (debug.messageEnabled()) {
                     debug.message("isLockedOut returns false. " +
-                    "loginFailureLockoutDuration=" +
-                    failureLockoutDuration +
-                    " lockOutTime=" + lockOutTime +
-                    " now=" + now );
+                        "loginFailureLockoutDuration=" +
+                        failureLockoutDuration +
+                        " lockOutTime=" + lockOutTime +
+                        " now=" + now );
                 }
                 // check if the account has been physically
                 // unlocked by the admin.
@@ -526,39 +516,23 @@ public class ISAccountLockout {
      */
     
     private void inactivateUserAccount(AMIdentity amIdentity) {
-        debug.message("inactivateUseraccount: amIdentity");
+        debug.message("entering ISAccountLockout.inactivateUserAccount");
         try {
             Map attrMap = new HashMap();
             Set attrValSet1 = new HashSet();
-            if (lockoutAttrName != null && lockoutAttrValue != null ) {
+            if ((lockoutAttrName != null) && (lockoutAttrValue != null )) {
                 attrValSet1.add(lockoutAttrValue);
-                attrMap.put(lockoutAttrName,attrValSet1);
-            } 
+                attrMap.put(lockoutAttrName, attrValSet1);
+            }
+            
             Set attrValSet2 = new HashSet();
             attrValSet2.add(USER_INACTIVE);
-            attrMap.put(USER_STATUS_ATTR,attrValSet2);
+            attrMap.put(USER_STATUS_ATTR, attrValSet2);
+            
             amIdentity.setAttributes(attrMap);
             amIdentity.store();
         } catch (Exception e) {
-            debug.error("Error inactivating user account",e);
-        }
-    }
-    /**
-     * Inactivates user account
-     *
-     * @param AMUser the user object
-     */
-    
-    private void inactivateUserAccount(AMUser amUser) {
-        debug.message("inactivateUseraccount");
-        try {
-            if (lockoutAttrName != null && lockoutAttrValue != null ) {
-                amUser.setStringAttribute(lockoutAttrName,lockoutAttrValue);
-            }  
-            amUser.setStringAttribute(USER_STATUS_ATTR, USER_INACTIVE);
-            amUser.store();
-        } catch (Exception e) {
-            debug.error("Error inactivating user account");
+            debug.error("ISAccountLockout.inactivateUserAccount", e);
         }
     }
     
@@ -577,7 +551,7 @@ public class ISAccountLockout {
             userWarningCount = -1;
         } else {
             if (lockoutUserWarning > 0 &&
-            lockoutUserWarning < failureLockoutCount) {
+                lockoutUserWarning < failureLockoutCount) {
                 int upperLimit = lockoutUserWarning;
                 if (failCount >= upperLimit) {
                     // num of tries left
@@ -600,25 +574,19 @@ public class ISAccountLockout {
         if (!memoryLocking) {
             try {
                 if (lockoutAttrName != null && lockoutAttrValue != null ) {
-                    Set attrValueSet =
-                    amIdentity.getAttribute(lockoutAttrName);
+                    Set attrValueSet = amIdentity.getAttribute(lockoutAttrName);
                     if ((attrValueSet != null) && (!attrValueSet.isEmpty())) {
                         Iterator i = attrValueSet.iterator();
-                        String attrValue = (String) i.next();
-                        if (attrValue.equals(lockoutAttrValue)) {
-                            isLocked= true;
-                        }
+                        String attrValue = (String)i.next();
+                        isLocked = attrValue.equals(lockoutAttrValue);
                     }
-                } 
-                if (isLocked == false) {
-                    Set attrValueSet =
-                    amIdentity.getAttribute(USER_STATUS_ATTR);
+                }
+                if (!isLocked) {
+                    Set attrValueSet =amIdentity.getAttribute(USER_STATUS_ATTR);
                     if ((attrValueSet != null) && (!attrValueSet.isEmpty())) {
                         Iterator i = attrValueSet.iterator();
-                        String attrValue =  (String) i.next();
-                        if (attrValue.equals(USER_INACTIVE)) {
-                            isLocked=true;
-                        }
+                        String attrValue =  (String)i.next();
+                        isLocked = attrValue.equals(USER_INACTIVE);
                     }
                 }
             } catch (Exception e) {
@@ -634,60 +602,21 @@ public class ISAccountLockout {
         }
         return isLocked;
     }
+
     /**
-     * Checks if user account has been unlocked.This method is only
-     * for accounts which are physically locked.
-     *
-     * @param AMUser ,the user object
-     * @return true if account is locked else false
-     */
-    
-    public boolean isAccountLocked(AMUser amUser) {
-        boolean isLocked=false;
-        if (!memoryLocking) {
-            try {
-                if (lockoutAttrName != null && lockoutAttrValue != null ) {
-                    String attrValue =
-                    amUser.getStringAttribute(lockoutAttrName);
-                    if ((attrValue != null) && (attrValue.length() != 0)) {
-                        if (attrValue.equals(lockoutAttrValue)) {
-                            isLocked= true;
-                        }
-                    }
-                }
-                if (isLocked == false) {
-                    String attrValue =
-                    amUser.getStringAttribute(USER_STATUS_ATTR);
-                    if ((attrValue != null) && (attrValue.length() != 0)) {
-                        if (attrValue.equals(USER_INACTIVE)) {
-                            isLocked=true;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                debug.error("Error inactivating user account");
-            }
-        }
-        if (debug.messageEnabled()) {
-            if (isLocked) {
-                debug.message("Account is locked");
-            } else {
-                debug.message("Account is unlocked");
-            }
-        }
-        return isLocked;
-    }
-    /**
-     * Resets attempts related data in Data store if the user has successfully 
+     * Resets attempts related data in Data store if the user has successfully
      * authenticated.
      *
-     * @param  amIdentity , AMidentity object
+     * @param userDN Distinguished name of user.
+     * @param amIdentity <code>AMidentity</code> object.
+     * @param acInfo Account Lockout Information.
      */
-    public void resetLockoutAttempts(String userDN,AMIdentity amIdentity, 
-    AccountLockoutInfo acInfo) {
-        if (debug.messageEnabled()) {
-            debug.message("ISAccountLockout::resetLockoutAttempts ");
-        }
+    public void resetLockoutAttempts(
+        String userDN,
+        AMIdentity amIdentity,
+        AccountLockoutInfo acInfo
+    ) {
+        debug.message("entering ISAccountLockout.resetLockoutAttempts");
         if (storeInvalidAttemptsInDS) {
             try {
                 int fail_count = 0;
@@ -698,7 +627,7 @@ public class ISAccountLockout {
                     lastFailTime = acInfo.getLastFailTime();
                     locked_out_at = acInfo.getLockoutAt();
                 }
-
+                
                 if ((fail_count !=0)||(lastFailTime !=0)||(locked_out_at !=0)) {
                     Map attrMap = new HashMap();
                     Set invalidAttempts = new HashSet();
@@ -709,42 +638,42 @@ public class ISAccountLockout {
                     amIdentity.setAttributes(attrMap);
                     amIdentity.store();
                 }
-                debug.message("ISAccountLockout::resetLockoutAttempts done");
-            } catch (Exception exp) {
-                debug.message("error reseting Lockout Attempts");
+                debug.message("ISAccountLockout.resetLockoutAttempts done");
+            } catch (Exception e) {
+                debug.message("ISAccountLockout.resetLockoutAttempts", e);
             }
         } else {
             loginFailHash.remove(userDN);
         }
         
     }
-
+    
     /**
-     * Returns XML to be stored in data store the format is like this 
-     *  <InvalidPassword>
-     *    <InvalidCount>failureLockoutCount</LockoutCount>
-     *    <LastInvalidAt>failureLockoutDuration</LockoutDuration>
-     *    <LockedoutAt>failureLockoutTime</LockoutTime>
-     *  </InvalidPassword>
+     * Returns XML to be stored in data store the format is like this
+     * &lt;InvalidPassword>
+     *    &lt;InvalidCount>failureLockoutCount&lt;/LockoutCount>
+     *    &lt;LastInvalidAt>failureLockoutDuration&lt;/LockoutDuration>
+     *    &lt;LockedoutAt>failureLockoutTime&lt;/LockoutTime>
+     *  &lt;/InvalidPassword>
      *
      */
-     private static String createInvalidAttemptsXML(
+    private static String createInvalidAttemptsXML(
         int invalidCount, long lastFailed, long lockedOutAt) {
-     StringBuffer xmlBuffer = new StringBuffer(150);
-     xmlBuffer.append(BEGIN_XML).append(INVALID_PASS_COUNT_BEGIN)
-     .append(String.valueOf(invalidCount)).append(INVALID_PASS_COUNT_END)
-     .append(LAST_FAILED_BEGIN).append(String.valueOf(lastFailed))
-     .append(LAST_FAILED_END).append(LOCKEDOUT_AT_BEGIN)
-     .append(String.valueOf(lockedOutAt)).append(LOCKEDOUT_AT_END)
-     .append(END_XML);
+        StringBuffer xmlBuffer = new StringBuffer(150);
+        xmlBuffer.append(BEGIN_XML).append(INVALID_PASS_COUNT_BEGIN)
+            .append(String.valueOf(invalidCount)).append(INVALID_PASS_COUNT_END)
+            .append(LAST_FAILED_BEGIN).append(String.valueOf(lastFailed))
+            .append(LAST_FAILED_END).append(LOCKEDOUT_AT_BEGIN)
+            .append(String.valueOf(lockedOutAt)).append(LOCKEDOUT_AT_END)
+            .append(END_XML);
+        return xmlBuffer.toString();
+    }
 
-     return xmlBuffer.toString();
-     }
-    /**
-     * method gets values in the elements of given XML String
-     */ 
-     private static String getElement(String content, String start,
-        String end) {
+    private static String getElement(
+        String content, 
+        String start,
+        String end
+    ) {
         String answer = null;
         if (content != null) {
             int startIndex = content.indexOf(start);
@@ -757,5 +686,5 @@ public class ISAccountLockout {
         }
         return (answer);
     }
-
+    
 }

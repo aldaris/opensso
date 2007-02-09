@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2007-02-07 20:47:39 jonnelson Exp $
+   $Id: build.xml,v 1.13 2007-02-09 22:14:23 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -168,6 +168,30 @@
             <zipfileset dir="${javahelp.dir}/css" prefix="html/en/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/en/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/en/help/graphics" />
+
+            <zipfileset dir="${amserver.passwordreset.dir}/html" prefix="password">
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/html/ui" prefix="password/ui">
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/jsp" prefix="password/ui">
+                <include name="*.jsp" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/css" prefix="password/css">
+                <include name="*.css" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/images"
+                prefix="password/images">
+                <include name="*.*" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/images/button"
+                prefix="password/images/button">
+                <include name="*.*" />
+            </zipfileset>
+            <zipfileset dir="${amserver.passwordreset.dir}/js" prefix="password/js">
+                <include name="*.js" />
+            </zipfileset>
         </war>
         <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
     </target>
