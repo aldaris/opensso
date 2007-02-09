@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PMDefaultAuthSchemeConditionEditViewBean.java,v 1.1 2007-02-07 20:23:16 jonnelson Exp $
+ * $Id: PMDefaultAuthSchemeConditionEditViewBean.java,v 1.2 2007-02-09 17:57:33 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,19 +68,34 @@ public class PMDefaultAuthSchemeConditionEditViewBean
         return "policy.condition.missing.auth.scheme";
     }
 
-    protected void setPropertiesValues(Map values) {
+    protected void setPropertiesValues(Map values) {        
         if ((values != null) && !values.isEmpty()) {
             for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
                 String propName = (String)i.next();
-                if (propName.equals(AuthSchemeCondition.AUTH_SCHEME)) {
-                    Set val = (Set)values.get(propName);
-                    if ((val != null) && !val.isEmpty()) {
-                        AMModel model = getModel();
-                        CCSelect sl = (CCSelect)getChild(
-                                AuthSchemeCondition.AUTH_SCHEME);
-                        sl.setOptions(createOptionList(getLabelValueMap(val)));
-                        propertySheetModel.setValues(
-                            propName, val.toArray(), model);
+                Set propValue = (Set)values.get(propName);                    
+                if ((propValue != null) && !propValue.isEmpty()) {
+                    if (propName.equals(AuthSchemeCondition.AUTH_SCHEME) && 
+                        canModify) 
+                    {
+                        Set val = (Set)values.get(propName);
+
+                            AMModel model = getModel();
+                            CCSelect sl = (CCSelect)getChild(
+                                    AuthSchemeCondition.AUTH_SCHEME);
+                            sl.setOptions(createOptionList(
+                                getLabelValueMap(propValue)));
+                            propertySheetModel.setValues(
+                                propName, propValue.toArray(), model);
+                    } else {
+                        StringBuffer strValue = new StringBuffer(16);
+                        for (Iterator x=propValue.iterator(); x.hasNext();) {
+                            String tmp = (String)x.next();
+                            if (strValue.length() > 0) {
+                                strValue.append(", ");
+                            } 
+                            strValue.append(tmp);                        
+                        }
+                        setDisplayFieldValue(propName, strValue.toString());
                     }
                 }
             }
