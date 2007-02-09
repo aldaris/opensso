@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPolicyImpl.java,v 1.1 2006-10-30 23:16:50 qcheng Exp $
+ * $Id: NameIDPolicyImpl.java,v 1.2 2007-02-09 21:43:04 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,7 +223,7 @@ public class NameIDPolicyImpl implements NameIDPolicy {
 	   	     .append(SAML2Constants.QUOTE);
 	}
 
-	xmlString.append(SAML2Constants.END_TAG).append(SAML2Constants.NEWLINE)
+	xmlString.append(SAML2Constants.END_TAG)
 		 .append(SAML2Constants.SAML2_END_TAG)
 		 .append(SAML2Constants.NAMEIDPOLICY)
 		 .append(SAML2Constants.END_TAG);
