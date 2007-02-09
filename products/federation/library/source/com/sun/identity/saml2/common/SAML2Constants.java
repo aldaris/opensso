@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.3 2006-12-13 19:03:19 weisun2 Exp $
+ * $Id: SAML2Constants.java,v 1.4 2007-02-09 21:43:37 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -314,9 +314,9 @@ public interface SAML2Constants {
     public static final String FORCEAUTHN="ForceAuthn";
     
     /**
-     * Constant for isPassive attribute
+     * Constant for IsPassive attribute
      */
-    public static final String ISPASSIVE="isPassive";
+    public static final String ISPASSIVE="IsPassive";
     
     /**
      * Constant for AllowCreate attribute
