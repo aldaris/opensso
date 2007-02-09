@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddPrivileges.java,v 1.2 2006-12-08 21:02:22 veiming Exp $
+ * $Id: AddPrivileges.java,v 1.3 2007-02-09 19:26:07 bhavnab Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,16 +84,19 @@ public class AddPrivileges extends IdentityCommand {
                 adminSSOToken, idName, idType, realm, null); 
             String uid = amid.getUniversalId();
 
+            DelegationPrivilege newDp = null;
             for (Iterator i = privileges.iterator(); i.hasNext(); ){
                 String name = (String)i.next();
                 DelegationPrivilege dp = getDelegationPrivilege(
                     name, privilegeObjects);
                 if (dp != null) {
+                    System.out.println("AddPriviliges.handleRequest found priv");
                     Set subjects = dp.getSubjects();
                     if (!subjects.contains(uid)) {
                         subjects.add(uid);
                         mgr.removePrivilege(name);
-                        mgr.addPrivilege(dp);
+                        newDp = new DelegationPrivilege(name, subjects, realm);
+                        mgr.addPrivilege(newDp);
                     } else {
                         String[] args = {idName, name};
                         String msg = MessageFormat.format(getResourceString(
@@ -103,10 +106,10 @@ public class AddPrivileges extends IdentityCommand {
                             ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
                     }
                 } else {
+                    System.out.println("AddPriviliges.handleRequest NOT found priv");
                     Set subjects = new HashSet(2);
                     subjects.add(uid);
-                    DelegationPrivilege newDp = new DelegationPrivilege(
-                        name, subjects, realm);
+                    newDp = new DelegationPrivilege(name, subjects, realm);
                      mgr.addPrivilege(newDp);
                 }
             }
