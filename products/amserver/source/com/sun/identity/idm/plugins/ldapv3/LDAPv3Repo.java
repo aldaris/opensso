@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.15 2007-02-08 01:52:23 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.16 2007-02-13 19:41:52 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3254,9 +3254,6 @@ public class LDAPv3Repo extends IdRepo {
                 if ((OCs != null) && OCs.containsAll(ocSet)) {
                     resultsSet.add(sname);
                 }
-            }
-            if (myServiceMap != null) {
-                resultsSet.addAll(myServiceMap.keySet());
             }
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: getAssignedServices returns " +
