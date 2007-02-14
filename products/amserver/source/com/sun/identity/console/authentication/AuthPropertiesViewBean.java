@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthPropertiesViewBean.java,v 1.1 2007-02-07 20:18:50 jonnelson Exp $
+ * $Id: AuthPropertiesViewBean.java,v 1.2 2007-02-14 21:36:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,6 +146,8 @@ public  class AuthPropertiesViewBean
                 super.initialize();
                 createPageTitleModel();
                 createPropertyModel(realmName);
+                createInstanceTable();
+                createConfigurationTable();
                 registerChildren();
             }
         }
@@ -393,9 +395,6 @@ public  class AuthPropertiesViewBean
         propertySheetModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(xmlFile));
         propertySheetModel.clear();
-
-        createInstanceTable();
-        createConfigurationTable();
     }
 
     /*
@@ -646,10 +645,20 @@ public  class AuthPropertiesViewBean
             setPageSessionAttribute(INSTANCE_MSG,
                 model.getLocalizedString("no.module.instance"));
             forwardTo();
-        } else {
+        } else {            
             setPageSessionAttribute(
                 EditAuthTypeViewBean.SERVICE_TYPE, type);
-    
+            
+            /*
+             * EditAuthTypeViewBean displays the properties for the auth 
+             * instance selected. We need to set the current profile value
+             * to be the name of the current realm. Current Profile is use
+             * by AMServiceProfileViewBeanBase.getPropertySheetXML() when 
+             * building the page.
+             */ 
+            setPageSessionAttribute(AMAdminConstants.CURRENT_PROFILE, 
+                (String)getPageSessionAttribute(AMAdminConstants.CURRENT_REALM));
+            
             EditAuthTypeViewBean vb = (EditAuthTypeViewBean)
                 getViewBean(EditAuthTypeViewBean.class);
             unlockPageTrail();
