@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.13 2007-01-23 23:03:04 veiming Exp $
+ * $Id: FilesRepo.java,v 1.14 2007-02-14 00:39:05 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -757,9 +757,6 @@ public class FilesRepo extends IdRepo {
             Set idAttrValues = (Set) results.get(realmAttrName);
             if (idAttrValues == null) {
                 results.put(realmAttrName, realmAttrValues);
-            } else {
-                // Need to combine the values
-                idAttrValues.addAll(realmAttrValues);
             }
         }
         return (results);
