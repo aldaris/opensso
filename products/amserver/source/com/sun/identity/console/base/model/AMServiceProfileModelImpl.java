@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceProfileModelImpl.java,v 1.1 2007-02-07 20:19:44 jonnelson Exp $
+ * $Id: AMServiceProfileModelImpl.java,v 1.2 2007-02-14 21:33:26 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,7 +130,12 @@ public class AMServiceProfileModelImpl
         }
 
         try {
-            return xmlBuilder.getXML();
+            /*
+             * the location needs to be set in order for the page to be 
+             * constructed correctly. Some choice value components can have 
+             * their values built based on the realm.
+             */
+            return xmlBuilder.getXML(realmName);
         } catch (SMSException e) {
             throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {
