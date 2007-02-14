@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.2 2007-02-07 20:19:42 jonnelson Exp $
+ * $Id: AMModelBase.java,v 1.3 2007-02-14 21:32:34 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -301,14 +301,12 @@ public class AMModelBase
         String searchAttribute = null;
         Map attributes = getConsoleAttributes();
         
-debug.error("AMModelBase.getUserSearchAttributes all attrs = " + attributes);
         Set values = (Set)attributes.get(CONSOLE_USER_SEARCH_KEY);
 
         if ((values != null) && !values.isEmpty()) {
             searchAttribute = (String)values.iterator().next();
         }
  
-debug.error("AMModelBase.getUserSEarchAttributes searching for " + searchAttribute);
         return searchAttribute;
     }
 
