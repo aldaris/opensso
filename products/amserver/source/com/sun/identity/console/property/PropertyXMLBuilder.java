@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilder.java,v 1.1 2007-02-07 20:23:57 jonnelson Exp $
+ * $Id: PropertyXMLBuilder.java,v 1.2 2007-02-14 21:35:02 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -153,7 +153,25 @@ public class PropertyXMLBuilder
         throws SMSException, SSOException, AMConsoleException {
         return getXML(Collections.EMPTY_SET, true);
     }
-
+    
+    /**
+     * Returns an XML string for displaying attributes in a property sheet for 
+     * a specific realm. This will build a page whose values may be specific 
+     * to the specified realm.
+     *
+     * @param realmName name of the realm to obtain values.
+     * @throws SMSException if attribute schema cannot obtained.
+     * @throws SSOException if single sign on token is invalid.
+     * @throws AMConsoleException if there are no attribute to display.
+     * @return XML for displaying attribute in property sheet.
+     */
+    public String getXML(String realmName)
+        throws SMSException, SSOException, AMConsoleException {
+        
+        currentRealm = realmName;
+        return getXML(Collections.EMPTY_SET, true);
+    }
+    
     /**
      * Returns a XML for displaying attribute in property sheet.
      *

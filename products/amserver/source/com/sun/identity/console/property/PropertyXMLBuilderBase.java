@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.1 2007-02-07 20:23:57 jonnelson Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.2 2007-02-14 21:35:03 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,6 +107,7 @@ public abstract class PropertyXMLBuilderBase
     protected Map mapTypeToAttributeSchema;
     protected String serviceName;
     protected boolean allAttributesReadonly;
+    protected String currentRealm;
 
     static String getTagClassName(AttributeSchema as) {
         String tagClassName = null;
@@ -708,7 +709,30 @@ public abstract class PropertyXMLBuilderBase
         }
         return xml.toString();
     }
-        
+    
+    /*
+     * Sets the value for the current realm name being used to build the 
+     * property sheet xml page.
+     *
+     * @param value the name of the realm 
+     */
+    protected void setCurrentRealm(String value) {
+        currentRealm = value;
+    }
+    
+    /*
+     * Returns the current realm name value which can be used for constructing
+     * the xml page. If the realm name has not been set the default location
+     * which is stored in <code>AMModelBase</code> will be returned. If no
+     * location has been set in the model the realm where the user logged in
+     * is returned.
+     *
+     * @return name of the realm used for building the page.
+     */
+    protected String getCurrentRealm() {
+        return (currentRealm != null) ? currentRealm : model.getLocationDN();            
+    }
+    
     private Set getSortedChoiceValues(
         AttributeSchema as,
         Map values,
@@ -716,9 +740,9 @@ public abstract class PropertyXMLBuilderBase
     ) {
         Set sorted = new TreeSet();
         Map tmp = new HashMap(2);
-        tmp.put(Constants.ORGANIZATION_NAME, model.getLocationDN());
+        tmp.put(Constants.ORGANIZATION_NAME, getCurrentRealm());
         String[] choices =  as.getChoiceValues(tmp);
-
+        
         if ((choices != null) && (choices.length > 0)) {
             for (int i = 0; i < choices.length; i++) {
                 String val = choices[i];
