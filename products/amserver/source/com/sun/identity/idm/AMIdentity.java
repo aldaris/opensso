@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.18 2007-01-18 23:43:17 arviranga Exp $
+ * $Id: AMIdentity.java,v 1.19 2007-02-15 17:01:28 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -953,7 +953,10 @@ public final class AMIdentity {
                     String idDN = id.getUniversalId();
                     String mdn = id.getDN();
                     if (mdn != null) {
-                        idDN = idDN.substring(0, idDN.indexOf(mdn) - 9);
+                        int endIdx = idDN.indexOf(mdn) - 9;
+                        if (endIdx >= 0) {
+                            idDN = idDN.substring(0, endIdx);
+                        }
                     }
                     if (idDN.equalsIgnoreCase(identityDN)) {
                         ismember = true;
