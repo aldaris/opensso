@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.1 2006-10-30 23:16:16 qcheng Exp $
+ * $Id: CookieUtils.java,v 1.2 2007-02-15 21:47:42 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ public class CookieUtils {
         SystemPropertiesManager.get(IDPDiscoveryConstants.AM_COOKIE_ENCODE).
         equalsIgnoreCase("true"));
     private static int defAge = -1;
-    public static Debug debug = Debug.getInstance("amIDPDiscovery");
+    public static Debug debug = Debug.getInstance("libIDPDiscovery");
 
     /**
      * Gets property value of "com.iplanet.am.cookie.secure"

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2006-11-02 01:05:04 veiming Exp $
+   $Id: build.xml,v 1.4 2007-02-15 21:47:41 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,8 +46,8 @@
                 <include name="com_sun_web_ui/css/css_ns6up.css"/>
                 <include name="com_sun_web_ui/images/other/javalogo.gif"/>
                 <include name="com_sun_web_ui/images/masthead/masthead-sunname.gif"/>
-                <include name="com_sun_web_ui/images/masthead-background.jpg"/>
-                <include name="com_sun_web_ui/images/masthead-sun-background.jpg"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-background.jpg"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-sun-background.jpg"/>
                 <include name="com_sun_web_ui/images/other/dot.gif"/>
                 <include name="console/images/PrimaryProductName.png"/>
             </patternset>

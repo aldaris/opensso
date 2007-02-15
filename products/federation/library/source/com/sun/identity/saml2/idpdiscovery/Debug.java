@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.2 2006-11-30 05:47:39 qcheng Exp $
+ * $Id: Debug.java,v 1.3 2007-02-15 21:47:43 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,7 +163,7 @@ public class Debug {
                         "MM/dd/yyyy hh:mm:ss:SSS a zzz");
                     try {
                         ResourceBundle bundle =
-                            ResourceBundle.getBundle("IDPDiscoveryConfig");
+                            ResourceBundle.getBundle("libIDPDiscoveryConfig");
                         defaultDebugLevel = bundle.getString(
                             "com.sun.identity.services.debug.level");
                         outputDirectory = bundle.getString(

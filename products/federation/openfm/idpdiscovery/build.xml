@@ -1,0 +1,90 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2007-02-15 21:48:02 qcheng Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="openfed-idp-discovery" default="all">
+                
+    <description>Open Federation: IDP Discovery Service</description>
+
+    <!-- enforce invocation via top level build only -->
+    <fail message="*** IDP discovery service may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="openfm.built.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+
+    <property name="idpdiscovery.packages.dir" location="${openfm.built.dir}/idpdiscovery/package"/>
+    <property name="idpdiscovery.packages.temp.dir" location="${openfm.built.dir}/idpdiscovery/.package"/>
+
+    <target name="all" depends="preparebuild">
+        <delete dir="${idpdiscovery.packages.dir}" />
+        <unjar src="${fm.dist.dir}/openfm.war" dest="${idpdiscovery.packages.dir}">
+            <patternset>
+                <include name="com_sun_web_ui/css/css_ns6up.css"/>
+                <include name="com_sun_web_ui/images/other/javalogo.gif"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-sunname.gif"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-background.jpg"/>
+                <include name="com_sun_web_ui/images/masthead/masthead-sun-background.jpg"/>
+                <include name="com_sun_web_ui/images/other/dot.gif"/>
+                <include name="console/images/PrimaryProductName.png"/>
+            </patternset>
+        </unjar>
+        <mkdir dir="${idpdiscovery.packages.dir}/WEB-INF/lib" />
+        <copy todir="${idpdiscovery.packages.dir}/WEB-INF/lib"
+            file="${library.extlib.dir}/opensso-sharedlib.jar"/>
+        <mkdir dir="${idpdiscovery.packages.dir}/WEB-INF/classes" />
+        <copy todir="${idpdiscovery.packages.dir}/WEB-INF/classes">
+            <fileset dir="${library.classes.dir}"
+                includes="com/sun/identity/saml2/idpdiscovery/*.class"/>
+        </copy>
+        <copy todir="${idpdiscovery.packages.dir}/WEB-INF/classes"
+            file="${library.res.dir}/libIDPDiscoveryConfig.properties"/>
+        <copy todir="${idpdiscovery.packages.dir}"
+            file="${openfm.idpdiscovery.dir}/index.html"/>
+        <copy todir="${idpdiscovery.packages.dir}/WEB-INF"
+            file="${openfm.idpdiscovery.dir}/WEB-INF/web.xml"/>    
+        <delete dir="META-INF" />
+	<mkdir dir="${idpdiscovery.packages.temp.dir}" />
+	<move file="${idpdiscovery.packages.dir}/WEB-INF/web.xml" tofile="${idpdiscovery.packages.temp.dir}/web.xml" />
+        <war destfile="${fm.dist.dir}/openfm-idpdiscovery.war" webxml="${idpdiscovery.packages.temp.dir}/web.xml">
+            <zipfileset dir="${idpdiscovery.packages.dir}" />
+        </war>
+	<move file="${idpdiscovery.packages.temp.dir}/web.xml" tofile="${idpdiscovery.packages.dir}/WEB-INF/web.xml" />
+	<delete dir="${idpdiscovery.packages.temp.dir}" />
+        <checksum file="${fm.dist.dir}/openfm-idpdiscovery.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${idpdiscovery.packages.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${fm.dist.dir}"/>
+        <delete dir="${idpdiscovery.packages.dir}"/>
+    </target>
+
+</project>
