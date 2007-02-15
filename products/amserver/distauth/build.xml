@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-01-05 02:40:51 veiming Exp $
+   $Id: build.xml,v 1.3 2007-02-15 21:37:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,8 +50,8 @@
             <classpath refid="build.class.path"/>
         </javac>
 
-        <copy file="${amserver.distauth.dir}/buildwar.xml" 
-              tofile="${distauth.package.dir}/build.xml" />
+        <copy file="${amserver.distauth.dir}/manifest" 
+              tofile="${distauth.package.dir}/manifest" />
 
         <copy file="${amserver.distauth.dir}/resources/configDefault.properties" 
               tofile="${distauth.package.dir}/classes/configDefault.properties" />
@@ -114,18 +114,15 @@
             </fileset>
         </copy>
 
-        <copy todir="${distauth.package.dir}/xml">
-            <fileset dir="${amserver.distauth.dir}/xml">
-                <include name="web.xml" />
-            </fileset>
-        </copy>
-
         <copy todir="${distauth.package.dir}/war/WEB-INF">
             <fileset dir="${amserver.dtd.xml.dir}">
                 <include name="auth.tld" />
             </fileset>
             <fileset dir="${jatolib.dir}">
                 <include name="jato.tld" />
+            </fileset>
+            <fileset dir="${amserver.distauth.dir}/xml">
+                <include name="web.xml" />
             </fileset>
         </copy>
 

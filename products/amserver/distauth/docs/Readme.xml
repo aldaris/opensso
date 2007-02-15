@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.xml,v 1.2 2007-01-05 02:40:52 veiming Exp $
+   $Id: Readme.xml,v 1.3 2007-02-15 21:37:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,22 +33,13 @@
     </paragraph>
 
     <paragraph>
-    <orderedlist nocontext="no">
-    <item>on the shell prompt,<br />
-        <code>scripts/setup.sh</code> (have to <code>chmod</code> to make it
-        executable) for Unix and Linux; or<br />
-        <code>scripts/setup.bat</code> for Windows.<br />
+    on the shell prompt,<br />
+    <code>scripts/setup.sh</code> (have to <code>chmod</code> to make it
+    executable) for Unix and Linux; or<br />
+    <code>scripts/setup.bat</code> for Windows.<br />
     This setup class will prompt for some server information; create the 
     <code>AMConfig.properties</code> file under <code>war/WEB-INF/classes</code>
-    directory.
-    </item>
-    <item>type <code>ant war</code> to create the WAR file and deploy it.
-    </item>
-    </orderedlist></paragraph>
-    <paragraph>
-    Note: Ant (<code>http://www.ant.org</code>) version 1.6 or higher is needed 
-    for the creation of web archive.
-    <br />
+    directory and create the distauth.war.
     </paragraph>
     </section>
 
