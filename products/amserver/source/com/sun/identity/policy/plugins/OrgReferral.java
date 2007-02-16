@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgReferral.java,v 1.2 2006-08-25 21:21:10 veiming Exp $
+ * $Id: OrgReferral.java,v 1.3 2007-02-16 00:40:27 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ package com.sun.identity.policy.plugins;
 
 import com.sun.identity.policy.*;
 import com.sun.identity.policy.interfaces.Referral;
-import com.iplanet.ums.*;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.am.util.Cache;
@@ -40,14 +39,6 @@ import java.util.*;
  */
 abstract public class OrgReferral implements Referral {
 
-    /** The name of the template that would be used to search
-     * for the organizations. In future, we might want to get
-     * this value from PluginConfig instead of hard coding here.
-     */
-    protected static final String SEARCH_TEMPLATE_NAME 
-            = "BasicOrganizationSearch";
-    protected static final String CREATION_TEMPLATE_NAME 
-            = "BasicOrganization";
     protected static final Debug DEBUG 
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
     protected final static String CAN_NOT_GET_VALUES_FOR_REFERRAL 
@@ -223,73 +214,6 @@ abstract public class OrgReferral implements Referral {
             actionNames, envParameters));
     }
 
-    /**
-     * Get the search filter to be used to  to look for the organization
-     * represented by the orgDn in the config directory.
-     */
-
-    protected String getSearchFilter(String orgDn ) throws UMSException {
-        String searchFilter = null;
-        Guid orgGuid = new Guid(orgDn);
-        SearchTemplate searchTemplate = 
-            TemplateManager.getTemplateManager().
-            getSearchTemplate(OrgReferral.SEARCH_TEMPLATE_NAME, orgGuid);
-        if ( searchTemplate == null ) {
-            searchFilter = "(objectclass=organization)";
-        } else {
-            searchFilter = searchTemplate.getSearchFilter();
-        }
-        if ( searchFilter == null ) {
-            searchFilter = "(objectclass=organization)";
-        } 
-        return searchFilter;
-    }
-
-    /**
-     * Get the naming attribute to be used for the provided orgDn.
-     */
-
-    protected String getNamingAttribute(String orgDn ) throws UMSException {
-        String namingAttr = null;
-        Guid orgGuid = new Guid(orgDn);
-        CreationTemplate template =
-            TemplateManager.getTemplateManager().
-            getCreationTemplate(OrgReferral.CREATION_TEMPLATE_NAME, orgGuid);
-        if ( template == null ) {
-            namingAttr = "o";
-        } else {
-            namingAttr = template.getNamingAttribute();
-            if ( namingAttr == null ) {
-                namingAttr = "o";
-            }
-        }
-        return namingAttr;
-    }
-
-    /**
-     * Get the search filter to be used to  to look for the organization
-     * represented by the orgDn in the config directory, matching the
-     * given pattern.
-     */
-    protected String getSearchFilter(String orgDn, 
-            String pattern) throws UMSException {
-        String searchFilter = getSearchFilter(orgDn);
-        String namingAttribute = getNamingAttribute(orgDn);
-        if ( pattern == null ) {
-            pattern = "*";
-        }
-        searchFilter = "(&(" + searchFilter + ")(" + namingAttribute
-                        + "=" 
-                        + pattern + "))";
-        return searchFilter;
-    }
-
-    /**
-     * Get the naming attribute from the <code>PersistentObject</code>
-     */
-    protected String getNamingAttribute(PersistentObject po) {
-        return po.getNamingAttribute();
-    }
 
     /**Gets resource names that are exact matches, sub resources or 
      * wild card matches of argument resource name.
