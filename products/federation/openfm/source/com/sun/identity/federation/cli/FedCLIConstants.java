@@ -1,0 +1,120 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: FedCLIConstants.java,v 1.1 2007-02-16 02:02:51 veiming Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.federation.cli;
+
+/**
+ * Constants for CLI options and arguments.
+ */
+public interface FedCLIConstants {
+    /**
+     * Realm name.
+     */
+    String ARGUMENT_REALM = "realm";
+
+    /**
+     * Entity ID.
+     */
+    String ARGUMENT_ENTITY_ID = "entityid";
+
+    /**
+     * Signing enabled.
+     */
+    String ARGUMENT_SIGN = "sign";
+
+    /**
+     * Metadata option.
+     */
+    String ARGUMENT_METADATA = "metadata";
+
+    /**
+     * Extended Configuration option.
+     */
+    String ARGUMENT_EXTENDED_DATA = "extended";
+
+    /**
+     * Circle of Trust.
+     */
+    String ARGUMENT_COT = "cot";
+
+    /**
+     * Trusted Providers.
+     */
+    String ARGUMENT_TRUSTED_PROVIDERS = "trustedproviders";
+
+    /**
+     * Prefix.
+     */
+    String ARGUMENT_PREFIX = "prefix";
+
+    /**
+     * Service Provider.
+     */
+    String ARGUMENT_SERVICE_PROVIDER = "serviceprovider";
+
+    /**
+     * Identity Provider.
+     */
+    String ARGUMENT_IDENTITY_PROVIDER = "identityprovider";
+
+    /**
+     * Service Provider Signing Certificate Alias.
+     */
+    String ARGUMENT_SP_S_CERT_ALIAS = "spscertalias";
+
+    /**
+     * Identity Provider Signing Certificate Alias.
+     */
+    String ARGUMENT_IDP_S_CERT_ALIAS = "idpscertalias";
+
+    /**
+     * Service Provider Encryption Certificate Alias.
+     */
+    String ARGUMENT_SP_E_CERT_ALIAS = "specertalias";
+
+    /**
+     * Service Provider Encryption Certificate Alias.
+     */
+    String ARGUMENT_IDP_E_CERT_ALIAS = "idpecertalias";
+
+    /**
+     * Extended Configuration Data only option.
+     */
+    String ARGUMENT_EXTENDED_ONLY = "extendedonly";
+
+    /**
+     * Specification version e.g. SAML2, IDFF
+     */
+    String SPECIFICATION_VERSION = "spec";
+
+    /**
+     * SAML2 specification.
+     */
+    String SAML2_SPECIFICATION = "saml2";
+
+    /**
+     * IDFF specification.
+     */
+    String IDFF_SPECIFICATION = "idff";
+}

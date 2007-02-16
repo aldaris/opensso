@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.2 2006-12-08 21:02:39 veiming Exp $
+ * $Id: FederationManager.java,v 1.3 2007-02-16 02:02:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,10 +36,8 @@ public class FederationManager extends CLIDefinitionBase {
     private static final String DEFINITION_CLASS =
         "com.sun.identity.federation.cli.stubs.FederationManagerCLI";
 
-    static final String SPECIFICATION_VERSION = "spec";
-    static final String SAML2_SPECIFICATION = "saml2";
-    static final String IDFF_SPECIFICATION = "idff";
-    static final String DEFAULT_SPECIFICATION = SAML2_SPECIFICATION;
+    static final String DEFAULT_SPECIFICATION = 
+        FedCLIConstants.SAML2_SPECIFICATION;
     
     /**
      * Constructs an instance of this class.
@@ -79,7 +77,7 @@ public class FederationManager extends CLIDefinitionBase {
      */
     public static String getIDFFSubCommandSpecification(RequestContext rc) {
         String spec = DEFAULT_SPECIFICATION;
-        List specs = rc.getOption(SPECIFICATION_VERSION);
+        List specs = rc.getOption(FedCLIConstants.SPECIFICATION_VERSION);
         if ((specs != null) && !specs.isEmpty()) {
             spec = ((String)specs.get(0)).trim();
         }

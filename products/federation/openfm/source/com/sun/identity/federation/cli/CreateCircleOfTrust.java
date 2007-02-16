@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCircleOfTrust.java,v 1.2 2006-12-08 21:02:39 veiming Exp $
+ * $Id: CreateCircleOfTrust.java,v 1.3 2007-02-16 02:02:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,10 +44,6 @@ import java.util.Set;
  */
 public class CreateCircleOfTrust extends AuthenticatedCommand {
     private static Debug debug = COTUtils.debug;
-    static final String ARGUMENT_REALM = "realm";
-    static final String ARGUMENT_COT = "cot";
-    static final String ARGUMENT_TRUSTED_PROVIDERS = "trustedproviders";
-    static final String ARGUMENT_PREFIX = "prefix";
     
     private String realm;
     private String cot;
@@ -64,12 +60,13 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
     public void handleRequest(RequestContext rc) throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        realm = getStringOptionValue(ARGUMENT_REALM, "/");
-        cot = getStringOptionValue(ARGUMENT_COT);
-        prefix = getStringOptionValue(ARGUMENT_PREFIX);
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
+        cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
+        prefix = getStringOptionValue(FedCLIConstants.ARGUMENT_PREFIX);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
-        trustedProviders = (List)rc.getOption(ARGUMENT_TRUSTED_PROVIDERS);
+        trustedProviders = (List)rc.getOption(
+            FedCLIConstants.ARGUMENT_TRUSTED_PROVIDERS);
         
         Set providers = new HashSet();
         if (trustedProviders != null) {
@@ -78,7 +75,7 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
         String readerURL = "/saml2reader";
         String writerURL = "/saml2writer";
         
-        if (spec.equalsIgnoreCase(FederationManager.IDFF_SPECIFICATION)) {
+        if (spec.equalsIgnoreCase(FedCLIConstants.IDFF_SPECIFICATION)) {
             readerURL = "/idffreader";
             writerURL = "/idffwriter";
         }

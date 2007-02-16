@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.1 2006-10-30 23:16:25 qcheng Exp $
+ * $Id: SAML2MetaManager.java,v 1.2 2007-02-16 02:02:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -373,6 +373,7 @@ public class SAML2MetaManager {
                            LogUtil.ENTITY_DESCRIPTOR_DELETED,
                            objs,
                            null);
+            SAML2MetaCache.putEntityDescriptor(realm, entityId, null);
         } catch (ConfigurationException e) {
             debug.error("SAML2MetaManager.deleteEntityDescriptor:", e);
             String[] data = { e.getMessage(), entityId, realm };
@@ -725,7 +726,8 @@ public class SAML2MetaManager {
             LogUtil.access(Level.INFO,
                            LogUtil.ENTITY_CONFIG_DELETED,
                            objs,
-                           null);               
+                           null);
+            SAML2MetaCache.putEntityConfig(realm, entityId, null);
         } catch (ConfigurationException e) {
             debug.error("SAML2MetaManager.deleteEntityConfig:", e);
             String[] data = { e.getMessage(), entityId, realm };

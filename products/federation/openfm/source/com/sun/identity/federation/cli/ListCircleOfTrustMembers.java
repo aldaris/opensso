@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrustMembers.java,v 1.1 2006-10-30 23:18:01 qcheng Exp $
+ * $Id: ListCircleOfTrustMembers.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,6 @@ import java.util.Set;
  */
 public class ListCircleOfTrustMembers extends AuthenticatedCommand {
     private static Debug debug = COTUtils.debug;
-    private static final String ARGUMENT_REALM = "realm";
-    private static final String ARGUMENT_COT = "cot";
     
     private String realm;
     private String cot;
@@ -59,8 +57,8 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        realm = getStringOptionValue(ARGUMENT_REALM, "/");
-        cot = getStringOptionValue(ARGUMENT_COT);
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
+        cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         IOutput outputWriter = getOutputWriter();
         spec=FederationManager.getIDFFSubCommandSpecification(rc);
         

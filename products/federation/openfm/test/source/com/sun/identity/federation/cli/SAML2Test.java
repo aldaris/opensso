@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.2 2006-10-31 21:46:52 veiming Exp $
+ * $Id: SAML2Test.java,v 1.3 2007-02-16 02:02:53 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,17 +32,20 @@ import com.sun.identity.cli.DevNullOutputWriter;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.test.common.TestBase;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class SAML2Test extends TestBase {
     private CommandManager cmdManager;
     private static DevNullOutputWriter outputWriter = new DevNullOutputWriter();
+    private static String NAME_COT = "clitest";
+    private static String NAME_IDP = "www.idp.com";
 
     public SAML2Test() {
         super("FederationCLI");
@@ -68,9 +71,8 @@ public class SAML2Test extends TestBase {
         throws CLIException, COTException, SAML2MetaException {
         entering("createCircleOfTrust", null);
         String[] args = {"create-circle-of-trust",
-            CLIConstants.PREFIX_ARGUMENT_LONG +
-                CreateCircleOfTrust.ARGUMENT_COT,
-            "clitest"
+            CLIConstants.PREFIX_ARGUMENT_LONG + FedCLIConstants.ARGUMENT_COT,
+            NAME_COT
         };
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
         cmdManager.addToRequestQueue(req);
@@ -79,31 +81,230 @@ public class SAML2Test extends TestBase {
             cmdManager.serviceRequestQueue();
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             CircleOfTrustDescriptor objCircleOfTrust = 
-                cotManager.getCircleOfTrust("/", "clitest");
+                cotManager.getCircleOfTrust("/", NAME_COT);
             assert(objCircleOfTrust != null);
         } finally {
             exiting("createCircleOfTrust");
         }
     }
 
-    @Test(groups = {"samlv2"}, dependsOnMethods = {"createCircleOfTrust"},
+    @Test(groups = {"samlv2", "samlv2op"},
+        dependsOnMethods={"createCircleOfTrust"})
+    public void createMetaTemplate()
+        throws CLIException {
+        entering("createMetaTemplate", null);
+        String[] args = {
+            "create-metadata-template",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_ENTITY_ID,
+            NAME_IDP,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_METADATA,
+            "meta",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_EXTENDED_DATA,
+            "extended",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_SERVICE_PROVIDER,
+            "/sp",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER,
+            "/idp",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("createMetaTemplate");
+    }
+
+    @Test(groups = {"samlv2", "samlv2op"},
+        dependsOnMethods={"createMetaTemplate"})
+    public void importEntity()
+        throws CLIException, SAML2MetaException {
+        entering("importEntity", null);
+        String[] args = {
+            "import-entity",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_METADATA,
+            "meta",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_EXTENDED_DATA,
+            "extended",
+            CLIConstants.PREFIX_ARGUMENT_LONG + 
+                FedCLIConstants.ARGUMENT_COT,
+            NAME_COT,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+
+        SAML2MetaManager mgr = new SAML2MetaManager();
+        EntityDescriptorElement entity = mgr.getEntityDescriptor(
+            "/", NAME_IDP);
+        assert (entity != null);
+        exiting("importEntity");
+    }
+
+    @Test(groups = {"samlv2", "samlv2entityop"},
+        dependsOnMethods={"importEntity"})
+    public void listEntity()
+        throws CLIException, SAML2MetaException {
+        entering("listEntity", null);
+        String[] args = {
+            "list-entities",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("listEntity");
+    }
+    
+    @Test(groups = {"samlv2", "samlv2entityop"},
+        dependsOnMethods={"importEntity"})
+    public void listCircleOfTrustMembers()
+        throws CLIException, SAML2MetaException {
+        entering("listCircleOfTrustMembers", null);
+        String[] args = {
+            "list-circle-of-trust-members",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_COT,
+            NAME_COT,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("listCircleOfTrustMembers");
+    }
+
+    @Test(groups = {"samlv2", "samlv2entityop"},
+        dependsOnMethods={"importEntity"})
+    public void listCircleOfTrusts()
+        throws CLIException, SAML2MetaException {
+        entering("listCircleOfTrusts", null);
+        String[] args = {
+            "list-circle-of-trusts",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("listCircleOfTrusts");
+    }
+
+    @Test(groups = {"samlv2", "samlv2entityop"},
+        dependsOnMethods={"importEntity"})
+    public void exportEntity()
+        throws CLIException, SAML2MetaException {
+        entering("exportEntity", null);
+        String[] args = {
+            "export-entity",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_ENTITY_ID,
+            NAME_IDP,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_METADATA,
+            "meta",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_EXTENDED_DATA,
+            "extended",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("exportEntity");
+    }
+    
+    @Test(groups = {"samlv2", "samlv2op"},
+        dependsOnMethods={"removeProviderFromCircleOfTrust"})
+    public void deleteEntity()
+        throws CLIException, SAML2MetaException {
+        entering("deleteEntity", null);
+        String[] args = {
+            "delete-entity",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_ENTITY_ID,
+            NAME_IDP,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+
+        SAML2MetaManager mgr = new SAML2MetaManager();
+        EntityDescriptorElement entity = mgr.getEntityDescriptor(
+            "/", NAME_IDP);
+
+        assert (entity == null);
+        exiting("deleteEntity");
+    }
+
+    @Test(groups = {"samlv2", "samlv2op"}, dependsOnGroups={"samlv2entityop"})
+    public void removeProviderFromCircleOfTrust()
+        throws CLIException, SAML2MetaException {
+        entering("removeProviderFromCircleOfTrust", null);
+        String[] args = {
+            "remove-circle-of-trust-member",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_ENTITY_ID,
+            NAME_IDP,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_COT,
+            NAME_COT,
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.SPECIFICATION_VERSION,
+            FedCLIConstants.SAML2_SPECIFICATION
+        };
+
+        CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
+        exiting("removeProviderFromCircleOfTrust");
+    }
+
+    @Test(groups = {"samlv2"}, 
+        dependsOnMethods = {"removeProviderFromCircleOfTrust"},
         expectedExceptions = {COTException.class})
     public void deleteCircleOfTrust()
         throws CLIException, COTException, SAML2MetaException {
         entering("deleteCircleOfTrust", null);
         String[] args = {"delete-circle-of-trust",
-            CLIConstants.PREFIX_ARGUMENT_LONG +
-                CreateCircleOfTrust.ARGUMENT_COT,
-            "clitest"
+            CLIConstants.PREFIX_ARGUMENT_LONG + FedCLIConstants.ARGUMENT_COT,
+            NAME_COT
         };
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
         cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
 
         try {
             cmdManager.serviceRequestQueue();
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             CircleOfTrustDescriptor objCircleOfTrust = 
-                cotManager.getCircleOfTrust("/", "clitest");
+                cotManager.getCircleOfTrust("/", NAME_COT);
         } finally {
             exiting("deleteCircleOfTrust");
         }

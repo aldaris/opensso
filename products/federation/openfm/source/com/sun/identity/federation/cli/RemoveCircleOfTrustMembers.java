@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveCircleOfTrustMembers.java,v 1.1 2006-10-30 23:18:01 qcheng Exp $
+ * $Id: RemoveCircleOfTrustMembers.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,9 +39,6 @@ import java.text.MessageFormat;
  */
 public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
     private static Debug debug = COTUtils.debug;
-    private static final String ARGUMENT_REALM = "realm";
-    private static final String ARGUMENT_COT = "cot";
-    private static final String ARGUMENT_ENTITY_ID = "entityid";
     
     private String realm;
     private String cot;
@@ -58,10 +55,11 @@ public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        realm = getStringOptionValue(ARGUMENT_REALM, "/");
-        cot = getStringOptionValue(ARGUMENT_COT);
-        entityID = getStringOptionValue(ARGUMENT_ENTITY_ID);
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
+        cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
+        entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
+        
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             cotManager.removeCircleOfTrustMember(realm,cot,spec,entityID);

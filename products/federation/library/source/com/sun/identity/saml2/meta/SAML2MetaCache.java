@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaCache.java,v 1.1 2006-10-30 23:16:24 qcheng Exp $
+ * $Id: SAML2MetaCache.java,v 1.2 2007-02-16 02:02:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,15 +72,24 @@ class SAML2MetaCache
      * @param descriptor <code>EntityDescriptorElement</code> for the entity. 
      */
     static void putEntityDescriptor(String realm, String entityId,
-            EntityDescriptorElement descriptor) 
+            EntityDescriptorElement descriptor)
     {
         String cacheKey = buildCacheKey(realm, entityId);
-
-        if (debug.messageEnabled()) {
-            debug.message("SAML2MetaCache.putEntityDescriptor: cacheKey = " +
-			  cacheKey);
+        if (descriptor != null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaCache.putEntityDescriptor: cacheKey = " +
+                    cacheKey);
+            }
+            descriptorCache.put(cacheKey, descriptor);
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "SAML2MetaCache.putEntityDescriptor: delete cacheEey = " +
+                    cacheKey);
+            }
+            descriptorCache.remove(cacheKey);
+            configCache.remove(cacheKey);
         }
-	descriptorCache.put(cacheKey, descriptor);
     }
 
     /**
@@ -110,14 +119,22 @@ class SAML2MetaCache
      * @param config <code>EntityConfigElement</code> object for the entity.
      */
     static void putEntityConfig(String realm, String entityId,
-            EntityConfigElement config) 
-    {
+        EntityConfigElement config) {
         String cacheKey = buildCacheKey(realm, entityId);
-        if (debug.messageEnabled()) {
-            debug.message("SAML2MetaCache.putEntityConfig: cacheKey = " +
-			  cacheKey);
+        if (config != null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaCache.putEntityConfig: cacheKey = " +
+                    cacheKey);
+            }
+            configCache.put(cacheKey, config);
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "SAML2MetaCache.putEntityConfig: delete cacheKey = " +
+                    cacheKey);
+            }
+            configCache.remove(cacheKey);
         }
-	configCache.put(cacheKey, config);
     }
 
     /**

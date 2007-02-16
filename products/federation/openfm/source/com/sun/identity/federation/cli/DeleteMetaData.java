@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.1 2006-10-30 23:17:59 qcheng Exp $
+ * $Id: DeleteMetaData.java,v 1.2 2007-02-16 02:02:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,9 +41,8 @@ import java.text.MessageFormat;
  */
 public class DeleteMetaData extends AuthenticatedCommand {
     private static Debug debug = SAML2MetaUtils.debug;
-    private static final String ARGUMENT_ENTITY_ID = "entityid";
-    private static final String ARGUMENT_EXTENDED_ONLY = "extendedonly";
-    private static final String ARGUMENT_REALM = "realm";
+
+    static final String ARGUMENT_REALM = "realm";
 
     private boolean extendedOnly;
     private String realm = "/";
@@ -60,14 +59,14 @@ public class DeleteMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        extendedOnly = isOptionSet(ARGUMENT_EXTENDED_ONLY);
-        realm = getStringOptionValue(ARGUMENT_REALM);
-        entityID = getStringOptionValue(ARGUMENT_ENTITY_ID);
+        extendedOnly = isOptionSet(FedCLIConstants.ARGUMENT_EXTENDED_ONLY);
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM);
+        entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
         if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
             handleSAML2Request(rc);
-        } else if (spec.equals(FederationManager.IDFF_SPECIFICATION)) {
+        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
         } else {
             throw new CLIException(

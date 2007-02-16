@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteCircleOfTrust.java,v 1.1 2006-10-30 23:17:59 qcheng Exp $
+ * $Id: DeleteCircleOfTrust.java,v 1.2 2007-02-16 02:02:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,8 +39,6 @@ import java.text.MessageFormat;
  */
 public class DeleteCircleOfTrust extends AuthenticatedCommand {
     private static Debug debug = COTUtils.debug;
-    private static final String ARGUMENT_REALM = "realm";
-    private static final String ARGUMENT_COT = "cot";
     
     private String realm;
     private String cot;
@@ -56,8 +54,8 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        realm = getStringOptionValue(ARGUMENT_REALM, "/");
-        cot = getStringOptionValue(ARGUMENT_COT);
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
+        cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
         try {

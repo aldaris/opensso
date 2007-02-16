@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.2 2007-01-23 06:46:09 veiming Exp $
+ * $Id: ImportMetaData.java,v 1.3 2007-02-16 02:02:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,11 +57,7 @@ import org.w3c.dom.Document;
  * Import Meta Data.
  */
 public class ImportMetaData extends AuthenticatedCommand {
-    private static Debug debug = SAML2MetaUtils.debug;
-    private static final String ARGUMENT_METADATA = "metadata";
-    private static final String ARGUMENT_EXTENDED_DATA = "extended";
-    private static final String ARGUMENT_COT = "cot";
-
+    static Debug debug = SAML2MetaUtils.debug;
     private String metadata;
     private String extendedData;
     private String cot;
@@ -79,9 +75,10 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        metadata = getStringOptionValue(ARGUMENT_METADATA);
-        extendedData = getStringOptionValue(ARGUMENT_EXTENDED_DATA);
-        cot = getStringOptionValue(ARGUMENT_COT);
+        metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
+        extendedData = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_EXTENDED_DATA);
+        cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
 
         if ((metadata == null) && (extendedData == null)) {
             throw new CLIException(
@@ -96,7 +93,7 @@ public class ImportMetaData extends AuthenticatedCommand {
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
             handleSAML2Request(rc);
-        } else if (spec.equals(FederationManager.IDFF_SPECIFICATION)) {
+        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
         } else {
             throw new CLIException(
@@ -121,7 +118,7 @@ public class ImportMetaData extends AuthenticatedCommand {
             if ((cot != null) && (cot.length() > 0) &&
                 (entityID != null) && (entityID.length() > 0)) {
                 CircleOfTrustManager cotManager = new CircleOfTrustManager();
-                cotManager.addCircleOfTrustMember(realm, cot, spec,entityID);
+                cotManager.addCircleOfTrustMember(realm, cot, spec, entityID);
             }
         } catch (COTException e) {
             throw new CLIException(e.getMessage(),

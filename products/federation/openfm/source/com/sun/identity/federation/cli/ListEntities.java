@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListEntities.java,v 1.1 2006-10-30 23:18:01 qcheng Exp $
+ * $Id: ListEntities.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,6 @@ import java.util.Set;
  */
 public class ListEntities extends AuthenticatedCommand {
     private static Debug debug = SAML2MetaUtils.debug;
-    private static final String ARGUMENT_REALM = "realm";
     
     private String realm;
 
@@ -58,13 +57,13 @@ public class ListEntities extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        realm = getStringOptionValue(ARGUMENT_REALM, "/");
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
 
         
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
         if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
             handleSAML2Request(rc);
-        } else if (spec.equals(FederationManager.IDFF_SPECIFICATION)) {
+        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
         } else {
             throw new CLIException(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.5 2007-01-23 06:46:08 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.6 2007-02-16 02:02:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,15 +51,6 @@ import java.text.MessageFormat;
  */
 public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
-    private static final String ARGUMENT_ENTITY_ID = "entityid";
-    private static final String ARGUMENT_METADATA = "metadata";
-    private static final String ARGUMENT_EXTENDED_DATA = "extended";
-    private static final String ARGUMENT_SERVICE_PROVIDER = "serviceprovider";
-    private static final String ARGUMENT_IDENTITY_PROVIDER = "identityprovider";
-    private static final String ARGUMENT_SP_S_CERT_ALIAS = "spscertalias";
-    private static final String ARGUMENT_IDP_S_CERT_ALIAS = "idpscertalias";
-    private static final String ARGUMENT_SP_E_CERT_ALIAS = "specertalias";
-    private static final String ARGUMENT_IDP_E_CERT_ALIAS = "idpecertalias";
     
     private String entityID;
     private String metadata;
@@ -94,7 +85,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
         if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
             handleSAML2Request(rc);
-        } else if (spec.equals(FederationManager.IDFF_SPECIFICATION)) {
+        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
         } else {
             throw new CLIException(
@@ -126,15 +117,23 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void getOptions() {
-        entityID = getStringOptionValue(ARGUMENT_ENTITY_ID);
-        idpAlias = getStringOptionValue(ARGUMENT_IDENTITY_PROVIDER);
-        spAlias = getStringOptionValue(ARGUMENT_SERVICE_PROVIDER);
-        metadata = getStringOptionValue(ARGUMENT_METADATA);
-        extendedData = getStringOptionValue(ARGUMENT_EXTENDED_DATA);
-        idpSCertAlias = getStringOptionValue(ARGUMENT_IDP_S_CERT_ALIAS);
-        idpECertAlias = getStringOptionValue(ARGUMENT_IDP_E_CERT_ALIAS);
-        spSCertAlias = getStringOptionValue(ARGUMENT_SP_S_CERT_ALIAS);
-        spECertAlias = getStringOptionValue(ARGUMENT_SP_E_CERT_ALIAS);
+        entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
+        idpAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER);
+        spAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_SERVICE_PROVIDER);
+        metadata = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_METADATA);
+        extendedData = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_EXTENDED_DATA);
+        idpSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_IDP_S_CERT_ALIAS);
+        idpECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_IDP_E_CERT_ALIAS);
+        spSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_SP_S_CERT_ALIAS);
+        spECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_SP_E_CERT_ALIAS);
         protocol = SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
         host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
         port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);

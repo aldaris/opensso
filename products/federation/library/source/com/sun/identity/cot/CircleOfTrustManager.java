@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.2 2006-12-09 06:21:14 veiming Exp $
+ * $Id: CircleOfTrustManager.java,v 1.3 2007-02-16 02:02:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -600,7 +600,7 @@ public class CircleOfTrustManager {
         try {
             // Remove the cot from the cotlist attribute in
             // the entity config.
-            removeFromEntityConfig(realm, cotName, cotType,entityId);
+            removeFromEntityConfig(realm, cotName, cotType, entityId);
             
             // Remove entity id from the cot
             CircleOfTrustDescriptor cotDesc;
@@ -928,7 +928,6 @@ public class CircleOfTrustManager {
     boolean isValidCotTypeInConfig(Map attrs, String cotType)
         throws COTException {
         COTUtils.isValidCOTType(cotType);
-        Set valueSet = null;
         String value = COTUtils.getFirstEntry(attrs,COTConstants.COT_TYPE);
         if (value == null || !value.equalsIgnoreCase(cotType)) {
             String[] data = { cotType };
