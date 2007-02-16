@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.xml,v 1.4 2007-02-15 21:36:18 veiming Exp $
+   $Id: Readme.xml,v 1.5 2007-02-16 02:04:49 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,7 +37,6 @@
     </paragraph>
 
     <paragraph>
-    <orderedlist nocontext="no">
     on the shell prompt,<br />
     <code>scripts/setup.sh</code> (have to <code>chmod</code> to make it
     executable) for Unix and Linux; or<br />
