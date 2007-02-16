@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.15 2007-01-24 23:21:30 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.16 2007-02-16 02:07:54 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1822,15 +1822,24 @@ public class SMSEntry implements Cloneable {
                                     "SMSEntry.NotificationThread.run " + 
                                     "Sending to URL: " + surl);
                             }
+                            
+                            if (adminSSOToken == null) {
+                                adminSSOToken = (SSOToken) 
+                                    AccessController.doPrivileged(
+                                    com.sun.identity.security.AdminTokenAction
+                                    .getInstance());
+                            }
+                           
                             client.send("notifyObjectChanged", params,
                         	    Session.getLBCookie(
                         	        adminSSOToken.getTokenID().toString()), 
                         	        null);
+
                         } catch (Throwable t) {
                             if (eventDebug.warningEnabled()) {
                                 eventDebug.warning(
                                     "SMSEntry.NotificationThread.run " + 
-                                    "Unable to send notification to: " + surl, 
+                                    "Unable to send notification to: " + surl,  
                                     t);
                             }
                         }
