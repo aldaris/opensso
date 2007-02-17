@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: spSSOInit.php,v 1.2 2006-11-03 00:49:40 superpat7 Exp $
+ * $Id: spSSOInit.php,v 1.3 2007-02-17 04:08:28 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,8 +30,50 @@
     require 'saml-lib.php';
 
     $metaAlias = $_GET["metaAlias"];
+
+    if (!isset($metaAlias)) {
+        // If no metaalias specified then just use the first SP defined in the list
+        foreach ( $spMetadata as $spKey => $spValue ) {
+            $metaAlias = $spKey;
+            break;
+        }
+        if (!isset($metaAlias)) {
+            $error = "400 No SPs are configured!";
+            header($_SERVER["SERVER_PROTOCOL"] . " " . $error );
+            echo ($error);
+            exit;
+        }
+    }
+
     $idpEntityID = $_GET["idpEntityID"];
+
+    if (!isset($idpEntityID)) {
+        // If no idpEntityID specified then just use the first IdP defined in the list
+        foreach ( $idpMetadata as $idpKey => $idpValue ) {
+            $idpEntityID = $idpKey;
+            break;
+        }
+        if (!isset($idpEntityID)) {
+            $error = "400 No IdPs are configured!";
+            header($_SERVER["SERVER_PROTOCOL"] . " " . $error );
+            echo ($error);
+            exit;
+        }
+    }
+
+    // Selection of binding is not yet implemented!
     $binding = $_GET["binding"];
+    if (!isset($binding)) {
+        // Default to POST binding for now
+        $binding = SAML2_BINDINGS_POST;
+    }
+    else if ($binding != SAML2_BINDINGS_POST ) {
+        $error = "400 The only currently supported binding is " . SAML2_BINDINGS_POST;
+        header($_SERVER["SERVER_PROTOCOL"] . " " . $error );
+        echo ($error);
+        exit;
+    }
+
     $RelayStateURL = $_GET["RelayState"];
 
     error_log("metaAlias = " . $metaAlias);
@@ -72,7 +114,7 @@
       "IssueInstant=\"" . $issueInstant . "\" " .
       "ForceAuthn=\"false\" " .
       "isPassive=\"false\" " .
-      "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" " .
+      "ProtocolBinding=\"" . $binding . "\" " .
       "AssertionConsumerServiceURL=\"" . $assertionConsumerServiceURL . "\">\n" .
         "<saml:Issuer " .
         "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">" .

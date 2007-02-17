@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: saml-lib.php,v 1.2 2006-11-03 00:49:39 superpat7 Exp $
+ * $Id: saml-lib.php,v 1.3 2007-02-17 04:08:28 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,12 @@
 require('xmlseclibs.php');
 require('samlIdpMetadata.php');
 
-define('SAML_ASSERT_NS', 'urn:oasis:names:tc:SAML:2.0:assertion');
-define('SAML_PROTOCOL_NS', 'urn:oasis:names:tc:SAML:2.0:protocol');
+define('SAML2_ASSERT_NS', 'urn:oasis:names:tc:SAML:2.0:assertion');
+define('SAML2_PROTOCOL_NS', 'urn:oasis:names:tc:SAML:2.0:protocol');
 
-define('SAMLP_STATUS_SUCCESS', 'urn:oasis:names:tc:SAML:2.0:status:Success');
+define('SAML2_BINDINGS_POST', 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST');
+
+define('SAML2_STATUS_SUCCESS', 'urn:oasis:names:tc:SAML:2.0:status:Success');
 
 function processResponse($samlResponse,$validate=TRUE) {    
     try {
@@ -113,7 +115,7 @@ function getAttributes($token) {
     $attributes = array();
     if ($token instanceof DOMDocument) {
         $xPath = new DOMXpath($token);
-        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
+        $xPath->registerNamespace('mysaml', SAML2_ASSERT_NS);
 
         $query = '/mysaml:Assertion/mysaml:Conditions';
         $nodelist = $xPath->query($query);
@@ -148,8 +150,8 @@ function getNameId($token) {
     $nameID = array();
     if ($token instanceof DOMDocument) {
         $xPath = new DOMXpath($token);
-        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
-        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+        $xPath->registerNamespace('mysaml', SAML2_ASSERT_NS);
+        $xPath->registerNamespace('mysamlp', SAML2_PROTOCOL_NS);
 
         $query = '/mysamlp:Response/mysaml:Assertion/mysaml:Subject/mysaml:NameID';
         $nodelist = $xPath->query($query);
@@ -165,8 +167,8 @@ function getNameId($token) {
 function getIssuer($token) {
     if ($token instanceof DOMDocument) {
         $xPath = new DOMXpath($token);
-        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
-        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+        $xPath->registerNamespace('mysaml', SAML2_ASSERT_NS);
+        $xPath->registerNamespace('mysamlp', SAML2_PROTOCOL_NS);
 
         $query = '/mysamlp:Response/mysaml:Issuer';
         $nodelist = $xPath->query($query);
@@ -180,8 +182,8 @@ function getIssuer($token) {
 function getSessionIndex($token) {
     if ($token instanceof DOMDocument) {
         $xPath = new DOMXpath($token);
-        $xPath->registerNamespace('mysaml', SAML_ASSERT_NS);
-        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+        $xPath->registerNamespace('mysaml', SAML2_ASSERT_NS);
+        $xPath->registerNamespace('mysamlp', SAML2_PROTOCOL_NS);
 
         $query = '/mysamlp:Response/mysaml:Assertion/mysaml:AuthnStatement';
         $nodelist = $xPath->query($query);
@@ -195,7 +197,7 @@ function getSessionIndex($token) {
 function getLogoutResponseStatus($token) {
     if ($token instanceof DOMDocument) {
         $xPath = new DOMXpath($token);
-        $xPath->registerNamespace('mysamlp', SAML_PROTOCOL_NS);
+        $xPath->registerNamespace('mysamlp', SAML2_PROTOCOL_NS);
 
         $query = '/mysamlp:LogoutResponse/mysamlp:Status/mysamlp:StatusCode';
         $nodelist = $xPath->query($query);

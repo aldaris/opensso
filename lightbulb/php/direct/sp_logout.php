@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: sp_logout.php,v 1.1 2006-11-03 00:56:53 superpat7 Exp $
+ * $Id: sp_logout.php,v 1.2 2007-02-17 04:08:28 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@
 
     if ($token = processResponse($samlResponse,FALSE)) {
         $status = getLogoutResponseStatus($token);
-        if ( $status == SAMLP_STATUS_SUCCESS ) {
+        if ( $status == SAML2_STATUS_SUCCESS ) {
             clearUserId();
             header("Location: " . $RelayStateURL);
         } else {
