@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2007-02-20 08:51:56 veiming Exp $
+   $Id: build.xml,v 1.15 2007-02-20 22:52:05 goodearth Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,6 +127,7 @@
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
                 <include name="am_sm_ds_schema.ldif" />
+                <include name="am_sm_ad_schema.ldif" />
                 <include name="ds_remote_schema.ldif" />
                 <include name="index.ldif" />
                 <include name="install.ldif" />
