@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.9 2007-01-25 00:42:47 pawand Exp $
+ * $Id: ServicesDefaultValues.java,v 1.10 2007-02-20 22:43:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public class ServicesDefaultValues {
         while (requestEnum.hasMoreElements()) {
             String key = (String)requestEnum.nextElement();
             map.put(key, ((String)request.getParameter(key)).trim());
-        } // while
+        }
         String base = (String)map.get(
             SetupConstants.CONFIG_VAR_BASE_DIR);
         base = base.replace('\\', '/');
@@ -113,16 +113,20 @@ public class ServicesDefaultValues {
         map.put(SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, 
             getCookieDomain(cookieDomain, hostname));
         setPlatformLocale();
-        AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
-        dsConfig.setDSValues();
+        
+        String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
+        boolean dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
+        boolean dbMsAD = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
+        
+        if (dbSunDS || dbMsAD) {
+            AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+            dsConfig.setDSValues();
 
-        if (((String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE))
-            .equals("dirServer")) {
             //try to connect to the DS with the supplied host/port
             if (!dsConfig.isDServerUp()) {
                 dsConfig = null;
-                 throw new ConfiguratorException(
-                     "configurator.dsconnnectfailure", null, locale);
+                throw new ConfiguratorException(
+                    "configurator.dsconnnectfailure", null, locale);
             }
             if ((!DN.isDN((String) map.get(
                 SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
@@ -136,8 +140,10 @@ public class ServicesDefaultValues {
             if ((dbName != null) && (dbName.length() > 0)) {
                 map.put(SetupConstants.DB_NAME, dbName);
             }
-            map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
-            dsConfig = null;
+            
+            if (dbSunDS) {
+                map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
+            }
         }
     }
 
@@ -340,15 +346,22 @@ public class ServicesDefaultValues {
                     SetupConstants.CONFIG_VAR_ENCRYPTION_KEY)).trim()));
             map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
         }
-
-        if (((String)map.get(
-            SetupConstants.CONFIG_VAR_DATA_STORE)).equals(
-                SetupConstants.SMS_DS_DATASTORE)) {
+        String datastore = (String)map.get(
+            SetupConstants.CONFIG_VAR_DATA_STORE);
+        
+        if (datastore.equals(SetupConstants.SMS_DS_DATASTORE) ||
+            datastore.equals(SetupConstants.SMS_AD_DATASTORE)
+        ) {
             adminPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
             confirmAdminPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD)).trim();
-            if (isPasswordValid(adminPwd, confirmAdminPwd, locale)) {
+            if (adminPwd != null) {
+                if (!adminPwd.equals(confirmAdminPwd)) {
+                    throw new 
+                        ConfiguratorException("configurator.nopasswdmatch",
+                        null, locale);
+                }
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
                 map.remove(SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD);
             }
@@ -435,7 +448,7 @@ public class ServicesDefaultValues {
             } else if (key.equals(SetupConstants.CONFIG_VAR_ROOT_SUFFIX)) {
                 String normalized = DNUtils.normalizeDN(value);
                 orig = orig.replaceAll(
-                    "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX_HAT + "@",
+                    "@" + SetupConstants.SM_ROOT_SUFFIX_HAT + "@",
                     normalized.replaceAll(",", "^"));
                 String rfced = (new DN(value)).toRFCString();
                 orig = orig.replaceAll(

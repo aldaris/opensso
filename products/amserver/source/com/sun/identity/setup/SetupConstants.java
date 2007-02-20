@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.6 2007-01-25 00:42:48 pawand Exp $
+ * $Id: SetupConstants.java,v 1.7 2007-02-20 22:43:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,16 +122,40 @@ public interface SetupConstants {
     String SCHEMA_PROPERTY_FILENAME = "schemaNames";
 
     /**
-     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file that has 
-     * schema that needs to be loaded by the configurator.
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Sun Directory Server Schema File for configuration data.
      */
-    String SMS_PROPERTY_FILENAME = "smsSchema";
+    String DS_SMS_PROPERTY_FILENAME = "dsSmsSchema";
+    
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Microsoft Active Directory Schema File for configuration data.
+     */
+    String AD_SMS_PROPERTY_FILENAME = "adSmsSchema";
+    
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Sun Directory Server Schema File for user management data.
+     */
     String SDK_PROPERTY_FILENAME = "sdkSchema";
 
     /**
      * Type of Data store used for storing the configuration files.
+     * Sun Directory Server.
      */
     String SMS_DS_DATASTORE = "dirServer";
+
+    /**
+     * Type of Data store used for storing the configuration files.
+     * Active Directory.
+     */
+    String SMS_AD_DATASTORE = "activeDir";
+
+    
+    /**
+     * Type of Data store used for storing the configuration files.
+     * Native Operating System file system.
+     */
     String SMS_FF_DATASTORE = "flatfile";
 
     /**
@@ -276,12 +300,6 @@ public interface SetupConstants {
     String CONFIG_VAR_ROOT_SUFFIX = "ROOT_SUFFIX";
     
     /**
-     * Configuration Variable for root suffix with carat suffix.
-     */
-    String CONFIG_VAR_ROOT_SUFFIX_HAT = "ROOT_SUFFIX_HAT";
-
-
-    /**
      * Configuration Variable for bootstarp file base directory.
      */
     String CONFIG_VAR_BOOTSTRAP_BASE_DIR = "AccessManager";
@@ -319,6 +337,16 @@ public interface SetupConstants {
     String CONFIG_VAR_DEFAULT_SHARED_KEY = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
 
     /**
+     * SDK Schema Option Flag.
+     */
+    String OPT_SDK_SCHEMA = "sdkSchema";
+    
+    /**
+     * Schema Template Directory.
+     */
+    String SCHEMA_TEMPLATE_DIRECTORY = "WEB-INF/template/sms";
+
+    /**
      * Configuration Variable for service management root suffix with carat 
      * suffix.
      */
@@ -334,6 +362,5 @@ public interface SetupConstants {
      * Configuration Variable for service management root suffix.
      */
     String SM_CONFIG_ROOT_SUFFIX = "SM_CONFIG_ROOT_SUFFIX";
-    
-
 }
+

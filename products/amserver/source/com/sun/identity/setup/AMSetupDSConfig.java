@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.4 2007-01-10 00:42:42 goodearth Exp $
+ * $Id: AMSetupDSConfig.java,v 1.5 2007-02-20 22:43:15 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import netscape.ldap.LDAPModificationSet;
 import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.LDIF;
+import netscape.ldap.util.LDIFAddContent;
 import netscape.ldap.util.LDIFAttributeContent;
 import netscape.ldap.util.LDIFContent;
 import netscape.ldap.util.LDIFModifyContent;
@@ -172,7 +173,7 @@ public class AMSetupDSConfig {
             String underscoreDN = replaceDNDelimiter(normalizedDN, "_");
             map.put("People_" + SetupConstants.NORMALIZED_ROOT_SUFFIX, 
                 replaceDNDelimiter(peopleNMDN, "_"));
-            map.put(SetupConstants.CONFIG_VAR_ROOT_SUFFIX_HAT, 
+            map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
                 replaceDNDelimiter(escapedDN, "^"));
             map.put(SetupConstants.NORMALIZED_RS, escapedDN); 
             map.put(SetupConstants.NORMALIZED_ORG_BASE, escapedDN); 
@@ -181,6 +182,7 @@ public class AMSetupDSConfig {
             map.put(SetupConstants.RS_RDN, LDAPDN.escapeRDN(rdn)); 
             map.put(SetupConstants.DEFAULT_ORG, canonicalizedDN); 
             map.put(SetupConstants.ORG_BASE, canonicalizedDN);
+
             if ((smsuffix != null) && (smsuffix.length() > 0)) { 
                 if (suffix.equalsIgnoreCase(smsuffix)) {
                     map.put(SetupConstants.SM_CONFIG_BASEDN, canonicalizedDN);
@@ -319,16 +321,21 @@ public class AMSetupDSConfig {
                     content = rec.getContent();
                     DN = rec.getDN();
                     if (content instanceof LDIFModifyContent) {
-                        mods = ((LDIFModifyContent)content).getModifications();
+                            mods = ((LDIFModifyContent)content).getModifications();
                         ld.modify(DN, mods);
-                    } else if (content instanceof LDIFAttributeContent) {
+                    } else if ((content instanceof LDIFAttributeContent) ||
+                        (content instanceof LDIFAddContent)
+                    ) {
                         LDAPAttributeSet attrSet = null;
                         LDAPAttribute[] attrs = 
-                            ((LDIFAttributeContent)content).getAttributes();
+                            (content instanceof LDIFAttributeContent) ?
+                                ((LDIFAttributeContent)content).getAttributes():
+                                ((LDIFAddContent)content).getAttributes();
                         LDAPEntry amEntry = new LDAPEntry(DN, 
                             new LDAPAttributeSet(attrs)); 
                         ld.add(amEntry); 
                     }
+
                 } catch (LDAPException e) {
                     switch (e.getLDAPResultCode()) {
                         case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
@@ -357,7 +364,10 @@ public class AMSetupDSConfig {
                             LDAPModificationSet modSet = 
                                 new LDAPModificationSet();
                             LDAPAttribute[] attrs = 
-                                ((LDIFAttributeContent)content).getAttributes();
+                            (content instanceof LDIFAttributeContent) ?
+                                ((LDIFAttributeContent)content).getAttributes():
+                                ((LDIFAddContent)content).getAttributes();
+                            
                             for (int i = 0; i < attrs.length; i++) {
                                 modSet.add(LDAPModification.ADD, attrs[i]);
                             }

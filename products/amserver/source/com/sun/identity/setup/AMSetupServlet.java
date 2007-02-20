@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.14 2007-01-19 23:39:35 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.15 2007-02-20 22:43:16 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,15 +206,20 @@ public class AMSetupServlet extends HttpServlet {
                 reInitConfigProperties();
                 boolean isDITLoaded = ((String)map.get(
                     SetupConstants.DIT_LOADED)).equals("true");
-                boolean isDSServer = ((String)map.get(
-                    SetupConstants.CONFIG_VAR_DATA_STORE)).equals("dirServer");
-                if (isDSServer && !isDITLoaded) {
-                    if (((String)map.get(SetupConstants.CONFIG_VAR_DS_UM_SCHEMA))
-                        .equals("sdkSchema")){
-                        writeSchemaFiles(basedir, true);
-                    } else {
-                        writeSchemaFiles(basedir, false);
-                    }
+                
+                String dataStore = (String)map.get(
+                    SetupConstants.CONFIG_VAR_DATA_STORE);
+                boolean isDSServer = dataStore.equals(
+                    SetupConstants.SMS_DS_DATASTORE);
+                boolean isADServer = (isDSServer) ? false : dataStore.equals(
+                    SetupConstants.SMS_AD_DATASTORE);
+
+                if ((isDSServer || isADServer) && !isDITLoaded) {
+                    boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
+                        SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
+                            "sdkSchema") : false;
+                    List schemaFiles = getSchemaFiles(dataStore, loadSDKSchema);
+                    writeSchemaFiles(basedir, schemaFiles);
                 }
 
                 String hostname = (String)map.get(
@@ -227,7 +232,7 @@ public class AMSetupServlet extends HttpServlet {
                     regService.registers(adminSSOToken);
                     processDataRequests("WEB-INF/template/sms");
                 } else {
-                    if (isDSServer) {
+                    if (isDSServer || isADServer) {
                        //Update the platform server list
                        updatePlatformServerList(serverURL, hostname);
                     }
@@ -556,10 +561,15 @@ public class AMSetupServlet extends HttpServlet {
             int idx = file.lastIndexOf("/");
             String absFile = (idx != -1) ? file.substring(idx+1) : file;
 
-            if (absFile.equalsIgnoreCase(
-                SetupConstants.AMCONFIG_PROPERTIES)) {
-                if (((String)map.get(
-                    SetupConstants.CONFIG_VAR_DATA_STORE)).equals("dirServer")) {
+            if (absFile.equalsIgnoreCase(SetupConstants.AMCONFIG_PROPERTIES)) {
+                String dataStore = (String)map.get(
+                    SetupConstants.CONFIG_VAR_DATA_STORE);
+                boolean isDSServer = dataStore.equals(
+                    SetupConstants.SMS_DS_DATASTORE);
+                boolean isADServer = (isDSServer) ? false : dataStore.equals(
+                    SetupConstants.SMS_AD_DATASTORE);
+
+                if (isDSServer || isADServer) {
                     int idx1 = sbuf.indexOf(
                         SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS);
                     if (idx1 != -1) {
@@ -624,24 +634,35 @@ public class AMSetupServlet extends HttpServlet {
 
 
     /**
-     * Get schema file names.
+     * Returns schema file names.
      *
-     * @param sdkSchema Type of schema files names to return. 
-     * @throws MissingResourceException if the bundle cannot be found
+     * @param dataStore Name of data store configuration data.
+     * @param sdkSchema <code>true</code> to include access manager SDK ldif
+     *        file.
+     * @return schema file names to be loaded.
+     * @throws MissingResourceException if the bundle cannot be found.
      */
 
-    private static List getSchemaFiles(boolean sdkSchema)
+    private static List getSchemaFiles(String dataStore, boolean sdkSchema)
         throws MissingResourceException
     {
         List fileNames = new ArrayList();
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
-        String strFiles; 
-        if (sdkSchema) {
-            strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
+        String strFiles;
+        boolean isDSServer = dataStore.equals(
+            SetupConstants.SMS_DS_DATASTORE);
+
+        if (isDSServer) {
+            if (sdkSchema) {
+                strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
+            } else {
+                strFiles = rb.getString(SetupConstants.DS_SMS_PROPERTY_FILENAME);
+            }
         } else {
-            strFiles = rb.getString(SetupConstants.SMS_PROPERTY_FILENAME);
+            strFiles = rb.getString(SetupConstants.AD_SMS_PROPERTY_FILENAME);
         }
+        
         StringTokenizer st = new StringTokenizer(strFiles);
         while (st.hasMoreTokens()) {
             fileNames.add(st.nextToken());
@@ -684,15 +705,14 @@ public class AMSetupServlet extends HttpServlet {
      * Tag swaps strings in schema files.
      *
      * @param basedir the configuration base directory.
-     * @param sdkSchema the type of schema to load. 
+     * @param schemaFiles List of schema files to be loaded.
      * @throws IOException if data files cannot be written.
      */
     private static void writeSchemaFiles(
         String basedir,
-        boolean sdkSchema
+        List schemaFiles
     )   throws IOException
     {
-        List schemaFiles = getSchemaFiles(sdkSchema);
         for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
             InputStreamReader fin = new InputStreamReader(
