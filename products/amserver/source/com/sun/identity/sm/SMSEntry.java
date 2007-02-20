@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.16 2007-02-16 02:07:54 rarcot Exp $
+ * $Id: SMSEntry.java,v 1.17 2007-02-20 22:51:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ import netscape.ldap.LDAPException;
 import netscape.ldap.util.DN;
 
 /**
- * This object represents a SMS entry in datstore, similar to UMS's equivalent
+ * This object represents a SMS entry in datastore, similar to UMS's equivalent
  * class called PersistentObject.
  * <p>
  * This class is used both to read and write information into the datastore.
@@ -103,6 +103,8 @@ public class SMSEntry implements Cloneable {
     static String DEFAULT_ORG_PROPERTY = "com.iplanet.am.defaultOrg";
 
     static String baseDN;
+
+    static String dataStore;
 
     static String amsdkbaseDN;
 
@@ -171,7 +173,7 @@ public class SMSEntry implements Cloneable {
 
     static boolean enableDataStoreNotification;
 
-    // Initalize the above varibales
+    // Initialize the above variables
     static {
         // Initialize for checking delegation permissions
         readActionSet.add(READ);
@@ -888,11 +890,8 @@ public class SMSEntry implements Cloneable {
      * Returns the DNs that match the filter. The search is performed from the
      * root suffix ie., DN. It searchs for SMS objects only.
      */
-    public static Set search(SSOToken token, String dn, String filter)
+    public static Set search(SSOToken token, String dn, String filter) 
         throws SMSException {
-        // Since this is full recusive search, need to check
-        // if the user has write permissions
-        isAllowedByDelegation(token, dn, modifyActionSet);
         try {
             return smsObject.search(token, dn, filter);
         } catch (SSOException ssoe) {
@@ -1115,6 +1114,22 @@ public class SMSEntry implements Cloneable {
 
     public static String getAMSdkBaseDN() {
         return amsdkbaseDN;
+    }
+
+    public static String getDataStore(SSOToken token) {
+        if (dataStore == null) {
+            // This has to be called only if the backend datastore is
+            // based on LDAP protocol. Should not be for JDBC.
+            String smsClassName = SystemProperties.get(SMS_OBJECT_PROPERTY,
+                DEFAULT_SMS_CLASS_NAME);
+            if (smsClassName.equals(DEFAULT_SMS_CLASS_NAME)) {
+                GetBackendDataStore gbs = new GetBackendDataStore(); 
+                dataStore = gbs.getDataStore(token);
+            } else {
+                dataStore = "flatfile";
+            }
+        }
+        return dataStore;
     }
 
     /**

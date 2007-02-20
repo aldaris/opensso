@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.7 2006-12-15 01:02:26 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.8 2007-02-20 22:51:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -699,8 +699,10 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             }
 
         } catch (LDAPException le) {
-            debug.error("SMSLdapObject: LDAP exception in search "
+            if (debug.warningEnabled()) {
+                debug.warning("SMSLdapObject: LDAP exception in search "
                     + "for filter match: " + filter, le);
+            }
             throw (new SMSException(le, "sms-error-in-searching"));
         } finally {
             releaseConnection(conn);
@@ -726,6 +728,10 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         }
         return (answer);
     }
+
+    /**
+     * Checks if the provided DN exists. Used by PolicyManager.
+     */
 
     /**
      * Checks if the provided DN exists. Used by PolicyManager.
@@ -1071,9 +1077,15 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         sb.append(")");
         String filter = sb.toString();
 
-        String FILTER_PATTERN_SEARCH_ORG = "(|(&(objectclass="
+        String FILTER_PATTERN_SEARCH_ORG = "{0}";
+        String dataStore = SMSEntry.getDataStore(token);
+        if ((dataStore != null) && (!dataStore.equals("activeDir"))) {
+           // Include the OCs only for sunDS, not Active Directory.
+           //String FILTER_PATTERN_SEARCH_ORG = "(|(&(objectclass="
+           FILTER_PATTERN_SEARCH_ORG = "(|(&(objectclass="
                 + SMSEntry.OC_REALM_SERVICE + "){0})" + "(&(objectclass="
                 + SMSEntry.OC_SERVICE_COMP + "){0}))";
+        }
 
         String[] objs = { filter };
         String sfilter = MessageFormat.format(

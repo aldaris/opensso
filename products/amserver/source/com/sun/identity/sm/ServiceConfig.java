@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.3 2006-07-31 23:41:01 arviranga Exp $
+ * $Id: ServiceConfig.java,v 1.4 2007-02-20 22:51:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,6 +228,16 @@ public class ServiceConfig {
      */
     public ServiceConfig getSubConfig(String subConfigName)
             throws SSOException, SMSException {
+        String dataStore = SMSEntry.getDataStore(token);
+        // If the datastore is Active Directory, convert
+        // ou=dc=samples^dc=com^^AgentLogging to
+        // ou=dc_samples^dc_com^^AgentLogging.
+        // Otherwise BAD_NAME error LDAPException code 34 will occur.
+        if ((dataStore != null) && (dataStore.equals("activeDir"))) {
+            if (subConfigName.indexOf("^") >= 0) {
+                subConfigName = subConfigName.replaceAll("=","_");
+            }
+        }
         ServiceConfigImpl sci = sc.getSubConfig(token, subConfigName);
         return ((sci == null) ? null : new ServiceConfig(scm, sci));
     }
@@ -284,6 +294,16 @@ public class ServiceConfig {
         sb.append(priority);
 
         // Create the entry
+        String dataStore = SMSEntry.getDataStore(token);
+        // If the datastore is Active Directory, convert
+        // ou=dc=samples^dc=com^^AgentLogging to
+        // ou=dc_samples^dc_com^^AgentLogging.
+        // Otherwise BAD_NAME error LDAPException code 34 will occur.
+        if ((dataStore != null) && (dataStore.equals("activeDir"))) {
+            if (subConfigName.indexOf("^") >= 0) {
+                subConfigName = subConfigName.replaceAll("=","_");
+            }
+        }
         CreateServiceConfig.createSubConfigEntry(token, ("ou=" + subConfigName
                 + "," + sc.getDN()), nss, subConfigId, sb.toString(), attrs, sc
                 .getOrganizationName());
@@ -302,6 +322,10 @@ public class ServiceConfig {
     public void removeSubConfig(String subConfigName) throws SMSException,
             SSOException {
         // Obtain the SMSEntry for the subconfig and delete it
+        // unescape in case users provide such a subConfigName for deletion.
+        // "http:&amp;#47;&amp;#47;abc.east.sun.com:58080"
+
+        subConfigName = SMSSchema.unescapeName(subConfigName);
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, ("ou="
                 + subConfigName + "," + sc.getDN()), null);
         SMSEntry entry = cEntry.getClonedSMSEntry();

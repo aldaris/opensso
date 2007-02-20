@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.7 2006-10-26 20:53:55 kenwho Exp $
+ * $Id: ServiceSchema.java,v 1.8 2007-02-20 22:51:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -518,7 +518,9 @@ public class ServiceSchema {
             String attrName = (String) items.next();
             AttributeSchema as = getAttributeSchema(attrName);
             if (as == null) {
-                throw (new SchemaException("invalid-attr-name: " + attrName));
+                Object[] args = { attrName };
+                throw (new SchemaException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-invalid-attr-name", args)); 
             }
             as.setDefaultValues((Set) attrs.get(attrName), document);
         }

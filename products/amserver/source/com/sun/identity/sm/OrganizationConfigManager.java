@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.11 2007-01-18 23:43:18 arviranga Exp $
+ * $Id: OrganizationConfigManager.java,v 1.12 2007-02-20 22:51:20 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -858,47 +858,56 @@ public class OrganizationConfigManager {
                     SMSUtils.setAttributeValuePairs(e, attrsMap, ss
                             .getSearchableAttributeNames());
 
-                    // This is for storing organization attributes
-                    // in top/default realm node. eg.,ou=services,o=isp
-                    if (e.getDN().equalsIgnoreCase(SERVICES_NODE)) {
-                        String[] ocVals = e
+                    String dataStore = SMSEntry.getDataStore(token);
+                    // Add these OCs only for SunOne DS. Do not add the 
+                    // OCs for Active Directory.
+                    // Will get WILL_NOT_PERFORM in AD.
+                    if ((dataStore !=null) && 
+                        (!dataStore.equals("activeDir"))) {
+                        // This is for storing organization attributes
+                        // in top/default realm node. eg.,ou=services,o=isp
+                        if (e.getDN().equalsIgnoreCase(SERVICES_NODE)) {
+                            String[] ocVals = e
                                 .getAttributeValues(SMSEntry.ATTR_OBJECTCLASS);
-                        boolean exists = false;
-                        for (int ic = 0; ocVals != null 
+                            boolean exists = false;
+                            for (int ic = 0; ocVals != null 
                                 && ic < ocVals.length; ic++) 
-                        {
-                            if (ocVals[ic].startsWith(SMSEntry.OC_SERVICE_COMP))
                             {
-                                // OC needs to be added outside the for loop
-                                // else will throw concurrent mod exception
-                                exists = true;
-                                break;
+                                if (ocVals[ic].startsWith(
+                                    SMSEntry.OC_SERVICE_COMP)) {
+                                    // OC needs to be added outside the for loop
+                                    // else will throw concurrent mod exception
+                                    exists = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (!exists) {
-                            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,
+                            if (!exists) {
+                                e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,
                                     SMSEntry.OC_SERVICE_COMP);
-                        }
-                    } else if (e.getDN().startsWith(
-                            SMSEntry.ORGANIZATION_RDN + SMSEntry.EQUALS)) {
-                        // This is for storing organization attributes in
-                        // organizations created via sdk through realm console.
-                        String[] vals = e
-                                .getAttributeValues(SMSEntry.ATTR_OBJECTCLASS);
-                        boolean rsvcExists = false;
-                        for (int n = 0; vals != null && n < vals.length; n++) {
-                            if (vals[n].equalsIgnoreCase(
-                                    SMSEntry.OC_REALM_SERVICE)) 
-                            {
-                                // OC needs to be added outside the for loop
-                                // else will throw concurrent mod exception
-                                rsvcExists = true;
-                                break;
                             }
-                        }
-                        if (!rsvcExists) {
-                            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,
+                        } else if (e.getDN().startsWith(
+                            SMSEntry.ORGANIZATION_RDN + SMSEntry.EQUALS)) {
+                            // This is for storing organization attributes in
+                            // organizations created via sdk through realm 
+                            // console.
+                            String[] vals = e
+                                .getAttributeValues(SMSEntry.ATTR_OBJECTCLASS);
+                            boolean rsvcExists = false;
+                            for (int n = 0; vals != null && n < vals.length; 
+                                n++) {
+                                if (vals[n].equalsIgnoreCase(
+                                    SMSEntry.OC_REALM_SERVICE)) 
+                                {
+                                    // OC needs to be added outside the for loop
+                                    // else will throw concurrent mod exception
+                                    rsvcExists = true;
+                                    break;
+                                }
+                            }
+                            if (!rsvcExists) {
+                                e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,
                                     SMSEntry.OC_REALM_SERVICE);
+                            }
                         }
                     }
 

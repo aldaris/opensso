@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.3 2006-12-13 00:27:16 rarcot Exp $
+ * $Id: CreateServiceConfig.java,v 1.4 2007-02-20 22:51:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -328,23 +328,48 @@ public class CreateServiceConfig {
             throws SMSException, SSOException {
         SMSEntry e = new SMSEntry(token, dn);
         if (e.isNewEntry()) {
-            // Add needed object classes
-            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
-            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_SERVICE_COMP);
-            e.save();
+            int ndx = dn.indexOf(SMSEntry.SERVICES_RDN);
+            if (ndx >= 0) {
+                if (dn.indexOf(SMSEntry.SERVICES_RDN, ndx+11) >= 0) {
+                    // Add needed object classes for the 'ou=services' node
+                    // under the subrealms created.
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, 
+                        SMSEntry.OC_SERVICE);
+                } else {
+                    // Add needed object classes
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, 
+                        SMSEntry.OC_SERVICE_COMP);
+                }
+            }
         }
+        e.save();
     }
 
     static void checkAndCreateServiceVersionNode(SSOToken t, String dn,
             String serviceName) throws SMSException, SSOException {
         SMSEntry e = new SMSEntry(t, dn);
         if (e.isNewEntry()) {
-            // Add needed object classes
-            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
-            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_SERVICE);
-            e.addAttribute(SMSEntry.PLACEHOLDER_RDN, serviceName);
-            e.save();
+            int ndx = dn.indexOf(SMSEntry.SERVICES_RDN);
+            if (ndx >= 0) {
+                String firstSvc = dn.substring(ndx);
+                if (firstSvc.indexOf(SMSEntry.SERVICES_RDN) >= 0) {
+                    // Add needed object classes for the 'ou=services' node
+                    // under the subrealms created.
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, 
+                        SMSEntry.OC_SERVICE);
+                } else {
+                    // Add needed object classes and service name.
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, 
+                        SMSEntry.OC_SERVICE);
+                    e.addAttribute(SMSEntry.PLACEHOLDER_RDN, serviceName);
+                }
+            }
         }
+        e.save();
     }
 
     static void updateSubEntriesNode(SSOToken token, String sdn)
