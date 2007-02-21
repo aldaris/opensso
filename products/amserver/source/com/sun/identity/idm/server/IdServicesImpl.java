@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.13 2006-12-20 23:07:11 rarcot Exp $
+ * $Id: IdServicesImpl.java,v 1.14 2007-02-21 18:08:56 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2823,7 +2823,7 @@ public class IdServicesImpl implements IdServices {
             Map allAttrMaps = current.getResultAttributes();
             while (it.hasNext()) {
                 String m = (String) it.next();
-                String mname = DNUtils.DNtoName(m);
+                String mname = DNUtils.DNtoName(m, false);
                 Map attrMap = (Map) allAttrMaps.get(m);
                 attrMap = reverseMapAttributeNames(attrMap, configMap);
                 Set attrMaps = (Set) resultsMap.get(mname);

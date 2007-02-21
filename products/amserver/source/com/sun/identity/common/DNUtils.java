@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNUtils.java,v 1.2 2006-08-11 00:42:24 rarcot Exp $
+ * $Id: DNUtils.java,v 1.3 2007-02-21 18:08:55 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,12 +58,29 @@ public class DNUtils {
      */
     public static String DNtoName(String dn) {
         // String dn is guaranteed type of DN
+        return DNtoName(dn, true);
+    }
+
+    /**
+     * Converts a DN string to the token value of the naming attribute.
+     *
+     * @param dn
+     *            The passed in DN string
+     * @param noTypes
+     *            if true, returns only the values of the components and 
+     *            not the names(such as "cn")
+     * @return returns the token value of the naming attribute in the passed in
+     *         DN string. If the dn string is not in DN format, returns itself.
+     */
+    public static String DNtoName(String dn,  boolean noTypes) {
+        // String dn is guaranteed type of DN
         String id = dn;
         try {
-            id = LDAPDN.explodeDN(dn, true)[0];
+            id = LDAPDN.explodeDN(dn, noTypes)[0];
         } catch (Exception e) {
         }
         return id;
     }
+
 
 }
