@@ -1,0 +1,152 @@
+------------------------------------------------------------------------------
+README file for Open Web Single Sign-On tuning scripts (amtune)
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2007-02-23 23:45:00 bt199000 Exp $
+
+Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+------------------------------------------------------------------------------
+
+%% Contents:
+    %% 1. About tuning sripts
+    %% 2. Setup tuning scripts
+    %% 3. Running tuning scripts
+
+%% 1. About tuning scripts
+
+The Access Manager tuning scripts allow you to tune Access Manager and other 
+components of your deployment, including Sun Java System Directory Server, 
+the web container running Access Manager, and the operating system (OS) kernel 
+and TCP/IP parameters.
+
+The following table describes the tuning scripts that are available in OpenSSO release.
+
+Script 			Description 
+
+amtune 			Wrapper script that calls other scripts based on values in the amtune-env file.
+
+amtune-identity		Tunes the installed instance of Access Manager. 
+
+amtune-os 		Tunes the operating system kernel and TCP/IP parameters. 
+
+amtune-ws7 		Tunes the Sun Java System Web Server 7 Web container. 
+
+amtune-ws61 		Tunes the Sun Java System Web Server 6.1 2005Q4 SP5 Web container.
+
+amtune-as8 		Tunes the Sun Java System Application Server Enterprise Edition 8.2 Web container.
+
+amtune-as7 		Tunes the Sun Java System Application Server 7 Web container. 
+
+amtune-prepareDSTuner 	Generates the amtune-directory script, which you can use to tune the Directory Server 
+			that supports Access Manager. 
+
+amtune-directory	Tune the Directory Server 5 or 6.  This script is customized by amtune-prepareDSTuner 
+			using template amtune-directory.template.
+
+The tuning scripts for Unix and Linux platforms are written in Unix shell script
+and for Window platform are written in Perl script. Therefore, these same scripts on Window
+platform will have extension *.pl.
+
+The source location of tuning scripts is opensso/products/amserver/scripts/tune/unix and 
+opensso/products/amserver/scripts/tune/window.
+
+%% 2. Setup tuning scripts
+
+   Unzip amserver/built/dist/amtune.zip to a directory in the same machine where 
+OpenSSO server is installed.
+
+%% 2. Running tunning scripts
+
+2.1 Tuning Modes
+
+The Access Manager tuning scripts can run in the following modes, as determined by the AMTUNE_MODE 
+parameter in the amtune-env file.
+
+    * 	REVIEW mode (default). The scripts return tuning recommendations for an Access Manager deployment, 
+	but they do not make any actual changes to the environment.
+    * 	CHANGE mode. The scripts make all of the tuning modifications that are defined in the amtune-env 
+	file and amtune-directory.  Use CHANGE mode only after you have reviewed and understand the tuning 
+	changes that will be applied to your deployment.
+
+In either mode, the scripts return a list of tuning recommendations to the amtune debug log file and the 
+terminal window. The location of the log file is determined by the com.iplanet.services.debug.directory 
+parameter in the AMConfig.properties file or in the same location of tuning scripts if Access Manager does 
+not exists on the system. 
+
+
+2.2 Running scripts
+
+2.2.1 Running scripts to tune the operating system, the Web Container, and the Access Manager
+
+To run a tuning script, 
+
+	* Log in as or become superuser.
+	* If you have not run the scripts in REVIEW mode, ensure that AMTUNE_MODE is set to REVIEW 
+	  (default value) in the amtune-env file. 
+	* Edit other parameters in the amtune-env file, depending on the components you want to tune
+	* Run the script using the following syntax:
+		For wraper script, run
+			amtune dirmanager_password [ as8/ws7_admin_password ]
+
+		For individual scripts, run
+
+			amtune-os, amtune-identity, amtune-ws61, and amtune-as8 without any argument or
+			amtune-ws7 ws7_admin_password, or 
+			amtune-as8 as8_admin_password, or 
+			amtune-prepareDSTuner dirmanager_password
+
+		The tuning script parameters are:
+
+      			* dirmanager_password is the Directory Manager (cn=Directory Manager) password.
+      			* ws7_admin_password is the Administrator password that is required if you are 
+	  		  tuning Web Server (WEB_CONTAINER is set to WS7).
+      			* as8_admin_password is the Administrator password that is required if you are 
+	  		  tuning Application Server (WEB_CONTAINER is set to AS8).
+
+	* In REVIEW mode, run either the amtune script or one of the component scripts.  Review the tuning 
+	  recommendations in the debug log file. If needed, make changes to the amtune-env file based on 
+	  this run.
+	* If you are satisfied with the tuning recommendations from the REVIEW mode run, set AMTUNE_MODE 
+	  to CHANGE in the amtune-env file.
+	* In CHANGE mode, run either the amtune script or one of the component scripts. 
+	* Check the debug log file for the results of the run.
+
+	Note: In CHANGE mode, the amtune script might need to restart the Web container and Access Manager. In 
+	some instances, amtune might also recommend a system restart.
+
+
+2.2.2 Running a script to tune the Directory Server
+
+To run a tuning script, 
+
+	* Log in as or become superuser.
+	* Transfer or copy amtune-directory.tar file that was generated by amtune-prepareDSTuner script 
+	* Extract this tar file in any temporary location i.e. /tmp.  
+	* If you have not run the scripts in REVIEW mode, ensure that AMTUNE_MODE is set to REVIEW 
+	  (default value) in the amtune-directory file. 
+	* Edit other parameters in the amtune-directory file, depending on the components you want to tune
+	* Run the script using the following syntax:
+			amtune-directory dirmanager_password 
+	* In REVIEW mode, review the tuning recommendations in the debug log file. If needed, make changes to 
+	  the amtune-directory file based on this run.
+	* If you are satisfied with the tuning recommendations from the REVIEW mode run, set AMTUNE_MODE 
+	  to CHANGE in the amtune-directory file and run it again to modify the parameters.
+	* Check the debug log file for the results of the run.
