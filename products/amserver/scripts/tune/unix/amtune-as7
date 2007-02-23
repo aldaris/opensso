@@ -1,0 +1,288 @@
+#!/bin/sh
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: amtune-as7,v 1.1 2007-02-23 23:41:24 bt199000 Exp $
+#
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+#
+###############################################################################
+tuneInitConf() {
+    tune_file="$CONTAINER_INSTANCE_DIR/config/init.conf"
+
+    $ECHO $LINE_SEP
+    $ECHO "Tuning $tune_file..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   RqThrottle"
+    $ECHO "Current Value        : RqThrottle=`getMagnusEntry $tune_file 'RqThrottle'`"
+    $ECHO "Recommended Value    : RqThrottle=$numRQThrottle"
+    $ECHO
+    $ECHO "2.   RqThrottleMin"
+    $ECHO "Current Value        : RqThrottleMin=`getMagnusEntry $tune_file 'RqThrottleMin'`"
+    $ECHO "Recommended Value    : RqThrottleMin=$AMTUNE_NUM_WS_RQTHROTTLE_MIN"
+    $ECHO
+    $ECHO "3.   ThreadIncrement"
+    $ECHO "Current Value        : ThreadIncrement=`getMagnusEntry $tune_file 'ThreadIncrement'`"
+    $ECHO "Recommended Value    : ThreadIncrement=$AMTUNE_NUM_WS_THREAD_INCREMENT"
+    $ECHO
+    $ECHO "4.   ConnQueueSize"
+    $ECHO "Current Value        : ConnQueueSize=`getMagnusEntry $tune_file 'ConnQueueSize'`"
+    $ECHO "Recommended Value    : ConnQueueSize=$AMTUNE_NUM_TCP_CONN_SIZE"
+    $ECHO
+    $ECHO "5.   ListenQ"
+    $ECHO "Current Value        : ListenQ=`getMagnusEntry $tune_file 'ListenQ'`"
+    $ECHO "Recommended Value    : ListenQ=$AMTUNE_NUM_TCP_CONN_SIZE"
+    $ECHO
+    $ECHO
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    check_file_for_write $tune_file
+    if [ $? = 100 ]; then
+        return
+    fi
+
+    delete_line $tune_file "RqThrottle"
+    delete_line $tune_file "RqThrottleMin"
+    delete_line $tune_file "ThreadIncrement"
+    delete_line $tune_file "ConnQueueSize"
+    delete_line $tune_file "ListenQ"
+    delete_line $tune_file "# Start: Access Manager Tuning"
+    delete_line $tune_file "# End: Access Manager Tuning"
+
+    add_to_end $tune_file "# Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "RqThrottle $numRQThrottle"
+    add_to_end $tune_file "RqThrottleMin $AMTUNE_NUM_WS_RQTHROTTLE_MIN"
+    add_to_end $tune_file "ThreadIncrement $AMTUNE_NUM_WS_THREAD_INCREMENT"
+    add_to_end $tune_file "ConnQueueSize $AMTUNE_NUM_TCP_CONN_SIZE"
+    add_to_end $tune_file "ListenQ $AMTUNE_NUM_TCP_CONN_SIZE"
+    add_to_end $tune_file "# End: Access Manager Tuning"
+}
+
+tuneServerXML() {
+    tune_file="$CONTAINER_INSTANCE_DIR/config/server.xml"
+
+    $ECHO $LINE_SEP
+    $ECHO "Tuning $tune_file..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   Acceptor Threads"
+    $ECHO "Current Value        : acceptor-threads=`get_token_in_line $tune_file 'acceptor-threads' 'acceptor-threads'`"
+    $ECHO "Recommended Value    : acceptor-threads=$acceptorThreads"
+    $ECHO
+    $ECHO "2.   native-library-path-prefix (if Solaris 8)"
+    $ECHO "Current Value        : native-library-path-prefix=`get_token_in_line $tune_file 'native-library-path-prefix' 'native-library-path-prefix'`"
+    $ECHO "Recommended Value    : native-library-path-prefix=/usr/lib/lwp"
+    $ECHO
+    $ECHO "3.   Max and Min Heap Size"
+    $ECHO "Current Value        : Min Heap: `getServerXMLJVMOptionEntry $tune_file '-Xms' 'jvm-options'` Max Heap: `getServerXMLJVMOptionEntry $tune_file '-Xmx' 'jvm-options'`"
+    $ECHO "Recommended Value    : -Xms${maxHeapSize}M -Xmx${maxHeapSize}M"
+    $ECHO
+    $ECHO "4.   LogGC Output"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-Xloggc' 'jvm-options'`"
+    $ECHO "Recommended Value    : -Xloggc:$CONTAINER_INSTANCE_DIR/logs/gc.log"
+    $ECHO
+    $ECHO "5.   JVM in Server mode"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-server' 'jvm-options'`"
+    $ECHO "Recommended Value    : -server"
+    $ECHO
+    $ECHO "6.   Stack Size"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-Xss' 'jvm-options'`"
+    $ECHO "Recommended Value    : -Xss${AMTUNE_PER_THREAD_STACK_SIZE_IN_KB}k"
+    $ECHO
+    $ECHO "7.   New Size"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:NewSize' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:NewSize=${maxNewSize}M"
+    $ECHO
+    $ECHO "8.   Max New Size"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:MaxNewSize' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:MaxNewSize=${maxNewSize}M"
+    $ECHO
+    $ECHO "9.   Perm Size"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:PermSize' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:PermSize=${maxPermSize}M (if the calculated value is >= ${AMTUNE_MIN_PERM_SIZE_AS7}M )"
+    $ECHO
+    $ECHO "10.  Max Perm Size"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:MaxPermSize' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:MaxPermSize=${maxPermSize}M (if the calculated value is >= ${AMTUNE_MIN_PERM_SIZE_AS7}M )"
+    $ECHO
+    $ECHO "11.  Disable Explicit GC"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+DisableExplicitGC' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+DisableExplicitGC"
+    $ECHO
+    $ECHO "12.  Use Parallel GC"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+UseParNewGC' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+UseParNewGC"
+    $ECHO
+    $ECHO "13.  CMSPermGenSweepingEnabled"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+CMSPermGenSweepingEnabled' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+CMSPermGenSweepingEnabled"
+    $ECHO
+    $ECHO "14.  CMS Class Unloading"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+CMSClassUnloadingEnabled' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+CMSClassUnloadingEnabled"
+    $ECHO
+    $ECHO "15.  CMS Full GCs before Compact"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+UseCMSCompactAtFullCollection' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+UseCMSCompactAtFullCollection"
+    $ECHO
+    $ECHO "16.  CMS Full GCs before Compact"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:CMSFullGCsBeforeCompaction' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:CMSFullGCsBeforeCompaction=0"
+    $ECHO
+    $ECHO "17.  Soft Reference Cleanup"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:SoftRefLRUPolicyMSPerMB' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:SoftRefLRUPolicyMSPerMB=0"
+    $ECHO
+    $ECHO "18.  Print Class Histogram"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+PrintClassHistogram' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+PrintClassHistogram"
+    $ECHO
+    $ECHO "19.  Print GC Details"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+PrintGCDetails' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+PrintGCDetails"
+    $ECHO
+    $ECHO "20.  Print GC Time Stamps"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+PrintGCTimeStamps' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+PrintGCTimeStamps"
+    $ECHO
+    $ECHO "21.  OverrideDefaultLibthread (if Solaris 8)"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+OverrideDefaultLibthread' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+OverrideDefaultLibthread"
+    $ECHO
+    $ECHO "22.  Enable Conc Mark Sweep GC"
+    $ECHO "Current Value        : `getServerXMLJVMOptionEntry $tune_file '-XX:+UseConcMarkSweepGC' 'jvm-options'`"
+    $ECHO "Recommended Value    : -XX:+UseConcMarkSweepGC"
+    $ECHO
+    $ECHO
+ 
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    check_file_for_write $tune_file
+    if [ $? = 100 ]; then
+        return
+    fi
+
+    substitute_token_in_line $tune_file "acceptor-threads" "acceptor-threads" "$acceptorThreads" 0 ":"
+
+    if [ ! "`/bin/uname -r | grep 8 | wc -m`" -eq "0" ] ; then
+        $ECHO  "Solaris 8 specific changes"
+        substitute_token_in_line $tune_file "native-library-path-prefix" "native-library-path-prefix" "/usr/lib/lwp" 2 ":"
+    fi
+
+    delete_line $tune_file "Start: Performance Related JVM Options for IS"
+    delete_line $tune_file "<jvm-options>-Xms"
+    delete_line $tune_file "<jvm-options>-Xmx"
+    delete_line $tune_file "<jvm-options> -Xms"
+    delete_line $tune_file "<jvm-options> -Xmx"
+    delete_line $tune_file "<jvm-options>-Xloggc"
+    delete_line $tune_file "<jvm-options>-Xrs"
+    delete_line $tune_file "<jvm-options>-server"
+    delete_line $tune_file "<jvm-options>-Xss"
+    delete_line $tune_file "<jvm-options>-XX:NewSize"
+    delete_line $tune_file "<jvm-options>-XX:MaxNewSize"
+    delete_line $tune_file "<jvm-options>-XX:PermSize"
+    delete_line $tune_file "<jvm-options>-XX:MaxPermSize"
+    delete_line $tune_file "<jvm-options>-XX:CMSFullGCsBeforeCompaction"
+    delete_line $tune_file "<jvm-options>-XX:+DisableExplicitGC"
+    delete_line $tune_file "<jvm-options>-XX:+UseParNewGC"
+    delete_line $tune_file "<jvm-options>-XX:+UseConcMarkSweepGC"
+    delete_line $tune_file "<jvm-options>-XX:+CMSPermGenSweepingEnabled"
+    delete_line $tune_file "<jvm-options>-XX:+CMSClassUnloadingEnabled"
+    delete_line $tune_file "<jvm-options>-XX:+UseCMSCompactAtFullCollection"
+    delete_line $tune_file "<jvm-options>-XX:SoftRefLRUPolicyMSPerMB"
+    delete_line $tune_file "<jvm-options>-XX:+PrintClassHistogram"
+    delete_line $tune_file "<jvm-options>-XX:+PrintGCDetails"
+    delete_line $tune_file "<jvm-options>-XX:+PrintGCTimeStamps"
+    delete_line $tune_file "<jvm-options>-XX:+OverrideDefaultLibthread"
+    delete_line $tune_file "End: Performance Related JVM Options for IS"
+
+    insert_line $tune_file "java.util.logging.manager" "<!-- Start: Performance Related JVM Options for Access Manager -->"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-Xms${maxHeapSize}M -Xmx${maxHeapSize}M</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-Xloggc:$CONTAINER_INSTANCE_DIR/logs/gc.log</jvm-options>"
+    #insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-Xrs</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-server</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-Xss${AMTUNE_PER_THREAD_STACK_SIZE_IN_KB}k</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:NewSize=${maxNewSize}M</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:MaxNewSize=${maxNewSize}M</jvm-options>"
+
+    if [ $maxPermSize -ge $AMTUNE_MIN_PERM_SIZE_AS7 ]; then
+        insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:PermSize=${maxPermSize}M</jvm-options>"
+        insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:MaxPermSize=${maxPermSize}M</jvm-options>"
+    fi
+
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+DisableExplicitGC</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+UseParNewGC</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+UseConcMarkSweepGC</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+CMSPermGenSweepingEnabled</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+CMSClassUnloadingEnabled</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+UseCMSCompactAtFullCollection</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:CMSFullGCsBeforeCompaction=0</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:SoftRefLRUPolicyMSPerMB=0</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+PrintClassHistogram</jvm-options>"
+    #insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+PrintGCDetails</jvm-options>"
+    insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+PrintGCTimeStamps</jvm-options>"
+
+    if [ ! "`/bin/uname -r | grep 8 | wc -m`" -eq "0" ] ; then
+        $ECHO  "Solaris 8 specific changes"
+        insert_line $tune_file "java.util.logging.manager" "    <jvm-options>-XX:+OverrideDefaultLibthread</jvm-options>"
+    fi
+
+
+    insert_line $tune_file "java.util.logging.manager" "<!-- End: Performance Related JVM Options for Access Manager -->"
+
+}
+###############################################################################
+# Start of main program
+###############################################################################
+SCRIPT_LOCATION=`/usr/bin/dirname $0`
+AMTUNE_SCRIPT_RECORD_STRING="AMTUNE_AS7_SCRIPT"
+
+# import the environment
+if [ -f $SCRIPT_LOCATION/amtune-env ]; then
+    if [ ! "$INIT_STATUS" = "INIT_COMPLETE" ]; then
+        . $SCRIPT_LOCATION/amtune-env
+    fi
+fi
+
+ECHO_MSG "Access Manager - Application Server Tuning Script"
+
+tuneInitConf	| eval $OUTPUT_TYPE
+tuneServerXML	| eval $OUTPUT_TYPE
+
+if [ "$AMTUNE_MODE" = "CHANGE" ]; then
+   $ECHO
+   $ECHO "##################################################################"
+   $ECHO "Please restart the application server to have new configurations "
+   $ECHO "take effect"
+   $ECHO "##################################################################"
+   $ECHO
+fi
+
+ECHO_MSG $PARA_SEP

@@ -1,0 +1,509 @@
+#!/bin/sh
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: amtune-os,v 1.1 2007-02-23 23:41:26 bt199000 Exp $
+#
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+#
+###############################################################################
+OSVERSION=`/bin/uname -r`
+
+###############################################################################
+#  Functions for Linux OS
+###############################################################################
+getSysctlParam() {
+    paramString=$1
+
+    if [ "$paramString" = "" ]; then
+        $ECHO "ERROR: Argument is missing"
+        return
+    fi
+
+    $SYSCTL -a | $GREP "$paramString" | $AWK -F" = " '{ print $2 }' | $SED -e 's/\t/ /g'
+
+}
+
+tuneSysctl() {
+    #Linux Kernel Tuning
+
+    tune_file="/etc/sysctl.conf"
+
+    $ECHO $LINE_SEP
+    $ECHO "Linux Kernel Tuning..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   fs.file-max"
+    $ECHO "Current Value        :   fs.file-max =`getEntry 'fs.file-max ' $tune_file`"
+    $ECHO "Recommended Value    :   fs.file-max = $AMTUNE_NUM_FILE_DESCRIPTORS"
+    $ECHO
+    $ECHO "2.   vm.bdflush"
+    $ECHO "Current Value        :   vm.bdflush =`getEntry 'vm.bdflush ' $tune_file`"
+    $ECHO "Recommended Value    :   vm.bdflush = $AMTUNE_LINUX_VM_BDFLUSH"
+    $ECHO
+    $ECHO "3.   net.ipv4.ip_local_port_range"
+    $ECHO "Current Value        :   net.ipv4.ip_local_port_range=`getSysctlParam 'net.ipv4.ip_local_port_range'`"
+    $ECHO "Recommended Value    :   net.ipv4.ip_local_port_range=$AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE"
+    $ECHO
+    $ECHO "4.   net.core.rmem_max"
+    $ECHO "Current Value        :   net.core.rmem_max=`getSysctlParam 'net.core.rmem_max'`"
+    $ECHO "Recommended Value    :   net.core.rmem_max=$AMTUNE_LINUX_CORE_RMEM_MAX"
+    $ECHO
+    $ECHO "5.   net.core.rmem_default"
+    $ECHO "Current Value        :   net.core.rmem_default=`getSysctlParam 'net.core.rmem_default'`"
+    $ECHO "Recommended Value    :   net.core.rmem_default=$AMTUNE_LINUX_CORE_RMEM_DEFAULT"
+    $ECHO
+    $ECHO "6.   net.ipv4.tcp_rmem"
+    $ECHO "Current Value        :   net.ipv4.tcp_rmem=`getSysctlParam 'net.ipv4.tcp_rmem'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_rmem=$AMTUNE_LINUX_IPV4_TCP_RMEM"
+    $ECHO
+    $ECHO "7.   net.ipv4.tcp_wmem"
+    $ECHO "Current Value        :   net.ipv4.tcp_wmem=`getSysctlParam 'net.ipv4.tcp_wmem'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_wmem=$AMTUNE_LINUX_IPV4_TCP_WMEM"
+    $ECHO
+    $ECHO "8.   net.ipv4.tcp_sack"
+    $ECHO "Current Value        :   net.ipv4.tcp_sack=`getSysctlParam 'net.ipv4.tcp_sack'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_sack=$AMTUNE_LINUX_IPV4_TCP_SACK"
+    $ECHO
+    $ECHO "9.   net.ipv4.tcp_timestamps"
+    $ECHO "Current Value        :   net.ipv4.tcp_timestamps=`getSysctlParam 'net.ipv4.tcp_timestamps'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_timestamps=$AMTUNE_LINUX_IPV4_TCP_TIMESTAMPS"
+    $ECHO
+    $ECHO "10.   net.ipv4.tcp_window_scaling"
+    $ECHO "Current Value        :   net.ipv4.tcp_window_scaling=`getSysctlParam 'net.ipv4.tcp_window_scaling'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_window_scaling=$AMTUNE_LINUX_IPV4_TCP_WIN_SCALE"
+    $ECHO
+    $ECHO "11.  net.ipv4.tcp_keepalive_time"
+    $ECHO "Current Value        :   net.ipv4.tcp_keepalive_time=`getSysctlParam 'net.ipv4.tcp_keepalive_time'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_keepalive_time=$AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME"
+    $ECHO
+    $ECHO "12.  net.ipv4.tcp_keepalive_intvl"
+    $ECHO "Current Value        :   net.ipv4.tcp_keepalive_intvl=`getSysctlParam 'net.ipv4.tcp_keepalive_intvl'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_keepalive_intvl=$AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL"
+    $ECHO
+    $ECHO "13.  net.ipv4.tcp_fin_timeout"
+    $ECHO "Current Value        :   net.ipv4.tcp_fin_timeout=`getSysctlParam 'net.ipv4.tcp_fin_timeout'`"
+    $ECHO "Recommended Value    :   net.ipv4.tcp_fin_timeout=$AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT"
+    $ECHO
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    delete_line $tune_file "Start: Access Manager Tuning"
+    delete_line $tune_file "fs.file-max"
+    delete_line $tune_file "vm.bdflush"
+    delete_line $tune_file "net.ipv4.ip_local_port_range"
+    delete_line $tune_file "net.core.rmem_max"
+    delete_line $tune_file "net.core.rmem_default"
+    delete_line $tune_file "net.ipv4.tcp_rmem"
+    delete_line $tune_file "net.ipv4.tcp_wmem"
+    delete_line $tune_file "net.ipv4.tcp_sack"
+    delete_line $tune_file "net.ipv4.tcp_timestamps"
+    delete_line $tune_file "net.ipv4.tcp_window_scaling"
+    delete_line $tune_file "net.ipv4.tcp_keepalive_time"
+    delete_line $tune_file "net.ipv4.tcp_keepalive_intvl"
+    delete_line $tune_file "net.ipv4.tcp_fin_timeout"
+    delete_line $tune_file "End: Access Manager Tuning"
+
+    add_to_end $tune_file "# Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "fs.file-max = $AMTUNE_NUM_FILE_DESCRIPTORS"
+    add_to_end $tune_file "vm.bdflush = $AMTUNE_LINUX_VM_BDFLUSH"
+    add_to_end $tune_file "net.ipv4.ip_local_port_range = $AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE"
+    add_to_end $tune_file "net.core.rmem_max = $AMTUNE_LINUX_CORE_RMEM_MAX"
+    add_to_end $tune_file "net.core.rmem_default = $AMTUNE_LINUX_CORE_RMEM_DEFAULT"
+    add_to_end $tune_file "net.ipv4.tcp_rmem = $AMTUNE_LINUX_IPV4_TCP_RMEM"
+    add_to_end $tune_file "net.ipv4.tcp_wmem = $AMTUNE_LINUX_IPV4_TCP_WMEM"
+    add_to_end $tune_file "net.ipv4.tcp_sack = $AMTUNE_LINUX_IPV4_TCP_SACK"
+    add_to_end $tune_file "net.ipv4.tcp_timestamps = $AMTUNE_LINUX_IPV4_TCP_TIMESTAMPS"
+    add_to_end $tune_file "net.ipv4.tcp_window_scaling = $AMTUNE_LINUX_IPV4_TCP_WIN_SCALE"
+    add_to_end $tune_file "net.ipv4.tcp_keepalive_time = $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME"
+    add_to_end $tune_file "net.ipv4.tcp_keepalive_intvl = $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL"
+    add_to_end $tune_file "net.ipv4.tcp_fin_timeout = $AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT"
+    add_to_end $tune_file "# End: Access Manager Tuning : `date`"
+
+
+    # Loading new values from sysctl.conf
+    $ECHO "Loading new values from $tune_file"
+    $SYSCTL -p $tune_file
+
+}
+
+tuneRcLocal() {
+    #Linux Boot Script
+
+    AMTUNE_TCP_FIN_TIMEOUT_NAME="/proc/sys/net/ipv4/tcp_fin_timeout"
+    AMTUNE_TCP_KEEPALIVE_TIME_NAME="/proc/sys/net/ipv4/tcp_keepalive_time"
+    AMTUNE_TCP_KEEPALIVE_INTVL_NAME="/proc/sys/net/ipv4/tcp_keepalive_intvl"
+    AMTUNE_TCP_WINDOW_SCALING_NAME="/proc/sys/net/ipv4/tcp_window_scaling"
+    AMTUNE_VM_BDFLUSH_NAME="/proc/sys/vm/bdflush"
+    AMTUNE_LOAD_SYSCTL_CMD="sysctl -p /etc/sysctl.conf"
+
+    tune_file="/etc/rc.local"
+
+    $ECHO $LINE_SEP
+    $ECHO "Linux Boot Script Tuning..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   $AMTUNE_TCP_FIN_TIMEOUT_NAME"
+    $ECHO "Current Value        :   `$GREP -i $AMTUNE_TCP_FIN_TIMEOUT_NAME $tune_file`"
+    $ECHO "Recommended Value    :   echo $AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT > $AMTUNE_TCP_FIN_TIMEOUT_NAME"
+    $ECHO
+    $ECHO "2.   $AMTUNE_TCP_KEEPALIVE_TIME_NAME"
+    $ECHO "Current Value        :   `$GREP -i $AMTUNE_TCP_KEEPALIVE_TIME_NAME $tune_file`"
+    $ECHO "Recommended Value    :   echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME > $AMTUNE_TCP_KEEPALIVE_TIME_NAME"
+    $ECHO
+    $ECHO "3.   $AMTUNE_TCP_KEEPALIVE_INTVL_NAME"
+    $ECHO "Current Value        :   `$GREP -i $AMTUNE_TCP_KEEPALIVE_INTVL_NAME $tune_file`"
+    $ECHO "Recommended Value    :   echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL > $AMTUNE_TCP_KEEPALIVE_INTVL_NAME"
+    $ECHO
+    $ECHO "4.   $AMTUNE_TCP_WINDOW_SCALING_NAME"
+    $ECHO "Current Value        :   `$GREP -i $AMTUNE_TCP_WINDOW_SCALING_NAME $tune_file`"
+    $ECHO "Recommended Value    :   echo $AMTUNE_LINUX_IPV4_TCP_WIN_SCALE > $AMTUNE_TCP_WINDOW_SCALING_NAME"
+    $ECHO
+    $ECHO "5.   $AMTUNE_VM_BDFLUSH_NAME"
+    $ECHO "Current Value        :   `$GREP -i $AMTUNE_VM_BDFLUSH_NAME $tune_file`"
+    $ECHO "Recommended Value    :   echo $AMTUNE_LINUX_VM_BDFLUSH > $AMTUNE_VM_BDFLUSH_NAME"
+    $ECHO
+    $ECHO "6.   Loading Kernel file with $AMTUNE_LOAD_SYSCTL_CMD"
+    $ECHO "Current Value        :   `$GREP -i "$AMTUNE_LOAD_SYSCTL_CMD" $tune_file`"
+    $ECHO "Recommended Value    :   $AMTUNE_LOAD_SYSCTL_CMD"
+    $ECHO
+
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    delete_line $tune_file "Start: Access Manager Tuning"
+    delete_line $tune_file "`$ECHO $AMTUNE_TCP_FIN_TIMEOUT_NAME  | $SED -e 's/\//\\\\\//g'`"
+    delete_line $tune_file "`$ECHO $AMTUNE_TCP_KEEPALIVE_TIME_NAME | $SED -e 's/\//\\\\\//g'`"
+    delete_line $tune_file "`$ECHO $AMTUNE_TCP_KEEPALIVE_INTVL_NAME | $SED -e 's/\//\\\\\//g'`"
+    delete_line $tune_file "`$ECHO $AMTUNE_TCP_WINDOW_SCALING_NAME  | $SED -e 's/\//\\\\\//g'`"
+    delete_line $tune_file "`$ECHO $AMTUNE_VM_BDFLUSH_NAME | $SED -e 's/\//\\\\\//g'`"
+    delete_line $tune_file $AMTUNE_LOAD_SYSCTL_CMD
+    delete_line $tune_file "End: Access Manager Tuning"
+
+    add_to_end $tune_file "# Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT > $AMTUNE_TCP_FIN_TIMEOUT_NAME"
+    add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME > $AMTUNE_TCP_KEEPALIVE_TIME_NAME"
+    add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL > $AMTUNE_TCP_KEEPALIVE_INTVL_NAME"
+    add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_WIN_SCALE > $AMTUNE_TCP_WINDOW_SCALING_NAME"
+    add_to_end $tune_file "echo $AMTUNE_LINUX_VM_BDFLUSH > $AMTUNE_VM_BDFLUSH_NAME"
+    add_to_end $tune_file "$AMTUNE_LOAD_SYSCTL_CMD"
+    add_to_end $tune_file "# End: Access Manager Tuning : `date`"
+}
+
+tuneSecurityLimits() {
+    #Openfile and file descriptors
+
+    tune_file="/etc/security/limits.conf"
+
+    $ECHO $LINE_SEP
+    $ECHO "Openfile and File Descriptors Tuning..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+
+    curNoFileSoftString=`$GREP -v "^#" $tune_file | $GREP -i "soft" | $GREP -i "nofile"`
+    if [ "$curNoFileSoftString" != "" ]; then
+        curNoFileSoftDomain=`$ECHO "$curNoFileSoftString" | $AWK -F" " '{ print $1 }'`
+        newNoFileSoftString="$curNoFileSoftDomain               soft    nofile          $AMTUNE_NUM_FILE_DESCRIPTORS"
+    else
+        newNoFileSoftString="*               soft    nofile          $AMTUNE_NUM_FILE_DESCRIPTORS"
+    fi
+
+    $ECHO "1.   Number of Files - Soft"
+    $ECHO "Current Value        :   $curNoFileSoftString"
+    $ECHO "Recommended Value    :   $newNoFileSoftString"
+    $ECHO
+
+    curNoFileHardString=`$GREP -v "^#" $tune_file | $GREP -i "hard" | $GREP -i "nofile"`
+    if [ "$curNoFileHardString" != "" ]; then
+        curNoFileHardDomain=`$ECHO "$curNoFileHardString" | $AWK -F" " '{ print $1 }'`
+        newNoFileHardString="$curNoFileHardDomain               hard    nofile          $AMTUNE_NUM_FILE_DESCRIPTORS"
+    else
+        newNoFileHardString="*               hard    nofile          $AMTUNE_NUM_FILE_DESCRIPTORS"
+    fi
+
+    $ECHO "2.   Number of Files - Hard"
+    $ECHO "Current Value        :   $curNoFileHardString"
+    $ECHO "Recommended Value    :   $newNoFileHardString"
+    $ECHO
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    delete_line $tune_file "Start: Access Manager Tuning"
+    if [ "$curNoFileSoftString" != "" ]; then
+        delete_line $tune_file "$curNoFileSoftString"
+    fi
+
+    if [ "$curNoFileHardString" != "" ]; then
+        delete_line $tune_file "$curNoFileHardString"
+    fi
+    delete_line $tune_file "End: Access Manager Tuning"
+
+    add_to_end $tune_file "# Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "$newNoFileSoftString"
+    add_to_end $tune_file "$newNoFileHardString"
+    add_to_end $tune_file "# End: Access Manager Tuning : `date`"
+
+}
+
+#############################################################################
+#  Functions for Solaris OS
+#############################################################################
+tuneEtcSystem() {
+    #Solaris Kernel Tuning
+
+    tune_file="/etc/system"
+
+    $ECHO $LINE_SEP
+    $ECHO "Solaris Kernel Tuning..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   rlim_fd_max"
+    $ECHO "Current Value        :   rlim_fd_max=`getEntry 'rlim_fd_max=' $tune_file`"
+    $ECHO "Recommended Value    :   rlim_fd_max=$AMTUNE_NUM_FILE_DESCRIPTORS"
+    $ECHO
+    $ECHO "2.   rlim_fd_cur"
+    $ECHO "Current Value        :   rlim_fd_cur=`getEntry 'rlim_fd_cur=' $tune_file`"
+    $ECHO "Recommended Value    :   rlim_fd_cur=$AMTUNE_NUM_FILE_DESCRIPTORS"
+    $ECHO
+
+    if [ "$OSVERSION" = "5.9" ] || [ "$OSVERSION" = "5.8" ]; then
+    
+    	$ECHO "3.   tcp:tcp_conn_hash_size=$AMTUNE_NUM_TCP_CONN_SIZE"
+    	$ECHO "Current Value        :   tcp:tcp_conn_hash_size=`getEntry 'tcp:tcp_conn_hash_size=' $tune_file`"
+    	$ECHO "Recommended Value    :   tcp:tcp_conn_hash_size=$AMTUNE_NUM_TCP_CONN_SIZE"
+    	$ECHO
+    fi
+    $ECHO
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    check_file_for_write $tune_file
+    if [ $? = 100 ]; then
+        return
+    fi
+
+    delete_line $tune_file "* Start: Access Manager Tuning"
+    delete_line $tune_file "rlim_fd_max"
+    delete_line $tune_file "rlim_fd_cur"
+    delete_line $tune_file "sq_max_size"
+    delete_line $tune_file "tcp:tcp_conn_hash_size"
+    delete_line $tune_file "* End: Access Manager Tuning"
+
+    add_to_end $tune_file "* Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "set rlim_fd_max=$AMTUNE_NUM_FILE_DESCRIPTORS"
+    add_to_end $tune_file "set rlim_fd_cur=$AMTUNE_NUM_FILE_DESCRIPTORS"
+    
+    if [ "$OSVERSION" = "5.9" ] || [ "$OSVERSION" = "5.8" ]; then
+
+    	add_to_end $tune_file "set tcp:tcp_conn_hash_size=$AMTUNE_NUM_TCP_CONN_SIZE"
+    fi
+
+    add_to_end $tune_file "* End: Access Manager Tuning"
+
+}
+
+tuneTCP() {
+    #Solaris TCP Tuning
+
+    tune_file="/etc/rc2.d/S71ndd_tcp"
+
+    $ECHO $LINE_SEP
+    $ECHO "Solaris TCP Tuning using ndd..."
+    $ECHO
+    $ECHO "File                 : $tune_file"
+    $ECHO "Parameter tuning     :"
+    $ECHO
+    $ECHO "1.   /dev/tcp tcp_fin_wait_2_flush_interval"
+    $ECHO "Current Value        :   /dev/tcp tcp_fin_wait_2_flush_interval `$NDD -get /dev/tcp tcp_fin_wait_2_flush_interval`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_fin_wait_2_flush_interval 67500"
+    $ECHO
+    $ECHO "2.   /dev/tcp tcp_conn_req_max_q"
+    $ECHO "Current Value        :   /dev/tcp tcp_conn_req_max_q `$NDD -get /dev/tcp tcp_conn_req_max_q`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_conn_req_max_q $AMTUNE_NUM_TCP_CONN_SIZE"
+    $ECHO
+    $ECHO "3.   /dev/tcp tcp_conn_req_max_q0"
+    $ECHO "Current Value        :   /dev/tcp tcp_conn_req_max_q0 `$NDD -get /dev/tcp tcp_conn_req_max_q0`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_conn_req_max_q0 $AMTUNE_NUM_TCP_CONN_SIZE"
+    $ECHO
+    $ECHO "4.   /dev/tcp tcp_keepalive_interval"
+    $ECHO "Current Value        :   /dev/tcp tcp_keepalive_interval `$NDD -get /dev/tcp tcp_keepalive_interval`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_keepalive_interval 90000"
+    $ECHO
+    $ECHO "5.  /dev/tcp tcp_smallest_anon_port"
+    $ECHO "Current Value        :   /dev/tcp tcp_smallest_anon_port `$NDD -get /dev/tcp tcp_smallest_anon_port`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_smallest_anon_port 1024"
+    $ECHO
+    $ECHO "6.  /dev/tcp tcp_slow_start_initial"
+    $ECHO "Current Value        :   /dev/tcp tcp_slow_start_initial `$NDD -get /dev/tcp tcp_slow_start_initial`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_slow_start_initial 2"
+    $ECHO
+    $ECHO "7.  /dev/tcp tcp_xmit_hiwat"
+    $ECHO "Current Value        :   /dev/tcp tcp_xmit_hiwat `$NDD -get /dev/tcp tcp_xmit_hiwat`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_xmit_hiwat $AMTUNE_NUM_FILE_DESCRIPTORS"
+    $ECHO
+    $ECHO "8.  /dev/tcp tcp_recv_hiwat"
+    $ECHO "Current Value        :   /dev/tcp tcp_recv_hiwat `$NDD -get /dev/tcp tcp_recv_hiwat`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_recv_hiwat $AMTUNE_NUM_FILE_DESCRIPTORS"
+    $ECHO
+    $ECHO "9.  /dev/tcp tcp_ip_abort_cinterval"
+    $ECHO "Current Value        :   /dev/tcp tcp_ip_abort_cinterval `$NDD -get /dev/tcp tcp_ip_abort_cinterval`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_ip_abort_cinterval 10000"
+    $ECHO
+    $ECHO "10.  /dev/tcp tcp_deferred_ack_interval"
+    $ECHO "Current Value        :   /dev/tcp tcp_deferred_ack_interval `$NDD -get /dev/tcp tcp_deferred_ack_interval`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_deferred_ack_interval 5"
+    $ECHO
+    $ECHO "11.  /dev/tcp tcp_strong_iss"
+    $ECHO "Current Value        :   /dev/tcp tcp_strong_iss `$NDD -get /dev/tcp tcp_strong_iss`"
+    $ECHO "Recommended Value    :   /dev/tcp tcp_strong_iss 2"
+    $ECHO
+    $ECHO
+
+    if [ "$AMTUNE_MODE" = "REVIEW" ]; then
+        return
+    fi
+
+    #backup the file if it already exists. amutils does this, but the orig file (S71ndd_tcp-orig-<pid>)
+    #take precedence over the S71ndd_tcp file
+    if [ -f $tune_file ]; then
+        base_file_name=`$BASENAME $tune_file`
+        dir_name=`$DIRNAME $tune_file`
+        $CP $tune_file $dir_name/orig-$$-$base_file_name
+    fi
+
+    if [ ! -f $tune_file ]; then
+        touch $tune_file
+    fi
+
+    check_file_for_write $tune_file
+    if [ $? = 100 ]; then
+        return
+    fi
+
+    delete_line $tune_file "# Start: Access Manager Tuning"
+    delete_line $tune_file "tcp_time_wait_interval"
+    delete_line $tune_file "tcp_fin_wait_2_flush_interval"
+    delete_line $tune_file "tcp_conn_req_max_q"
+    delete_line $tune_file "tcp_conn_req_max_q0"
+    delete_line $tune_file "tcp_ip_abort_interval"
+    delete_line $tune_file "tcp_keepalive_interval"
+    delete_line $tune_file "tcp_rexmit_interval_max"
+    delete_line $tune_file "tcp_rexmit_interval_min"
+    delete_line $tune_file "tcp_rexmit_interval_initial"
+    delete_line $tune_file "tcp_smallest_anon_port"
+    delete_line $tune_file "tcp_slow_start_initial"
+    delete_line $tune_file "tcp_xmit_hiwat"
+    delete_line $tune_file "tcp_recv_hiwat"
+    delete_line $tune_file "tcp_ip_abort_cinterval"
+    delete_line $tune_file "tcp_ip_abort_interval"
+    delete_line $tune_file "tcp_deferred_ack_interval"
+    delete_line $tune_file "tcp_strong_iss"
+    delete_line $tune_file "# End: Access Manager Tuning"
+
+
+    add_to_end $tune_file "# Start: Access Manager Tuning : `date`"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_fin_wait_2_flush_interval 67500"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_conn_req_max_q $AMTUNE_NUM_TCP_CONN_SIZE"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_conn_req_max_q0 $AMTUNE_NUM_TCP_CONN_SIZE"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_keepalive_interval 90000"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_smallest_anon_port 1024"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_slow_start_initial 2"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_xmit_hiwat $AMTUNE_NUM_FILE_DESCRIPTORS"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_recv_hiwat $AMTUNE_NUM_FILE_DESCRIPTORS"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_ip_abort_cinterval 10000"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_deferred_ack_interval 5"
+    add_to_end $tune_file "ndd -set /dev/tcp tcp_strong_iss 2"
+    add_to_end $tune_file "# End: Access Manager Tuning"
+
+    $RM $tune_file-orig-$$
+    
+    #source the tcp tune file so that the settings are visible immediately
+    . $tune_file
+
+
+}
+#############################################################################
+# Start of main program
+#############################################################################
+if [ "$OSVERSION" = "5.10" ]; then
+    curSystemZone=`/usr/sbin/zoneadm list | /bin/grep -i global`
+
+    if [ "$curSystemZone" != "global" ]; then
+        echo "***********************************************************************"
+        echo "* WARNING: amtune-os is not running because system zone is not global *"
+        echo "***********************************************************************"
+        echo
+        exit
+    fi
+fi
+
+SCRIPT_LOCATION=`dirname $0`
+AMTUNE_SCRIPT_RECORD_STRING="AMTUNE_OS_SCRIPT"
+
+# import the environment
+if [ -f $SCRIPT_LOCATION/amtune-env ]; then
+    if [ ! "$INIT_STATUS" = "INIT_COMPLETE" ]; then
+        . $SCRIPT_LOCATION/amtune-env
+    fi
+fi
+
+if [ "$OSTYPE" = "SunOS" ]; then
+
+    ECHO_MSG "Solaris Tuning Script" 
+
+    tuneEtcSystem 	| eval $OUTPUT_TYPE
+
+    tuneTCP		| eval $OUTPUT_TYPE
+elif [ "$OSTYPE" = "Linux" ]; then
+
+    ECHO_MSG "Linux Tuning Script"
+
+    #check if this is a linux installation ...
+
+    #Linux tuning
+
+    tuneSysctl              | eval $OUTPUT_TYPE
+    tuneRcLocal             | eval $OUTPUT_TYPE
+    tuneSecurityLimits      | eval $OUTPUT_TYPE
+
+    if [ "$AMTUNE_MODE" = "CHANGE" ]; then
+        ECHO_MSG "Please reboot the system for the changes to take effect..."
+    fi
+else
+    $ECHO "ERROR: Invalid OS Type $OSTYPE. Cannot proceed."
+fi
+
+ECHO_MSG $PARA_SEP
