@@ -39,10 +39,6 @@
 		<param-name>jato:com.sun.identity.console.delegation.*:moduleURL</param-name>
 		<param-value>../delegation</param-value>
 	 </context-param>
-         <context-param>
-		<param-name>jato:com.sun.identity.console.dm.*:moduleURL</param-name>
-		<param-value>../dm</param-value>
-	 </context-param>
 	 <context-param>
 		<param-name>jato:enforceStrictSessionTimeout</param-name>
 		<param-value>true</param-value>
@@ -108,10 +104,6 @@
         <servlet>
                 <servlet-name>DelegationServlet</servlet-name>
 		<servlet-class>com.sun.identity.console.delegation.DelegationServlet</servlet-class>
-	</servlet>
-        <servlet>
-                <servlet-name>DMServlet</servlet-name>
-		<servlet-class>com.sun.identity.console.dm.DMServlet</servlet-class>
 	</servlet>
 
         <!-- lockhart 2.x servlets -->
@@ -215,10 +207,6 @@
 	<servlet-mapping>
 		<servlet-name>DelegationServlet</servlet-name>
 		<url-pattern>/delegation/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>DMServlet</servlet-name>
-		<url-pattern>/dm/*</url-pattern>
 	</servlet-mapping>
 
         <!-- lockhart 2.x servlet mappings -->
