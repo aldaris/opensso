@@ -488,6 +488,7 @@ function writeResponse( resp)
     resp = resp.replace('counter.js', 'counterRYA.js');
     resp = resp.replace('urchin.js', 'urchinRYA.js');
     resp = resp.replace('s_code_remote.txt', 's_code_remoteRYA.txt');
+    resp = resp.replace('s_code_remote.js', 's_code_remoteRYA.js');
     document.write(resp);
     document.close();
 }
