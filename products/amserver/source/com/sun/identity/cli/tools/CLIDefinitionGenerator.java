@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionGenerator.java,v 1.6 2007-02-02 18:05:34 veiming Exp $
+ * $Id: CLIDefinitionGenerator.java,v 1.7 2007-02-23 22:37:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,7 +150,8 @@ public class CLIDefinitionGenerator {
                 String subcmdName = fld.getName().replace('_', '-');
 
                 String resPrefix = "subcmd-" + subcmdName;
-                rbOut.println(resPrefix +  "=" + info.description());
+                String desc = info.description().replaceAll("&#124;", "|");
+                rbOut.println(resPrefix +  "=" + desc);
                 createResourceForOptions(resPrefix + "-",
                     mandatoryOptions, rbOut);
                 createResourceForOptions(resPrefix + "-",

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.11 2007-02-02 18:05:33 veiming Exp $
+ * $Id: AccessManager.java,v 1.12 2007-02-23 22:37:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1240,4 +1240,164 @@ public class AccessManager {
             "idrepo-remove-privileges-succeed=Privileges are removed from identity, {2} of type, {1} in realm, {0}.",
             "delegation-does-not-have-privilege={0} does not have privilege, {1}"})
     private String remove_privileges;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.ListAuthInstances",
+        description="List authentication instances",
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-list-auth-instance=Authentication Instances:",
+            "authentication-list-auth-instance-empty=There are no authentication instances.",
+            "authentication-list-auth-instance-entry={0}, [type={1}]"}
+    )
+    private String list_auth_instances;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.CreateAuthInstance",
+        description="Create authentication instance",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication instance.",
+            "authtype|t|s|Type of authentication instance e.g. LDAP, Datastore."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-created-auth-instance-succeeded=Authentication Instance is created."}
+    )
+    private String create_auth_instance;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.DeleteAuthInstances",
+        description="Delete authentication instances",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "names|m|m|Name of authentication instances."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-delete-auth-instance-succeeded=Authentication Instance is deleted.",
+            "authentication-delete-auth-instances-succeeded=Authentication Instances are deleted."
+        }
+    )
+    private String delete_auth_instances;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.UpdateAuthInstance",
+        description="Update authentication instance values",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication instance."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        resourceStrings={
+            "authentication-update-auth-instance-succeeded=Authentication Instance is updated.",
+            "authentication-update-auth-instance-not-found=Authentication Instance is not found."}
+    )
+    private String update_auth_instance;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.GetAuthInstance",
+        description="Get authentication instance values",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication instance."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-get-auth-instance-succeeded=Authentication Instance profile:",
+            "authentication-get-auth-instance-result={0}={1}",
+            "authentication-get-auth-instance-no-values=There are no attribute values.",
+            "authentication-get-auth-instance-not-found=Authentication Instance is not found."}
+    )
+    private String get_auth_instance;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.ListAuthConfigurations",
+        description="List authentication configurations",
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-list-auth-configurations-succeeded=Authentication Configurations:",
+            "authentication-list-auth-configurations-no-configurations=There are no configurations."
+        }
+    )
+    private String list_auth_configurations;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.CreateAuthConfiguration",
+        description="Create authentication configuration",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication configuration."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-created-auth-configuration-succeeded=Authentication Configuration is created."}
+    )
+    private String create_auth_configuration;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.DeleteAuthConfigurations",
+        description="Delete authentication configurations",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "names|m|m|Name of authentication configurations."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-delete-auth-configuration-succeeded=Authentication Configuration is deleted.",
+            "authentication-delete-auth-configurations-succeeded=Authentication Configurations are deleted."
+        }
+    )
+    private String delete_auth_configurations;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.GetAuthConfigurationEntries",
+        description="Get authentication configuration entries",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication configuration."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "authentication-get-auth-config-entries-succeeded=Authentication Configuration's entries:",
+            "authentication-get-auth-config-entries-entry=[name={0}] [flag={1}] [options={2}]",
+            "authentication-get-auth-config-entries-no-values=There are no entries.",
+            "authentication-get-auth-config-entries-not-found=Authentication Configuration is not found."}
+    )
+    private String get_auth_configuration_entries;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.UpdateAuthConfigurationEntries",
+        description="Set authentication configuration entries",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication configuration."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "entries|a|m|formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.",
+            "datafile|D|s|Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options."},
+        resourceStrings={
+            "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries is updated",
+            "authentication-set-auth-config-entries-not-found=Authentication Configuration is not found.",
+            "authentication-set-auth-config-entries-missing-data=Entries and datafile are missing."}
+    )
+    private String update_auth_configuration_entries;
 }

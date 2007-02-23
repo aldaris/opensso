@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.1 2007-02-20 08:51:56 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.2 2007-02-23 22:36:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,6 +274,8 @@ public class WebCLIHelper {
         return opt.equals("continue") || opt.equals("outfile") ||
             (opt.equals("datafile") &&
                 cmd.isSupportedOption("attributevalues")) ||
+            (opt.equals("datafile") &&
+                cmd.isSupportedOption("entries")) ||
             (opt.equals("datafile") &&
                 cmd.isSupportedOption("choicevalues"));
     }

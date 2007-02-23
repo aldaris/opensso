@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.3 2006-12-08 21:02:16 veiming Exp $
+ * $Id: AttributeValues.java,v 1.4 2007-02-23 22:36:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,7 +201,7 @@ public class AttributeValues {
         return values;
     }
 
-    private static CLIException createIncorrectFormatException(
+    public static CLIException createIncorrectFormatException(
         CommandManager mgr,
         String line
     ) {

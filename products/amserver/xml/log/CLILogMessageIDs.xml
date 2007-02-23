@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.2 2006-07-17 18:11:54 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.3 2007-02-23 22:37:44 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3388,6 +3388,383 @@
         </datainfo>
         <triggers>
             <item>Execute set attribute schema boolean values Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_AUTH_INSTANCES" id="2680"
+        loglevel="LL_INFO"
+        description="Attempt to list authentication instances.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication instances Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_AUTH_INSTANCES" id="2681"
+        loglevel="LL_INFO"
+        description="List authentication instances succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication instances Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_AUTH_INSTANCES" id="2682"
+        loglevel="LL_INFO"
+        description="Failed to list authentication instances.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication instances Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_AUTH_INSTANCE" id="2690"
+        loglevel="LL_INFO"
+        description="Attempt to create authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+            <item>type of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_AUTH_INSTANCE" id="2691"
+        loglevel="LL_INFO"
+        description="Authentication instance created.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+            <item>type of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_AUTH_INSTANCE" id="2692"
+        loglevel="LL_INFO"
+        description="Failed to create authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+            <item>type of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication instance Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_AUTH_INSTANCES" id="2700"
+        loglevel="LL_INFO"
+        description="Attempt to delete authentication instances.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instances</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_AUTH_INSTANCES" id="2701"
+        loglevel="LL_INFO"
+        description="Authentication instances are deleted.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instances</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication instances Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_AUTH_INSTANCES" id="2702"
+        loglevel="LL_INFO"
+        description="Failed to delete authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instances</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication instances Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_UPDATE_AUTH_INSTANCE" id="2710"
+        loglevel="LL_INFO"
+        description="Attempt to update authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_UPDATE_AUTH_INSTANCE" id="2711"
+        loglevel="LL_INFO"
+        description="Authentication instance is updated.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_AUTH_INSTANCE" id="2712"
+        loglevel="LL_INFO"
+        description="Failed to update authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update authentication instance Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_GET_AUTH_INSTANCE" id="2710"
+        loglevel="LL_INFO"
+        description="Attempt to get authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_GET_AUTH_INSTANCE" id="2711"
+        loglevel="LL_INFO"
+        description="Authentication instance profile is displayed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication instance Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_GET_AUTH_INSTANCE" id="2712"
+        loglevel="LL_INFO"
+        description="Failed to get authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication instance</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication instance Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_AUTH_CONFIGURATIONS" id="2720"
+        loglevel="LL_INFO"
+        description="Attempt to list authentication configurations.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_AUTH_CONFIGURATIONS" id="2721"
+        loglevel="LL_INFO"
+        description="List authentication configurations succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_AUTH_CONFIGURATIONS" id="2722"
+        loglevel="LL_INFO"
+        description="Failed to list authentication configurations.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_AUTH_CONFIGURATION" id="2730"
+        loglevel="LL_INFO"
+        description="Attempt to create authentication configuration.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_AUTH_CONFIGURATION" id="2731"
+        loglevel="LL_INFO"
+        description="Authentication configuration created.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_AUTH_CONFIGURATION" id="2732"
+        loglevel="LL_INFO"
+        description="Failed to create authentication configuration.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create authentication configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_AUTH_CONFIGURATIONS" id="2740"
+        loglevel="LL_INFO"
+        description="Attempt to delete authentication configurations.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configurations</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_AUTH_CONFIGURATIONS" id="2741"
+        loglevel="LL_INFO"
+        description="Authentication configurations are deleted.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configurations</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_AUTH_CONFIGURATIONS" id="2742"
+        loglevel="LL_INFO"
+        description="Failed to delete authentication instance.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configurations</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete authentication configurations Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_GET_AUTH_CONFIG_ENTRIES" id="2750"
+        loglevel="LL_INFO"
+        description="Attempt to get authentication configuration entries.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_GET_AUTH_CONFIG_ENTRIES" id="2751"
+        loglevel="LL_INFO"
+        description="Authentication instance configuration entries are displayed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_GET_AUTH_CONFIG_ENTRIES" id="2752"
+        loglevel="LL_INFO"
+        description="Failed to get authentication configuration entries.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_AUTH_CONFIG_ENTRIES" id="2760"
+        loglevel="LL_INFO"
+        description="Attempt to set authentication configuration entries.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SET_AUTH_CONFIG_ENTRIES" id="2761"
+        loglevel="LL_INFO"
+        description="Authentication instance configuration entries are displayed.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_AUTH_CONFIG_ENTRIES" id="2762"
+        loglevel="LL_INFO"
+        description="Failed to set authentication configuration entries.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of authentication configuration</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set authentication configuration entries Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>
