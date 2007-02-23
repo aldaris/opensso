@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: cli-testng.xml,v 1.4 2007-02-02 18:05:37 veiming Exp $
+   $Id: cli-testng.xml,v 1.5 2007-02-23 22:38:26 veiming Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -116,6 +116,17 @@
         </groups>
         <classes>
             <class name="com.sun.identity.cli.idrepo.IdRepoTest"/>
+        </classes>
+    </test>
+    <test name="CLI Authentication Configuration">
+        <parameter name="realm" value="/" />
+        <groups>
+            <run>
+                <include name="cli-authconfig" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.cli.authentication.AuthConfigTest"/>
         </classes>
     </test>
 </suite>
