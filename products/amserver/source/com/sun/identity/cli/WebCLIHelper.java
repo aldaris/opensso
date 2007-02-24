@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.2 2007-02-23 22:36:55 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.3 2007-02-24 01:09:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,7 +173,7 @@ public class WebCLIHelper {
         }
         buff.append(cmd.getDescription())
             .append("<br /><br />");
-        buff.append("<form action=\"amadm.jsp?cmd=")
+        buff.append("<form action=\"fmadm.jsp?cmd=")
             .append(cmdName)
             .append("&submit=\" method=\"post\" ")
             .append("onSubmit=\"selectListBoxes(this)\">");
