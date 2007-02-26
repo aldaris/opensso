@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.3 2006-12-08 21:02:18 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.4 2007-02-26 20:37:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,6 @@ import java.util.ResourceBundle;
  * This is the base class for CLI definition class.
  */
 public abstract class CLIDefinitionBase implements IDefinition {
-    private String version;
     private List subCommands = new ArrayList();
     private String definitionClass;
     protected ResourceBundle rb;
@@ -50,7 +49,6 @@ public abstract class CLIDefinitionBase implements IDefinition {
         this.definitionClass = definitionClass;
         ICLIStub defObject = getDefinitionObject();
         rb = ResourceBundle.getBundle(defObject.getResourceBundleName());
-        version = defObject.getVersion();
         getCommands(defObject);
     }
     
@@ -81,15 +79,6 @@ public abstract class CLIDefinitionBase implements IDefinition {
                 this, rb, subcmdName, stub.mandatoryOptions, 
                 stub.optionalOptions, stub.aliasOptions, stub.implClassName));
         }
-    }
-
-    /**
-     * Returns version.
-     *
-     * @return version.
-     */
-    public String getVersion() {
-        return version;
     }
 
     /**

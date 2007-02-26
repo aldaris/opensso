@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ICLIStub.java,v 1.1 2006-12-08 21:02:30 veiming Exp $
+ * $Id: ICLIStub.java,v 1.2 2007-02-26 20:37:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,13 +38,6 @@ public interface ICLIStub {
      * @return resource bundle name.
      */
     String getResourceBundleName();
-
-    /**
-     * Returns version string.
-     *
-     * @return version string.
-     */
-    String getVersion();
 
     /**
      * Returns a list of <code>SubCommandStub</code> objects.

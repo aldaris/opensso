@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefinitionClassInfo.java,v 1.2 2006-07-17 18:11:04 veiming Exp $
+ * $Id: DefinitionClassInfo.java,v 1.3 2007-02-26 20:37:48 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface DefinitionClassInfo {
     String productName();
-    String version();
     String resourceBundle();
 }

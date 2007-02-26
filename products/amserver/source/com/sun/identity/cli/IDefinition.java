@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDefinition.java,v 1.2 2006-07-17 18:11:01 veiming Exp $
+ * $Id: IDefinition.java,v 1.3 2007-02-26 20:37:48 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,13 +37,6 @@ public interface IDefinition {
      * @return product name.
      */
     String getProductName();
-
-    /**
-     * Returns version.
-     *
-     * @return version.
-     */
-    String getVersion();
 
     /**
      * Returns a list of sub commands.

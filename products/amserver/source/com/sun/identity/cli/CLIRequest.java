@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.2 2006-07-17 18:10:59 veiming Exp $
+ * $Id: CLIRequest.java,v 1.3 2007-02-26 20:37:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.Constants;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -216,14 +218,9 @@ public class CLIRequest {
         IOutput outputWriter = mgr.getOutputWriter();
         outputWriter.printlnMessage("");
         outputWriter.printlnMessage("");
-
-        List definitionObjects = mgr.getDefinitionObjects();
-        for (Iterator i = definitionObjects.iterator(); i.hasNext();) {
-            IDefinition def = (IDefinition)i.next();
-            outputWriter.printlnMessage(
-                def.getProductName() + " " + def.getVersion());
-            outputWriter.printlnMessage("");
-        }
+        outputWriter.printlnMessage(
+            SystemProperties.get(Constants.AM_VERSION));
+        outputWriter.printlnMessage("");
     }
 
 }
