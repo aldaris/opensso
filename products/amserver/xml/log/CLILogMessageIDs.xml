@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.3 2007-02-23 22:37:44 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.4 2007-02-27 01:46:12 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3765,6 +3765,158 @@
         </datainfo>
         <triggers>
             <item>Execute set authentication configuration entries Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_DATASTORES" id="2770"
+        loglevel="LL_INFO"
+        description="Attempt to list datastores.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list datastores Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_DATASTORES" id="2771"
+        loglevel="LL_INFO"
+        description="List datastores succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list datastores Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_DATASTORES" id="2772"
+        loglevel="LL_INFO"
+        description="Failed to list datastores.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list datastores Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_DATASTORE" id="2780"
+        loglevel="LL_INFO"
+        description="Attemp to create datastore.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+            <item>type of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_DATASTORE" id="2781"
+        loglevel="LL_INFO"
+        description="Create datastore succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+            <item>type of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_DATASTORE" id="2782"
+        loglevel="LL_INFO"
+        description="Failed to create datastore.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+            <item>type of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create datastore Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_DATASTORES" id="2790"
+        loglevel="LL_INFO"
+        description="Attempt to delete datastores.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>names of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete datastores Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_DATASTORES" id="2791"
+        loglevel="LL_INFO"
+        description="Delete datastores succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>names of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete datastores Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_DATASTORES" id="2792"
+        loglevel="LL_INFO"
+        description="Failed to delete datastores.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>names of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete datastore Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_UPDATE_DATASTORE" id="2800"
+        loglevel="LL_INFO"
+        description="Attempt to update datastore profile.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_UPDATE_DATASTORE" id="2801"
+        loglevel="LL_INFO"
+        description="Update datastore succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_DATASTORE" id="2802"
+        loglevel="LL_INFO"
+        description="Failed to update datastore.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update datastore Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>

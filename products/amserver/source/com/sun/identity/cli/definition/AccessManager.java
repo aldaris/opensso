@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.13 2007-02-26 20:37:48 veiming Exp $
+ * $Id: AccessManager.java,v 1.14 2007-02-27 01:49:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1399,4 +1399,74 @@ public class AccessManager {
             "authentication-set-auth-config-entries-missing-data=Entries and datafile are missing."}
     )
     private String update_auth_configuration_entries;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.ListDataStores",
+        description="List data stores under a realm",
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "datastore-list-datastores-succeeded=Datastore:",
+            "datastore-list-datastores-no-entries=There are no datastores."
+        }
+    )
+    private String list_datastores;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.CreateDataStore",
+        description="Create data store under a realm",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of datastore.",
+            "datatype|t|s|Type of datastore."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        resourceStrings={
+            "datastore-create-datastore-succeeded=Datastore is created.",
+            "datastore-create-datastore-missing-data=Attribute values and datafile are missing."
+        }
+    )
+    private String create_datastore;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.DeleteDataStores",
+        description="Delete data stores under a realm",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "names|m|m|Names of datastore."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "datastore-delete-datastore-not-found=Datastores are not found.",
+            "datastore-delete-datastore-succeeded=Datastore is deleted.",
+            "datastore-delete-datastores-succeeded=Datastores are deleted."
+        }
+    )
+    private String delete_datastores;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.UpdateDataStore",
+        description="Update data store profile.",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of datastore."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        resourceStrings={
+            "datastore-update-datastore-succeeded=Datastore profile is updated.",
+            "datastore-update-datastore-not-found=Datastore is not found.",
+            "datastore-update-datastore-missing-data=Attribute values and datafile are missing."
+        }
+    )
+    private String update_datastore;
 }
