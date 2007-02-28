@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.17 2007-02-20 22:51:20 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.18 2007-02-28 21:45:42 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
+import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.Principal;
@@ -71,6 +72,12 @@ import netscape.ldap.util.DN;
 public class SMSEntry implements Cloneable {
 
     // Name of place holder nodes
+    public static final String ORGANIZATION_RDN = "o";
+
+    public static final String EQUALS = "=";
+
+    static final String ORG_PLACEHOLDER_RDN = ORGANIZATION_RDN + EQUALS;
+
     public static final String SERVICES_NODE = "services";
 
     public static final String PLACEHOLDER_RDN = "ou";
@@ -317,7 +324,48 @@ public class SMSEntry implements Cloneable {
         }
 
         // Get the amsdkbaseDN
-        String atemp = smsObject.getAMSdkBaseDN();
+        String atemp;
+        if (SMSJAXRPCObjectFlg) {
+            boolean checkForJAXRPCVersion = false;
+
+            /*
+             * Check for the SMSObject (JAXRPC) version (which is 10 currently)
+             * and determine whether to make calls for new APIs implemented
+             * in the latest AM server, but not in older version.
+             * This is to take care of the compatibility issue between
+             * latest web service APIs(SDK) on the server side and the old SDK
+             * used by agents/client.
+             * Anytime we add new interfaces, we need to increment the
+             * version number SMSJAXRPCObject.java and handle the client 
+             * accordingly.
+             */
+            try {
+                SSOToken appToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                Map versionMap = smsObject.read(appToken,
+                    ORG_PLACEHOLDER_RDN + SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
+                String verStr = 
+                    (String) versionMap.get(SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
+                if (verStr != null && verStr.length() > 0) {
+                    int version = Integer.valueOf(verStr).intValue();
+                    checkForJAXRPCVersion = (version > 9);
+                }
+            } catch (NumberFormatException nfe) {
+                debug.warning("SMSEntry:<init>.", nfe);
+            } catch (SSOException ssoe) {
+                debug.warning("SMSEntry:<init>.", ssoe);
+            } catch (SMSException e) {
+                debug.warning("SMSEntry:<init>.", e);
+            }
+            if (checkForJAXRPCVersion) {
+                atemp = smsObject.getAMSdkBaseDN();
+            } else {
+                atemp = SMSEntry.baseDN;
+            }
+        } else {
+
+            atemp = smsObject.getAMSdkBaseDN();
+        }
         if (atemp != null) {
             amsdkbaseDN = (new DN(atemp)).toRFCString().toLowerCase();
         } else {
@@ -1667,17 +1715,11 @@ public class SMSEntry implements Cloneable {
     // Static global variables
 
     // Attributes with defined positions
-    public static final String ORGANIZATION_RDN = "o";
-
     public static final String DC_RDN = "dc";
 
     // Constructs for placeholder nodes
-    public static final String EQUALS = "=";
-
     public static final String DEFAULT_RDN = PLACEHOLDER_RDN + EQUALS
             + SMSUtils.DEFAULT;
-
-    static final String ORG_PLACEHOLDER_RDN = ORGANIZATION_RDN + EQUALS;
 
     static final String DELEGATION_SERVICES_RDN = PLACEHOLDER_RDN + EQUALS
             + SERVICES_NODE + COMMA;
