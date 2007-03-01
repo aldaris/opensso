@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.38 2007-02-07 17:35:07 jonnelson Exp $
+   $Id: build.xml,v 1.39 2007-03-01 08:45:38 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,8 +65,9 @@
     </target>
 
     <target name="build" depends="checkjar, preparebuild, sharedlib">
-        <javac destdir="${amserver.classes.dir}" source="1.4" target="1.4"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}" source="1.4" target="1.4"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
@@ -221,21 +222,24 @@
     </target>
 
     <target name="preparecli">
-        <javac destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}" source="1.5" target="1.5"
             srcdir="${amserver.src.dir}/com/sun/identity/cli/annotation"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <classpath refid="build.class.path"/>
             <include name="*.java"/>
         </javac>
                                                                                
-        <javac destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}" source="1.5" target="1.5"
             srcdir="${amserver.src.dir}/com/sun/identity/cli/tools"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <classpath refid="build.class.path"/>
             <include name="*.java"/>
         </javac>
                                                                                
-        <javac destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}" source="1.5" target="1.5"
             srcdir="${amserver.src.dir}/com/sun/identity/cli/definition"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <classpath refid="build.class.path"/>

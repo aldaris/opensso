@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-02-15 21:36:17 veiming Exp $
+   $Id: build.xml,v 1.5 2007-03-01 08:45:39 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,8 @@
     <property name="samples.clientsdk.source.dir" location="${clientsdk.sample.dir}/source" />
 
     <target name="all" depends="preparebuild">
-        <javac destdir="${samples.clientsdk.classes.dir}" source="1.4" target="1.4"
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${samples.clientsdk.classes.dir}" source="1.4" target="1.4"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${samples.clientsdk.source.dir}"/>
             <classpath refid="build.class.path"/>

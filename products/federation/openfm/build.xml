@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2007-02-15 21:47:39 qcheng Exp $
+   $Id: build.xml,v 1.8 2007-03-01 08:45:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,7 +55,8 @@
     </path>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
             srcdir="${openfm.src.dir}/com/sun/identity/federation/cli/definition"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <classpath refid="build.class.path"/>
