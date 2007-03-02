@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2007-02-20 22:52:05 goodearth Exp $
+   $Id: build.xml,v 1.16 2007-03-02 19:10:57 ak138937 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,6 +45,11 @@
 
     <target name="all" depends="preparebuild">
         <antcall target="cli" />
+        <antcall target="tools" />
+    </target>
+    <target name="tools">
+        <ant antfile="${amserver.src.dir}/com/sun/identity/tools/bundles/build.xml"
+             dir="${amserver.src.dir}/com/sun/identity/tools/bundles"/>
     </target>
 
     <target name="war">

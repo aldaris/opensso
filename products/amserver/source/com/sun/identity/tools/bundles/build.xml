@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2007-03-02 19:03:29 ak138937 Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="amadm" default="cleanup" basedir=".">
+    <import file="amadm.xml"/>
+    <target name="beforeCompile">
+        <mkdir dir="${amadm.tools.path}${file.separator}src${file.separator}com${file.separator}sun${file.separator}identity${file.separator}tools${file.separator}bundles"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}build"/>
+        <copy todir="${amadm.tools.path}${file.separator}src${file.separator}com${file.separator}sun${file.separator}identity${file.separator}tools${file.separator}bundles"
+            overwrite="yes" encoding="UTF-8">
+            <fileset dir="." includes="*.java"/>
+        </copy>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.locale.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.lib.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.classes.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.template.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.template.dir}${file.separator}${amadm.windows.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.windows.bin.path}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.template.dir}${file.separator}${amadm.unix.dir}"/>
+        <mkdir dir="${amadm.tools.path}${file.separator}${amadm.unix.bin.path}"/>
+    </target>
+    <target name="compile" depends="beforeCompile">
+        <javac srcdir="${amadm.tools.path}${file.separator}src"
+            destdir="${amadm.tools.path}${file.separator}build" source="1.4"
+            target="1.4"/>
+        <copy todir="${amadm.tools.path}${file.separator}build${file.separator}${amadm.package.dir}"
+            overwrite="yes" encoding="UTF-8">
+            <fileset dir="." includes="*.properties"/>
+        </copy>
+    </target>
+    <target name="makeJar" depends="compile">
+        <jar destfile="${amadm.tools.path}${file.separator}${amadm.lib.dir}${file.separator}amadm_setup.jar"
+            basedir="${amadm.tools.path}${file.separator}build">
+            <manifest>
+                <attribute name="Main-Class"
+                    value="com.sun.identity.tools.bundles.Main"/>
+            </manifest>
+        </jar>
+    </target>
+    <target name="copyNeededFiles" depends="makeJar">
+        <copy todir="${amadm.tools.path}${file.separator}${amadm.lib.dir}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.extlib.path}"
+                includes="j2ee.jar, jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, ldapjdk.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, saaj-api.jar, saaj-impl.jar"/>
+            <fileset dir="${amadm.shared.lib.path}"
+                includes="opensso-sharedlib.jar"/>
+            <fileset dir="${amadm.dest.path}"
+                includes="opensso.jar"/>
+        </copy>
+        <copy todir="${amadm.tools.path}${file.separator}${amadm.classes.dir}"
+            overwrite="yes" encoding="UTF-8">
+            <fileset dir="${amadm.amserver.path}${file.separator}built${file.separator}classes"
+                includes="**/*"/>
+        </copy>
+        <copy todir="${amadm.tools.path}${file.separator}${amadm.locale.dir}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.i18n.path}" includes="*.properties"/>
+            <fileset dir="${amadm.dtd.path}" includes="*.dtd"/>
+        </copy>
+        <copy todir="${amadm.tools.path}" overwrite="yes" flatten="yes"
+            encoding="UTF-8">
+            <fileset dir="${amadm.amserver.path}" includes="license.txt"/>
+            <fileset dir="${amadm.windows.scripts.path}"
+                includes="README.amadm"/>
+        </copy>
+        <copy todir="${amadm.tools.path}${file.separator}${amadm.windows.bin.path}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.windows.scripts.path}"
+                includes="${amadm.windows.amadm.bat.file}, ${amadm.windows.ampassword.bat.file}"/>
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+        <copy todir="${amadm.tools.path}${file.separator}${amadm.unix.bin.path}"
+              overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.unix.scripts.path}"
+                includes="${amadm.unix.amadm.file}, ${amadm.unix.ampassword.file}"/>
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+    </target>
+    <target name="createZipFile" depends="copyNeededFiles">
+        <zip destfile="${amadm.dest.path}${file.separator}amAdminTools.zip"
+            whenempty="create">
+            <zipfileset dir="${amadm.setupscripts.dir}${file.separator}${amadm.tools.dir}"
+                filemode="755">
+                <include name="setup"/>
+                <include name="setup.bat"/>
+            </zipfileset>
+            <zipfileset dir="${amadm.tools.path}" filemode="755">
+                <include name="${amadm.lib.dir}/**/*"/>
+                <include name="${amadm.classes.dir}/**/*"/>
+                <include name="${amadm.locale.dir}/**/*"/>
+                <include name="${amadm.template.dir}/**/*"/>
+                <include name="license.txt"/>
+                <include name="README.amadm"/>
+            </zipfileset>
+        </zip>
+    </target>
+    <target name="cleanup" depends="createZipFile">
+        <delete dir=".${file.separator}${amadm.build.dir}"/>
+        <delete dir=".${file.separator}${amadm.src.dir}"/>
+        <delete dir=".${file.separator}${amadm.temp.dir}"/>
+    </target>
+</project>

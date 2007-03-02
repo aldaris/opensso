@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.39 2007-03-01 08:45:38 veiming Exp $
+   $Id: build.xml,v 1.40 2007-03-02 19:11:29 ak138937 Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -269,7 +269,7 @@
         <delete dir="${amserver.built.dir}"/>
     </target>
    
-    <target name="war" depends="build,prepXML">
+    <target name="war" depends="build,jars,prepXML">
         <ant antfile="${amserver.warbase.dir}/build.xml" inheritRefs="true"/>
     </target>
 

@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amadm.bat,v 1.3 2007-03-02 19:07:58 ak138937 Exp $
+: $Id: ampassword.bat,v 1.1 2007-03-02 19:06:23 ak138937 Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -36,6 +36,9 @@ goto WHILE
 
 set TOOLS_HOME=@TOOLS_HOME@
 
-java  -Xms64m -Xmx256m -cp @CONFIG_DIR@;%TOOLS_HOME%/locale;%TOOLS_HOME%/classes;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxb-impl.jar;%TOOLS_HOME%/lib/jaxb-libs.jar;%TOOLS_HOME%/lib/xsdlib.jar;%TOOLS_HOME%/lib/xmlsec.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar  -D"definitionFiles=com.sun.identity.cli.AccessManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
+set TOOLS_CLASSPATH=%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/db.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxrpc-api.jar;%TOOLS_HOME%/lib/jaxrpc-impl.jar;%TOOLS_HOME%/lib/jaxrpc-spi.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/saaj-api.jar;%TOOLS_HOME%/lib/saaj-impl.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/locale;%TOOLS_HOME%/config
+
+
+java -Xms64m -Xmx256m -classpath %TOOLS_CLASSPATH% com.iplanet.services.ldap.ServerConfigMgr %PARAM%
 endlocal
 :END
