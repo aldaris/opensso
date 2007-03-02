@@ -86,67 +86,6 @@ string trimUriOrgEntry(const string& uriString) {
     return retVal;
 }
 
-
-/* assumption: the dpro cookie is in the following format:
-        sessionID@Http_sessionID@iAS_SLB_cookieValue
-   if DSAME is running on iAS and sticky load balancing is turned on.
-   otherwise the cookie is in format:
-        sessionID@Http_sessionID
-*/
-const char *getIASCookie(const char *cookie) {
-    const char *idx = (const char *) strstr(cookie, "@");
-    if (idx != NULL) {
-        idx = strstr(idx + 1, "@");
-        if (idx != NULL) {
-            return idx+1;
-        }
-    }
-    return NULL;
-}
-
-/* create the cookie header for multi-jvm and load balancer support */
-void buildCookieHeader(Http::CookieList& cookieList, const char *cookie,
-		       const Properties& serviceParam) {
-    const char *ias_cookie;
-    Http::Cookie iascookie, dsamecookie;
-
-    bool loadBalancerEnabled = serviceParam.getBool(AM_COMMON_LOADBALANCE_PROPERTY,
-						    false);
-    std::string SLB_cookie_name = serviceParam.get(AM_POLICY_SLBCOOKIE_PROPERTY,
-						   "GX_jst");
-    std::string cookie_name = serviceParam.get(AM_COMMON_COOKIE_NAME_PROPERTY,
-					       "iPlanetDirectoryPro");
-
-    ias_cookie = getIASCookie(cookie);
-
-    if (cookieList.empty()) {
-        Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "cookieList is not empty");
-    } else {
-        /* just flush it, we can't reuse cookie list because
-	 * ssotoken can change */
-        /* ssotoken can change due to timeout or logout or ... */
-        cookieList.clear();
-    }
-    if (ias_cookie) {
-        Log::log(Log::ALL_MODULES, Log::LOG_INFO,
-		 "ias_cookie= %s, value = %s",
-		 SLB_cookie_name.c_str(), ias_cookie);
-        iascookie.name = SLB_cookie_name;
-        iascookie.value = ias_cookie;
-        cookieList.push_back(iascookie);
-    }
-    if (loadBalancerEnabled == true) {
-        Log::log(Log::ALL_MODULES, Log::LOG_INFO,
-		 "loadBalance cookie= %s, value = %s",
-		 cookie_name.c_str(), cookie);
-        dsamecookie.name = cookie_name;
-        dsamecookie.value = cookie;
-        cookieList.push_back(dsamecookie);
-    }
-
-    Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "Exit from buildCookieHeader");
-}
-
 bool isValidAttrsFetchMode(const std::string &svcName) {
 	return ((!strcasecmp(svcName.c_str(), AM_POLICY_SET_ATTRS_AS_HEADER)) ||
 	    (!strcasecmp(svcName.c_str(), AM_POLICY_SET_ATTRS_AS_HEADER_OLD)) ||
@@ -587,12 +526,6 @@ Service::construct_auth_svc(PolicyEntryRefCntPtr policyEntry)
     SSOToken& ssoToken = policyEntry->getSSOToken();
     do_agent_auth_login(ssoToken);
 
-    // save the cookie list in the entry, the list is not really used
-    // for now because the original cookie is from application auth
-    buildCookieHeader(policyEntry->cookies,
-		      ssoToken.getEncodedString().c_str(),
-		      svcParams);
-
     Log::log(logID, Log::LOG_MAX_DEBUG, "Service::construct_auth_svc() done");
 }
 
@@ -991,14 +924,13 @@ Service::getPolicyResult(const char *userSSOToken,
     bool justUpdated = false;
     const ActionDecision *ad = static_cast<ActionDecision *>(NULL);
     bool cookieEncoded=strchr(userSSOToken,'%')!=NULL;
-    const SSOToken ssoToken(cookieEncoded?Http::decode(userSSOToken):userSSOToken,
-			    !cookieEncoded?userSSOToken:Http::encode(userSSOToken));
+    const SSOToken ssoToken(
+		    cookieEncoded?Http::decode(userSSOToken):userSSOToken, 
+                    cookieEncoded?userSSOToken:Http::encode(userSSOToken));
 
     SessionInfo uSessionInfo;
+    PolicyEntryRefCntPtr uPolicyEntry;
 
-    // First try getting it from the sso Table.
-    PolicyEntryRefCntPtr uPolicyEntry = policyTable.find(ssoToken.getString());
-    
     rsrcTraits.canonicalize(rName, &c_res);
     if(c_res == NULL) {
 	Log::log(logID, Log::LOG_ERROR,
@@ -1028,13 +960,19 @@ Service::getPolicyResult(const char *userSSOToken,
 	resources.resize(0);
 	results.resize(0);
 
-	uPolicyEntry = policyTable.find(ssoToken.getString());
+        uPolicyEntry = policyTable.find(ssoToken.getString());
 	if(!uPolicyEntry) {
-	    throw InternalException(func,
+	    /* Try once more to see whether we can fetch the policy entry */
+            update_policy(ssoToken, resName, actionName, env, uSessionInfo,
+                          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
+
+            uPolicyEntry = policyTable.find(ssoToken.getString());
+	    if(!uPolicyEntry) {
+	        throw InternalException(func,
 		    "No User PolicyEntry found even after doing update_policy.",
 		    AM_POLICY_FAILURE);
-	}
-
+	    }
+        }
 
  	// Assign the user's passwd to the remote user passwd field
  	if(policy_res->remote_user_passwd == NULL) {
@@ -1077,7 +1015,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	  if(resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    if (uPolicyEntry->getTree(rootRes,false) == NULL) {
 	      update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	           mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, true);
+	            mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, true);
 	      Log::log(logID, Log::LOG_WARNING,
 	              "%s:Result size is %d,tree not present for %s", func,
 	              results.size(),resName.c_str());
@@ -1166,14 +1104,13 @@ Service::getPolicyResult(const char *userSSOToken,
 	    Log::log(logID, Log::LOG_MAX_DEBUG,
 		     "Service::getPolicyResult(): "
 		     "Advice string constructed: [%s]", adviceStr.c_str());
-            // No need to cache the policy decision when it has an advice
-            // Remove the entry from the policy cache
-            Log::log(logID, Log::LOG_MAX_DEBUG,
-                     "Service::getPolicyResult(): "
-                     "Removing the policy decision which has advice "
-                     "from the policy cache");
-            policyTable.remove(ssoToken.getString());
-
+	    // No need to cache the policy decision when it has an advice
+	    // Remove the entry from the policy cache
+	    Log::log(logID, Log::LOG_MAX_DEBUG,
+		     "Service::getPolicyResult(): "
+		     "Removing the policy decision which has advice "
+		     "from the policy cache");
+	    policyTable.remove(ssoToken.getString());
 	} else {
 	    Log::log(logID, Log::LOG_DEBUG,
 		     "Service::getPolicyResult(): "
@@ -1220,25 +1157,78 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		       policy_fetch_scope_t scope,
 		       bool refetchPolicy)
 {
+    am_status_t status;
+    bool policyUpdated = false;
+    PolicyEntryRefCntPtr policyEntry;
     string func("Service::update_policy");
     Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Executing update_policy(%s, %s, %s, %d)",
 	     ssoTok.getString().c_str(), resName.c_str(),
 	     actionName.c_str(), scope);
-    am_status_t status;
-    PolicyEntryRefCntPtr policyEntry = policyTable.find(ssoTok.getString());
-    bool wasInTable = true;
-    // if the policyEntry does not exist in the hash table, create
-    // a new policyEntry.
-    if(!policyEntry) {
-        policyEntry = new PolicyEntry(ssoTok, env, profileAttributesMap, 
-					rsrcTraits);
-	wasInTable = false;
-    }
 
-    /*  creates the cookie list for the policyEntry here  */
-    buildCookieHeader(policyEntry->cookies, ssoTok.getEncodedString().c_str(),
-		      svcParams);
+    if (!refetchPolicy) {
+        policyEntry = policyTable.find(ssoTok.getString());
+
+        if (policyEntry) {
+	    
+            // Do naming query, if notification is not enabled or
+            // valid naming information is not present in the policyEntry.
+            if(!policyEntry->namingInfo.isValid()) {
+	        if(AM_SUCCESS != (status = namingSvc.getProfile(namingSvcInfo,
+					   ssoTok.getString(),
+					   policyEntry->cookies,
+					   policyEntry->namingInfo))) {
+	            throw InternalException(func, "Naming query failed.",
+				    status);
+	        }
+           }
+           if(policyEntry) { 
+               status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), 
+					  ssoTok.getString(), 
+                                          policyEntry->cookies, true, sessionInfo, 
+                                          false, false);
+    
+               if (status != AM_SUCCESS) {
+                    // if agent could not contact session service to validate
+	            // user, and get any NSPR error, it is considered equivalent
+	            // to the session being invalid.
+                    if (AM_NSPR_ERROR == status) {
+                        status = AM_INVALID_SESSION;
+                    }
+	            throw InternalException(func, "Session query failed.", status);
+               }
+               return;
+           }
+       } 
+    }
+    policyUpdated = do_update_policy(ssoTok, resName, actionName, env, sessionInfo,scope);
+    /* if server is in the process of initializing the
+     * appssotoken the do_update_policy will return false
+     * retry do_update_policy 
+     */
+
+    if(!policyUpdated) {
+         policyUpdated = do_update_policy(ssoTok, resName, actionName, env, sessionInfo,scope);
+	 if(!policyUpdated) {
+	     /*throw error message policy not updated even after refresh */
+         }
+    }
+    return;
+}
+
+bool
+Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
+		       const string &actionName,
+		       const KeyValueMap &env,
+                       SessionInfo &sessionInfo,
+		       policy_fetch_scope_t scope)
+{
+    am_status_t status;
+    string func("Service::do_update_policy");
+    PolicyEntryRefCntPtr policyEntry; 
+
+    /* Create new policy entry */
+    policyEntry = new PolicyEntry(ssoTok, env, profileAttributesMap, rsrcTraits);
 
     // Do naming query, if notification is not enabled or
     // valid naming information is not present in the policyEntry.
@@ -1250,10 +1240,12 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	    throw InternalException(func, "Naming query failed.",
 				    status);
 	}
-   }
+    }
     
-    status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), ssoTok.getString(), 
-                                          policyEntry->cookies, true, sessionInfo, false, false);
+    status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), 
+					  ssoTok.getString(), 
+                                          policyEntry->cookies, true, sessionInfo, 
+                                          false, false);
     
     if (status != AM_SUCCESS) {
         // if agent could not contact session service to validate
@@ -1267,7 +1259,8 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 
    
    if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
-       Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and response attributes fetch mode is set to NONE");
+       Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and "
+                "response attributes fetch mode is set to NONE");
    } else {
     // get the resource root.
     std::string rootRes;
@@ -1288,10 +1281,8 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
     // policyEntry->cookies
      
     // do policy
-    string xmlData;
-    PolicyEntryRefCntPtr tmpPolicyEntry = policyTable.find(ssoTok.getString());
-    if (!tmpPolicyEntry || refetchPolicy) {
-        if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
+   string xmlData;
+   if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
 					       policyEntry->getSSOToken(),
 					       policyEntry->cookies,
 					       sessionInfo,
@@ -1335,12 +1326,10 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	    if(initialized == true) {
 		Log::log(logID, Log::LOG_WARNING,
 			 "Thread wokeup after successful initialization.");
-	        update_policy(ssoTok, resName, actionName,
-			      env, sessionInfo, scope, false);
-		/* by setting this to true, the policyTable.insert
-		 * will not get executed.
+                /* This method is returning false because we have re-initialized   
+		 * the Agent but we haven't updated the orignal policy
 		 */
-		wasInTable = true;
+                return false;
 	    } else {
 		throw InternalException(func, "Agent reinitialization failed",
 					status);
@@ -1350,21 +1339,19 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
             if (AM_NSPR_ERROR == status) {
                 status = AM_INVALID_SESSION;
             }
-	    throw InternalException(func, "Policy query failed.",
-				    status);
+	    throw InternalException(func, "Policy query failed.", status);
 	}
     } else {
 	// Log:INFO
 	process_policy_response(policyEntry, env, xmlData);
     }
-   }
   }
 
-    if(!wasInTable)
-	policyTable.insert(policyEntry->getSSOToken().getString(), policyEntry);
-    Log::log(logID, Log::LOG_INFO,
-	     "Successful return from update_policy().");
-    return;
+    /* Insert entry into the policy table */
+    policyTable.insert(policyEntry->getSSOToken().getString(), policyEntry);
+
+  Log::log(logID, Log::LOG_INFO, "Successful return from update_policy().");
+  return true;
 }
 
 /*
@@ -1388,7 +1375,7 @@ Service::update_policy_list(const SSOToken &ssoTok,
     
     SessionInfo sessionInfo;
     for(iter = resList.begin(); iter != resList.end(); iter++) {
-	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope, true);
+	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope,true);
     }
     return;
 }
@@ -1431,7 +1418,7 @@ Service::invalidate_session(const char *ssoTokenId) {
     ServiceInfo svcInfo;
     bool cookieEncoded=strchr(ssoTokenId,'%')!=NULL;
     const SSOToken ssoToken(cookieEncoded?Http::decode(ssoTokenId):ssoTokenId,
-			    !cookieEncoded?ssoTokenId:Http::encode(ssoTokenId));
+			    cookieEncoded?ssoTokenId:Http::encode(ssoTokenId));
 
     status = mSSOTokenSvc.destroySession(svcInfo, ssoToken.getString());
 

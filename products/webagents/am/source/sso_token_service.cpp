@@ -499,10 +499,17 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
 		    initialize();
 	    }
 	    else {
-		Log::log(mLogID, Log::LOG_ERROR, 
+                if (sts == AM_INVALID_SESSION) {
+                    Log::log(mLogID, Log::LOG_INFO,
+                         "SSOTokenService::getSessionInfo(): "
+                         "Error %d for sso token ID %s.",
+                         sts, ssoTokenID.c_str());
+                } else {
+		    Log::log(mLogID, Log::LOG_ERROR, 
                          "SSOTokenService::getSessionInfo(): "
 			 "Error %d for sso token ID %s.",
 			 sts, ssoTokenID.c_str());
+                }
 	    }
 	} catch (smi::InternalException& exc) {
 	    sts = exc.getStatusCode();

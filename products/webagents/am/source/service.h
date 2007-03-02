@@ -24,7 +24,7 @@
  * This class encapsulates the policy information associated with a
  * particular service.
  *
- */ 
+ */
 #ifndef __SERVICE_H__
 #define __SERVICE_H__
 
@@ -129,6 +129,12 @@ class Service {
                        SessionInfo &,
 		       policy_fetch_scope_t scope,
 		       bool refetchPolicy);
+bool
+Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
+		       const string &actionName,
+		       const KeyValueMap &env,
+                       SessionInfo &sessionInfo,
+		       policy_fetch_scope_t scope);
 
     void update_policy_list(const SSOToken &,
 			    const std::vector<std::string> &,

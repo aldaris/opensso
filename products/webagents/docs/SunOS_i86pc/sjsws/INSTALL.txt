@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.1 2007-01-17 23:15:22 subbae Exp $
+# $Id: INSTALL.txt,v 1.2 2007-03-02 17:32:20 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -44,7 +44,7 @@ Installation does the following:
 
 %% 1.1 Steps
 
-1.1.1 Extract  sjsws_7.0_SunOS_x86_agent.zip installation bits.
+1.1.1 Extract  sjsws_v70_SunOS_x86_agent.zip installation bits.
 1.1.2 Goto web_agents/sjsws_agent/bin
 1.1.3 Execute agentadmin --install
 1.1.4 Accept the license agreement terms
@@ -66,7 +66,7 @@ Installation does the following:
 
 Here is the sample of the above steps with Web Server 7.0 :
 
-[/opt]> unzip sjsws_7.0_SunOS_x86_agent.zip
+[/opt]> unzip sjsws_v70_SunOS_x86_agent.zip
 
 x web_agents
 x web_agents/sjsws_agent
