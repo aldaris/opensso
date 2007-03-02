@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.18 2007-02-28 21:45:42 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.19 2007-03-02 02:26:21 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -324,7 +324,7 @@ public class SMSEntry implements Cloneable {
         }
 
         // Get the amsdkbaseDN
-        String atemp;
+        String atemp = null;
         if (SMSJAXRPCObjectFlg) {
             boolean checkForJAXRPCVersion = false;
 
@@ -363,7 +363,6 @@ public class SMSEntry implements Cloneable {
                 atemp = SMSEntry.baseDN;
             }
         } else {
-
             atemp = smsObject.getAMSdkBaseDN();
         }
         if (atemp != null) {
@@ -1175,6 +1174,9 @@ public class SMSEntry implements Cloneable {
                 dataStore = gbs.getDataStore(token);
             } else {
                 dataStore = "flatfile";
+            }
+            if (debug.messageEnabled()) {
+                debug.message("SMSEntry:getDataStore.dataStore "+dataStore);
             }
         }
         return dataStore;
