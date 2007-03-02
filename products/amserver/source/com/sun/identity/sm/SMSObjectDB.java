@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObjectDB.java,v 1.1 2006-12-15 01:14:12 goodearth Exp $
+ * $Id: SMSObjectDB.java,v 1.2 2007-03-02 02:27:05 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,6 @@
 package com.sun.identity.sm;
 
 import com.iplanet.services.ldap.*;
-
-import com.iplanet.ums.DataLayer;
 
 import com.iplanet.ums.IUMSConstants;
 
@@ -40,8 +38,6 @@ import com.iplanet.ums.UMSException;
  */
 public abstract class SMSObjectDB extends SMSObject {
 
-    static DataLayer dlayer;
-
     static String amsdkbaseDN;
 
     /**
@@ -50,14 +46,6 @@ public abstract class SMSObjectDB extends SMSObject {
      */
     public String getAMSdkBaseDN() {
         try {
-            // Get UMS datalayer
-
-           //After Directory Server support is given, uncomment this.
-          
-            /*dlayer = DataLayer.getInstance();
-            if (debug().messageEnabled()) {
-                debug().message("SMSObjectDB: DataLayer instance obtained.");
-            }
             // Use puser id just to get the baseDN from serverconfig.xml
             // from "default" server group.
             ServerInstance serverInstanceForUM = null;
@@ -69,7 +57,7 @@ public abstract class SMSObjectDB extends SMSObject {
             if (serverInstanceForUM != null) {
                 amsdkbaseDN = serverInstanceForUM.getBaseDN();
             }
-            if ((mgr == null) || (dlayer == null) ||
+            if ((mgr == null) || 
                 (serverInstanceForUM == null)) {
                 debug().error("SMSObject: Unable to initialize LDAP");
                 throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
@@ -77,7 +65,7 @@ public abstract class SMSObjectDB extends SMSObject {
             }
             if (debug().messageEnabled()) {
                 debug().message("SMSObjectDB: amsdkbasedn: "+amsdkbaseDN);
-            }*/
+            }
 
         } catch (Exception e) {
             // Unable to initialize (trouble!!)
