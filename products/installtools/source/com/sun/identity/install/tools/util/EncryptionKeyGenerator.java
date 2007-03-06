@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionKeyGenerator.java,v 1.1 2006-09-28 07:37:57 rarcot Exp $
+ * $Id: EncryptionKeyGenerator.java,v 1.2 2007-03-06 00:26:12 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,11 +31,14 @@ public class EncryptionKeyGenerator {
     public static String generateRandomString() {
 
         String randomStr = null;
+        String str_provider = System.getProperty(STR_PROVIDER_PROPERTY_NAME,
+            STR_PROVIDER_DEFAULT_VALUE);
+
         try {
             
             byte[] bytes = new byte[24];
             SecureRandom random = SecureRandom.getInstance(STR_SHA_ALGO,
-                    STR_PROVIDER);
+                    str_provider);
             random.nextBytes(bytes);
             randomStr = Base64.encode(bytes).trim();
 
@@ -47,6 +50,7 @@ public class EncryptionKeyGenerator {
     }
 
     public static String STR_SHA_ALGO = "SHA1PRNG";
-
-    public static String STR_PROVIDER = "SUN";
+    public static String STR_PROVIDER_DEFAULT_VALUE = "SUN";
+    private static final String STR_PROVIDER_PROPERTY_NAME = 
+        "amRandomGenProvider";
 }

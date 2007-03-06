@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.1 2006-09-28 23:30:26 huacui Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.2 2007-03-06 00:26:40 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,10 +29,12 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
+import com.sun.identity.agents.common.ICookieResetHelper;
 
 /**
  * <p>
@@ -102,6 +104,7 @@ implements IApplicationLogoutHandler {
             if (session != null) {
                 session.invalidate();
             }
+            doCookiesReset(ctx);
             String logoutURL = getLogoutURL(ctx);
             result = new AmFilterResult(
                     AmFilterResultStatus.STATUS_REDIRECT, 
@@ -520,6 +523,16 @@ implements IApplicationLogoutHandler {
 
     private Hashtable getEntryURIs() {
         return _entryURIs;
+    }
+
+    private void doCookiesReset(AmFilterRequestContext ctx) {
+        HttpServletRequest request = ctx.getHttpServletRequest();
+        HttpServletResponse response = ctx.getHttpServletResponse();
+        ICookieResetHelper cookieResetHelper =
+            getSSOContext().getCookieResetHelper();
+        if (cookieResetHelper != null && cookieResetHelper.isActive()) {
+            cookieResetHelper.doCookiesReset(request, response);
+        }
     }
 
     private String _entryURL;

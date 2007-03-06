@@ -20,7 +20,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: agentadmin,v 1.1 2006-09-28 23:17:45 huacui Exp $
+# $Id: agentadmin,v 1.2 2007-03-06 00:26:40 leiming Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -35,6 +35,15 @@ else
     JAVA_VM=${JAVA_HOME}/bin/java
 fi
 
+OS_TYPE=`uname -s | tr '[a-z]' '[A-Z]'`
+
+if [ $OS_TYPE ==  "AIX" ]; then
+    AGENT_OPTS="-DamKeyGenDescriptor.provider=IBMJCE -DamCryptoDescriptor.provider=IBMJCE -DamRandomGenProvider=IBMJCE"
+else
+
+    AGENT_OPTS=
+fi
+
 AGENT_CLASSPATH=${AGENT_HOME}/lib/opensso-installtools-launcher.jar
 
-$JAVA_VM -classpath $AGENT_CLASSPATH com.sun.identity.install.tools.launch.AdminToolLauncher $*
+$JAVA_VM -classpath $AGENT_CLASSPATH  $AGENT_OPTS com.sun.identity.install.tools.launch.AdminToolLauncher $*
