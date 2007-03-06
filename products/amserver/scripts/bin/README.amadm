@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README.amadm,v 1.2 2006-11-16 04:31:06 veiming Exp $
+   $Id: README.amadm,v 1.3 2007-03-06 03:06:48 ak138937 Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,9 +29,10 @@ Steps:
  1. Install OpenSSO server
      - deploy the opensso.war and configure it
  2. Setup the CLI
-     - unzip amserver/built/dist/amadm.zip to a directory
+     - unzip amserver/built/dist/amAdminTools.zip to a directory
        in the same machine where opensso.war is deployed.
-     - copy the AMConfig.properties that was
-       generated in Step One to the "classes" directory
+     - run the setup 
+     - provide the path to the configured AMConfig.properties 
+       that was generated in Step One 
  3. Run the CLI 
      - type "amadm" or "amadm.bat" to run the CLI. 
