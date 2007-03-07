@@ -20,7 +20,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: agentadmin,v 1.2 2007-03-06 00:26:40 leiming Exp $
+# $Id: agentadmin,v 1.3 2007-03-07 02:25:01 leiming Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -37,7 +37,7 @@ fi
 
 OS_TYPE=`uname -s | tr '[a-z]' '[A-Z]'`
 
-if [ $OS_TYPE ==  "AIX" ]; then
+if [ "$OS_TYPE" = "AIX" ]; then
     AGENT_OPTS="-DamKeyGenDescriptor.provider=IBMJCE -DamCryptoDescriptor.provider=IBMJCE -DamRandomGenProvider=IBMJCE"
 else
 
