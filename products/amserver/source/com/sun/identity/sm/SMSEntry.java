@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.19 2007-03-02 02:26:21 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.20 2007-03-07 22:11:16 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,9 @@ public class SMSEntry implements Cloneable {
 
     static final String JAXRPC_SMS_CLASS_NAME = 
         "com.sun.identity.sm.jaxrpc.SMSJAXRPCObject";
+
+    static final String FLATFILE_SMS_CLASS_NAME = 
+        "com.sun.identity.sm.flatfile.SMSEnhancedFlatFileObject";
 
     static final String SMS_ENABLE_DB_NOTIFICATION = 
         "com.sun.identity.sm.enableDataStoreNotification";
@@ -283,20 +286,31 @@ public class SMSEntry implements Cloneable {
         if (smsObject == null) {
             try {
                 if (smsClassName.equals(DEFAULT_SMS_CLASS_NAME)) {
-                    debug.message("SMSEntry: Using default JAXRPC "
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSEntry: Using default JAXRPC "
                             + "implementation");
+                    }
                     smsObject = (SMSObject) Class
                             .forName(JAXRPC_SMS_CLASS_NAME).newInstance();
                     SMSJAXRPCObjectFlg = true;
                 } else if (smsClassName.equals(JAXRPC_SMS_CLASS_NAME)) {
-                    debug.message("SMSEntry: Using default JAXRPC "
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSEntry: Using default JAXRPC "
                             + "implementation");
+                    }
                     smsObject = (SMSObject) Class
                             .forName(JAXRPC_SMS_CLASS_NAME).newInstance();
                     SMSJAXRPCObjectFlg = true;
-                } else {
-                    debug.message("SMSEntry: Using default LDAP "
+                } else if (smsClassName.equals(FLATFILE_SMS_CLASS_NAME)) {
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSEntry: Using default FlatFile "
                             + "implementation");
+                    }
+                } else {
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSEntry: Using default LDAP "
+                            + "implementation");
+                    }
                     smsObject = (SMSObject) Class.forName(
                             DEFAULT_SMS_CLASS_NAME).newInstance();
                 }

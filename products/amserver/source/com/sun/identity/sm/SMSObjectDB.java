@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObjectDB.java,v 1.2 2007-03-02 02:27:05 goodearth Exp $
+ * $Id: SMSObjectDB.java,v 1.3 2007-03-07 22:11:16 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.iplanet.ums.UMSException;
 public abstract class SMSObjectDB extends SMSObject {
 
     static String amsdkbaseDN;
+    static String baseDN;
 
     /**
      * Returns the AMSDK BaseDN for the UM objects.
@@ -47,7 +48,8 @@ public abstract class SMSObjectDB extends SMSObject {
     public String getAMSdkBaseDN() {
         try {
             // Use puser id just to get the baseDN from serverconfig.xml
-            // from "default" server group.
+            // from "default" server group. This is for user management 
+            // baseDN.
             ServerInstance serverInstanceForUM = null;
             DSConfigMgr mgr = DSConfigMgr.getDSConfigMgr();
             if (mgr != null) {
@@ -59,7 +61,7 @@ public abstract class SMSObjectDB extends SMSObject {
             }
             if ((mgr == null) || 
                 (serverInstanceForUM == null)) {
-                debug().error("SMSObject: Unable to initialize LDAP");
+                debug().error("SMSObjectDB: Unable to initialize LDAP");
                 throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                     IUMSConstants.CONFIG_MGR_ERROR, null));
             }
@@ -68,10 +70,47 @@ public abstract class SMSObjectDB extends SMSObject {
             }
 
         } catch (Exception e) {
-            // Unable to initialize (trouble!!)
-            debug().error("SMSObject:getAMSdkBaseDN(): Unable to initalize(exception):", e);
-
+            debug().error("SMSObjectDB: Unable to get amsdkbasedn:", e);
         }
         return (amsdkbaseDN);
+    }
+
+    /**
+     * Returns the BaseDN for the SM objects.
+     * This is the root suffix.
+     */
+    public String getRootSuffix() {
+        try {
+            // Use puser id just to get the baseDN from serverconfig.xml
+            // from "sms" server group. This is for SM base DN.
+            ServerInstance serverInstanceForSM = null;
+            DSConfigMgr mgr = DSConfigMgr.getDSConfigMgr();
+            if (mgr != null) {
+                serverInstanceForSM = mgr.getServerInstance(
+                    SMSEntry.SMS_SERVER_GROUP,LDAPUser.Type.AUTH_PROXY);
+            }
+            if (serverInstanceForSM != null) {
+                baseDN = serverInstanceForSM.getBaseDN();
+            }
+            if ((mgr == null) || 
+                (serverInstanceForSM == null)) {
+                baseDN = getAMSdkBaseDN();
+                if (debug().warningEnabled()) {
+                    debug().warning("SMSObjectDB: SMS servergroup not "+
+                    "available. Returning the default baseDN: "+baseDN);
+                }
+            }
+            if (debug().messageEnabled()) {
+                debug().message("SMSObjectDB: basedn: "+baseDN);
+            }
+
+        } catch (Exception e) {
+            baseDN = getAMSdkBaseDN();
+            if (debug().warningEnabled()) {
+                debug().warning("SMSObjectDB: SMS servergroup not "+
+                    "available. Returning the default baseDN: "+baseDN);
+            }
+        }
+        return (baseDN);
     }
 }
