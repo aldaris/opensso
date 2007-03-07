@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.6 2006-12-15 01:03:34 goodearth Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.7 2007-03-07 22:12:24 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,9 +92,7 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
         mRootDir = SystemProperties.get(SMS_FLATFILE_ROOTDIR_PROPERTY,
             DEFAULT_ROOT_DIR); 
         // get the default org dn 
-        mRootDN = SystemProperties.get(Constants.AM_DEFAULT_ORG,
-            DEFAULT_ORG_DN); 
-        
+        mRootDN = getRootSuffix();
         // look for the object name mapper if any.
         // create the flat file directory up to the org if it doesn't exist.
         mRootDirHandle = new File(mRootDir);
@@ -752,15 +750,6 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      */
     public void deregisterCallbackHandler(String id) {
         // not yet implemented
-    }
-
-    /**
-     * Returns the default Org of this server. 
-     * 
-     * @return DN of the default org.
-     */
-    public String getRootSuffix() {
-        return (mRootDN);
     }
 
     /**

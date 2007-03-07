@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.8 2007-02-20 22:51:21 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.9 2007-03-07 22:11:51 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,8 +102,6 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
     static HashSet retryErrorCodes = new HashSet();
 
-    static String baseDN;
-
     static Set entriesPresent = new HashSet();
 
     static Set entriesNotPresent = new HashSet();
@@ -176,18 +174,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                             + "obtained.");
                 }               
             }
-            // Use puser id just to get the baseDN from serverconfig.xml
-            ServerInstance serverInstance = null;
-            DSConfigMgr mgr = DSConfigMgr.getDSConfigMgr();
-            if (mgr != null) {
-                serverInstance = mgr
-                        .getServerInstance(LDAPUser.Type.AUTH_PROXY);
-            }
-            if (serverInstance != null) {
-                baseDN = serverInstance.getBaseDN();
-            }
-            if ((mgr == null) || (serverInstance == null)
-                    || ((dlayer == null) && (smdlayer == null))) {
+             if ((dlayer == null) && (smdlayer == null)) {
                 debug.error("SMSLdapObject: Unable to initialize LDAP");
                 throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                         IUMSConstants.CONFIG_MGR_ERROR, null));
@@ -200,7 +187,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             retryErrorCodes = DataLayer.getRetryErrorCodes();
 
             // Need to check if the root nodes exists. If not, create them
-            String serviceDN = SMSEntry.SERVICES_RDN + SMSEntry.COMMA + baseDN;
+            String serviceDN = 
+                SMSEntry.SERVICES_RDN + SMSEntry.COMMA + getRootSuffix();
             if (!entryExists(serviceDN)) {
                 Map attrs = new HashMap();
                 Set attrValues = new HashSet();
@@ -795,13 +783,6 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             releaseConnection(conn);
         }
         return (entryExists);
-    }
-
-    /**
-     * Returns the base DN configured in serverconfig.xml
-     */
-    public String getRootSuffix() {
-        return (baseDN);
     }
 
     /**
