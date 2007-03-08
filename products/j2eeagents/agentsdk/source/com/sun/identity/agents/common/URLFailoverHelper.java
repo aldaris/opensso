@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLFailoverHelper.java,v 1.2 2007-01-25 20:42:32 madan_ranganath Exp $
+ * $Id: URLFailoverHelper.java,v 1.3 2007-03-08 20:40:47 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class URLFailoverHelper extends SurrogateBase
                                "URLFailoverHelper: No URL is available at" 
                                     + " this time");
 
-                            throw new AgentException(
+                            throw new AgentServerErrorException(
                                 "No URL is available at this time");
                         }
                     }
@@ -116,7 +116,8 @@ public class URLFailoverHelper extends SurrogateBase
                 logError(
                     "URLFailoverHelper: No URL is available at this time");
 
-                throw new AgentException("No URL is available at this time");
+                throw new AgentServerErrorException(
+                    "No URL is available at this time");
             }
         }
 

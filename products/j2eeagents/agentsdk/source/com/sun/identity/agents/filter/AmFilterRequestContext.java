@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.1 2006-09-28 23:29:46 huacui Exp $
+ * $Id: AmFilterRequestContext.java,v 1.2 2007-03-08 20:42:20 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -394,7 +394,18 @@ public class AmFilterRequestContext implements IUtilConstants {
         }
         return result;
     }
-    
+   
+    /**
+     * Returns an <code>AmFilterResult</code> instance that represents a 
+     * server error result for filter processing.
+     *
+     * @return an <code>AmFilterResult</code> to indicate a server error
+     */
+    public AmFilterResult getServerErrorResult() {
+        return new AmFilterResult(AmFilterResultStatus.STATUS_SERVER_ERROR);
+    }
+
+ 
     /**
      * Returns an <code>AmFilterResult</code> instance that represents a blocked
      * result for filter processing.

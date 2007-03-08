@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterResultStatus.java,v 1.1 2006-09-28 23:30:01 huacui Exp $
+ * $Id: AmFilterResultStatus.java,v 1.2 2007-03-08 20:42:36 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,11 +35,13 @@ public class AmFilterResultStatus extends ConstrainedSelection {
     public static final int INT_STATUS_REDIRECT = 1;
     public static final int INT_STATUS_FORBIDDEN = 2;
     public static final int INT_STATUS_SERVE_DATA = 3;
+    public static final int INT_STATUS_SERVER_ERROR = 4;
     
     public static final String STR_STATUS_CONTINUE = "CONTINUE";
     public static final String STR_STATUS_REDIRECT = "REDIRECT";
     public static final String STR_STATUS_FORBIDDEN = "FORBIDDEN";
     public static final String STR_STATUS_SERVE_DATA = "SERVE DATA";
+    public static final String STR_STATUS_SERVER_ERROR = "SERVER ERROR";
     
     public static final AmFilterResultStatus STATUS_CONTINUE =
         new AmFilterResultStatus(STR_STATUS_CONTINUE, INT_STATUS_CONTINUE);
@@ -52,6 +54,9 @@ public class AmFilterResultStatus extends ConstrainedSelection {
     
     public static final AmFilterResultStatus STATUS_SERVE_DATA =
         new AmFilterResultStatus(STR_STATUS_SERVE_DATA, INT_STATUS_SERVE_DATA);
+
+    public static final AmFilterResultStatus STATUS_SERVER_ERROR =
+        new AmFilterResultStatus(STR_STATUS_SERVER_ERROR, INT_STATUS_SERVER_ERROR);
     
     private static final AmFilterResultStatus[] values =
         new AmFilterResultStatus[] { STATUS_CONTINUE, 

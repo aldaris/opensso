@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentBaseFilter.java,v 1.1 2006-09-28 23:29:01 huacui Exp $
+ * $Id: AmAgentBaseFilter.java,v 1.2 2007-03-08 20:42:02 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,11 @@ public abstract class AmAgentBaseFilter implements Filter
 
             case AmFilterResultStatus.INT_STATUS_SERVE_DATA :
                 sendData(httpResponse, result);
+                break;
+
+            case AmFilterResultStatus.INT_STATUS_SERVER_ERROR :
+                httpResponse.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 break;
 
             default :
