@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.12 2007-01-21 10:34:22 mrudul_uchil Exp $
+ * $Id: AuthD.java,v 1.13 2007-03-08 22:42:20 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -222,9 +222,9 @@ public class AuthD  {
     private static boolean useHttpSession;
     
     static {
-        String status = "INACTIVE";
-        status = SystemProperties.get(Constants.AM_LOGSTATUS);
-        if (status.equalsIgnoreCase("ACTIVE")) {
+        String status = SystemProperties.get(Constants.AM_LOGSTATUS,
+            "INACTIVE");
+        if ("ACTIVE".equalsIgnoreCase(status)) {
             logStatus = true;
         }
         
