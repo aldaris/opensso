@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributeHelper.java,v 1.1 2006-09-28 23:25:49 huacui Exp $
+ * $Id: ProfileAttributeHelper.java,v 1.2 2007-03-08 20:41:06 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentException;
+import com.sun.identity.agents.arch.AgentSSOException;
 import com.sun.identity.agents.arch.Module;
 import com.sun.identity.agents.arch.SurrogateBase;
 import com.sun.identity.idm.AMIdentity;
@@ -82,6 +84,9 @@ implements IProfileAttributeHelper
                     }
                 }
             }
+        } catch (SSOException ssoe) {
+            throw new AgentSSOException("Invalid User SSO Token: "
+                    + ", for user:" + userDN, ssoe);
         } catch (Exception ex) {
             throw new AgentException("Unable to obtain attribute: "
                     + attributeName + ", for user: " 
@@ -125,6 +130,9 @@ implements IProfileAttributeHelper
                                 .get(nextAttributeName));
                 }
             }
+        } catch (SSOException ssoe) {
+            throw new AgentSSOException("Invalid User SSO Token: "
+                    + ", for user:" + userDN, ssoe);
         } catch (Exception ex) {
             throw new AgentException("Unable to obtain attributes: " 
                     + queryMap + ", for user: " 

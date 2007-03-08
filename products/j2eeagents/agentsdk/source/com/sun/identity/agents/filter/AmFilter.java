@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.2 2007-01-25 20:46:20 madan_ranganath Exp $
+ * $Id: AmFilter.java,v 1.3 2007-03-08 20:41:43 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sun.identity.agents.arch.AgentBase;
 import com.sun.identity.agents.arch.AgentException;
+import com.sun.identity.agents.arch.AgentServerErrorException;
+import com.sun.identity.agents.arch.AgentSSOException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.arch.ServiceFactory;
 import com.sun.identity.agents.common.CommonFactory;
@@ -46,7 +48,7 @@ import com.sun.identity.agents.util.RequestDebugUtils;
  * well as URL policies for various resources in the protected application.
  */
 public class AmFilter extends AgentBase 
-        implements IAmFilter, IFilterConfigurationConstants 
+    implements IAmFilter, IFilterConfigurationConstants 
 {
 
     /**
@@ -133,7 +135,7 @@ public class AmFilter extends AgentBase
                 result = processTaskHandlers(ctx);
             }
         } catch(Throwable th) {
-            logError("AmFilter: An error occured while processing request. "
+            logError("AmFilter: An error occurred while processing request. "
                      + "Access will be denied.", th);
             result = ctx.getBlockAccessResult();
         }
@@ -148,7 +150,7 @@ public class AmFilter extends AgentBase
         
         // If verified session associate with request, propagate it down
         if (ctx.isAuthenticated()) {
-                result.setSSOValidationResult(ctx.getSSOValidationResult());
+            result.setSSOValidationResult(ctx.getSSOValidationResult());
         }
         return result;
     }
@@ -169,6 +171,16 @@ public class AmFilter extends AgentBase
                 }
                 result = handler[index].process(ctx);
                 index++;
+            } catch (AgentServerErrorException ase) {
+                logError("AmFilter: a server error occurred.", ase);
+                result = ctx.getServerErrorResult();
+            } catch (AgentSSOException assoe) {
+                if (isLogMessageEnabled()) {
+                    logMessage("AmFilter: user SSO Token is invalid. "
+                            + assoe.getMessage()
+                            + ". Redirect to authentication page.");
+                }
+                result = ctx.getAuthRedirectResult();
             } catch (Exception ex) {
                 logError("AmFilter: Error while delegating to inbound"
                        + " handler: " + handler[index].getHandlerName()
@@ -436,7 +448,7 @@ public class AmFilter extends AgentBase
             logMessage("AmFilter: sso context is: " + _ssoContext);
         }
     }
-
+    
     private void initLoginURLFailoverHelper(CommonFactory cf) 
     throws AgentException 
     {
