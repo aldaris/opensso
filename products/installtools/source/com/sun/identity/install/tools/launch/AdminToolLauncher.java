@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminToolLauncher.java,v 1.1 2006-09-28 07:37:48 rarcot Exp $
+ * $Id: AdminToolLauncher.java,v 1.2 2007-03-09 21:34:44 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,13 +97,17 @@ public class AdminToolLauncher {
         setProductEtcDir(getRequiredDirectory(productHome + STR_ETC_DIR_PREFIX,
                 true));
 
-        // JCE dir must exist
-        setProductJCEDir(getRequiredDirectory(productHome + STR_JCE_DIR_PREFIX,
-                false));
+        // Set JCE dir
+        if (isDirectoryExisting(productHome + STR_JCE_DIR_PREFIX)) {
+            setProductJCEDir(getRequiredDirectory(
+                productHome + STR_JCE_DIR_PREFIX, false));
+        }
 
-        // JSSE dir must exist
-        setProductJSSEDir(getRequiredDirectory(productHome
-                + STR_JSSE_DIR_PREFIX, false));
+        // Set JSSE dir
+        if (isDirectoryExisting(productHome + STR_JSSE_DIR_PREFIX)) {
+            setProductJSSEDir(getRequiredDirectory(
+                productHome + STR_JSSE_DIR_PREFIX, false));
+        }
 
         // Lib dir must exist
         setProductLibDir(getRequiredDirectory(productHome + STR_LIB_DIR_PREFIX,
@@ -192,6 +196,16 @@ public class AdminToolLauncher {
 
         return dir;
     }
+
+    private static boolean isDirectoryExisting(String path) 
+        throws SecurityException {
+        boolean isDirExisting = false;
+        if (path != null) {
+            File dir = new File(path);
+            isDirExisting = dir.isDirectory();
+        }
+        return isDirExisting;
+    }  
 
     private static void initializeClassPath(ArrayList classPathElements) {
         String currentClassPath = System.getProperty(STR_JAVA_CLASSPATH);
