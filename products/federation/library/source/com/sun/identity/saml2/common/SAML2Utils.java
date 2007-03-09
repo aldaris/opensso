@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.2 2006-12-13 19:03:19 weisun2 Exp $
+ * $Id: SAML2Utils.java,v 1.3 2007-03-09 05:51:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -830,16 +830,19 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
     
     /**
-     * Checks if a <code>Issuer</code> is valid or not.
+     * Returns <code>true</code> if <code>Issuer</code> is valid.
+     *
      * @param issuer to be checked <code>Issuer</code> instance.
      * @param orgName the name of the realm or organization.
      * @param hostEntityId Entity ID of the hosted provider.
      * @return <code>true</code> if the <code>Issuer</code> is trusted;
      *          <code>false</code> otherwise.
      */
-    public static boolean isSourceSiteValid(Issuer issuer,
-            String orgName,
-            String hostEntityId) {
+    public static boolean isSourceSiteValid(
+        Issuer issuer,
+        String orgName,
+        String hostEntityId
+    ) {
         boolean isValid = false;
         try {
             if (issuer != null) {
@@ -1012,24 +1015,21 @@ public class SAML2Utils extends SAML2SDKUtils {
     /**
      * Returns an instance of <code>SAML2MetaManger</code>.
      *
-     * @return Instance of SAML2MetaManager
+     * @return Instance of <code>SAML2MetaManager</code>
      */
     public static SAML2MetaManager getSAML2MetaManager() {
         return saml2MetaManager;
     }
     
     /**
-     * Returns the realm
-     * @param realm Realm object
+     * Returns the realm.
+     * @param realm Realm object.
      * @return realm if the input is not null or empty, otherwise
-     *         return the default realm from AMConfig.properties
+     *         return the root realm.
      */
     public static String getRealm(String realm) {
-        if ((realm == null) || (realm.length() == 0)) {
-            // use the default realm from AMConfig.properties
-            realm = SystemPropertiesManager.get(Constants.AM_DEFAULT_ORG,"/");
-        }
-        return realm;
+        return ((realm == null) || (realm.length() == 0)) ?
+            "/" : realm;
     }
     
     /**
@@ -1040,12 +1040,8 @@ public class SAML2Utils extends SAML2SDKUtils {
      */
     public static String getRealm(Map paramsMap) {
         String realm = getParameter(paramsMap,SAML2Constants.REALM);
-        
-        if ((realm == null) || (realm.length() == 0)) {
-            // use the default realm from AMConfig.properties
-            realm = SystemPropertiesManager.get(Constants.AM_DEFAULT_ORG,"/");
-        }
-        return realm;
+        return ((realm == null) || (realm.length() == 0)) ?
+            "/" : realm;
     }
     
     /**
@@ -2178,8 +2174,8 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.message(method + "queryString :" + queryString);
         }
         
-        String alias =
-                SAML2Utils.getSigningCertAlias(realm, hostEntity, hostEntityRole);
+        String alias = SAML2Utils.getSigningCertAlias(
+            realm, hostEntity, hostEntityRole);
         
         if (debug.messageEnabled()) {
             debug.message(method + "realm is : "+ realm);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.8 2006-11-29 05:36:52 veiming Exp $
+ * $Id: Constants.java,v 1.9 2007-03-09 05:50:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,12 +74,6 @@ public interface Constants {
      */
     public static final String AM_SDK_USER_ENTRY_PROCESSING_IMPL = 
         "com.iplanet.am.sdk.userEntryProcessingImpl";
-
-    /**
-     * property string for default organization
-     */
-    public static final String AM_DEFAULT_ORG = 
-        "com.iplanet.am.defaultOrg";
 
     /**
      * property string for SSL enabled
@@ -236,12 +230,6 @@ public interface Constants {
      */
     public static final String AM_LOGSTATUS = 
         "com.iplanet.am.logstatus";
-
-    /**
-     * property string for directory root suffix
-     */
-    public static final String AM_ROOT_SUFFIX =
-        "com.iplanet.am.rootsuffix";
 
     /**
      * property string for domain component
@@ -955,10 +943,6 @@ public interface Constants {
      */
     public static final String CLUSTER_SERVER_LIST = 
         "iplanet-am-session-cluster-serverlist";
-
-    /** Default organization location properties name. */
-    public static final String DEFAULT_ORGANIZATION =
-        "com.iplanet.am.defaultOrg";
 
     /**
      * This value is used by LDAP connection pool to reap connections

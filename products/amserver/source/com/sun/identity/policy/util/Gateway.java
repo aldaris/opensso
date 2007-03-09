@@ -17,13 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Gateway.java,v 1.3 2006-08-25 21:21:13 veiming Exp $
+ * $Id: Gateway.java,v 1.4 2007-03-09 05:51:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
-
-
-
 
 package com.sun.identity.policy.util;
 
@@ -60,6 +57,7 @@ import com.sun.identity.policy.PolicyDecision;
 import com.sun.identity.policy.ProxyPolicyEvaluatorFactory;
 import com.sun.identity.policy.ProxyPolicyEvaluator;
 import com.sun.identity.policy.PolicyEvaluator;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.OrganizationConfigManager;
 
@@ -90,9 +88,7 @@ public class Gateway extends HttpServlet {
                  authenticators.add(auth);
             }
                         
-            String defaultOrg = SystemProperties.get(
-                                     Constants.DEFAULT_ORGANIZATION);
-            initGWServletUtilsMap(defaultOrg);
+            initGWServletUtilsMap(SMSEntry.getRootSuffix());
             actionNames.add(GET);
             actionNames.add(POST);
             pe = ProxyPolicyEvaluatorFactory.getInstance()

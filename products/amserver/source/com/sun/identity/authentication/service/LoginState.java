@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.10 2007-01-21 10:34:24 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.11 2007-03-09 05:50:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.ServiceConfig;
 import java.net.InetAddress;
 import java.security.AccessController;
@@ -98,8 +99,6 @@ import netscape.ldap.util.DN;
  */
 public class LoginState {
     
-    private static final String rootSuffix =
-        SystemProperties.get(Constants.AM_ROOT_SUFFIX);
     private static final boolean urlRewriteInPath =
         Boolean.valueOf(SystemProperties.get(
             Constants.REWRITE_AS_PATH,"")).booleanValue();
@@ -971,7 +970,8 @@ public class LoginState {
             String applicationUser=
             ISAuthConstants.APPLICATION_USER_PREFIX.toLowerCase();
             if (token.startsWith(applicationUser)) {
-                return "cn=" + token + ",ou=DSAME Users," + rootSuffix;
+                return "cn=" + token + ",ou=DSAME Users," +
+                    SMSEntry.getRootSuffix();
             }
             
             String id = token;

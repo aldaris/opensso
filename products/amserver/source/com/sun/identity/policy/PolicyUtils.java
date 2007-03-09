@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.6 2006-12-22 03:40:11 dillidorai Exp $
+ * $Id: PolicyUtils.java,v 1.7 2007-03-09 05:51:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,12 +35,13 @@ import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.MessageProviderFactory;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.SMSEntry;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -753,8 +754,7 @@ public class PolicyUtils {
              Map levelDNs = new HashMap(); 
              TreeMap sortedDNs; 
                
-             rootDN = new DN(
-                    SystemProperties.get("com.iplanet.am.rootsuffix"));  
+             rootDN = new DN(SMSEntry.getRootSuffix());
              Map avPair = new HashMap();
              Set value = new HashSet(); 
              value.add("iPlanetAMPolicyConfigService");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CramMD5MechanismHandler.java,v 1.2 2006-12-23 05:15:39 hengming Exp $
+ * $Id: CramMD5MechanismHandler.java,v 1.3 2007-03-09 05:51:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,14 +57,13 @@ import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProviderManager;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * The <code>CramMD5MechanismHandler</code> is a handler for 'CRAM-MD5'
  * mechanism.
  */
 public class CramMD5MechanismHandler implements MechanismHandler {
-    private static String defaultOrg = SystemPropertiesManager.get(
-        "com.iplanet.am.defaultOrg");
     private static Debug debug = Debug.getInstance("fmAuthnSvc");
 
     private static final String PROP_SERVER_HOST = "com.iplanet.am.server.host"; 
@@ -262,7 +261,7 @@ public class CramMD5MechanismHandler implements MechanismHandler {
 
         AuthContext authContext = null;
         try {
-            authContext = new AuthContext(defaultOrg);
+            authContext = new AuthContext(SMSEntry.getRootSuffix());
             authContext.login(AuthContext.IndexType.MODULE_INSTANCE, "LDAP");
         } catch (AuthLoginException le) {
             debug.error("CramMD5MechanismHandler.authenticate: ", le);

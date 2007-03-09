@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.2 2006-12-05 21:56:17 weisun2 Exp $
+ * $Id: SPCache.java,v 1.3 2007-03-09 05:51:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 
 package com.sun.identity.saml2.profile;
 
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.Constants;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -42,16 +41,6 @@ import netscape.ldap.util.DN;
  */
 
 public class SPCache {
-
-    private static String defaultOrg =
-                SystemPropertiesManager.get(Constants.AM_DEFAULT_ORG);
-    private static String rootSuffix =
-                SystemPropertiesManager.get(Constants.AM_ROOT_SUFFIX);
-
-    private static String nrootSuffix = 
-                new DN(rootSuffix).toRFCString().toLowerCase();
-    private static String nDefaultOrg = 
-                new DN(defaultOrg+","+rootSuffix).toRFCString().toLowerCase();
 
     private SPCache() {
     }
@@ -140,8 +129,7 @@ public class SPCache {
      */
     public static void clear(String realmName) {
         boolean isDefault = isDefaultOrg(realmName);
-        if ((authCtxObjHash != null)
-                        && (!authCtxObjHash.isEmpty())) {
+        if ((authCtxObjHash != null) && (!authCtxObjHash.isEmpty())) {
             Enumeration keys = authCtxObjHash.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
@@ -153,8 +141,7 @@ public class SPCache {
                 }
             }
         }
-        if ((authContextHash != null) && 
-                        (!authContextHash.isEmpty())) {
+        if ((authContextHash != null) && (!authContextHash.isEmpty())) {
             Enumeration keys = authContextHash.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
@@ -186,22 +173,13 @@ public class SPCache {
 
 
     /**
-     * Checks if the Organization is the default.
+     * Returns <code>true</code> if the realm is root.
      *
      * @param orgName the organization name
-     * @return true if organization is the default else false.
+     * @return <code>true</code> if realm is root.
      */
     public static boolean isDefaultOrg(String orgName) {
-        boolean isDefault = false;
-        if (orgName !=null && !orgName.equals("/")) {
-           String norgName = 
-                    new DN(orgName).toRFCString().toLowerCase();
-           if (norgName != null && (norgName.equals(nrootSuffix)
-                        || norgName.equals(nDefaultOrg))) {
-                isDefault = true;
-           }
-        }
-        return isDefault;
+        return (orgName !=null) || orgName.equals("/");
     }
 
 }

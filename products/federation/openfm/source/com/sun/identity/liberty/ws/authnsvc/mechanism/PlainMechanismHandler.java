@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PlainMechanismHandler.java,v 1.2 2006-12-23 05:15:40 hengming Exp $
+ * $Id: PlainMechanismHandler.java,v 1.3 2007-03-09 05:51:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,14 +41,13 @@ import com.sun.identity.liberty.ws.authnsvc.AuthnSvcUtils;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLRequest;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
 import com.sun.identity.liberty.ws.soapbinding.Message;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * The <code>PlainMechanismHandler</code> is a handler for 'PLAIN'
  * mechanism.
  */
 public class PlainMechanismHandler implements MechanismHandler {
-    private static String defaultOrg =
-        SystemPropertiesManager.get("com.iplanet.am.defaultOrg");
     public static Debug debug = Debug.getInstance("fmAuthnSvc");
 
 
@@ -135,7 +134,7 @@ public class PlainMechanismHandler implements MechanismHandler {
 
         AuthContext authContext = null;
         try {
-            authContext = new AuthContext(defaultOrg);
+            authContext = new AuthContext(SMSEntry.getRootSuffix());
             authContext.login(AuthContext.IndexType.MODULE_INSTANCE,
                 "DataStore");
         } catch (AuthLoginException le) {

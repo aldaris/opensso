@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: header.jsp,v 1.1 2007-01-30 21:23:32 bina Exp $
+   $Id: header.jsp,v 1.2 2007-03-09 05:51:05 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -69,7 +69,7 @@ import="java.io.IOException,
     String localPort = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
     String localDeploymentURI = SystemPropertiesManager.get(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-    String defaultOrg = SystemPropertiesManager.get(Constants.AM_DEFAULT_ORG);
+    String defaultOrg  = "/";
 %>
 
 <%!

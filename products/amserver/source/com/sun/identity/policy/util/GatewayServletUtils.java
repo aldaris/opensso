@@ -17,55 +17,49 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GatewayServletUtils.java,v 1.3 2006-08-25 21:21:13 veiming Exp $
+ * $Id: GatewayServletUtils.java,v 1.4 2007-03-09 05:51:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-
-
-
 package com.sun.identity.policy.util;
 
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.authentication.config.AMAuthConfigUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.identity.shared.debug.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.authentication.config.AMAuthConfigUtils;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceListener;
-
 public class GatewayServletUtils implements ServiceListener {
     
-        private static Debug debug = Debug.getInstance("amGateway");
-        private static String moduleName = null;
-        private static ServiceConfigManager sConfigMgr = null;
-        private static String CERT_PORT_ATTR = null;
-        private static HashMap AuthConfigMap = new HashMap();
+    private static Debug debug = Debug.getInstance("amGateway");
+    private static String moduleName = null;
+    private static ServiceConfigManager sConfigMgr = null;
+    private static String CERT_PORT_ATTR = null;
+    private static HashMap AuthConfigMap = new HashMap();
 
-        // constructor
-        public GatewayServletUtils (ServiceConfigManager scm, String module) {
-           sConfigMgr = scm;
-           CERT_PORT_ATTR = "iplanet-am-auth-" +  module.toLowerCase() + 
-                            "-port-number";
-           moduleName = module;
-        }
+    // constructor
+    public GatewayServletUtils (ServiceConfigManager scm, String module) {
+        sConfigMgr = scm;
+        CERT_PORT_ATTR = "iplanet-am-auth-" +  module.toLowerCase() + 
+            "-port-number";
+        moduleName = module;
+    }
 
     /**
      * This method is used to receive notifications if schema changes.
      * @param serviceName the name of the service.
      * @param version the version of the service.
      */
-    public void schemaChanged (
-    String serviceName,
-    String version
-    ) {
-                //No op.
+    public void schemaChanged (String serviceName, String version) {
+        //No op.
     }
     
     /**
@@ -79,11 +73,11 @@ public class GatewayServletUtils implements ServiceListener {
      * @param type type of modification
      */
     public void globalConfigChanged (
-    String serviceName,
-    String version,
-    String groupName,
-    String serviceComponent,
-    int type
+        String serviceName,
+        String version,
+        String groupName,
+        String serviceComponent,
+        int type
     ) {
         //No op.
     }
@@ -95,7 +89,7 @@ public class GatewayServletUtils implements ServiceListener {
      */
     
     public void organizationConfigChanged () {
-       organizationConfigChanged (null, null, null, null,      null, 0);
+       organizationConfigChanged (null, null, null, null, null, 0);
     }               
                 
     /**
@@ -103,9 +97,8 @@ public class GatewayServletUtils implements ServiceListener {
      * As this object listens for changes in schema of amConsoleService.
      * this method is No-op.
      */
-    
     public void organizationConfigChanged (String orgName) {
-       organizationConfigChanged (null, null, orgName, null,   null, 0);
+       organizationConfigChanged (null, null, orgName, null, null, 0);
     }               
                 
     /**
@@ -119,20 +112,19 @@ public class GatewayServletUtils implements ServiceListener {
      * @param serviceComponent service component
      * @param type type of modification
      */
-    
     public void organizationConfigChanged (
-    String serviceName,
-    String version,
-    String orgName,
-    String groupName,
-    String serviceComponent,
-    int type
+        String serviceName,
+        String version,
+        String orgName,
+        String groupName,
+        String serviceComponent,
+        int type
     ) {
        String certModulePortNumber = null;
        String certModuleLevel = null;
 
        if (orgName == null) {
-          orgName = SystemProperties.get(Constants.DEFAULT_ORGANIZATION);
+          orgName = SMSEntry.getRootSuffix();
        }
        // Get the port number for Cert module
        try {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSystemConfig.java,v 1.2 2007-02-07 20:19:44 jonnelson Exp $
+ * $Id: AMSystemConfig.java,v 1.3 2007-03-09 05:51:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.base.model;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.SMSEntry;
 
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
@@ -84,8 +85,7 @@ public class AMSystemConfig
     /** 
      * default organization 
      */
-    public static String defaultOrg =
-        normalizeString(SystemProperties.get(DEFAULT_ORGANIZATION));
+    public static String defaultOrg = SMSEntry.getRootSuffix();
 
     /** 
      * version 
@@ -93,13 +93,7 @@ public class AMSystemConfig
     public static String version =
         normalizeString(SystemProperties.get(Constants.AM_VERSION));
 
-    /** 
-     * Root Suffix 
-     */
-    public static String rootSuffix =
-        normalizeString(SystemProperties.get(Constants.AM_ROOT_SUFFIX));
-
-    private static String normalizeString(String tmp) {
+    public static String normalizeString(String tmp) {
         if (tmp != null) {
             // parse string to remove any extraneous space
             String[] dns = LDAPDN.explodeDN(tmp, false);

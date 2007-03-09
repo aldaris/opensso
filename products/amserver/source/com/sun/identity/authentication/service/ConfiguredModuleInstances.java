@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredModuleInstances.java,v 1.2 2006-08-25 21:20:30 veiming Exp $
+ * $Id: ConfiguredModuleInstances.java,v 1.3 2007-03-09 05:50:59 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ChoiceValues;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * The class determines the configured LDAP/DataStore Module Instances for realm
@@ -76,7 +77,7 @@ public class ConfiguredModuleInstances extends ChoiceValues {
             orgDN = (String)envParams.get(Constants.ORGANIZATION_NAME);
         }
         if (orgDN == null || orgDN.length() == 0) {
-            orgDN = SystemProperties.get(Constants.AM_ROOT_SUFFIX);
+            orgDN = SMSEntry.getRootSuffix();
         }
 
         Map answer = new HashMap();

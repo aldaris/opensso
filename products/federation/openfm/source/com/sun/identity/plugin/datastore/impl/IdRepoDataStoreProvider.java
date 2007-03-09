@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoDataStoreProvider.java,v 1.2 2007-01-16 20:16:20 exu Exp $
+ * $Id: IdRepoDataStoreProvider.java,v 1.3 2007-03-09 05:51:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.SMSEntry;
 
 import java.security.AccessController;
 import java.util.HashMap;
@@ -63,24 +64,9 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
     private static ResourceBundle bundle = 
         Locale.getInstallResourceBundle("fmDataStoreProvider");
     private static Debug debug = Debug.getInstance("fmDataStoreProvider");
-    private static SSOToken adminToken = null;
-    private static String defaultOrg;
     // Identity repository instance map
     private static Map idRepoMap = new HashMap();
 
-    // initialize admin token
-    static {
-        try {
-            adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            defaultOrg =
-                SystemPropertiesManager.get("com.iplanet.am.defaultOrg");
-            adminToken.setProperty("Organization", defaultOrg);
-        } catch (SSOException ssoe) {
-            debug.error("IdRepoDataStoreProvider.static: can't create token", 
-                ssoe);
-        }
-    }
 
     /**
      * Default Constructor.
@@ -121,6 +107,9 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
         }
 
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            adminToken.setProperty("Organization", SMSEntry.getRootSuffix());
             AMIdentity amId = IdUtils.getIdentity(adminToken, userID);
             return amId.getAttribute(attrName);
         } catch (SSOException ssoe) {
@@ -156,6 +145,9 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
         }
 
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            adminToken.setProperty("Organization", SMSEntry.getRootSuffix());
             AMIdentity amId = IdUtils.getIdentity(adminToken, userID);
             return amId.getAttributes(attrNames);
         } catch (SSOException ssoe) {
@@ -189,6 +181,9 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
         }
 
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            adminToken.setProperty("Organization", SMSEntry.getRootSuffix());
             AMIdentity amId = IdUtils.getIdentity(adminToken, userID);
             amId.setAttributes(attrMap);
             amId.store();
@@ -219,7 +214,7 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
         throws DataStoreProviderException
     {
         if (orgDN == null) {
-            orgDN = defaultOrg;
+            orgDN = SMSEntry.getRootSuffix();
         }
         
         if ((avPairs == null) || (avPairs.size() == 0)) {
@@ -277,6 +272,9 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
         }
 
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            adminToken.setProperty("Organization", SMSEntry.getRootSuffix());
             AMIdentity amId = IdUtils.getIdentity(adminToken, userID);
             // treat inactive as user does not exist
             return amId.isActive();
@@ -303,8 +301,10 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
     {
         AMIdentityRepository amIdentityRepository = null;
         try {
-            amIdentityRepository = 
-                    (AMIdentityRepository) idRepoMap.get(realm);
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            adminToken.setProperty("Organization", SMSEntry.getRootSuffix());
+            amIdentityRepository = (AMIdentityRepository) idRepoMap.get(realm);
             if (amIdentityRepository == null) {
                 amIdentityRepository =
                     new AMIdentityRepository(adminToken, realm);

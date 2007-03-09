@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.20 2007-03-07 22:11:16 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.21 2007-03-09 05:51:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,9 +105,6 @@ public class SMSEntry implements Cloneable {
     static boolean cacheSMSEntries;
 
     public static ResourceBundle bundle;
-
-    // BaseDN (Root DN)
-    static String DEFAULT_ORG_PROPERTY = "com.iplanet.am.defaultOrg";
 
     static String baseDN;
 

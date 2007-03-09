@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.3 2006-12-13 19:03:22 weisun2 Exp $
+ * $Id: SPSSOFederate.java,v 1.4 2007-03-09 05:51:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
@@ -513,12 +512,9 @@ public class SPSSOFederate {
 
     /* Returns the realm */
     private static String getRealm(String realm) {
-        if ((realm == null) || (realm.length() == 0)) {
-            // use the default realm from AMConfig.properties
-            realm = SystemPropertiesManager.get(Constants.AM_DEFAULT_ORG,"/");
-        }
-        return realm;
+        return ((realm == null) || (realm.length() == 0)) ? "/" : realm;
     }
+
     /* Returns value of isPassive attribute */
     private static Boolean doPassive(Map paramsMap,Map spConfigAttrsMap){
         // get isPassive

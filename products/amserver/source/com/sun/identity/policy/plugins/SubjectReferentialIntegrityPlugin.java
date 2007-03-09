@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectReferentialIntegrityPlugin.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
+ * $Id: SubjectReferentialIntegrityPlugin.java,v 1.3 2007-03-09 05:51:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,12 +25,6 @@
 
 package com.sun.identity.policy.plugins;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import netscape.ldap.util.DN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -48,6 +42,12 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyUtils;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.sm.SMSEntry;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import netscape.ldap.util.DN;
 
 /**
  * The class <code>SubjectReferentialIntegrityPlugin</code> provides
@@ -95,8 +95,7 @@ public class SubjectReferentialIntegrityPlugin extends AMCallBack {
                 DN entryDName = new DN(entryDN);
                 //a connection to the Identity Server data store.
                 AMStoreConnection dpStore = new AMStoreConnection(token);
-                DN rootDN = 
-                new DN(SystemProperties.get("com.iplanet.am.rootsuffix"));
+                DN rootDN = new DN(SMSEntry.getRootSuffix());
                 if (debug.messageEnabled()) {
                     debug.message("Searching for all policies from root DN: " 
                     + rootDN.toString());

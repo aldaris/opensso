@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.3 2007-02-07 20:19:40 jonnelson Exp $
+ * $Id: AMAdminConstants.java,v 1.4 2007-03-09 05:51:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,12 +267,6 @@ public interface AMAdminConstants {
     String CONSOLE_USER_SEARCH_RETURN_KEY =
         "iplanet-am-admin-console-user-return-attribute";
 
-    /**
-     * Federation Provider Configuration service name.
-     */
-    String DEFAULT_ORGANIZATION =
-        "com.iplanet.am.defaultOrg";
-    
     /**
      * Adminstration Console service name.
      */

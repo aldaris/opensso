@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.4 2007-01-21 10:34:19 mrudul_uchil Exp $
+ * $Id: Application.java,v 1.5 2007-03-09 05:50:57 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,9 +40,9 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.servlet.http.HttpServletRequest;
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.shared.datastruct.CollectionHelper;
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.authentication.internal.AuthContext;
+import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
@@ -50,12 +50,13 @@ import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.security.DecodeAction;
-import com.sun.identity.authentication.internal.AuthContext;
-import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.security.DecodeAction;
+import com.sun.identity.sm.SMSEntry;
 
 /**
  * Application login module.<br>
@@ -84,7 +85,6 @@ public class Application extends AMLoginModule {
     private static final String amAuthApplication = "amAuthApplication";
     private static Debug debug = Debug.getInstance(amAuthApplication);
     private ResourceBundle bundle = null;
-    private static String rootSuffix = null;
     private LDAPAuthUtils ldapUtil;
     private Map currentConfig;
     private static boolean ldapSSL = false;
@@ -95,7 +95,6 @@ public class Application extends AMLoginModule {
             Constants.AM_SERVICES_SECRET).trim();
         secret = (String) AccessController.doPrivileged(
             new DecodeAction(tmp));
-        rootSuffix = SystemProperties.get(Constants.AM_ROOT_SUFFIX);
         ldapSSL = Boolean.valueOf(SystemProperties.get(
             Constants.AM_DIRECTORY_SSL_ENABLED, "false")).booleanValue();
     }
@@ -177,7 +176,8 @@ public class Application extends AMLoginModule {
             }
             String userDNString = ISAuthConstants.APPLICATION_USER_NAMING_ATTR +
                 "=" + newUserName + "," +
-                ISAuthConstants.SPECIAL_USERS_CONTAINER + "," + rootSuffix;
+                ISAuthConstants.SPECIAL_USERS_CONTAINER + "," +
+                SMSEntry.getRootSuffix();
 
             if (!isValidUserEntry(userDNString)) {
                 debug.message(

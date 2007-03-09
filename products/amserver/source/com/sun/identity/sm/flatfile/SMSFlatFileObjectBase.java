@@ -17,13 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.7 2007-03-07 22:12:24 goodearth Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.8 2007-03-09 05:51:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm.flatfile;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.common.CaseInsensitiveProperties;
+import com.sun.identity.common.CaseInsensitiveTreeSet;
+import com.sun.identity.common.ReaderWriterLock;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
@@ -31,15 +40,6 @@ import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SchemaException;
 import com.sun.identity.sm.ServiceNotFoundException;
-import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.common.CaseInsensitiveProperties;
-import com.sun.identity.common.CaseInsensitiveTreeSet;
-import com.sun.identity.shared.Constants;
-import com.sun.identity.common.ReaderWriterLock;
-import com.sun.identity.shared.debug.Debug;
-import com.iplanet.am.util.SystemProperties;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -72,10 +72,9 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
     static final String SMS_FLATFILE_ROOTDIR_PROPERTY = 
         "com.sun.identity.sm.flatfile.root_dir";
     static final String DEFAULT_ROOT_DIR = "/var/opt/SUNWam/sms";
-    static final String DEFAULT_ORG_DN = "dc=sun,dc=com";
 
     /**
-     * Gets the flat file directory and default org from AMConfig.properties,
+     * Gets the flat file directory from AMConfig.properties,
      * and creates the root directory if it does not exist.
      * This function must be called in a single thread.
      * @throws SMSException if any error occurs.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetModelImpl.java,v 1.1 2007-02-09 22:14:21 veiming Exp $
+ * $Id: PWResetModelImpl.java,v 1.2 2007-03-09 05:51:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
@@ -60,11 +61,6 @@ public class PWResetModelImpl
      * Password reset Debug file name
      */
     private static final String PASSWORD_DEBUG_FILENAME = "amPasswordReset";
-
-    /**
-     * Root Suffix
-     */
-    private static final String ROOT_SUFFIX = "com.iplanet.am.rootsuffix";
 
     /**
      *  Name of password reset enabled attribute
@@ -143,11 +139,6 @@ public class PWResetModelImpl
      * Debug object 
      */
     public static Debug debug = Debug.getInstance(PASSWORD_DEBUG_FILENAME);
-
-    /** 
-     * Root Suffix value
-     */
-    public static final String rootSuffix = SystemProperties.get(ROOT_SUFFIX);
 
     /** 
      * SSO token object
@@ -430,7 +421,7 @@ public class PWResetModelImpl
      * @return root suffix.
      */
     public String getRootSuffix() {
-        return rootSuffix;
+        return SMSEntry.getRootSuffix();
     }
     
     /**
