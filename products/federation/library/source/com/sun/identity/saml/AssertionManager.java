@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.2 2006-11-30 02:32:13 bina Exp $
+ * $Id: AssertionManager.java,v 1.3 2007-03-10 00:29:21 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1796,10 +1796,6 @@ public final class AssertionManager {
             Map map = paMapper.getUser(assertions, srcID, null);
             name = (String) map.get(PartnerAccountMapper.NAME);
             org = (String) map.get(PartnerAccountMapper.ORG);
-        } else {
-            Map mapper = sourceSite.getAccountMapper().getUser(subject, srcID);
-            org = (String) mapper.get(AccountMapper.ORG);
-            name = (String) mapper.get(AccountMapper.NAME);
         }
 
         if ((org == null) || (name == null)) {

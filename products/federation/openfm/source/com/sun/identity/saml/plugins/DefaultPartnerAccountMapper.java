@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultPartnerAccountMapper.java,v 1.1 2006-10-30 23:15:46 qcheng Exp $
+ * $Id: DefaultPartnerAccountMapper.java,v 1.1 2007-03-10 00:29:24 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -37,6 +37,8 @@ import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 
 import com.sun.identity.saml.protocol.SubjectQuery;
+
+import com.sun.identity.sm.SMSEntry;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -170,8 +172,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
         if (nameIdentifier != null) {
             String name = nameIdentifier.getName();
             String org = nameIdentifier.getNameQualifier();
-            String rootSuffix = SystemConfigurationUtil.getProperty(
-                SAMLConstants.DEFAULT_ORG);   
+            String rootSuffix = SMSEntry.getRootSuffix();
             if (name != null && (name.length() != 0)) {
                 String temp = name; 
                 if (org != null && (org.length() != 0)) {

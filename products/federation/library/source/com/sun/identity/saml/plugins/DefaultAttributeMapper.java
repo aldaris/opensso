@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.1 2006-10-30 23:15:45 qcheng Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.2 2007-03-10 00:29:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -177,10 +177,6 @@ public class DefaultAttributeMapper implements AttributeMapper {
         if (paMapper != null) {
             Map map = paMapper.getUser(query, sourceID);
             name = (String) map.get(PartnerAccountMapper.NAME);
-        } else {
-            Map mapper =destSite.getAccountMapper().getUser(query.getSubject(),
-                                                            sourceID);
-            name = (String) mapper.get(AccountMapper.NAME);
         }
 
         if (name == null) {

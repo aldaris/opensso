@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.2 2006-11-30 02:32:15 bina Exp $
+ * $Id: SAMLConstants.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1092,12 +1092,6 @@ public final class SAMLConstants
      * <code>AMConfig.properties</code> file.
      */
     public static final String SERVER_PORT = "com.iplanet.am.server.port";
-
-    /**
-     * Attribute that identifies default orgranization in
-     * <code>AMConfig.properties</code> file.
-     */
-    public static final String DEFAULT_ORG ="com.iplanet.am.defaultOrg";
 
     /**
      * Attribute that identifies default version for saml assertion in

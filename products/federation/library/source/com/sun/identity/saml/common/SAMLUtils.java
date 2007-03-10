@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.2 2006-11-30 02:32:17 bina Exp $
+ * $Id: SAMLUtils.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,6 @@ import com.sun.identity.saml.assertion.Conditions;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.saml.assertion.SubjectStatement;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager; 
-import com.sun.identity.saml.plugins.AccountMapper;
 import com.sun.identity.saml.plugins.PartnerAccountMapper;
 import com.sun.identity.saml.protocol.*;
 import com.sun.identity.saml.servlet.POSTCleanUpThread;
@@ -1062,9 +1061,6 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             Map map = paMapper.getUser(assertions, srcID, target);
             name = (String) map.get(PartnerAccountMapper.NAME);
             attrMap = (Map) map.get(PartnerAccountMapper.ATTRIBUTE);
-        } else {
-            Map mapper = partnerdest.getAccountMapper().getUser(subject, srcID);
-            name = (String) mapper.get(AccountMapper.NAME);
         }
         
         if (attrMap == null) {

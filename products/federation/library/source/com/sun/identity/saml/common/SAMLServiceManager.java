@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.2 2006-11-30 02:32:19 bina Exp $
+ * $Id: SAMLServiceManager.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,12 +39,10 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProviderManager;
-import com.sun.identity.saml.plugins.AccountMapper;
 import com.sun.identity.saml.plugins.ActionMapper;
 import com.sun.identity.saml.plugins.AttributeMapper;
 import com.sun.identity.saml.plugins.DefaultNameIdentifierMapper;
 import com.sun.identity.saml.plugins.DefaultAttributeMapper;
-import com.sun.identity.saml.plugins.DefaultPartnerAccountMapper;
 import com.sun.identity.saml.plugins.NameIdentifierMapper;
 import com.sun.identity.saml.plugins.PartnerSiteAttributeMapper;
 import com.sun.identity.saml.plugins.PartnerAccountMapper;
@@ -75,7 +73,8 @@ public class SAMLServiceManager implements ConfigurationListener {
     private static String serverPort = null;
     private static String serverURL = null;
     private static boolean removeAssertion = false;
-  
+    private static String DEFAULT_PARTNER_ACCOUNT_MAPPER =
+        "com.sun.identity.saml.plugins.DefaultPartnerAccountMapper"; 
     /**
      * Default Constructor.
      */
@@ -170,7 +169,6 @@ public class SAMLServiceManager implements ConfigurationListener {
         private String basicAuthUserID = null;
         private String basicAuthPasswd = null;
         private String certalias = null;
-        private AccountMapper acctMapper = null;
         private PartnerAccountMapper partnerAcctMapper = null;
         private SiteAttributeMapper _siteAttributeMapper = null;
         private PartnerSiteAttributeMapper _partnerSiteAttributeMapper = null;
@@ -192,7 +190,6 @@ public class SAMLServiceManager implements ConfigurationListener {
          * @param bAuthUserID user ID for basic authentication
          * @param bAuthPasswd user password for basic authentication
          * @param certAlias certificate alias used to verify signature
-         * @param accountMapper <code>AccountMapper</code> plugin instance
          * @param partnerAccountMapper <code>PartnerAccountMapper</code>
          *      plugin instance
          * @param siteAttributeMapper <code>SiteAttributeMapper</code> plugin
@@ -211,7 +208,6 @@ public class SAMLServiceManager implements ConfigurationListener {
         public SOAPEntry(String sourceid, String soapUrl, String authType, 
                          String user, String bAuthUserID,
                         String bAuthPasswd, String certAlias, 
-                         AccountMapper accountMapper,
                          PartnerAccountMapper partnerAccountMapper,
                          SiteAttributeMapper siteAttributeMapper, 
                          PartnerSiteAttributeMapper partnerSiteAttributeMapper,
@@ -226,7 +222,6 @@ public class SAMLServiceManager implements ConfigurationListener {
             basicAuthUserID = bAuthUserID;
             basicAuthPasswd = bAuthPasswd;
             certalias = certAlias; 
-            acctMapper = accountMapper; 
             partnerAcctMapper = partnerAccountMapper; 
             _siteAttributeMapper = siteAttributeMapper;
             _partnerSiteAttributeMapper = partnerSiteAttributeMapper;
@@ -298,12 +293,6 @@ public class SAMLServiceManager implements ConfigurationListener {
          * @return String SAML 1.x version the partner site preferred to use.
          */
         public String getVersion() { return prefVersion;}
-
-        /**
-         * Returns <code>AccountMapper</code> instance.
-         * @return AccountMapper instance.
-         */
-        public AccountMapper getAccountMapper() {return acctMapper;}
 
         /**
          * Returns <code>PartnerAccountMapper</code> instance.
@@ -809,7 +798,6 @@ public class SAMLServiceManager implements ConfigurationListener {
                         String basic_auth_passwd = null;
                         String _certAlias = null;
                         String preferVersion = null; 
-                        AccountMapper _accountMapper = null;
                         PartnerAccountMapper _partnerAccountMapper = null;
                         SiteAttributeMapper _siteAttributeMapper = null;
                         PartnerSiteAttributeMapper _partnerSiteAttributeMapper
@@ -900,10 +888,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                                 try {
                                     Object temp = Class.forName(
                                       element.substring(nextpos)).newInstance();
-                                    if (temp instanceof AccountMapper) {
-                                        _accountMapper = 
-                                            (AccountMapper) temp;
-                                    } else if (temp instanceof 
+                                    if (temp instanceof 
                                          PartnerAccountMapper) {
                                         _partnerAccountMapper =
                                            (PartnerAccountMapper) temp;
@@ -921,7 +906,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                                 } catch (ClassNotFoundException ce) {
                                     SAMLUtils.debug.error("SAMLServiceManager:"+
                                                           ce); 
-                                    _accountMapper = null;                      
+                                    _partnerAccountMapper = null;
                                 }
                             } else if (key.equalsIgnoreCase(
                                          SAMLConstants.PARTNERACCOUNTMAPPER)) {
@@ -1081,14 +1066,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                         if (_authType == null) {
                             _authType = SAMLConstants.NOAUTH; 
                         }
-                        
+                       
                         // provide default AccountMapper
-                        if ((_accountMapper == null) &&
-                            (_partnerAccountMapper == null))
-                        {
-                            _partnerAccountMapper =
-                                new DefaultPartnerAccountMapper();
+                        if (_partnerAccountMapper == null) {
+                            try {
+                                _partnerAccountMapper = (PartnerAccountMapper)
+                                  Class.forName(
+                                  DEFAULT_PARTNER_ACCOUNT_MAPPER).newInstance();
+                            } catch (Exception ex0) {
+                                // ignore
+                            }
                         }
+ 
                         // provide default AttributeMapper
                         if (attrMapper == null) {
                             attrMapper = new DefaultAttributeMapper();
@@ -1152,7 +1141,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                             SOAPEntry server = new SOAPEntry(
                                    _destID, _soapRevUrl, _authType,
                                    _user, basic_auth_user, basic_auth_passwd,
-                                    _certAlias, _accountMapper,
+                                    _certAlias,
                                    _partnerAccountMapper, _siteAttributeMapper,
                                    _partnerSiteAttributeMapper, niMapper,
                                    attrMapper,actionMapper, _issuer, 
