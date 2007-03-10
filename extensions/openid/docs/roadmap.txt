@@ -1,0 +1,33 @@
+OpenID 1.1 Extension for OpenSSO: Roadmap
+Updated 2007-03-10
+
+1.0 alpha1 (completed 2007-03-05):
+  - Full IDP protocol compliance with OpenID Authentication 1.1.
+
+1.0 alpha2 (targeted milestone 2007-03-16):
+  - Full IDP compliance with OpenID Simple Registration Extension 1.0.
+  - End-user interface to manage trust decisions (sans persistence).
+  - Migration from amserver to federation product.
+
+1.0 alpha3 (target milestone 2007-03-23):
+  - Administration user interface to manage OpenID service settings.
+  - OpenID identity to OpenSSO realm & subject matching.
+  - End-user trust decision persistence and management user interface.
+  - Relying party discrimination (hooks for rule execution).
+
+1.0 beta1:
+  - All hard-codings replaced with dynamic configuration and/or discovery.
+  - Code formatting alignment with rest of OpenSSO project.
+  - User interface cleanup and alignment with rest of OpenSSO project.
+  - Beta testing and associated defect resolution.
+  - Administrator and end-user help documentation.
+
+1.0 final:
+  - Administration documentation.
+  - OpenID 1.1 IDP complete and suitable for inclusion into federation product.
+
+1.1 (alpha, beta, final)
+  - OpenID consumer (relying party) implementation.
+
+2.x
+  - Support for full set of OpenID 2.0 specifications for OP and RP.

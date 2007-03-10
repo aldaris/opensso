@@ -1,0 +1,90 @@
+------------------------------------------------------------------------------
+README file for OpenID Extension for OpenSSO
+Version: 1.0 alpha1
+------------------------------------------------------------------------------
+
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2007-03-10 23:00:07 pbryan Exp $
+
+Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+Portions Copyrighted Paul C. Bryan
+------------------------------------------------------------------------------
+
+%% Contents:
+    %% 1. Introduction
+    %% 2. Dependencies
+    %% 3. Before you build
+    %% 4. Building the OpenID extension
+        %% 4.1 clean target
+        %% 4.2 war target
+        %% 4.3 usage target
+
+%% 1. Introduction
+
+This is the 1.0 alpha1 version of the OpenID extension for OpenSSO. It
+currently provides an implementation that is protocol compliant with the
+OpenID Authentication 1.1 specification.
+
+This is the first release in a planned series of releases. To see the roadmap
+of releases, consult the docs/roadmap.txt file.
+
+%% 2. Dependencies
+
+This extension depends on the amserver product inside of OpenSSO, and in
+turn, all of its dependencies.
+
+%% 3. Before you build
+
+Before you build the WAR file containing the OpenID extension, you must first
+build the amserver WAR file. Build the war target in amserver.
+
+This alpha1 release of the OpenID extension has a hard-coded OpenID
+realm (URL scheme). You must change this scheme to match your OpenID identity
+provider URL. Change the HARD_CODED_OPENID_REALM constant inside of the
+com/sun/identity/openid/ProviderServlet.java file.
+
+%% 4. Building the OpenID extension
+
+The workspace build system offers different build targets. You can view the
+available targets by issuing the ant command from the root of the workspace.
+The default target that is executed is the usage target, which displays a
+brief description about the other targets. Currently, the main targets
+available in the workspace are:
+
+  - clean : cleans any generated files
+  - war   : builds the WAR
+  - usage : displays this usage message
+
+%% 4.1 clean target
+
+The clean target removes all of the intermediate and output directories.
+
+%% 4.2 war target
+
+The war target extracts the amserver WAR file, compiles in the OpenID
+extension, and packages it up as a new WAR file. A deployable WAR file will
+be created under the openid/built/dist directory after this target is
+successfully executed.
+
+%% 4.3 usage target
+
+Displays a list of available targets along with a brief description of each
+available target for quick reference.
