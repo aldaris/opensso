@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amConsoleConfig.xml,v 1.2 2007-02-07 17:30:09 jonnelson Exp $
+   $Id: amConsoleConfig.xml,v 1.3 2007-03-14 19:28:55 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,7 +26,8 @@
 
 <consoleconfig>
 <tabs>
-    <tab id="1" viewbean="com.sun.identity.console.realm.RMRealmViewBean"
+    <tab id="1" 
+	viewbean="com.sun.identity.console.realm.RMRealmViewBean"
 	url="../realm/RMRealm"
 	label="tab.realm.label"
 	tooltip="tab.realm.tooltip"
@@ -34,7 +35,8 @@
 	permissions="sunAMRealmService,sunIdentityRepositoryService,iPlanetAMPolicyService" />
 
         
-    <tab id="4" viewbean="com.sun.identity.console.service.SCConfigViewBean"
+    <tab id="4" 
+        viewbean="com.sun.identity.console.service.SCConfigViewBean"
 	url="../service/SCConfig"
 	label="tab.configuration.label"
 	tooltip="tab.configuration.tooltip"
@@ -43,7 +45,8 @@
 	accesslevel="globalconfig"/>
 
 
-    <tab id="5" viewbean="com.sun.identity.console.session.SMProfileViewBean"
+    <tab id="5" 
+	viewbean="com.sun.identity.console.session.SMProfileViewBean"
 	url="../session/SMProfile"
 	label="tab.session.label"
 	tooltip="tab.session.tooltip"
@@ -55,35 +58,35 @@
                          
 <profiletabs>
     <profile id="realms">
-	<tab id="1" 
+	<tab id="11" 
 	    viewbean="com.sun.identity.console.realm.RealmPropertiesViewBean"
 	    url="../realm/RMRealm"
 	    label="realm.showmenu.label.properties"
 	    tooltip="tab.sub.realm.tooltip"
 	    status="tab.sub.realm.status"
 	    permissions="sunAMRealmService" />
-	<tab id="2" 
+	<tab id="12" 
 	    viewbean="com.sun.identity.console.authentication.AuthPropertiesViewBean" 
 	    label="realm.showmenu.label.authentication" 
 	    url="../realm/RMRealm"
 	    tooltip="tab.sub.authentication.tooltip"
 	    status="tab.sub.authentication.status"
 	    permissions="iPlanetAMAuth" />
-	<tab id="3" 
+	<tab id="13" 
 	    viewbean="com.sun.identity.console.realm.ServicesViewBean"
 	    url="../realm/RMRealm"
 	    tooltip="tab.sub.services.tooltip"
 	    status="tab.sub.services.status"
 	    label="realm.showmenu.label.services"
 	    permissions="sunAMRealmService,ANY_SERVICE" />
-	<tab id="4"
+	<tab id="14"
 	    viewbean="com.sun.identity.console.realm.IDRepoViewBean"
 	    url="../realm/RMRealm"
 	    tooltip="tab.sub.repository.tooltip"
 	    status="tab.sub.repository.status"
 	    label="realm.showmenu.label.repository"
 	    permissions="sunIdentityRepositoryService" />
-	<tab id="5"
+	<tab id="15"
 	    viewbean="com.sun.identity.console.delegation.DelegationViewBean"
 	    url="../delegation/Delegation"
 	    tooltip="tab.sub.delegation.tooltip"
@@ -91,14 +94,14 @@
 	    label="realm.showmenu.label.delegation"
 	    delegateUI="true"
 	    permissions="sunAMRealmService" />
-    	<tab id="6" 
+    	<tab id="16" 
     	    viewbean="com.sun.identity.console.policy.PolicyViewBean"
     	    url="../policy/Policy"
     	    label="tab.sub.policy.label"
     	    tooltip="tab.sub.policy.tooltip"
     	    status="tab.sub.policy.status"
     	    permissions="iPlanetAMPolicyService" />
-    	<tab id="7" 
+    	<tab id="17" 
     	    viewbean="com.sun.identity.console.idm.HomeViewBean"
     	    url="../idm/Home"
     	    label="tab.sub.subjects.label"

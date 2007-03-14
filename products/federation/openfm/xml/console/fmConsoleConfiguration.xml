@@ -1,0 +1,70 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: fmConsoleConfiguration.xml,v 1.1 2007-03-14 19:33:48 jonnelson Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<consoleconfig>
+<tabs>
+    <tab id="3" viewbean="none"
+        url="none"
+        label="tab.webservices.label"
+        tooltip="tab.webservices.tooltip"
+        status="tab.webservices.tooltip"
+        controller="com.sun.identity.console.controller.FedTabController"
+        permissions="sunIdentityServerLibertyPPService,sunIdentityServerDiscoveryService,sunIdentityServerSOAPBinding,sunIdentityServerAuthnService" >
+
+        <tab id="31" viewbean="com.sun.identity.console.webservices.WSPersonalProfileServiceViewBean"
+            url="../webservices/WSPersonalProfileService"
+            label="tab.webservices.personalprofile.label"
+            tooltip="tab.webservices.personalprofile.tooltip"
+            status="tab.webservices.personalprofile.status"
+            permissions="sunIdentityServerLibertyPPService"
+            accesslevel="globalconfig"/>
+
+        <tab id="32" viewbean="com.sun.identity.console.service.SMDiscoveryServiceViewBean"
+            url="../service/SMDiscoveryService"
+            label="tab.webservices.discoveryservice.label"
+            tooltip="tab.webservices.discoveryservice.tooltip"
+            status="tab.webservices.discoveryservice.status"
+            permissions="sunIdentityServerDiscoveryService"
+            accesslevel="globalconfig"/>
+ 
+        <tab id="33" viewbean="com.sun.identity.console.service.SCSOAPBindingViewBean"
+            url="../service/SCSOAPBinding"
+            label="tab.webservices.soapbidingservice.label"
+            tooltip="tab.webservices.soapbidingservice.tooltip"
+            status="tab.webservices.soapbidingservice.status"
+            permissions="sunIdentityServerSOAPBinding"
+            accesslevel="globalconfig"/>
+ 
+        <tab id="34" viewbean="com.sun.identity.console.webservices.WSAuthNServicesViewBean"
+            url="../webservices/WSAuthNServices"
+            label="tab.webservices.authentication.label"
+            tooltip="tab.webservices.authentication.tooltip"
+            status="tab.webservices.authentication.status"
+            permissions="sunIdentityServerAuthnService"
+            accesslevel="globalconfig"/>
+    </tab>
+</tabs>
+
+</consoleconfig>

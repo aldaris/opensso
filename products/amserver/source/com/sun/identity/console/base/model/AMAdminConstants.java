@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.4 2007-03-09 05:51:00 veiming Exp $
+ * $Id: AMAdminConstants.java,v 1.5 2007-03-14 19:28:44 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,7 +178,7 @@ public interface AMAdminConstants {
     /**
      * Subjects node identifier.
      */
-    int SUBJECTS_NODE_ID = 7;
+    int SUBJECTS_NODE_ID = 17;
 
     /**
      * Last tab visited before opening a profile object.

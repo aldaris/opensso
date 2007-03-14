@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.40 2007-03-02 19:11:29 ak138937 Exp $
+   $Id: build.xml,v 1.41 2007-03-14 19:28:43 jonnelson Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -76,12 +76,6 @@
             <exclude name="**/com/sun/identity/cli/definition/*.java"/>
         </javac>
         <antcall target="jaxrpc" />
-
-        <copy todir="${amserver.console.classes.dir}">
-	    <fileset dir="${amserver.console.xml.dir}/components">
-		<include name="*.xml"/>
-	    </fileset>
-        </copy>
 
         <copy todir="${amserver.built.res.dir}">
             <fileset dir="${amserver.config.res.dir}">

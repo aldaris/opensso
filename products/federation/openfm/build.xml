@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-03-01 08:45:40 veiming Exp $
+   $Id: build.xml,v 1.9 2007-03-14 19:33:19 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,6 +50,12 @@
             <include name="**/*.jar"/>
         </fileset>
         <fileset dir="${library.extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${jatolib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${lockhart.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -101,10 +107,6 @@
 
     <target name="war" depends="build">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
-    </target>
-
-    <target name="jsf-war" depends="build">
-        <ant antfile="${openfm.dir}/build-jsf-war.xml" inheritRefs="true"/>
     </target>
 
     <target name="samples" depends="war">
@@ -178,6 +180,7 @@
     <target name="extlib-clean">
         <delete file="${openfm.extlib.dir}/amclientsdk.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.jar"/>
+        <delete file="${openfm.extlib.dir}/opensso-sharedlib.jar"/>
         <delete file="${openfm.extlib.dir}/opensso-test.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.war"/>
     </target>

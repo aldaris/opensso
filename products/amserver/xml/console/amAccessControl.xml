@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.2 2007-02-07 17:30:09 jonnelson Exp $
+   $Id: amAccessControl.xml,v 1.3 2007-03-14 19:28:55 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -288,6 +288,7 @@
     <neednodealwith classname="com.sun.identity.console.policy.PMDefaultAuthLevelConditionAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.PMDefaultIPConditionAddViewBean" /> 
     <neednodealwith classname="com.sun.identity.console.policy.ResponseProviderAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.policy.SelectResponseProviderTypeViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SelectConditionTypeViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.PMDefaultAuthLevelConditionViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SubjectNoneAddViewBean" />

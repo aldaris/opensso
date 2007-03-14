@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.5 2007-01-23 06:46:08 veiming Exp $
+   $Id: build-war.xml,v 1.6 2007-03-14 19:33:19 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,6 +36,7 @@
 
     <property name="war.classes.dir" location="${openfm.built.war.dir}/classes"/>
     <property name="war.package.dir" location="${openfm.built.war.dir}/package"/>
+    <property name="war.webinf.classes.dir" location="${openfm.built.war.dir}/package/WEB-INF/classes"/>
     <property name="war.cli.package.dir" location="${openfm.built.war.dir}/cli/package"/>
     <property name="war.packageweb.dir" location="${openfm.built.war.dir}/packageweb"/>
 
@@ -137,6 +138,14 @@
                 includes="*.jsp" />
         </copy>
 
+        <copy todir="${war.package.dir}/console">
+            <fileset dir="${openfm.dir}/www/console"/>
+        </copy>
+
+        <copy todir="${war.package.dir}/WEB-INF/classes/com/sun/identity/console">
+            <fileset dir="${openfm.dir}/xml/console/components"
+                includes="*.xml" />
+        </copy>
         <replaceregexp flags="s"
             file="${war.package.dir}/WEB-INF/classes/amPolicyConfig.xml"
             match="(iplanet-am-policy-selected-subjects.+?&lt;ChoiceValues&gt;)"
@@ -183,6 +192,61 @@
             <arg value="${war.package.dir}/WEB-INF/jaxrpc-ri-runtime.xml" />
             <arg value="&lt;/endpoints&gt;" />
         </java>
+
+	<!-- update amConsoleConfig with federation tabs -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;tab id=&quot;3&quot;.+?&lt;/tab&gt;" />
+            <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
+            <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
+            <arg value="&lt;tab id=&quot;4&quot;" />
+        </java>
+
+	<!-- update web.xml with fed servlet info -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;context-param&gt;.+?&lt;/context-param&gt;" />
+            <arg value="${openfm.dir}/xml/console/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- context param --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
+            <arg value="${openfm.dir}/xml/console/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
+            <arg value="${openfm.dir}/xml/console/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
+
+	<!-- update console access permission for federation classes -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;neednodealwith.+?/&gt;" />
+            <arg value="${openfm.dir}/xml/console/fmAccessControl.xml" />
+            <arg value="${war.webinf.classes.dir}/amAccessControl.xml" />
+            <arg value="&lt;/accesscontrols&gt;" />
+        </java>
+
+	<!-- merge am and fm console properties -->
+        <java classname="com.sun.identity.setup.MergeProperties" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${war.package.dir}/WEB-INF/classes"/>
+                <pathelement path="resources"/>
+            </classpath>
+            <arg value="amConsole" />
+            <arg value="fmConsole" />
+            <arg value="${war.webinf.classes.dir}/amConsole.properties" />
+        </java>
+
+
 
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>

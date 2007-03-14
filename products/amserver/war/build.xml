@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2007-03-02 19:10:57 ak138937 Exp $
+   $Id: build.xml,v 1.17 2007-03-14 19:28:45 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -96,7 +96,6 @@
             </zipfileset>
             <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default" />
             <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default_en" />
-            <zipfileset dir="${amserver.console.xml.dir}" prefix="WEB-INF/classes" />
             <zipfileset dir="${amserver.built.war.dir}/xml/services" prefix="WEB-INF/classes" />
             <zipfileset dir="${amserver.built.war.dir}/xml" prefix="WEB-INF/template/sms">
                 <include name="serverconfig.xml" />
@@ -146,6 +145,11 @@
                 <include name="jato.tld" />
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF/com_sun_web_ui" />
+            <zipfileset dir="${amserver.console.xml.dir}" prefix="WEB-INF/classes">
+		<include name="amAccessControl.xml" />
+		<include name="amConsoleConfig.xml" />
+            </zipfileset>
+	    <zipfileset dir="${amserver.console.xml.dir}/components" prefix="WEB-INF/classes/com/sun/identity/console" />
             <zipfileset dir="${amserver.www.dir}/console" prefix="console">
                 <exclude name="html" />
                 <exclude name="html/*" />

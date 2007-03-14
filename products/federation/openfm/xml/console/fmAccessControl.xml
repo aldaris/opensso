@@ -1,0 +1,15 @@
+<neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesHandlersEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceDSAttributeMapListEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesHandlersAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSPersonalProfileServiceViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceSupportedContainerAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceSupportedContainerEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SMDiscoveryServiceViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SMDiscoveryBootstrapRefOffEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SMDiscoveryProviderResourceIdMapperEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SMDiscoveryDescriptionEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SMDiscoveryProviderResourceIdMapperAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListDupViewBean" />

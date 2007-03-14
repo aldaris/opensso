@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.1 2007-02-07 20:19:33 jonnelson Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.2 2007-03-14 19:28:43 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -509,7 +509,7 @@ public abstract class AMPrimaryMastHeadViewBean
 
     protected PageTrail.Marker backTrail() {
         PageTrail trail = getPageTrail();
-        return trail.pop();
+        return (trail != null) ? trail.pop() : null;
     }
 
     private CCBreadCrumbs createBreadCrumb(String name) {

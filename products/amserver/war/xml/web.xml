@@ -58,6 +58,8 @@
 		<param-value>true</param-value>
 	</context-param>
 
+<!-- context param -->
+
 	<filter>
                 <filter-name>amSetupFilter</filter-name>
 		<filter-class>com.sun.identity.setup.AMSetupFilter</filter-class>
