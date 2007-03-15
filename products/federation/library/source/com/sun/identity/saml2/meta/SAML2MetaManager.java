@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.2 2007-02-16 02:02:50 veiming Exp $
+ * $Id: SAML2MetaManager.java,v 1.3 2007-03-15 18:00:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,23 +28,21 @@ package com.sun.identity.saml2.meta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.logging.Level;
-
 import javax.xml.bind.JAXBException;
-
-import com.sun.identity.plugin.configuration.ConfigurationManager;
-import com.sun.identity.plugin.configuration.ConfigurationInstance;
-import com.sun.identity.plugin.configuration.ConfigurationException;
-
-import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.plugin.configuration.ConfigurationManager;
+import com.sun.identity.plugin.configuration.ConfigurationInstance;
+import com.sun.identity.plugin.configuration.ConfigurationException;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
@@ -53,9 +51,7 @@ import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.logging.LogUtil;
-
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.common.SAML2SDKUtils;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The <code>SAML2MetaManager</code> provides methods to manage both the 
@@ -943,10 +939,9 @@ public class SAML2MetaManager {
                 return null;
             }
 
-            for(Iterator iter = entityIds.iterator(); iter.hasNext();) {
+            for (Iterator iter = entityIds.iterator(); iter.hasNext();) {
                 String entityId = (String)iter.next();
-                EntityConfigElement config =
-                                    getEntityConfig(realm, entityId);
+                EntityConfigElement config = getEntityConfig(realm, entityId);
                 if (config == null) {
                     continue;
                 }
@@ -967,7 +962,55 @@ public class SAML2MetaManager {
 
         return null;
     }
-
+    
+    /**
+     * Returns role of an entity based on its metaAlias.
+     *
+     * @param metaAlias Meta alias of the entity.
+     * @return role of an entity either <code>SAML2Constants.IDP_ROLE</code>; or
+     *         <code>SAML2Constants.SP_ROLE</code> or 
+     *         <code>SAML2Constants.UNKNOWN_ROLE</code>
+     * @throws SAML2MetaException if there are issues in getting the entity
+     *         profile from the meta alias.
+     */
+    public String getRoleByMetaAlias(String metaAlias)
+        throws SAML2MetaException {
+        String role = SAML2Constants.UNKNOWN_ROLE;
+        
+        String entityId = getEntityByMetaAlias(metaAlias);
+        
+        if (entityId != null) {
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+            IDPSSOConfigElement idpConfig = getIDPSSOConfig(realm, entityId);
+            SPSSOConfigElement spConfig = getSPSSOConfig(realm, entityId);
+            
+            if (idpConfig == null) {
+                String m = spConfig.getMetaAlias();
+                if ((m != null) && m.equals(metaAlias)) {
+                    role = SAML2Constants.SP_ROLE;
+                }
+            } else if (spConfig == null) {
+                String m = idpConfig.getMetaAlias();
+                if ((m != null) && m.equals(metaAlias)) {
+                    role = SAML2Constants.IDP_ROLE;
+                }
+            } else {
+                //Assuming that sp and idp cannot have the same metaAlias
+                String m = spConfig.getMetaAlias();
+                if ((m != null) && m.equals(metaAlias)) {
+                    role = SAML2Constants.SP_ROLE;
+                } else {
+                    m = idpConfig.getMetaAlias();
+                    if ((m != null) && m.equals(metaAlias)) {
+                        role = SAML2Constants.IDP_ROLE;
+                    }
+                }
+            }
+        }
+        
+        return role;        
+    }
+    
     /**
      * Returns metaAliasies of all hosted identity providers under the realm.
      * @param realm The realm under which the identity provider metaAliases

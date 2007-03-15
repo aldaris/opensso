@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaConstants.java,v 1.1 2006-10-30 23:16:24 qcheng Exp $
+ * $Id: SAML2MetaConstants.java,v 1.2 2007-03-15 18:00:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,19 +30,21 @@ package com.sun.identity.saml2.meta;
  * service.
  */
 public interface SAML2MetaConstants {
-    static final String SAML2_COT_SERVICE =
-                                    "sunSAML2COTConfigService";
-    static final String SAML2_COT_SERVICE_VERSION = "1.0";
-    static final String COT_DESC = 
-            "sun-saml2-cot-description";
-    static final String COT_STATUS = 
-            "sun-saml2-cot-status";
-    static final String COT_WRITER_SERVICE =
-            "sun-saml2-writerservice-url";
-    static final String COT_READER_SERVICE =
-            "sun-saml2-readerservice-url"; 
-    static final String COT_TRUSTED_PROVIDERS =
-            "sun-saml2-trusted-providers";                  
-    static final String ACTIVE= "active"; 
-    static final String INACTIVE = "inactive";         
+    String SAML2_COT_SERVICE = "sunSAML2COTConfigService";
+    
+    String SAML2_COT_SERVICE_VERSION = "1.0";
+    
+    String COT_DESC = "sun-saml2-cot-description";
+    
+    String COT_STATUS = "sun-saml2-cot-status";
+    
+    String COT_WRITER_SERVICE = "sun-saml2-writerservice-url";
+    
+    String COT_READER_SERVICE = "sun-saml2-readerservice-url"; 
+    
+    String COT_TRUSTED_PROVIDERS = "sun-saml2-trusted-providers";                  
+    
+    String ACTIVE= "active"; 
+    
+    String INACTIVE = "inactive";         
 } 

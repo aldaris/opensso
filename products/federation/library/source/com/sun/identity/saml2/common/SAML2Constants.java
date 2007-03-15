@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.4 2007-02-09 21:43:37 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.5 2007-03-15 18:00:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -580,11 +580,20 @@ public interface SAML2Constants {
     public String SAML_ART = "SAMLart";
 
     /**
-     * Identifies SP role and IDP Role.
+     * Service Provider Role
      */
     public String SP_ROLE = "SPRole";
 
-    public static final String IDP_ROLE = "IDPRole";
+    /**
+     * Identity Provider Role
+     */
+    public String IDP_ROLE = "IDPRole";
+    
+    /**
+     * Unknown Role
+     */
+    public String UNKNOWN_ROLE = "UNKNOWN";
+    
 
     /**
      * Attribute to be configured in SPSSOConfig for SAML2 authentication

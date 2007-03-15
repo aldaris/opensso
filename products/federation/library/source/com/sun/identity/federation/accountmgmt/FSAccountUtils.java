@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountUtils.java,v 1.1 2006-10-30 23:14:02 qcheng Exp $
+ * $Id: FSAccountUtils.java,v 1.2 2007-03-15 18:00:57 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,33 +35,33 @@ import java.util.StringTokenizer;
  * The utility class contains the helper functions used in 
  * account management.
  */
-class FSAccountUtils {
+public class FSAccountUtils {
     
     /**
      * Attribute name to store Account's federation information key
      */    
-    static final String USER_FED_INFO_KEY_ATTR = 
+    public static final String USER_FED_INFO_KEY_ATTR = 
         "iplanet-am-user-federation-info-key";
     
     /**
      * Attribute name to store Account's federation information.
      */    
-    static final String USER_FED_INFO_ATTR = 
+    public static final String USER_FED_INFO_ATTR = 
         "iplanet-am-user-federation-info";
 
     private static final String FED_INFO_DELIM = "|";
     
     /**
-     * Parses fedInfo string and put corresponding parts in object fields.
+     * Parses federation information string and put corresponding parts in
+     * object fields.
+     *
      * @param fedInfoString - String containg federation information.
-     * @return - Account federation info as an object.
-     * @throws FSAccountMgmtException - if error occures during parsing the 
-     *     string.
+     * @return Account federation information object.
+     * @throws FSAccountMgmtException if <code>fedInfoString</code> cannot be
+     *         parsed.
      */
-    static FSAccountFedInfo stringToObject(
-        String fedInfoString)
-        throws FSAccountMgmtException 
-    {
+    public static FSAccountFedInfo stringToObject(String fedInfoString)
+        throws FSAccountMgmtException {
         FSAccountFedInfo fedInfoObject = null;
         StringTokenizer str = new StringTokenizer(fedInfoString, 
             FED_INFO_DELIM);
@@ -177,15 +177,15 @@ class FSAccountUtils {
     }
     
     /**
-     * Returns all Object Field's value in a string.
-     * @return Account Federation info as a string.
-     * @param fedInfoObject - federation info as an object.
-     * @exception FSAccountMgmtException 
+     * Returns string equalivent of <code>FSAccountFedInfo</code> object.
+     *
+     * @return Account Federation information.
+     * @param fedInfoObject federation info as an object.
+     * @exception FSAccountMgmtException if <code>fedInfoObject</code> cannot
+     *            be converted to string.
      */
-    static String objectToInfoString(
-        FSAccountFedInfo fedInfoObject)
-        throws FSAccountMgmtException
-    {
+    public static String objectToInfoString(FSAccountFedInfo fedInfoObject)
+        throws FSAccountMgmtException {
         StringBuffer fedInfoSB = new StringBuffer(1000);
         
         fedInfoSB.append(FED_INFO_DELIM);
@@ -296,16 +296,15 @@ class FSAccountUtils {
     }
     
     /**
-     * Returns nameSpace & name in a string. 
-     * @return Account Federation info Key as a string.
-     * @param fedInfoKeyObject - federation info as an object.
+     * Returns nameSpace and name of account federation information key. 
+     *
+     * @return string equalivent of account federation information key.
+     * @param fedInfoKeyObject Account federation information key.
      * @exception FSAccountMgmtException if the namespace and/or name 
-     *     in the fedInfoKeyObject are null. 
+     *             in the fedInfoKeyObject are null. 
      */
-    static String objectToKeyString(
-        FSAccountFedInfoKey fedInfoKeyObject)
-        throws FSAccountMgmtException
-    {
+    public static String objectToKeyString(FSAccountFedInfoKey fedInfoKeyObject)
+        throws FSAccountMgmtException {
         StringBuffer attrValueSB = new StringBuffer(300);
         String nameSpace = fedInfoKeyObject.getNameSpace();
         if ((nameSpace == null) || (nameSpace.length() <= 0)){

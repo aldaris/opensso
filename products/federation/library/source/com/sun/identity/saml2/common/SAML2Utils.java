@@ -17,21 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.3 2007-03-09 05:51:03 veiming Exp $
+ * $Id: SAML2Utils.java,v 1.4 2007-03-15 18:00:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.common;
 
-import java.security.PrivateKey;
 import com.sun.identity.common.SystemConfigurationUtil;
-import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.xml.XMLUtils;
-import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.federation.common.FSUtils;
+
+import com.sun.identity.plugin.datastore.DataStoreProvider;
+import com.sun.identity.plugin.datastore.DataStoreProviderException;
+import com.sun.identity.plugin.datastore.DataStoreProviderManager;
+import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLUtilsCommon;
+import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.AudienceRestriction;
 import com.sun.identity.saml2.assertion.AuthnStatement;
@@ -43,21 +50,28 @@ import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.assertion.SubjectConfirmation;
 import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.key.KeyUtil;
-import com.sun.identity.saml2.plugins.IDPAccountMapper;
-import com.sun.identity.saml2.plugins.SPAccountMapper;
-import com.sun.identity.saml2.profile.AuthnRequestInfo;
+import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.profile.CacheCleanUpThread;
+import com.sun.identity.saml2.profile.AuthnRequestInfo;
+import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
+import com.sun.identity.saml2.plugins.IDPAccountMapper;
 import com.sun.identity.saml2.profile.IDPCache;
+import com.sun.identity.saml2.plugins.SPAccountMapper;
+import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
 import com.sun.identity.saml2.profile.SPCache;
+import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
-import com.sun.identity.saml2.protocol.ProtocolFactory;
-import com.sun.identity.saml2.protocol.RequestedAuthnContext;
-import com.sun.identity.saml.common.SAMLUtilsCommon;
-import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
@@ -72,6 +86,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -82,7 +97,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -106,20 +120,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import com.sun.identity.plugin.datastore.DataStoreProvider;
-import com.sun.identity.plugin.datastore.DataStoreProviderException;
-import com.sun.identity.plugin.datastore.DataStoreProviderManager;
-import com.sun.identity.federation.common.FSUtils;
-import com.sun.identity.saml.common.SAMLConstants;
-import com.sun.identity.saml2.assertion.AssertionFactory;
-import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
-import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
-import com.sun.identity.saml2.logging.LogUtil;
-import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
-import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
-import com.sun.identity.plugin.session.SessionManager;
-import com.sun.identity.plugin.session.SessionException;
 
 /**
  * The <code>SAML2Utils</code> contains utility methods for SAML 2.0

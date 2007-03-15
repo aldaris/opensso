@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.4 2007-02-26 20:38:56 veiming Exp $
+ * $Id: FederationManager.java,v 1.5 2007-03-15 18:01:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -290,8 +290,7 @@ public class FederationManager {
             "delete-entity-descriptor-deleted=Descriptor is deleted for entity, {0}."})
     private String delete_entity;
 
-    
-@SubCommandInfo(
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListEntities",
         description="List entities under a realm.",
         mandatoryOptions={},
@@ -304,7 +303,8 @@ public class FederationManager {
             "list-entities-no-entities=There are no entities.",
             "list-entities-entity-listing=List of entity IDs:"})
     private String list_entities;
-@SubCommandInfo(
+
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.CreateCircleOfTrust",
         description="Create circle of trust.",
         mandatoryOptions={
@@ -319,7 +319,8 @@ public class FederationManager {
         resourceStrings={
             "create-circle-of-trust-succeeded=Circle of trust, {0} is created."})
     private String create_circle_of_trust;
-@SubCommandInfo(
+
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.DeleteCircleOfTrust",
         description="Delete circle of trust.",
         mandatoryOptions={
@@ -333,8 +334,7 @@ public class FederationManager {
             "delete-circle-of-trust-succeeded=Circle of trust, {0} is deleted."})
     private String delete_circle_of_trust;
 
-
-@SubCommandInfo(
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrusts",
         description="List circle of trusts.",
         mandatoryOptions={},
@@ -348,7 +348,7 @@ public class FederationManager {
             "list-circle-of-trust-members=List of circle of trusts:"})
     private String list_circle_of_trusts;
 
-@SubCommandInfo(
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrustMembers",
         description="List the members in a circle of trust.",
         mandatoryOptions={
@@ -362,7 +362,8 @@ public class FederationManager {
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
             "list-circle-of-trust-members-members=List of trusted entities (entity IDs) in the circle of trust, {0}:"})
     private String list_circle_of_trust_members;
-@SubCommandInfo(
+
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.RemoveCircleOfTrustMembers",
         description="Remove a member from a circle of trust.",
         mandatoryOptions={
@@ -376,7 +377,8 @@ public class FederationManager {
         resourceStrings={
             "remove-circle-of-trust-member-succeeded=Entity, {1} is removed from the circle of trust, {0}."})
     private String remove_circle_of_trust_member;
-@SubCommandInfo(
+
+    @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.AddCircleOfTrustMembers",
         description="Add a member to a circle of trust.",
         mandatoryOptions={
@@ -391,4 +393,49 @@ public class FederationManager {
             "add-circle-of-trust-member-succeeded=Entity, {2} is added to the circle of trust, {1}, in realm {3}."})
     private String add_circle_of_trust_member;
 
+    @SubCommandInfo(
+        implClassName="com.sun.identity.federation.cli.BulkFederation",
+        description="Perform bulk federation.",
+        mandatoryOptions={
+            "metaalias|m|s|Specify metaAlias for local provider.",
+            "remoteentityid|r|s|Remote entity Id",
+            "useridmapping|g|s|File name of local to remote user Id mapping. Format <local-user-id>|<remote-user-id>",
+            "nameidmapping|e|Name of file that will be created by this sub command. It contains remote user Id to name identifier. It shall be used by remote provider to update user profile."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+        resourceStrings={
+            "bulk-federation-succeeded=Bulk Federation for this host is completed. To complete the federation, name Id mapping file should be loaded to remote provider.",
+            "bulk-federation-infile-do-not-exists=User Id Mapping file, {0} does not exist.",
+            "bulk-federation-outfile-exists=Name Id mapping file, {0} already exists.",
+            "bulk-federation-outfile-cannot-write=Name Id mapping file, {0} is not writable.",
+            "bulk-federation-wrong-format=Wrong format, {0} in User Id Mapping file, {1}.",
+            "bulk-federation-cannot-generate-name-id=Cannot generate name identifier.",
+            "bulk-federation-unknown-metaalias=Meta Alias, {0} is unknown.",
+            "bulk-federation-cannot-federate=Cannot federate user, {0}"
+            })
+    private String do_bulk_federation;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.federation.cli.ImportBulkFederationData",
+        description="Import bulk federation data which is generated by 'do-bulk-federation' sub command.",
+        mandatoryOptions={
+            "metaalias|m|s|Specify metaAlias for local provider.",
+            "bulkfeddata|g|s|File name of  bulk federation data which is generated by 'do-bulk-federation' sub command."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+        resourceStrings={
+            "import-bulk-federation-data-succeeded=Bulk Federation for this host is completed.",
+            "import-bulk-federation-data-unknown-metaalias=Meta Alias, {0} is unknown.",
+            "import-bulk-federation-data-incorrect-entity-id=Entity Id in data file does not match with the entity Id of given meta alias.",
+            "import-bulk-federation-data-incorrect-file-format=Incorrect file format.",
+            "import-bulk-federation-data-incorrect-data-format=Incorrect data format, {0}.",
+            "import-bulk-federation-data-incorrect-role=Incorrect role. The role in data file differs from the role of provider metaalias.",
+            "import-bulk-federation-data-incorrect-spec=Incorrect specification. The specification in data file differs from the entered specification",
+            "import-bulk-federation-data-cannot-federate=Cannot federate user, {0}"
+            })
+    private String import_bulk_federation_data;
 }
