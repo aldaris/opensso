@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-11-02 06:05:46 hengming Exp $
+   $Id: build.xml,v 1.5 2007-03-15 06:21:04 bhavnab Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,6 +61,7 @@
             <arg value="${testng.dir}/saml-testng.xml"/>
             <arg value="${testng.dir}/idff-testng.xml"/>
             <arg value="${testng.dir}/saml2-testng.xml"/>
+            <arg value="${testng.dir}/xacml2-testng.xml"/>
             <arg value="${testng.dir}/sasl-testng.xml"/>
             <arg value="${testng.dir}/disco-testng.xml"/>
             <arg value="${testng.dir}/idpp-testng.xml"/>
@@ -69,6 +70,25 @@
 
         <antcall target="report" />
     </target>
+    <target name="xacml-test">
+	<delete dir="${output.dir}" />
+	<mkdir dir="${output.dir}" />
+	<delete dir="${logs.dir}" />
+	<mkdir dir="${logs.dir}" />
+
+	<java classname="org.testng.TestNG" fork="true">
+            <jvmarg value="-Xint"/>
+            <jvmarg value="-Dlog.level=${log.level}"/>
+            <jvmarg value="-ea"/>
+            <arg value="-d"/>
+            <arg value="${output.dir}"/>
+            <arg value="${testng.dir}/xacml2-testng.xml"/>
+		<classpath refid="build.class.path"/>
+	</java>
+
+	<!-- <antcall target="report" /> -->
+    </target>
+
 
     <target name="configure" unless="unittest.configured">
         <exec executable="${java.home}/../bin/keytool">
