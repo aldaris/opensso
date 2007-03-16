@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.2 2006-04-27 07:53:30 veiming Exp $
+ * $Id: Logger.java,v 1.3 2007-03-16 18:44:05 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,16 +117,34 @@ public class Logger extends java.util.logging.Logger {
         String formatterClass = LogManager.FORMATTER;
         String levelProp = LogConstants.LOG_PROP_PREFIX + "." +
             result.logName + ".level";
+        
+        /*
+         *  see if logging level for this file already defined.
+         *  if not, then check AMConfig.properties.
+         *  if not, then use Logging service config value.
+         *  if not, then use default ("INFO")
+         */
         String levelString = lm.getProperty(levelProp);
-        if (levelString != null) {
-            result.setLevel(Level.parse(levelString));
-        } else {
+
+        if ((levelString == null) || !(levelString.length() > 0)) {
             levelString = SystemProperties.get (levelProp);
-            if (levelString == null) {
-                levelString = "INFO";
+            if ((levelString == null) || !(levelString.length() > 0)) {
+                levelString = lm.getProperty(LogConstants.LOGGING_LEVEL);
+                if ((levelString == null) || !(levelString.length() > 0)) {
+                    levelString = LogConstants.DEFAULT_LOGGING_LEVEL_STR;
+                }
             }
-            result.setLevel(Level.parse(levelString));
         }
+        Level logLevel = null;
+        try {
+            logLevel = Level.parse(levelString);
+        } catch (IllegalArgumentException iaex) {
+            logLevel = LogConstants.DEFAULT_LOGGING_LEVEL;
+        }
+
+        result.setLevel(logLevel);
+
+        //  but disabled logging in AMConfig.properties takes precedence
         String logStatus = lm.getProperty(LogConstants.LOG_STATUS);
         if (logStatus != null && logStatus.startsWith("INACTIVE")) {
             result.setLevel(Level.OFF);

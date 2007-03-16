@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.6 2006-12-06 18:17:15 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.7 2007-03-16 18:45:16 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -713,6 +713,17 @@ public class LogConfigReader implements ServiceListener{
             }
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read Log Status");
+        }
+
+        // Logging Level attribute
+        try {
+            key = LogConstants.LOGGING_LEVEL;
+            value = CollectionHelper.getMapAttr(logAttributes, key,
+                LogConstants.DEFAULT_LOGGING_LEVEL_STR);
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        } catch(Exception e) {
+            debug.error("LogConfigReader:Could not read Logging Level");
         }
 
         // processing platform attributes

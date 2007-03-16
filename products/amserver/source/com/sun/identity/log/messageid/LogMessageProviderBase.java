@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProviderBase.java,v 1.4 2006-08-25 21:20:59 veiming Exp $
+ * $Id: LogMessageProviderBase.java,v 1.5 2007-03-16 18:45:46 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,7 +110,7 @@ public class LogMessageProviderBase
                 logMsgId.getPrefix() + "-" + logMsgId.getID());
         } else {
             Debug.error("LogMessageProviderBase.createLogRecord: " +
-                "unable to locale message ID object for " + messageIDName);
+                "unable to locate message ID object for " + messageIDName);
         }
 
         return logRec;

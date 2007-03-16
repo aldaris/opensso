@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.2 2006-11-22 01:12:30 ak138937 Exp $
+    $Id: amLogging.xml,v 1.3 2007-03-16 18:46:26 bigfatrat Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -232,6 +232,7 @@
 			<Value>ModuleName</Value>
 			<Value>ContextID</Value>
 			<Value>MessageID</Value>
+			<Value>NameID</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 
@@ -250,6 +251,7 @@
 			<ChoiceValue i18nKey="choiceMODULENAME">ModuleName</ChoiceValue>
 			<ChoiceValue i18nKey="choiceCONTEXTID">ContextID</ChoiceValue>
 			<ChoiceValue i18nKey="choiceMESSAGEID">MessageID</ChoiceValue>
+			<ChoiceValue i18nKey="choiceNAMEID">NameID</ChoiceValue>
 		    </ChoiceValues>
 		    <DefaultValues>
 			<Value>Domain</Value>
@@ -261,6 +263,7 @@
 			<Value>ModuleName</Value>
 			<Value>ContextID</Value>
 			<Value>MessageID</Value>
+			<Value>NameID</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 		<AttributeSchema name="iplanet-am-logging-verify-period-in-seconds"
@@ -404,6 +407,26 @@
 			<Value>com.sun.identity.log.spi.SecureTimestampGenerator</Value>
 		    </DefaultValues>
 		</AttributeSchema>
+
+		<AttributeSchema name="sun-am-log-level"
+		    type="single_choice"
+		    syntax="string"
+		    i18nKey="a130">
+		    <ChoiceValues>
+			<ChoiceValue i18nKey="choiceLOGSEVERE">SEVERE</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGWARNING">WARNING</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGINFO">INFO</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGCONFIG">CONFIG</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGFINE">FINE</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGFINER">FINER</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGFINEST">FINEST</ChoiceValue>
+			<ChoiceValue i18nKey="choiceLOGOFF">OFF</ChoiceValue>
+		    </ChoiceValues>
+		    <DefaultValues>
+			<Value>INFO</Value>
+		    </DefaultValues>
+		</AttributeSchema>
+
 	    </Global>
 	</Schema>
     </Service>

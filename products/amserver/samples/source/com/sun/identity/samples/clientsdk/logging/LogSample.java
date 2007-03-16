@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSample.java,v 1.2 2006-12-21 17:39:59 bigfatrat Exp $
+ * $Id: LogSample.java,v 1.3 2007-03-16 18:42:04 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,8 @@ public class LogSample {
     private void logWriteProcessing() {
         /*
          *  get:
-         *    1. subject userid (subject of the LogRecord) *    2. subject userid's password
+         *    1. subject userid (subject of the LogRecord)
+	 *    2. subject userid's password
          *    3. Log filename to log to
          *    4. LogRecord's "data"
          *    5. LoggedBy userid (who's doing the logging)

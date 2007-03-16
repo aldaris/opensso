@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.5 2006-12-06 16:53:40 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.6 2007-03-16 18:44:04 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.log;
+
+import java.util.logging.Level;
 
 /**
  * Defines constants used in the Logging service. <tt> LogConstants </TT>
@@ -334,7 +336,12 @@ public class LogConstants {
      */
     public static final String DEFAULT_SECURITY_SIGNING_ALGORITHM =
         "SHA1withRSA";
-
+    
+    /**
+     * Attribute defining the log file logging level
+     */
+    public static final String LOGGING_LEVEL = "sun-am-log-level";
+    
     /**
      * Property defining whether logging is enabled
      * @supported.api
@@ -426,6 +433,13 @@ public class LogConstants {
      */
     public static final String MESSAGE_ID = "MessageID";
 
+    /**
+     * The NameID field. The Name Identifier associated with
+     * this particular log record data field.
+     * @supported.api
+     */
+    public static final String NAME_ID = "NameID";
+
     public static final String LOGIN_ID_SID = "LoginIDSid";
     public static final String LOGGED_BY_SID = "LoggedBySid";
 
@@ -460,4 +474,10 @@ public class LogConstants {
      */
     public static final String LOG_RESOLVE_HOSTNAME =
         "com.sun.identity.log.resolveHostName";
+
+    /**
+     * default logging level
+     */
+    public static final String DEFAULT_LOGGING_LEVEL_STR = "INFO"; 
+    public static final Level DEFAULT_LOGGING_LEVEL = Level.INFO;
 }

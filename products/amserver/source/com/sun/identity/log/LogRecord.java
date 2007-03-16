@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecord.java,v 1.3 2006-08-25 21:20:58 veiming Exp $
+ * $Id: LogRecord.java,v 1.4 2007-03-16 18:44:05 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,6 +169,7 @@ public class LogRecord extends java.util.logging.LogRecord {
         String moduleName   = (String)properties.get(LogConstants.MODULE_NAME);
         String contextID    = (String)properties.get(LogConstants.CONTEXT_ID);
         String messageID    = (String)properties.get(LogConstants.MESSAGE_ID);
+        String nameID       = (String)properties.get(LogConstants.NAME_ID);
         String hostName = ipAddress;
         if (ipAddress != null) {
             try {
@@ -204,6 +205,9 @@ public class LogRecord extends java.util.logging.LogRecord {
         }
         if ((contextID != null) && (contextID.length() > 0)) {
             addLogInfo(LogConstants.CONTEXT_ID, contextID);
+        }
+        if ((nameID != null) && (nameID.length() > 0)) {
+            addLogInfo(LogConstants.NAME_ID, nameID);
         }
     }
 

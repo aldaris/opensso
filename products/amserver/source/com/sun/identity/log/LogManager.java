@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.2 2006-04-27 07:53:30 veiming Exp $
+ * $Id: LogManager.java,v 1.3 2007-03-16 18:44:04 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,13 +30,14 @@ import java.lang.SecurityException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Set;
-import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.logging.Handler;
 import java.util.HashSet;
 import java.util.logging.Formatter;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.s1is.LogConfigReader;
@@ -94,6 +95,8 @@ public class LogManager extends java.util.logging.LogManager {
     private String[] allFields;
 
     private Set selectedFieldSet;
+
+    protected Level loggingLevel = null;
 
     /**
      * Return whether secure logging is specified.
@@ -250,12 +253,22 @@ public class LogManager extends java.util.logging.LogManager {
                             }
                         }
                     }
+
+                    String strLogLevel =
+                        getProperty(LogConstants.LOGGING_LEVEL);
+                    try {
+                        loggingLevel = Level.parse(strLogLevel);
+                    } catch (IllegalArgumentException iaex) {
+                        loggingLevel = Level.INFO;  // default
+                        Debug.error("LogManager:readConfiguration:" +
+                            "Log level '" + strLogLevel +
+                            "' unknown; setting to Level.INFO.");
+                    }
                 } else {
                     HANDLER = getProperty(LogConstants.REMOTE_HANDLER);
                     if (HANDLER == null) {
                         HANDLER = LogConstants.DEFAULT_REMOTE_HANDER;
                     }
-                    FORMATTER = getProperty(LogConstants.REMOTE_FORMATTER);
                     if (FORMATTER == null) {
                         FORMATTER = LogConstants.DEFAULT_REMOTE_FORMATTER;
                     }
@@ -323,6 +336,23 @@ public class LogManager extends java.util.logging.LogManager {
                         }
                         h.setFormatter(f);
                         l.addHandler(h);
+
+                        String levelProp = LogConstants.LOG_PROP_PREFIX + "." +
+                            l.getName() + ".level";
+                        String lvlStr = SystemProperties.get (levelProp);
+                        Level tlevel = loggingLevel;
+
+                        if ((lvlStr != null) && (lvlStr.length() > 0)) {
+                            try {
+                                tlevel = Level.parse(lvlStr);
+                            } catch (IllegalArgumentException iaex) {
+                                // use value for all others
+                            }
+                        }
+                        if (loggingLevel != null) {  // only if isLocal
+                            // update logging level
+                            l.setLevel(tlevel);
+                        }
                     } /* end of avoid rootlogger */
                 } /* end of while(loggerNames.hasMoreElements) */
             } /* end of synchronized(Logger.class) */
