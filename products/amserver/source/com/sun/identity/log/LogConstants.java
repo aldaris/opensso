@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.6 2007-03-16 18:44:04 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.7 2007-03-18 06:54:51 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,6 +341,30 @@ public class LogConstants {
      * Attribute defining the log file logging level
      */
     public static final String LOGGING_LEVEL = "sun-am-log-level";
+    
+    /**
+     * Attribute defining the Oracle DB data type for the DATA field
+     */
+    public static final String ORA_DBDATA_FIELDTYPE =
+        "sun-am-logging-oradbdata-fieldtype";
+
+    /**
+     * Attribute defining the MySQL DB data type for the DATA field
+     */
+    public static final String MYSQL_DBDATA_FIELDTYPE =
+        "sun-am-logging-mysqldbdata-fieldtype";
+
+    /**
+     * Attribute defining the format for the Oracle DATE/TIME field
+     */
+    public static final String ORA_DBDATETIME_FORMAT =
+        "sun-am-logging-ora-dbdate-format";
+
+    /**
+     * Attribute defining the format for the MySQL DATE/TIME field
+     */
+    public static final String MYSQL_DBDATETIME_FORMAT =
+        "sun-am-logging-mysql-dbdate-format";
     
     /**
      * Property defining whether logging is enabled

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.3 2007-03-16 18:46:26 bigfatrat Exp $
+    $Id: amLogging.xml,v 1.4 2007-03-18 06:53:45 bigfatrat Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -251,7 +251,7 @@
 			<ChoiceValue i18nKey="choiceMODULENAME">ModuleName</ChoiceValue>
 			<ChoiceValue i18nKey="choiceCONTEXTID">ContextID</ChoiceValue>
 			<ChoiceValue i18nKey="choiceMESSAGEID">MessageID</ChoiceValue>
-			<ChoiceValue i18nKey="choiceNAMEID">NameID</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceNAMEID">NameID</ChoiceValue>
 		    </ChoiceValues>
 		    <DefaultValues>
 			<Value>Domain</Value>
@@ -263,7 +263,7 @@
 			<Value>ModuleName</Value>
 			<Value>ContextID</Value>
 			<Value>MessageID</Value>
-			<Value>NameID</Value>
+                        <Value>NameID</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 		<AttributeSchema name="iplanet-am-logging-verify-period-in-seconds"
@@ -407,26 +407,56 @@
 			<Value>com.sun.identity.log.spi.SecureTimestampGenerator</Value>
 		    </DefaultValues>
 		</AttributeSchema>
-
-		<AttributeSchema name="sun-am-log-level"
-		    type="single_choice"
-		    syntax="string"
-		    i18nKey="a130">
-		    <ChoiceValues>
-			<ChoiceValue i18nKey="choiceLOGSEVERE">SEVERE</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGWARNING">WARNING</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGINFO">INFO</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGCONFIG">CONFIG</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGFINE">FINE</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGFINER">FINER</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGFINEST">FINEST</ChoiceValue>
-			<ChoiceValue i18nKey="choiceLOGOFF">OFF</ChoiceValue>
-		    </ChoiceValues>
-		    <DefaultValues>
-			<Value>INFO</Value>
-		    </DefaultValues>
-		</AttributeSchema>
-
+                <AttributeSchema name="sun-am-log-level"
+                    type="single_choice"
+                    syntax="string"
+                    i18nKey="a130">
+                    <ChoiceValues>
+                        <ChoiceValue i18nKey="choiceLOGSEVERE">SEVERE</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGWARNING">WARNING</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGINFO">INFO</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGCONFIG">CONFIG</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGFINE">FINE</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGFINER">FINER</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGFINEST">FINEST</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceLOGOFF">OFF</ChoiceValue>
+                    </ChoiceValues>
+                    <DefaultValues>
+                        <Value>INFO</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sun-am-logging-oradbdata-fieldtype"
+                    type="single"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>CLOB</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sun-am-logging-mysqldbdata-fieldtype"
+                    type="single"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>LONGTEXT</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sun-am-logging-ora-dbdate-format"
+                    type="single"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>YYYY-MM-DD HH24:MI:SS</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sun-am-logging-mysql-dbdate-format"
+                    type="single"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>%Y-%m-%d %H:%i:%s</Value>
+                    </DefaultValues>
+                </AttributeSchema>
 	    </Global>
 	</Schema>
     </Service>

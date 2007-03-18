@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.5 2006-12-08 01:37:10 bigfatrat Exp $
+ * $Id: DBHandler.java,v 1.6 2007-03-18 06:56:15 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,6 +85,10 @@ public class DBHandler extends Handler {
     //
     private boolean connectionToDBLost = false;
     private boolean isMySQL = false;
+
+    private String oraDataType;
+    private String mysqlDataType;
+    private int dbFieldMax = 0;
 
     private void configure() throws NullLocationException,
     FormatterInitException {
@@ -165,6 +169,10 @@ public class DBHandler extends Handler {
             timeBufferingEnabled = true;
         }
         
+        oraDataType = lmanager.getProperty(LogConstants.ORA_DBDATA_FIELDTYPE);
+        mysqlDataType =
+            lmanager.getProperty(LogConstants.MYSQL_DBDATA_FIELDTYPE);
+
         databaseURL = lmanager.getProperty(LogConstants.LOG_LOCATION);
         if ((databaseURL == null) || (databaseURL.length() == 0)) {
             throw new NullLocationException("Database URL location is null");
@@ -264,7 +272,7 @@ public class DBHandler extends Handler {
     }
     
     /**
-     * Constructor takes the tableName as paramater. Gets the configuration
+     * Constructor takes the tableName as a parameter. Gets the configuration
      * information from LogManager regarding the user name, password, database
      * driver, the log location. Gets the formatter class from the
      * configuration, loads it and sets it as default Formatter. Connects to
@@ -606,7 +614,7 @@ public class DBHandler extends Handler {
                         Debug.message(tableName +
                             "DBHandler:execute:SQLException: insertStr = " +
                             insertStr);
-                        Debug.error(tableName +
+                        Debug.message(tableName +
                             ":DBHandler:execute:SQLException (" +
                             sqleErrCode + "): " + sqle.getMessage());
                     }
@@ -755,6 +763,9 @@ public class DBHandler extends Handler {
                         Debug.error (tableName +
                             ":DBHandler:flush:executeUpdate failed (" +
                             sqleErrCode + "): " + sqle.getMessage());
+                        Debug.error(tableName +
+                            ":DBHandler:execute:SQLException: insertStr = " +
+                            insertStr);
                         // if the max mem buffer is exceeded, dump the records
                         clearBuffer();
                         throw new AMLogException (
@@ -831,22 +842,22 @@ public class DBHandler extends Handler {
 
         try {
             if(!isMySQL){
-                //
-                //  unlike MySQL, Oracle seems to make the table name
-                //  all uppercase.  wonder if you can query using the
-                //  original case?
-                //
+                /*
+                 *  unlike MySQL, Oracle seems to make the table name
+                 *  all uppercase.  wonder if you can query using the
+                 *  original case?
+                 */
                 sbuffer.append(
                 "select count(table_name) from all_tables where table_name = ");
                 sbuffer.append("'")
                         .append(oracleTableName)
                        .append("'");
             } else {
-                //
-                //  MySQL makes the table (at least running on solaris)
-                //  the same case as specified in the create, so the
-                //  query needs to specify the same case.
-                //
+                /*
+                 *  MySQL makes the table (at least running on solaris)
+                 *  the same case as specified in the create, so the
+                 *  query needs to specify the same case.
+                 */
                 sbuffer.append("show tables like ");
                 sbuffer.append("'")
                        .append((new String(tableName.getBytes("UTF-8"))))
@@ -874,12 +885,12 @@ public class DBHandler extends Handler {
                 }
             }
 
-            //
-            //  if the table's in the DB, then check if it has all
-            //  the columns we're going to want to write.
-            //  if table's not in the DB, fall through (as before),
-            //  to create it.
-            //
+            /*
+             *  if the table's in the DB, then check if it has all
+             *  the columns we're going to want to write.
+             *  if table's not in the DB, fall through (as before),
+             *  to create it.
+             */
             if (foundTable == true) {
                 String getColNames = null;
                 if (isMySQL) {
@@ -897,10 +908,10 @@ public class DBHandler extends Handler {
                     Debug.error("DBHandler:createTable: '" + getColNames +
                         "'; error (" + sqe.getErrorCode() + "); msg = " +
                         sqe.getMessage());
-                    //
-                    //  guess we'll have to just return here, and
-                    //  let the flush handle the error...
-                    //
+                    /*
+                     *  guess we'll have to just return here, and
+                     *  let the flush handle the error...
+                     */
                     return;
                 }
                 ResultSetMetaData rsmd = rs.getMetaData();
@@ -910,15 +921,15 @@ public class DBHandler extends Handler {
                 int tempj = 0;
                 Set colSet = new HashSet();
 
-                //
-                //  Oracle appears to return column names in
-                //  all uppercase, 1 per cursor position.
-                //  MySQL returns column names in the case created,
-                //  also 1 per cursor position, but also information
-                //  about the column (type ['varchar(255)'], and
-                //  | Null | Key | Default | Extra).  the column name
-                //  is in the first column (#1) of the row.
-                //
+                /*
+                 *  Oracle appears to return column names in
+                 *  all uppercase, 1 per cursor position.
+                 *  MySQL returns column names in the case created,
+                 *  also 1 per cursor position, but also information
+                 *  about the column (type ['varchar(255)'], and
+                 *  | Null | Key | Default | Extra).  the column name
+                 *  is in the first column (#1) of the row.
+                 */
 
                 while (rs.next()) {
                     colName = rs.getString(1);
@@ -929,14 +940,14 @@ public class DBHandler extends Handler {
                     tempj++;
                 }
 
-                //
-                //  check that the columns we want to write are
-                //  already in the table.  if not, going to issue
-                //  an alter command.  except for Data field, both
-                //  Oracle and MySQL lengths are 255 (see in create, below).
-                //
-                //  Oracle seems to return the column names in uppercase.
-                //
+                /*
+                 *  check that the columns we want to write are
+                 *  already in the table.  if not, going to issue
+                 *  an alter command.  except for Data field, both
+                 *  Oracle and MySQL lengths are 255 (see in create, below).
+                 *
+                 *  Oracle seems to return the column names in uppercase.
+                 */
 
                 StringBuffer colList = new StringBuffer();
                 String [] allFields = lmanager.getAllFields();
@@ -967,13 +978,13 @@ public class DBHandler extends Handler {
                         Debug.error("DBHandler:createTable: '" + altStr +
                             "'; error (" + sqle.getErrorCode() + "); msg = " +
                             sqle.getMessage());
-                        //
-                        //  guess we'll have to just return here, and
-                        //  let the flush handle the error...
-                        //
-                        //  there's a return right after this, so just
-                        //  fall through.
-                        //
+                        /*
+                         *  guess we'll have to just return here, and
+                         *  let the flush handle the error...
+                         *
+                         *  there's a return right after this, so just
+                         *  fall through.
+                         */
                     }
                 }
                 return;
@@ -983,23 +994,17 @@ public class DBHandler extends Handler {
             Debug.error(tableName +
                 ":DBHandler:createTable:Query:SQLException (" +
                 e.getErrorCode() + "): " + e.getMessage());
-            //
             //  rethrow the exception
-            //
             throw e;
         } catch (UnsupportedEncodingException use) {
             Debug.error(tableName + 
                 ":DBHandler:createTable:Query:UE: "+
                 use.getMessage());
-            //
             //  rethrow the exception
-            //
             throw use;
         }
 
-        //
         //  didn't find the table in the DB, so create it.
-        //
 
         sbuffer = new StringBuffer();
         try {
@@ -1009,19 +1014,35 @@ public class DBHandler extends Handler {
             Debug.error(tableName + 
                 ":DBHandler: unsupported encoding exception uee", uee);
         }
-        sbuffer.append(" (time varchar(30), ");
-        if(isMySQL) {
-            // in case of MySQL max column size is 255
-            sbuffer.append(" data varchar(255), ");
+
+        String varCharX = "varchar2"; // default for Oracle
+
+        if (isMySQL) {
+            sbuffer.append(" (time datetime, ");
         } else {
-            sbuffer.append(" data varchar(1024), ");
+            sbuffer.append(" (time date, ");
         }
+
+        /*
+         * next column is the DATA column, which will be a non-VARCHAR*
+         * type, since it *can* contain a large quantity of 'character'
+         * (note not binary) data.  Oracle uses "CLOB", while MySQL
+         * uses "LONGTEXT".
+         */
+
+        if(isMySQL) {
+            varCharX = "varchar";
+            sbuffer.append(" data " + mysqlDataType + ", ");
+        } else {
+            sbuffer.append(" data " + oraDataType + ", ");
+        }
+
         String [] allFields = lmanager.getAllFields();
         int i = 0;
         for (i = 2; i < allFields.length - 1; i ++) {
-            sbuffer.append(allFields[i]).append(" varchar (255), ");
+            sbuffer.append(allFields[i]).append(" " + varCharX + " (255), ");
         }
-        sbuffer.append(allFields[i]).append(" varchar (255)) ");
+        sbuffer.append(allFields[i]).append(" " + varCharX + " (255)) ");
         String createString = sbuffer.toString();
         try {
             Statement stmt = conn.createStatement();

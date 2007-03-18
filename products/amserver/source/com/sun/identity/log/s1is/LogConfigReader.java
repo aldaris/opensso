@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.7 2007-03-16 18:45:16 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.8 2007-03-18 06:55:41 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -699,6 +699,47 @@ public class LogConfigReader implements ServiceListener{
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read time " +
                 "buffering status ");
+        }
+
+        // Oracle DB data type for DATA field
+        try {
+            key = LogConstants.ORA_DBDATA_FIELDTYPE;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        } catch(Exception e) {
+            debug.error("LogConfigReader:Could not read ORA DB data type");
+        }
+
+        // MySQL DB data type for DATA field
+        try {
+            key = LogConstants.MYSQL_DBDATA_FIELDTYPE;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        } catch(Exception e) {
+            debug.error("LogConfigReader:Could not read MYSQL DB data type");
+        }
+
+        // DB date/time formats (Oracle and MySQL)
+        try {
+            key = LogConstants.ORA_DBDATETIME_FORMAT;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        } catch(Exception e) {
+            debug.error(
+                "LogConfigReader:Could not read Oracle DB date/time format");
+        }
+
+        try {
+            key = LogConstants.MYSQL_DBDATETIME_FORMAT;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        } catch(Exception e) {
+            debug.error(
+                "LogConfigReader:Could not read MySQl DB date/time format");
         }
 
         // Log status from the AMConfig.properties file

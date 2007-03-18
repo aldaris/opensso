@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.3 2006-04-27 07:53:31 veiming Exp $
+ * $Id: DBFormatter.java,v 1.4 2007-03-18 06:56:15 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,9 @@ public class DBFormatter extends Formatter {
     private ITimestampGenerator secureTimestampGenerator;
 
     private final String NOTAVAIL = "Not Available";
+
+    private String dateTimeFormat = null;
+    private boolean isMySQL = false;
     
     /**
      * Creates <code>DBFormatter</code> object
@@ -74,6 +77,26 @@ public class DBFormatter extends Formatter {
         } catch (IllegalAccessException iae) {
             Debug.error("DBFormatter: Timestamp Generator Could not " +
                 "be Instantiated", iae);
+        }
+        String driver = lmanager.getProperty(LogConstants.DB_DRIVER);
+        if ((driver == null) || (driver.length() == 0)) {
+            Debug.error("DBFormatter:DB driver not provided; assume not MySQL");
+        } else {
+            if(driver.toLowerCase().indexOf("oracle") != -1) {
+                isMySQL = false;
+                dateTimeFormat =
+                    lmanager.getProperty(LogConstants.ORA_DBDATETIME_FORMAT);
+            } else if (driver.toLowerCase().indexOf("mysql") != -1) {
+                isMySQL = true;
+                dateTimeFormat =
+                    lmanager.getProperty(LogConstants.MYSQL_DBDATETIME_FORMAT);
+            } else {
+                isMySQL = false;
+                dateTimeFormat =
+                    lmanager.getProperty(LogConstants.ORA_DBDATETIME_FORMAT);
+                Debug.error("DBFormatter:assuming driver: '" + driver +
+                    "' is Oracle-compatible.");
+            }
         }
     }
 
@@ -137,9 +160,23 @@ public class DBFormatter extends Formatter {
         if(secureTimestampGenerator != null) {
             strTime = secureTimestampGenerator.getTimestamp();
         }
+
+        /*
+         *  currently assuming that the date/time comes back in
+         *  the "yyyy-mm-dd hh:mn:ss" format (24hr).  if it changes
+         *  then there'll need to be a change to the dbdate-format
+         *  attribute.
+         */
         
-        sbuffer.append("'").append(strTime).append("', ");
-        
+        String toDate = null;
+        if (!isMySQL) {
+            toDate = "TO_DATE('";
+        } else {
+            toDate = "STR_TO_DATE('";
+        }
+
+        sbuffer.append(toDate + strTime + "', '" + dateTimeFormat + "'), ");
+
         /* Need to check for single-quote in the DATA field to be written 
          * to the db
          */
