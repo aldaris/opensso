@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.6 2007-03-14 19:33:19 jonnelson Exp $
+   $Id: build-war.xml,v 1.7 2007-03-19 20:51:40 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -43,7 +43,7 @@
     <target name="all">
         <antcall target="cli" inheritRefs="true"/>
     </target>
-
+    
     <target name="cli" depends="war">
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
@@ -196,10 +196,10 @@
 	<!-- update amConsoleConfig with federation tabs -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
-            <arg value="&lt;tab id=&quot;3&quot;.+?&lt;/tab&gt;" />
+            <arg value="&lt;tab id=\&quot;3\&quot;.+?/tab&gt;" />
             <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
             <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
-            <arg value="&lt;tab id=&quot;4&quot;" />
+            <arg value="&lt;tab id=\&quot;4\&quot;" />
         </java>
 
 	<!-- update web.xml with fed servlet info -->
@@ -245,8 +245,8 @@
             <arg value="fmConsole" />
             <arg value="${war.webinf.classes.dir}/amConsole.properties" />
         </java>
-
-
+        
+    
 
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
