@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.41 2007-03-14 19:28:43 jonnelson Exp $
+   $Id: build.xml,v 1.42 2007-03-19 21:01:30 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,6 +28,10 @@
     <description>Open Web Single Sign-On</description>
     <import file="../products.xml" />
     <import file="amserver.xml" />
+
+    <property name="tracker" value="${amserver.basedir}/tracker.properties" />
+
+    <touch file="${tracker}" />
 
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
@@ -137,7 +141,7 @@
         </copy>
     </target>
 
-    <target name="jaxrpc">
+    <target name="jaxrpc" unless="amserver.jaxrpc.done">
         <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
@@ -151,6 +155,9 @@
             <arg value="${amserver.jaxrpc.xml.dir}/config.xml" />
         </java>
         <move file="${amserver.classes.dir}/IdentityManagementServices.wsdl" tofile="${amserver.classes.dir}/jaxrpc/IdentityManagementServices.wsdl" />
+
+        <property name="amserver.jaxrpc.done" value="true" />
+        <concat destfile="${tracker}" append="true">amserver.jaxrpc.done=true&#10;</concat>
     </target>
 
     <target name="sharedlib">
@@ -207,6 +214,7 @@
 
     <target name="preparebuild">
         <mkdir dir="${amserver.built.dir}"/>
+        <mkdir dir="${amserver.dist.dir}"/>
         <mkdir dir="${amserver.classes.dir}"/>
         <mkdir dir="${amserver.built.res.dir}"/>
         <mkdir dir="${amserver.built.docs.dir}"/>
@@ -215,7 +223,7 @@
         <antcall target="preparecli" />
     </target>
 
-    <target name="preparecli">
+    <target name="preparecli" unless="amserver.preparecli.done">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${amserver.classes.dir}" source="1.5" target="1.5"
             srcdir="${amserver.src.dir}/com/sun/identity/cli/annotation"
@@ -251,6 +259,8 @@
             <arg value="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
             <arg value="com.sun.identity.cli.stubs"/>
         </java>
+        <property name="amserver.preparecli.done" value="true" />
+        <concat destfile="${tracker}" append="true">amserver.preparecli.done=true&#10;</concat>
     </target>
 
     <target name="clean" depends="nightly-clean,war-clean,jars-clean,clientsdk-clean,demo-clean,samples-clean,distauth-clean,unittest-clean">
@@ -261,10 +271,16 @@
         <delete dir="${amserver.classes.dir}/jaxrpc"/>
         <delete dir="${amserver.classes.dir}"/>
         <delete dir="${amserver.built.dir}"/>
+        <delete file="${tracker}" />
     </target>
-   
-    <target name="war" depends="build,jars,prepXML">
+
+    <target name="tools" depends="build,jars,prepXML">
         <ant antfile="${amserver.warbase.dir}/build.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="war" depends="build,prepXML">
+        <ant antfile="${amserver.warbase.dir}/build.xml" target="war"
+            inheritRefs="true"/>
     </target>
 
     <target name="prepXML">
@@ -313,10 +329,7 @@
         </java>
     </target>
     
-    <target name="nightly" depends="war,publicdoc,doc,clientsdk,demo,samples,distauth,unittest">
-        <antcall target="jars" />
-        <antcall target="war" />
-
+    <target name="nightly" depends="tools,publicdoc,doc,clientsdk,demo,samples,distauth,unittest">
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
@@ -332,6 +345,7 @@
 
     <target name="nightly-clean">
         <delete dir="${amserver.dist.dir}" />
+        <delete file="${tracker}" />
     </target>
 
     <target name="war-clean">

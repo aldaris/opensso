@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2006-12-08 21:02:38 veiming Exp $
+   $Id: build.xml,v 1.5 2007-03-19 21:01:32 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,6 +28,9 @@
     <description>Open Federation</description>
     <import file="../../products.xml" />
     <import file="library.xml" />
+
+    <property name="libtracker" value="${library.basedir}/tracker.properties" />
+    <touch file="${libtracker}" />
 
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
@@ -48,7 +51,7 @@
         </fileset>
     </path>
 
-    <target name="xsd.liberty" depends="preparebuild">
+    <target name="xsd.liberty" depends="preparebuild" unless="library.xsd.liberty.done">
         <property name="xsd.liberty.dir" value="${library.xsd.dir}/liberty"/>
         <property name="xsd.liberty.files" value="${xsd.liberty.dir}/lib-id-sis-pp.xsd ${xsd.liberty.dir}/lib-arch-metadata.xsd ${xsd.liberty.dir}/idff-entity-config-schema.xsd ${xsd.liberty.dir}/lib-arch-disco-svc.xsd ${xsd.liberty.dir}/lib-arch-interact-svc.xsd ${xsd.liberty.dir}/lib-arch-paos.xsd ${xsd.liberty.dir}/lib-arch-soap-binding.xsd ${xsd.liberty.dir}/lib-arch-security-fmwk.xsd ${xsd.liberty.dir}/secext.xsd ${xsd.liberty.dir}/discoentry.xsd ${xsd.liberty.dir}/ppextension.xsd ${xsd.liberty.dir}/lib-idwsf-authn-svc.xsd ${xsd.liberty.dir}/liberty-idwsf-disco-svc-v1.1.xsd ${xsd.liberty.dir}/liberty-idwsf-soap-binding-v1.1.xsd"/>
         <java classname="com.sun.tools.xjc.Driver" 
@@ -56,9 +59,11 @@
             <classpath refid="build.class.path"/>
             <arg line="-b ${xsd.liberty.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.liberty.files}"/> 
         </java>
+        <property name="library.xsd.liberty.done" value="true" />
+        <concat destfile="${libtracker}" append="true">library.xsd.liberty.done=true&#10;</concat>
     </target>
 
-    <target name="xsd.saml2" depends="preparebuild">
+    <target name="xsd.saml2" depends="preparebuild" unless="library.xsd.saml2.done">
         <property name="xsd.saml2.dir" value="${library.xsd.dir}/saml2"/>
         <property name="xsd.saml2.files" value="${xsd.saml2.dir}/entity-config-schema.xsd ${xsd.saml2.dir}/saml-schema-assertion-2.0.xsd ${xsd.saml2.dir}/saml-schema-metadata-2.0.xsd  ${xsd.saml2.dir}/schema.xsd"/>
         <java classname="com.sun.tools.xjc.Driver" 
@@ -66,15 +71,19 @@
             <classpath refid="build.class.path"/>
             <arg line="-b ${xsd.saml2.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.saml2.files}"/> 
         </java>
+        <property name="library.xsd.saml2.done" value="true" />
+        <concat destfile="${libtracker}" append="true">library.xsd.saml2.done=true&#10;</concat>
     </target>
 
-    <target name="jaxb.properties">
+    <target name="jaxb.properties" unless="library.jaxb.done">
         <copy todir="${library.classes.dir}">
             <fileset dir="${library.src.dir}">
                 <include name="**/jaxb.properties" />
                 <include name="**/bgm.ser" />
             </fileset>
-       </copy>
+        </copy>
+        <property name="library.jaxb.done" value="true" />
+        <concat destfile="${libtracker}" append="true">library.jaxb.done=true&#10;</concat>
     </target>
 
     <target name="compile" depends="preparebuild">
@@ -113,7 +122,7 @@
         </copy>
     </target>
 
-    <target name="jaxrpc">
+    <target name="jaxrpc" unless="library.jaxrpc.done">
         <java classname="com.sun.xml.rpc.tools.wscompile.Main" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
@@ -169,6 +178,8 @@
             <arg value="${library.xml.dir}/jaxrpc-libertymanager-config.xml" />
         </java>
         <move file="${library.classes.dir}/LibertyManagerService.wsdl" tofile="${library.classes.dir}/jaxrpc/LibertyManagerService.wsdl" />
+        <property name="library.jaxrpc.done" value="true" />
+        <concat destfile="${libtracker}" append="true">library.jaxrpc.done=true&#10;</concat>
     </target>
 
 
@@ -249,6 +260,7 @@
         <delete dir="${library.classes.dir}/jaxrpc"/>
         <delete dir="${library.classes.dir}"/>
         <delete dir="${library.built.dir}"/>
+        <delete file="${libtracker}"/>
     </target>
 
     <target name="unittest" depends="build">
