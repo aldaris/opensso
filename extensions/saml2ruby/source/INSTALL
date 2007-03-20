@@ -19,7 +19,7 @@ Unpack the archive and run setup.rb to install:
 
 setup.rb installs the library into your system ruby.  
 
-If don't want to add openid to you system ruby, 
+If don't want to add ruby-saml2 to your system ruby, 
 you may instead add the *lib* directory of the extracted tarball to your RUBYLIB environment variable:
   $ export RUBYLIB=${RUBYLIB}:/path/to/ruby-saml2/lib
   
