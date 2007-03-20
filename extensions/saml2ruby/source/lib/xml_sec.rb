@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: xml_sec.rb,v 1.1 2007-03-19 22:45:55 todddd Exp $
+# $Id: xml_sec.rb,v 1.2 2007-03-20 18:33:41 superpat7 Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 # Portions Copyrighted 2007 Todd W Saxton.
@@ -26,6 +26,7 @@ require "rexml/document"
 require "rexml/xpath"
 require "openssl"
 require "wss4r/security/util/xmlcanonicalizer"
+require "digest/sha1"
  
 #
 # WARNING, WARNING: VERY rudimentary
