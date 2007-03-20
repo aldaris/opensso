@@ -1,4 +1,4 @@
-= Ruby SAML2.0 Library Installation
+= Ruby SAML2 Library Installation
 
 == Dependencies
 
@@ -21,7 +21,7 @@ setup.rb installs the library into your system ruby.
 
 If don't want to add openid to you system ruby, 
 you may instead add the *lib* directory of the extracted tarball to your RUBYLIB environment variable:
-  $ export RUBYLIB=${RUBYLIB}:/path/to/ruby-openid/lib
+  $ export RUBYLIB=${RUBYLIB}:/path/to/ruby-saml2/lib
   
 or in the case of a rails application copy the library files to your rails application's lib directory.
 
