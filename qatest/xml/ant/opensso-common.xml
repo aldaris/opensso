@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.1 2007-02-06 19:55:35 rmisra Exp $
+ $Id: opensso-common.xml,v 1.2 2007-03-20 22:02:32 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,8 +67,14 @@
     <target name="compile-all" depends="clean-all" if="cond-is-true">
         <mkdir dir="${built.classes.dir}"/>
         <mkdir dir="${debug.dir}"/>
+        <copy todir="${built.classes.dir}" flatten="true">
+            <fileset dir="./resources">
+                <include name="**/*.properties"/>
+                <exclude name="AMClient.properties"/>
+            </fileset>
+        </copy>
         <echo message="Compiling test source files"/>
-        <!-- <echo message="classpath: ${client.cp}"/> -->
+        <echo message="classpath: ${client.cp}"/>
         <javac destdir="${built.classes.dir}"
         debug="on"
         failonerror="false">
@@ -90,6 +96,7 @@
             <arg value="${OPENSSO_HOME}" />
             <arg value="${QATEST_HOME}" />
         </java>
+        <copy file="./resources/AMConfig.properties" todir="${built.classes.dir}"/>
             
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpath="${testng.classpath}"/>
         <testng classpathref="client.classpath"

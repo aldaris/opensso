@@ -20,28 +20,20 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-authentication-testng.xml,v 1.1 2007-02-06 19:55:36 rmisra Exp $
+ $Id: client-authentication-testng.xml,v 1.2 2007-03-20 22:02:37 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="client-authentication" verbose="1">
-    <test name="ZeroPageLogin">
-        <parameter name="module" value="DataStore"/>
-        <parameter name="service" value="adminconsoleservice"/>
-        <parameter name="user" value="amadmin"/>
-        <parameter name="org" value="opensso"/>
-        <parameter name="realm" value="opensso"/>
-        <parameter name="level" value="0"/>
-        <parameter name="passMsg" value="Sun Java(TM) System Access Manager"/>
-        <parameter name="failMsg" value="Sun Java System Access Manager (Authentication Failed)"/>
+    <test name="AuthTest">
         <groups>
             <run>
                 <include name="client"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.authentication.ZeroPageLogin"/>
+            <class name="com.sun.identity.qatest.authentication.AuthTestFactory"/>
         </classes>
     </test>
 </suite>

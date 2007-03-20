@@ -17,22 +17,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.1 2007-02-06 19:55:34 rmisra Exp $
+ * $Id: TestCommon.java,v 1.2 2007-03-20 22:02:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -43,6 +54,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import org.testng.Reporter;
 
 /**
  * This class is the base for all <code>OpenSSO</code> QA testcases.
@@ -66,7 +78,8 @@ public class TestCommon implements TestConstants
 
     static {
         try {
-            rb_amconfig = ResourceBundle.getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
+            rb_amconfig = ResourceBundle.getBundle(
+                    TestConstants.TEST_PROPERTY_AMCONFIG);
             logger = Logger.getLogger("com.sun.identity.qatest");
             FileHandler fileH = new FileHandler("logs");
             SimpleFormatter simpleF = new SimpleFormatter();
@@ -78,7 +91,8 @@ public class TestCommon implements TestConstants
             }
             logLevel = logger.getLevel();
             adminUser = rb_amconfig.getString(TestConstants.KEY_AMADMIN_USER); 
-            adminPassword = rb_amconfig.getString(TestConstants.KEY_AMADMIN_PASSWORD); 
+            adminPassword = rb_amconfig.getString(
+                    TestConstants.KEY_AMADMIN_PASSWORD); 
             basedn = rb_amconfig.getString(TestConstants.KEY_BASEDN); 
             protocol = rb_amconfig.getString(TestConstants.KEY_PROTOCOL); 
             host = rb_amconfig.getString(TestConstants.KEY_HOST); 
@@ -119,7 +133,7 @@ public class TestCommon implements TestConstants
     /**
      * Writes a log entry.
      */
-    protected void log(Level level, String methodName, String message) {
+    protected void log(Level level, String methodName, Object message) {
         Object[] args = {methodName, message};
         logger.log(level, MessageFormat.format(logEntryTemplate, args));
     }
@@ -135,6 +149,19 @@ public class TestCommon implements TestConstants
     ) {
         Object[] args = {methodName, message};
         logger.log(level, MessageFormat.format(logEntryTemplate, args), params);
+    }
+
+    /**
+     * Writes a log entry for testng report
+     */
+    protected void logTestngReport(Map m) {
+        Set s = m.keySet();
+        Iterator it = s.iterator();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            String value = (String)m.get(key);
+            Reporter.log(key + "=" + value);
+        }
     }
 
     /**
@@ -173,6 +200,21 @@ public class TestCommon implements TestConstants
     }
 
     /**
+     * Validate single sign on token.
+     */
+    protected boolean validateToken(SSOToken ssotoken)
+        throws Exception {
+        log(logLevel, "validateToken", "Inside validate token");
+        SSOTokenManager stMgr = SSOTokenManager.getInstance();
+        boolean bVal = stMgr.isValidToken(ssotoken);
+        if (bVal)
+            log(logLevel, "validateToken", "Token is Valid");
+        else
+            log(logLevel, "validateToken", "Token is Invalid");
+        return bVal;
+    }
+
+    /**
      * Destroys single sign on token.
      */
     protected void destroyToken(SSOToken ssotoken)
@@ -182,6 +224,68 @@ public class TestCommon implements TestConstants
         if (stMgr.isValidToken(ssotoken))
             stMgr.destroyToken(ssotoken);
     }
+
+    /**
+     * Returns the base directory where code base is
+     * checked out.
+     */
+    protected String getBaseDir()
+        throws Exception {
+        log(logLevel, "getBaseDir", "Inside getBaseDir");
+        File file = new File (".");
+        String strCD = file.getCanonicalPath();
+        log(logLevel, "getBaseDir", "Current Directory:" + strCD);
+        return (strCD);
+    }
+
+    /**
+     * Reads a file containing data-value pairs and returns that as a list object.
+     */
+    protected List getListFromFile(String fileName)
+        throws Exception {
+        ArrayList list = null;
+        if (fileName != null) {
+            list = new ArrayList();
+            BufferedReader input = new BufferedReader(new FileReader(fileName));
+            String line = null;
+            while ((line=input.readLine()) != null) {
+                list.add(line);
+            }
+            log(logLevel, "getListFromFile", "List :" + list);
+            if (input != null)
+                input.close();
+        }
+        return (list);
+    }
+
+    /**
+     * Login to console using htmlunit
+     */ 
+    public void consoleLogin(
+        WebClient webclient,
+        String amUrl,
+        String amadmUser,
+        String amadmPassword
+    ) throws Exception {
+        entering("consoleLogin", null);
+        log(logLevel, "consoleLogin", "JavaScript Enabled:" +
+                webclient.isJavaScriptEnabled());
+        log(logLevel, "consoleLogin", "Redirect Enabled:" +
+                webclient.isRedirectEnabled());
+        URL url = new URL(amUrl);
+        HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
+        log(logLevel, "consoleLogin", page.getTitleText());
+        HtmlForm form = page.getFormByName("Login");
+        HtmlHiddenInput txt1 =
+                (HtmlHiddenInput)form.getInputByName("IDToken1");
+        txt1.setValueAttribute(amadmUser);
+        HtmlHiddenInput txt2 =
+                (HtmlHiddenInput)form.getInputByName("IDToken2");
+        txt2.setValueAttribute(amadmPassword);
+        form.submit();
+        exiting("consoleLogin");
+    }
+
 
     /**
      * Returns a map of String to Set of String from a formatted string.

@@ -21,7 +21,7 @@ README file for executing QA test on OpenSSO
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.1 2007-02-06 19:55:31 rmisra Exp $
+# $Id: README.txt,v 1.2 2007-03-20 22:02:22 rmisra Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -30,6 +30,8 @@ README file for executing QA test on OpenSSO
     %% 1 Setup requirements
     %% 2 Execution
     %% 3 Post execution
+    %% 4 Authentication module test execution
+    %% 5 Issues
 
 %% 1 Setup requirements
 
@@ -71,8 +73,9 @@ across test modules)
 2.5.3 qatest.realm=<the realm to execute the tests for>
 2.5.4 qatest.log.level=<the log level used by framework to log debug> 
 2.5.5 com.iplanet.am.service.password=<superuser password>
+2.5.5 com.iplanet.am.defaultOrg=<default root orqanization dn>
 statements)
-2.5.5 All the properties marked with value as @COPY_FROM_CONFIG@, have their 
+2.5.6 All the properties marked with value as @COPY_FROM_CONFIG@, have their 
 values picked from the configuration AMConfig.properties
 
 2.6 Properties required exclusively by any test modules are defined in their 
@@ -111,3 +114,18 @@ QATEST_HOME/build.properties file.
 
 3.4 A file called logs is generated undet QATEST_HOME. This contains all the 
 output from the debug statements set in the source code.
+
+%% 4 Authentication module test execution
+
+4.1 Go to QATEST_HOME/xml/authentication and configure the attribute value for the give modules,
+in their respective data files. For eg for LDAP auth module, the datafile name is LDAPTestData.
+This contains attributes and values, which are required to create the module instance.
+
+4.2 Go to QATEST_HOME/resources/authentication and configure the values defined in the
+authenticationTest.properties file.
+
+%% 5 Issues
+
+5.1 Current authentication module testcase execution overwrites the reports generated using testng.
+This is an issue in testng and we are working to resolve it. Hence the report shows execution
+results for the last executed authentication module.
