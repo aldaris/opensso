@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2007-03-10 23:00:07 pbryan Exp $
+$Id: README,v 1.2 2007-03-21 03:33:37 pbryan Exp $
 
 Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted Paul C. Bryan
@@ -40,8 +40,8 @@ Portions Copyrighted Paul C. Bryan
 %% 1. Introduction
 
 This is the 1.0 alpha1 version of the OpenID extension for OpenSSO. It
-currently provides an implementation that is protocol compliant with the
-OpenID Authentication 1.1 specification.
+currently provides a provider implementation that is protocol compliant with
+the OpenID Authentication 1.1 specification.
 
 This is the first release in a planned series of releases. To see the roadmap
 of releases, consult the docs/roadmap.txt file.
