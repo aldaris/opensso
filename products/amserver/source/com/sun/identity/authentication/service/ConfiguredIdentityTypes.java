@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredIdentityTypes.java,v 1.3 2007-03-09 05:50:58 veiming Exp $
+ * $Id: ConfiguredIdentityTypes.java,v 1.4 2007-03-21 22:33:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,7 @@ public class ConfiguredIdentityTypes extends ChoiceValues {
         } catch (SSOException sso) {
             // Due to this exception, idTypes will be NULL
         }
-        if (idTypes != null) {
+        if ((idTypes != null) && !idTypes.isEmpty()) {
             Iterator idTypeIterator = idTypes.iterator();
             String strIdType = null;
             if (answer == null) {

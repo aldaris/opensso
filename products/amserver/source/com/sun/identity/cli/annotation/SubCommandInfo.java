@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommandInfo.java,v 1.2 2006-09-21 18:29:14 veiming Exp $
+ * $Id: SubCommandInfo.java,v 1.3 2007-03-21 22:33:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
 public @interface SubCommandInfo {
     String implClassName();
     String description();
+    String webSupport();
     String[] mandatoryOptions();
     String[] optionalOptions();
     String macro();

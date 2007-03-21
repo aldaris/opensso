@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.4 2006-08-25 21:21:29 veiming Exp $
+ * $Id: ServiceConfigImpl.java,v 1.5 2007-03-21 22:33:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -296,7 +296,7 @@ class ServiceConfigImpl implements ServiceListener {
         // Add default values, if attribute not present
         // and decrypt password attributes
         String validate = ss.getValidate();
-        if (validate == null || validate.equalsIgnoreCase("yes")) {
+        if ((validate == null) || validate.equalsIgnoreCase("yes")) {
             Set asNames = ss.getAttributeSchemaNames();
             // Remove attributes that do not exist in the schema.
             Set oldSet = origAttributes.keySet();
@@ -541,6 +541,97 @@ class ServiceConfigImpl implements ServiceListener {
         if (serviceName.equalsIgnoreCase(scm.getName())) {
             update();
         }
+    }
+    
+    public String toXML(String nodeName)
+        throws SMSException, SSOException {
+        return toXML(nodeName, null);
+    }
+    
+    public String toXML(String nodeName, String organizationName)
+        throws SMSException, SSOException {
+        Set serviceConfigNames = getSubConfigNames(token);
+        Map orgAttributes = null;
+
+        if (nodeName.equals(SMSUtils.ORG_CONFIG)) {
+            OrganizationConfigManager ocm = new OrganizationConfigManager(
+                token, organizationName);
+            orgAttributes = ocm.getAttributes(scm.getName());
+        }
+
+        if (((attributesWithoutDefaults == null) ||
+            attributesWithoutDefaults.isEmpty()) &&
+            ((serviceConfigNames == null) ||
+                serviceConfigNames.isEmpty()) &&
+            ((orgAttributes == null) || orgAttributes.isEmpty())
+        ) {
+            return "";
+        }
+
+        StringBuffer buff = new StringBuffer();
+        buff.append("<").append(nodeName);
+        
+        if (nodeName.equals(SMSUtils.GLOBAL_CONFIG) ||
+            nodeName.equals(SMSUtils.ORG_CONFIG) ||
+            nodeName.equals(SMSUtils.INSTANCE)
+        ) {
+            if ((groupName != null) && (groupName.length() > 0)) {
+                buff.append(" ").append(SMSUtils.GROUP).append("=\"")
+                    .append(groupName).append("\"");
+            }
+        }
+        
+        if (nodeName.equals(SMSUtils.ORG_CONFIG) ||
+            nodeName.equals(SMSUtils.INSTANCE)
+        ) {
+            if ((organizationName != null) && 
+                (organizationName.length() > 0)
+            ) {
+                String oName = (organizationName.indexOf('/') == -1) ?
+                    DNMapper.orgNameToRealmName(organizationName) :
+                    organizationName;
+                buff.append(" ").append(SMSUtils.NAME).append("=\"")
+                    .append(oName).append("\"");
+            }
+        }
+        
+        if (nodeName.equals(SMSUtils.SUB_CONFIG)) {
+            if ((compName != null) && (compName.length() > 0)) {
+                buff.append(" ").append(SMSUtils.NAME).append("=\"")
+                    .append(compName).append("\"");
+            }
+        
+            if ((configID != null) && (configID.length() > 0)) {
+                buff.append(" ").append(SMSUtils.SERVICE_ID).append("=\"")
+                    .append(configID).append("\"");
+            }
+            if (priority > 0) {
+                buff.append(" ").append(SMSUtils.PRIORITY).append("=\"")
+                    .append(Integer.toString(priority)).append("\"");
+            }
+        }
+        
+        buff.append(">");
+        
+        buff.append(SMSUtils.toAttributeValuePairXML(
+            attributesWithoutDefaults));
+        
+        for (Iterator i = serviceConfigNames.iterator(); i.hasNext(); ) {
+            String scName = (String)i.next();
+            ServiceConfigImpl sci = this.getSubConfig(token, scName);
+            buff.append(sci.toXML(SMSUtils.SUB_CONFIG));
+        }
+        
+        if ((orgAttributes != null) && !orgAttributes.isEmpty()) {
+            buff.append("<").append(SMSUtils.ORG_ATTRIBUTE_VALUE_PAIR)
+                .append(">\n");
+            buff.append(SMSUtils.toAttributeValuePairXML(orgAttributes));
+            buff.append("</").append(SMSUtils.ORG_ATTRIBUTE_VALUE_PAIR)
+                .append(">\n");
+        }
+
+        buff.append("</").append(nodeName).append(">");
+        return buff.toString();
     }
 
     // Static variables

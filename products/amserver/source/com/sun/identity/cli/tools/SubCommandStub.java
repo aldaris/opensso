@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommandStub.java,v 1.2 2007-02-02 18:05:35 veiming Exp $
+ * $Id: SubCommandStub.java,v 1.3 2007-03-21 22:33:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ public class SubCommandStub {
     public List<String> mandatoryOptions;
     public List<String> optionalOptions;
     public List<String> aliasOptions;
+    public boolean webSupport;
 
     /**
      * Constructs an instance of <code>SubCommandStub</code>.
@@ -46,19 +47,23 @@ public class SubCommandStub {
      * @param m List of mandatory options (pipe separated format).
      * @param o List of optional options (pipe separated format).
      * @param a List of options aliases (pipe separated format).
+     * @param webSupport <code>true</code> is this command is supported on the
+     *        web browser.
      */
     public SubCommandStub(
         String name,
         String impl,
         List<String> m, 
         List<String> o,
-        List<String> a
+        List<String> a,
+        boolean webSupport
     ) {
         this.name = name;
         this.implClassName = impl;
         mandatoryOptions = m;
         optionalOptions = o;
         aliasOptions = a;
+        this.webSupport = webSupport;
     }
 
     /**
@@ -91,6 +96,13 @@ public class SubCommandStub {
                 .append((String)i.next())
                 .append("\");\n");
         }
+        
+        if (webSupport) {
+            buff.append("cmd.webSupport = true;");
+        } else {
+            buff.append("cmd.webSupport = false;");
+        }
+        
         buff.append("addSubCommand(cmd);\n");
         buff.append("}");
         return buff.toString();

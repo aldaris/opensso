@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.21 2007-03-09 05:51:02 veiming Exp $
+ * $Id: SMSEntry.java,v 1.22 2007-03-21 22:33:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,6 +101,21 @@ public class SMSEntry implements Cloneable {
     static String GLOBAL_CACHE_PROPERTY = "com.iplanet.am.sdk.caching.enabled";
 
     static String SM_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
+
+    /**
+     * Flat File Configuration Data Store
+     */
+    public static String DATASTORE_FLAT_FILE = "flatfile";
+
+    /**
+     * Sun Directory Server Configuration Data Store
+     */
+    public static String DATASTORE_SUN_DIR = "dirServer";
+
+    /**
+     * Active Directory Configuration Data Store
+     */
+    public static String DATASTORE_ACTIVE_DIR = "activeDir";
 
     static boolean cacheSMSEntries;
 
@@ -1178,11 +1193,10 @@ public class SMSEntry implements Cloneable {
         if (dataStore == null) {
             // This has to be called only if the backend datastore is
             // based on LDAP protocol. Should not be for JDBC.
-            String smsClassName = SystemProperties.get(SMS_OBJECT_PROPERTY,
-                DEFAULT_SMS_CLASS_NAME);
-            if (smsClassName.equals(DEFAULT_SMS_CLASS_NAME)) {
-                GetBackendDataStore gbs = new GetBackendDataStore(); 
-                dataStore = gbs.getDataStore(token);
+            String smsClassName = smsObject.getClass().getName();
+            if (smsClassName.equals(DEFAULT_SMS_CLASS_NAME) ||
+                smsClassName.equals(JAXRPC_SMS_CLASS_NAME)) {
+                dataStore = GetBackendDataStore.getDataStore(token);
             } else {
                 dataStore = "flatfile";
             }
@@ -1525,7 +1539,6 @@ public class SMSEntry implements Cloneable {
          * using the following 2 properties in AMConfig.properties.
          * 'com.sun.identity.authentication.super.user'
          * 'com.sun.identity.authentication.special.users'
-         * 
          * 3) Since service config/data resides only under the group node ie.,
          * ou=default node, bypass the delegation check for the nodes above
          * that. This is to avoid unnecessary parsing and delegation checking.

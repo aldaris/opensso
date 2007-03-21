@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.12 2007-02-20 22:51:20 goodearth Exp $
+ * $Id: OrganizationConfigManager.java,v 1.13 2007-03-21 22:33:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -862,8 +862,9 @@ public class OrganizationConfigManager {
                     // Add these OCs only for SunOne DS. Do not add the 
                     // OCs for Active Directory.
                     // Will get WILL_NOT_PERFORM in AD.
-                    if ((dataStore !=null) && 
-                        (!dataStore.equals("activeDir"))) {
+                    if ((dataStore != null) && !dataStore.equals(
+                        SMSEntry.DATASTORE_ACTIVE_DIR)
+                    ) {
                         // This is for storing organization attributes
                         // in top/default realm node. eg.,ou=services,o=isp
                         if (e.getDN().equalsIgnoreCase(SERVICES_NODE)) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.4 2007-02-26 20:37:47 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.5 2007-03-21 22:33:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public abstract class CLIDefinitionBase implements IDefinition {
             subcmdName = subcmdName.replace('_', '-');
             subCommands.add(new SubCommand(
                 this, rb, subcmdName, stub.mandatoryOptions, 
-                stub.optionalOptions, stub.aliasOptions, stub.implClassName));
+                stub.optionalOptions, stub.aliasOptions, stub.implClassName,
+                stub.webSupport));
         }
     }
 

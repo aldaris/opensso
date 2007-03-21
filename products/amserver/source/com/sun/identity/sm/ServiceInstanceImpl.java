@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstanceImpl.java,v 1.2 2006-08-25 21:21:30 veiming Exp $
+ * $Id: ServiceInstanceImpl.java,v 1.3 2007-03-21 22:33:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,4 +223,25 @@ class ServiceInstanceImpl {
     private static final String serviceInsMutex = "ServiceInstanceMutex";
 
     private static Debug debug = SMSEntry.debug;
+    
+    public String toXML() {
+        StringBuffer buff = new StringBuffer();
+        buff.append("<")
+            .append(SMSUtils.INSTANCE)
+            .append(" ").append(SMSUtils.NAME).append("=\"").append(name)
+            .append("\"")
+            .append(" ").append(SMSUtils.GROUP).append("=\"").append(group)
+            .append("\"");
+        
+        if ((uri != null) && (uri.length() > 0)) {
+            buff.append(" ").append(SMSUtils.URI).append("=\"").append(uri)
+                .append("\"");
+        }
+        buff.append(">");
+        buff.append(SMSUtils.toAttributeValuePairXML(attributes));
+        buff.append("</")
+            .append(SMSUtils.INSTANCE)
+            .append(">\n");
+        return buff.toString();
+    }
 }

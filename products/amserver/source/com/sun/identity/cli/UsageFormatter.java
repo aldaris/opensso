@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UsageFormatter.java,v 1.2 2006-12-08 21:02:21 veiming Exp $
+ * $Id: UsageFormatter.java,v 1.3 2007-03-21 22:33:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,12 +127,15 @@ public class UsageFormatter {
             IDefinition def = (IDefinition)i.next();
             for (Iterator j = def.getSubCommands().iterator(); j.hasNext(); ) {
                 SubCommand cmd = (SubCommand)j.next();
-                String name = cmd.getName();
-                orderCmds.add(name);
-                mapCmds.put(name, cmd.getDescription());
+                
+                if ((cmd != null) && (!mgr.webEnabled() || cmd.webEnabled())) {
+                    String name = cmd.getName();
+                    orderCmds.add(name);
+                    mapCmds.put(name, cmd.getDescription());
+                }
             }
         }
-
+        
         StringBuffer buffCmd = new StringBuffer();
         boolean started = false;
         String webEnabledURL = mgr.getWebEnabledURL();

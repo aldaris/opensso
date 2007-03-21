@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.4 2006-08-25 21:21:28 veiming Exp $
+ * $Id: SMSSchema.java,v 1.5 2007-03-21 22:33:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,9 +52,11 @@ public class SMSSchema {
 
     private static final String SLASH_ESC_SEQ = "&#47;";
 
-    private static final String SCHEMA_PREFIX_1 = 
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "\n<ServicesConfiguration><Service name=\"";
+    static final String XML_ENC = 
+        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+
+    private static final String SCHEMA_PREFIX_1 = XML_ENC +
+        "\n<ServicesConfiguration><Service name=\"";
 
     private static final String SCHEMA_PREFIX_2 = "\" version=\"";
 
@@ -63,9 +65,8 @@ public class SMSSchema {
     private static final String SCHEMA_SUFFIX = 
         "</Service></ServicesConfiguration>";
 
-    private static final String PLUGIN_PREFIX_1 = 
-        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
-            + "\n<ServicesConfiguration><Service name=\"";
+    private static final String PLUGIN_PREFIX_1 = XML_ENC +
+         "\n<ServicesConfiguration><Service name=\"";
 
     private static final String PLUGIN_PREFIX_2 = "\" version=\"";
 

@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.8 2007-01-18 23:43:18 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.9 2007-03-21 22:33:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -33,14 +32,18 @@ import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.w3c.dom.Document;
@@ -419,6 +422,7 @@ public class ServiceManager {
         // Validate SSO Token
         SMSEntry.validateToken(token);
         Set sNames = new HashSet();
+        List serviceNodes = new ArrayList();
         // Get the XML document and get the list of service nodes
         Document doc = SMSSchema.getXMLDocument(xmlServiceSchema);
 
@@ -426,6 +430,11 @@ public class ServiceManager {
             throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                     IUMSConstants.SMS_xml_invalid_doc_type, null);
         }
+        
+        // Before validating service schema, we need to check
+        // for AttributeSchema having the syntax of "password"
+        // and if present, encrypt the DefaultValues if any
+        checkAndEncryptPasswordSyntax(doc);
 
         // Create service schema
         NodeList nodes = doc.getElementsByTagName(SMSUtils.SERVICE);
@@ -441,10 +450,6 @@ public class ServiceManager {
 
             // Check if the schema element exists
             if (XMLUtils.getChildNode(serviceNode, SMSUtils.SCHEMA) != null) {
-                // Before validating service schema, we need to check
-                // for AttributeSchema having the syntax of "password"
-                // and if present, encrypt the DefaultValues if any
-                checkAndEncryptPasswordSyntax(doc);
                 validateServiceSchema(serviceNode);
                 ServiceSchemaManager.createService(token, smsSchema);
 
@@ -474,15 +479,31 @@ public class ServiceManager {
                 PluginSchema.createPluginSchema(token, pluginNode, smsSchema);
             }
 
-            // Check if configuration element exists
-            Node configNode;
-            if ((configNode = XMLUtils.getChildNode(serviceNode,
-                    SMSUtils.CONFIGURATION)) != null) {
-                // Store the configuration, will throw exception if
-                // the service configuration already exists
-                CreateServiceConfig.createService(this, name, version,
-                        configNode);
+            if (XMLUtils.getChildNode(serviceNode, SMSUtils.CONFIGURATION) 
+                != null
+            ) {
+                serviceNodes.add(serviceNode);
             }
+        }
+
+        clearCache();
+        /*
+         * Need to do this after all the schema has been loaded
+         */
+        for (Iterator i = serviceNodes.iterator(); i.hasNext(); ) {
+            Node svcNode = (Node)i.next();
+            String name = XMLUtils.getNodeAttributeValue(svcNode,
+                SMSUtils.NAME);
+            String version = XMLUtils.getNodeAttributeValue(svcNode,
+                SMSUtils.VERSION);
+            Node configNode = XMLUtils.getChildNode(svcNode,
+                SMSUtils.CONFIGURATION);
+            /*
+             * Store the configuration, will throw exception if
+             * the service configuration already exists
+             */
+            CreateServiceConfig.createService(this, name, version,
+                configNode, true);
         }
         return sNames;
     }
@@ -842,7 +863,13 @@ public class ServiceManager {
     }
 
     protected static void checkAndEncryptPasswordSyntax(Document doc)
-            throws SMSException {
+        throws SMSException {
+        checkAndEncryptPasswordSyntax(doc, true);
+    }
+
+    protected static void checkAndEncryptPasswordSyntax(Document doc,
+        boolean encrypt
+    ) throws SMSException {
         // Get the node list of all AttributeSchema
         NodeList nl = doc.getElementsByTagName(SMSUtils.SCHEMA_ATTRIBUTE);
         for (int i = 0; i < nl.getLength(); i++) {
@@ -864,15 +891,32 @@ public class ServiceManager {
                             .hasNext();) {
                         Node valueNode = (Node) items.next();
                         String value = XMLUtils.getValueOfValueNode(valueNode);
-                        // Encrypt it
-                        String encValue = (String) AccessController
-                                .doPrivileged(new EncodeAction(value));
+                        String encValue = (encrypt) ?
+                            (String)AccessController
+                                .doPrivileged(new EncodeAction(value)):
+                            (String)AccessController
+                                .doPrivileged(new DecodeAction(value));
+                        if (!encrypt) {
+                            try {
+                                //this is catch the whitespace for password
+                                byte[] b = encValue.getBytes("ISO-8859-1");
+                                if ((b.length == 1) && (b[0] == -96)) {
+                                    encValue = "&amp;#160;";
+                                }
+                            } catch (UnsupportedEncodingException e) {
+                                //ignore
+                            }
+                        } else {
+                            String x =(String)AccessController
+                                .doPrivileged(new DecodeAction(encValue));
+                        }
+
                         // Construct the encrypted "Value" node
                         StringBuffer sb = new StringBuffer(100);
                         sb.append(AttributeSchema.VALUE_BEGIN).append(encValue)
-                                .append(AttributeSchema.VALUE_END);
-                        Document newDoc = SMSSchema.getXMLDocument(sb
-                                .toString(), false);
+                          .append(AttributeSchema.VALUE_END);
+                        Document newDoc = SMSSchema.getXMLDocument(
+                            sb.toString(), false);
                         Node newValueNode = XMLUtils.getRootNode(newDoc,
                                 SMSUtils.ATTRIBUTE_VALUE);
                         // Replace the node
@@ -939,7 +983,6 @@ public class ServiceManager {
         // Check if already initialized
         if (initialized)
             return;
-
         // Initilaize the parameters
         try {
             // Get the service names and cache it
@@ -959,7 +1002,6 @@ public class ServiceManager {
                     + serviceDN, e);
             throw (e);
         }
-
         // Check if realm is enabled and set appropriate flags
         checkFlags(token);
         initialized = true;
@@ -969,6 +1011,7 @@ public class ServiceManager {
         try {
             CachedSMSEntry entry = CachedSMSEntry.getInstance(token,
                     REALM_ENTRY, null);
+            
             if (!entry.isNewEntry()) {
                 ditUpgradedCache = true;
                 ServiceConfigManagerImpl ssm = ServiceConfigManagerImpl
@@ -1003,5 +1046,41 @@ public class ServiceManager {
                     + "if Realm is enabled: ", e);
             throw (e);
         }
+    }
+    
+    public String toXML()
+        throws SMSException, SSOException
+    {
+        StringBuffer buff = new StringBuffer();
+        buff.append(SMSSchema.XML_ENC)
+            .append("\n")
+            .append("<!DOCTYPE ServicesConfiguration\n")
+            .append(
+       "PUBLIC \"=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN\"\n")
+            .append("\"jar://com/sun/identity/sm/sms.dtd\">\n\n");
+        buff.append("<ServicesConfiguration>\n");
+
+        Set serviceNames = getServiceNames();
+        
+        for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
+            String serviceName = (String)i.next();
+            Set versions = getServiceVersions(serviceName);
+        
+            for (Iterator j = versions.iterator(); j.hasNext(); ) {
+                String version = (String)j.next();
+                ServiceSchemaManager ssm = new 
+                    ServiceSchemaManager(token, serviceName, version);
+                String xml = ssm.toXML();
+                ServiceConfigManager scm = new ServiceConfigManager(
+                    serviceName, token);
+                int idx = xml.lastIndexOf("</" + SMSUtils.SERVICE + ">");
+                xml = xml.substring(0, idx) + scm.toXML() + "</" + 
+                    SMSUtils.SERVICE + ">";
+                buff.append(xml).append("\n");
+            }
+        }
+
+        buff.append("</ServicesConfiguration>\n");
+        return buff.toString().replaceAll("&amp;#160;", "&#160;");
     }
 }

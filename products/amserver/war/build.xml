@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2007-03-14 19:28:45 jonnelson Exp $
+   $Id: build.xml,v 1.18 2007-03-21 22:33:52 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -220,8 +220,17 @@
             <fileset dir="${amserver.built.res.dir}">
                 <exclude name="*.xml" />
             </fileset>
+            <fileset dir="${amserver.warbase.dir}/ldif">
+                <include name="am_sm_ad_schema.ldif" />
+                <include name="am_sm_ds_schema.ldif" />
+            </fileset>
             <fileset dir="${amserver.classes.dir}" />
             <fileset dir="${sharedlib.classes.dir}" />
+        </copy>
+        <copy todir="${amserver.cli.package.dir}/classes/com/sun/identity/sm">
+            <fileset dir="${amserver.dtd.xml.dir}">
+                <include name="sms.dtd" />
+            </fileset>
         </copy>
         <copy todir="${amserver.cli.package.dir}/lib">
             <fileset dir="${extlib.dir}" includes="ldapjdk.jar,mail.jar,j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar" />

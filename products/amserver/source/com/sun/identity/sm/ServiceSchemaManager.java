@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.4 2006-08-25 21:21:31 veiming Exp $
+ * $Id: ServiceSchemaManager.java,v 1.5 2007-03-21 22:33:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.sun.identity.shared.xml.XMLUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -822,5 +824,41 @@ public class ServiceSchemaManager {
         }
         smsEntry.save(token);
         cEntry.refresh(smsEntry);
+    }
+    
+    public String toXML()
+        throws SMSException {
+        String xml = ssm.toXML();
+        int idx = xml.lastIndexOf("</" + SMSUtils.SERVICE + ">");
+        StringBuffer buff = new StringBuffer();
+        buff.append(xml.substring(0, idx));
+
+        Set realms = new HashSet();
+        realms.add("/");
+
+        for (Iterator i = getPluginInterfaceNames().iterator(); i.hasNext(); ) {
+            String iName = (String)i.next();
+            getPlugSchemaXML(buff, iName, realms);
+        }
+
+        buff.append("</" + SMSUtils.SERVICE + ">");
+        return buff.toString();
+    }
+
+    private void getPlugSchemaXML(
+        StringBuffer buff,
+        String interfaceName,
+        Set realms
+    ) throws SMSException {
+        for (Iterator i = realms.iterator(); i.hasNext(); ){
+            String realm = (String)i.next();
+            Set schemaNames = getPluginSchemaNames(interfaceName, realm);
+            for (Iterator j = schemaNames.iterator(); j.hasNext();) {
+                String pName = (String)j.next();
+                PluginSchema pSchema = getPluginSchema(
+                    pName, interfaceName, realm);
+                buff.append(pSchema.toXML());
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.4 2007-02-27 01:46:12 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.5 2007-03-21 22:33:53 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3922,5 +3922,115 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+    <logmessage name="ATTEMPT_IMPORT_SM_CONFIG_DATA" id="2900"
+        loglevel="LL_INFO"
+        description="Attempt to import service management configuration data.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_IMPORT_SM_CONFIG_DATA" id="2901"
+        loglevel="LL_INFO"
+        description="Import service management configuration data succeeded.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_IMPORT_SM_CONFIG_DATA" id="2902"
+        loglevel="LL_INFO"
+        description="Failed to import service management configuration data.">
+        <datainfo>
+            <item>name of file</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_EXPORT_SM_CONFIG_DATA" id="3000"
+        loglevel="LL_INFO"
+        description="Attempt to export service management configuration data.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_IMPORT_SM_CONFIG_DATA" id="3001"
+        loglevel="LL_INFO"
+        description="Export service management configuration data succeeded.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_EXPORT_SM_CONFIG_DATA" id="3002"
+        loglevel="LL_INFO"
+        description="Failed to export service management configuration data.">
+        <datainfo>
+            <item>name of file</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export configuration data Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+     <logmessage name="ATTEMPT_CREATE_SERVERCONFIG_XML" id="3010"
+        loglevel="LL_INFO"
+        description="Attempt to create server configuration xml.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server configuration xml Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_SERVERCONFIG_XML" id="3011"
+        loglevel="LL_INFO"
+        description="Create server configuration xml succeeded.">
+        <datainfo>
+            <item>name of file</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server configuration xml Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_SERVERCONFIG_XML" id="3012"
+        loglevel="LL_INFO"
+        description="Failed to create server configuration xml.">
+        <datainfo>
+            <item>name of file</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create server configuration xml Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
 </logmessages>
 

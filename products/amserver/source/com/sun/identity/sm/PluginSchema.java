@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchema.java,v 1.2 2006-08-25 21:21:26 veiming Exp $
+ * $Id: PluginSchema.java,v 1.3 2007-03-21 22:33:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -304,5 +304,12 @@ public class PluginSchema {
                 .getPluginSchema(name));
         e.save(token);
         ce.refresh(e);
+    }
+
+    public String toXML()
+        throws SMSException {
+        Document pluginDoc = getDocumentCopy();
+        return SMSSchema.nodeToString(XMLUtils.getRootNode(
+            pluginDoc, SMSUtils.PLUGIN_SCHEMA));
     }
 }

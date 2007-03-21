@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: sms.dtd,v 1.1 2006-08-29 07:52:20 veiming Exp $
+   $Id: sms.dtd,v 1.2 2007-03-21 22:33:52 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -234,8 +234,8 @@ Unique Declaration name for DOCTYPE tag:
         group NMTOKEN "default"
 >
 
-<!-- OrganizationConfiguration defines the configuration parameters for a particular organization. The attribute name provides the name of the organization. The element AttributeValuePair provides the configuration data and SubConfiguration provides the configuration data for further sub-grouping of configuration parameters. The i18nIndex specifies the I18N key used to get the localized display name. -->
-<!ELEMENT OrganizationConfiguration (AttributeValuePair*, SubConfiguration*) >
+<!-- OrganizationConfiguration defines the configuration parameters for a particular organization. The attribute name provides the name of the organization. The element AttributeValuePair provides the configuration data and SubConfiguration provides the configuration data for further sub-grouping of configuration parameters. The element OrganizationAttributeValuePair provides the organization specific configuration defined by OrganizationAttributeSchema, these configuration parameters are searchable and are usually indexed by the configuration store. The i18nIndex specifies the I18N key used to get the localized display name. -->
+<!ELEMENT OrganizationConfiguration (AttributeValuePair*, SubConfiguration*, OrganizationAttributeValuePair?) >
 <!ATTLIST OrganizationConfiguration name CDATA #REQUIRED
         group NMTOKEN "default"
         %i18nIndex; >
@@ -246,6 +246,9 @@ Unique Declaration name for DOCTYPE tag:
         id CDATA #IMPLIED
         priority NMTOKEN #IMPLIED
         %i18nIndex; >
+
+<!-- OrganizationAttributeValuePair defines the configuration parameters that will be required at the time of organization creation and will be managed as part of the organization attributes. -->
+<!ELEMENT OrganizationAttributeValuePair ( AttributeValuePair* ) >
 
 <!-- PluginConfiguration defines the configuration information for a plugin as defined by its plugin schema. The attribute name provides a user friendly name for the plugin configuration, pluginSchemaName specifies the name of the plugin schema for which the configuration parameters are provided, organizationName if specified determines the organization to which the plugin configuration is to be applied, and priority specifies the priority for this plugin. -->
 <!ELEMENT PluginConfiguration        ( AttributeValuePair* ) >

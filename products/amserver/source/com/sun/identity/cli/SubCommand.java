@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.5 2007-01-23 06:45:02 veiming Exp $
+ * $Id: SubCommand.java,v 1.6 2007-03-21 22:33:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ public class SubCommand {
     private Set setOptionAliases = new HashSet();
     private List mandatoryOptions = new ArrayList();
     private List optionalOptions = new ArrayList();
+    private boolean webSupport;
     private Map optionNameToShortName = new HashMap();
     private Set unaryOptionNames = new HashSet();
     private Set singleOptionNames = new HashSet();
@@ -148,6 +149,8 @@ public class SubCommand {
      * @param optionalOptions Formated list of optional argument/options.
      * @param optionAliases Formated list of argument/options aliases.
      * @param implClassName Implementation class name.
+     * @param webSupport <code>true</code> if this command is supported on the
+     *        web browser.
      * @throws CLIException if this object cannot be constructed.
      */
     public SubCommand(
@@ -157,12 +160,14 @@ public class SubCommand {
         List mandatoryOptions,
         List optionalOptions,
         List optionAliases,
-        String implClassName
+        String implClassName,
+        boolean webSupport
     ) throws CLIException {
         this.definition = definition;
         this.name = name;
         this.rb = rb;
         this.implClassName = implClassName;
+        this.webSupport = webSupport;
 
         //this is use to clean duplicate short options.
         Set shortOptions = new HashSet();
@@ -566,6 +571,15 @@ public class SubCommand {
      */
     public boolean isBinaryOption(String cmdName) {
         return singleOptionNames.contains(cmdName);        
+    }
+
+    /**
+     * Returns <code>true</code> if this command is supported on web browser.
+     *
+     * @return <code>true</code> if this command is supported on web browser.
+     */
+    public boolean webEnabled() {
+        return webSupport;
     }
 
     /**

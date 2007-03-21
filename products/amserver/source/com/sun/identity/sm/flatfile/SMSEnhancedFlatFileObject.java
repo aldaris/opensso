@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEnhancedFlatFileObject.java,v 1.4 2006-12-08 21:02:35 veiming Exp $
+ * $Id: SMSEnhancedFlatFileObject.java,v 1.5 2007-03-21 22:33:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -492,7 +492,10 @@ public class SMSEnhancedFlatFileObject extends SMSFlatFileObjectBase {
                 saveProperties(props, attrFile, objName);
                 createSunServiceIdFiles(node, sunserviceids);
                 createSunXmlKeyValFiles(node, sunxmlkeyvals);
-                root.addChild(node);
+                if (!root.addChild(node)) {
+                    throw new SMSException(
+                        "parent not found for node name=" + objName);
+                }
                 saveDirectoryTree();
             } catch (SMSException e) {
                 File attrFile = new File(filepath);

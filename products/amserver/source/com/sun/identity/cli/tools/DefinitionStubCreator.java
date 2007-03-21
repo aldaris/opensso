@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefinitionStubCreator.java,v 1.2 2007-02-26 20:37:49 veiming Exp $
+ * $Id: DefinitionStubCreator.java,v 1.3 2007-03-21 22:33:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,6 +85,7 @@ public class DefinitionStubCreator {
                         "Incorrect Definiton: mandatory fields in command");
                 }
                 
+                boolean webSupport = info.webSupport().equals("true");
                 List mandatoryOptions = CLIDefinitionGenerator.toList(
                     info.mandatoryOptions());
                 List optionalOptions = CLIDefinitionGenerator.toList(
@@ -108,7 +109,7 @@ public class DefinitionStubCreator {
                 
                 stub.subCommands.add(new SubCommandStub(subcmdName,
                     info.implClassName(), mandatoryOptions, optionalOptions,
-                    optionAliases));
+                    optionAliases, webSupport));
             }
         }
     }

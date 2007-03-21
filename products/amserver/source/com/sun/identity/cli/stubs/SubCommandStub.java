@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommandStub.java,v 1.1 2006-12-08 21:02:31 veiming Exp $
+ * $Id: SubCommandStub.java,v 1.2 2007-03-21 22:33:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,11 @@ public class SubCommandStub {
      * List of option aliases of Sub Command.
      */
     public List aliasOptions = new ArrayList();
+    
+    /**
+     * Web Support flag.
+     */
+    public boolean webSupport;
 
     /**
      * Constructs an instance of <code>SubCommandStub</code>.

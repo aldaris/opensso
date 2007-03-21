@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.1 2006-05-31 21:49:44 veiming Exp $
+ * $Id: IArgument.java,v 1.2 2007-03-21 22:33:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,4 +133,9 @@ public interface IArgument {
      * Attribute value pair argument.
      */
     String ATTRIBUTE_VALUES = "attributevalues";
+
+    /**
+     * Output file name.
+     */
+    String OUTPUT_FILE = "outfile";
 }

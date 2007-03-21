@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.4 2006-08-25 21:21:30 veiming Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.5 2007-03-21 22:33:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -167,7 +167,8 @@ class ServiceConfigManagerImpl {
             return (null);
         }
         // Get group name
-        String groupName = (instanceName == null) ? SMSUtils.DEFAULT
+        String groupName = ((instanceName == null) ||
+            instanceName.equals(SMSUtils.DEFAULT)) ? SMSUtils.DEFAULT
                 : getInstance(token, instanceName).getGroup();
         String cacheName = null;
         ServiceConfigImpl answer = null;
@@ -206,7 +207,8 @@ class ServiceConfigManagerImpl {
             return (null);
         }
         // Construct the group name
-        String groupName = (instanceName == null) ? SMSUtils.DEFAULT
+        String groupName = ((instanceName == null) ||
+            instanceName.equals(SMSUtils.DEFAULT)) ? SMSUtils.DEFAULT
                 : getInstance(token, instanceName).getGroup();
         String cacheName = null;
         ServiceConfigImpl answer = null;

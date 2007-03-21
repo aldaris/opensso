@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.4 2007-02-24 01:13:00 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.5 2007-03-21 22:33:41 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,6 +92,11 @@ public class WebCLIHelper {
         SSOToken ssoToken
     ) throws CLIException {
         SubCommand cmd = cmdMgr.getSubCommand(cmdName);
+        
+        if (!cmd.webEnabled()) {
+            return "";
+        }
+        
         List list = new ArrayList();
         Map map = request.getParameterMap();
 
@@ -166,7 +171,7 @@ public class WebCLIHelper {
             (Object[])paramCmdName))
             .append("<br />");
         SubCommand cmd = cmdMgr.getSubCommand(cmdName);
-        if (cmd == null) {
+        if ((cmd == null) || !cmd.webEnabled()) {
             throw new CLIException(rb.getString(
                 "web-interface-cmd-name-not-found"),
                 ExitCodes.INVALID_SUBCOMMAND);
@@ -271,7 +276,7 @@ public class WebCLIHelper {
     private boolean isAuthField(String opt) {
         return opt.equals("adminid") || opt.equals("password");
     }
-                                                                                          
+
     private boolean isIgnored(SubCommand cmd, String opt) {
         return opt.equals("continue") || opt.equals("outfile") ||
             (opt.equals("datafile") &&

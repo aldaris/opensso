@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.5 2007-03-15 18:01:01 veiming Exp $
+ * $Id: FederationManager.java,v 1.6 2007-03-21 22:33:53 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.LoadSchema",
         description="Create a new service in server.",
+        webSupport="true",
         mandatoryOptions={
             "xmlfile|X|m|XML file(s) that contains schema."},
         optionAliases={},
@@ -71,6 +72,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.DeleteService",
         description="Delete service from the server.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|m|Service Name(s)."},
         optionAliases={},
@@ -89,6 +91,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeDefaults",
         description="Remove default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -106,6 +109,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddAttributeDefaults",
         description="Add default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -122,6 +126,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.GetAttributeDefaults",
         description="Show default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -138,6 +143,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeDefaults",
         description="Set default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -154,6 +160,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaChoiceValues",
         description="Set choice values of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -172,6 +179,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaChoiceValues",
         description="Remove choice values from attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -188,6 +196,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaBooleanValues",
         description="Set boolean values of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -207,6 +216,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.CreateMetaDataTemplate",
         description="Create new metadata template.",
+        webSupport="true",
         mandatoryOptions={
             "entityid|e|s|Entity ID"},
         optionAliases={},
@@ -236,6 +246,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ImportMetaData",
         description="Import entity.",
+        webSupport="true",
         mandatoryOptions={},
         optionAliases={},
         macro="authentication",
@@ -254,6 +265,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ExportMetaData",
         description="Export entity.",
+        webSupport="true",
         mandatoryOptions={
             "entityid|e|s|Entity ID"},
         optionAliases={},
@@ -277,6 +289,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.DeleteMetaData",
         description="Delete entity.",
+        webSupport="true",
         mandatoryOptions={
             "entityid|e|s|Entity ID"},
         optionAliases={},
@@ -293,6 +306,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListEntities",
         description="List entities under a realm.",
+        webSupport="true",
         mandatoryOptions={},
         optionAliases={},
         macro="authentication",
@@ -307,6 +321,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.CreateCircleOfTrust",
         description="Create circle of trust.",
+        webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust"},
         optionAliases={},
@@ -323,6 +338,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.DeleteCircleOfTrust",
         description="Delete circle of trust.",
+        webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust"},
         optionAliases={},
@@ -337,6 +353,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrusts",
         description="List circle of trusts.",
+        webSupport="true",
         mandatoryOptions={},
         optionAliases={},
         macro="authentication",
@@ -351,6 +368,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ListCircleOfTrustMembers",
         description="List the members in a circle of trust.",
+        webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust"},
         optionAliases={},
@@ -366,6 +384,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.RemoveCircleOfTrustMembers",
         description="Remove a member from a circle of trust.",
+        webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust",
             "entityid|e|s|Entity ID"},
@@ -381,6 +400,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.AddCircleOfTrustMembers",
         description="Add a member to a circle of trust.",
+        webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust",
             "entityid|e|s|Entity ID"},
@@ -396,6 +416,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.BulkFederation",
         description="Perform bulk federation.",
+        webSupport="false",
         mandatoryOptions={
             "metaalias|m|s|Specify metaAlias for local provider.",
             "remoteentityid|r|s|Remote entity Id",
@@ -420,6 +441,7 @@ public class FederationManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ImportBulkFederationData",
         description="Import bulk federation data which is generated by 'do-bulk-federation' sub command.",
+        webSupport="false",
         mandatoryOptions={
             "metaalias|m|s|Specify metaAlias for local provider.",
             "bulkfeddata|g|s|File name of  bulk federation data which is generated by 'do-bulk-federation' sub command."},

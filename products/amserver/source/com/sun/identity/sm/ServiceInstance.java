@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstance.java,v 1.2 2005-12-08 01:16:53 veiming Exp $
+ * $Id: ServiceInstance.java,v 1.3 2007-03-21 22:33:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -298,5 +298,9 @@ public class ServiceInstance {
         SMSEntry entry = instance.getSMSEntry();
         entry.delete();
         instance.refresh(entry);
+    }
+    
+    public String toXML() {
+        return instance.toXML();
     }
 }

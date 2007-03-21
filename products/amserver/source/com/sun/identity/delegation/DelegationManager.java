@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.7 2007-01-31 06:05:45 veiming Exp $
+ * $Id: DelegationManager.java,v 1.8 2007-03-21 22:33:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.delegation;
 
+import com.sun.identity.sm.SMSException;
 import java.security.AccessController;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -142,13 +143,17 @@ public final class DelegationManager {
                     globalPrivNames = privsConfig.getSubConfigNames();
                 }
             }
-            // get the organizationally defined privilege names
-            sc = scm.getOrganizationConfig(orgName, null);
-            if (sc != null) {
-                privsConfig = sc.getSubConfig(subConfigName);
-                if (privsConfig != null) {
-                    orgPrivNames = privsConfig.getSubConfigNames();
+            try {
+                // get the organizationally defined privilege names
+                sc = scm.getOrganizationConfig(orgName, null);
+                if (sc != null) {
+                    privsConfig = sc.getSubConfig(subConfigName);
+                    if (privsConfig != null) {
+                        orgPrivNames = privsConfig.getSubConfigNames();
+                    }
                 }
+            } catch (SMSException ex) {
+                //ignore if organization configuration is not present
             }
             // merge the privilege names
             if ((globalPrivNames != null) && (!globalPrivNames.isEmpty())) {
@@ -212,11 +217,9 @@ public final class DelegationManager {
             } catch (IdRepoException idrepo) {
                 throw (new DelegationException(idrepo.getMessage()));
             }
-            
             for (Iterator i = privileges.iterator(); i.hasNext(); ) {
                 DelegationPrivilege dp = (DelegationPrivilege)i.next();
                 Set subjs = dp.getSubjects();
-                
                 if ((subjs != null) && (!subjs.isEmpty())) {
                     for (Iterator j = subjs.iterator(); j.hasNext(); ) {
                         String subject = (String)j.next();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetPolicy.java,v 1.2 2006-07-17 18:11:07 veiming Exp $
+ * $Id: RealmGetPolicy.java,v 1.3 2007-03-21 22:33:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,6 @@ import java.util.logging.Level;
  */
 public class RealmGetPolicy extends AuthenticatedCommand {
     private static final String ARGUMENT_POLICY_NAMES = "policynames";
-    private static final String ARGUMENT_OUTFILE = "outfile";
     
     /**
      * Services a Commandline Request.
@@ -68,7 +67,7 @@ public class RealmGetPolicy extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         List filters = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
-        String outfile = getStringOptionValue(ARGUMENT_OUTFILE);
+        String outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
         IOutput outputWriter = getOutputWriter();
         String currentPolicyName = null;
 

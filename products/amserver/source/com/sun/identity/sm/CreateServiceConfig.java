@@ -17,27 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.4 2007-02-20 22:51:19 goodearth Exp $
+ * $Id: CreateServiceConfig.java,v 1.5 2007-03-21 22:33:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
-
 import org.w3c.dom.Node;
-
-import com.sun.identity.shared.xml.XMLUtils;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.ums.IUMSConstants;
 
 public class CreateServiceConfig {
 
@@ -52,8 +51,22 @@ public class CreateServiceConfig {
     // ----------------------------------------------------------
     // Protected methods
     // ----------------------------------------------------------
-    static void createService(ServiceManager sm, String sName, String version,
-            Node configNode) throws SMSException, SSOException {
+    static void createService(
+        ServiceManager sm,
+        String sName,
+        String version,
+        Node configNode
+    ) throws SMSException, SSOException {
+        createService(sm, sName, version, configNode, false);
+    }
+
+    static void createService(
+        ServiceManager sm,
+        String sName,
+        String version,
+        Node configNode,
+        boolean createRealms
+    ) throws SMSException, SSOException {
         // Make sure schema exists for the given service & version
         SSOToken token = sm.getSSOToken();
         ServiceSchemaManagerImpl ssm = ServiceSchemaManagerImpl.getInstance(
@@ -148,15 +161,15 @@ public class CreateServiceConfig {
             String orgDN = SMSEntry.baseDN;
             String orgName = XMLUtils.getNodeAttributeValue(orgNode,
                     SMSUtils.NAME);
-            if ((orgName != null) && (DN.isDN(orgName))) {
-                orgDN = orgName;
-            } else if ((orgName != null) && (orgName.indexOf('/') != -1)) {
-                // Convert to DN
-                orgDN = DNMapper.orgNameToDN(orgName);
-            }
-
+            if (orgName != null) {
+                if (DN.isDN(orgName)) {
+                    orgDN = orgName;
+                } else if (orgName.indexOf('/') != -1) {
+                    orgDN = DNMapper.orgNameToDN(orgName);
+                }
+             }
             // Check if config nodes exists
-            checkBaseNodesForOrg(token, orgDN, sName, version);
+            checkBaseNodesForOrg(token, orgDN, sName, version, createRealms);
 
             // create sub-config node
             StringBuffer sb = new StringBuffer(100);
@@ -164,6 +177,17 @@ public class CreateServiceConfig {
                     ORG_CONFIG_NODE).append("ou=").append(version).append(
                     ",ou=").append(sName).append(",ou=services,").append(orgDN);
             createSubConfig(token, sb.toString(), orgNode, ss, orgDN);
+
+            // Process OrganizationAttributeValuePairs
+            Node orgAttrValuePairNode = XMLUtils.getChildNode(orgNode,
+                SMSUtils.ORG_ATTRIBUTE_VALUE_PAIR);
+            if (orgAttrValuePairNode != null) {
+                // Get the attributes
+                Map attrs = getAttributeValuePairs(orgAttrValuePairNode);
+                OrganizationConfigManager ocm = new
+                    OrganizationConfigManager(token, orgDN);
+                ocm.setAttributes(sName, attrs);
+            }
         }
 
         // Process Plugin configuration
@@ -239,8 +263,10 @@ public class CreateServiceConfig {
         // Construct the SMSEntry for the node
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, dn, null);
         SMSEntry entry = cEntry.getClonedSMSEntry();
-        if ((ss == null) || (!entry.isNewEntry())) {
-            SMSEntry.debug.error("Entry already exists: " + dn);
+        if ((ss == null) || !entry.isNewEntry()) {
+            SMSEntry.debug.error(
+            "CreateServiceConfig.createSubConfigEntry: Entry already exists: " +
+                dn);
             throw (new ServiceAlreadyExistsException(
                     IUMSConstants.UMS_BUNDLE_NAME,
                     IUMSConstants.SMS_service_already_exists_no_args, null));
@@ -271,15 +297,33 @@ public class CreateServiceConfig {
         updateSubEntriesNode(token, entry.getDN());
     }
 
-    static void checkBaseNodesForOrg(SSOToken token, String orgDN,
-            String sName, String version) throws SMSException, SSOException {
+    static void checkBaseNodesForOrg(
+        SSOToken token,
+        String orgDN,
+        String sName,
+        String version
+    ) throws SMSException, SSOException {
+        checkBaseNodesForOrg(token, orgDN, sName, version, false);
+    }
+
+    static void checkBaseNodesForOrg(
+        SSOToken token,
+        String orgDN,
+        String sName,
+        String version,
+        boolean createRealms
+    ) throws SMSException, SSOException {
         // Check if org exists
         SMSEntry entry = new SMSEntry(token, orgDN);
         if (entry.isNewEntry()) {
-            // Organization does not exists
-            Object[] args = { orgDN };
-            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+            // Organization does not exists, create if needed
+            if (createRealms) {
+                createOrganization(token, orgDN);
+            } else {
+                Object[] args = { orgDN };
+                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                     "sms-org-doesnot-exist", args));
+            }
         }
 
         // Check if services node exists
@@ -414,13 +458,12 @@ public class CreateServiceConfig {
     /*
      * create the sub-organization.
      */
-
     static void createOrganization(SSOToken token, String orgDN)
-            throws SMSException {
-
+        throws SMSException {
+        // Check if the organization already exists
         try {
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN,
-                    null);
+                null);
             SMSEntry e = cEntry.getClonedSMSEntry();
             if (!e.isNewEntry()) {
                 SMSEntry.debug.error("Organization already exists: " + orgDN);
@@ -429,14 +472,32 @@ public class CreateServiceConfig {
                         IUMSConstants.SMS_organization_already_exists_no_args,
                         null));
             }
-            // Add needed object classes
-            e
-                    .addAttribute(SMSEntry.ATTR_OBJECTCLASS,
-                            SMSEntry.OC_REALM_SERVICE);
-            e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
-
-            e.save(token);
-            cEntry.refresh(e);
+            // Normalize DN, so it can be parsed and compared
+            orgDN = DNUtils.normalizeDN(orgDN);
+            
+            // Need to start from baseDN, to create intermediate nodes
+            String[] dns = LDAPDN.explodeDN(orgDN, false);
+            String partdn = dns[dns.length -1];
+            // Obtain the baseDN
+            int index = dns.length -1;
+            while ((index > 0) && !partdn.equalsIgnoreCase(DNMapper.serviceDN)){
+                partdn = dns[--index] + "," + partdn;
+            }
+            // Check the intermediate nodes
+            while (index >= 1) {
+                partdn = dns[--index] + "," + partdn;
+                cEntry = CachedSMSEntry.getInstance(token, partdn, null);
+                e = cEntry.getClonedSMSEntry();
+                if (e.isNewEntry()) {
+                    // Create the realm
+                    // Add needed object classes
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS,
+                        SMSEntry.OC_REALM_SERVICE);
+                    e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
+                    e.save(token);
+                    cEntry.refresh(e);
+                }
+            } 
         } catch (SSOException ssoe) {
             SMSEntry.debug.error("CreateServiceConfig: Unable to "
                     + "create organization ", ssoe);

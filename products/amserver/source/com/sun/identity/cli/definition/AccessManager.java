@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.14 2007-02-27 01:49:50 veiming Exp $
+ * $Id: AccessManager.java,v 1.15 2007-03-21 22:33:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.BulkOperations",
         description="Do multiple requests in one command.",
+        webSupport="true",
         mandatoryOptions={
             "datafile|D|s|Name of file that contains commands and options."},
         optionAliases={},
@@ -71,6 +72,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.SessionCommand",
         description="List Sessions.",
+        webSupport="true",
         mandatoryOptions={
             "host|t|s|Host Name."},
         optionAliases={},
@@ -100,6 +102,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.AddResourceBundle",
         description="Add resource bundle to data store.",
+        webSupport="true",
         mandatoryOptions={
             "bundlename|b|s|Resource Bundle Name.",
             "bundlefilename|B|s|Resource bundle physical file name."},
@@ -114,6 +117,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.GetResourceBundle",
         description="List resource bundle in data store.",
+        webSupport="true",
         mandatoryOptions={
             "bundlename|b|s|Resource Bundle Name."},
         optionAliases={},
@@ -128,6 +132,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.DeleteResourceBundle",
         description="Remove resource bundle from data store.",
+        webSupport="true",
         mandatoryOptions={
             "bundlename|b|s|Resource Bundle Name."},
         optionAliases={},
@@ -141,6 +146,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.LoadSchema",
         description="Create a new service in server.",
+        webSupport="true",
         mandatoryOptions={
             "xmlfile|X|m|XML file(s) that contains schema."},
         optionAliases={},
@@ -155,6 +161,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.DeleteService",
         description="Delete service from the server.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|m|Service Name(s)."},
         optionAliases={},
@@ -173,6 +180,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.UpdateService",
         description="Update service.",
+        webSupport="true",
         mandatoryOptions={
             "xmlfile|X|m|XML file(s) that contains schema."},
         optionAliases={},
@@ -187,6 +195,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddAttributeSchema",
         description="Add attribute schema to an existing service.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Service Name.",
             "schematype|t|s|Schema Type.",
@@ -203,6 +212,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.SMSMigration",
         description="Migrate organization to realm.",
+        webSupport="true",
         mandatoryOptions={
             "entrydn|e|s|Distinguished name of organization to be migrated."},
         optionAliases={},
@@ -215,6 +225,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.CreateRealm",
         description="Create realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm to be created."},
         optionAliases={},
@@ -227,6 +238,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.DeleteRealm",
         description="Delete realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm to be deleted."},
         optionAliases={},
@@ -240,6 +252,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.SearchRealms",
         description="List realms by name.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm where search begins."},
         optionAliases={},
@@ -256,6 +269,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmAssignService",
         description="Add service to a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Service Name."},
@@ -271,6 +285,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAssignedServices",
         description="Show services in a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -286,6 +301,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAssignableServices",
         description="List the assignable services to a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -300,6 +316,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmUnassignService",
         description="Remove service from a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service to be removed."},
@@ -314,6 +331,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetAttributeValues",
         description="Get realm property values.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service."},
@@ -329,6 +347,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetServiceAttributeValues",
         description="Show realm's service attribute values.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service."},
@@ -343,6 +362,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmRemoveAttribute",
         description="Delete attribute from a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service.",
@@ -357,6 +377,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmModifyService",
         description="Set service attribute values in a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service."},
@@ -373,6 +394,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmAddAttributeValues",
         description="Add attribute value to a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service."},
@@ -388,6 +410,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmSetAttributeValues",
         description="Set attribute values of a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "servicename|s|s|Name of service."},
@@ -403,6 +426,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmCreatePolicy",
         description="Create policies in a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "xmlfile|X|s|Name of file that contains policy XML definition."},
@@ -416,6 +440,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmDeletePolicy",
         description="Delete policies from a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "policynames|p|m|Names of policy to be deleted."},
@@ -429,6 +454,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmGetPolicy",
         description="List policy definitions in a realm.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -444,6 +470,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeDefaults",
         description="Remove default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -461,6 +488,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddAttributeDefaults",
         description="Add default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -477,6 +505,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.GetAttributeDefaults",
         description="Show default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -494,6 +523,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeDefaults",
         description="Set default attribute values in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema."},
@@ -510,6 +540,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaChoiceValues",
         description="Set choice values of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -528,6 +559,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaBooleanValues",
         description="Set boolean values of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -547,6 +579,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaChoiceValues",
         description="Remove choice values from attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -563,6 +596,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaType",
         description="Set type member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -579,6 +613,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaUIType",
         description="Set UI type member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -595,6 +630,7 @@ public class AccessManager {
    @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaSyntax",
         description="Set syntax member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -611,6 +647,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaI18nKey",
         description="Set i18nKey member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -627,6 +664,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaPropertiesViewBeanURL",
         description="Set properties view bean URL member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -643,6 +681,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyAttributeSchemaAny",
         description="Set any member of attribute schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -659,6 +698,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemaDefaultValues",
         description="Delete attribute schema default values.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -675,6 +715,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaValidator",
         description="Set attribute schema validator.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -691,6 +732,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaStartRange",
         description="Set attribute schema start range.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -707,6 +749,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetAttributeSchemaEndRange",
         description="Set attribute schema end range.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -723,6 +766,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveAttributeSchemas",
         description="Delete attribute schemas from a service",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -738,6 +782,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceSchemaI18nKey",
         description="Set service schema i18n key.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "i18nkey|k|s|I18n Key."},
@@ -751,6 +796,7 @@ public class AccessManager {
      @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceSchemaPropertiesViewBeanURL",
         description="Set service schema properties view bean URL.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "url|r|s|Service Schema Properties View Bean URL"},
@@ -764,6 +810,7 @@ public class AccessManager {
      @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetServiceRevisionNumber",
         description="Set service schema revision number.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "revisionnumber|r|s|Revision Number"},
@@ -777,6 +824,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.GetServiceRevisionNumber",
         description="Get service schema revision number.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service."},
         optionAliases={},
@@ -789,6 +837,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddSubConfiguration",
         description="Create a new sub configuration.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "subconfigname|g|s|Name of sub configuration."},
@@ -808,6 +857,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.DeleteSubConfiguration",
         description="Remove Sub Configuration.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "subconfigname|g|s|Name of sub configuration."},
@@ -823,6 +873,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifySubConfiguration",
         description="Set sub configuration.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "subconfigname|g|s|Name of sub configuration.",
@@ -842,6 +893,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddSubSchema",
         description="Add sub schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -857,6 +909,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.RemoveSubSchema",
         description="Remove sub schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -872,6 +925,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ModifyInheritance",
         description="Set Inheritance value of Sub Schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "schematype|t|s|Type of schema.",
@@ -887,6 +941,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.AddPluginInterface",
         description="Add Plug-in interface to service.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "interfacename|i|s|Name of interface.",
@@ -902,6 +957,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.SetPluginSchemaPropertiesViewBeanURL",
         description="Set properties view bean URL of plug-in schema.",
+        webSupport="true",
         mandatoryOptions={
             "servicename|s|s|Name of service.",
             "interfacename|i|s|Name of interface.",
@@ -917,6 +973,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.CreateIdentity",
         description="Create identity in a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -937,6 +994,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.DeleteIdentities",
         description="Delete identities in a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idnames|i|m|Names of identites.",
@@ -951,6 +1009,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.SearchIdentities",
         description="List identities in a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "filter|x|s|Filter (Pattern).",
@@ -967,6 +1026,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAllowedIdOperations",
         description="Show the allowed operations of an identity a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idtype|t|s|Type of Identity such as User, Role and Group."},
@@ -981,6 +1041,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetSupportedIdTypes",
         description="Show the supported identity type in a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -995,6 +1056,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAssignableServices",
         description="List the assignable service to an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1012,6 +1074,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAssignedServices",
         description="Show the service in an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1028,6 +1091,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetServiceAttributes",
         description="Show the service attribute values of an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1045,6 +1109,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetAttributes",
         description="Get identity property values",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1062,6 +1127,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetMemberships",
         description="Show the memberships of an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1080,6 +1146,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetMembers",
         description="Show the memberships of an identity.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1098,6 +1165,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.AddMember",
         description="Add an identity as member of another identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "memberidname|m|s|Name of identity that is member.",
@@ -1114,6 +1182,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.RemoveMember",
         description="Remove membership of identity from another identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "memberidname|m|s|Name of identity that is member.",
@@ -1130,6 +1199,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.AssignService",
         description="Add Service to an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1147,6 +1217,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.UnassignService",
         description="Remove Service from an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1162,6 +1233,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.ModifyService",
         description="Set service attribute values of an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1179,6 +1251,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.SetAttributeValues",
         description="Set attribute values of an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1195,6 +1268,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetPrivileges",
         description="Show privileges assigned to an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1211,6 +1285,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.AddPrivileges",
         description="Add privileges to an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1227,6 +1302,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.RemovePrivileges",
         description="Remove privileges from an identity",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "idname|i|s|Name of identity.",
@@ -1243,6 +1319,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.ListAuthInstances",
         description="List authentication instances",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -1258,6 +1335,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.CreateAuthInstance",
         description="Create authentication instance",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication instance.",
@@ -1273,6 +1351,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.DeleteAuthInstances",
         description="Delete authentication instances",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "names|m|m|Name of authentication instances."},
@@ -1289,6 +1368,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.UpdateAuthInstance",
         description="Update authentication instance values",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication instance."},
@@ -1306,6 +1386,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.GetAuthInstance",
         description="Get authentication instance values",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication instance."},
@@ -1323,6 +1404,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.ListAuthConfigurations",
         description="List authentication configurations",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -1338,6 +1420,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.CreateAuthConfiguration",
         description="Create authentication configuration",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication configuration."},
@@ -1352,6 +1435,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.DeleteAuthConfigurations",
         description="Delete authentication configurations",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "names|m|m|Name of authentication configurations."},
@@ -1368,6 +1452,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.GetAuthConfigurationEntries",
         description="Get authentication configuration entries",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication configuration."},
@@ -1385,6 +1470,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.UpdateAuthConfigurationEntries",
         description="Set authentication configuration entries",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication configuration."},
@@ -1403,6 +1489,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.ListDataStores",
         description="List data stores under a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
         optionAliases={},
@@ -1418,6 +1505,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.CreateDataStore",
         description="Create data store under a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of datastore.",
@@ -1437,6 +1525,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.DeleteDataStores",
         description="Delete data stores under a realm",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "names|m|m|Names of datastore."},
@@ -1454,6 +1543,7 @@ public class AccessManager {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.UpdateDataStore",
         description="Update data store profile.",
+        webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of datastore."},
@@ -1469,4 +1559,60 @@ public class AccessManager {
         }
     )
     private String update_datastore;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.schema.ExportServiceConfiguration",
+        description="Export service configuration.",
+        webSupport="false",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={"outfile|o|s|Filename where configuration is written."},
+        resourceStrings={
+            "export-service-configuration-succeeded=Service Configuration is exported."
+        }
+    )
+    private String export_service_configuration;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.schema.ImportServiceConfiguration",
+        description="Import service configuration.",
+        webSupport="false",
+        mandatoryOptions={
+            "datastoretype|t|s|Type of datastore either file, sunds or ad. Flat File, Sun Directory Server and Microsoft's Active Directory respectively.",
+            "xmlfile|X|s|XML file that contains configuration data."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "import-service-configuration-succeeded=Service Configuration is imported.",
+            "import-service-configuration-invalid-ds-type=Invalid datastore type.",
+            "import-service-configuration-invalid-port=Invalid port number.",
+            "import-service-configuration-not-connect-to-ds=Unable to connect to directory server.",
+            "import-service-configuration-connecting-to-ds=Connecting to directory server.",
+            "import-service-configuration-connected-to-ds=Connected to directory server.",
+            "import-service-configuration-cannot-load-lidf=Cannot locate LDIF, {0}."
+        }
+    )
+    private String import_service_configuration;
+    
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.schema.CreateServerConfigXML",
+        description="Create serverconfig.xml file. No options are required for flat file configuration data store.",
+        webSupport="false",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "dshost|t|s|Directory Server host name",
+            "dsport|p|s|Directory Server port number",
+            "dsadmin|a|s|Directory Server administrator distinguished name",
+            "dspassword|x|s|Directory Server administrator password",
+            "outfile|o|s|File name where serverconfig XML is written."
+        },
+        resourceStrings={
+            "create-serverconfig-xml-succeeded=Server Configuration XML is created."
+        }
+    )
+    private String create_serverconfig_xml;
 }

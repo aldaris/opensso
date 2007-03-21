@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.3 2006-11-08 00:47:12 veiming Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.4 2007-03-21 22:33:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,8 +52,6 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdEventListener;
-
-import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -241,7 +239,6 @@ public class DelegationPolicyImpl implements DelegationInterface,
      * @throws SSOException  invalid or expired single-sign-on token
      * @throws DelegationException  for any abnormal condition
      */
-
     public Set getPrivileges(SSOToken token, String orgName) 
         throws SSOException, DelegationException {
         try {
@@ -253,7 +250,7 @@ public class DelegationPolicyImpl implements DelegationInterface,
                     AdminTokenAction.getInstance());
             }
             PolicyManager pm = new PolicyManager(token,
-                                    POLICY_REPOSITORY_REALM);
+                POLICY_REPOSITORY_REALM);
             Set pnames = pm.getPolicyNames();
             if (pnames != null) {
                 /* the name of the policy is in the form of 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.3 2006-08-25 21:21:29 veiming Exp $
+ * $Id: ServiceConfigManager.java,v 1.4 2007-03-21 22:33:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -639,6 +640,78 @@ public class ServiceConfigManager {
             sb.append(ssoe.getMessage());
         }
         return (sb.toString());
+    }
+    
+    public String toXML() 
+        throws SMSException, SSOException {
+        StringBuffer buff = new StringBuffer();
+        buff.append("<" + SMSUtils.CONFIGURATION + ">");
+
+        Set instances = getInstanceNames();
+        
+        for (Iterator i = instances.iterator(); i.hasNext(); ) {
+            String instanceName = (String)i.next();
+            ServiceInstance instance = getInstance(instanceName);
+            buff.append(instance.toXML());
+        }
+
+        /*
+         * Before calling the Global configuration we need to add "default" to
+         * the set of instances as getInstances method does not return this.
+         */
+        instances.add(SMSUtils.DEFAULT);
+        
+        for (Iterator i = instances.iterator(); i.hasNext(); ) {
+            String instanceName = (String)i.next();
+            try {
+                ServiceConfig sc = getGlobalConfig(instanceName);
+                if (sc != null) {
+                    buff.append(sc.toXML(SMSUtils.GLOBAL_CONFIG));
+                }
+            } catch (SMSException e) {
+                //ignored
+            }
+        }
+
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            token, "/");
+        Set orgNames = new HashSet();
+        Set oNames = orgMgr.getSubOrganizationNames("*", true);
+        
+        for (Iterator i = oNames.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            if (!name.startsWith("/")) {
+                name = "/" + name;
+            }
+            orgNames.add(name);
+        }
+        
+        orgNames.add("/");
+        
+        /*
+         * we hide the hidden realm that is used for storing the configuration
+         * data. Add it accordingly.
+         */
+        orgNames.add(com.sun.identity.policy.PolicyManager.DELEGATION_REALM); 
+        
+        for (Iterator i = orgNames.iterator(); i.hasNext(); ) {
+            String orgName = (String)i.next();
+            for (Iterator j = instances.iterator(); j.hasNext(); ) {
+                String instanceName = (String)j.next();
+                try {
+                    ServiceConfig sc = getOrganizationConfig(
+                        orgName, instanceName);
+                    if (sc != null) {
+                        buff.append(sc.toXML(SMSUtils.ORG_CONFIG, orgName));
+                    }
+                } catch (SMSException e) {
+                    //ignored
+                }
+            }
+        }
+        
+        buff.append("</" + SMSUtils.CONFIGURATION + ">");
+        return buff.toString();
     }
 
     // ---------------------------------------------------------

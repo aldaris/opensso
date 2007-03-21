@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationRequest.java,v 1.2 2006-11-03 00:27:27 exu Exp $
+ * $Id: FSNameRegistrationRequest.java,v 1.3 2007-03-21 22:33:53 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,14 +61,14 @@ import org.w3c.dom.Document;
  */
 
 public class FSNameRegistrationRequest extends AbstractRequest {
-    private String providerId=null;
-    private SPProvidedNameIdentifier spProvidedNameIdentifier=null;
-    private IDPProvidedNameIdentifier idpProvidedNameIdentifier=null;
-        private OldProvidedNameIdentifier oldProvidedNameIdentifier=null;
-        private String relayState = "";
-    protected String xmlString        = null;
-    protected String signatureString        = null;
-    protected String id = null;
+    private String providerId;
+    private SPProvidedNameIdentifier spProvidedNameIdentifier;
+    private IDPProvidedNameIdentifier idpProvidedNameIdentifier;
+    private OldProvidedNameIdentifier oldProvidedNameIdentifier;
+    private String relayState = "";
+    protected String xmlString;
+    protected String signatureString;
+    protected String id;
     protected int minorVersion = 0;
 
     /** 
@@ -156,12 +156,11 @@ public class FSNameRegistrationRequest extends AbstractRequest {
         String relayState) throws FSMsgException {
      
         int length = 0;
-        int i=0;
         setIssueInstant(new Date());    
         if ((respondWiths != null) &&
-        (respondWiths != Collections.EMPTY_LIST)) {
+            (respondWiths != Collections.EMPTY_LIST)) {
             length = respondWiths.size();
-            for (i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++) {
                 Object temp = respondWiths.get(i);
                 if (!(temp instanceof String)) {
                     if (FSUtils.debug.messageEnabled()) {
@@ -188,8 +187,8 @@ public class FSNameRegistrationRequest extends AbstractRequest {
         this.providerId=providerId;
         this.spProvidedNameIdentifier=spProvidedNameIdentifier;
         this.idpProvidedNameIdentifier=idpProvidedNameIdentifier;
-                this.oldProvidedNameIdentifier=oldProvidedNameIdentifier;
-                this.relayState = relayState;
+        this.oldProvidedNameIdentifier=oldProvidedNameIdentifier;
+        this.relayState = relayState;
     }
     
     /**
@@ -320,7 +319,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
     }
 
     public static FSNameRegistrationRequest parseXML(String xml)
-                  throws FSMsgException {
+        throws FSMsgException {
         Document doc = XMLUtils.toDOMDocument(xml, FSUtils.debug);
         if (doc == null) {
             FSUtils.debug.error("FSNameRegistrationRequest.parseXML:Error " +
@@ -354,7 +353,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
      *         this object ot a string.
      */
     public String toXMLString(boolean includeNS, boolean declareNS)
-                  throws FSMsgException {
+        throws FSMsgException {
         return toXMLString(includeNS, declareNS, false);
     }
     
@@ -372,7 +371,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
      *        this object ot a string.
      */
     public String toXMLString(boolean includeNS,boolean declareNS,
-                              boolean includeHeader) throws FSMsgException {
+        boolean includeHeader) throws FSMsgException {
         if((providerId == null) || (providerId.length() == 0)){
             FSUtils.debug.error("FSNameRegistrationRequest.toXMLString: "
                 + "providerId is null in the request with requestId:" 
@@ -509,7 +508,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
      * @see #getIDPProvidedNameIdentifier
      */
     public void setIDPProvidedNameIdentifier(
-                 IDPProvidedNameIdentifier nameIdentifier) {
+        IDPProvidedNameIdentifier nameIdentifier) {
         idpProvidedNameIdentifier=nameIdentifier;
     }
     
@@ -522,7 +521,7 @@ public class FSNameRegistrationRequest extends AbstractRequest {
      */
     
     public void setOldProvidedNameIdentifier(
-            OldProvidedNameIdentifier nameIdentifier) {
+        OldProvidedNameIdentifier nameIdentifier) {
         oldProvidedNameIdentifier=nameIdentifier;
     }
     /**

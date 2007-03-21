@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.3 2007-02-26 20:37:47 veiming Exp $
+ * $Id: CLIRequest.java,v 1.4 2007-03-21 22:33:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,9 @@ public class CLIRequest {
                     ExitCodes.INCORRECT_OPTION, arg);
         } else {
             SubCommand subcmd = mgr.getSubCommand(arg);
-            if (subcmd == null) {
+            if ((subcmd == null) || 
+                (mgr.webEnabled() && !subcmd.webEnabled())
+            ) {
                 Object[] param = {commandName + " " + arg};
                 throw new CLIException(MessageFormat.format(
                     rb.getString("error-message-unknown-subcommand"), param),
@@ -177,7 +179,9 @@ public class CLIRequest {
 
         String cmdName = argv[0];
         SubCommand subcmd = mgr.getSubCommand(cmdName);
-        if (subcmd == null) {
+        if ((subcmd == null) || 
+            (mgr.webEnabled() && !subcmd.webEnabled())
+        ) {
             Object[] param = {commandName + " " + sumOfArgs};
             throw new CLIException(MessageFormat.format(
                 rb.getString("error-message-unknown-subcommand"),

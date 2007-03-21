@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MockCLI.java,v 1.3 2007-02-26 20:48:46 veiming Exp $
+ * $Id: MockCLI.java,v 1.4 2007-03-21 22:33:52 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ public class MockCLI {
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.DummyCommand",
         description="A dummy command for testing purposes.",
+        webSupport="true",
         mandatoryOptions={
             "mandatory|m|s|Mandatory option."},
         optionAliases={},

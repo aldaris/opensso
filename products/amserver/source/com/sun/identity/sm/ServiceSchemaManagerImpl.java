@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManagerImpl.java,v 1.2 2006-08-25 21:21:32 veiming Exp $
+ * $Id: ServiceSchemaManagerImpl.java,v 1.3 2007-03-21 22:33:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -496,4 +496,12 @@ class ServiceSchemaManagerImpl {
     private static final int DEFAULT_REVISION = 10;
 
     private static final int REVISION_ERROR = -1;
+    
+    public String toXML()
+        throws SMSException {
+        Document doc = getDocumentCopy();
+        ServiceManager.checkAndEncryptPasswordSyntax(doc, false);
+        return SMSSchema.nodeToString(
+            XMLUtils.getRootNode(doc, SMSUtils.SERVICE));
+    }
 }

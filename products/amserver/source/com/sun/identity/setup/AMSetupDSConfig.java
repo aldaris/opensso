@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.5 2007-02-20 22:43:15 goodearth Exp $
+ * $Id: AMSetupDSConfig.java,v 1.6 2007-03-21 22:33:46 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import java.util.Iterator;
@@ -302,111 +303,23 @@ public class AMSetupDSConfig {
     }
 
     /**
-     * Creates LDAP schema from ldif file.
-     *
-     * @param file LDIF file containing Access Manager entries.
-     */
-    public void createSchemaFromLDIF(String file) {
-        LDAPModification mods[] = null;
-        LDIFContent content = null; 
-        String DN = null;
-
-
-        try {
-            LDIF ldif = new LDIF(file);
-            LDIFRecord rec = ldif.nextRecord();
-           
-            for( ; rec != null; rec = ldif.nextRecord()) {
-                try {
-                    content = rec.getContent();
-                    DN = rec.getDN();
-                    if (content instanceof LDIFModifyContent) {
-                            mods = ((LDIFModifyContent)content).getModifications();
-                        ld.modify(DN, mods);
-                    } else if ((content instanceof LDIFAttributeContent) ||
-                        (content instanceof LDIFAddContent)
-                    ) {
-                        LDAPAttributeSet attrSet = null;
-                        LDAPAttribute[] attrs = 
-                            (content instanceof LDIFAttributeContent) ?
-                                ((LDIFAttributeContent)content).getAttributes():
-                                ((LDIFAddContent)content).getAttributes();
-                        LDAPEntry amEntry = new LDAPEntry(DN, 
-                            new LDAPAttributeSet(attrs)); 
-                        ld.add(amEntry); 
-                    }
-
-                } catch (LDAPException e) {
-                    switch (e.getLDAPResultCode()) {
-                        case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
-                            if (Debug.getInstance(
-                                SetupConstants.DEBUG_NAME).messageEnabled()
-                             ) {
-                                Debug.getInstance(
-                                    SetupConstants.DEBUG_NAME).message(
-                                        "AMSetupDSConfig.createSchemaFromLDIF: "+
-                                        "LDAP Operation return code: " +
-                                         e.getLDAPResultCode());
-                            }
-                            break;
-                        case LDAPException.NO_SUCH_ATTRIBUTE:
-                            if (Debug.getInstance(
-                                SetupConstants.DEBUG_NAME).messageEnabled()
-                             ) {
-                                Debug.getInstance(
-                                    SetupConstants.DEBUG_NAME).message(
-                                        "AMSetupDSConfig.createSchemaFromLDIF: "+
-                                        "LDAP Operation return code: " +
-                                        e.getLDAPResultCode());
-                            }
-                            break;
-                        case LDAPException.ENTRY_ALREADY_EXISTS: 
-                            LDAPModificationSet modSet = 
-                                new LDAPModificationSet();
-                            LDAPAttribute[] attrs = 
-                            (content instanceof LDIFAttributeContent) ?
-                                ((LDIFAttributeContent)content).getAttributes():
-                                ((LDIFAddContent)content).getAttributes();
-                            
-                            for (int i = 0; i < attrs.length; i++) {
-                                modSet.add(LDAPModification.ADD, attrs[i]);
-                            }
-                            try {
-                                ld.modify(DN, modSet);
-                            } catch (LDAPException ex) {
-                                //Ignore the exception
-                            }
-                            break;
-                        default:
-                            if (Debug.getInstance(
-                                SetupConstants.DEBUG_NAME).messageEnabled()
-                             ) {
-                                Debug.getInstance(
-                                    SetupConstants.DEBUG_NAME).message(
-                                        "AMSetupDSConfig.createSchemaFromLDIF: "+
-                                        "LDAP Operation return code: " +
-                                        e.getLDAPResultCode());
-                            }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new ConfiguratorException("configurator.ldiferror",
-                null, locale);
-        }
-    }  
-
-    /**
      * Loads the schema files into the directory Server.
      *
      * @param schemaFiles Array of schema files to load.
      */
     public void loadSchemaFiles(List schemaFiles) {
-        for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
-            String file = (String)i.next();
-            int idx = file.lastIndexOf("/");
-            String schemaFile = (idx != -1) ? file.substring(idx+1) : file;
-            createSchemaFromLDIF(basedir + "/" + schemaFile);
+        try {
+            for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
+                String file = (String)i.next();
+                int idx = file.lastIndexOf("/");
+                String schemaFile = (idx != -1) ? file.substring(idx+1) : file;
+                LDAPUtils.createSchemaFromLDIF(basedir + "/" + schemaFile, ld);
+            }
+        } catch (IOException e) {
+            throw new ConfiguratorException("configurator.ldiferror",
+                null, locale);
+        } catch (LDAPException e) {
+            throw new ConfiguratorException(e.getMessage());
         }
     }
   

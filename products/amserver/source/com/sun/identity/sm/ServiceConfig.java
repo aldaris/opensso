@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.4 2007-02-20 22:51:21 goodearth Exp $
+ * $Id: ServiceConfig.java,v 1.5 2007-03-21 22:33:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,16 +228,6 @@ public class ServiceConfig {
      */
     public ServiceConfig getSubConfig(String subConfigName)
             throws SSOException, SMSException {
-        String dataStore = SMSEntry.getDataStore(token);
-        // If the datastore is Active Directory, convert
-        // ou=dc=samples^dc=com^^AgentLogging to
-        // ou=dc_samples^dc_com^^AgentLogging.
-        // Otherwise BAD_NAME error LDAPException code 34 will occur.
-        if ((dataStore != null) && (dataStore.equals("activeDir"))) {
-            if (subConfigName.indexOf("^") >= 0) {
-                subConfigName = subConfigName.replaceAll("=","_");
-            }
-        }
         ServiceConfigImpl sci = sc.getSubConfig(token, subConfigName);
         return ((sci == null) ? null : new ServiceConfig(scm, sci));
     }
@@ -294,16 +284,6 @@ public class ServiceConfig {
         sb.append(priority);
 
         // Create the entry
-        String dataStore = SMSEntry.getDataStore(token);
-        // If the datastore is Active Directory, convert
-        // ou=dc=samples^dc=com^^AgentLogging to
-        // ou=dc_samples^dc_com^^AgentLogging.
-        // Otherwise BAD_NAME error LDAPException code 34 will occur.
-        if ((dataStore != null) && (dataStore.equals("activeDir"))) {
-            if (subConfigName.indexOf("^") >= 0) {
-                subConfigName = subConfigName.replaceAll("=","_");
-            }
-        }
         CreateServiceConfig.createSubConfigEntry(token, ("ou=" + subConfigName
                 + "," + sc.getDN()), nss, subConfigId, sb.toString(), attrs, sc
                 .getOrganizationName());
@@ -327,7 +307,7 @@ public class ServiceConfig {
 
         subConfigName = SMSSchema.unescapeName(subConfigName);
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, ("ou="
-                + subConfigName + "," + sc.getDN()), null);
+            + subConfigName + "," + sc.getDN()), null);
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);
@@ -799,5 +779,15 @@ public class ServiceConfig {
             e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_SERVICE_COMP);
             e.save(token);
         }
+    }
+    
+    public String toXML(String NodeTag)
+        throws SMSException, SSOException {
+        return sc.toXML(NodeTag);
+    }
+
+    public String toXML(String NodeTag, String orgName)
+        throws SMSException, SSOException {
+        return sc.toXML(NodeTag, orgName);
     }
 }

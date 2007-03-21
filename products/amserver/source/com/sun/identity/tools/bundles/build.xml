@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-03-02 19:03:29 ak138937 Exp $
+   $Id: build.xml,v 1.2 2007-03-21 22:33:51 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,9 +72,18 @@
                 includes="opensso.jar"/>
         </copy>
         <copy todir="${amadm.tools.path}${file.separator}${amadm.classes.dir}"
-            overwrite="yes" encoding="UTF-8">
+              overwrite="yes" encoding="UTF-8">
             <fileset dir="${amadm.amserver.path}${file.separator}built${file.separator}classes"
-                includes="**/*"/>
+                     includes="**/*"/>
+            <fileset dir="${amserver.warbase.dir}/ldif">
+                <include name="am_sm_ad_schema.ldif" />
+                <include name="am_sm_ds_schema.ldif" />
+            </fileset>
+        </copy>
+        <copy todir="${amadm.tools.path}/${amadm.classes.dir}/com/sun/identity/sm">
+            <fileset dir="${amserver.dtd.xml.dir}">
+                <include name="sms.dtd" />
+            </fileset>
         </copy>
         <copy todir="${amadm.tools.path}${file.separator}${amadm.locale.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">

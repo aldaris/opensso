@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.9 2007-03-07 22:11:51 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.10 2007-03-21 22:33:51 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,9 +57,6 @@ import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.ldap.DSConfigMgr;
-import com.iplanet.services.ldap.LDAPUser;
-import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.DataLayer;
@@ -67,7 +64,6 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
 
@@ -145,13 +141,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         OU_ATTR[0] = getNamingAttribute();
         O_ATTR[0] = getOrgNamingAttribute();
 
-        String enableP = SystemProperties
-                .get("com.sun.identity.sm.ldap.enableProxy");
-        if (enableP != null && enableP.equalsIgnoreCase("true")) {
-            enableProxy = true;
-        } else {
-            enableProxy = false;
-        }
+        String enableP = SystemProperties.get(SMSEntry.DB_PROXY_ENABLE);
+        enableProxy = (enableP != null) && enableP.equalsIgnoreCase("true");
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: proxy enable value: " + enableProxy);
         }
@@ -219,6 +210,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 .getString(IUMSConstants.SMS_INVALID_DN)
                     + dn, LDAPException.NO_SUCH_OBJECT), "sms-NO_SUCH_OBJECT"));
         }
+        
+       
         if (!DN.isDN(dn)) {
             debug.warning("SMSLdapObject: Invalid DN=" + dn);
             String[] args = {dn};
@@ -250,7 +243,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                     debug.message("SMSLdapObject.read() retry: " + retry);
                 }
                 try {
-                    ldapEntry = conn.read(dn, getAttributeNames());
+                    ldapEntry = conn.read(getNormalizedName(token, dn),
+                        getAttributeNames());
                     break;
                 } catch (LDAPException e) {
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
@@ -264,6 +258,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                     }
                 }
             }
+
             if (ldapEntry == null) {
                 if (debug.warningEnabled()) {
                     debug.warning("SMSLdapObject: insufficient access rights "
@@ -287,8 +282,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             } else {
                 if (debug.warningEnabled()) {
                     debug.warning(
-                            "SMSLdapObject: Error in accessing entry DN: "
-                                            + dn, ex);
+                        "SMSLdapObject.read: Error in accessing entry DN: " +
+                            dn, ex);
                 }
                 throw (new SMSException(ex, "sms-entry-cannot-access"));
             }
@@ -323,7 +318,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     public void create(SSOToken token, String dn, Map attrs)
             throws SMSException, SSOException {
         // Call the private method that takes the principal name
-        create(token.getPrincipal(), dn, attrs);
+        create(token.getPrincipal(), getNormalizedName(token, dn), 
+            attrs);
         // Update entryPresent cache
         objectChanged(dn, ADD);
     }
@@ -385,7 +381,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 }
                 try {
                     LDAPModificationSet modSet = copyModItemsToLDAPModSet(mods);
-                    conn.modify(dn, modSet);
+                    conn.modify(getNormalizedName(token, dn), modSet);
                     break;
                 } catch (LDAPException e) {
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
@@ -432,21 +428,22 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         // while searching for the suborgs.
         // Loop through the suborg at the first level and if there
         // is no next suborg, delete that.
-        Iterator so = searchSubOrgNames(token, dn, "*", 0, false, false, false)
-                .iterator();
-        while (so.hasNext()) {
+        Set subOrgNames = searchSubOrgNames(
+            token, dn, "*", 0, false, false, false);
+        
+        for (Iterator so = subOrgNames.iterator(); so.hasNext(); ) {
             String subOrg = (String) so.next();
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject: deleting suborganization: "
                         + subOrg);
             }
-            delete(token, subOrg);
+            delete(token, getNormalizedName(token, subOrg));
         }
 
         // Get LDAP connection
         LDAPConnection conn = getConnection(token.getPrincipal());
         try {
-            delete(conn, dn);
+            delete(conn, getNormalizedName(token, dn));
         } finally {
             releaseConnection(conn);
         }
@@ -526,8 +523,9 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 }
                 try {
                     // Get the sub entries
-                    results = conn.search(dn, LDAPConnection.SCOPE_ONE, filter,
-                            OU_ATTR, false, constraints);
+                    results = conn.search(getNormalizedName(token, dn),
+                        LDAPConnection.SCOPE_ONE, filter, OU_ATTR, false, 
+                        constraints);
                     // Check if the results have to sorted
                     if (sortResults) {
                         LDAPCompareAttrNames comparator = 
@@ -577,7 +575,9 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 }
                 throw (new SMSException(ldape, "sms-entry-cannot-obtain"));
             }
-            answer.add(LDAPDN.explodeDN(entry.getDN(), true)[0]);
+            
+            String temp = LDAPDN.explodeDN(entry.getDN(), true)[0]; 
+            answer.add(getDenormalizedName(token, temp));
         }
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: Successfully obtained "
@@ -597,7 +597,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: schemaSubEntries search: " + dn);
         }
-
+        
         // Construct the filter
         String[] objs = { filter, sidFilter };
         String sfilter = MessageFormat.format(
@@ -669,9 +669,11 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 if (debug.messageEnabled()) {
                     debug.message("SMSLdapObject.search() retry: " + retry);
                 }
+                
                 try {
-                    results = conn.search(startDN, LDAPConnection.SCOPE_SUB,
-                            filter, null, false, constraints);
+                    results = conn.search(getNormalizedName(token, startDN),
+                        LDAPConnection.SCOPE_SUB,filter, null, false, 
+                        constraints);
                     break;
                 } catch (LDAPException e) {
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
@@ -728,6 +730,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: checking if entry exists: " + dn);
         }
+        
         // Check the caches
         if (entriesPresent.contains(dn)) {
             if (debug.messageEnabled()) {
@@ -743,7 +746,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         }
 
         // Check if entry exisits
-        boolean entryExists = entryExists(dn);
+        boolean entryExists = entryExists(getNormalizedName(token, dn));
 
         // Update the cache
         if (entryExists) {
@@ -876,8 +879,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     public void allObjectsChanged() {
         // Not clear why this class is implemeting the SMSObjectListener
         // interface.
-        SMSEntry.debug
-                .error("SMSLDAPObject: got notifications, all objects changed");
+        SMSEntry.debug.error(
+            "SMSLDAPObject: got notifications, all objects changed");
         synchronized (entriesPresent) {
             entriesPresent.clear();
             entriesNotPresent.clear();
@@ -894,7 +897,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             int numOfEntries, boolean sortResults, boolean ascendingOrder,
             boolean recursive) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject:searchSubOrgNames search: " + dn);
+            debug.message("SMSLdapObject.searchSubOrgNames search: " + dn);
         }
 
         /*
@@ -915,11 +918,15 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         return (answer);
     }
 
-    private Set searchSubOrganizationNames(SSOToken token, String dn,
-            String filter, int numOfEntries, boolean sortResults,
-            boolean ascendingOrder, boolean recursive) throws SMSException,
-            SSOException {
-
+    private Set searchSubOrganizationNames(
+        SSOToken token, 
+        String dn,
+        String filter,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder, 
+        boolean recursive
+    ) throws SMSException, SSOException {
         LDAPConnection conn = getConnection(token.getPrincipal());
         // Setup the search constraints
         LDAPSearchConstraints constraints = conn.getSearchConstraints();
@@ -933,16 +940,16 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
                     debug.message(
-                            "SMSLdapObject.searchSubOrganizationNames() retry: "
-                                    + retry);
+                        "SMSLdapObject.searchSubOrganizationNames() retry: " +
+                        retry);
                 }
                 try {
                     // Get the suborganization names
                     if (recursive) {
                         scope = LDAPConnection.SCOPE_SUB;
                     }
-                    results = conn.search(dn, scope, filter, O_ATTR, false,
-                            constraints);
+                    results = conn.search(getNormalizedName(token, dn), 
+                        scope, filter, O_ATTR, false, constraints);
 
                     // Check if the results have to be sorted
                     if (sortResults) {
@@ -1060,7 +1067,9 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
         String FILTER_PATTERN_SEARCH_ORG = "{0}";
         String dataStore = SMSEntry.getDataStore(token);
-        if ((dataStore != null) && (!dataStore.equals("activeDir"))) {
+        if ((dataStore != null) && !dataStore.equals(
+            SMSEntry.DATASTORE_ACTIVE_DIR)
+        ) {
            // Include the OCs only for sunDS, not Active Directory.
            //String FILTER_PATTERN_SEARCH_ORG = "(|(&(objectclass="
            FILTER_PATTERN_SEARCH_ORG = "(|(&(objectclass="
@@ -1095,14 +1104,12 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
-                    debug
-                            .message("SMSLdapObject.getOrgNames() retry: "
-                                    + retry);
+                    debug.message("SMSLdapObject.getOrgNames() retry: "+ retry);
                 }
                 try {
                     // Get the organization names
-                    results = conn.search(dn, scope, filter, O_ATTR, false,
-                            constraints);
+                    results = conn.search(getNormalizedName(token, dn),
+                        scope, filter, O_ATTR, false, constraints);
 
                     // Check if the results have to be sorted
                     if (sortResults) {
@@ -1165,5 +1172,51 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                     + "organization names  : " + answer.toString());
         }
         return (answer);
+    }
+    
+    private String getDenormalizedName(SSOToken token, String name) {
+        if (name.indexOf("^") >= 0) {
+            String dataStore = SMSEntry.getDataStore(token);
+            if ((dataStore != null) && 
+                dataStore.equals(SMSEntry.DATASTORE_ACTIVE_DIR)
+            ) {
+                name = name.replaceAll("_", "=");
+            }
+        }
+        return name;
+    }
+    
+    private String getNormalizedName(SSOToken token, String dn) {
+        if (dn.indexOf("^") >= 0) {
+            String dataStore = SMSEntry.getDataStore(token);
+            /*
+             * If the datastore is Active Directory, convert
+             * ou=dc=samples^dc=com^^AgentLogging to
+             * ou=dc_samples^dc_com^^AgentLogging.
+             * Otherwise BAD_NAME error LDAPException code 34 will occur.
+             **/
+            if ((dataStore != null) && 
+                dataStore.equals(SMSEntry.DATASTORE_ACTIVE_DIR)
+            ) {
+                String[] dns = LDAPDN.explodeDN(dn, false);
+                StringBuffer buff = new StringBuffer();
+
+                String s = dns[0];
+                int idx = s.indexOf('=');
+                String naming = s.substring(0, idx+1);
+                String value = s.substring(idx+1).replaceAll("=", "_");
+                buff.append(naming).append(value);
+
+                for (int i = 1; i < dns.length; i++) {
+                    s = dns[i];
+                    idx = s.indexOf('=');
+                    naming = s.substring(0, idx+1);
+                    value = s.substring(idx+1).replaceAll("=", "_");
+                    buff.append(",").append(naming).append(value);
+                }
+                dn = buff.toString();
+            }
+        }
+        return dn;
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.4 2006-12-08 21:02:18 veiming Exp $
+ * $Id: CommandManager.java,v 1.5 2007-03-21 22:33:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -560,5 +560,16 @@ public class CommandManager {
      */
     public String getWebEnabledURL() {
         return (String)environment.get(CLIConstants.WEB_ENABLED_URL);
+    }
+
+
+    /**
+     * Returns <code>true</code> if command manager is created from JSP.
+     *
+     * @returns <code>true</code> if command manager is created from JSP.
+     */
+    public boolean webEnabled() {
+        String url = getWebEnabledURL();
+        return (url != null) && (url.length() > 0);
     }
 }

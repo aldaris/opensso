@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSUtils.java,v 1.1 2005-11-01 00:31:30 arvindp Exp $
+ * $Id: SMSUtils.java,v 1.2 2007-03-21 22:33:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,9 @@ public class SMSUtils {
 
     protected static final String ORG_ATTRIBUTE_SCHEMA = 
         "OrganizationAttributeSchema";
+
+    protected static final String ORG_ATTRIBUTE_VALUE_PAIR = 
+        "OrganizationAttributeValuePair";
 
     protected static final String ORG_CONFIG = "OrganizationConfiguration";
 
@@ -487,5 +490,34 @@ public class SMSUtils {
                                 + value);
             }
         }
+    }
+    
+    static String toAttributeValuePairXML(Map map) {
+        if ((map == null) || map.isEmpty()) {
+            return "";
+        }
+        
+        StringBuffer buff = new StringBuffer();
+        
+        for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry e = (Map.Entry)i.next();
+            buff.append("<").append(SMSUtils.ATTRIBUTE_VALUE_PAIR)
+                .append(">\n");
+            buff.append("    <").append(SMSUtils.ATTRIBUTE)
+                .append(" ").append(SMSUtils.NAME).append("=\"")
+                .append(e.getKey()).append("\"/>\n");
+            Set values = (Set)e.getValue();
+            for (Iterator j = values.iterator(); j.hasNext(); ) {
+                buff.append("    <").append(SMSUtils.ATTRIBUTE_VALUE)
+                    .append(">")
+                    .append(SMSSchema.escapeSpecialCharacters((String)j.next()))
+                    .append("</").append(SMSUtils.ATTRIBUTE_VALUE)
+                    .append(">\n");
+            }
+            buff.append("</").append(SMSUtils.ATTRIBUTE_VALUE_PAIR)
+                .append(">\n");
+        }
+        
+        return buff.toString();
     }
 }

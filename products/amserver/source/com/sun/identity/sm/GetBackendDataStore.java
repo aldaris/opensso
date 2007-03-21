@@ -17,15 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetBackendDataStore.java,v 1.1 2007-02-20 22:42:12 goodearth Exp $
+ * $Id: GetBackendDataStore.java,v 1.2 2007-03-21 22:33:46 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSEntry;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,38 +38,43 @@ import java.util.Set;
  * like openldap.
  */
 public class GetBackendDataStore {
+    private static Debug debug = Debug.getInstance("amSMS");
 
-    public static Debug debug = Debug.getInstance("amSMS");
-
-    public GetBackendDataStore() {
+    private GetBackendDataStore() {
     }
-
-   public static String getDataStore(SSOToken token) {
-       String dataStore = "flatfile";
-       String srchBaseDN = "cn=7-bit check,cn=plugins,cn=config";
-       String filter = "nsslapd-pluginVendor=Sun Microsystems, Inc.";
-       Set results = new HashSet();
-       try {
-           results = SMSEntry.search(token, srchBaseDN, filter);
-           if (results != null) {
-               dataStore = "dirServer";
-           }
-       } catch (SMSException smse) {
-           // Use filter and search in Active Directory.
-           srchBaseDN =
-               "CN=nTDSService-Display,CN=409,CN=DisplaySpecifiers,CN=Configuration," + SMSEntry.baseDN;
-           filter = "classDisplayName=Active Directory Service";
-           try {
-               results = SMSEntry.search(token, srchBaseDN, filter);
-               if (results != null) {
-                   dataStore = "activeDir";
-               }
-           } catch (SMSException se) {
-               // Default is flatfile.
-           }
-       }
-       return dataStore;
+    
+    public static String getDataStore(SSOToken token) {
+        String dataStore = SMSEntry.DATASTORE_FLAT_FILE;
+        
+        if (!isFlatFile()) {
+            dataStore = isSunDS(token) ? SMSEntry.DATASTORE_SUN_DIR :
+                SMSEntry.DATASTORE_ACTIVE_DIR;
+        }
+        if (debug.messageEnabled()) {
+            debug.message("GetBackendDataStore.getDataStore: datastore=" +
+                dataStore);
+        }
+        return dataStore;
     }
-
-
+    
+    
+    private static boolean isSunDS(SSOToken token) {
+        String srchBaseDN = "cn=7-bit check,cn=plugins,cn=config";
+        String filter = "nsslapd-pluginVendor=Sun Microsystems, Inc.";
+        
+        try {
+            Set results = SMSEntry.search(token, srchBaseDN, filter);
+            return (results != null);
+        } catch (SMSException smse) {
+            //ignore
+        }
+        return false;
+    }
+    
+    private static boolean isFlatFile() {
+        String plugin = SystemProperties.get(SMSEntry.SMS_OBJECT_PROPERTY);
+        return (plugin != null) &&
+            (plugin.equals(SMSEntry.FLATFILE_SMS_CLASS_NAME));
+    }
+    
 }
