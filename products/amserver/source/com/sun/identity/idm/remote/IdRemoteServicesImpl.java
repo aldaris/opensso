@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.9 2006-12-16 01:52:15 rarcot Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.10 2007-03-22 00:49:02 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,6 +143,23 @@ public class IdRemoteServicesImpl implements IdServices {
         client = new SOAPClient(SDK_SERVICE);
     }
 
+    protected void processException(Exception exception) 
+        throws SSOException, IdRepoException {
+        
+        if (exception instanceof SSOException) {                  
+            throw (SSOException) exception;                              
+        } else if (exception instanceof IdRepoException) { 
+            throw (IdRepoException) exception;
+        } else {
+            if (debug.errorEnabled()) {
+                getDebug().error(
+                    "IdRemoteServicesImpl.processException(): " +
+                    "caught remote/un-known exception - ", exception);                
+            }
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        }                               
+    }
+    
     /**
      * Returns <code>true</code> if the data store has successfully
      * authenticated the identity with the provided credentials. In case the
@@ -171,27 +188,19 @@ public class IdRemoteServicesImpl implements IdServices {
     public AMIdentity create(SSOToken token, IdType type, String name,
             Map attrMap, String amOrgName) throws IdRepoException, SSOException
     {
-        try {
+        String univid = null;
+        
+        try {            
             Object[] objs = { getTokenString(token), type.getName(),
                     name, attrMap, amOrgName };
-            String univid = (String) client.send(client.encodeMessage(
+            univid = (String) client.send(client.encodeMessage(
                     "create_idrepo", objs), 
-                    Session.getLBCookie(token.getTokenID().toString()), null);
-            return IdUtils.getIdentity(token, univid);
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.create_idrepo: caught exception=",
-                    rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+                    Session.getLBCookie(token.getTokenID().toString()), null);            
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.create_idrepo: caught exception=",
-                    ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
-
+        
+        return IdUtils.getIdentity(token, univid);
     }
 
     public void delete(SSOToken token, IdType type, String name,
@@ -202,28 +211,21 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, orgName, amsdkDN };
             client.send(client.encodeMessage("delete_idrepo", objs), 
         	    Session.getLBCookie(token.getTokenID().toString()), null);
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.create_idrepo: caught exception=",
-                    rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.create_idrepo: caught exception=",
-                    ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
     }
 
     public Map getAttributes(SSOToken token, IdType type, String name,
             Set attrNames, String amOrgName, String amsdkDN, boolean isString)
             throws IdRepoException, SSOException {
+        
+        Map res = null;
+        
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, attrNames, amOrgName, amsdkDN };
-            Map res = ((Map) client.send(client.encodeMessage(
+            res = ((Map) client.send(client.encodeMessage(
                     "getAttributes1_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
             if (res != null) {
@@ -235,27 +237,24 @@ public class IdRemoteServicesImpl implements IdServices {
                 }
                 res = res2;
             }
-            return res;
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.getAttributes1_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+            
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.getAttributes1_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return res;
     }
 
     public Map getAttributes(SSOToken token, IdType type, String name,
             String amOrgName, String amsdkDN) throws IdRepoException,
             SSOException {
+        
+        Map res = null;
+        
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
-            Map res = ((Map) client.send(client.encodeMessage(
+            res = ((Map) client.send(client.encodeMessage(
                     "getAttributes2_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
             if (res != null) {
@@ -267,18 +266,11 @@ public class IdRemoteServicesImpl implements IdServices {
                 }
                 res = res2;
             }
-            return res;
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.getAttributes2_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.getAttributes2_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return res;
     }
 
     public void removeAttributes(SSOToken token, IdType type, String name,
@@ -289,17 +281,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, attrNames, amOrgName, amsdkDN };
             client.send(client.encodeMessage("removeAttributes_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.removeAttributes_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.removeAttributes_idrepo: caught "
-                    + "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
     }
 
@@ -314,6 +297,8 @@ public class IdRemoteServicesImpl implements IdServices {
         } else {
             filterOp = IdRepo.OR_MOD;
         }
+        
+        Map idResults = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     pattern, new Integer(ctrl.getTimeOut()),
@@ -322,24 +307,14 @@ public class IdRemoteServicesImpl implements IdServices {
                     new Boolean(ctrl.isGetAllReturnAttributesEnabled()),
                     new Integer(filterOp), avMap,
                     new Boolean(ctrl.isRecursive()), amOrgName };
-            Map idresults = ((Map) client.send(client.encodeMessage(
+            idResults = ((Map) client.send(client.encodeMessage(
                     "search2_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
-            return mapToIdSearchResults(token, type, amOrgName, idresults);
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.search2_idrepo: caught exception=",
-                    rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.search2_idrepo: caught exception=",
-                    ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
 
+        return mapToIdSearchResults(token, type, amOrgName, idResults);
     }
 
     public void setAttributes(SSOToken token, IdType type, String name,
@@ -352,16 +327,8 @@ public class IdRemoteServicesImpl implements IdServices {
             client.send(client.encodeMessage("setAttributes2_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.setAttributes_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.setAttributes_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
     }
 
@@ -376,16 +343,8 @@ public class IdRemoteServicesImpl implements IdServices {
             client.send(client.encodeMessage("assignService_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.assignService_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.assignService_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
 
     }
@@ -393,31 +352,27 @@ public class IdRemoteServicesImpl implements IdServices {
     public Set getAssignedServices(SSOToken token, IdType type, String name,
             Map mapOfServiceNamesAndOCs, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
+        
+        Set resultSet = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, mapOfServiceNamesAndOCs, amOrgName, amsdkDN };
-            return ((Set) client.send(client.encodeMessage(
+            resultSet = ((Set) client.send(client.encodeMessage(
                     "getAssignedServices_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
 
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getAssignedServices_idrepo: caught "
-                            + "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getAssignedServices_idrepo: caught "
-                            + "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return resultSet;
     }
 
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
             String serviceName, Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
+        
+        Map resultMap = null;
         try {
             if (debug.messageEnabled()) {
                 debug.message("IdRemoteServicesImpl.getServiceAttributes  type="
@@ -429,23 +384,15 @@ public class IdRemoteServicesImpl implements IdServices {
 
             Object[] objs = { getTokenString(token), type.getName(),
                     name, serviceName, attrNames, amOrgName, amsdkDN };
-            return ((Map) client.send(client.encodeMessage(
+            resultMap = ((Map) client.send(client.encodeMessage(
                     "getServiceAttributes_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
 
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getServiceAttributes_idrepo: caught "
-                            + "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getServiceAttributes_idrepo: caught "
-                            + "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return resultMap;
     }
 
 
@@ -468,6 +415,8 @@ public class IdRemoteServicesImpl implements IdServices {
     public Map getServiceAttributesAscending(SSOToken token, IdType type,
             String name, String serviceName, Set attrNames, String amOrgName,
             String amsdkDN) throws IdRepoException, SSOException {
+        
+        Map resultMap = null;
         try {
             if (debug.messageEnabled()) {
                 debug.message("IdRemoteServicesImpl."
@@ -479,22 +428,16 @@ public class IdRemoteServicesImpl implements IdServices {
 
             Object[] objs = { getTokenString(token), type.getName(),
                    name, serviceName, attrNames, amOrgName, amsdkDN};
-            return ((Map)client.send(
+            resultMap = ((Map)client.send(
                     client.encodeMessage(
                         "getServiceAttributesAscending_idrepo", objs),
                         Session.getLBCookie(token.getTokenID().toString()), null));
 
-        } catch (RemoteException rex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.getServiceAttributesAscending_idrepo: "
-                 + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
         } catch (Exception ex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.getServiceAttributesAscending_idrepo: "
-                 + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return resultMap;
     }
 
 
@@ -507,18 +450,9 @@ public class IdRemoteServicesImpl implements IdServices {
             client.send(client.encodeMessage("unassignService_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.unassignService_idrepo: "
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.unassignService_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
-
     }
 
     public void modifyService(SSOToken token, IdType type, String name,
@@ -539,83 +473,66 @@ public class IdRemoteServicesImpl implements IdServices {
             client.send(client.encodeMessage("modifyService_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.modifyService_idrepo: " +
-                    "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.modifyService_idrepo: " +
-                    "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
-
     }
 
     public Set getMembers(SSOToken token, IdType type, String name,
             String amOrgName, IdType membersType, String amsdkDN)
             throws IdRepoException, SSOException {
+        Set idResults = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, membersType.getName(), amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
                     "getMembers_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null);
-            Set idres = new HashSet();
+            idResults = new HashSet();
             if (res != null) {
                 Iterator it = res.iterator();
                 while (it.hasNext()) {
                     String univid = (String) it.next();
                     AMIdentity id = IdUtils.getIdentity(token, univid);
-                    idres.add(id);
+                    idResults.add(id);
                 }
             }
-            return idres;
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.getMembers_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+            
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.getMembers_idrepo: " 
-                    + "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return idResults;
     }
 
     public Set getMemberships(SSOToken token, IdType type, String name,
             IdType membershipType, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException {
+        
+        Set idResults = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, membershipType.getName(), amOrgName, amsdkDN };
             Set res = (Set) client.send(client.encodeMessage(
                     "getMemberships_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null);
-            Set idres = new HashSet();
+            
+            idResults = new HashSet();
+            
             if (res != null) {
                 Iterator it = res.iterator();
                 while (it.hasNext()) {
                     String univid = (String) it.next();
                     AMIdentity id = IdUtils.getIdentity(token, univid);
-                    idres.add(id);
+                    idResults.add(id);
                 }
-            }
-            return idres;
+            }            
 
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl.getMemberships_idrepo: " 
-                    + "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error("IdRemoteServicesImpl.getMemberships_idrepo: " +
-                    "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return idResults;
     }
 
     public void modifyMemberShip(SSOToken token, IdType type, String name,
@@ -628,133 +545,107 @@ public class IdRemoteServicesImpl implements IdServices {
             client.send(client.encodeMessage("modifyMemberShip_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.modifyMemberShip_idrepo: caught "
-                            + "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.modifyMemberShip_idrepo: caught "
-                            + "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
-
     }
 
     public Set getSupportedOperations(SSOToken token, IdType type,
             String amOrgName) throws IdRepoException, SSOException {
+        
+        Set results = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     amOrgName };
             Set ops = (Set) client.send(client.encodeMessage(
                     "getSupportedOperations_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null);
-            Set resOps = new HashSet();
+            results = new HashSet();
             if (ops != null) {
                 Iterator it = ops.iterator();
                 while (it.hasNext()) {
                     String op = (String) it.next();
                     IdOperation idop = new IdOperation(op);
-                    resOps.add(idop);
+                    results.add(idop);
                 }
             }
-            return resOps;
-        } catch (RemoteException rex) {
-            getDebug().error("IdRemoteServicesImpl." 
-                    + "getSupportedOperations_idrepo: caught "
-                    + "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+            
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getSupportedOperations_idrepo: " +
-                    "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return results;
     }
 
     public Set getSupportedTypes(SSOToken token, String amOrgName)
             throws IdRepoException, SSOException {
+        
+        Set results = null;
         try {
             Object[] objs = { getTokenString(token), amOrgName };
             Set types = (Set) client.send(client.encodeMessage(
                     "getSupportedTypes_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null);
-            Set resTypes = new HashSet();
+            results = new HashSet();
             if (types != null) {
                 Iterator it = types.iterator();
                 while (it.hasNext()) {
                     String currType = (String) it.next();
                     IdType thisType = IdUtils.getType(currType);
-                    resTypes.add(thisType);
+                    results.add(thisType);
                 }
             }
-            return resTypes;
-        } catch (RemoteException rex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getSupportedTypes_idrepo: caught "
-                            + "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+            
         } catch (Exception ex) {
-            getDebug().error(
-                    "IdRemoteServicesImpl.getSupportedTypes_idrepo: caught "
-                            + "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return results;
     }
 
     public boolean isExists(SSOToken token, IdType type, String name,
         String amOrgName) throws SSOException, IdRepoException
     {
+        Boolean isExists = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName};
-            Boolean res =
+            isExists =
                 ((Boolean) client
                     .send(client.encodeMessage("isExists_idrepo", objs),
-                            Session.getLBCookie(token.getTokenID().toString()), null));
-            return res.booleanValue();
-        } catch (RemoteException rex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.isExists: caught " +
-                "exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
+                            Session.getLBCookie(token.getTokenID().toString()), 
+                            null));
+            
         } catch (Exception ex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.isExists: caught " +
-               "exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
+        
+        return isExists.booleanValue(); 
     }
 
     public boolean isActive(SSOToken token, IdType type, String name,
             String amOrgName, String amsdkDN) throws SSOException,
             IdRepoException {
+        
+        Boolean isActive = null;
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN };
-            Boolean res = ((Boolean) client.send(client.encodeMessage(
+            isActive = ((Boolean) client.send(client.encodeMessage(
                     "isActive_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
-            return res.booleanValue();
-        } catch (RemoteException rex) {
-            return false;
+            
         } catch (Exception ex) {
-            return false;
+            processException(ex);
         }
+        
+        return isActive.booleanValue();
     }
 
     public void setActiveStatus(SSOToken token, IdType type, String name,
         String amOrgName, String amsdkDN, boolean active) throws SSOException,
         IdRepoException {
+        
         try {
             Object[] objs = { getTokenString(token), type.getName(),
                     name, amOrgName, amsdkDN, new Boolean(active)};
@@ -762,18 +653,8 @@ public class IdRemoteServicesImpl implements IdServices {
                     client.encodeMessage("setActiveStatus_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
-        } catch (RemoteException rex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.setActiveStatus_idrepo: " +
-                     "caught exception=", rex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
-        } catch (IdRepoException ide) {
-            throw (ide);
         } catch (Exception ex) {
-            getDebug().error(
-                "IdRemoteServicesImpl.setActiveStatus_idrepo: " +
-                     "caught exception=", ex);
-            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+            processException(ex);
         }
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.3 2006-12-13 23:59:00 beomsuk Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.4 2007-03-22 00:48:58 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class ComplianceServicesImpl implements IComplianceServices {
         } catch (AMRemoteException amrex) {
             debug.error("ComplianceServicesImpl.isAncestorOrgDeleted()- "
                     + "encountered exception=", amrex);
-            throw RemoteServicesImpl.convertException(amrex);
+            throw RemoteServicesImpl.convertException(amrex);        
         } catch (RemoteException rex) {
             debug.error("ComplianceServicesImpl.isAncestorOrgDeleted()- "
                     + "encountered exception=", rex);
@@ -103,6 +103,8 @@ public class ComplianceServicesImpl implements IComplianceServices {
             debug.error("ComplianceServicesImpl.getDeletedObjectFilter()- "
                     + "encountered exception=", amrex);
             throw RemoteServicesImpl.convertException(amrex);
+        } catch (SSOException ssoe) {
+            throw ssoe;
         } catch (RemoteException rex) {
             debug.error("ComplianceServicesImpl.getDeletedObjectFilter()- "
                     + "encountered exception=", rex);

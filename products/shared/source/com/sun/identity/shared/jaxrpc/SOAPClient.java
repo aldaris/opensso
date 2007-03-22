@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.7 2007-02-07 21:40:31 veiming Exp $
+ * $Id: SOAPClient.java,v 1.8 2007-03-22 00:49:03 rarcot Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,7 +138,8 @@ public class SOAPClient {
      * Performs a raw SOAP call with "message" as the SOAP data and response is
      * returned as <code>SOAPResponseObject</code>
      */
-    private SOAPResponseObject call(String message, String cookies) throws Exception {
+    private SOAPResponseObject call(String message, String cookies) 
+        throws Exception {
         if (debug.messageEnabled()) {
             debug.message("SOAP Client: Message being sent:" + message);
         }
@@ -168,9 +169,8 @@ public class SOAPClient {
                     // if no servers are found
                     boolean validServerFound = false;
                     try {
-                        if ((serviceUrl = url =
-                            JAXRPCHelper.getValidURL(serviceName))
-                            != null) {
+                        if ((serviceUrl = url = JAXRPCHelper
+                                .getValidURL(serviceName)) != null) {
                             validServerFound = true;
                         }
                     } catch (RemoteException re) {
@@ -178,45 +178,45 @@ public class SOAPClient {
                         // are no available server
                     }
                     if (!validServerFound) {
-			// It is possible the WebtopNaming has not recognized
-			// server is down and removed from the list.
-			// Retry 3 times
-			if (++urlIndex > 3) {
+                        // It is possible the WebtopNaming has not recognized
+                        // server is down and removed from the list.
+                        // Retry 3 times
+                        if (++urlIndex > 3) {
                             debug.error("SOAPClient::call() no valid servers");
                             throw (new RemoteException("no-server-found"));
-			}
+                        }
                         // Sleep for 1 second, and try again
-			try {
+                        try {
                             Thread.sleep(1000);
-			} catch (InterruptedException ie) {
+                        } catch (InterruptedException ie) {
                             // Ignore the exception and continue
-			}
+                        }
                         continue;
                     }
                 }
             }
-            
+
             URL endpoint = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) endpoint
-                .openConnection();
+                    .openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
-                "text/xml; charset=\"utf-8\"");
+                    "text/xml; charset=\"utf-8\"");
             if (cookies != null) {
                 connection.setRequestProperty("Cookie", cookies);
             }
             String userInfo = endpoint.getUserInfo();
             if (userInfo != null) {
                 connection.setRequestProperty("Authorization", "Basic "
-                    + Base64.encode(userInfo.getBytes("UTF-8")));
+                        + Base64.encode(userInfo.getBytes("UTF-8")));
             }
-            
+
             // Output
             byte[] data = message.getBytes("UTF-8");
             int requestLength = data.length;
             connection.setRequestProperty("Content-Length", Integer
-                .toString(requestLength));
+                    .toString(requestLength));
             OutputStream out = null;
             try {
                 out = connection.getOutputStream();
@@ -224,7 +224,7 @@ public class SOAPClient {
                 // Debug the exception
                 if (debug.warningEnabled()) {
                     debug.warning("SOAP Client: Connection Exception: " + url,
-                        ce);
+                            ce);
                 }
                 // Server may be down, try the next server
                 JAXRPCHelper.serverFailed(url);
@@ -234,7 +234,7 @@ public class SOAPClient {
             // Write out the message
             out.write(data);
             out.flush();
-            
+
             // Get the response
             try {
                 in_buf = connection.getInputStream();
@@ -249,21 +249,21 @@ public class SOAPClient {
             } finally {
                 done = true;
             }
-            
+
         }
-        
+
         // Debug the input/output messages
         if (debug.messageEnabled()) {
             StringBuffer inbuf = new StringBuffer();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                in_buf, "UTF-8"));
+                    in_buf, "UTF-8"));
             while ((line = reader.readLine()) != null) {
                 inbuf.append(line).append("\n");
             }
             String data = new String(inbuf);
             debug.message("SOAP Client: Input: " + message + "\nOutput: "
-                + data);
+                    + data);
             in_buf = new ByteArrayInputStream(data.getBytes("UTF-8"));
         }
         return (new SOAPResponseObject(in_buf, isException));
@@ -348,7 +348,7 @@ public class SOAPClient {
         }
         
         // Check for exceptions
-        if (response.isException()) {
+        if (handler.isException()) {
             throw (handler.getException());
         }
         
@@ -635,6 +635,10 @@ public class SOAPClient {
             return (exception);
         }
         
+        protected boolean isException() {
+            return isException;
+        }
+        
         public void startElement(String namespaceURI, String localName,
             String rawName, Attributes attrs) throws SAXException {
             if (!started && localName.equalsIgnoreCase(BODY)) {
@@ -672,7 +676,8 @@ public class SOAPClient {
                 }
             } else {
                 // Check for ArrayOfanyType and reset the set
-                if (localName.equals(ARRAY_OF_ANY_TYPE)) {
+                if (localName.equals(ARRAY_OF_ANY_TYPE)|| 
+                        localName.equalsIgnoreCase(ARRAY_OF_STRING_TYPE)) {
                     messageArgs = new HashSet();
                 }
             }
@@ -757,11 +762,9 @@ public class SOAPClient {
                     resourceBundleName = currentString.toString();
                 } else if (localName.equals(ITEM)) {
                     messageArgs.add(currentString.toString());
-                }
-                if (localName.equals(LDAP_ERROR_CODE)) {
+                } else if (localName.equals(LDAP_ERROR_CODE)) {
                     ldapErrorCode = Integer.parseInt(currentString.toString());
-                }
-                if (localName.equals(ERROR_STRING)) {
+                } else if (localName.equals(ERROR_STRING)) {
                     errorString = currentString.toString();
                 }
             }
@@ -817,7 +820,8 @@ public class SOAPClient {
             Exception exception = null;
             if ((resourceBundleName != null) && (exceptionCode != null)) {
                 try {
-                    Class[] params = {String.class, String.class, Object[].class};
+                    Class[] params = {String.class, String.class, 
+                            Object[].class};
                     Constructor ctr = clazz.getConstructor(params);
                     
                     Object[] objs = {resourceBundleName, exceptionCode,
@@ -1055,6 +1059,8 @@ public class SOAPClient {
     static final String HREF = "href";
     
     static final String ARRAY_OF_ANY_TYPE = "ArrayOfanyType";
+    
+    static final String ARRAY_OF_STRING_TYPE = "ArrayOfString";
     
     static final String ID = "id";
     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.6 2006-12-15 21:40:43 kenwho Exp $
+ * $Id: RemoteServicesImpl.java,v 1.7 2007-03-22 00:49:01 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -794,6 +794,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     amrex);
             }
             throw convertException(amrex);
+        } catch (SSOException ssoe) {
+            throw ssoe;
         } catch (RemoteException rex) {
             getDebug().error(
                     "RemoteServicesImpl.createEntry: caught " + "exception=",

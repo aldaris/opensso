@@ -17,12 +17,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.7 2006-12-20 23:07:09 rarcot Exp $
+ * $Id: EventListener.java,v 1.8 2007-03-22 00:49:00 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.am.sdk.remote;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMEventManagerException;
@@ -43,15 +54,6 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.CreateServiceConfig;
 import com.sun.identity.sm.SMSSchema;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import netscape.ldap.util.DN;
 
 /**
  * The <code>EventListener</code> handles the events generated from the
@@ -64,8 +66,6 @@ class EventListener {
     private static Debug debug = RemoteServicesImpl.getDebug();
     
     private static SOAPClient client;
-    
-    private static boolean initialized = false;
 
     private static Set listeners = new HashSet();
 
@@ -74,6 +74,15 @@ class EventListener {
     private static String idRepoNotificationID;
     
     private static EventListener instance = null;
+    
+    private static final String NOTIFICATION_PROPERTY = 
+        "com.sun.identity.idm.remote.notification.enabled";
+    
+    private static final String CACHE_POLLING_TIME_PROPERTY = 
+        "com.iplanet.am.sdk.remote.pollingTime";   
+    
+    private static final int DEFAULT_CACHE_POLLING_TIME = 1;
+    
     
     public synchronized static EventListener getInstance() {
         if (instance == null) {
@@ -93,46 +102,95 @@ class EventListener {
 
         // Construct the SOAP Client
         client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
+                
+        // Check if notification is enabled 
+        // Default the notification enabled to true if the property
+        // is not found for backward compatibility.
+        String notificationFlag = SystemProperties.get(
+                NOTIFICATION_PROPERTY, "true");
 
-        // Check if notification URL is provided
-        URL url = null;
-        try {
-            url = WebtopNaming.getNotificationURL();
+        if (notificationFlag.equalsIgnoreCase("true")) {
+            // Run in notifications mode
+            // Check if notification URL is provided
+            URL url = null;
+            try {
+                url = WebtopNaming.getNotificationURL();
 
-            // Register for notification with AM Server
-            notificationID = (String) client.send(
-                    "registerNotificationURL", url.toString(), null);
+                // Register for notification with AM Server
+                notificationID = (String) client.send(
+                        "registerNotificationURL", url.toString(), null);
 
-            // Register with PLLClient for notificaiton
-            PLLClient.addNotificationHandler(
-                    RemoteServicesImpl.SDK_SERVICE,
-                    new EventNotificationHandler());
+                // Register with PLLClient for notificaiton
+                PLLClient.addNotificationHandler(
+                        RemoteServicesImpl.SDK_SERVICE,
+                        new EventNotificationHandler());
 
-            // Register for IdRepo Service
-            idRepoNotificationID = (String) client.send(
-                    "registerNotificationURL_idrepo", url.toString(), null);
+                // Register for IdRepo Service
+                idRepoNotificationID = (String) client.send(
+                        "registerNotificationURL_idrepo", url.toString(), null);
 
-            // Register with PLLClient for notificaiton
-            PLLClient.addNotificationHandler(
-                    RemoteServicesImpl.IDREPO_SERVICE,
-                    new IdRepoEventNotificationHandler());
+                // Register with PLLClient for notificaiton
+                PLLClient.addNotificationHandler(
+                        RemoteServicesImpl.IDREPO_SERVICE,
+                        new IdRepoEventNotificationHandler());
 
+                if (debug.messageEnabled()) {
+                    debug.message("EventService: Using notification "
+                            + "mechanism for cache updates: "
+                            + url.toString());
+                }
+            } catch (Exception e) {
+                // Use polling mechanism to update caches
+                if (debug.warningEnabled()) {
+                    debug.warning("EventService: Registering for "
+                            + "notification via URL failed for " + url 
+                            + e.getMessage()
+                            + "\nUsing polling mechanism for updates");
+                }
+                // Start Polling thread only if enabled.
+                startPollingThreadIfEnabled(getCachePollingInterval());
+            }            
+        } else {
+            // Start Polling thread only if enabled.
+            startPollingThreadIfEnabled(getCachePollingInterval());
+        }
+        
+    }
+    
+    private int getCachePollingInterval() {
+        // If the property is not configured, default it to 1 minute. 
+        String cachePollingTimeStr = SystemProperties.get(
+                CACHE_POLLING_TIME_PROPERTY);
+        int cachePollingInterval = DEFAULT_CACHE_POLLING_TIME;
+        if (cachePollingTimeStr != null) { 
+            try {
+                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);            
+            } catch (NumberFormatException nfe) {
+                debug.error("EventListener::NotificationThread:: "
+                        + "Invalid Polling Time: " + cachePollingTimeStr + 
+                        " Defaulting to " + DEFAULT_CACHE_POLLING_TIME  + 
+                        " minute");
+            }
+        }        
+        return cachePollingInterval;
+    }    
+    
+    private static void startPollingThreadIfEnabled(int cachePollingInterval) {
+        if (cachePollingInterval > 0) {
             if (debug.messageEnabled()) {
-                debug.message("EventService: Using notification "
-                        + "mechanism for cache updates: "
-                        + url.toString());
+                debug.message("EventListener: Polling mode enabled. " +
+                        "Starting the polling thread..");
             }
-        } catch (Exception e) {
-            // Use polling mechanism to update caches
+            // Run in polling mode
+            NotificationThread nt = new NotificationThread(
+                    cachePollingInterval);
+            nt.start();            
+        } else {
             if (debug.warningEnabled()) {
-                debug.warning("EventService: Registering for "
-                        + "notification via URL failed for " + url 
-                        + e.getMessage()
-                        + "\nUsing polling mechanism for updates");
+                debug.warning("EventListener: Polling mode DISABLED. " +
+                         CACHE_POLLING_TIME_PROPERTY + "=" + 
+                         cachePollingInterval);
             }
-            // Start the daemon thread to check for changes
-            NotificationThread nt = new NotificationThread();
-            nt.start();
         }
     }
 
@@ -401,29 +459,15 @@ class EventListener {
     }
 
     static class NotificationThread extends Thread {
-        static final String CACHE_TIME_PROPERTY = 
-            "com.iplanet.am.sdk.remote.pollingTime";
 
-        static int pollingTime = 1;
+        int pollingTime;        
+        int sleepTime;
 
-        static int sleepTime = 1000 * 60;
-
-        NotificationThread() {
+        NotificationThread(int interval) {
             // Set this as a dameon thread
             setDaemon(true);
-            // Read polling time (in minutes)
-            String pTime = SystemProperties.get(CACHE_TIME_PROPERTY);
-            if (pTime != null) {
-                try {
-                    pollingTime = Integer.parseInt(pTime);
-                    if (pollingTime > 0) {
-                        sleepTime = pollingTime * 1000 * 60;
-                    }
-                } catch (NumberFormatException nfe) {
-                    debug.error("EventListener::NotificationThread:: "
-                            + "Invalid Polling Time: " + pTime, nfe);
-                }
-            }
+            pollingTime = interval;
+            sleepTime = pollingTime * 1000 * 60;            
         }
 
         public void run() {
@@ -438,7 +482,8 @@ class EventListener {
                         sleep(sleepTime);
                     }
                     Object obj[] = { new Integer(pollingTime) };
-                    Set mods = (Set) client.send("objectsChanged", obj, null, null);
+                    Set mods = (Set) client.send("objectsChanged", obj, null, 
+                            null);
                     if (debug.messageEnabled()) {
                         debug.message("EventListener:NotificationThread "
                                 + "retrived changes: " + mods);

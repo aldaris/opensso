@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.5 2006-12-15 01:19:53 goodearth Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.6 2007-03-22 00:49:03 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,14 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
      * JAXRPC Version String.
      */
     public static final String AMJAXRPCVERSION = "10";
+    
+    public static final String NOTIFICATION_PROPERTY = 
+        "com.sun.identity.sm.notification.enabled";
+    
+    private static final String CACHE_POLLING_TIME_PROPERTY = 
+        "com.sun.identity.sm.cacheTime";   
+    
+    private static final int DEFAULT_CACHE_POLLING_TIME = 1;
 
     public SMSJAXRPCObject() {
         if (!initialized) {
@@ -75,38 +83,87 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
                 if (!initialized) {
                     // Construct the SOAP client
                     client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
+                                        
+                    // Check if notification is enabled 
+                    // Default the notification enabled to true if the property
+                    // is not found for backward compatibility.
+                    String notificationFlag = SystemProperties.get(
+                            NOTIFICATION_PROPERTY, "true");
 
-                    // Check if notification URL is provided
-                    try {
-                        URL url = WebtopNaming.getNotificationURL();
-                        // Register with PLLClient for notificaiton
-                        PLLClient.addNotificationHandler(
-                                JAXRPCUtil.SMS_SERVICE,
-                                new SMSNotificationHandler());
-                        // Register for notification with SMS Server
-                        client.send("registerNotificationURL", url.toString(),
-                                null, null);
-                        if (debug.messageEnabled()) {
-                            debug.message("SMSJAXRPCObject: Using notification "
-                                            + "mechanism for cache updates: "
-                                            + url.toString());
-                        }
-                    } catch (Exception e) {
-                        // Use polling mechanism to update caches
-                        if (debug.warningEnabled()) {
-                            debug.warning("SMSJAXRPCObject: Registering for "
-                                    + "notification via URL failed: "
+                    if (notificationFlag.equalsIgnoreCase("true")) {
+                        // Check if notification URL is provided
+                        try {
+                            URL url = WebtopNaming.getNotificationURL();
+                            // Register with PLLClient for notificaiton
+                            PLLClient.addNotificationHandler(
+                                    JAXRPCUtil.SMS_SERVICE,
+                                    new SMSNotificationHandler());
+                            // Register for notification with SMS Server
+                            client.send("registerNotificationURL", url.toString(),
+                                    null, null);
+                            if (debug.messageEnabled()) {
+                                debug.message("SMSJAXRPCObject: Using " 
+                                        + "notification mechanism for cache " 
+                                        + "updates: " + url);
+                            }
+                        } catch (Exception e) {
+                            // Use polling mechanism to update caches
+                            if (debug.warningEnabled()) {
+                                debug.warning("SMSJAXRPCObject: Registering for"
+                                    + " notification via URL failed: "
                                     + e.getMessage()
                                     + "\nUsing polling mechanism for updates");
+                            }
+                            
+                            // Start Polling thread only if enabled.
+                            startPollingThreadIfEnabled(
+                                    getCachePollingInterval());
                         }
-                        // Start the daemon thread to check for changes
-                        NotificationThread nt = new NotificationThread(this);
-                        nt.start();
+                    } else {
+                        // Start Polling thread only if enabled.
+                        startPollingThreadIfEnabled(getCachePollingInterval());
                     }
                     // Add this object to receive notifications
                     registerCallbackHandler(this);
                     initialized = true;
                 }
+            }
+        }
+    }
+    
+    private int getCachePollingInterval() {
+        // If the property is not configured, default it to 1 minute. 
+        String cachePollingTimeStr = SystemProperties.get(
+                CACHE_POLLING_TIME_PROPERTY);
+        int cachePollingInterval = DEFAULT_CACHE_POLLING_TIME;
+        if (cachePollingTimeStr != null) { 
+            try {
+                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);            
+            } catch (NumberFormatException nfe) {
+                debug.error("EventListener::NotificationThread:: "
+                        + "Invalid Polling Time: " + cachePollingTimeStr + 
+                        " Defaulting to " + DEFAULT_CACHE_POLLING_TIME  + 
+                        " minute");
+            }
+        }        
+        return cachePollingInterval;
+    }    
+    
+    private static void startPollingThreadIfEnabled(int cachePollingInterval) {
+        if (cachePollingInterval > 0) {
+            if (debug.messageEnabled()) {
+                debug.message("EventListener: Polling mode enabled. " +
+                        "Starting the polling thread..");
+            }
+            // Run in polling mode
+            NotificationThread nt = new NotificationThread(
+                    cachePollingInterval);
+            nt.start();            
+        } else {
+            if (debug.warningEnabled()) {
+                debug.warning("EventListener: Polling mode DISABLED. " +
+                         CACHE_POLLING_TIME_PROPERTY + "=" + 
+                         cachePollingInterval);
             }
         }
     }
@@ -532,29 +589,16 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     // Inner class to check for notifications
     static class NotificationThread extends Thread {
 
-        static final String CACHE_TIME_PROPERTY = 
-            "com.sun.identity.sm.cacheTime";
+        int pollingTime;
 
-        static int pollingTime = 1;
+        int sleepTime;
 
-        static int sleepTime = 1000 * 60;
-
-        NotificationThread(SMSJAXRPCObject jaxclient) {
+        NotificationThread(int interval) {
             // Set this as a daemon thread
-            setDaemon(true);
-            // Read cache polling time (in minutes)
-            String cacheTime = SystemProperties.get(CACHE_TIME_PROPERTY);
-            if (cacheTime != null) {
-                try {
-                    pollingTime = Integer.parseInt(cacheTime);
-                    if (pollingTime > 0) {
-                        sleepTime = pollingTime * 1000 * 60;
-                    }
-                } catch (NumberFormatException nfe) {
-                    debug.error("SMSJAXRPCObject::NotificationThread:: "
-                            + "Cache Time error: " + cacheTime, nfe);
-                }
-            }
+            setDaemon(true);            
+            pollingTime = interval ;            
+            sleepTime = pollingTime * 1000 * 60;
+            
         }
 
         // Get the modification list and send notifications

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.16 2007-02-13 19:41:52 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.17 2007-03-22 00:49:01 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
@@ -67,10 +68,6 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
-import com.sun.identity.idm.IdRepoListener;
-import com.sun.identity.shared.locale.AMResourceBundleCache;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.locale.Locale;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
@@ -88,10 +85,14 @@ import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdRepoFatalException;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.SchemaType;
 
 public class LDAPv3Repo extends IdRepo {
@@ -1172,9 +1173,10 @@ public class LDAPv3Repo extends IdRepo {
 
         String searchBase = getPropertyStringValue(myConfigMap,
                 LDAPv3Config_LDAP_PSEARCHBASE);
-        if (ldapServerName == null) {
+        if (searchBase == null) {
             debug.error("LDAPv3Repo: addListener failed. "
-                    + "missing persistence search base.");
+                    + "missing persistence search base. Not " 
+                    + "starting persistent search.");
             return 0;
         }
 
