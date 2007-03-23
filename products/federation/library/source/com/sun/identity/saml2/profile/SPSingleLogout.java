@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.4 2007-01-02 21:58:00 weisun2 Exp $
+ * $Id: SPSingleLogout.java,v 1.5 2007-03-23 22:26:17 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -186,10 +186,6 @@ public class SPSingleLogout {
                 debug.message("infoKeyString : " + infoKeyString);
             }
 
-            // local log out
-            sessionProvider.invalidateSession(
-                session, request, response);
-
             // get SPSSODescriptor
             SPSSODescriptorElement spsso =
                 sm.getSPSSODescriptor(realm,spEntityID);
@@ -216,6 +212,8 @@ public class SPSingleLogout {
                         paramsMap,tmpInfoKeyString);
                 }
             }
+            // local log out
+            sessionProvider.invalidateSession(session, request, response);
         } catch (SAML2MetaException sme) {
             debug.error("Error retreiving metadata",sme);
             throw new SAML2Exception(
