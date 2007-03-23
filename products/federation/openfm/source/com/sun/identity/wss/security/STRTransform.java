@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STRTransform.java,v 1.1 2007-03-23 00:02:01 mallas Exp $
+ * $Id: STRTransform.java,v 1.2 2007-03-23 19:54:39 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,6 +187,22 @@ public class STRTransform extends TransformSpi {
             canonAlgo = canonElem.getAttribute("Algorithm");
         }
         return canonAlgo;
+    }
+    
+    
+    public boolean wantsOctetStream () { 
+        return true;
+    }
+    
+    public boolean wantsNodeSet () {
+        return true;
+    }
+    public boolean returnsOctetStream () {
+        return true;
+    }
+    
+    public boolean returnsNodeSet () {
+        return false;
     }
     
 }
