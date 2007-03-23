@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.2 2006-12-23 05:13:07 hengming Exp $
+ * $Id: XMLSignatureManager.java,v 1.3 2007-03-23 00:01:44 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ import com.sun.identity.common.SystemConfigurationUtil;
 
 public class XMLSignatureManager {
     // Singleton instance of XMLSignatureManager
-    private static XMLSignatureManager instance = null;
+    protected static XMLSignatureManager instance = null;
     private SignatureProvider sp = null; 
     
     /**
@@ -393,7 +393,29 @@ public class XMLSignatureManager {
         return sp.signWithWSSSAMLTokenProfile(doc, cert, assertionID,
             algorithm, ids, wsfVersion);
     }
+    
+    /**
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes with SAML Token
+     * @param doc XML dom object
+     * @param cert signer's Certificate
+     * @param assertionID assertion ID for the SAML Security Token
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return SAML Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithSAMLToken(
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String assertionID,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
+        throws XMLSignatureException {
 
+        return sp.signWithSAMLToken(doc, cert, assertionID, algorithm, ids);
+    }
+    
     /**
      *
      * Sign part of the XML document referred by the supplied a list
@@ -433,7 +455,25 @@ public class XMLSignatureManager {
          return sp.signWithWSSX509TokenProfile(doc, cert, algorithm, ids,
              wsfVersion);
     }
-
+    
+    /**
+     * Sign part of the XML document wth binary security token using
+     * referred by the supplied a list of id attributes of nodes.
+     * @param doc the XML <code>DOM</code> document.
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithBinarySecurityToken(
+                 org.w3c.dom.Document doc,
+                 java.security.cert.Certificate cert,
+                 java.lang.String algorithm,
+                 java.util.List ids)
+        throws XMLSignatureException {
+           return sp.signWithBinarySecurityToken(doc, cert, algorithm, ids);
+    }
     /**                                                                        
      * Verify all the signatures of the XML document                           
      * @param document XML dom document whose signature to be verified              
@@ -576,7 +616,25 @@ public class XMLSignatureManager {
         org.w3c.dom.Document document) throws XMLSignatureException {
         return sp.verifyXMLSignature(wsfVersion, certAlias, document);
     }
+    
+    /**
+     * Verify all the signatures of the XML document for the
+     * web services security.
+     * @param document XML dom document whose signature to be verified
+     *
+     * @param certAlias alias for Signer's certificate, this is used to search
+     *        signer's public certificate if it is not presented in
+     *        <code>ds:KeyInfo</code>.
+     * @return true if the XML signature is verified, false otherwise
+     * @throws XMLSignatureException if problem occurs during verification
+     */
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+                                       java.lang.String certAlias)
+        throws XMLSignatureException {
 
+        return sp.verifyWSSSignature(document, certAlias);
+    }
+    
     /**
      * Get <code>KeyProvider</code>
      * @return <code>KeyProvider</code>

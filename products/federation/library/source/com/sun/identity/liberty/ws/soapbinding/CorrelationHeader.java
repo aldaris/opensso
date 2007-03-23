@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CorrelationHeader.java,v 1.1 2006-10-30 23:15:20 qcheng Exp $
+ * $Id: CorrelationHeader.java,v 1.2 2007-03-23 00:01:42 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -211,7 +211,7 @@ public class CorrelationHeader {
      *
      * @param headerE parent Header Element
      */
-    void addToParent(Element headerE) {
+    public void addToParent(Element headerE) {
         Document doc = headerE.getOwnerDocument();
         Element correlationHeaderE = doc.createElementNS(
                                         SOAPBindingConstants.NS_SOAP_BINDING,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.2 2006-12-23 05:10:01 hengming Exp $
+ * $Id: Utils.java,v 1.3 2007-03-23 00:01:42 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -472,7 +472,7 @@ public class Utils {
      * @throws SOAPBindingException if the message violates rules on client.
      * @throws SOAPFaultException if the message violates rules on server.
      */
-    static void enforceProcessingRules(Message message,String requestMessageID,
+    public static void enforceProcessingRules(Message message,String requestMessageID,
             boolean isServer)
             throws SOAPBindingException, SOAPFaultException {
         CorrelationHeader corrH = message.getCorrelationHeader();

@@ -1,0 +1,113 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: WSSConstants.java,v 1.1 2007-03-23 00:02:06 mallas Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.wss.security;
+
+/**
+ * This class defines the Constants related to Web services security token
+ * profiles.
+ */
+public class WSSConstants {
+
+     public static final String WSSE_SECURITY_LNAME = "Security";
+
+     public static final String WSSE_NS = "http://docs.oasis-open.org/wss" +
+                 "/2004/01/oasis-200401-wss-wssecurity-secext-01.xsd"; 
+
+     public static final String WSSE_TAG = "wsse";
+
+     public static final String NS_XML =  "http://www.w3.org/2000/xmlns/";
+
+     public static final String TAG_XML_WSSE = "xmlns:wsse";
+
+     public static final String WSU_NS = "http://docs.oasis-open.org/wss" +
+                 "/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+
+     public static final String WSU_TAG = "wsu";
+
+     public static final String TAG_XML_WSU = "xmlns:wsu";
+
+     public static final String WSU_ID = "wsu:Id";
+
+     public static final String TAG_BINARY_SECURITY_TOKEN = 
+                         "BinarySecurityToken";
+
+     public static final String WSSE_MSG_SEC = "http://docs.oasis-open.org/" +
+             "wss/2004/01/oasis-200401-wss-soap-message-security-1.0";
+ 
+     public static final String WSSE_X509_NS = "http://docs.oasis-open.org/" +
+             "wss/2004/01/oasis-200401-wss-x509-token-profile-1.0";
+
+     public static final String TIME_STAMP = "TimeStamp";
+
+     public static final String TAG_KEYIDENTIFIER = "KeyIdentifier";
+
+     public static final String TAG_REFERENCE = "Reference";
+
+     public static final String TAG_SECURITYTOKEN_REFERENCE = 
+                         "SecurityTokenReference";
+
+     public static final String TAG_X509DATA = "X509Data";
+
+     public static final String ASSERTION_VALUE_TYPE = 
+                   "http://docs.oasis-open.org/" +
+                   "wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID";
+
+     public static final String XMLSIG_NAMESPACE_URI =   
+                   "http://www.w3.org/2000/09/xmldsig#";
+
+     public static final String PASSWORD_DIGEST_TYPE = 
+                   "http://docs.oasis-open.org/" +
+                   "wss/oasis-wss-saml-token-profile-1.0#PasswordDigest";
+
+     public static final String PASSWORD_PLAIN_TYPE = 
+                   "http://docs.oasis-open.org/" +
+                   "wss/oasis-wss-saml-token-profile-1.0#PasswordPlainText";
+
+     public static final String TAG_USERNAME_TOKEN = "UsernameToken";
+   
+     public static final String MUST_UNDERSTAND = "mustUnderstand";
+
+     public static final String CREATED = "Created";
+
+     public static final String EXPIRES = "Expires";
+
+     public static final long INTERVAL = 300;
+
+     public static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----\n";
+ 
+     public static final String END_CERT   = "\n-----END CERTIFICATE-----";
+
+     public static final String TRANSFORMATION_PARAMETERS = 
+                                "TransformationParameters";
+
+     public static final String TAG_URI = "URI";
+
+     public static final String TAG_VALUETYPE = "ValueType";
+     
+     public static final String SAML_VALUETYPE = "http://docs.oasis-open.org/" +
+         "wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID";
+
+}
+

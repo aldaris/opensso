@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmAuthnSvc.xml,v 1.1 2006-10-30 23:18:13 qcheng Exp $
+   $Id: fmAuthnSvc.xml,v 1.2 2007-03-23 00:02:11 mallas Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -43,7 +43,8 @@
                     i18nKey="a101">
                     <DefaultValues> 
                         <Value>key=PLAIN|class=@AUTHNSVC_PLAIN_MECHANISM_HANDLER@</Value> 
-                        <Value>key=CRAM-MD5|class=@AUTHNSVC_CRAMMD5_MECHANISM_HANDLER@</Value> 
+                        <Value>key=CRAM-MD5|class=@AUTHNSVC_CRAMMD5_MECHANISM_HANDLER@</Value>
+                        <Value>key=SSOTOKEN|class=@AUTHNSVC_SSOTOKEN_MECHANISM_HANDLER@</Value> 
                     </DefaultValues> 
                 </AttributeSchema> 
             </Global>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.2 2006-12-23 05:13:06 hengming Exp $
+ * $Id: AMSignatureProvider.java,v 1.3 2007-03-23 00:01:42 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
  */
 
 public class AMSignatureProvider implements SignatureProvider {
-    private KeyProvider keystore = null;
+    protected KeyProvider keystore = null;
     private String c14nMethod = null;
     private String transformAlg = null;
     // define default id attribute name
@@ -1450,7 +1450,7 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param keyinfo KeyInfo
      * @return a X509Certificate
      */
-    private PublicKey getX509PublicKey(Document doc, KeyInfo keyinfo) {
+    protected PublicKey getX509PublicKey(Document doc, KeyInfo keyinfo) {
 	PublicKey pk = null;
         try {
             if (keyinfo != null) {
@@ -1763,7 +1763,7 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param keyinfo KeyInfo 
      * @return a PublicKey
      */
-    private PublicKey getPublicKey(X509Certificate cert) {
+    protected PublicKey getPublicKey(X509Certificate cert) {
         PublicKey pk = null;
         if (cert != null) {
             pk = cert.getPublicKey();
@@ -1771,7 +1771,7 @@ public class AMSignatureProvider implements SignatureProvider {
         return pk;
     }
     
-    private boolean isValidAlgorithm(String algorithm) {
+    protected boolean isValidAlgorithm(String algorithm) {
         if (algorithm.equals(SAMLConstants.ALGO_ID_MAC_HMAC_SHA1) ||
             algorithm.equals(SAMLConstants.ALGO_ID_SIGNATURE_DSA) ||
             algorithm.equals(SAMLConstants.ALGO_ID_SIGNATURE_RSA) ||
@@ -1831,5 +1831,77 @@ public class AMSignatureProvider implements SignatureProvider {
             return SAMLConstants.ALGO_ID_SIGNATURE_DSA; 
         } 
         return SAMLConstants.ALGO_ID_SIGNATURE_RSA_SHA1;
-    } 
+    }
+    
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param assertionID assertion ID
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return SAML Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithSAMLToken(
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   String assertionID,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
+        throws XMLSignatureException {
+        return null;
+    }
+       /**
+     * Sign part of the XML document wth binary security token using
+     * referred by the supplied a list of id attributes of nodes.
+     * @param doc the XML <code>DOM</code> document.
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithBinarySecurityToken(
+                 org.w3c.dom.Document doc,
+                 java.security.cert.Certificate cert,
+                 java.lang.String algorithm,
+                 java.util.List ids)
+        throws XMLSignatureException {        
+        return null;
+    }
+    
+        /**
+     * Verify all the signatures of the XML document for the
+     * web services security.
+     * @param document XML dom document whose signature to be verified
+     *
+     * @param certAlias alias for Signer's certificate, this is used to search
+     *        signer's public certificate if it is not presented in
+     *        <code>ds:KeyInfo</code>.
+     * @return true if the XML signature is verified, false otherwise
+     * @throws XMLSignatureException if problem occurs during verification
+     */
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+                                       java.lang.String certAlias)
+        throws XMLSignatureException {
+        return false;
+    }
+    
+    /**
+     * Return algorithm URI for the given algorithm.
+     */
+    protected String getAlgorithmURI(String algorithm) {
+        if(algorithm == null) {
+           return null;
+        }
+        if(algorithm.equals("RSA")) {
+           return SAMLConstants.ALGO_ID_SIGNATURE_RSA;
+        } else if(algorithm.equals("DSA")) {
+           return SAMLConstants.ALGO_ID_SIGNATURE_DSA;
+        } else {
+          return null;
+        }
+    }
 }
