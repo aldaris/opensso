@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.3 2006-12-21 19:49:17 weisun2 Exp $
+   $Id: spAssertionConsumer.jsp,v 1.4 2007-03-23 22:25:25 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -169,7 +169,7 @@ com.sun.identity.plugin.session.SessionException
             request, response, metaAlias, token, respInfo,
             orgName, hostEntityId, metaManager);
     } catch (SAML2Exception se) {
-        if (se.getMessage().equals("NoUserMapping")) {
+        if (se.getMessage().equals(SAML2Utils.bundle.getString("noUserMapping"))) {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("spAssertionConsumer.jsp:need "
                     + " local login!!");
