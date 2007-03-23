@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.1 2007-01-30 21:23:33 bina Exp $
+   $Id: configure.jsp,v 1.2 2007-03-23 22:24:23 bina Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -67,6 +67,7 @@
         String host = request.getParameter("host");
         String port = request.getParameter("port");
         String deploymenturi = request.getParameter("deploymenturi");
+        String remoteEntityID = null;
         
         if ((proto != null) && (host != null) && (port != null) &&
             (deploymenturi != null)
@@ -82,12 +83,13 @@
                 if (deploymenturi.charAt(0) != '/') {
                     deploymenturi = "/" + deploymenturi;
                 }
-
+                remoteEntityID = new StringBuffer()
+                                     .append(proto).append("://").append(host)
+                                     .append(":").append(port)
+                                     .append(deploymenturi).toString();
                 try {
                     // [START] Make a call to CLI to get the meta data template
-                    String entityName = baseHost;
-                    //String entityName = baseURL;
-                    //String entityName = host;
+                    String entityName = baseURL;
                     hostedSPEntityID=entityName;
                     SAML2MetaManager metaManager = new SAML2MetaManager();
                     List spEntityList = 
@@ -151,13 +153,13 @@
                     List idpEntityList = 
                         metaManager.getAllRemoteIdentityProviderEntities("/");
                     boolean idpExists =  ((idpEntityList != null 
-                                         && !idpEntityList.isEmpty()) 
-                                         && idpEntityList.contains(host)) ;
-                    remoteIDPEntityID = host;
+                                    && !idpEntityList.isEmpty()) 
+                                    && idpEntityList.contains(remoteEntityID));
+                    remoteIDPEntityID = remoteEntityID;
                     if (!idpExists) {
                     // [START] Make a call to CLI to get IDP meta data template
                     String[] args2 = {"create-metadata-template", 
-                        "--entityid", entityName,
+                        "--entityid", remoteEntityID,
                         "--identityprovider", "/idp"};
                     outputWriter = new StringOutputWriter();
                     env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, 

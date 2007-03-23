@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.1 2007-01-30 21:23:34 bina Exp $
+   $Id: home.jsp,v 1.2 2007-03-23 22:24:24 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
                             <a href="<%= localLoginUrl %>?goto=<%= thisUrl %>">
                                 Login</a>
                     <% } else { %>          <!-- not logged in, i am sp -->
-                            <a href="<%= appBase %>spssonit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
+                            <a href="<%= appBase %>spssoinit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
                             Login, secure service provided by <%=  idpTitle%></a>
                     <% } %>
                 <%  } else { %>             <!-- user logged in -->
