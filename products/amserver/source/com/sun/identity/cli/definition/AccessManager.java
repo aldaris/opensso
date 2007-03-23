@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.15 2007-03-21 22:33:41 veiming Exp $
+ * $Id: AccessManager.java,v 1.16 2007-03-23 22:55:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1126,7 +1126,7 @@ public class AccessManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetMemberships",
-        description="Show the memberships of an identity",
+        description="Show the memberships of an identity. For sample show the memberships of an user.",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
@@ -1145,7 +1145,7 @@ public class AccessManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.idrepo.GetMembers",
-        description="Show the memberships of an identity.",
+        description="Show the members of an identity. For example show the members of a role",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",

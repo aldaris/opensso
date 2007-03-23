@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssignService.java,v 1.1 2006-05-31 21:49:49 veiming Exp $
+ * $Id: AssignService.java,v 1.2 2007-03-23 22:55:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -64,16 +65,20 @@ public class AssignService extends IdentityCommand {
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
         String serviceName = getStringOptionValue(IArgument.SERVICE_NAME);
         IdType idType = convert2IdType(type);
-        String dataFile = getStringOptionValue(IArgument.DATA_FILE);
-        Map attributeValues = (dataFile != null) ?
-            AttributeValues.parse(getCommandManager(), dataFile) :
-            Collections.EMPTY_MAP;
+        String datafile = getStringOptionValue(IArgument.DATA_FILE);
+        List attrValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
 
+        if ((datafile == null) && (attrValues == null)) {
+            throw new CLIException(
+                getResourceString("missing-attributevalues"),
+                ExitCodes.INCORRECT_OPTION, rc.getSubCommand().getName());
+        }
+
+        Map attributeValues = AttributeValues.parse(getCommandManager(),
+            datafile, attrValues);
         String[] params = {realm, type, idName, serviceName};
 
         try {
-            AMIdentityRepository amir = new AMIdentityRepository(
-                adminSSOToken, realm);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_IDREPO_ASSIGN_SERVICE", params);
             AMIdentity amid = new AMIdentity(
