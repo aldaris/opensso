@@ -1,0 +1,69 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: FMEnvironmentMapper.java,v 1.1 2007-03-24 01:16:53 dillidorai Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.xacml2.plugins;
+import com.sun.identity.xacml2.context.Environment;
+import com.sun.identity.xacml2.context.Subject;
+import com.sun.identity.xacml2.common.XACML2Exception;
+import com.sun.identity.xacml2.spi.EnvironmentMapper;
+import java.util.Map;
+
+/**
+ * This class implements EnvironmentMapper to map between XACML context 
+ * Environment and FM native environment.
+ * This mapper does not recognise any attributes of
+ * <code>xacml-context:Envrionement</code> at present.
+ * So, at present it is essentially a no-op.
+ *
+ */
+public class FMEnvironmentMapper implements EnvironmentMapper {
+
+    /**
+     * Initializes the mapper implementation. This would be called immediately 
+     * after constructing an instance of the implementation.
+     *
+     * @param pdpEntityId EntityID of PDP
+     * @param pepEntityId EntityID of PEP
+     * @param properties configuration properties
+     * @exception XACML2Exception if can not initialize
+     */
+    public void initialize(String pdpEntityId, String pepEntityId, 
+            Map properties) throws XACML2Exception {
+    }
+
+    /**
+     * Returns native environment
+     * @param xacmlContextEnvironment XACML  context Environment
+     * @param xacmlContextSubject XACML context Subject
+     * @return native environment map
+     * @exception XACML2Exception if can not map to native environment
+     */
+    public Map mapToNativeEnvironment(Environment xacmlContextEnvironment, 
+            Subject xacmlContextSubject) 
+            throws XACML2Exception {
+        return null;
+    }
+
+}
+
