@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2SDKUtils.java,v 1.1 2007-03-15 06:19:05 bhavnab Exp $
+ * $Id: XACML2SDKUtils.java,v 1.2 2007-03-24 01:25:43 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -31,6 +31,7 @@ import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.xacml2.context.Attribute;
 import com.sun.identity.xacml2.context.ContextFactory;
+import com.sun.identity.xacml2.context.Decision;
 import java.security.SecureRandom;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -119,4 +120,55 @@ public class XACML2SDKUtils extends SAML2SDKUtils {
          attr.setIssuer(issuer);
          return attr;
     }
+
+    public static boolean isValidDecision(Decision decision) {
+        boolean valid = false;
+        if (decision != null) {
+            String value = decision.getValue();
+            valid = isValidDecision(value);
+        }
+        return valid;
+    }
+
+    public static boolean isValidDecision(String value) {
+        boolean valid = false;
+        if (value != null) {
+            if (value.equals(XACML2Constants.PERMIT) 
+                    || value.equals(XACML2Constants.DENY)
+                    || value.equals(XACML2Constants.INDETERMINATE)
+                    || value.equals(XACML2Constants.NOT_APPLICABLE)) {
+                valid = true;
+            }
+        }
+        return valid;
+    }
+
+    public static boolean isValidStatusMessage(String value) {
+        boolean valid = true;
+        //FIXME: add validation
+        return valid;
+    }
+
+    public static boolean isValidStatusCode(String value) {
+        boolean valid = true;
+        //FIXME: add validation
+        return valid;
+    }
+
+    public static boolean isValidMinorStatusCode(String value) {
+        boolean valid = true;
+        //FIXME: add validation
+        return valid;
+    }
+
+    public static String quote(String s) {
+        String val = null;
+        if (s == null) {
+            val = "\"\"";
+        } else {
+            val = "\"" + s + "\"";
+        }
+        return val;
+    }
+
 }

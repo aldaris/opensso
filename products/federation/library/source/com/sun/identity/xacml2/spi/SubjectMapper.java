@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectMapper.java,v 1.1 2007-03-15 06:23:00 bhavnab Exp $
+ * $Id: SubjectMapper.java,v 1.2 2007-03-24 01:26:07 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.spi;

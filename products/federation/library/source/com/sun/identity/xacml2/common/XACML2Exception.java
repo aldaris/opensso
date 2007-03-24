@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Exception.java,v 1.1 2007-03-15 06:19:05 bhavnab Exp $
+ * $Id: XACML2Exception.java,v 1.2 2007-03-24 01:25:42 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 

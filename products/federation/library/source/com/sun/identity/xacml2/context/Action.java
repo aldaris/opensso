@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Subject.java,v 1.2 2007-03-24 01:25:53 dillidorai Exp $
+ * $Id: Action.java,v 1.1 2007-03-24 01:25:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,34 +27,28 @@ package com.sun.identity.xacml2.context;
 import com.sun.identity.xacml2.common.XACML2Exception;
 
 import java.util.List;
-import java.net.URI;
 
 /**
- * The <code>Subject</code> element specifies information about a
- * subject of the <code>Request</code> context by listing a 
+ * The <code>Action</code> element specifies information about the
+ * action requested in the <code>Request</code> context by listing a 
  * sequence of <code>Attribute</code> elements associated with the
- * subject. A subject is an entity associated with the access request.
+ * action.
  * <p>
  * <pre>
- * &lt;xs:complexType name="SubjectType">
- *  &lt;xs:sequence>
- *   &lt;xs:element ref="xacml-context:Attribute" minOccurs="0"
- *      maxOccurs="unbounded"/>
- * &lt;xs:sequence>
- * &lt;xs:attribute name="SubjectCategory" type="xs:anyURI" 
- *  default="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"/>
+ * &lt;xs:element name="Action" type="xacml-context:ActionType"/>
+ * &lt;xs:complexType name="ActionType">
+ *    &lt;xs:sequence>
+ *       &lt;xs:element ref="xacml-context:Attribute" minOccurs="0"
+ *       maxOccurs="unbounded"/>
+ *    &lt;xs:sequence>
  * &lt;xs:complexType>
  * </pre>
  *@supported.all.api
  */
-public interface Subject {
+public interface Action {
     /**
      * Returns zero to many <code>Attribute</code> elements of this object
      * If no attributes and present, empty <code>List</code> will be returned.
-     * Typically a <code>Subject</code> element will contain an <code>
-     * Attribute</code> with an <code>AttributeId</code> of
-     * "urn:oasis:names:tc:xacml:1.0:subject:subject-id", containing 
-     * the identity of the <code>Subject</code>
      *
      * @return the <code>Attribute</code> elements of this object
      */
@@ -73,35 +67,6 @@ public interface Subject {
      * be determined by calling <code>isMutable</code> on the object.
      */
     public void setAttributes(List attributes) throws XACML2Exception;
-
-    /**
-     * Returns the <code>SubjectCategory</code> of this object.
-     * This is optional so could be null if not defined.
-     * This attribute indicates the role that the parent <code>Subject</code> 
-     * played in the formation of the access request. If this attribute is not 
-     * present in the <code>Subject</code> element, then the
-     * default value of 
-     * urn:oasis:names:tc:xacml:1.0:subject-category:access-subject SHALL be
-     * used, indicating that the <code>Subject</code> represents the entity 
-     * ultimately responsible for initiating the access request.
-     *
-     * @return <code>URI</code> representing the 
-     * <code>SubjectCategory</code> of this  object.
-     */
-    public URI getSubjectCategory();
-
-    /**
-     * Sets the <code>SubjectCategory</code> of this object
-     *
-     * @param subjectCategory <code>URI</code> 
-     *
-     * @exception XACML2Exception if the object is immutable
-     * An object is considered <code>immutable</code> if <code>
-     * makeImmutable()</code> has been invoked on it. It can
-     * be determined by calling <code>isMutable</code> on the object.
-     */
-    public void setSubjectCategory(URI subjectCategory) throws 
-        XACML2Exception;
 
    /**
     * Returns a <code>String</code> representation of this object

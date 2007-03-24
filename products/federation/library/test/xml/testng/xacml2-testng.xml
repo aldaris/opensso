@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: xacml2-testng.xml,v 1.1 2007-03-15 06:21:05 bhavnab Exp $
+   $Id: xacml2-testng.xml,v 1.2 2007-03-24 01:23:15 dillidorai Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,4 +69,86 @@
             <class name="com.sun.identity.xacml2.context.ResourceTest"/>
         </classes>
     </test>
+
+    <test name="XACML2-d1" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.common.XACML2SDKUtilsTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d2" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.DecisionTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d3" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.StatusMessageTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d4" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.StatusCodeTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d5" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.StatusDetailTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d6" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.StatusTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d7" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.ResultTest"/>
+        </classes>
+    </test>
+    <test name="XACML2-d8" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.context.ResponseTest"/>
+        </classes>
+    </test>
+
 </suite>

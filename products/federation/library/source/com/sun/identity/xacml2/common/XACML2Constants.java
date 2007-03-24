@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.1 2007-03-15 06:19:04 bhavnab Exp $
+ * $Id: XACML2Constants.java,v 1.2 2007-03-24 01:25:41 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.common;
@@ -139,7 +139,7 @@ public class  XACML2Constants {
      * String used to declare XACML2 context namespace.
      */
     public static String CONTEXT_DECLARE_STR =
-    " xmlns:xacml-context=\"urn:oasis:names:tc:xacml:2.0:context:schema:os\"";
+    " xmlns:xacml-context=\"urn:oasis:names:tc:xacml:2.0:context:schema:os\" ";
     
     /**
      * XACML2 context schema location 
@@ -211,6 +211,7 @@ public class  XACML2Constants {
      **/
     public static String URI_DATATYPE = 
         "http://www.w3.org/2001/XMLSchema#anyURI";
+
     /**
      * constant for subject category
      */
@@ -218,5 +219,70 @@ public class  XACML2Constants {
         "urn:oasis:names:tc:xacml:1.0:subject-category";
     
 
+
+    /**
+     * constant for Response element
+     */
+    public static final String RESPONSE_ELEMENT = "Response";
+
+    /**
+     * constant for Result element
+     */
+    public static final String RESULT_ELEMENT = "Result";
+
+    /**
+     * constant for ResourceId attribute
+     */
+    public static final String RESOURCE_ID_ATTRIBUTE = "ResourceId";
+
+    /**
+     * constant for Decision element
+     */
+    public static final String DECISION_ELEMENT = "Decision";
+
+    /**
+     * constant for Status element
+     */
+    public static final String STATUS_ELEMENT = "Status";
+
+    /**
+     * constant for StatusCode element
+     */
+    public static final String STATUS_CODE_ELEMENT = "StatusCode";
+
+    /**
+     * constant for Value attribute
+     */
+    public static final String VALUE_ATTRIBUTE = "Value";
+
+    /**
+     * constant for StatusMessage element
+     */
+    public static final String STATUS_MESSAGE_ELEMENT = "StatusMessage";
+
+    /**
+     * constant for StatusDetail element
+     */
+    public final static String STATUS_DETAIL_ELEMENT = "StatusDetail";
+
+    /**
+     * constant for Permit
+     */
+    public static final String PERMIT = "Permit";
+
+    /**
+     * constant for Deny
+     */
+    public static final String DENY = "Deny";
+
+    /**
+     * constant for Indeterminate
+     */
+    public static final String INDETERMINATE = "Indeterminate";
+
+    /**
+     * constant for NotApplicable
+     */
+    public static final String NOT_APPLICABLE = "NotApplicable";
 
 }

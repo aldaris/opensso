@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ContextFactory.java,v 1.1 2007-03-15 06:19:06 bhavnab Exp $
+ * $Id: ContextFactory.java,v 1.2 2007-03-24 01:25:45 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -35,7 +35,6 @@ import com.sun.identity.xacml2.context.impl.ResourceImpl;
 import com.sun.identity.xacml2.context.impl.SubjectImpl;
 import com.sun.identity.xacml2.saml2.impl.XACMLAuthzDecisionQueryImpl;
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
-/*
 import com.sun.identity.xacml2.context.impl.DecisionImpl;
 import com.sun.identity.xacml2.context.impl.StatusCodeImpl;
 import com.sun.identity.xacml2.context.impl.StatusDetailImpl;
@@ -43,8 +42,6 @@ import com.sun.identity.xacml2.context.impl.StatusImpl;
 import com.sun.identity.xacml2.context.impl.StatusMessageImpl;
 import com.sun.identity.xacml2.context.impl.ResponseImpl;
 import com.sun.identity.xacml2.context.impl.ResultImpl;
-import com.sun.identity.xacml2.policy.Obligations;
- */
 
 /**
  * This is the factory class to obtain instances of the objects defined
@@ -366,6 +363,397 @@ public class ContextFactory {
             return new XACMLAuthzDecisionQueryImpl(xml);
         } else {
             return (XACMLAuthzDecisionQuery) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Response</code>.
+     *
+     * @return a new instance of <code>Response</code>
+     * 
+     */
+    public Response createResponse() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESPONSE_ELEMENT);
+        if (object == null) {
+            return new ResponseImpl();
+        } else {
+            return (Response)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Response</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Response</code>
+     * @return a new instance of <code>Response</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Response createResponse(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESPONSE_ELEMENT, elem);
+        if (object == null) {
+            return new ResponseImpl(elem);
+        } else {
+            return (Response)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Response</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Response</code>
+     * @return a new instance of <code>Response</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Response createResponse(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESPONSE_ELEMENT, xml);
+        if (object == null) {
+            return new ResponseImpl(xml);
+        } else {
+            return (Response)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Result</code>.
+     *
+     * @return a new instance of <code>Result</code>
+     * 
+     */
+    public Result createResult() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESULT_ELEMENT);
+        if (object == null) {
+            return new ResultImpl();
+        } else {
+            return (Result)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Result</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Result</code>
+     * @return a new instance of <code>Result</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Result createResult(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESULT_ELEMENT, elem);
+        if (object == null) {
+            return new ResultImpl(elem);
+        } else {
+            return (Result)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Result</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Result</code>
+     * @return a new instance of <code>Result</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Result createResult(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.RESULT_ELEMENT, xml);
+        if (object == null) {
+            return new ResultImpl(xml);
+        } else {
+            return (Result)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Decision</code>.
+     *
+     * @return a new instance of <code>Decision</code>
+     * 
+     */
+    public Decision createDecision() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.DECISION_ELEMENT);
+        if (object == null) {
+            return new DecisionImpl();
+        } else {
+            return (Decision)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Decision</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Decision</code>
+     * @return a new instance of <code>Decision</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Decision createDecision(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.DECISION_ELEMENT, elem);
+        if (object == null) {
+            return new DecisionImpl(elem);
+        } else {
+            return (Decision)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Decision</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Decision</code>
+     * @return a new instance of <code>Decision</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Decision createDecision(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.DECISION_ELEMENT, xml);
+        if (object == null) {
+            return new DecisionImpl(xml);
+        } else {
+            return (Decision)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Status</code>.
+     *
+     * @return a new instance of <code>Status</code>
+     * 
+     */
+    public Status createStatus() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_ELEMENT);
+        if (object == null) {
+            return new StatusImpl();
+        } else {
+            return (Status)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Status</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Status</code>
+     * @return a new instance of <code>Status</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Status createStatus(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_ELEMENT, elem);
+        if (object == null) {
+            return new StatusImpl(elem);
+        } else {
+            return (Status)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Status</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Status</code>
+     * @return a new instance of <code>Status</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Status createStatus(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_ELEMENT, xml);
+        if (object == null) {
+            return new StatusImpl(xml);
+        } else {
+            return (Status)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusCode</code>.
+     *
+     * @return a new instance of <code>StatusCode</code>
+     * 
+     */
+    public StatusCode createStatusCode() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_CODE_ELEMENT);
+        if (object == null) {
+            return new StatusCodeImpl();
+        } else {
+            return (StatusCode)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusCode</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>StatusCode</code>
+     * @return a new instance of <code>StatusCode</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public StatusCode createStatusCode(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_CODE_ELEMENT, elem);
+        if (object == null) {
+            return new StatusCodeImpl(elem);
+        } else {
+            return (StatusCode)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusCode</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>StatusCode</code>
+     * @return a new instance of <code>StatusCode</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public StatusCode createStatusCode(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_CODE_ELEMENT, xml);
+        if (object == null) {
+            return new StatusCodeImpl(xml);
+        } else {
+            return (StatusCode)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusMessage</code>.
+     *
+     * @return a new instance of <code>StatusMessage</code>
+     * 
+     */
+    public StatusMessage createStatusMessage() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_MESSAGE_ELEMENT);
+        if (object == null) {
+            return new StatusMessageImpl();
+        } else {
+            return (StatusMessage)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusMessage</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>StatusMessage</code>
+     * @return a new instance of <code>StatusMessage</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public StatusMessage createStatusMessage(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_MESSAGE_ELEMENT, elem);
+        if (object == null) {
+            return new StatusMessageImpl(elem);
+        } else {
+            return (StatusMessage)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusMessage</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>StatusMessage</code>
+     * @return a new instance of <code>StatusMessage</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public StatusMessage createStatusMessage(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_MESSAGE_ELEMENT, xml);
+        if (object == null) {
+            return new StatusMessageImpl(xml);
+        } else {
+            return (StatusMessage)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusDetail</code>.
+     *
+     * @return a new instance of <code>StatusDetail</code>
+     * 
+     */
+    public StatusDetail createStatusDetail() throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_DETAIL_ELEMENT);
+        if (object == null) {
+            return new StatusDetailImpl();
+        } else {
+            return (StatusDetail)object;
+        }
+    }
+    /**
+     * Returns a new instance of <code>StatusDetail</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>StatusDetail</code>
+     * @return a new instance of <code>StatusDetail</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public StatusDetail createStatusDetail(Element elem)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_DETAIL_ELEMENT, elem);
+        if (object == null) {
+            return new StatusDetailImpl(elem);
+        } else {
+            return (StatusDetail)object;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>StatusDetail</code>
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>StatusDetail</code>
+     * @return a new instance of <code>StatusDetail</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public StatusDetail createStatusDetail(String xml)throws XACML2Exception {
+        Object object = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.STATUS_DETAIL_ELEMENT, xml);
+        if (object == null) {
+            return new StatusDetailImpl(xml);
+        } else {
+            return (StatusDetail)object;
         }
     }
 
