@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.8 2007-02-09 22:14:15 veiming Exp $
+ * $Id: ISAccountLockout.java,v 1.9 2007-03-26 20:49:07 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -185,9 +185,15 @@ public class ISAccountLockout {
         }
         
         long now = System.currentTimeMillis();
-        int fail_count = acInfo.getFailCount() +1;
+        int fail_count = acInfo.getFailCount();
         long lastFailTime = acInfo.getLastFailTime();
         long lockedAt = acInfo.getLockoutAt();
+        
+        if((lastFailTime + failureLockoutTime) > now) {
+            fail_count = fail_count +1;
+        } else {
+            fail_count = 1;
+        }        
         
         if (((lastFailTime + failureLockoutTime) > now) &&
             (fail_count == failureLockoutCount)
