@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-03-01 08:45:38 veiming Exp $
+   $Id: build.xml,v 1.5 2007-03-26 22:00:28 manish_rustagi Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,13 +67,10 @@
                 <include name="*.bat" />
             </fileset>
         </copy>
-
-        <copy todir="${distauth.package.dir}/resources">
-            <fileset dir="${amserver.distauth.dir}/resources">
-                <include name="AMConfigTemplate.properties"/>
-            </fileset>
-        </copy>
-
+        
+        <copy file="${amserver.clientsdkbase.dir}/resources/AMClient.properties" 
+              tofile="${distauth.package.dir}/resources/AMConfigTemplate.properties" />
+        
         <copy todir="${distauth.package.dir}/war">
             <fileset dir="${amserver.www.dir}/authentication/UI">
                 <include name="index.html"/>
