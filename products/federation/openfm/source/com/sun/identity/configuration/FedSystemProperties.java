@@ -17,17 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.1 2006-10-30 23:17:58 qcheng Exp $
+ * $Id: FedSystemProperties.java,v 1.2 2007-03-27 06:03:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.configuration;
 
+import com.iplanet.services.naming.WebtopNaming;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.common.SystemConfigurationUtil;
 import java.net.URL;
 import java.util.Collection;
-
-import com.iplanet.services.naming.WebtopNaming;
 
 /**
  * This is the adapter class for Federation Manager to the shared library.
@@ -51,11 +52,12 @@ public class FedSystemProperties extends FedLibSystemProperties {
         if ((value != null) && (value.trim().length() > 0)) {
             return value;
         }
-        return com.iplanet.am.util.SystemProperties.get(key);
-        /*
-        return ((value != null) && (value.trim().length() > 0)) ?
-            value : com.iplanet.am.util.SystemProperties.get(key);
-        */
+        if (key.equals(SystemConfigurationUtil.PROP_SERVER_MODE)) {
+            return com.iplanet.am.util.SystemProperties.get(
+                Constants.SERVER_MODE);
+        } else {
+            return com.iplanet.am.util.SystemProperties.get(key);
+        }
     }
 
     /**

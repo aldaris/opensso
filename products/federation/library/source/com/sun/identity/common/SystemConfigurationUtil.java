@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemConfigurationUtil.java,v 1.1 2006-10-30 23:13:56 qcheng Exp $
+ * $Id: SystemConfigurationUtil.java,v 1.2 2007-03-27 06:02:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
@@ -52,25 +54,12 @@ import com.sun.identity.plugin.configuration.ConfigurationManager;
  * getProperty to get properties in "FederationConfig.properties".
  */
 public final class SystemConfigurationUtil implements ConfigurationListener {
-
-    private static final String SYSTEM_CONFIG_PROPERTY_NAME =
-        "FederationConfig";
-    private static final String PROP_SERVER_MODE =
+    public static final String PROP_SERVER_MODE =
         "com.sun.identity.common.serverMode";
     private static final String SVC_PLATFORM = "PLATFORM";
     private static final String SVC_NAMING = "NAMING";
-    private static final String ATTR_LOGIN_URL =
-        "iplanet-am-platform-login-url";
-    private static final String ATTR_COOKIE_DOMAINS =
-        "iplanet-am-platform-cookie-domains";
-    private static final String ATTR_SERVER_LIST =
-        "iplanet-am-platform-server-list";
-    private static final String ATTR_SITE_LIST =
-        "iplanet-am-platform-site-list";
 
-    private static Properties systemConfigProps = null;
     private static boolean ignoreNaming = false;
-    private static boolean serverMode = false;
     private static ConfigurationInstance platformConfig;
     private static ConfigurationInstance namingConfig;
     private static String authenticationURL;
@@ -79,12 +68,6 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
     private static Hashtable serverToIdTable = null;
     private static Hashtable idToServerTable = null;
     private static boolean platformNamingInitialized = false;
-
-    static {
-        initProperties();
-        serverMode = Boolean.valueOf(System.getProperty(PROP_SERVER_MODE,
-            getProperty(PROP_SERVER_MODE, "false"))).booleanValue();
-    }
 
     private SystemConfigurationUtil() {
     }
@@ -132,11 +115,13 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
     }
 
     /**
-     * Checks if this is running on server mode.
-     * @return true if this is running on server mode, false otherwise.
+     * Returns <code>true</code> if this is running on server mode.
+     *
+     * @return <code>true</code> if this is running on server mode.
      */
     public static boolean isServerMode() {
-        return serverMode;
+        return Boolean.valueOf(System.getProperty(PROP_SERVER_MODE,
+            getProperty(PROP_SERVER_MODE, "false"))).booleanValue();
     }
 
     /**
@@ -272,7 +257,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
      *     not exist.
      */  
     public static String getProperty(String propertyName) {
-        return systemConfigProps.getProperty(propertyName);
+        return SystemPropertiesManager.get(propertyName);
     }
 
     /**
@@ -284,41 +269,8 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
      *     not exist.
      */
     public static String getProperty(String propertyName, String defaultValue) {
-        String value = systemConfigProps.getProperty(propertyName);
+        String value = SystemPropertiesManager.get(propertyName);
         return (value == null ? defaultValue : value);
-    }
-
-    /**
-     * Initializes the properties to be used by Open Federation Library.
-     * Ideally this must be called first before any other method is called
-     * within Open Federation Library. This method provides a programmatic way
-     * to set the properties, and will override similar properties if loaded
-     * for a properties file.
-     *
-     * @param properties  properties for Open Federation Library
-     */
-    public static synchronized void initializeProperties(
-        Properties properties) {
-
-        Properties newProps = new Properties();
-        newProps.putAll(systemConfigProps);
-        newProps.putAll(properties);
-        systemConfigProps = newProps;
-
-    }
-
-    private static void initProperties() {
-        systemConfigProps = new Properties();
-        try {
-            ResourceBundle bundle =
-                ResourceBundle.getBundle(SYSTEM_CONFIG_PROPERTY_NAME);
-            Enumeration e = bundle.getKeys();
-            while (e.hasMoreElements()) {
-                String key = (String) e.nextElement();
-                systemConfigProps.put(key, bundle.getString(key));
-            }
-        } catch (MissingResourceException mrex) {
-        }
     }
 
     /**
@@ -335,7 +287,6 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
      * Note: This server id should be unique if it's participating
      * in load balancing mode. 
      */
-
     private static void storeServerList(Set servers) {
         if ((servers == null) || servers.isEmpty()) {
             serverList = Collections.EMPTY_LIST;
@@ -406,29 +357,26 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
                 serverToIdTable = null;
                 idToServerTable = null;
             } else {
-                Set values = (Set)avPairs.get(ATTR_LOGIN_URL);
+                Set values = (Set)avPairs.get(Constants.ATTR_LOGIN_URL);
                 if ((values == null) || values.isEmpty()) {
                     authenticationURL = null;
                 } else {
                     authenticationURL = (String)values.iterator().next();
                 }
 
-                values =(Set)avPairs.get(ATTR_COOKIE_DOMAINS);
+                values =(Set)avPairs.get(Constants.ATTR_COOKIE_DOMAINS);
                 if ((values == null) || values.isEmpty()) {
                     cookieDomains = Collections.EMPTY_LIST;
                 } else {
                     cookieDomains = new ArrayList();
-                    for(Iterator iter = values.iterator(); iter.hasNext();) {
-                        cookieDomains.add(iter.next());
-                    }
+                    cookieDomains.addAll(values);
                 }
 
-                values = (Set)avPairs.get(ATTR_SERVER_LIST);
+                values = (Set)avPairs.get(Constants.PLATFORM_LIST);
                 if ((values == null) || values.isEmpty()) {
-                    values = (Set)avPairs.get(ATTR_SITE_LIST);
+                    values = (Set)avPairs.get(Constants.SITE_LIST);
                 } else {
-                    values.addAll(
-                            (Set)avPairs.get(ATTR_SITE_LIST));
+                    values.addAll((Set)avPairs.get(Constants.SITE_LIST));
                 }
                 storeServerList(values);
             }

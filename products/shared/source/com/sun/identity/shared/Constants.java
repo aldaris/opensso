@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.6 2007-03-09 05:51:07 veiming Exp $
+ * $Id: Constants.java,v 1.7 2007-03-27 06:03:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -882,6 +882,16 @@ public interface Constants {
      * Property string for determining whether server mode or client mode.
      */
     String SERVER_MODE = "com.iplanet.am.serverMode";
+
+    /**
+     * Property to determine the login URL.
+     */
+    String ATTR_LOGIN_URL = "iplanet-am-platform-login-url";
+
+    /**
+     * Property to determine the cookie domains.
+     */
+    String ATTR_COOKIE_DOMAINS = "iplanet-am-platform-cookie-domains";
 
     /**
      * Key name for platform server list in naming table.

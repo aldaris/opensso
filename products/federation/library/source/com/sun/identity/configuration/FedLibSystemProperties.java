@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedLibSystemProperties.java,v 1.1 2006-10-30 23:13:57 qcheng Exp $
+ * $Id: FedLibSystemProperties.java,v 1.2 2007-03-27 06:02:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,13 +28,23 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.configuration.ISystemProperties;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 
 /**
  * This is the adapter class for Federation Library to the shared library.
  * Mainly to provide system configuration information.
   */
 public class FedLibSystemProperties implements ISystemProperties {
-    
+    private static final String SYSTEM_CONFIG_PROPERTY_NAME ="FederationConfig";
+    private static Properties systemConfigProps = null;
+
+    static {
+        initProperties();
+    }
+
     /**
      * Creates a new instance of <code>FedLibSystemProperties</code>
      */
@@ -47,9 +57,39 @@ public class FedLibSystemProperties implements ISystemProperties {
      * @param key Key to the properties.
      */
     public String get(String key) {
-        return SystemConfigurationUtil.getProperty(key);
+        return systemConfigProps.getProperty(key);
     }
-    
+
+    /**
+     * Initializes the properties to be used by Open Federation Library.
+     * Ideally this must be called first before any other method is called
+     * within Open Federation Library. This method provides a programmatic way
+     * to set the properties, and will override similar properties if loaded
+     * for a properties file.
+     *
+     * @param properties  properties for Open Federation Library
+     */
+    public static synchronized void initializeProperties(Properties properties){
+        Properties newProps = new Properties();
+        newProps.putAll(systemConfigProps);
+        newProps.putAll(properties);
+        systemConfigProps = newProps;
+    }
+
+    private static void initProperties() {
+        systemConfigProps = new Properties();
+        try {
+            ResourceBundle bundle =
+                ResourceBundle.getBundle(SYSTEM_CONFIG_PROPERTY_NAME);
+            Enumeration e = bundle.getKeys();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                systemConfigProps.put(key, bundle.getString(key));
+            }
+        } catch (MissingResourceException mrex) {
+        }
+    }
+
     /**
      * Returns server list.
      *

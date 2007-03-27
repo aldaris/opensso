@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.2 2006-11-01 05:12:05 veiming Exp $
+ * $Id: FederationPlugin.java,v 1.3 2007-03-27 06:03:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,12 +26,12 @@ package com.sun.identity.setup.plugin;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.configuration.FedLibSystemProperties;
 import com.sun.identity.saml.common.SAMLSiteID;
-import com.sun.identity.shared.configuration.ConfigurationFileLocator;
 import com.sun.identity.setup.ConfiguratorPlugin;
 import com.sun.identity.setup.ServicesDefaultValues;
 import com.sun.identity.setup.SetupConstants;
+import com.sun.identity.shared.configuration.ConfigurationFileLocator;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -69,7 +69,7 @@ public class FederationPlugin implements ConfiguratorPlugin {
             if (fin != null) {
                 Properties prop = new Properties();
                 prop.load(fin);
-                SystemConfigurationUtil.initializeProperties(prop);
+                FedLibSystemProperties.initializeProperties(prop);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultSPAdapter.java,v 1.1 2007-01-10 06:32:56 exu Exp $
+ * $Id: FSDefaultSPAdapter.java,v 1.2 2007-03-27 06:03:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,10 +116,11 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      * @param response servlet response
      * @param authnRequest the original authentication request sent from SP
      * @param authnResponse response from IDP if Browser POST or LECP profile
-     *          is used for the request, value will be null if Browser Artifact
-     *          profile is used.
-     * @param samlResponse response from IDP if Browser Artifact profile is used     *          for the request, value will be null if Browser POST or LECP
-     *          profile is used.
+     *        is used for the request, value will be null if Browser Artifact
+     *        profile is used.
+     * @param samlResponse response from IDP if Browser Artifact profile is used
+     *        for the request, value will be null if Browser POST or LECP
+     *        profile is used.
      * @exception FederationException if user want to fail the process.
      */
     public void preSSOFederationProcess(
@@ -129,8 +130,7 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
         FSAuthnRequest authnRequest,
         FSAuthnResponse authnResponse,
         FSResponse samlResponse)
-    throws FederationException
-    {
+    throws FederationException {
         FSUtils.debug.message("In FSDefaultSPAdapter.preSSOFederationProcess.");
     }
 
@@ -139,26 +139,26 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      * @param hostedEntityID provider ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
-     * @ssoToken   user's SSO token
+     * @param ssoToken user's SSO token
      * @param authnRequest the original authentication request sent from SP 
      * @param authnResponse response from IDP if Browser POST or LECP profile
-     *		is used for the request, value will be null if Browser Artifact
-     *		profile is used. 
+     *        is used for the request, value will be null if Browser Artifact
+     *        profile is used. 
      * @param samlResponse response from IDP if Browser Artifact profile is used
-     *		for the request, value will be null if Browser POST or LECP 
-     * 		profile is used.
+     *        for the request, value will be null if Browser POST or LECP 
+     *        profile is used.
      * @exception FederationException if user want to fail the process.
      * @return true if browser redirection happened, false otherwise.
      */
-    public boolean postSSOFederationSuccess(String hostedEntityID, 
-				HttpServletRequest request, 
-				HttpServletResponse response, 
-				Object ssoToken,
-				FSAuthnRequest authnRequest, 
-				FSAuthnResponse authnResponse,
-				FSResponse samlResponse)
-    throws FederationException 
-    {
+    public boolean postSSOFederationSuccess(
+        String hostedEntityID, 
+        HttpServletRequest request, 
+        HttpServletResponse response, 
+        Object ssoToken,
+        FSAuthnRequest authnRequest, 
+        FSAuthnResponse authnResponse,
+        FSResponse samlResponse
+    ) throws FederationException {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSDefaultSPAdapter.postFedSuccess, "
                 + "process " + hostedEntityID);
@@ -311,27 +311,26 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
     /**
      * Invokes this method if the Single-Sign-On or Federation fails 
      * for some reason.
-     * @param hostedProviderID provider ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
      * @param authnRequest the original authentication request sent from SP 
      * @param authnResponse response from IDP if Browser POST or LECP profile
-     *		is used for the request, value will be null if Browser Artifact
-     *		profile is used. 
+     *        is used for the request, value will be null if Browser Artifact
+     *        profile is used. 
      * @param samlResponse response from IDP if Browser Artifact profile is used
-     *		for the request, value will be null if Browser POST or LECP 
-     * 		profile is used.
+     *        for the request, value will be null if Browser POST or LECP 
+     *        profile is used.
      * @param failureCode an integer specifies the failure code.
      * @return true if browser redirection happened, false otherwise.
      */
     public boolean postSSOFederationFailure(String hostedEntityID, 
-				HttpServletRequest request, 
-				HttpServletResponse response, 
-				FSAuthnRequest authnRequest, 
-				FSAuthnResponse authnResponse,
-				FSResponse samlResponse,
-                                int failureCode)
-    {
+        HttpServletRequest request, 
+        HttpServletResponse response, 
+        FSAuthnRequest authnRequest, 
+        FSAuthnResponse authnResponse,
+        FSResponse samlResponse,
+        int failureCode
+    ) {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSDefaultSPAdapter.postFedFailure, "
                  + "process " + hostedEntityID
@@ -413,13 +412,14 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      * @param userDN DN of the user with whom name identifier registration
      *        performed
      * @param regRequest register name identifier request, value will be
-     *                null if the request object is not available
+     *        null if the request object is not available
      * @param regResponse register name identifier response, value will be
-     *          null if the response object is not available
-     * @param regProfile register name identifier profile used, one of following     *          IFSConstants.NAME_REGISTRATION_SP_HTTP_PROFILE
-     *          IFSConstants.NAME_REGISTRATION_SP_SOAP_PROFILE
-     *          IFSConstants.NAME_REGISTRATION_IDP_HTTP_PROFILE
-     *          IFSConstants.NAME_REGISTRATION_IDP_SOAP_PROFILE
+     *        null if the response object is not available
+     * @param regProfile register name identifier profile used, one of following
+     *        <code>IFSConstants.NAME_REGISTRATION_SP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.NAME_REGISTRATION_SP_SOAP_PROFILE</code>
+     *        <code>IFSConstants.NAME_REGISTRATION_IDP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.NAME_REGISTRATION_IDP_SOAP_PROFILE</code>
      */
     public void postRegisterNameIdentifierSuccess(
         String hostedProviderID,
@@ -444,10 +444,10 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      *        performed
      * @param notification federation termination notification message
      * @param termProfile federation termination profile used, one of following
-     *          IFSConstants.TERMINATION_SP_HTTP_PROFILE
-     *          IFSConstants.TERMINATION_SP_SOAP_PROFILE
-     *          IFSConstants.TERMINATION_IDP_HTTP_PROFILE
-     *          IFSConstants.TERMINATION_IDP_SOAP_PROFILE
+     *        <code>IFSConstants.TERMINATION_SP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.TERMINATION_SP_SOAP_PROFILE</code>
+     *        <code>IFSConstants.TERMINATION_IDP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.TERMINATION_IDP_SOAP_PROFILE</code>
      */
     public void postTerminationNotificationSuccess(
         String hostedProviderID,
@@ -473,10 +473,10 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      * @param logoutResponse single logout response, value will be
      *          null if the response object is not available
      * @param sloProfile single logout profile used, one of following
-     *          IFSConstants.LOGOUT_SP_REDIRECT_PROFILE
-     *          IFSConstants.LOGOUT_SP_SOAP_PROFILE
-     *          IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE
-     *          IFSConstants.LOGOUT_IDP_SOAP_PROFILE
+     *        <code>IFSConstants.LOGOUT_SP_REDIRECT_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_SP_SOAP_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_IDP_REDIRECT_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_IDP_SOAP_PROFILE</code>
      */
     public void preSingleLogoutProcess(
         String hostedProviderID,
@@ -503,10 +503,10 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
      * @param logoutResponse single logout response, value will be
      *          null if the response object is not available
      * @param sloProfile single logout profile used, one of following
-     *          IFSConstants.LOGOUT_SP_HTTP_PROFILE
-     *          IFSConstants.LOGOUT_SP_SOAP_PROFILE
-     *          IFSConstants.LOGOUT_IDP_HTTP_PROFILE
-     *          IFSConstants.LOGOUT_IDP_SOAP_PROFILE
+     *        <code>IFSConstants.LOGOUT_SP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_SP_SOAP_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_IDP_HTTP_PROFILE</code>
+     *        <code>IFSConstants.LOGOUT_IDP_SOAP_PROFILE</code>
      */
     public void postSingleLogoutSuccess(
         String hostedProviderID,

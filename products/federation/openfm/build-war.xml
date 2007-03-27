@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.7 2007-03-19 20:51:40 jonnelson Exp $
+   $Id: build-war.xml,v 1.8 2007-03-27 06:02:59 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -90,8 +90,8 @@
         </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/classes">
-            <fileset dir="${library.res.dir}" includes="*.properties">
-            </fileset>
+            <fileset dir="${library.res.dir}" includes="*.properties"
+                excludes="FederationConfig.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
             <fileset dir="${library.classes.dir}" />
             <fileset dir="${openfm.classes.dir}" />
@@ -191,6 +191,17 @@
             <arg value="${library.xml.dir}/jaxrpc-ri-runtime.xml" />
             <arg value="${war.package.dir}/WEB-INF/jaxrpc-ri-runtime.xml" />
             <arg value="&lt;/endpoints&gt;" />
+        </java>
+
+	<!--
+            remove duplicate entries in FederationConfig.properties against
+            AMConfig.properties
+        -->
+        <java classname="com.sun.identity.setup.RemoveDuplicateConfig" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="${war.package.dir}/WEB-INF/classes/AMConfig.properties" />
+            <arg value="${library.res.dir}/FederationConfig.properties" />
+            <arg value="${war.package.dir}/WEB-INF/classes/FederationConfig.properties" />
         </java>
 
 	<!-- update amConsoleConfig with federation tabs -->
