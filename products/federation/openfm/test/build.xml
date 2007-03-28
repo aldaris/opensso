@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-11-02 01:05:06 veiming Exp $
+   $Id: build.xml,v 1.3 2007-03-28 05:41:30 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -60,7 +60,9 @@
             <fileset dir="${openfm.classes.dir}" />
             <fileset dir="${library.classes.dir}" />
             <fileset dir="${library.res.dir}" />
+            <fileset dir="${library.res.i18n.dir}" />
             <fileset dir="${openfm.res.dir}" />
+            <fileset dir="${openfm.res.i18n.dir}" />
         </copy>
 
         <copy todir="${test.package.dir}/test/classes">

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.8 2007-03-27 06:02:59 veiming Exp $
+   $Id: build-war.xml,v 1.9 2007-03-28 05:41:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,7 +69,7 @@
             tofile="${war.cli.package.dir}/fmadm" />
         <copy file="${openfm.script.dir}/bin/fmadm.bat"
             tofile="${war.cli.package.dir}/fmadm.bat" />
-        <copy file="${openfm.res.dir}/FederationManagerCLI.properties"
+        <copy file="${openfm.res.i18n.dir}/FederationManagerCLI.properties"
             tofile="${war.cli.package.dir}/classes/FederationManagerCLI.properties" />
         <zip destfile="${fm.dist.dir}/fmadm.zip" basedir="${war.cli.package.dir}" />
         <checksum file="${fm.dist.dir}/fmadm.zip" algorithm="SHA" fileext=".sha" />
@@ -92,6 +92,8 @@
         <copy todir="${war.package.dir}/WEB-INF/classes">
             <fileset dir="${library.res.dir}" includes="*.properties"
                 excludes="FederationConfig.properties" />
+            <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
+            <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
             <fileset dir="${library.classes.dir}" />
             <fileset dir="${openfm.classes.dir}" />
@@ -263,7 +265,6 @@
             <classpath refid="build.class.path"/>
             <classpath>
                 <pathelement path="${war.package.dir}/WEB-INF/classes"/>
-                <pathelement path="resources"/>
             </classpath>
             <arg value="configuratorPlugins" />
             <arg value="fmConfiguratorPlugins" />
@@ -274,7 +275,6 @@
             <classpath refid="build.class.path"/>
             <classpath>
                 <pathelement path="${war.package.dir}/WEB-INF/classes"/>
-                <pathelement path="${library.res.dir}"/>
             </classpath>
             <arg value="serviceNames" />
             <arg value="fmServiceNames" />
@@ -296,7 +296,6 @@
             <classpath refid="build.class.path"/>
             <classpath>
                 <pathelement path="${war.package.dir}/WEB-INF/classes"/>
-                <pathelement path="${library.res.dir}"/>
             </classpath>
             <arg value="configuratorTagSwap" />
             <arg value="fmConfiguratorTagSwap" />

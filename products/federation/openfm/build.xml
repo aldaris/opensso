@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2007-03-14 19:33:19 jonnelson Exp $
+   $Id: build.xml,v 1.10 2007-03-28 05:41:06 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,7 +72,7 @@
         </javac>
         <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
             <classpath refid="build.class.path"/>
-            <arg value="${openfm.res.dir}"/>
+            <arg value="${openfm.res.i18n.dir}"/>
             <arg value="com.sun.identity.federation.cli.definition.FederationManager"/>
         </java>
         <java classname="com.sun.identity.cli.tools.DefinitionStubCreator">

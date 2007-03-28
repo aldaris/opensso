@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2006-11-02 01:05:03 veiming Exp $
+   $Id: build.xml,v 1.3 2007-03-28 05:41:04 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -71,7 +71,8 @@
 
         <copy todir="${test.package.dir}/classes">
             <fileset dir="${library.classes.dir}" />
-            <fileset dir="${library.res.dir}" />
+            <fileset dir="${library.res.dir}" includes="*.properties" />
+            <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
         </copy>
 
         <copy todir="${test.package.dir}/test/classes">

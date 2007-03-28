@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-02-15 21:48:02 qcheng Exp $
+   $Id: build.xml,v 1.2 2007-03-28 05:41:08 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,7 +61,7 @@
                 includes="com/sun/identity/saml2/idpdiscovery/*.class"/>
         </copy>
         <copy todir="${idpdiscovery.packages.dir}/WEB-INF/classes"
-            file="${library.res.dir}/libIDPDiscoveryConfig.properties"/>
+            file="${library.res.i18n.dir}/libIDPDiscoveryConfig.properties"/>
         <copy todir="${idpdiscovery.packages.dir}"
             file="${openfm.idpdiscovery.dir}/index.html"/>
         <copy todir="${idpdiscovery.packages.dir}/WEB-INF"
