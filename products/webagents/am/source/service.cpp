@@ -20,6 +20,7 @@
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
  */
+
 #include <climits>
 #include <ctime>
 #include <string>
@@ -945,8 +946,10 @@ Service::getPolicyResult(const char *userSSOToken,
     
     
     // Log:INFO Calling update_policy to get policy info.
+    uPolicyEntry = policyTable.find(ssoToken.getString());
     update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
+	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF,
+                  false, uPolicyEntry);
     
 
     policy_res->remote_user = NULL;
@@ -960,9 +963,9 @@ Service::getPolicyResult(const char *userSSOToken,
 	resources.resize(0);
 	results.resize(0);
 
-        uPolicyEntry = policyTable.find(ssoToken.getString());
+  /*      uPolicyEntry = policyTable.find(ssoToken.getString());
 	if(!uPolicyEntry) {
-	    /* Try once more to see whether we can fetch the policy entry */
+	    // Try once more to see whether we can fetch the policy entry 
             update_policy(ssoToken, resName, actionName, env, uSessionInfo,
                           mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, false);
 
@@ -973,7 +976,7 @@ Service::getPolicyResult(const char *userSSOToken,
 		    AM_POLICY_FAILURE);
 	    }
         }
-
+*/
  	// Assign the user's passwd to the remote user passwd field
  	if(policy_res->remote_user_passwd == NULL) {
  	    try {
@@ -1015,7 +1018,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	  if(resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    if (uPolicyEntry->getTree(rootRes,false) == NULL) {
 	      update_policy(ssoToken, resName, actionName, env, uSessionInfo,
-	            mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, true);
+	            mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF, true, uPolicyEntry);
 	      Log::log(logID, Log::LOG_WARNING,
 	              "%s:Result size is %d,tree not present for %s", func,
 	              results.size(),resName.c_str());
@@ -1054,7 +1057,7 @@ Service::getPolicyResult(const char *userSSOToken,
 		for(iter=resources.begin(); iter != resources.end(); ++iter) {
 		    uPolicyEntry->removePolicy(*iter);
 		}
-		update_policy_list(ssoToken, resources, actionName, env);
+		update_policy_list(ssoToken, resources, actionName, env, uPolicyEntry);
 		justUpdated = true;
 		continue;
 	    } else break;
@@ -1155,63 +1158,74 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
 		       policy_fetch_scope_t scope,
-		       bool refetchPolicy)
+		       bool refetchPolicy,
+                       PolicyEntryRefCntPtr &policyEntry)
 {
     am_status_t status;
     bool policyUpdated = false;
-    PolicyEntryRefCntPtr policyEntry;
     string func("Service::update_policy");
+    bool isNewEntry = false;
     Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Executing update_policy(%s, %s, %s, %d)",
 	     ssoTok.getString().c_str(), resName.c_str(),
 	     actionName.c_str(), scope);
 
-    if (!refetchPolicy) {
-        policyEntry = policyTable.find(ssoTok.getString());
-
-        if (policyEntry) {
-	    
-            // Do naming query, if notification is not enabled or
-            // valid naming information is not present in the policyEntry.
-            if(!policyEntry->namingInfo.isValid()) {
-	        if(AM_SUCCESS != (status = namingSvc.getProfile(namingSvcInfo,
-					   ssoTok.getString(),
-					   policyEntry->cookies,
-					   policyEntry->namingInfo))) {
-	            throw InternalException(func, "Naming query failed.",
-				    status);
-	        }
-           }
-           if(policyEntry) { 
-               status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), 
-					  ssoTok.getString(), 
-                                          policyEntry->cookies, true, sessionInfo, 
-                                          false, false);
-    
-               if (status != AM_SUCCESS) {
-                    // if agent could not contact session service to validate
-	            // user, and get any NSPR error, it is considered equivalent
-	            // to the session being invalid.
-                    if (AM_NSPR_ERROR == status) {
-                        status = AM_INVALID_SESSION;
-                    }
-	            throw InternalException(func, "Session query failed.", status);
-               }
-               return;
-           }
-       } 
+  //      policyEntry = policyTable.find(ssoTok.getString());
+   
+    if (policyEntry == NULL) {
+        policyEntry = new PolicyEntry(ssoTok, env, profileAttributesMap, rsrcTraits);
+        isNewEntry = true;
     }
-    policyUpdated = do_update_policy(ssoTok, resName, actionName, env, sessionInfo,scope);
-    /* if server is in the process of initializing the
-     * appssotoken the do_update_policy will return false
-     * retry do_update_policy 
-     */
 
-    if(!policyUpdated) {
-         policyUpdated = do_update_policy(ssoTok, resName, actionName, env, sessionInfo,scope);
-	 if(!policyUpdated) {
-	     /*throw error message policy not updated even after refresh */
-         }
+	    
+    // Do naming query, if notification is not enabled or
+    // valid naming information is not present in the policyEntry.
+    if(!policyEntry->namingInfo.isValid()) {
+        if(AM_SUCCESS != (status = namingSvc.getProfile(namingSvcInfo,
+				   ssoTok.getString(),
+				   policyEntry->cookies,
+				   policyEntry->namingInfo))) {
+           throw InternalException(func, "Naming query failed.",
+				    status);
+	}
+    } 
+            
+    status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), 
+				  ssoTok.getString(), 
+                                  policyEntry->cookies, true, sessionInfo, 
+                                  false, false);
+    
+    if (status != AM_SUCCESS) {
+        // if agent could not contact session service to validate
+        // user, and get any NSPR error, it is considered equivalent
+	// to the session being invalid.
+        if (AM_NSPR_ERROR == status) {
+                 status = AM_INVALID_SESSION;
+        }
+	throw InternalException(func, "Session query failed.", status);
+    }
+
+    if (refetchPolicy) {       
+        
+        policyUpdated = do_update_policy(ssoTok, resName, actionName, env,
+                                             sessionInfo, scope, policyEntry);
+
+        /* if server is in the process of initializing the
+         * appssotoken the do_update_policy will return false
+         * retry do_update_policy 
+         */
+
+        if(!policyUpdated) {
+            policyUpdated = do_update_policy(ssoTok, resName, actionName, env,
+                                                  sessionInfo, scope, policyEntry);
+	    if(!policyUpdated) {
+	      /*throw error message policy not updated even after refresh */
+            }
+        }
+    }
+
+    if (isNewEntry) {
+        policyTable.insert(policyEntry->getSSOToken().getString(), policyEntry);
     }
     return;
 }
@@ -1221,51 +1235,22 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
-		       policy_fetch_scope_t scope)
+		       policy_fetch_scope_t scope,
+                       PolicyEntryRefCntPtr& policyEntry)
 {
     am_status_t status;
     string func("Service::do_update_policy");
-    PolicyEntryRefCntPtr policyEntry; 
 
-    /* Create new policy entry */
-    policyEntry = new PolicyEntry(ssoTok, env, profileAttributesMap, rsrcTraits);
-
-    // Do naming query, if notification is not enabled or
-    // valid naming information is not present in the policyEntry.
-    if(!policyEntry->namingInfo.isValid()) {
-	if(AM_SUCCESS != (status = namingSvc.getProfile(namingSvcInfo,
-					   ssoTok.getString(),
-					   policyEntry->cookies,
-					   policyEntry->namingInfo))) {
-	    throw InternalException(func, "Naming query failed.",
-				    status);
-	}
-    }
-    
-    status =  mSSOTokenSvc.getSessionInfo(policyEntry->namingInfo.getSessionSvcInfo(), 
-					  ssoTok.getString(), 
-                                          policyEntry->cookies, true, sessionInfo, 
-                                          false, false);
-    
-    if (status != AM_SUCCESS) {
-        // if agent could not contact session service to validate
-	// user, and get any NSPR error, it is considered equivalent
-	// to the session being invalid.
-        if (AM_NSPR_ERROR == status) {
-            status = AM_INVALID_SESSION;
-        }
-	throw InternalException(func, "Session query failed.", status);
-    }
-
-   
-   if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
-       Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and "
+    if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
+        Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and "
                 "response attributes fetch mode is set to NONE");
-   } else {
+        return true;
+    } 
+
     // get the resource root.
     std::string rootRes;
     if(scope == SCOPE_SUBTREE) {
-	ResourceName resObj(resName);
+        ResourceName resObj(resName);
 	if(!resObj.getResourceRoot(rsrcTraits, rootRes)) {
 	    throw InternalException(func,
 				    "ResourceName::getResourceRoot() failed.",
@@ -1281,8 +1266,8 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
     // policyEntry->cookies
      
     // do policy
-   string xmlData;
-   if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
+    string xmlData;
+    if((status = policySvc->getPolicyDecisions(policyEntry->namingInfo.getPolicySvcInfo(),
 					       policyEntry->getSSOToken(),
 					       policyEntry->cookies,
 					       sessionInfo,
@@ -1345,13 +1330,9 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 	// Log:INFO
 	process_policy_response(policyEntry, env, xmlData);
     }
-  }
-
-    /* Insert entry into the policy table */
-    policyTable.insert(policyEntry->getSSOToken().getString(), policyEntry);
-
-  Log::log(logID, Log::LOG_INFO, "Successful return from update_policy().");
-  return true;
+  
+    Log::log(logID, Log::LOG_INFO, "Successful return from do_update_policy().");
+    return true;
 }
 
 /*
@@ -1364,7 +1345,8 @@ void
 Service::update_policy_list(const SSOToken &ssoTok,
 			    const vector<string> &resList,
 			    const string &actionName,
-			    const KeyValueMap &env)
+			    const KeyValueMap &env,
+                            PolicyEntryRefCntPtr &policyEntry)
 {
     std::vector<string>::const_iterator iter;
     policy_fetch_scope_t scope = SCOPE_SELF;
@@ -1375,7 +1357,8 @@ Service::update_policy_list(const SSOToken &ssoTok,
     
     SessionInfo sessionInfo;
     for(iter = resList.begin(); iter != resList.end(); iter++) {
-	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope,true);
+	update_policy(ssoTok, *iter, actionName, env, sessionInfo, scope,
+                      true, policyEntry);
     }
     return;
 }

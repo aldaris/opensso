@@ -96,7 +96,8 @@ NamingService::NamingService(const Properties& props,
     : BaseService("NamingService", props, cert_passwd, cert_nick_name, 
 		  trustServerCert),
       ignoreNamingService(props.getBool(AM_COMMON_IGNORE_NAMING_SERVICE_PROPERTY, false)),
-      namingURL(props.get(AM_COMMON_NAMING_URL_PROPERTY))
+      namingURL(props.get(AM_COMMON_NAMING_URL_PROPERTY)),
+      ignorePreferredNamingURL(props.getBool(AM_COMMON_IGNORE_PREFERRED_NAMING_URL_PROPERTY, true))
 {
 }
 
@@ -237,6 +238,8 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 
 	bodyChunkList.push_back(sessidPrefixChunk);
 	bodyChunkList.push_back(BodyChunk(ssoToken));
+
+        if(!ignorePreferredNamingURL) {
 	bodyChunkList.push_back(preferredNamingPrefixChunk);
 
 	url_length = strlen(namingURL.c_str());
@@ -266,6 +269,7 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 	if (preferredNamingURL != NULL) {
 	    bodyChunkList.push_back(BodyChunk(preferredNamingURL));
 	    free(preferredNamingURL);
+        }
         }
 	bodyChunkList.push_back(suffixChunk);
 

@@ -311,76 +311,106 @@ BaseService::doRequest(const ServiceInfo& service,
 			"BaseService::doRequest(): Using server: %s.",
 			iter->getURL().c_str());
             }
-	    try {
-		Connection conn(*iter, certDBPasswd,
+
+            // retry to connect to server before marking it as down.
+            // making the number of attempts configurable may have a negative
+            // side effect on performance, if the the value is a high number.
+            int retryAttempts = 3;
+            int retryCount = 0;
+            while(retryCount < retryAttempts) {
+                retryCount++;
+
+	        try {
+                    Connection conn(*iter, certDBPasswd,
 				(cert_nick_name.size()>0)?cert_nick_name:certNickName,
 				alwaysTrustServerCert);
-		const char *operation = "sending to";
+		    const char *operation = "sending to";
 
-		Http::HeaderList headerList;
-		Http::Cookie hostHeader("Host", (*iter).getHost());
-		headerList.push_back(hostHeader);
-		if(Log::isLevelEnabled(logModule, Log::LOG_MAX_DEBUG)) {
-		    std::string commString;
-		    for(std::size_t i = 0; i < bodyChunkList.size(); ++i) {
-			if(!bodyChunkList[i].secure) {
-			    commString.append(bodyChunkList[i].data);
-			} else {
-			    commString.append("<secure data>");
-			}
-		    }
-		    for(std::size_t commPos = commString.find("%");
-			commPos != std::string::npos &&
+		    Http::HeaderList headerList;
+		    Http::Cookie hostHeader("Host", (*iter).getHost());
+		    headerList.push_back(hostHeader);
+		    if(Log::isLevelEnabled(logModule, Log::LOG_MAX_DEBUG)) {
+		        std::string commString;
+		        for(std::size_t i = 0; i < bodyChunkList.size(); ++i) {
+			    if(!bodyChunkList[i].secure) {
+			        commString.append(bodyChunkList[i].data);
+			    } else {
+			        commString.append("<secure data>");
+			    }
+		        }
+		        for(std::size_t commPos = commString.find("%");
+		    	    commPos != std::string::npos &&
 			    commPos < commString.size();
-			commPos = commString.find("%", commPos)) {
-			commString.replace(commPos, 1, "%%");
-			commPos += 2;
-		    }
-		    Log::log(logModule, Log::LOG_MAX_DEBUG,
+			    commPos = commString.find("%", commPos)) {
+			    commString.replace(commPos, 1, "%%");
+			    commPos += 2;
+		        }
+		        Log::log(logModule, Log::LOG_MAX_DEBUG,
 			     commString.c_str());
-		}
-		status = sendRequest(conn, headerPrefix, iter->getURI(),
+		    }
+		    status = sendRequest(conn, headerPrefix, iter->getURI(),
 				     uriParameters, headerList, cookieList,
 				     contentLineChunk, headerSuffix,
 				     bodyChunkList);
-		if (AM_SUCCESS == status) {
-		    operation = "receiving from";
-		    status = response.readAndParse(logModule, conn,
-						   initialBufferLen);
 		    if (AM_SUCCESS == status) {
-			Log::log(logModule, Log::LOG_MAX_DEBUG, "%.*s",
+		        operation = "receiving from";
+		        status = response.readAndParse(logModule, conn,
+						   initialBufferLen);
+		        if (AM_SUCCESS == status) {
+			    Log::log(logModule, Log::LOG_MAX_DEBUG, "%.*s",
 				 response.getBodyLen(), response.getBodyPtr());
+		        }
 		    }
-		}
 
-		if (AM_NSPR_ERROR == status) {
-		    PRErrorCode nspr_code = PR_GetError();
-		    Log::log(logModule, Log::LOG_ALWAYS,
+		    if (AM_NSPR_ERROR == status) {
+		        PRErrorCode nspr_code = PR_GetError();
+		        Log::log(logModule, Log::LOG_ALWAYS,
 			     "BaseService::doRequest() NSPR failure while "
 			     "%s %s, error = %s", operation,
 			     (*iter).toString().c_str(), 
 			     PR_ErrorToName(nspr_code));
-		}
+		    }
 		
-		if (AM_SUCCESS == status) {
-		    if(serverInfo != NULL) *serverInfo = &(*iter);
-		    break;
-		} else {
-		    svrInfo.markServerDown(poll_primary_server);
-		}
-	    } catch (const NSPRException& exc) {
-		Log::log(logModule, Log::LOG_DEBUG,
+		    if (AM_SUCCESS == status) {
+		        if(serverInfo != NULL) *serverInfo = &(*iter);
+		            break;
+		    } else {
+                        if(retryCount < retryAttempts) {
+                            continue;
+                        } else {
+                           Log::log(logModule, Log::LOG_DEBUG,
+                               "BaseService::doRequest() Invoking markSeverDown");
+                           svrInfo.markServerDown(poll_primary_server);
+                        }
+		    }
+	        } catch (const NSPRException& exc) {
+		    Log::log(logModule, Log::LOG_DEBUG,
 			 "BaseService::doRequest() caught %s: %s called by %s "
 			 "returned %s", exc.what(), exc.getNsprMethod(),
 			 exc.getThrowingMethod(), 
 			 PR_ErrorToName(exc.getErrorCode()));
-                Log::log(logModule, Log::LOG_DEBUG, 
-                   "BaseService::doRequest() Invoking markSeverDown");
-		svrInfo.markServerDown(poll_primary_server);
-		status = AM_NSPR_ERROR;
-		continue;
-	    }
-	}
+
+                   if(retryCount < retryAttempts) {
+		       status = AM_NSPR_ERROR;
+                       continue;
+                    } else {
+                       Log::log(logModule, Log::LOG_DEBUG,
+                           "BaseService::doRequest() Invoking markSeverDown");
+                       svrInfo.markServerDown(poll_primary_server);
+		       status = AM_NSPR_ERROR;
+                    }
+	        }
+            } //end of while
+
+            if (AM_SUCCESS == status) {
+               if(serverInfo != NULL) *serverInfo = &(*iter);
+                    break;
+            }
+            if (status = AM_NSPR_ERROR) {
+               continue;
+            }
+
+	} // end of for
     } else {
 	status = AM_BUFFER_TOO_SMALL;
     }

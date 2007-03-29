@@ -17,15 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFinder.java,v 1.1 2007-01-17 23:15:24 subbae Exp $
+ * $Id: ConfigFinder.java,v 1.2 2007-03-29 20:38:13 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.agents.install.sjsws;
-
+import java.net.InetAddress;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.configurator.IDefaultValueFinder;
+import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.util.OSChecker;
 
 
@@ -51,7 +52,7 @@ public class ConfigFinder implements IDefaultValueFinder,
         if (value != null) {
             result = value;
         } else {
-            result = getDefaultConfigDirectoryPath(state);
+            result = getDefaultConfigDirectoryPath();
         }
         
         return result;
@@ -60,17 +61,27 @@ public class ConfigFinder implements IDefaultValueFinder,
     /**
      * Returns server instance's config directory.
      */
-    private String getDefaultConfigDirectoryPath(IStateAccess state) {
-        String result =  null;
+    private String getDefaultConfigDirectoryPath() {
+        String result = null;
+        String localHost = "localhost";
+        try {
+            localHost = InetAddress.getLocalHost().getHostName();
+        } catch (Exception ex) {
+            // Better not throw an ugly exception while trying to get
+            // default value
+            Debug.log("ConfigFinder.getDefaultConfigDirectoryPath " +
+                " exception caught : " + ex.getMessage());
+        }
 
         if (OSChecker.isWindows()) {
-            result = STR_SWS_CONFIG_DIR_WINDOWS;
-        } else if (OSChecker.isSolaris()){
-            result = STR_SWS_CONFIG_DIR_SOLARIS;
-        } else if (OSChecker.isLinux()) {
-            result = STR_SWS_CONFIG_DIR_LINUX;
+                result = "C:\\Program Files\\Sun\\JavaES5\\WebServer7\\"
+                + "https-" + localHost + "\\config";
+        } else {
+            result = "/var/opt/SUNWwbsvr7/"
+                + "https-" + localHost + "/config";
         }
-        
+
         return result;
     }
+
 }

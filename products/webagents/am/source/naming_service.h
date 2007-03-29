@@ -76,6 +76,11 @@ private:
     static const std::string loadbalancerCookieAttribute;
     static const std::string invalidSessionMsgPrefix;
     static const std::string invalidSessionMsgSuffix;
+
+    // preferred naming url check
+    // if set to false, preferredNamingURL will not be sent as 
+    // part of naming request.
+    bool ignorePreferredNamingURL;
 };
 
 END_PRIVATE_NAMESPACE

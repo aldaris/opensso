@@ -128,17 +128,20 @@ class Service {
 		       const KeyValueMap &,
                        SessionInfo &,
 		       policy_fetch_scope_t scope,
-		       bool refetchPolicy);
+		       bool refetchPolicy,
+                       PolicyEntryRefCntPtr &);
 bool
 Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 		       const string &actionName,
 		       const KeyValueMap &env,
                        SessionInfo &sessionInfo,
-		       policy_fetch_scope_t scope);
+		       policy_fetch_scope_t scope,
+                       PolicyEntryRefCntPtr &);
 
     void update_policy_list(const SSOToken &,
 			    const std::vector<std::string> &,
-			    const std::string&, const KeyValueMap &);
+			    const std::string&, const KeyValueMap &,
+                            PolicyEntryRefCntPtr &);
 
     void process_policy_response(PolicyEntryRefCntPtr,
 				 const KeyValueMap &,

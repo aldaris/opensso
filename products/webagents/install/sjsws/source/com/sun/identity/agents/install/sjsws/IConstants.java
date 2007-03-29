@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConstants.java,v 1.1 2007-01-17 23:15:25 subbae Exp $
+ * $Id: IConstants.java,v 1.2 2007-03-29 20:38:13 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,14 +38,6 @@ public interface IConstants {
     
     /** Field FILE_SEP **/
     //public static final String FILE_SEP = "/";
-    
-    
-    public static final String STR_SWS_CONFIG_DIR_WINDOWS =
-            "C:\\Sun\\Web Server7\\config";
-    public static final String STR_SWS_CONFIG_DIR_SOLARIS =
-            "/var/opt/SUNWwbsvr7/config";
-    public static final String STR_SWS_CONFIG_DIR_LINUX	=
-            "/var/opt/SUNWwbsvr7/config";
     
     public static final String STR_SWS_MAGNUS_FILE = "magnus.conf";
     public static final String STR_SWS_OBJ_FILE = "obj.conf";

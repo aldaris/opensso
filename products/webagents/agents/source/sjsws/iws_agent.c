@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.2 2007-01-30 21:11:49 subbae Exp $
+ * $Id: iws_agent.c,v 1.3 2007-03-29 20:38:11 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -86,7 +86,10 @@ int send_data(const char *msg, Session *sn, Request *rq) {
 	/* Write the output using net_write*/
 	if (IO_ERROR == net_write(sn->csd, (char *)msg, len)) {
 	    retVal = REQ_EXIT;
-	}
+        } else {
+            retVal = net_flush(sn->csd);
+        }
+
     }
     return retVal;
 }
