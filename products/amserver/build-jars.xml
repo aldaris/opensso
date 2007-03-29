@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.1 2006-10-09 19:14:44 veiming Exp $
+   $Id: build-jars.xml,v 1.2 2007-03-29 19:39:19 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,6 +37,12 @@
     </fail>
 
     <target name="all" depends="preparebuild">
+        <antcall target="openssojar" />
+        <antcall target="openssotestjar" />
+        <antcall target="openssosrcjar" />
+    </target>
+
+    <target name="openssojar" depends="preparebuild">
         <jar destfile="${amserver.dist.dir}/opensso.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
@@ -45,15 +51,24 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" />
-            <zipfileset dir="${amserver.script.dir}" prefix="script" />
-            <zipfileset dir="${amserver.res.i18n.dir}" />
-            <zipfileset dir="${amserver.console.res.dir}" />
+            <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console" />
             <zipfileset dir="${amserver.www.dir}" prefix="www" />
         </jar>
+        <jar destfile="${amserver.dist.dir}/console.jar">
+            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/console/**" />
+            <zipfileset dir="${amserver.console.res.dir}" />
+            <zipfileset dir="${amserver.console.xml.dir}/components"
+                prefix="com/sun/identity/console"/>
+        </jar>
+
         <checksum file="${amserver.dist.dir}/opensso.jar" 
             algorithm="SHA" fileext=".sha" />
+        <checksum file="${amserver.dist.dir}/console.jar" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
 
+
+    <target name="openssotestjar" depends="preparebuild">
         <jar destfile="${amserver.dist.dir}/opensso-test.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
@@ -71,7 +86,9 @@
         </jar>
         <checksum file="${amserver.dist.dir}/opensso-test.jar" 
             algorithm="SHA" fileext=".sha" />
+    </target>
 
+    <target name="openssosrcjar" depends="preparebuild">
         <jar destfile="${amserver.dist.dir}/opensso-src.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>

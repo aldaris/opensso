@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2007-03-21 22:33:52 veiming Exp $
+   $Id: build.xml,v 1.19 2007-03-29 19:39:19 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -63,8 +63,9 @@
             <lib dir="${jatolib.dir}">
                 <include name="jato.jar" />
             </lib>
-            <classes dir="${amserver.built.dir}/classes" />
-            <classes dir="${sharedlib.classes.dir}" />
+            <lib dir="${amserver.dist.dir}" includes="opensso.jar" />
+            <lib dir="${amserver.dist.dir}" includes="console.jar" />
+            <lib dir="${sharedlib.dist.dir}" includes="opensso-sharedlib.jar" />
 
             <zipfileset dir="${amserver.www.dir}/authentication/UI">
                 <include name="index.html" />
@@ -146,10 +147,9 @@
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/xml" prefix="WEB-INF/com_sun_web_ui" />
             <zipfileset dir="${amserver.console.xml.dir}" prefix="WEB-INF/classes">
-		<include name="amAccessControl.xml" />
-		<include name="amConsoleConfig.xml" />
+                <include name="amAccessControl.xml" />
+                <include name="amConsoleConfig.xml" />
             </zipfileset>
-	    <zipfileset dir="${amserver.console.xml.dir}/components" prefix="WEB-INF/classes/com/sun/identity/console" />
             <zipfileset dir="${amserver.www.dir}/console" prefix="console">
                 <exclude name="html" />
                 <exclude name="html/*" />

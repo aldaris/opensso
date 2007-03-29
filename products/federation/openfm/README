@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2006-10-30 23:17:38 qcheng Exp $
+$Id: README,v 1.2 2007-03-29 19:39:20 veiming Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -52,9 +52,10 @@ is setup correctly pointing to its location.
 %% 2.3 Open Federation depends on "amserver" branch of openSSO. You could
        - check out the "amserver" branch source code 
        or
-       - download opensso.war, opensso.jar, opensso-test.jar, amclientsdk.jar
-         from https://opensso.dev.java.net/public/use/index.html
-         and copy to "extlib" directory.
+       - download opensso.war, console.jar, opensso.jar, opensso-test.jar,
+         amclientsdk.jar from
+         https://opensso.dev.java.net/public/use/index.html and copy to
+         "extlib" directory.
 
 %% 3. Building the workspace
 
