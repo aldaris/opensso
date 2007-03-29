@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-03-21 22:33:51 veiming Exp $
+   $Id: build.xml,v 1.3 2007-03-29 22:54:42 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -87,7 +87,8 @@
         </copy>
         <copy todir="${amadm.tools.path}${file.separator}${amadm.locale.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
-            <fileset dir="${amadm.i18n.path}" includes="*.properties"/>
+            <fileset dir="${amadm.i18n.path}" includes="*.properties"
+                 excludes="amConsole.properties "/>
             <fileset dir="${amadm.dtd.path}" includes="*.dtd"/>
         </copy>
         <copy todir="${amadm.tools.path}" overwrite="yes" flatten="yes"

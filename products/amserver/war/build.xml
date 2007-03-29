@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2007-03-29 19:39:19 veiming Exp $
+   $Id: build.xml,v 1.20 2007-03-29 22:54:42 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,7 +49,8 @@
     </target>
     <target name="tools">
         <ant antfile="${amserver.src.dir}/com/sun/identity/tools/bundles/build.xml"
-             dir="${amserver.src.dir}/com/sun/identity/tools/bundles"/>
+             dir="${amserver.src.dir}/com/sun/identity/tools/bundles" 
+             inheritRefs="true"/>
     </target>
 
     <target name="war">
@@ -217,9 +218,8 @@
         <copy file="${amserver.script.dir}/bin/README.amadm" tofile="${amserver.cli.package.dir}/README" />
                                                                                
         <copy todir="${amserver.cli.package.dir}/classes">
-            <fileset dir="${amserver.built.res.dir}">
-                <exclude name="*.xml" />
-            </fileset>
+            <fileset dir="${amserver.built.res.dir}"
+                excludes="*.xml" />
             <fileset dir="${amserver.warbase.dir}/ldif">
                 <include name="am_sm_ad_schema.ldif" />
                 <include name="am_sm_ds_schema.ldif" />
