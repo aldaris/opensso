@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.1 2007-01-17 23:15:18 subbae Exp $
+# $Id: Makefile,v 1.2 2007-03-29 22:53:20 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -40,7 +40,7 @@ ifeq ($(OS_ARCH), WINNT)
 CFLAGS += -DXP_WIN32
 ES6_CFLAGS += -I$(SJSWS_INC_DIR)
 LDFLAGS += -L$(SJSWS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(NSS_LIB_DIR) -L$(LIBXML_LIB_DIR)
-LDLIBS += -luser32 -lamsdk_static -lns-httpd30 -llibnspr4 -llibplds4 -llibplc4 -lnss3 -lssl3 -llibxml2
+LDLIBS += -luser32 -lamsdk_static -lns-httpd40 -llibnspr4 -llibplds4 -llibplc4 -lnss3 -lssl3 -llibxml2
 endif
 
 ifeq ($(OS_ARCH), SunOS)
