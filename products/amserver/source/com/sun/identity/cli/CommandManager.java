@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.5 2007-03-21 22:33:40 veiming Exp $
+ * $Id: CommandManager.java,v 1.6 2007-03-29 22:53:37 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,8 +122,11 @@ public class CommandManager {
             if (exitCode == ExitCodes.INCORRECT_OPTION) {
                 String scmd = e.getSubcommandName();
                 if (scmd != null) {
-                    UsageFormatter.getInstance().format(
-                        this, getSubCommand(scmd));
+                    SubCommand cmd = getSubCommand(scmd);
+
+                    if (cmd != null) {
+                        UsageFormatter.getInstance().format(this, cmd);
+                    }
                 } else {
                     UsageFormatter.getInstance().format(this);
                 }
