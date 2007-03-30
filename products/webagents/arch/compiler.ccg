@@ -1,27 +1,31 @@
 #
-# rcsid = $Id: compiler.ccg,v 1.1 2006-05-03 22:43:32 madan_ranganath Exp $
-# Copyright © 2006 Sun Microsystems, Inc. All rights reserved.
-# 
-# U.S. Government Rights - Commercial software. Government users are
-# subject to the Sun Microsystems, Inc. standard license agreement and
-# applicable provisions of the FAR and its supplements. Use is subject to
-# license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
-# trademarks or registered trademarks of Sun Microsystems, Inc. in the
-# U.S. and other countries.
-# 
-# Copyright © 2006 Sun Microsystems, Inc. Tous droits réservés.
-# 
-# Droits du gouvernement américain, utlisateurs gouvernmentaux - logiciel
-# commercial. Les utilisateurs gouvernmentaux sont soumis au contrat de
-# licence standard de Sun Microsystems, Inc., ainsi qu aux dispositions en
-# vigueur de la FAR [ (Federal Acquisition Regulations) et des suppléments
-# à celles-ci.
-# 
-# Distribué par des licences qui en restreignent l'utilisation. Sun, Sun
-# Microsystems, le logo Sun et Sun ONE sont des marques de fabrique ou des
-# marques déposées de Sun Microsystems, Inc. aux Etats-Unis et dans
-# d'autres pays.
-# 
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
+# compliance with the License.
+#
+# You can obtain a copy of the License at
+# https://opensso.dev.java.net/public/CDDLv1.0.html or
+# opensso/legal/CDDLv1.0.txt
+# See the License for the specific language governing
+# permission and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# Header Notice in each file and include the License file
+# at opensso/legal/CDDLv1.0.txt.
+# If applicable, add the following below the CDDL Header,
+# with the fields enclosed by brackets [] replaced by
+# your own identifying information:
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# $Id: compiler.ccg,v 1.2 2007-03-30 01:25:18 subbae Exp $
+#
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+#
 #
 #
 # Generalized C/C++ interface for Microsoft C/C++
@@ -55,7 +59,7 @@ if (! LibPath)
         LibPath = getenv(LibPathVarName);
     fi
 fi
-LibCName = "msvcrt.lib msvcirt.lib msvcprt.lib";
+LibCName = "msvcrt.lib msvcprt.lib";
 LinkType = "";
 Subsystem = "console";
 Output = "";
@@ -77,7 +81,7 @@ do
 		debug = 1;
 		coptions |= "-Zi";
 		ldoptions |= "-debug";
-		LibCName = "msvcrtd.lib msvcirtd.lib msvcprtd.lib";
+		LibCName = "msvcrt.lib msvcprt.lib";
 	elif (i == "-S")		# assembler listing
 		coptions |= "/FAs";
 	elif (substr(i,1,11) == "-subsystem:")
@@ -87,7 +91,7 @@ do
 		if (substr(LibCName,-4) != ".lib")
 			LibCName |= ".lib";
 		fi
-		LibCName |= " msvcirt.lib";
+		LibCName |= " msvcrt.lib";
 	elif (substr(i,-2) == ".c")
 		Srcs |= i;
 		opath = filepath(substr(i,1,length(i)-1));
