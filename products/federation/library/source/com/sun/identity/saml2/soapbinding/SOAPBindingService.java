@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPBindingService.java,v 1.1 2007-03-29 23:28:05 bina Exp $
+ * $Id: SOAPBindingService.java,v 1.2 2007-03-30 09:07:41 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,8 +122,8 @@ public class SOAPBindingService implements ConfigurationListener {
                 }
             } else {
                 if (debug.warningEnabled()) {
-                    debug.warning(classMethod + Invalid syntax for " +
-                                  "Request Handler List: " +  value);
+                    debug.warning(classMethod + "Invalid syntax for " +
+                        "Request Handler List: " + value);
                 }
             }
         }
