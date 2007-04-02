@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.4 2007-03-09 05:51:04 veiming Exp $
+ * $Id: SPSSOFederate.java,v 1.5 2007-04-02 23:34:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.datastruct.OrderedSet;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
@@ -634,26 +633,31 @@ public class SPSSOFederate {
 
     private static String getRelayStateID(String relayState,
                                           String requestID) {
-        String relayStateID=null;
-        if ((SPCache.relayStateHash != null) && 
-            (SPCache.relayStateHash.containsValue(relayState))) {
-            Enumeration rElements = SPCache.relayStateHash.keys();
-            while (rElements.hasMoreElements()) {
-                relayStateID = (String) rElements.nextElement();
-                String value = 
-                            (String) SPCache.relayStateHash.get(relayStateID);
-                if (value != null && value.equals(relayState)) {
-                    break;
+        String relayStateID = null;
+        
+        if (SPCache.relayStateHash != null) {
+            Enumeration e = SPCache.relayStateHash.keys();
+            while (e.hasMoreElements() && (relayStateID == null)) {
+                String id = (String)e.nextElement();
+                CacheObject cacheObj = (CacheObject)SPCache.relayStateHash.get(
+                    id);
+                if (cacheObj != null) {
+                    String value = (String)cacheObj.getObject();
+                    if ((value != null) && value.equals(relayState)) {
+                        relayStateID = id;
+                    }
                 }
             }
         }
         if (relayStateID == null) {
             relayStateID = requestID;
-            SPCache.relayStateHash.put(relayStateID,relayState);
+            SPCache.relayStateHash.put(relayStateID, 
+                new CacheObject(relayState));
         }
         if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message("SPSSOFederate: RelayStateHash : " 
-                    + SPCache.relayStateHash);
+            SAML2Utils.debug.message(
+                "SPSSOFederate.getRelayStateID: RelayStateHash : " + 
+                SPCache.relayStateHash);
         }
         return relayStateID;
     }

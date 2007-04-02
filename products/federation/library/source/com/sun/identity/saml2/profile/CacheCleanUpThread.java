@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheCleanUpThread.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
+ * $Id: CacheCleanUpThread.java,v 1.3 2007-04-02 23:34:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,22 +38,22 @@ import com.sun.identity.saml2.common.SAML2Utils;
  */
 public class CacheCleanUpThread extends Thread {
 
-    private Integer interval =
-                new Integer(SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT);
+    private int interval = SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
 
     /**
      *  Constructor.
      */
     public CacheCleanUpThread() {
         String intervalStr = SystemPropertiesManager.get(
-                                SAML2Constants.CACHE_CLEANUP_INTERVAL);
+            SAML2Constants.CACHE_CLEANUP_INTERVAL);
+        
         try {
             if (intervalStr != null && intervalStr.length() != 0) {
-                int value = Integer.parseInt(intervalStr);
-                if (value < 0) {
-                    value = SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+                interval = Integer.parseInt(intervalStr);
+                if (interval < 0) {
+                    interval = 
+                        SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
                 }
-                interval = new Integer(value);
             }
         } catch (NumberFormatException e) {
             if (SAML2Utils.debug.messageEnabled()) {
@@ -76,19 +76,13 @@ public class CacheCleanUpThread extends Thread {
             cleanup(SPCache.requestHash, now);
             cleanup(SPCache.responseHash, now);
             cleanup(SPCache.mniRequestHash, now);
+            cleanup(SPCache.relayStateHash, now);
             cleanup(IDPCache.authnRequestCache, now);
-
-            nextRun = System.currentTimeMillis() +
-                                (interval.intValue()) * 1000;
+            
             try {
-                sleeptime = nextRun - System.currentTimeMillis();
-                if (sleeptime > 0) {
-                    sleep(sleeptime);
-                }
+                sleep(interval *1000);
             } catch (Exception e) {
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message("CacheCleanUpThread::run", e);
-                }
+                SAML2Utils.debug.message("CacheCleanUpThread.run", e);
             }
         }
     }
@@ -96,7 +90,7 @@ public class CacheCleanUpThread extends Thread {
     private void cleanup(Hashtable hashtable, long now) {
         synchronized (hashtable) {
             Iterator iter = hashtable.keySet().iterator();
-            long delay = interval.intValue() * 1000;
+            long delay = interval * 1000;
             while (iter.hasNext()) {
                 String key = (String) iter.next();
                 long time = ((CacheObject) hashtable.get(key)).getTime();

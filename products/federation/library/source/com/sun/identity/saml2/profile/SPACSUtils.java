@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.3 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.4 2007-04-02 23:34:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1147,22 +1147,33 @@ public class SPACSUtils {
      * @return final relay state. Or <code>null</code> if the input 
      *         relayStateID is null and no default relay state is configured.
      */
-    public static String getRelayState(String relayStateID,
-                                        String orgName,
-                                        String hostEntityId,
-                                        SAML2MetaManager sm)
-    {
+    public static String getRelayState(
+        String relayStateID,
+        String orgName,
+        String hostEntityId,
+        SAML2MetaManager sm
+    ) {
         String relayStateUrl = null;
-        if (relayStateID != null && relayStateID.trim().length() != 0) {
-            relayStateUrl = (String) SPCache.relayStateHash.get(relayStateID);
-            if (relayStateUrl == null || relayStateUrl.trim().length() ==0) {
+
+        if ((relayStateID != null) && (relayStateID.trim().length() != 0)) {
+            CacheObject cache = (CacheObject)SPCache.relayStateHash.remove(
+                relayStateID);
+
+            if (cache != null) {
+                relayStateUrl = (String)cache.getObject();
+            }
+
+            if ((relayStateUrl == null) || (relayStateUrl.trim().length() == 0)
+            ) {
                 relayStateUrl = relayStateID;
             }
         }
+        
         if (relayStateUrl == null || relayStateUrl.trim().length() == 0) {
             relayStateUrl = getAttributeValueFromSPSSOConfig(
                 orgName, hostEntityId, sm, SAML2Constants.DEFAULT_RELAY_STATE);
         }
+        
         return relayStateUrl;
     }
 
