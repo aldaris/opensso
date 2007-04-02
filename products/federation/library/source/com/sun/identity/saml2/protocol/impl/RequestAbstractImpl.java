@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestAbstractImpl.java,v 1.1 2006-10-30 23:16:50 qcheng Exp $
+ * $Id: RequestAbstractImpl.java,v 1.2 2007-04-02 06:02:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,10 +305,9 @@ public abstract class RequestAbstractImpl implements RequestAbstract {
     public boolean isSignatureValid(X509Certificate senderCert)
         throws SAML2Exception {
 	if (isSignatureValid == null) {
-            isSignatureValid = new Boolean(
+            isSignatureValid = Boolean.valueOf(
                 SigManager.getSigInstance().verify(
-		    signedXMLString, getID(), senderCert
-                )
+		    signedXMLString, getID(), senderCert)
             );
         }
         return isSignatureValid.booleanValue();

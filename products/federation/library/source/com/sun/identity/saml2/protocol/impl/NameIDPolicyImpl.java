@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPolicyImpl.java,v 1.2 2007-02-09 21:43:04 qcheng Exp $
+ * $Id: NameIDPolicyImpl.java,v 1.3 2007-04-02 06:02:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -255,7 +255,7 @@ public class NameIDPolicyImpl implements NameIDPolicy {
 	spNameQualifier=element.getAttribute(SPNAMEQUALIFIER);
 	String allowCreateStr = element.getAttribute(ALLOWCREATE);
 	if ((allowCreateStr != null) && (allowCreateStr.length() > 0 )) {
-	    allowCreate = new Boolean(allowCreateStr);
+	    allowCreate = Boolean.valueOf(allowCreateStr);
 	}
     }
 

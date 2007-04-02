@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XSDurationValidator.java,v 1.4 2006-08-29 21:55:09 veiming Exp $
+ * $Id: XSDurationValidator.java,v 1.5 2007-04-02 06:02:09 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,7 +226,7 @@ public class XSDurationValidator
     /* Test */
     public static void main(String[] args) {
         if (args[0] != null) {
-            debug = new Boolean(args[0]).booleanValue();
+            debug = Boolean.valueOf(args[0]).booleanValue();
         }
         XSDurationValidator inst = getInstance();
         try {

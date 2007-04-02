@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionImpl.java,v 1.1 2006-10-30 23:16:04 qcheng Exp $
+ * $Id: AssertionImpl.java,v 1.2 2007-04-02 06:02:12 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -639,10 +639,9 @@ public class AssertionImpl implements Assertion {
             if (signedXMLString == null) {
                 signedXMLString = toXMLString(true, true);
             }
-            isSignatureValid = new Boolean(
+            isSignatureValid = Boolean.valueOf(
                 SigManager.getSigInstance().verify(
-                    signedXMLString, getID(), senderCert
-                )
+                    signedXMLString, getID(), senderCert)
             );
         }
         return isSignatureValid.booleanValue();

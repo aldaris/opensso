@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.6 2007-03-22 00:49:03 rarcot Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.7 2007-04-02 06:02:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -260,8 +260,9 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             boolean recursive) throws SMSException, SSOException {
         try {
             Object[] objs = { token.getTokenID().toString(), dn, filter,
-                    new Integer(numOfEntries), new Boolean(sortResults),
-                    new Boolean(ascendingOrder), new Boolean(recursive) };
+                    new Integer(numOfEntries), Boolean.valueOf(sortResults),
+                    Boolean.valueOf(ascendingOrder), Boolean.valueOf(recursive)
+            };
             return ((Set) client.send(client.encodeMessage("searchSubOrgNames",
                     objs), Session.getLBCookie(token.getTokenID().toString()),
                     null));
@@ -270,7 +271,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         } catch (SMSException smse) {
             throw smse;
         } catch (Exception re) {
-            debug.error("SMSJAXRPCObject:searchSubOrgNames -- Exception:", re);
+            debug.error("SMSJAXRPCObject.searchSubOrgNames", re);
             throw (new SMSException(re, "sms-JAXRPC-suborg-cannot-search"));
         }
     }
@@ -287,8 +288,9 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             throws SMSException, SSOException {
         try {
             Object[] objs = { token.getTokenID().toString(), dn,
-                    new Integer(numOfEntries), new Boolean(sortResults),
-                    new Boolean(ascendingOrder), serviceName, attrName, values};
+                    new Integer(numOfEntries), Boolean.valueOf(sortResults),
+                    Boolean.valueOf(ascendingOrder), serviceName, attrName, 
+                    values};
             return ((Set) client.send(client.encodeMessage(
                     "searchOrganizationNames", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
@@ -297,8 +299,7 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         } catch (SMSException smse) {
             throw smse;
         } catch (Exception re) {
-            debug.error("SMSJAXRPCObject:searchOrganizationNames -- Exception:",
-                            re);
+            debug.error("SMSJAXRPCObject.searchOrganizationNames", re);
             throw (new SMSException(re, "sms-JAXRPC-org-cannot-search"));
         }
     }
@@ -313,8 +314,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             throws SMSException, SSOException {
         try {
             Object[] objs = { token.getTokenID().toString(), dn, filter,
-                    new Integer(numOfEntries), new Boolean(sortResults),
-                    new Boolean(ascendingOrder) };
+                    new Integer(numOfEntries), Boolean.valueOf(sortResults),
+                    Boolean.valueOf(ascendingOrder) };
             return ((Set) client.send(client.encodeMessage("subEntries", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null));
         } catch (SSOException ssoe) {
@@ -337,11 +338,12 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             boolean ascendingOrder) throws SMSException, SSOException {
         try {
             Object[] objs = { token.getTokenID().toString(), dn, filter,
-                    sidFilter, new Integer(numOfEntries),
-                    new Boolean(sortResults), new Boolean(ascendingOrder) };
+                sidFilter, new Integer(numOfEntries),
+                Boolean.valueOf(sortResults), 
+                Boolean.valueOf(ascendingOrder) };
             return ((Set) client.send(client.encodeMessage("schemaSubEntries",
-                    objs), Session.getLBCookie(token.getTokenID().toString()),
-                    null));
+                objs), Session.getLBCookie(token.getTokenID().toString()), 
+                null));
         } catch (SSOException ssoe) {
             throw ssoe;
         } catch (SMSException smse) {

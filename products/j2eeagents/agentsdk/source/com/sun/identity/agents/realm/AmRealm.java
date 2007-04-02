@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.1 2006-09-29 00:04:29 huacui Exp $
+ * $Id: AmRealm.java,v 1.2 2007-04-02 06:02:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,7 +201,7 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                                 // If users did not put an entry in the map, we
                                 // will cover for that case too
                                 if (toLowerCaseStat == null) {
-                                    toLowerCaseStat = new Boolean(false);
+                                    toLowerCaseStat = Boolean.FALSE;
                                     // for second time
                                     getPrivilegedAttributeTypeCases().put(
                                             types[i].getName().toLowerCase(),

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.6 2006-08-25 21:20:03 veiming Exp $
+ * $Id: DataLayer.java,v 1.7 2007-04-02 06:02:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -958,9 +958,8 @@ public class DataLayer implements java.io.Serializable {
             if ((searchControl != null)
                     && (searchControl.contains(SearchControl.KeyVlvRange) 
                        || searchControl.contains(SearchControl.KeyVlvJumpTo))) {
-                result
-                        .set(SearchResults.EXPECT_VLV_RESPONSE, new Boolean(
-                                true));
+                result.set(SearchResults.EXPECT_VLV_RESPONSE, Boolean.TRUE);
+
             }
 
             if (searchControl != null
@@ -1323,7 +1322,7 @@ public class DataLayer implements java.io.Serializable {
 
             _trialConn.setOption(LDAPConnection.MAXBACKLOG, new Integer(
                     maxBackLog));
-            _trialConn.setOption(LDAPConnection.REFERRALS, new Boolean(
+            _trialConn.setOption(LDAPConnection.REFERRALS, Boolean.valueOf(
                     referrals));
 
             /*

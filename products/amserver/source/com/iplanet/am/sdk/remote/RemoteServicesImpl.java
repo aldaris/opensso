@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.7 2007-03-22 00:49:01 rarcot Exp $
+ * $Id: RemoteServicesImpl.java,v 1.8 2007-04-02 06:02:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,8 +223,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, entryDN,
-                    attrNames, new Boolean(byteValues), new Integer(objectType) 
-                    };
+                    attrNames, Boolean.valueOf(byteValues), 
+                    new Integer(objectType)};
             return ((Map) client.send(client.encodeMessage(
                     "getDCTreeAttributes", objs), 
                     Session.getLBCookie(tokenID), null));
@@ -440,7 +440,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, entryDN,
-                    new Boolean(ignoreCompliance), new Boolean(byteValues),
+                    Boolean.valueOf(ignoreCompliance), 
+                    Boolean.valueOf(byteValues),
                     new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes3",
                     objs), Session.getLBCookie(tokenID), null);
@@ -502,8 +503,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, entryDN,
-                    attrNames, new Boolean(ignoreCompliance),
-                    new Boolean(byteValues), new Integer(profileType) };
+                    attrNames, Boolean.valueOf(ignoreCompliance),
+                    Boolean.valueOf(byteValues), new Integer(profileType) };
             Map map = (Map) client.send(client.encodeMessage("getAttributes4",
                     objs), Session.getLBCookie(tokenID), null);
             AMHashMap res = new AMHashMap();
@@ -735,7 +736,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, members,
-                    staticGroupDN, new Boolean(toAdd) };
+                    staticGroupDN, Boolean.valueOf(toAdd) };
             client.send(client.encodeMessage("updateUserAttribute", objs),
                     Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
@@ -834,8 +835,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, entryDN,
-                    new Integer(objectType), new Boolean(recursive),
-                    new Boolean(softDelete) };
+                    new Integer(objectType), Boolean.valueOf(recursive),
+                    Boolean.valueOf(softDelete) };
             client.send(client.encodeMessage("removeEntry", objs), 
         	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {
@@ -882,8 +883,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
             throws SSOException, AMException {
         try {
         	String tokenID = token.getTokenID().toString();
-            Object[] objs = { tokenID, dn,
-                    new Boolean(recursive) };
+            Object[] objs = { tokenID, dn, Boolean.valueOf(recursive) };
             client.send(client.encodeMessage("removeAdminRole", objs), 
         	    Session.getLBCookie(tokenID),
         	    null);
@@ -1008,8 +1008,8 @@ public class RemoteServicesImpl implements IDirectoryServices {
                     new Integer(searchControl.getTimeOut()),
                     new Integer(searchControl.getMaxResults()),
                     new Integer(searchControl.getSearchScope()),
-                    new Boolean(
-                            searchControl.isGetAllReturnAttributesEnabled()),
+                    Boolean.valueOf(
+                        searchControl.isGetAllReturnAttributesEnabled()),
                     attrNamesSet };
             Map results = (Map) client.send(client.encodeMessage("search3",
                     objs), Session.getLBCookie(tokenID), null);
@@ -1112,7 +1112,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         try {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = {tokenID, new Integer(objectType), entryDN, newName,
-                    new Boolean(deleteOldName) };
+                    Boolean.valueOf(deleteOldName) };
             return ((String) client.send(client.encodeMessage("renameEntry",
                     objs), Session.getLBCookie(tokenID), null));
 
@@ -1163,7 +1163,7 @@ public class RemoteServicesImpl implements IDirectoryServices {
         	String tokenID = token.getTokenID().toString();
             Object[] objs = { tokenID, entryDN,
                     new Integer(objectType), stringAttributes, byteAttributes,
-                    new Boolean(isAdd) };
+                    Boolean.valueOf(isAdd) };
             client.send(client.encodeMessage("setAttributes", objs), 
         	    Session.getLBCookie(tokenID), null);
         } catch (AMRemoteException amrex) {

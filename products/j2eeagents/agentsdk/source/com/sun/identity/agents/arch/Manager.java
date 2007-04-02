@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Manager.java,v 1.1 2006-09-28 23:22:31 huacui Exp $
+ * $Id: Manager.java,v 1.2 2007-04-02 06:02:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class Manager implements IConfigurationKeyConstants,
     * @see IConfigurationAccess#getConfigurationBoolean(String, boolean)
     */
     public boolean getConfigurationBoolean(String id, boolean defaultValue) {
-        return(new Boolean(getConfiguration(
+        return(Boolean.valueOf(getConfiguration(
                 id, String.valueOf(defaultValue)))).booleanValue();
     }
     
@@ -227,7 +227,7 @@ public class Manager implements IConfigurationKeyConstants,
     * @see IConfigurationAccess#getConfigurationBoolean(java.lang.String)
     */
     public boolean getConfigurationBoolean(String id) {
-        return(new Boolean(getConfiguration(id)).booleanValue());
+        return Boolean.valueOf(getConfiguration(id)).booleanValue();
     }
     
    /* (non-Javadoc)

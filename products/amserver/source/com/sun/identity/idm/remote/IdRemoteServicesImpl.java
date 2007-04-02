@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.10 2007-03-22 00:49:02 rarcot Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.11 2007-04-02 06:02:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -304,9 +304,9 @@ public class IdRemoteServicesImpl implements IdServices {
                     pattern, new Integer(ctrl.getTimeOut()),
                     new Integer(ctrl.getMaxResults()),
                     ctrl.getReturnAttributes(),
-                    new Boolean(ctrl.isGetAllReturnAttributesEnabled()),
+                    Boolean.valueOf(ctrl.isGetAllReturnAttributesEnabled()),
                     new Integer(filterOp), avMap,
-                    new Boolean(ctrl.isRecursive()), amOrgName };
+                    Boolean.valueOf(ctrl.isRecursive()), amOrgName };
             idResults = ((Map) client.send(client.encodeMessage(
                     "search2_idrepo", objs), 
                     Session.getLBCookie(token.getTokenID().toString()), null));
@@ -322,8 +322,8 @@ public class IdRemoteServicesImpl implements IdServices {
             boolean isString) throws IdRepoException, SSOException {
         try {
             Object[] objs = { getTokenString(token), type.getName(),
-                    name, attributes, new Boolean(isAdd), amOrgName, amsdkDN,
-                    new Boolean(isString) };
+                    name, attributes, Boolean.valueOf(isAdd), amOrgName, 
+                    amsdkDN, Boolean.valueOf(isString) };
             client.send(client.encodeMessage("setAttributes2_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
@@ -648,7 +648,7 @@ public class IdRemoteServicesImpl implements IdServices {
         
         try {
             Object[] objs = { getTokenString(token), type.getName(),
-                    name, amOrgName, amsdkDN, new Boolean(active)};
+                    name, amOrgName, amsdkDN, Boolean.valueOf(active)};
             client.send(
                     client.encodeMessage("setActiveStatus_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.17 2007-03-22 00:49:01 rarcot Exp $
+ * $Id: LDAPv3Repo.java,v 1.18 2007-04-02 06:02:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -592,7 +592,7 @@ public class LDAPv3Repo extends IdRepo {
 
         try {
             ldc.setOption(LDAPv3.PROTOCOL_VERSION, new Integer(3));
-            ldc.setOption(LDAPv2.REFERRALS, new Boolean(referrals));
+            ldc.setOption(LDAPv2.REFERRALS, Boolean.valueOf(referrals));
             ldc.setOption(LDAPv2.TIMELIMIT, new Integer(timeLimit));
             ldc.setOption(LDAPv2.SIZELIMIT, new Integer(defaultMaxResults));
             setDefaultReferralCredentials(ldc);

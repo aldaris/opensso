@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthThreadManager.java,v 1.2 2006-08-25 21:20:29 veiming Exp $
+ * $Id: AuthThreadManager.java,v 1.3 2007-04-02 06:02:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class AuthThreadManager extends Thread   {
                             }
                             thread.interrupt();
                             timeoutHash.remove(key);
-                            timedOutHash.put(thread,new Boolean(true));
+                            timedOutHash.put(thread, Boolean.TRUE);
                         }
                     }
                 }

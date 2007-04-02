@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.5 2007-01-21 10:34:20 mrudul_uchil Exp $
+ * $Id: AuthContextLocal.java,v 1.6 2007-04-02 06:02:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -332,12 +332,12 @@ public final class AuthContextLocal extends Object
 
             HashMap loginParamsMap = new HashMap();
 
-            loginParamsMap.put(INDEX_TYPE,type);
-            loginParamsMap.put(INDEX_NAME,indexName);
-            loginParamsMap.put(PRINCIPAL,principal);
-            loginParamsMap.put(PASSWORD,password);
-            loginParamsMap.put(SUBJECT,subject);
-            loginParamsMap.put(PCOOKIE,new Boolean(pCookieMode));
+            loginParamsMap.put(INDEX_TYPE, type);
+            loginParamsMap.put(INDEX_NAME, indexName);
+            loginParamsMap.put(PRINCIPAL, principal);
+            loginParamsMap.put(PASSWORD, password);
+            loginParamsMap.put(SUBJECT, subject);
+            loginParamsMap.put(PCOOKIE, Boolean.valueOf(pCookieMode));
 
             if (authDebug.messageEnabled()) {
                 authDebug.message(
@@ -349,8 +349,7 @@ public final class AuthContextLocal extends Object
             authDebug.message("after AMLoginContext::exceuteLogin : ");
             if (amlc.getStatus() == LoginStatus.AUTH_SUCCESS) {
                 loginStatus = AuthContext.Status.SUCCESS;
-            }
-            else if (amlc.getStatus() == LoginStatus.AUTH_FAILED) {
+            } else if (amlc.getStatus() == LoginStatus.AUTH_FAILED) {
                 loginStatus = AuthContext.Status.FAILED;
             }
             if (authDebug.messageEnabled()) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Conditions.java,v 1.2 2006-08-25 21:21:02 veiming Exp $
+ * $Id: Conditions.java,v 1.3 2007-04-02 06:02:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -483,7 +483,7 @@ public class Conditions {
             ConditionDecision cd = condition.getConditionDecision(token, env);
             boolean currentAllowed = cd.isAllowed();
             currentAllowed = currentAllowed || previousAllowed;
-            allowMap.put(conditionType, new Boolean(currentAllowed));
+            allowMap.put(conditionType, Boolean.valueOf(currentAllowed));
             Map cdAdvices = cd.getAdvices();
             if ( (cdAdvices != null) && (!cdAdvices.isEmpty()) ) {
                 Map advices = (Map) advicesMap.get(conditionType);

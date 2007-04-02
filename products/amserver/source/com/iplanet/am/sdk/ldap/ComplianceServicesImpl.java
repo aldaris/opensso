@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.5 2007-01-10 00:39:51 goodearth Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.6 2007-04-02 06:02:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -620,7 +620,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
                                 + tdn + " as deleted");
                     }
                     synchronized (deletedOrg) {
-                        deletedOrg.put(tdn, new Boolean(true));
+                        deletedOrg.put(tdn, Boolean.TRUE);
                     }
                     // we have encountered at least one ancestor
                     // who is deleted so return true.
@@ -631,7 +631,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
                                 + tdn + " as active");
                     }
                     synchronized (deletedOrg) {
-                        deletedOrg.put(tdn, new Boolean(false));
+                        deletedOrg.put(tdn, Boolean.FALSE);
                     }
                 }
             } catch (UMSException umse) {

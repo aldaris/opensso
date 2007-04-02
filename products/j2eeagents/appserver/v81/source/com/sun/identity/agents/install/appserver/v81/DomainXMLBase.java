@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.3 2007-01-25 20:47:48 madan_ranganath Exp $
+ * $Id: DomainXMLBase.java,v 1.4 2007-04-02 06:02:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,7 +341,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
 	        strCoexistFlag = "false";
 	    }
 	      
-	    Boolean coexistFlag = new Boolean(strCoexistFlag);
+	    Boolean coexistFlag = Boolean.valueOf(strCoexistFlag);
 	    Debug.log("DomainXMLBase.getCoexistFlag(): Co-exist flag: "
 	            + coexistFlag);	 
 	    _coexistFlag = coexistFlag;

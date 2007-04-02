@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.3 2006-08-25 21:21:35 veiming Exp $
+ * $Id: SMDataLayer.java,v 1.4 2007-04-02 06:02:12 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,7 +208,7 @@ class SMDataLayer {
             // establish one good connection before the pool
             _trialConn.setOption(LDAPConnection.MAXBACKLOG, new Integer(
                     maxBackLog));
-            _trialConn.setOption(LDAPConnection.REFERRALS, new Boolean(
+            _trialConn.setOption(LDAPConnection.REFERRALS, Boolean.valueOf(
                     referrals));
 
             // Default rebind method is to provide the same authentication

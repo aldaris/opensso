@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.4 2007-03-15 18:00:58 veiming Exp $
+ * $Id: SAML2Utils.java,v 1.5 2007-04-02 06:02:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,8 +226,8 @@ public class SAML2Utils extends SAML2SDKUtils {
         AuthnRequestInfo reqInfo = null;
         String inRespToResp = response.getInResponseTo();
         if (inRespToResp != null && inRespToResp.length() != 0) {
-            reqInfo = (AuthnRequestInfo)
-            SPCache.requestHash.get(inRespToResp);
+            reqInfo = (AuthnRequestInfo)SPCache.requestHash.remove(
+                inRespToResp);
             if (reqInfo == null) {
                 if (debug.messageEnabled()) {
                     debug.message(method + "InResponseTo attribute in Response"

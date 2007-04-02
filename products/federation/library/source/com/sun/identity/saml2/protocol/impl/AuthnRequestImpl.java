@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.1 2006-10-30 23:16:47 qcheng Exp $
+ * $Id: AuthnRequestImpl.java,v 1.2 2007-04-02 06:02:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -718,12 +718,12 @@ public class AuthnRequestImpl extends RequestAbstractImpl
         // Get ForceAuthn Attribute
         String forceAuthnAttr = element.getAttribute(SAML2Constants.FORCEAUTHN);
 	if ((forceAuthnAttr != null) && (forceAuthnAttr.length() > 0)) {
-            forceAuthn = new Boolean(forceAuthnAttr);
+            forceAuthn = Boolean.valueOf(forceAuthnAttr);
 	}
         
         String isPassiveAttr = element.getAttribute(SAML2Constants.ISPASSIVE);
 	if ((isPassiveAttr != null) && (isPassiveAttr.length() > 0)) {
-            isPassive = new Boolean(isPassiveAttr);
+            isPassive = Boolean.valueOf(isPassiveAttr);
 	}
         
         protocolBinding = element.getAttribute(SAML2Constants.PROTOBINDING);

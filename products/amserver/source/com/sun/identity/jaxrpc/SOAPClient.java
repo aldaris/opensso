@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.4 2006-08-29 21:55:09 veiming Exp $
+ * $Id: SOAPClient.java,v 1.5 2007-04-02 06:02:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -662,7 +662,7 @@ public class SOAPClient {
                             answer = new Integer(0);
                         }
                     } else if (type.equalsIgnoreCase(BOOLEAN)) {
-                        answer = new Boolean(currentString.toString());
+                        answer = Boolean.valueOf(currentString.toString());
                     } else if (type.equalsIgnoreCase(LIST)) {
                         answer = list;
                     }

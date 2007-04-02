@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlock.java,v 1.2 2006-08-25 21:19:21 veiming Exp $
+ * $Id: CacheBlock.java,v 1.3 2007-04-02 06:02:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,7 @@ public class CacheBlock extends CacheBlockBase {
     private static void setEntryExpirationEnabledFlag() {
         String userEntryExpireTimeStr = SystemProperties.get(
                 ENTRY_EXPIRATION_ENABLED_KEY, "false");
-        ENTRY_EXPIRATION_ENABLED_FLAG = new Boolean(userEntryExpireTimeStr)
+        ENTRY_EXPIRATION_ENABLED_FLAG = Boolean.valueOf(userEntryExpireTimeStr)
                 .booleanValue();
     }
 

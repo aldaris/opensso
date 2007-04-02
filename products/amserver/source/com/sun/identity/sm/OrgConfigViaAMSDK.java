@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.8 2007-01-18 23:43:18 arviranga Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.9 2007-04-02 06:02:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -719,7 +719,7 @@ public class OrgConfigViaAMSDK {
     protected static void updateAMSDKConfiguredRealms(
         String realm, boolean configured) {
         if (!amsdkConfiguredRealms.keySet().contains(realm)) {
-            amsdkConfiguredRealms.put(realm, new Boolean(configured));
+            amsdkConfiguredRealms.put(realm, Boolean.valueOf(configured));
         }
     }
     
@@ -741,11 +741,11 @@ public class OrgConfigViaAMSDK {
                 OrganizationConfigManagerImpl ocm =
                     OrganizationConfigManagerImpl.getInstance(token, realm);
                 String orgname = getAmsdkdn(token, ocm);
-                answer = new Boolean(orgname != null);
+                answer = Boolean.valueOf(orgname != null);
             } catch (SSOException ssoe) {
-                answer = new Boolean("false");
+                answer = Boolean.FALSE;
             } catch (SMSException smse) {
-                answer = new Boolean("false");
+                answer = Boolean.FALSE;
             }
             // Update cache
             amsdkConfiguredRealms.put(realm, answer);

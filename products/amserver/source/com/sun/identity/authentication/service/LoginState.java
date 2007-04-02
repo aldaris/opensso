@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.11 2007-03-09 05:50:59 veiming Exp $
+ * $Id: LoginState.java,v 1.12 2007-04-02 06:02:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2325,25 +2325,25 @@ public class LoginState {
                             + token);
                         }
                         gotUserProfile = getUserProfile(token,true);
-                            gotUserProfileMap.put(token,
-                        new Boolean(gotUserProfile));
+                        gotUserProfileMap.put(token,
+                            Boolean.valueOf(gotUserProfile));
                         if (messageEnabled) {
-                            debug.message("gotUserProfile : " +
-                            gotUserProfile);
+                            debug.message("gotUserProfile : " + gotUserProfile);
                         }
                         if (gotUserProfile) {
                             if (validToken == null) {
                                 validToken = token;
                             }
-                            userEnabledMap.put(token,new Boolean(userEnabled));
+                            userEnabledMap.put(token, 
+                                Boolean.valueOf(userEnabled));
+                            
                             if (indexType == AuthContext.IndexType.ROLE) {
                                 userRoleFound = getUserForRole(
                                     getIdentityRole(indexName, getOrgDN()));
-                                userRoleFoundMap.put(token,
-                                new Boolean(userRoleFound));
+                                userRoleFoundMap.put(token, 
+                                    Boolean.valueOf(userRoleFound));
                             }
-                            foundAliasMap =
-                                searchUserAliases(token,tokenSet);
+                            foundAliasMap = searchUserAliases(token, tokenSet);
                             if (foundUserAlias=
                                 getFoundUserAlias(foundAliasMap)) {
                                 aliasToken =token;

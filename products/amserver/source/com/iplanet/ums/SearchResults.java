@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResults.java,v 1.4 2006-08-25 21:20:05 veiming Exp $
+ * $Id: SearchResults.java,v 1.5 2007-04-02 06:02:08 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -360,8 +360,7 @@ public class SearchResults implements java.io.Serializable {
                 // related attribute(s). Set the internal flag not to launch
                 // the probe again in subsequent get.
                 //
-                testResults.set(SearchResults.EXPECT_VLV_RESPONSE, new Boolean(
-                        false));
+                testResults.set(SearchResults.EXPECT_VLV_RESPONSE, Boolean.FALSE);
                 return testResults.get(name);
             }
         }
@@ -481,7 +480,7 @@ public class SearchResults implements java.io.Serializable {
      *         control and <code>false</code> otherwise
      */
     private boolean expectVlvResponse() {
-        Boolean expected = new Boolean(false);
+        Boolean expected = Boolean.FALSE;
 
         try {
             expected = (Boolean) get(EXPECT_VLV_RESPONSE);

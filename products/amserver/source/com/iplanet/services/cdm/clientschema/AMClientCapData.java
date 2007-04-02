@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientCapData.java,v 1.2 2006-08-25 21:19:48 veiming Exp $
+ * $Id: AMClientCapData.java,v 1.3 2007-04-02 06:02:07 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -959,7 +959,7 @@ public class AMClientCapData implements IDSEventListener {
         Set vals = getServiceAttribute(ENABLE_CLIENT_CREATION_ATTR);
         if (vals != null) {
             Iterator iter = vals.iterator();
-            Boolean perms = new Boolean((String) iter.next());
+            Boolean perms = Boolean.valueOf((String)iter.next());
             allow = perms.booleanValue();
         }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.2 2006-10-12 06:24:03 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.3 2007-04-02 06:02:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -659,8 +659,8 @@ public class AgentConfiguration implements
                     userPrinsipalFlagString = DEFAULT_USE_DN;
                 }
         
-                _userPrincipalEnabled = (new Boolean(
-                        userPrinsipalFlagString)).booleanValue();
+                _userPrincipalEnabled = Boolean.valueOf(
+                        userPrinsipalFlagString).booleanValue();
         
                 if (isLogMessageEnabled()) {
                     logMessage("AgentConfiguration: use-DN is set to: " 
@@ -766,7 +766,7 @@ public class AgentConfiguration implements
             boolean pollingEnabled = false;
             String flag = getProperty(SDKPROP_SESSION_POLLING_ENABLE);
             if (flag != null && flag.trim().length() > 0) {
-                pollingEnabled = (new Boolean(flag)).booleanValue();
+                pollingEnabled = Boolean.valueOf(flag).booleanValue();
             }
             
             _sessionNotificationEnabledFlag = !pollingEnabled;
@@ -800,7 +800,7 @@ public class AgentConfiguration implements
             boolean enable = false;
             String flag = getProperty(SDKPROP_POLICY_NOTIFICATION_ENABLE);
             if (flag != null && flag.trim().length() > 0) {
-                enable = (new Boolean(flag)).booleanValue();
+                enable = Boolean.valueOf(flag).booleanValue();
             }
             
             _policyNotificationEnabledFlag = enable;
