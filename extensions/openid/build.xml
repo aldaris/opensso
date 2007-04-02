@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-03-10 23:00:07 pbryan Exp $
+   $Id: build.xml,v 1.2 2007-04-02 22:01:43 pbryan Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
    Portions Copyright 2007 Paul C. Bryan.
@@ -37,6 +37,7 @@
     <!-- directory to store intermediate files for build -->
     <property name="package.dir" value="package"/>
     <property name="package.classes" value="${package.dir}/WEB-INF/classes"/>
+    <property name="package.lib" value="${package.dir}/WEB-INF/lib"/>
     <property name="package.webxml" value="${package.dir}/WEB-INF/web.xml"/>
 
     <!-- directory to store build results -->
@@ -80,6 +81,7 @@
             <classpath>
                 <pathelement path="${package.classes}"/>
                 <fileset dir="${extlib}"><include name="**/*.jar"/></fileset>
+                <fileset dir="${package.lib}"><include name="**/*.jar"/></fileset>
             </classpath>
         </javac>
 
