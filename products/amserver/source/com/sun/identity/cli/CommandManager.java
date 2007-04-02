@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.6 2007-03-29 22:53:37 veiming Exp $
+ * $Id: CommandManager.java,v 1.7 2007-04-02 06:07:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,11 +127,7 @@ public class CommandManager {
                     if (cmd != null) {
                         UsageFormatter.getInstance().format(this, cmd);
                     }
-                } else {
-                    UsageFormatter.getInstance().format(this);
                 }
-            } else if (exitCode == ExitCodes.INVALID_SUBCOMMAND) {
-                UsageFormatter.getInstance().format(this);
             }
         } catch (CLIException ex) {
             debugger.error("CommandManager.printUsageOnException", ex);
@@ -141,22 +137,6 @@ public class CommandManager {
 
     private void init(Map env)
         throws CLIException {
-        environment = new HashMap();
-        if (env.get(CLIConstants.ARGUMENT_DEBUG) != null) {
-            environment.put(CLIConstants.ARGUMENT_DEBUG, Boolean.TRUE);
-        }
-
-        if (env.get(CLIConstants.ARGUMENT_VERBOSE) != null) {
-            environment.put(CLIConstants.ARGUMENT_VERBOSE, Boolean.TRUE);
-        }
-
-        outputWriter = (IOutput)env.get(
-            CLIConstants.SYS_PROPERTY_OUTPUT_WRITER);
-        if (outputWriter == null) {
-            throw new CLIException("output writer is not defined.",
-                ExitCodes.OUTPUT_WRITER_CLASS_CANNOT_INSTANTIATE);
-        }
-
         Locale locale = (Locale)env.get(CLIConstants.ARGUMENT_LOCALE);
         if (locale == null) {
             locale = Locale.getDefault();
@@ -182,6 +162,22 @@ public class CommandManager {
                 ExitCodes.MISSING_COMMAND_NAME);
         }
 
+        outputWriter = (IOutput)env.get(
+            CLIConstants.SYS_PROPERTY_OUTPUT_WRITER);
+        if (outputWriter == null) {
+            throw new CLIException("output writer is not defined.",
+                ExitCodes.OUTPUT_WRITER_CLASS_CANNOT_INSTANTIATE);
+        }
+
+        environment = new HashMap();
+        if (env.get(CLIConstants.ARGUMENT_DEBUG) != null) {
+            environment.put(CLIConstants.ARGUMENT_DEBUG, Boolean.TRUE);
+        }
+
+        if (env.get(CLIConstants.ARGUMENT_VERBOSE) != null) {
+            environment.put(CLIConstants.ARGUMENT_VERBOSE, Boolean.TRUE);
+        }
+
         String webEnabledURL = (String)env.get(CLIConstants.WEB_ENABLED_URL);
         if (webEnabledURL != null) {
             environment.put(CLIConstants.WEB_ENABLED_URL, webEnabledURL);
@@ -192,6 +188,24 @@ public class CommandManager {
         throws CLIException
     {
         environment = new HashMap();
+        getLocale(argv);
+
+        String defintionFiles = System.getProperty(
+            CLIConstants.SYS_PROPERTY_DEFINITION_FILES);
+        setupDefinitions(defintionFiles);
+
+        commandName = System.getProperty(
+            CLIConstants.SYS_PROPERTY_COMMAND_NAME);
+        if ((commandName == null) || (commandName.length() == 0)) {
+            throw new CLIException(rbMessages.getString(
+                "exception-message-missing-command-name"),
+                ExitCodes.MISSING_COMMAND_NAME);
+        }
+
+        String outputWriterClassName = System.getProperty(
+            CLIConstants.SYS_PROPERTY_OUTPUT_WRITER);
+        getOutputWriter(outputWriterClassName);
+
         if (getFlag(argv, CLIConstants.ARGUMENT_DEBUG,
             CLIConstants.SHORT_ARGUMENT_DEBUG)
         ) {
@@ -208,24 +222,6 @@ public class CommandManager {
             CLIConstants.SHORT_ARGUMENT_NOLOG)
         ) {
             environment.put(CLIConstants.ARGUMENT_NOLOG, Boolean.TRUE);
-        }
-
-        String outputWriterClassName = System.getProperty(
-            CLIConstants.SYS_PROPERTY_OUTPUT_WRITER);
-        getOutputWriter(outputWriterClassName);
-
-        getLocale(argv);
-
-        String defintionFiles = System.getProperty(
-            CLIConstants.SYS_PROPERTY_DEFINITION_FILES);
-        setupDefinitions(defintionFiles);
-
-        commandName = System.getProperty(
-            CLIConstants.SYS_PROPERTY_COMMAND_NAME);
-        if ((commandName == null) || (commandName.length() == 0)) {
-            throw new CLIException(rbMessages.getString(
-                "exception-message-missing-command-name"),
-                ExitCodes.MISSING_COMMAND_NAME);
         }
     }
 
