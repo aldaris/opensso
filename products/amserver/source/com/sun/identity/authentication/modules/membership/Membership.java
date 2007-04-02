@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,29 +18,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Membership.java,v 1.3 2007-01-09 19:08:13 manish_rustagi Exp $
+ * $Id: Membership.java,v 1.4 2007-04-02 21:38:19 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 
-
 package com.sun.identity.authentication.modules.membership;
 
-import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
-import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
-import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.authentication.spi.InvalidPasswordException;
-import com.sun.identity.authentication.spi.UserNamePasswordValidationException;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
@@ -60,44 +52,11 @@ import javax.security.auth.callback.ChoiceCallback;
 import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import netscape.ldap.LDAPException;
 
 public class Membership extends AMLoginModule {
     private static Debug debug;
     private ResourceBundle bundle;
     private Map sharedState;
-    // system parameters from AMConfig.properties
-    private static boolean ldapSSL;
-    // store org DN for failover to secondary server
-    private static HashSet orgHash = new HashSet();
-    
-    // LDAPAuthUtil's exception conditions
-    static final int USER_NOT_FOUND = 1;
-    static final int PASSWORD_EXP = 2;
-    static final int PASSWORD_INVALID = 3;
-    static final int CONFIG_ERROR = 4;
-    static final int CANNOT_CONTACT_SERVER = 5;
-    
-    // LDAPAuthUtil's user states (normal)
-    static final int PASSWORD_EXPIRED_STATE = 20;
-    static final int PASSWORD_EXPIRING = 21;
-    static final int PASSWORD_CHANGED = 22;
-    static final int PASSWORD_MISMATCH = 23;
-    static final int PASSWORD_USERNAME_SAME = 24;
-    static final int PASSWORD_NOT_UPDATE = 25;
-    static final int SUCCESS = 26;
-    static final int WRONG_PASSWORD_ENTERED = 27;
-    static final int PASSWORD_UPDATED_SUCCESSFULLY = 28;
-    static final int USER_PASSWORD_SAME = 29;
-    static final int PASSWORD_MIN_CHARACTERS = 30;
-    static final int SERVER_DOWN = 31;
-    static final int PASSWORD_RESET_STATE = 32;
-    
-    // these are the different states that can possibly
-    // be displayed from the module. The order of the states
-    // here must match the order of the states listed in the
-    // properties file for the module.
-    //
     
     // state IDs
     // state 2 through 15 are error message states
@@ -138,7 +97,7 @@ public class Membership extends AMLoginModule {
     
     // previousScreen is used when an error occurs. After
     // the user acknowledges the error they will be returned
-    // the the state stored in previosScreen
+    // the the state stored in previousScreen
     private int previousScreen;
     
     // user's valid ID and principal
@@ -148,8 +107,6 @@ public class Membership extends AMLoginModule {
     // configurations
     private Map options;
     
-    private boolean primary = true;
-    private  LDAPAuthUtils ldapUtil;
     private String serviceStatus;
     private boolean isDisclaimerExist = true;
     private Set defaultRoles;
@@ -171,11 +128,7 @@ public class Membership extends AMLoginModule {
     static {
         if (debug == null) {
             debug = Debug.getInstance(amAuthMembership);
-        }
-        
-        // initializing the login parameters by getting the values from
-        // AMConfig.properties
-        initSystemProperties();
+        }       
     }
     
     /**
@@ -187,7 +140,7 @@ public class Membership extends AMLoginModule {
      *        <code>Configuration</code> for this particular
      *        <code>LoginModule</code>.
      */
-    public void init(Subject subject, Map sharedState, Map options) {
+    public void init(Subject subject, Map sharedState, Map options) {    
         java.util.Locale locale = getLoginLocale();
         bundle = amCache.getResBundle(amAuthMembership, locale);
         if (debug.messageEnabled()) {
@@ -382,20 +335,19 @@ public class Membership extends AMLoginModule {
     }
 
     /**
-     * TODO-JAVADOC
+     * Destroy the module state
      */
     public void destroyModuleState() {
         validatedUserID = null;
     }
     
     /**
-     * TODO-JAVADOC
+     * Set all the used variables to null
      */
     public void nullifyUsedVars() {
         bundle = null;
         sharedState = null;
         options = null;
-        ldapUtil = null;
         serviceStatus = null;
         defaultRoles = null;
         // peopleContainerDN = null;  TODO- Backward Compatiblity
@@ -408,7 +360,7 @@ public class Membership extends AMLoginModule {
         callbacks = null;
     }
     
-    
+
     /**
      * Initializes auth configurations.
      */
@@ -420,52 +372,6 @@ public class Membership extends AMLoginModule {
         }
         
         try {
-            String serverHost = null;
-            if (!orgHash.contains(getRequestOrg())) {
-                serverHost = CollectionHelper.getServerMapAttr(options,
-                    "iplanet-am-auth-membership-server");
-                if (serverHost == null) {
-                    debug.error("Fatal error: primary ldap attribute " +
-                    "misconfigured");
-                    throw new AuthLoginException(amAuthMembership,
-                    "missing-primary-server", null);
-                } else if (debug.messageEnabled()) {
-                    debug.message("Using primary server " + serverHost);
-                }
-            } else {
-                serverHost = CollectionHelper.getServerMapAttr(options,
-                    "iplanet-am-auth-membership-server2");
-                if (serverHost == null) {
-                    debug.message("No secondary server, resetting to primary");
-                    removeOrg();
-                    throw new AuthLoginException(amAuthMembership,
-                    "Nosecserver", null);
-                }
-                primary = false;
-                if (debug.messageEnabled()) {
-                    debug.message("Using secondary server " + serverHost);
-                }
-            }
-            String baseDN  = CollectionHelper.getServerMapAttr(options,
-                "iplanet-am-auth-membership-base-dn");
-            if (baseDN == null) {
-                debug.error("Fatal error: baseDN for search has invalid value");
-            }
-            
-            String bindDN = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-bind-dn", "");
-            String bindPassword = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-bind-passwd", "");
-            String userNamingAttr = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-user-naming-attribute", "uid");
-            Set userSearchAttrs = (Set)options.get(
-                "iplanet-am-auth-membership-user-search-attributes");
-            String searchFilter = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-search-filter", "");
-            boolean ssl = Boolean.valueOf(CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-ssl-enabled", "false")
-                ).booleanValue();
-            
             String authLevel = CollectionHelper.getMapAttr(options,
                 "iplanet-am-auth-membership-auth-level");
             if (authLevel != null) {
@@ -476,318 +382,92 @@ public class Membership extends AMLoginModule {
                     // invalid auth level
                     debug.error("invalid auth level " + authLevel, e);
                 }
-            }
-            
-            String tmp = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-membership-search-scope", "SUBTREE");
-            // set default to SUBTREE
-            int searchScope = 2;
-            if (tmp.equalsIgnoreCase("OBJECT")) {
-                searchScope = 0;
-            } else if (tmp.equalsIgnoreCase("ONELEVEL")) {
-                searchScope = 1;
-            }
-            
-            int index = serverHost.indexOf(':');
-            int serverPort = 389;
-            String port = null;
-            if (index != -1) {
-                port = serverHost.substring(index+1);
-                serverPort = Integer.parseInt(port);
-                serverHost = serverHost.substring(0,index);
-            }
-            regEx = CollectionHelper.getMapAttr(options, INVALID_CHARS);
-            
-            String returnUserDN = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-ldap-return-user-dn", "true");
-            
-            // setup LDAPAuthUtils
-            ldapUtil = new LDAPAuthUtils(serverHost,serverPort,ssl,bundle,
-            baseDN, debug);
-            ldapUtil.setScope(searchScope);
-            ldapUtil.setFilter(searchFilter);
-            ldapUtil.setUserNamingAttribute(userNamingAttr);
-            ldapUtil.setUserSearchAttribute(userSearchAttrs);
-            ldapUtil.setAuthPassword(bindPassword);
-            ldapUtil.setReturnUserDN(returnUserDN);
-            ldapUtil.setAuthDN(bindDN);
-            
-            if (debug.messageEnabled()) {
-                debug.message("setup LDAPAuthUtils:" +
-                "\nserver host: " + serverHost +
-                "\nserver port: " + serverPort +
-                "\nbase DN: " + baseDN +
-                "\nsearch scope " + searchScope +
-                "\nsearch filter: " + searchFilter +
-                "\nuser naming attribute: " + userNamingAttr +
-                "\nuser search attributes: " + userSearchAttrs +
-                "\nreturned user DN: " + returnUserDN +
-                "\nbind DN: " + bindDN);
-            }
-            
+            }    
+            regEx = CollectionHelper.getMapAttr(options, INVALID_CHARS);        
             serviceStatus = CollectionHelper.getMapAttr(options,
                 "iplanet-am-auth-membership-default-user-status", "Active");
-            
+	            
             if (getNumberOfStates() >= DISCLAIMER) {
                 isDisclaimerExist = true;
             } else {
                 isDisclaimerExist = false;
             }
-            
+ 
             defaultRoles  = (Set)options.get(
-            "iplanet-am-auth-membership-default-roles");
-            
+                "iplanet-am-auth-membership-default-roles");        
             if (debug.messageEnabled()) {
                 debug.message("defaultRoles is : " + defaultRoles);
             }
-            
-            tmp = CollectionHelper.getMapAttr(options,
+     
+            String tmp = CollectionHelper.getMapAttr(options,
                 "iplanet-am-auth-membership-min-password-length");
             if (tmp != null) {
                 requiredPasswordLength = Integer.parseInt(tmp);
             }
-            
-            // OPEN ISSUE - TODO - peopleContainerDN for backward
-            // Compatibility
-            //Map authAttributes =
-            //getOrgServiceTemplate(null, "iPlanetAMAuthService");
-            //peopleContainerDN = CollectionHelper.getMapAttr(authAttributes,
-            //"iplanet-am-auth-user-container");
-            // check people container, it must ends with the org DN in
-            // the current session
-            /*if (!Misc.isDescendantOf(peopleContainerDN, getRequestOrg())) {
-                debug.error("Default People Container '" + peopleContainerDN +
-                "' does not belong to org " + getRequestOrg());
-                throw new AuthLoginException(amAuthMembership,
-                "invalidContainerDN", null);
-            }*/
-            
-            // save the orginal password callback for
-            // state PASSWORD_CHANGE
+   
             if (callbacks !=null && callbacks.length != 0) {
                 Callback[] callbacks = getCallback(PASSWORD_CHANGE);
                 pwdCallback = ((PasswordCallback)callbacks[0]);
-            }
-        } catch(Exception ex) {
-            debug.error("unable to initialize in initAuthConfig(): ", ex);
-            throw new AuthLoginException(amAuthMembership, "LDAPex", null, ex);
+            }        
+        }catch(Exception e){
+            debug.error("unable to initialize in initAuthConfig(): ", e);
+            throw new AuthLoginException(amAuthMembership,
+                "Membershipex", null, e);        	
         }
-    }
+    }    
+   
     
-    /**
-     * Returns the required system properties from AMConfig.properties.
-     */
-    private static void initSystemProperties() {
-        ldapSSL = Boolean.valueOf(SystemProperties.get(
-        Constants.AM_DIRECTORY_SSL_ENABLED, "false")).booleanValue();
-        
-        if (debug.messageEnabled()) {
-            debug.message("system parameters from AMConfig.properties: " +
-            "\nHost: " + AuthD.directoryHostName +
-            "\nPORT: " + AuthD.directoryPort +
-            "\nSSL: " + ldapSSL);
-        }
-    }
-    
-    /**
-     * Returns the username and password from the input
-     * and validates the user. The username is used to retrieve the
-     * user's profile, if this exists the password is then retrieved and
-     * the password stored in the profile is compared with that entered
-     * by the user in the login screen.
-     * The number of the next state to display is returned.
-     */
     private int loginUser(Callback[] callbacks) throws AuthLoginException {
-        String password = null;
-        if (callbacks !=null && callbacks.length == 0) {
-            userName = (String) sharedState.get(getUserKey());
-            password = (String) sharedState.get(getPwdKey());
-            if (userName == null || password == null) {
-                return ISAuthConstants.LOGIN_START;
-            }
-            getCredentialsFromSharedState = true;
-        } else {
-            // callbacks is not null
-            // callback[0] is for user name
-            // callback[1] is for password
-            userName = ((NameCallback)callbacks[0]).getName();
-            password = getPassword((PasswordCallback)callbacks[1]);
-        }
-        
-        // store username,password both in success and failure case
-        storeUsernamePasswd(userName,password);
-        
-        if (debug.messageEnabled()) {
-            debug.message("trying to login user: " + userName);
-        }
-        
+    	String password = null;
+        Callback[] idCallbacks = new Callback[2];
         try {
-            if (isSuperAdmin(userName)) {
-                // checks whether the superadmin and the username supplied
-                // are the same . This check is to allow Super Admin to
-                // log in even though ldap parameters are messed up
-                // due to misconfiguration
-                ldapUtil = new LDAPAuthUtils(AuthD.directoryHostName,
-                AuthD.directoryPort, ldapSSL, bundle, debug);
-                ldapUtil.authenticateSuperAdmin(userName, password);
-                
-                if (ldapUtil.getState() == SUCCESS) {
-                    validatedUserID = userName;
-                    return ISAuthConstants.LOGIN_SUCCEED;
-                    
-                } else {
-                    debug.message("Invalid admin ID or admin Password");
-                    setFailureID(ldapUtil.getUserId(userName));
-                    throw new AuthLoginException(amAuthMembership, "InvalidUP",
-                    null);
-                    
+            if (callbacks !=null && callbacks.length == 0) {
+                userName = (String) sharedState.get(getUserKey());
+                password = (String) sharedState.get(getPwdKey());
+                if (userName == null || password == null) {
+                    return ISAuthConstants.LOGIN_START;
                 }
-            } else  {
-                // normal user login
-                initAuthConfig();
-                validateUserName(userName, regEx);
-                validatePassword(password);
-                ldapUtil.authenticateUser(userName, password);
-                int newState = ldapUtil.getState();
-                
-                return processMembershipLoginState(
-                newState, userName, password);
-            }
-            
-        } catch(LDAPUtilException ex) {
-            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
-                getCredentialsFromSharedState = false;
-                return ISAuthConstants.LOGIN_START;
-            }
-            String failureUserID = ldapUtil.getUserId();
-            setFailureID(failureUserID);
-            switch (ex.getLDAPResultCode()) {
-                case LDAPException.NO_SUCH_OBJECT:
-                    if (debug.messageEnabled()) {
-                        debug.message("The specified user does not exist. " +
-                        "userID: " + userName);
-                    }
-                    return REGISTRATION;
-                    
-                case LDAPException.INVALID_CREDENTIALS:
-                    if (debug.messageEnabled()) {
-                        debug.message("Invalid password. userID: " + userName);
-                    }
-                    throw new InvalidPasswordException(amAuthMembership,
-                    "InvalidUP", null, failureUserID, null);
-                    
-                case LDAPException.UNWILLING_TO_PERFORM:
-                    debug.message("Unwilling to perform. Account inactivated");
-                    throw new AuthLoginException(amAuthMembership,
-                    "AcctInactive", null);
-                case LDAPUtilException.INAPPROPRIATE_AUTHENTICATION:
-                    debug.message( "Inappropriate authentication." );
-                    throw new AuthLoginException(amAuthMembership, "InappAuth",
-                    null);
-                default:
-                    throw new AuthLoginException(amAuthMembership,
-                    "LDAPex", null, ex);
-            }
-        } catch (UserNamePasswordValidationException upve) {
-            // Note: Do not set failure Id for this exception
-            
-            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
-                getCredentialsFromSharedState = false;
-                return ISAuthConstants.LOGIN_START;
+                getCredentialsFromSharedState = true;
+                NameCallback nameCallback = new NameCallback("dummy");
+                nameCallback.setName(userName);
+                idCallbacks[0] = nameCallback;
+                PasswordCallback passwordCallback = new PasswordCallback
+                    ("dummy",false);
+                passwordCallback.setPassword(password.toCharArray());
+                idCallbacks[1] = passwordCallback;
             } else {
-                debug.message("Invalid Characters detected");
-                throw new AuthLoginException(upve);
+                idCallbacks = callbacks;
+                //callbacks is not null
+                userName = ( (NameCallback) callbacks[0]).getName();
+                password = String.valueOf(((PasswordCallback)
+                    callbacks[1]).getPassword());
             }
-        }
-        
-    }
-    
-    /**
-     * Returns the next state to display for the specified LDAP state.
-     * "userName" and "password" are used for the case SERVER_DOWN, to
-     * authenticate to the secondary server.
-     */
-    private int processMembershipLoginState(
-        int ldapState,
-        String userName,
-        String password
-    ) throws AuthLoginException {
-        try {
-            switch(ldapState) {
-                case SUCCESS:
-                    validatedUserID = ldapUtil.getUserId();
-                    return ISAuthConstants.LOGIN_SUCCEED;
-                    
-                case PASSWORD_EXPIRING:
-                    validatedUserID = ldapUtil.getUserId();
-                    String fmtMsg =  bundle.getString("PasswordExp");
-                    String msg = 
-                        com.sun.identity.shared.locale.Locale.formatMessage(
-                            fmtMsg, ldapUtil.getExpTime());
-                    replaceHeader(PASSWORD_CHANGE, msg);
-                    return PASSWORD_CHANGE;
-                    
-                case PASSWORD_RESET_STATE:
-                    validatedUserID = ldapUtil.getUserId();
-                    isReset = true;
-                    String resetMsg = bundle.getString("PasswordReset");
-                    replaceHeader(PASSWORD_CHANGE, resetMsg);
-                    return PASSWORD_CHANGE;
-                    
-                case PASSWORD_EXPIRED_STATE:
-                    return PASSWORD_EXPIRED;
-                    
-                case SERVER_DOWN:
-                    if (primary == true) {
-                        addOrg();
-                        initAuthConfig();
-                        ldapUtil.authenticateUser(userName, password);
-                        int newState = ldapUtil.getState();
-                        return processMembershipLoginState(
-                        newState, userName, password);
-                        
-                    } else {
-                        removeOrg();
-                        throw new AuthLoginException(amAuthMembership,
-                        "LDAPex", null);
-                    }
-                    
-                case USER_NOT_FOUND :
-                    if (getCredentialsFromSharedState && 
-                        !isUseFirstPassEnabled()) {
-                        getCredentialsFromSharedState = false;
-                        return ISAuthConstants.LOGIN_START;
-                    }
-                    debug.message("The specified user does not exist");
-                    throw new AuthLoginException(amAuthMembership, "NoUser",
-                    null);
-                    
-                default:
-                    return ISAuthConstants.LOGIN_IGNORE;
+            //store username password both in success and failure case
+            storeUsernamePasswd(userName, password);
+            initAuthConfig();
+                 
+            AMIdentityRepository idrepo = getAMIdentityRepository(
+                getRequestOrg());
+            boolean success = idrepo.authenticate(idCallbacks);
+            if (success) {
+                validatedUserID = userName;
+                return ISAuthConstants.LOGIN_SUCCEED;
+            } else {
+                throw new AuthLoginException(amAuthMembership, "authFailed",
+                null);
             }
-            
-        } catch(LDAPUtilException ex) {
-            
+        } catch (IdRepoException ex) {
             if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
-            }
-            setFailureID(ldapUtil.getUserId(userName));
-            switch (ex.getLDAPResultCode()) {
-                case LDAPException.NO_SUCH_OBJECT:
-                    debug.message("The specified user does not exist");
-                    throw new AuthLoginException(amAuthMembership, "NoUser",
-                    null);
-                case LDAPException.INVALID_CREDENTIALS:
-                    debug.message("Invalid password");
-                    throw new AuthLoginException(amAuthMembership, "InvalidUP",
-                    null);
-                default:
-                    throw new AuthLoginException(amAuthMembership,
-                    "LDAPex", null, ex);
-            }
+            }			
+            debug.message("idRepo Exception");
+            setFailureID(userName);
+            throw new AuthLoginException(amAuthMembership, "authFailed",
+                null, ex);
         }
-    }
+    }   
+
     
     /**
      * Returns the current password, new password, and
@@ -806,6 +486,11 @@ public class Membership extends AMLoginModule {
         String confirmPassword = getPassword((PasswordCallback)callbacks[2]);
         validatePassword(newPassword);
         
+        //Change password functionality needs to be implemented  
+        
+        return ISAuthConstants.LOGIN_SUCCEED; 
+    
+        /*
         try {
             ldapUtil.changePassword(oldPassword, newPassword, confirmPassword);
             int ldapState = ldapUtil.getState();
@@ -827,54 +512,9 @@ public class Membership extends AMLoginModule {
                     throw new AuthLoginException(amAuthMembership,
                     "LDAPex", null, ex);
             }
-        }
-        
-    }
-    
-    /**
-     * Returns the next state to display for the specified LDAP state.
-     */
-    private int processMembershipPasswordState(int ldapState)
-            throws AuthLoginException {
-        switch(ldapState) {
-            case PASSWORD_UPDATED_SUCCESSFULLY:
-                validatedUserID = ldapUtil.getUserId();
-                return ISAuthConstants.LOGIN_SUCCEED;
-                
-            case PASSWORD_NOT_UPDATE:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("PInvalid"));
-                return PASSWORD_CHANGE;
-                
-            case PASSWORD_MISMATCH:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("PasswdMismatch"));
-                return PASSWORD_CHANGE;
-                
-            case PASSWORD_USERNAME_SAME:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("UPSame"));
-                return PASSWORD_CHANGE;
-                
-            case WRONG_PASSWORD_ENTERED:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("PasswdSame"));
-                return PASSWORD_CHANGE;
-                
-            case PASSWORD_MIN_CHARACTERS:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("PasswdMinChars"));
-                return PASSWORD_CHANGE;
-                
-            case USER_PASSWORD_SAME:
-                replaceHeader(PASSWORD_CHANGE,
-                bundle.getString("UPsame"));
-                return PASSWORD_CHANGE;
-                
-            default:
-                return ISAuthConstants.LOGIN_IGNORE;
-        }
-    }
+        }*/
+    }    
+
     
     /**
      * Creates user profile and sets the membership profile attributes.
@@ -1122,25 +762,6 @@ public class Membership extends AMLoginModule {
         return (new String(pwd));
     }
     
-    /**
-     * Replaces the specified PasswordCallback's prompt with the
-     * specified message. Then set the new modified PasswordCallback to
-     * the specified state and index.
-     */
-    private void replacePasswordPrompt(
-        PasswordCallback callback,
-        int state,
-        int index,
-        String msg
-    ) throws AuthLoginException {
-        String oldMsg = callback.getPrompt();
-        boolean echo = callback.isEchoOn();
-        
-        int i = oldMsg.indexOf("#REPLACE#");
-        String newMsg = oldMsg.substring(0, i) +
-        msg + oldMsg.substring(i + 9);
-        replaceCallback(state, index, new PasswordCallback(newMsg, echo));
-    }
     
     /**
      * Returns the input values as a Set for different types of Callback.
@@ -1205,19 +826,6 @@ public class Membership extends AMLoginModule {
         return validUserIDs;
     }
     
-    /**
-     * Adds the org DN in the current session to HashSet.
-     */
-    private synchronized void addOrg() {
-        orgHash.add(getRequestOrg());
-    }
-    
-    /**
-     * Removes the org DN in the current session from the HashSet.
-     */
-    private synchronized void removeOrg() {
-        orgHash.remove(getRequestOrg());
-    }
     
     /** check if user exists */
     private boolean userExists(String userID)
