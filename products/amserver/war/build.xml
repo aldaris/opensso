@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.20 2007-03-29 22:54:42 veiming Exp $
+   $Id: build.xml,v 1.21 2007-04-03 20:34:55 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,6 +54,14 @@
     </target>
 
     <target name="war">
+        <tstamp>
+            <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+        <filter token="DATESTAMP" value="${war.time.stamp}" />
+        <copy file="${war.xml.dir}/template/sms/AMConfig.properties"
+            tofile="${amserver.built.res.dir}/AMConfig.properties"
+            filtering="true"/>
+
         <war destfile="${amserver.dist.dir}/opensso.war" webxml="${war.xml.dir}/web.xml">
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
@@ -108,7 +116,6 @@
             </zipfileset>
             <zipfileset dir="${amserver.built.res.dir}" prefix="WEB-INF/classes">
                 <include name="*.properties" />
-                <exclude name="AMConfig.properties" />
             </zipfileset>
             <zipfileset dir="${amserver.www.dir}/jsp">
                 <include name="isAlive.jsp" />
@@ -127,9 +134,6 @@
             <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/template/sms">
                 <include name="SunAMClientData.xml" />
                 <include name="defaultDelegationPolicies.xml" />
-            </zipfileset>
-            <zipfileset dir="${war.xml.dir}/template/sms" prefix="WEB-INF/classes">
-                <include name="AMConfig.properties" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
                 <include name="am_sm_ds_schema.ldif" />
