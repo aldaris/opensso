@@ -1,0 +1,42 @@
+dn: CN= sunAMAuthInvalidAttemptsData,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+changetype: add
+adminDisplayName: sunAMAuthInvalidAttemptsData
+adminDescription: XML data for Invalid Login Attempts
+attributeID: 1.3.6.1.4.1.42.2.27.9.1.793
+attributeSyntax: 2.5.5.5
+cn: sunAMAuthInvalidAttemptsData
+instanceType: 4
+isSingleValued: FALSE
+lDAPDisplayName: sunAMAuthInvalidAttemptsData
+objectCategory: CN=Attribute-Schema,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+objectClass: attributeSchema
+oMSyntax: 22
+systemOnly: FALSE
+
+dn:
+changetype: modify
+add: schemaUpdateNow
+schemaUpdateNow: 1
+-
+
+dn: CN=sunAMAuthAccountLockout,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+changetype: add
+adminDisplayName: sunAMAuthAccountLockout
+adminDescription: Invalid Login Attempts
+cn: sunAMAuthAccountLockout
+governsID: 1.3.6.1.4.1.42.2.27.9.2.118
+instanceType: 4
+lDAPDisplayName: sunAMAuthAccountLockout
+mayContain: sunAMAuthInvalidAttemptsData
+objectCategory: CN=Class-Schema,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+objectClass: classSchema
+objectClassCategory: 3
+rDNAttID: cn
+subClassOf: top
+systemOnly: FALSE
+
+dn:
+changetype: modify
+add: schemaUpdateNow
+schemaUpdateNow: 1
+-
