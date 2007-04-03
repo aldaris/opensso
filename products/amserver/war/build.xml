@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2007-04-03 20:34:55 veiming Exp $
+   $Id: build.xml,v 1.22 2007-04-03 21:14:34 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,10 +41,8 @@
     <property name="war.built.dir" location="${amserver.built.war.dir}"/>
     <property name="war.xml.dir" location="${amserver.warbase.dir}/xml"/>
     <property name="war.www.dir" location="${amserver.warbase.dir}/www"/>
-    <property name="amserver.cli.package.dir" location="${amserver.built.war.dir}/cli/package"/>
 
     <target name="all" depends="preparebuild">
-        <antcall target="cli" />
         <antcall target="tools" />
     </target>
     <target name="tools">
@@ -212,53 +210,13 @@
         <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="cli" depends="war" >
-        <tstamp>
-            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
-        </tstamp>
-        <echo file="${amserver.cli.package.dir}/.manifest"
-            message="version=${openfm.version}, ${touch.time}" />
-        <copy file="${amserver.basedir}/license.txt" todir="${amserver.cli.package.dir}" />
-        <copy file="${amserver.script.dir}/bin/README.amadm" tofile="${amserver.cli.package.dir}/README" />
-                                                                               
-        <copy todir="${amserver.cli.package.dir}/classes">
-            <fileset dir="${amserver.built.res.dir}"
-                excludes="*.xml" />
-            <fileset dir="${amserver.warbase.dir}/ldif">
-                <include name="am_sm_ad_schema.ldif" />
-                <include name="am_sm_ds_schema.ldif" />
-            </fileset>
-            <fileset dir="${amserver.classes.dir}" />
-            <fileset dir="${sharedlib.classes.dir}" />
-        </copy>
-        <copy todir="${amserver.cli.package.dir}/classes/com/sun/identity/sm">
-            <fileset dir="${amserver.dtd.xml.dir}">
-                <include name="sms.dtd" />
-            </fileset>
-        </copy>
-        <copy todir="${amserver.cli.package.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="ldapjdk.jar,mail.jar,j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar" />
-        </copy>
-        <copy file="${amserver.script.dir}/bin/amadm"
-            tofile="${amserver.cli.package.dir}/amadm" />
-        <copy file="${amserver.script.dir}/bin/amadm.bat"
-            tofile="${amserver.cli.package.dir}/amadm.bat" />
-        <copy file="${amserver.res.i18n.dir}/AccessManagerCLI.properties"
-            tofile="${amserver.cli.package.dir}/classes/AccessManagerCLI.properties" />
-        <zip destfile="${amserver.dist.dir}/amadm.zip" basedir="${amserver.cli.package.dir}" />
-        <checksum file="${amserver.dist.dir}/amadm.zip" algorithm="SHA" fileext=".sha" />
-    </target>
-
-
     <target name="preparebuild">
         <mkdir dir="${amserver.built.war.dir}"/>
-        <mkdir dir="${amserver.cli.package.dir}"/>
         <mkdir dir="${amserver.dist.dir}"/>
     </target>
 
     <target name="clean">
         <delete dir="${amserver.built.war.dir}"/>
-        <delete dir="${amserver.cli.package.dir}"/>
         <delete file="${amserver.dist.dir}/opensso.war" />
         <delete file="${amserver.dist.dir}/opensso.war.sha" />
     </target>
