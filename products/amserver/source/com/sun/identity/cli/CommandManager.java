@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.7 2007-04-02 06:07:54 veiming Exp $
+ * $Id: CommandManager.java,v 1.8 2007-04-03 18:24:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -426,6 +426,9 @@ public class CommandManager {
             try {
                 req.process(this);
             } catch (CLIException e) {
+                if (isVerbose()) {
+                    e.printStackTrace(System.out);
+                }
                 if (bContinue) {
                     outputWriter.printlnError(e.getMessage());
                 } else {
