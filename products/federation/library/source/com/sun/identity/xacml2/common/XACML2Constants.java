@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.2 2007-03-24 01:25:41 dillidorai Exp $
+ * $Id: XACML2Constants.java,v 1.3 2007-04-03 17:01:30 pawand Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,7 +156,7 @@ public class  XACML2Constants {
     /**
      * String used to declare SAML2 protocol namespace.
      */
-    public String SAMLP_DECLARE_STR =
+    public static String SAMLP_DECLARE_STR =
         "xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"";
     
     /** 
