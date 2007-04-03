@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExitCodes.java,v 1.1 2006-05-31 21:49:43 veiming Exp $
+ * $Id: ExitCodes.java,v 1.2 2007-04-03 17:41:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -167,5 +167,5 @@ public interface ExitCodes {
     /**
      * Request cannot be processed.
      */
-    int REQUEST_CANNOT_BE_PROCESSED = 999;
+    int REQUEST_CANNOT_BE_PROCESSED = 127;
 }
