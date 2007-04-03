@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.6 2007-03-21 22:33:53 veiming Exp $
+ * $Id: FederationManager.java,v 1.7 2007-04-03 17:42:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -378,6 +378,7 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
+            "list-circle-of-trust-members-cot-does-not-exists=Circle of trust, {0} does not exist.",
             "list-circle-of-trust-members-members=List of trusted entities (entity IDs) in the circle of trust, {0}:"})
     private String list_circle_of_trust_members;
 

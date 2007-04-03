@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrustMembers.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
+ * $Id: ListCircleOfTrustMembers.java,v 1.3 2007-04-03 17:42:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,16 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
-            Set members = cotManager.listCircleOfTrustMember(realm,cot,spec);
+            Set circleOfTrusts = cotManager.getAllCirclesOfTrust(realm, spec);
+            if (!circleOfTrusts.contains(cot)){
+                Object[] obj = {cot};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString(
+                    "list-circle-of-trust-members-cot-does-not-exists"), obj),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+
+            Set members = cotManager.listCircleOfTrustMember(realm, cot, spec);
             
             if ((members == null) || members.isEmpty()) {
                 Object[] obj = {cot};
