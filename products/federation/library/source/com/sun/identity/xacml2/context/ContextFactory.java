@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ContextFactory.java,v 1.2 2007-03-24 01:25:45 dillidorai Exp $
+ * $Id: ContextFactory.java,v 1.3 2007-04-03 17:00:34 pawand Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,9 @@ import org.w3c.dom.Element;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.common.XACML2SDKUtils;
 import com.sun.identity.xacml2.common.XACML2Constants;
+import com.sun.identity.xacml2.context.impl.ActionImpl;
 import com.sun.identity.xacml2.context.impl.AttributeImpl;
+import com.sun.identity.xacml2.context.impl.EnvironmentImpl;
 import com.sun.identity.xacml2.context.impl.RequestImpl;
 import com.sun.identity.xacml2.context.impl.ResourceImpl;
 import com.sun.identity.xacml2.context.impl.SubjectImpl;
@@ -54,7 +56,7 @@ import com.sun.identity.xacml2.context.impl.ResultImpl;
 public class ContextFactory {
 
     private static ContextFactory instance = new ContextFactory();
-    private XACML2Constants xc;
+    
 
     /**
      * Sole Constructor.
@@ -79,7 +81,7 @@ public class ContextFactory {
      * 
      */
     public Request createRequest() {
-        Object obj = XACML2SDKUtils.getObjectInstance(xc.REQUEST);
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.REQUEST);
         if (obj == null) {
             return new RequestImpl();
         } else {
@@ -100,7 +102,7 @@ public class ContextFactory {
     public Request createRequest(Element elem)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.REQUEST, elem);
+            XACML2Constants.REQUEST, elem);
         if (obj == null) {
             return new RequestImpl(elem);
         } else {
@@ -121,7 +123,7 @@ public class ContextFactory {
     public Request createRequest(String xml)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.REQUEST, xml);
+            XACML2Constants.REQUEST, xml);
         if (obj == null) {
             return new RequestImpl(xml);
         } else {
@@ -137,7 +139,7 @@ public class ContextFactory {
      * 
      */
     public Resource createResource() {
-        Object obj = XACML2SDKUtils.getObjectInstance(xc.RESOURCE);
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.RESOURCE);
         if (obj == null) {
             return new ResourceImpl();
         } else {
@@ -158,7 +160,7 @@ public class ContextFactory {
     public Resource createResource(Element elem)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.RESOURCE, elem);
+            XACML2Constants.RESOURCE, elem);
         if (obj == null) {
             return new ResourceImpl(elem);
         } else {
@@ -179,7 +181,7 @@ public class ContextFactory {
     public Resource createResource(String xml)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.RESOURCE, xml);
+            XACML2Constants.RESOURCE, xml);
         if (obj == null) {
             return new ResourceImpl(xml);
         } else {
@@ -194,7 +196,7 @@ public class ContextFactory {
      * 
      */
     public Subject createSubject() {
-        Object obj = XACML2SDKUtils.getObjectInstance(xc.SUBJECT);
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.SUBJECT);
         if (obj == null) {
             return new SubjectImpl();
         } else {
@@ -215,7 +217,7 @@ public class ContextFactory {
     public Subject createSubject(Element elem)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.SUBJECT, elem);
+            XACML2Constants.SUBJECT, elem);
         if (obj == null) {
             return new SubjectImpl(elem);
         } else {
@@ -236,13 +238,129 @@ public class ContextFactory {
     public Subject createSubject(String xml)
         throws XACML2Exception {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.SUBJECT, xml);
+            XACML2Constants.SUBJECT, xml);
         if (obj == null) {
             return new SubjectImpl(xml);
         } else {
             return (Subject) obj;
         }
     }
+    
+    /**
+     * Returns a new instance of <code>Action</code>.
+     *
+     * @return a new instance of <code>Action</code>
+     * 
+     */
+    public Action createAction() {
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.ACTION);
+        if (obj == null) {
+            return new ActionImpl();
+        } else {
+            return (Action) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Action</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Action</code>
+     * @return a new instance of <code>Action</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Action createAction(Element elem)
+        throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.ACTION, elem);
+        if (obj == null) {
+            return new ActionImpl(elem);
+        } else {
+            return (Action) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Action</code>.
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Action</code>
+     * @return a new instance of <code>Action</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Action createAction(String xml)
+        throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.ACTION, xml);
+        if (obj == null) {
+            return new ActionImpl(xml);
+        } else {
+            return (Action) obj;
+        }
+    }
+    
+    /**
+     * Returns a new instance of <code>Environment</code>.
+     *
+     * @return a new instance of <code>Environment</code>
+     * 
+     */
+    public Environment createEnvironment() {
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.
+            ENVIRONMENT);
+        if (obj == null) {
+            return new EnvironmentImpl();
+        } else {
+            return (Environment) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Environment</code>.
+     * The return object is immutable.
+     *
+     * @param elem a DOM Element representation of <code>Environment</code>
+     * @return a new instance of <code>Environment</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    DOM Element 
+     * 
+     */
+    public Environment createEnvironment(Element elem)
+        throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.ENVIRONMENT, elem);
+        if (obj == null) {
+            return new EnvironmentImpl(elem);
+        } else {
+            return (Environment) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>Environment</code>.
+     * The return object is immutable.
+     *
+     * @param xml a XML string representation of <code>Environment</code>
+     * @return a new instance of <code>Environment</code>
+     * @throws XACML2Exception if error occurs while processing the 
+     *    XML string
+     * 
+     */
+    public Environment createEnvironment(String xml)
+        throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.ENVIRONMENT, xml);
+        if (obj == null) {
+            return new EnvironmentImpl(xml);
+        } else {
+            return (Environment) obj;
+        }
+    }
+
 
     /**
      * Returns a new instance of <code>Attribute</code>.
@@ -252,7 +370,8 @@ public class ContextFactory {
      * 
      */
     public Attribute createAttribute() {
-        Object obj = XACML2SDKUtils.getObjectInstance(xc.ATTRIBUTE);
+        Object obj = XACML2SDKUtils.getObjectInstance(XACML2Constants.
+            ATTRIBUTE);
         if (obj == null) {
             return new AttributeImpl();
         } else {
@@ -275,7 +394,7 @@ public class ContextFactory {
                 throws XACML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.ATTRIBUTE, elem);
+            XACML2Constants.ATTRIBUTE, elem);
         if (obj == null) {
             return new AttributeImpl(elem);
         } else {
@@ -296,7 +415,7 @@ public class ContextFactory {
                 throws XACML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.ATTRIBUTE, xml);
+            XACML2Constants.ATTRIBUTE, xml);
         if (obj == null) {
             return new AttributeImpl(xml);
         } else {
@@ -313,7 +432,7 @@ public class ContextFactory {
      */
     public XACMLAuthzDecisionQuery createXACMLAuthzDecisionQuery() {
         Object obj = XACML2SDKUtils.getObjectInstance(
-                xc.XACMLAUTHZDECISIONQUERY);
+                XACML2Constants.XACMLAUTHZDECISIONQUERY);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl();
         } else {
@@ -336,7 +455,7 @@ public class ContextFactory {
                 throws XACML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.XACMLAUTHZDECISIONQUERY, elem);
+            XACML2Constants.XACMLAUTHZDECISIONQUERY, elem);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl(elem);
         } else {
@@ -358,7 +477,7 @@ public class ContextFactory {
                 throws XACML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
-            xc.XACMLAUTHZDECISIONQUERY, xml);
+            XACML2Constants.XACMLAUTHZDECISIONQUERY, xml);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl(xml);
         } else {
@@ -672,7 +791,8 @@ public class ContextFactory {
      *    DOM Element 
      * 
      */
-    public StatusMessage createStatusMessage(Element elem)throws XACML2Exception {
+    public StatusMessage createStatusMessage(Element elem)
+        throws XACML2Exception {
         Object object = XACML2SDKUtils.getObjectInstance(
                 XACML2Constants.STATUS_MESSAGE_ELEMENT, elem);
         if (object == null) {

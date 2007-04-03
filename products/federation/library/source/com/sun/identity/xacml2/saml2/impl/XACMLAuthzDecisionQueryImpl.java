@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.1 2007-03-15 06:19:11 bhavnab Exp $
+ * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.2 2007-04-03 17:02:09 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,6 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
     private boolean returnContext = false;
     private boolean isMutable = true;
     private Request request;
-    private XACML2Constants xc;
     /**
      * Default constructor
      */
@@ -122,16 +121,17 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
         String value = null;
         if (element == null) {
             XACML2SDKUtils.debug.error(
-                    "XACMLAuthzDecisionQueryImpl.processElement(): invalid root "
+                    "XACMLAuthzDecisionQueryImpl.processElement():invalid root "
                     +"element");
             throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
                     "invalid_element"));
         }
         
         // First check that we're really parsing an XACMLAuthzDecisionQuery
-        if (! element.getLocalName().equals(xc.XACMLAUTHZDECISIONQUERY)) {
+        if (! element.getLocalName().equals(XACML2Constants.
+            XACMLAUTHZDECISIONQUERY)) {
             XACML2SDKUtils.debug.error(
-                    "XACMLAuthzDecisionQueryImpl.processElement(): invalid root "
+                    "XACMLAuthzDecisionQueryImpl.processElement():invalid root "
                     +"element");
             throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
                     "missing_local_name"));
@@ -144,8 +144,9 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
             Node node = nodes.item(i);
             if ((node.getNodeType() == Node.ELEMENT_NODE) ||
                     (node.getNodeType() == Node.ATTRIBUTE_NODE)) {
-                if (node.getLocalName().equals(xc.REQUEST)) {
-                    request = factory.getInstance().createRequest((Element)node);
+                if (node.getLocalName().equals(XACML2Constants.REQUEST)) {
+                    request = factory.getInstance().
+                        createRequest((Element)node);
                 }
             }
         }
@@ -157,21 +158,25 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
         
         NamedNodeMap attrs = element.getAttributes();
         try {
-            returnContext = Boolean.valueOf(attrs.getNamedItem(xc.RETURNCONTEXT).
+            returnContext = Boolean.valueOf(attrs.getNamedItem(
+                XACML2Constants.RETURNCONTEXT).
                     getNodeValue()).booleanValue();
         } catch (Exception e) {
             throw new XACML2Exception("XACMLAuthzDecisionQueryImpl."
                     +"processElement():"
-                    + "Error parsing optional attribute "+ xc.RETURNCONTEXT+":"
+                    + "Error parsing optional attribute " 
+                    + XACML2Constants.RETURNCONTEXT+":" 
                     +e.getMessage());
         }
         try {
             inputContextOnly = Boolean.valueOf(attrs.getNamedItem(
-                    xc.INPUTCONTEXTONLY).getNodeValue()).booleanValue();
+                    XACML2Constants.INPUTCONTEXTONLY).getNodeValue()).
+                    booleanValue();
         } catch (Exception e) {
             throw new XACML2Exception("XACMLAuthzDecisionQueryImpl."
                     +"processElement():"
-                    + "Error parsing optional attribute "+ xc.INPUTCONTEXTONLY 
+                    + "Error parsing optional attribute "
+                    + XACML2Constants.INPUTCONTEXTONLY 
                     +":"+e.getMessage());
         }
         
@@ -285,7 +290,8 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
     public void setRequest(Request request) throws XACML2Exception {
         if (request == null) {
             throw new XACML2Exception(
-                    XACML2SDKUtils.bundle.getString("null_not_valid")); //TODO i18n string
+                    XACML2SDKUtils.bundle.getString("null_not_valid")); 
+                   //TODO i18n string
         }
         this.request = request;
     }
@@ -305,23 +311,28 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
         StringBuffer NS = new StringBuffer(100);
         String appendNS = "";
         if (declareNS) {
-            NS.append(xc.SAMLP_DECLARE_STR).append(xc.SPACE);
-            NS.append(xc.CONTEXT_DECLARE_STR);
-            NS.append(xc.SPACE).append(xc.NS_XML).append(xc.SPACE);
+            NS.append(XACML2Constants.SAMLP_DECLARE_STR).
+                append(XACML2Constants.SPACE);
+            NS.append(XACML2Constants.CONTEXT_DECLARE_STR);
+            NS.append(XACML2Constants.SPACE).append(XACML2Constants.NS_XML).
+                append(XACML2Constants.SPACE);
         }
         if (includeNSPrefix) {
-            appendNS = xc.SAMLP_PREFIX;
+            appendNS = XACML2Constants.SAMLP_PREFIX;
         }
-        sb.append("<").append(appendNS).append(xc.XACMLAUTHZDECISIONQUERY).
-                append(xc.SPACE).append(NS);
-        sb.append(xc.SPACE).append(xc.INPUTCONTEXTONLY).append("=").append("\"");
+        sb.append("<").append(appendNS).append(XACML2Constants.
+            XACMLAUTHZDECISIONQUERY).append(XACML2Constants.SPACE).
+            append(NS);
+        sb.append(XACML2Constants.SPACE).append(XACML2Constants.
+            INPUTCONTEXTONLY).append("=").append("\"");
         sb.append(Boolean.toString(inputContextOnly));
-        sb.append("\"").append(xc.SPACE);
-        sb.append(xc.RETURNCONTEXT).append("=").append("\"");
+        sb.append("\"").append(XACML2Constants.SPACE);
+        sb.append(XACML2Constants.RETURNCONTEXT).append("=").append("\"");
         sb.append(Boolean.toString(returnContext));
-        sb.append("\"").append(xc.SPACE).append(">").append("\n");
+        sb.append("\"").append(XACML2Constants.SPACE).append(">").append("\n");
         sb.append(request.toXMLString(true,false)).append("\n");
-        sb.append("</").append(appendNS).append(xc.XACMLAUTHZDECISIONQUERY);
+        sb.append("</").append(appendNS).
+            append(XACML2Constants.XACMLAUTHZDECISIONQUERY);
         sb.append(">\n");
         return  sb.toString();
     }

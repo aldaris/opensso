@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestImpl.java,v 1.1 2007-03-15 06:19:09 bhavnab Exp $
+ * $Id: RequestImpl.java,v 1.2 2007-04-03 16:59:08 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,10 @@ import com.sun.identity.xacml2.context.ContextFactory;
 import com.sun.identity.xacml2.context.Resource;
 import com.sun.identity.xacml2.context.Request;
 import com.sun.identity.xacml2.context.Subject;
+import com.sun.identity.xacml2.context.Action;
+import com.sun.identity.xacml2.context.Environment;
+import com.sun.identity.xacml2.context.impl.ActionImpl;
+import com.sun.identity.xacml2.context.impl.EnvironmentImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -64,17 +68,17 @@ import org.w3c.dom.NodeList;
 public class RequestImpl implements Request {
     private List subjects = new ArrayList();
     private List resources = new ArrayList();
-    private List actions = new ArrayList();
-    private List env = new ArrayList();
+    private Action action = null;
+    private Environment env = null;
     private Subject subject;
     private Resource resource;
     private boolean isMutable = true;
-    private static XACML2Constants xc;
-
+    
     private  static Set supportedSubjectCategory = new HashSet();
     static {
-        supportedSubjectCategory.add(xc.SUBJECT_CATEGORY_DEFAULT);
-        supportedSubjectCategory.add(xc.SUBJECT_CATEGORY_INTERMEDIARY);
+        supportedSubjectCategory.add(XACML2Constants.SUBJECT_CATEGORY_DEFAULT);
+        supportedSubjectCategory.add(XACML2Constants.
+            SUBJECT_CATEGORY_INTERMEDIARY);
     };
    /** 
     * Default constructor
@@ -132,7 +136,7 @@ public class RequestImpl implements Request {
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(xc.REQUEST)) {
+        if (!elemName.equals(XACML2Constants.REQUEST)) {
             XACML2SDKUtils.debug.error(
                 "RequestImpl.processElement(): invalid local name " +
                  elemName);
@@ -170,7 +174,8 @@ public class RequestImpl implements Request {
         child = (Node)children.get(0);
         // The first subelement should be <Subject>
         String childName = child.getLocalName();
-        if ((childName == null) || (!childName.equals(xc.SUBJECT))) {
+        if ((childName == null) || (!childName.
+            equals(XACML2Constants.SUBJECT))) {
             XACML2SDKUtils.debug.error("RequestImpl.processElement():"+
                 " the first element is not <Subject>");
         throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
@@ -196,10 +201,10 @@ public class RequestImpl implements Request {
             // The next subelement may be <Resource> or <Subject>
             childName = child.getLocalName();
             if ((childName != null) &&
-                (childName.equals(xc.RESOURCE) || childName.equals(xc.SUBJECT)))
-            {
+                (childName.equals(XACML2Constants.RESOURCE) || childName.
+                equals(XACML2Constants.SUBJECT))) {
                     if (resourceFound) {
-                        if (childName.equals(xc.SUBJECT)) {
+                        if (childName.equals(XACML2Constants.SUBJECT)) {
                             // all <Subject> should be before <Resource>
                             XACML2SDKUtils.debug.error("RequestImpl."
                                 +"processElement(): <Subject> should be "
@@ -212,17 +217,18 @@ public class RequestImpl implements Request {
                                 Element)child);
                             resources.add(resource);
                         }
-                    } else if (childName.equals(xc.SUBJECT)) {
+                    } else if (childName.equals(XACML2Constants.SUBJECT)) {
                             subject = factory.getInstance().createSubject(
                                 (Element)child);
                             subjects.add(subject);
-                        } else { // childname is resource
+                    } else { // childname is resource
                             resourceFound = true;
                             resource = factory.getInstance().createResource((
                                 Element)child);
                             resources.add(resource);
-                        }
-            } else if ((childName != null) && (childName.equals(xc.ACTION))) {
+                    }
+            } else if ((childName != null) && (childName.
+                equals(XACML2Constants.ACTION))) {
                 if (!resourceFound) {
                     XACML2SDKUtils.debug.error("RequestImpl."
                         +"processElement(): <Resource> should be "
@@ -232,31 +238,10 @@ public class RequestImpl implements Request {
                             "element_out_of_place")); //TODO i18n string
                 } else {
                     actionFound = true;
-                    //get children which are the <Attribute> elements
-                    NodeList attrNodes = child.getChildNodes();
-                    int numOfAttrNodes = attrNodes.getLength();
-                    for (int k=0; k < numOfAttrNodes; k++) {
-                        Node attrChild = (Node)attrNodes.item(k);
-                        if (attrChild.getNodeType() == Node.ELEMENT_NODE) {
-                            String attrChildName = attrChild.getLocalName();
-                            if (attrChildName.equals(xc.ATTRIBUTE)) {
-                                Attribute attribute = 
-                                    factory.getInstance().createAttribute(
-                                    (Element)attrChild);
-                                actions.add(attribute);
-                            } else {
-                                XACML2SDKUtils.debug.error("RequestImpl."
-                                    +"processElement(): Invalid element :"
-                                    +attrChildName);
-                                throw new XACML2Exception( 
-                                    XACML2SDKUtils.bundle.getString(
-                                        "invalid_element"));
-                            }
-                        }
-                    }
+                    action = factory.createAction((Element)child);                                     
                 }
-            } else if ((childName != null) && (childName.equals(xc.ENVIRONMENT)))
-            {
+            } else if ((childName != null) && (childName.
+                equals(XACML2Constants.ENVIRONMENT))) {
                 if (!resourceFound || !actionFound){
                     XACML2SDKUtils.debug.error("RequestImpl."
                         +"processElement(): <Resource> and "
@@ -266,28 +251,8 @@ public class RequestImpl implements Request {
                                 "element_out_of_place")); //TODO i18n string
                 } else {
                     envFound = true;
-                    //get children which are the <Attribute> elements
-                    NodeList envNodes = child.getChildNodes();
-                    int numOfAttrNodes = envNodes.getLength();
-                    for (int k=0; k < numOfAttrNodes; k++) {
-                        Node envChild = (Node)envNodes.item(k);
-                        if (envChild.getNodeType() == Node.ELEMENT_NODE) {
-                            String envChildName = envChild.getLocalName();
-                            if (envChildName.equals(xc.ATTRIBUTE)) {
-                                Attribute attribute = factory.getInstance().
-                                    createAttribute((Element)envChild);
-                                env.add(attribute);
-                            } else {
-                                XACML2SDKUtils.debug.error("RequestImpl."
-                                    +"processElement(): Invalid element :"
-                                    +envChildName);
-                                throw new XACML2Exception(
-                                    XACML2SDKUtils.bundle.getString(
-                                        "invalid_element"));
-                            }
-                        }
-                    }
-                 }
+                    env = factory.createEnvironment((Element) child);
+                }
             }
         }
         if (XACML2SDKUtils.debug.messageEnabled()) {
@@ -370,73 +335,67 @@ public class RequestImpl implements Request {
     }
 
     /**
-     * Returns the List containing one to many <code>Attribute</code> elements
-     * associated with this <code>Action</code> element.
+     * Returns the instance of <code>Action</code> element
      *
-     * @return the List of <code>Attribute</code> elements associated with 
-     * the <code>Action</code>.
+     * @return the instance of <code>Action</code>.
      */
-    public List getActions() {
-        return actions;
+    public Action getAction() {
+        return action;
     }
 
     /**
-     * Sets the one to many <code>Attribute</code> elements associated with
-     * the <code>Action</code>
+     * Sets the instance of <code>Action</code>
      *
-     * @param actions List of the one to many <code>Attributes</code> elements 
-     * of the <code>Action</code>.
-     *
+     * @param argAction instance of  <code>Action</code>.
+     * 
      * @exception XACML2Exception if the object is immutable
      * An object is considered <code>immutable</code> if <code>
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setActions(List actions) throws XACML2Exception {
+    public void setAction(Action argAction) throws XACML2Exception {
         if (!isMutable) {
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
                 "objectImmutable"));
-        } 
-        if (actions == null || actions.isEmpty()) {
+        }
+        
+        if (argAction == null) {
             throw new XACML2Exception(
                 XACML2SDKUtils.bundle.getString("null_not_valid")); 
         }
-        this.actions.addAll(actions);
+        action = argAction;
+        
     }
 
     /**
-     * Returns the List containing one to many <code>Attribute</code> elements 
-     * associated with the  <code>Environment</code> element.
+     * Returns the instance of <code>Environment</code> element.
      *
-     * @return the List of <code>Attribute</code> elements associated with 
-     * the <code>Action</code>.
+     * @return the instance of <code>Environment</code>.
      */
-    public List getEnvironment() {
+    public Environment getEnvironment() {
         return env;
     }
 
     /**
-     * Sets the one to many <code>Attribute</code> elements associated with
-     * the <code>Environment</code>
+     * Sets the instance of the <code>Environment</code>
      *
-     * @param env List of the one to many <code>Attributes</code> elements 
-     * of the <code>Environment</code>.
+     * @param env instance of <code>Environment</code>.
      *
      * @exception XACML2Exception if the object is immutable
      * An object is considered <code>immutable</code> if <code>
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setEnvironment(List env) throws XACML2Exception {
+    public void setEnvironment(Environment argEnv) throws XACML2Exception {
         if (!isMutable) {
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
                 "objectImmutable"));
         } 
-        if (env == null || env.isEmpty()) {
+        if (argEnv == null ) {
             throw new XACML2Exception(
                 XACML2SDKUtils.bundle.getString("null_not_valid")); 
         }
-        this.env.addAll(env);
+        env = argEnv;
     }
 
    /**
@@ -451,18 +410,21 @@ public class RequestImpl implements Request {
     public String toXMLString(boolean includeNSPrefix, boolean declareNS)
             throws XACML2Exception {
         StringBuffer sb = new StringBuffer(2000);
-        StringBuffer NS = new StringBuffer(100);
-        String appendNS = "";
+        StringBuffer namespaceBuffer = new StringBuffer(100);
+        String nsDeclaration = "";
         if (declareNS) {
-            NS.append(xc.CONTEXT_DECLARE_STR).append(xc.SPACE);
-            NS.append(xc.NS_XML).append(xc.SPACE).append(
-                    xc.CONTEXT_SCHEMA_LOCATION);
+            namespaceBuffer.append(XACML2Constants.CONTEXT_DECLARE_STR).
+                append(XACML2Constants.SPACE);
+            namespaceBuffer.append(XACML2Constants.NS_XML).
+                append(XACML2Constants.SPACE).append(XACML2Constants.
+                CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            appendNS = XACML2Constants.CONTEXT_PREFIX;
+            nsDeclaration = XACML2Constants.CONTEXT_PREFIX;
         }
-        sb.append("<").append(appendNS).append(xc.REQUEST).append(NS);
-        sb.append(xc.END_TAG);
+        sb.append("<").append(nsDeclaration).append(XACML2Constants.REQUEST).
+            append(namespaceBuffer);
+        sb.append(">");
         int length = 0;
         if (subjects != null && !subjects.isEmpty()) {
             sb.append("\n");
@@ -480,29 +442,15 @@ public class RequestImpl implements Request {
                 sb.append(resource.toXMLString(includeNSPrefix, false));
             }
         }
-        if (actions != null && !actions.isEmpty()) {
+        if (action != null) {
             sb.append("\n");
-            sb.append("<").append(appendNS).append(xc.ACTION).append(">\n");
-            length = actions.size();
-            for (int i = 0; i < length; i++) {
-                Attribute action = (Attribute)actions.get(i);
-                sb.append(action.toXMLString(includeNSPrefix, false));
-            }
-            sb.append("</").append(appendNS).append(xc.ACTION).append(">\n");
+            sb.append(action.toXMLString(includeNSPrefix, false));
         }
-        if (env != null && !env.isEmpty()) {
+        if (env != null) {
             sb.append("\n");
-            sb.append("<").append(appendNS).append(xc.ENVIRONMENT).
-                    append(">\n");
-            length = env.size();
-            for (int i = 0; i < length; i++) {
-                Attribute environment = (Attribute)env.get(i);
-                sb.append(environment.toXMLString(includeNSPrefix, false));
-            }
-            sb.append("</").append(appendNS).append(xc.ENVIRONMENT).
-                    append(">\n");
+            sb.append(env.toXMLString(includeNSPrefix, false));
         }
-        sb.append("</").append(appendNS).append(xc.REQUEST).
+        sb.append("</").append(nsDeclaration).append(XACML2Constants.REQUEST).
         append(">\n");
         return sb.toString();
     }

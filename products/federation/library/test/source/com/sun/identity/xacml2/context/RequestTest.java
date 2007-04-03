@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestTest.java,v 1.1 2007-03-15 06:21:03 bhavnab Exp $
+ * $Id: RequestTest.java,v 1.2 2007-04-03 17:03:47 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,13 +89,13 @@ public class RequestTest extends UnitTestBase {
                 "Error creating XML String from Request object";
             log(Level.INFO, "validateRequest",xmlString);
             
-            validateActions(request.getActions());
+            validateAction(request.getAction());
             validateEnvironment(request.getEnvironment());
             // recreate Request from xml
             request = ContextFactory.getInstance().createRequest(xmlString);
             validateSubjects(request.getSubjects());
             validateResources(request.getResources());
-            validateActions(request.getActions());
+            validateAction(request.getAction());
             validateEnvironment(request.getEnvironment());
 
             
@@ -110,15 +110,17 @@ public class RequestTest extends UnitTestBase {
      *
      * @param actions the <code>Action</code> in the request.
      */
-    private void validateActions(List actions) throws XACML2Exception {
-        for (int i = 0; i < actions.size(); i++) {
-	    Attribute action = (Attribute)actions.get(i);
-            System.out.println("action string:"+action.toXMLString(true, true));
-            System.out.println("issuer:"+action.getIssuer());
-            System.out.println("attributId:"+action.getAttributeID());
-            System.out.println("datatype:"+action.getDataType());
-            for (int j=0; j < action.getAttributeValues().size(); j++) {
-                Element value = (Element)action.getAttributeValues().get(j);
+    private void validateAction(Action action) throws XACML2Exception {
+        List attributes = action.getAttributes();
+        System.out.println("Action XML :"+action.toXMLString(true, true));
+        for (int i = 0; i < attributes.size(); i++) {
+	    Attribute attribute = (Attribute)attributes.get(i);
+            System.out.println("attribute string:"+attribute.toXMLString(true, true));
+            System.out.println("issuer:"+attribute.getIssuer());
+            System.out.println("attributId:"+attribute.getAttributeID());
+            System.out.println("datatype:"+attribute.getDataType());
+            for (int j=0; j < attribute.getAttributeValues().size(); j++) {
+                Element value = (Element)attribute.getAttributeValues().get(j);
                 System.out.println("value:"
                     +XMLUtils.print(value));
             }
@@ -167,12 +169,14 @@ public class RequestTest extends UnitTestBase {
      *
      * @param env the <code>Environment</code> in the request.
      */
-    private void validateEnvironment(List environment) throws XACML2Exception {
-        for (int i = 0; i < environment.size(); i++) {
-	    Attribute env = (Attribute)environment.get(i);
-            System.out.println("issuer:"+env.getIssuer());
-            System.out.println("attributId:"+env.getAttributeID());
-            System.out.println("datatype:"+env.getDataType());
+    private void validateEnvironment(Environment environment) throws XACML2Exception {
+        List attributes = environment.getAttributes();
+        System.out.println("Environment XML :"+environment.toXMLString(true, true));
+        for (int i = 0; i < attributes.size(); i++) {
+	    Attribute attribute = (Attribute)attributes.get(i);
+            System.out.println("issuer:"+attribute.getIssuer());
+            System.out.println("attributId:"+attribute.getAttributeID());
+            System.out.println("datatype:"+attribute.getDataType());
         }
     }
 }

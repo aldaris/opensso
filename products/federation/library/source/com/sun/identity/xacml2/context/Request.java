@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.1 2007-03-15 06:19:06 bhavnab Exp $
+ * $Id: Request.java,v 1.2 2007-04-03 17:00:34 pawand Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,50 +90,42 @@ public interface Request {
 
     /**
      *
-     * Returns the List containing one to many <code>Attribute</code> elements
-     * associated with this <code>Action</code> element.
+     * Returns the instance of <code>Action</code>
      *
-     * @return the List of <code>Attribute</code> elements associated with 
-     * the <code>Action</code>.
+     * @return instance of <code>Action</code> 
      */
-    public List getActions();
+    public Action getAction();
 
     /**
-     * Sets the one to many <code>Attribute</code> elements associated with
-     * the <code>Action</code>
+     * Sets the instance of <code>Action</code>
      *
-     * @param actions List of the one to many <code>Attributes</code> elements 
-     * of the <code>Action</code>.
+     * @param action instance of <code>Action</code> 
      *
      * @exception XACML2Exception if the object is immutable
      * An object is considered <code>immutable</code> if <code>
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setActions(List actions) throws XACML2Exception;
+    public void setAction(Action action) throws XACML2Exception;
 
     /**
-     * Returns the List containing one to many <code>Attribute</code> elements 
-     * associated with the  <code>Environment</code> element.
+     * Returns the instance of <code>Environment</code>
      *
-     * @return the List of <code>Attribute</code> elements associated with 
-     * the <code>Action</code>.
+     * @return the instance of <code>Environment</code>
      */
-    public List getEnvironment();
+    public Environment getEnvironment();
 
     /**
-     * Sets the one to many <code>Attribute</code> elements associated with
-     * the <code>Environment</code>
+     * Sets the instance of <code>Environment</code>
      *
-     * @param env List of the one to many <code>Attributes</code> elements 
-     * of the <code>Environment</code>.
+     * @param env instance of <code>Environment</code>
      *
      * @exception XACML2Exception if the object is immutable
      * An object is considered <code>immutable</code> if <code>
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setEnvironment(List env) throws XACML2Exception;
+    public void setEnvironment(Environment env) throws XACML2Exception;
 
    /**
     * Returns a <code>String</code> representation of this object
