@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.15 2007-02-20 22:43:16 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.16 2007-04-03 17:43:47 ak138937 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -417,13 +417,13 @@ public class AMSetupServlet extends HttpServlet {
                 String realPath = servletCtx.getRealPath("/");
                 if ((realPath != null) && (realPath.length() > 0)) {
                     realPath = realPath.replace('\\', '/');
-                    int idx = realPath.indexOf(":");
-                    if (idx != -1) {
-                        realPath = realPath.substring(idx + 1);
-                    }
                     path = realPath.replaceAll("/", "_");
                 } else {
                     path = path.replaceAll("/", "_");
+                }
+                int idx = path.indexOf(":");
+                if (idx != -1) {
+                    path = path.substring(idx + 1);
                 }
                 String bootFile = servletCtx.getInitParameter(
                     SetupConstants.BOOTSTRAP_FILE_PREFIX);
