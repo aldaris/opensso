@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.1 2006-10-30 23:17:26 qcheng Exp $
+   $Id: web.xml,v 1.2 2007-04-03 21:46:20 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -194,10 +194,6 @@
             <jsp-file>/saml2/jsp/idpSSOFederate.jsp</jsp-file>
         </servlet>
         <servlet>
-            <servlet-name>SSOSoap</servlet-name>
-            <servlet-class>com.sun.identity.saml2.servlets.idp.SingleSignOnServiceSOAP</servlet-class>
-        </servlet>
-        <servlet>
             <servlet-name>Consumer</servlet-name>
             <jsp-file>/saml2/jsp/spAssertionConsumer.jsp</jsp-file>
         </servlet>
@@ -269,10 +265,6 @@
         <servlet-mapping>
             <servlet-name>Consumer</servlet-name>
             <url-pattern>/Consumer/*</url-pattern>
-        </servlet-mapping>
-        <servlet-mapping>
-            <servlet-name>SSOSoap</servlet-name>
-            <url-pattern>/SSOSoap</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>SSORedirect</servlet-name>
