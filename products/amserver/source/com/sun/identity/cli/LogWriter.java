@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogWriter.java,v 1.1 2006-05-31 21:49:45 veiming Exp $
+ * $Id: LogWriter.java,v 1.2 2007-04-04 00:26:05 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,6 @@ import java.util.logging.Level;
  * Writes audit log entries.
  */
 public class LogWriter {
-    private static final String ACCESS_LOG = "amAdmin.access";
-    private static final String ERROR_LOG = "amAdmin.error";
     private static final String LOG_MSG_XML = "CLI";
 
     /**
@@ -77,14 +75,15 @@ public class LogWriter {
     ) throws CLIException {
         if (!mgr.isLogOff()) {
             Logger logger = null;
+            String logName = mgr.getLogName();
             switch (type) {
                 case LOG_ERROR:
                     logger = (com.sun.identity.log.Logger)
-                        Logger.getLogger(ERROR_LOG);
+                        Logger.getLogger(logName + ".error");
                     break;
                 default:
                     logger = (com.sun.identity.log.Logger)
-                        Logger.getLogger(ACCESS_LOG);
+                        Logger.getLogger(logName + ".access");
             }
             if (logger.isLoggable(level)) {
                 try {

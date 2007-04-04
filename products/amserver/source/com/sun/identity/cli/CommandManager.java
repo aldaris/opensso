@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.8 2007-04-03 18:24:54 veiming Exp $
+ * $Id: CommandManager.java,v 1.9 2007-04-04 00:26:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class CommandManager {
     private ResourceBundle rbMessages;
     private Map environment;
     private String commandName;
+    private String logName;
     private IOutput outputWriter;
     private List definitionObjects;
     private List requestQueue = new Vector();
@@ -258,6 +259,7 @@ public class CommandManager {
             Class clazz = Class.forName(className);
             IDefinition defClass = (IDefinition)clazz.newInstance();
             definitionObjects.add(defClass);
+            logName = defClass.getLogName();
         } catch (ClassNotFoundException e) {
             Object[] param = {className};
             String message = MessageFormat.format(
@@ -328,6 +330,16 @@ public class CommandManager {
     public boolean isLogOff() {
         return (environment.get(CLIConstants.ARGUMENT_NOLOG) != null);
     }
+
+    /**
+     * Returns log name.
+     *
+     * @return log name.
+     */
+    public String getLogName() {
+        return logName;
+    }
+
 
     /**
      * Returns locale object.

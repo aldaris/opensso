@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.16 2007-03-23 22:55:06 veiming Exp $
+ * $Id: AccessManager.java,v 1.17 2007-04-04 00:26:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.cli.annotation.ResourceStrings;
 public class AccessManager {
     @DefinitionClassInfo(
         productName="Sun Java System Access Manager",
+        logName="amadm",
         resourceBundle="AccessManagerCLI")
     private String product;
 

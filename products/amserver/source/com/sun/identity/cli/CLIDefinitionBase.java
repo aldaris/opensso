@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.5 2007-03-21 22:33:39 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.6 2007-04-04 00:26:03 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 public abstract class CLIDefinitionBase implements IDefinition {
     private List subCommands = new ArrayList();
     private String definitionClass;
+    private String logName;
     protected ResourceBundle rb;
 
     /**
@@ -49,6 +50,7 @@ public abstract class CLIDefinitionBase implements IDefinition {
         this.definitionClass = definitionClass;
         ICLIStub defObject = getDefinitionObject();
         rb = ResourceBundle.getBundle(defObject.getResourceBundleName());
+        logName = defObject.getLogName();
         getCommands(defObject);
     }
     
@@ -89,6 +91,15 @@ public abstract class CLIDefinitionBase implements IDefinition {
      */
     public List getSubCommands() {
         return subCommands;
+    }
+    
+    /**
+     * Returns log name.
+     *
+     * @return log name.
+     */
+    public String getLogName() {
+        return logName;
     }
 
     /**

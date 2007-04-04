@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefinitionStubCreator.java,v 1.3 2007-03-21 22:33:44 veiming Exp $
+ * $Id: DefinitionStubCreator.java,v 1.4 2007-04-04 00:26:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,7 @@ public class DefinitionStubCreator {
             DefinitionClassInfo classInfo = pdtField.getAnnotation(
                 DefinitionClassInfo.class);
             stub.rbName = classInfo.resourceBundle();
+            stub.logName = classInfo.logName();
         } else {
             throw new Exception(
                 "Incorrect Definiton: missing product field");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StubTemplate.java,v 1.3 2007-02-26 20:37:49 veiming Exp $
+ * $Id: StubTemplate.java,v 1.4 2007-04-04 00:26:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import java.util.List;
  * are no annotation support.
  */
 public class StubTemplate {
+    public String logName;
     public String rbName;
     public List subCommands =new ArrayList();
 
@@ -58,6 +59,7 @@ public class StubTemplate {
         String code = TEMPLATE.replaceAll("@className@", className);
         code = code.replaceAll("@packageName@", packageName);
         code = code.replaceAll("@resourcebundle@", rbName);
+        code = code.replaceAll("@logname@", logName);
         
         StringBuffer buff = new StringBuffer();
         for (Iterator i = subCommands.iterator(); i.hasNext(); ) {
@@ -96,15 +98,21 @@ public class StubTemplate {
         "\n" +
         "public class @className@ implements ICLIStub {\n" +
         "    public String rbName;\n" +
+        "    public String logName;\n" +
         "    public List subCommands = new ArrayList();\n" +
         "\n" +
         "    public @className@() {\n" +
         "        rbName = \"@resourcebundle@\";\n" +
+        "        logName = \"@logname@\";\n" +
         "        @subcommand@" +
         "    }\n" +
         "\n" +
         "    public String getResourceBundleName() {\n" +
         "        return rbName;\n" +
+        "    }\n" +
+        "\n" +
+        "    public String getLogName() {\n" +
+        "        return logName;\n" +
         "    }\n" +
         "\n" +
         "    public List getSubCommandStubs() {\n" +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MockCLI.java,v 1.4 2007-03-21 22:33:52 veiming Exp $
+ * $Id: MockCLI.java,v 1.5 2007-04-04 00:26:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.cli.annotation.SubCommandInfo;
 public class MockCLI {
     @DefinitionClassInfo(
         productName="Mock Product",
+        logName="amadm",
         resourceBundle="MockCLI")
     private String product;
 
