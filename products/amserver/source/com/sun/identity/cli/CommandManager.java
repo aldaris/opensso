@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.9 2007-04-04 00:26:04 veiming Exp $
+ * $Id: CommandManager.java,v 1.10 2007-04-04 01:51:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,6 +138,7 @@ public class CommandManager {
 
     private void init(Map env)
         throws CLIException {
+        environment = new HashMap();
         Locale locale = (Locale)env.get(CLIConstants.ARGUMENT_LOCALE);
         if (locale == null) {
             locale = Locale.getDefault();
@@ -170,7 +171,6 @@ public class CommandManager {
                 ExitCodes.OUTPUT_WRITER_CLASS_CANNOT_INSTANTIATE);
         }
 
-        environment = new HashMap();
         if (env.get(CLIConstants.ARGUMENT_DEBUG) != null) {
             environment.put(CLIConstants.ARGUMENT_DEBUG, Boolean.TRUE);
         }
