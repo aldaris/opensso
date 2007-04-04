@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.3 2006-12-21 19:48:46 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.4 2007-04-04 06:31:40 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,6 +206,7 @@ public class IDPSingleLogout {
                 return;
             }
 
+            int soapFailCount = 0;
             for (int i = 0; i < n; i++) {
                 NameIDandSPpair pair = null;
                 if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
@@ -279,18 +280,30 @@ public class IDPSingleLogout {
                     idpSessionIndex = null;
                 }
                 
-                StringBuffer requestID = LogoutUtil.doLogout(
-                    metaAlias,
-                    spEntityID,
-                    slosList,
-                    extensionsList,
-                    binding,
-                    relayState,
-                    idpSessionIndex,
-                    pair.getNameID(),
-                    response,
-                    paramsMap,
-                    spConfig);
+                StringBuffer requestID = null;
+                try {
+                    requestID = LogoutUtil.doLogout(
+                        metaAlias,
+                        spEntityID,
+                        slosList,
+                        extensionsList,
+                        binding,
+                        relayState,
+                        idpSessionIndex,
+                        pair.getNameID(),
+                        response,
+                        paramsMap,
+                        spConfig);
+                } catch (SAML2Exception ex) {
+                    if (binding.equals(SAML2Constants.SOAP)) {
+                        debug.error(
+                            "IDPSingleLogout.initiateLogoutRequest:" , ex);
+                        soapFailCount++;
+                        continue;
+                    } else {
+                        throw ex;
+                    }
+                }
 
                 String requestIDStr = requestID.toString();
                 if (debug.messageEnabled()) {
@@ -308,6 +321,15 @@ public class IDPSingleLogout {
                 }
             }
 
+            if (binding.equals(SAML2Constants.SOAP)) {
+                if (soapFailCount == n) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("sloFailed"));
+                } else if (soapFailCount > 0) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("partialLogout"));
+                }
+            }
         } catch (SAML2MetaException sme) {
             debug.error("Error retreiving metadata",sme);
             throw new SAML2Exception(
@@ -861,6 +883,7 @@ public class IDPSingleLogout {
                                           logoutReq.getIssuer().getValue());
                 }
 
+                int soapFailCount = 0;
                 for (int i = 0; i < n; i++) {
                     if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
                         pair = (NameIDandSPpair)list.remove(0);
@@ -890,10 +913,22 @@ public class IDPSingleLogout {
                     String metaAlias = SAML2MetaUtils.getMetaAliasByUri(uri);
                     HashMap paramsMap = new HashMap();
                     paramsMap.put(SAML2Constants.ROLE, SAML2Constants.IDP_ROLE);
-                    StringBuffer requestID = LogoutUtil.doLogout(metaAlias,
-                        spEntityID, slosList, null, binding, relayState,
-                        sessionIndex, pair.getNameID(), response,
-                        paramsMap, spConfig);                                 
+                    StringBuffer requestID = null;
+                    try {
+                        requestID = LogoutUtil.doLogout(metaAlias,
+                            spEntityID, slosList, null, binding, relayState,
+                            sessionIndex, pair.getNameID(), response,
+                            paramsMap, spConfig);
+                    } catch (SAML2Exception ex) {
+                        if (binding.equals(SAML2Constants.SOAP)) {
+                            debug.error(
+                                "IDPSingleLogout.initiateLogoutRequest:" , ex);
+                            soapFailCount++;
+                            continue;
+                        } else {
+                            throw ex;
+                        }
+                    }
 
                     if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
                         String requestIDStr = requestID.toString();
@@ -904,6 +939,14 @@ public class IDPSingleLogout {
                         return null;
                     }
 
+                }
+
+                if (soapFailCount == n) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("sloFailed"));
+                } else if (soapFailCount > 0) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("partialLogout"));
                 }
                 // binding is SOAP, generate logout response 
                 // and send to initiating SP
