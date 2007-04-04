@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.3 2006-12-13 19:03:21 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.4 2007-04-04 06:30:04 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -283,7 +283,7 @@ public class IDPSSOFederate {
                 session = null;
             }
             // need to check if the forceAuth is true. if so, do auth 
-            if (authnReq.isForceAuthn() == Boolean.TRUE) { 
+            if (Boolean.TRUE.equals(authnReq.isForceAuthn())) {
                 if (session != null) {
                     try {
                         SessionManager.getProvider().invalidateSession(
