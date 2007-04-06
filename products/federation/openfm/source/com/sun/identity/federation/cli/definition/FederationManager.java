@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.8 2007-04-04 00:26:10 veiming Exp $
+ * $Id: FederationManager.java,v 1.9 2007-04-06 19:48:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class FederationManager {
         description="Create new metadata template.",
         webSupport="true",
         mandatoryOptions={
-            "entityid|e|s|Entity ID"},
+            "entityid|y|s|Entity ID"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
@@ -268,11 +268,11 @@ public class FederationManager {
         description="Export entity.",
         webSupport="true",
         mandatoryOptions={
-            "entityid|e|s|Entity ID"},
+            "entityid|y|s|Entity ID"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where data resides",
+            "realm|e|s|Realm where data resides",
             "sign|g|u|Set this flag to sign the metadata",
             "metadata|m|s|c|Metadata",
             "extended|x|s|c|Extended data",
@@ -292,11 +292,11 @@ public class FederationManager {
         description="Delete entity.",
         webSupport="true",
         mandatoryOptions={
-            "entityid|e|s|Entity ID"},
+            "entityid|y|s|Entity ID"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where data resides",
+            "realm|e|s|Realm where data resides",
             "extendedonly|x|u|Set to flag to delete only extended data.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
@@ -312,7 +312,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where entities reside.",
+            "realm|e|s|Realm where entities reside.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-entities-no-entities=There are no entities.",
@@ -328,7 +328,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trust resides",
+            "realm|e|s|Realm where circle of trust resides",
             "trustedproviders|k|m|Trusted Providers",
             "prefix|p|s|Prefix URL for idp discovery reader and writer URL.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
@@ -345,7 +345,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trust resides",
+            "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "delete-circle-of-trust-succeeded=Circle of trust, {0} is deleted."})
@@ -359,7 +359,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trusts reside",
+            "realm|e|s|Realm where circle of trusts reside",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-circle-of-trust-no-members=There are no circle of trusts.",
@@ -375,7 +375,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trust resides",
+            "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
@@ -389,11 +389,11 @@ public class FederationManager {
         webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust",
-            "entityid|e|s|Entity ID"},
+            "entityid|y|s|Entity ID"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trust resides",
+            "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "remove-circle-of-trust-member-succeeded=Entity, {1} is removed from the circle of trust, {0}."})
@@ -405,11 +405,11 @@ public class FederationManager {
         webSupport="true",
         mandatoryOptions={
             "cot|t|s|Circle of Trust",
-            "entityid|e|s|Entity ID"},
+            "entityid|y|s|Entity ID"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|r|s|Realm where circle of trust resides",
+            "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "add-circle-of-trust-member-succeeded=Entity, {2} is added to the circle of trust, {1}, in realm {3}."})
