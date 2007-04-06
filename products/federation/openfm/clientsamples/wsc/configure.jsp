@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.3 2006-11-03 00:20:10 hengming Exp $
+   $Id: configure.jsp,v 1.4 2007-04-06 22:59:40 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -58,7 +58,7 @@ java.util.Properties"
                 " exist.";
         } else {
             File fedConfig = new File(configDir +
-                "/FederationConfig.properties");
+                "/AMConfig.properties");
             if (!fedConfig.exists()) {
                 errorMsg = configDir + " is not a valid configuration " +
                     "directory.";
