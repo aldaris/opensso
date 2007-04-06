@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.4 2007-01-16 20:14:20 exu Exp $
+ * $Id: IFSConstants.java,v 1.5 2007-04-06 20:51:47 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2372,5 +2372,11 @@ public interface IFSConstants {
      * Provider description.
      */
     public String PROVIDER_DESCRIPTION = "providerDescription";
+
+    /**
+     * Service Provider's default relay state.
+     */
+    public String SP_DEFAULT_RELAY_STATE =
+        "/samples/idff/sp/index.jsp";
 }
 

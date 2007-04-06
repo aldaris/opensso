@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.2 2007-01-10 06:29:32 exu Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.3 2007-04-06 20:53:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -284,6 +284,7 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
         String baseURL = FSServiceUtils.getBaseURL(request);
         String framedPageURL = FSServiceUtils.getCommonLoginPageURL(
             hostMetaAlias, null, null, request,baseURL);        
+
         try {
             if (samlResponse == null) {
                 FSUtils.debug.error("FSBrowserArtifactConsumerHandler."
@@ -348,6 +349,19 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
             
             this.authnRequest = authnRequestRef;
             this.relayState = authnRequest.getRelayState();
+            if ((this.relayState == null) || 
+                (this.relayState.trim().length() == 0))
+            {
+                this.relayState = 
+                    IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                        hostConfig, IFSConstants.PROVIDER_HOME_PAGE_URL);
+                if ((this.relayState == null) || 
+                    (this.relayState.trim().length() == 0))
+                {
+                    this.relayState =
+                        baseURL + IFSConstants.SP_DEFAULT_RELAY_STATE;
+                }
+            }
             this.doFederate = authnRequest.getFederate();
             this.nameIDPolicy = authnRequest.getNameIDPolicy();
             

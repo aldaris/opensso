@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.2 2007-01-10 06:29:32 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.3 2007-04-06 20:50:16 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -298,6 +298,19 @@ public class FSAssertionArtifactHandler {
             request,
             baseURL);
         
+        this.relayState = authnRequest.getRelayState();
+        if ((this.relayState == null) || (this.relayState.trim().length() == 0))
+        {
+            this.relayState =
+                IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                    hostConfig, IFSConstants.PROVIDER_HOME_PAGE_URL);
+            if ((this.relayState == null) || 
+                (this.relayState.trim().length() == 0))
+            {
+                this.relayState = 
+                    baseURL + IFSConstants.SP_DEFAULT_RELAY_STATE;
+            }
+        }
         try {
             if (authnResponse == null) {
                 String[] data = 
@@ -984,8 +997,7 @@ public class FSAssertionArtifactHandler {
                     "FSAssertionArtifactHandler.generateToken:" +
                     "Invalid orgDN input using default orgDN");
             }
-            orgDN = SystemConfigurationUtil.getProperty(
-                "com.iplanet.am.defaultOrg");
+            orgDN = "/";
         }
         try {
             String name = ni.getName();
@@ -1205,7 +1217,7 @@ public class FSAssertionArtifactHandler {
             
             Map valueMap = new HashMap();
             valueMap.put(SessionProvider.PRINCIPAL_NAME, userID);
-            valueMap.put(SessionProvider.REALM, orgDN);
+            valueMap.put(SessionProvider.REALM, "/");
             valueMap.put(
                 SessionProvider.AUTH_LEVEL, String.valueOf(authnLevel));
             valueMap.put(SessionProvider.AUTH_INSTANT, getAuthInstant());
@@ -1220,6 +1232,8 @@ public class FSAssertionArtifactHandler {
                     valueMap, request, response, 
                     new StringBuffer(this.relayState));
             } catch (SessionException se) {
+                FSUtils.debug.error("FSAssertionArtifactHandler.generateToken:"
+                    + "cannot generate token:", se);
                 int failureCode = se.getErrCode();
                 if (failureCode == SessionException.AUTH_USER_INACTIVE) {
                     failureCode = 
