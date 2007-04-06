@@ -610,7 +610,7 @@ with
 <p></p>
 <li>Run the following command to delete the identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>machine-A_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>machine-A_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -630,7 +630,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to delete the service provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>machine-B_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>machine-B_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -651,7 +651,7 @@ For example, <code>http://sad.red.sun.com:80/openfm</code></td>
 
 <li>Run the following command to create a metadata file for the identity provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -e <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -744,15 +744,15 @@ where
 <li>Use the following procedure to set up <i>machine-B</i> as the service provider:<p></p>
 <ol type="i">
 <li>Run the following command to delete the sample identity provider entity:<p></p>
-<code>fmadm delete-entity -e <i>sample_idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>sample_idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to delete the sample service provider entity:<p></p>
-<code>fmadm delete-entity -e <i>sample_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>sample_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code></li>
 
 <p></p>
 <li>Run the following command to create a metadata file for the service provider:<p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -e <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -881,7 +881,7 @@ where
 <ol>
 <li>Run the following command on the hosted provider to export the metadata XML files.
 <P></P>
-<code>fmadm export-entity -e <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -c <i>metadata_spec</i></code>
+<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -915,12 +915,12 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <ul>
 <li>For a hosted identity provider, run the following command:
 <p></p>
- <code>fmadm create-metadata-template -e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>For a hosted service provider, run the following command:
 <p></p>
- <code>fmadm create-metadata-template -e <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li> 
 <P></P>You may modify the extended metadata attributes (for example, <code>providerHomePageURL</code>) as needed.</li>
 </ul> 
@@ -928,7 +928,7 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <P></P>
 <li>Run the following command on the hosted provider to delete the metadata XML files.
 <P></P>
-<code>fmadm delete-entity -e <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -r <i>realm</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>Run the following command on the hosted provider to load the modified metadata XML files.
@@ -944,7 +944,7 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <p></p>
 <ol>
 <li>Run the following command on the hosted provider to export the remote provider's standard metadata XML file.<p></p>
-<code>fmadm export-entity -e <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Search the XML file(s) for the <code>KeyDescriptor</code> attribute and make sure it contains a value.<p></p>
 If none exists, get the updated standard metadata XML file from the remote provider using the following procedure:
@@ -952,7 +952,7 @@ If none exists, get the updated standard metadata XML file from the remote provi
 <ol type="a">
 <li>Run the following command to delete the remote provider metadata from the hosted provider machine.
 <p></p>
-<code>fmadm delete-entity -e <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -r <i>realm</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Run the following command to import the updated remote provider metadata (retrieved from the remote provider machine) to the hosted provider machine.
 <p></p>
@@ -975,7 +975,7 @@ where
 <HR>
 <p><H3><FONT FACE="Times New Roman, serif">NOTE</FONT></H3></P>
 <FONT FACE="Times New Roman, serif">If the remote provider is running on an instance of Sun Java System Federation Manager, the standard metadata (including the <code>KeyDescriptor</code> attribute) can be obtained by running the following command on the machine in which the remote provider is hosted.<p></p>
-<code>fmadm export-entity -e <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code>
+<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code>
 </li>
 </FONT>
 <HR>
@@ -988,7 +988,7 @@ where
 <ol>
 <li>Run the following command to export the standard and extended metadata from the hosted service provider:
 <p></p>
-<code>fmadm export-entity -e <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Make sure the value of the <code>AuthnRequestsSigned</code> attribute in the <i>hosted_standard_metadata</i> is set to <code>true</code>.
 <p></p>
@@ -997,7 +997,7 @@ If not set the value correctly and proceed.
 <p></p>
 <li>Run the following command to delete the hosted provider's metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -r <i>realm</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Run the following command to import the hosted provider's updated metadata:
 <p></p>
@@ -1170,7 +1170,7 @@ You will be redirected to the target site without authentication.
 <ol>
 <li>Run the following command to create a circle of trust.
 <p></p>
-<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -w <i>amadmin_password</i> -r <i>realm</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1198,7 +1198,7 @@ where
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>fmadm create-metadata-template -e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1234,7 +1234,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>fmadm create-metadata-template --e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
 </ol></li></ul>
 <p></p>
 <ul>
@@ -1243,7 +1243,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>fmadm create-metadata-template --e <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1279,7 +1279,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>fmadm create-metadata-template -e <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
 </li>
 </ol></li></ul>
 <p></p>
@@ -1324,7 +1324,7 @@ The value of <i>cot_name</i> is the name of the circle of trust created in the f
 <li>Create the service provider metadata files.<p></p>
 <ol type="a"> 
 <li>Run the following command on the service provider instance to create the service provider metadata files.<p></p>
-<code>fmadm create-metadata-template -e <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>sp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1335,7 +1335,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create the Identity Provider metadata file.<p></p>
-<code>fmadm create-metadata-template -e <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>idp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1364,7 +1364,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 This will display all members of the named circle of trust. In this case, the hosted service provider and remote identity provider are listed. You can also export the metadata files for verification using the following command:
 <p></p>
-<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -e <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
+<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
 </li>
 <p></p>
 <li>Restart the Web Container.</li>
@@ -1392,7 +1392,7 @@ This will display all members of the named circle of trust. In this case, the ho
 <p></p>
 This will display all members of the named circle of trust. In this case, the remote service provider and hosted identity provider are listed. You can also export the metadata files, using the following command, for verification:
 <p></p>
-<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -e <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
+<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
 </li>
 <p></p>
 <li>Restart the web container.</li>
@@ -1432,10 +1432,10 @@ After setting up the keystore, import the applicable signing and encryption cert
 
 <ol>
 <li>Run the following command on the service provider machine to regenerate the service provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>fmadm create-metadata-template -e <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
 <P></P>
 <li>Run the following command on the identity provider machine to regenerate the identity provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>fmadm create-metadata-template -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
 <P></P>
 <li>Modify the values of the following attributes in the appropriate file to enable signing and encryption.
 <p></p>
@@ -1506,12 +1506,12 @@ After setting up the keystore, import the applicable signing and encryption cert
 <ol type="a">
 <li>Run the following command to remove the old hosted service provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
 </li>
 <P></P>
 <li>Run the following command to remove the old remote identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new hosted service provider metadata:
@@ -1537,12 +1537,12 @@ After setting up the keystore, import the applicable signing and encryption cert
 <ol type="a">
 <li>Run the following command to remove the old hosted identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
 </li>
 <P></P>
 <li>Run the following command to remove the old remote service provider metadata:
 <p></p>
-<code>fmadm delete-entity -e <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new hosted identity provider metadata:
@@ -1692,7 +1692,7 @@ In this case, we will call the file <code>datafile</code>.</li>
 <p></p>
 <li>Run the following command to delete the identity provider:
 <p></p>
-<code>fmadm delete-entity -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1713,7 +1713,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to delete the remote service provider:
 <p></p>
-<code>fmadm delete-entity -e <i>remote_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>remote_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1733,7 +1733,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the identity provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -e <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1831,17 +1831,17 @@ where
 <ol type="a">
 <li>Run the following command to delete the service provider:
 <p></p>
-<code>fmadm delete-entity -e <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to delete the remote identity provider:
 <p></p>
-<code>fmadm delete-entity -e <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the service provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -e <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new metadata files into the defined circle:
