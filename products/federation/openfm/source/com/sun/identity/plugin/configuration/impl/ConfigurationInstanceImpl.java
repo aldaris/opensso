@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.2 2007-03-29 23:31:02 bina Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.3 2007-04-06 21:06:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,8 +55,6 @@ import com.sun.identity.plugin.configuration.ConfigurationListener;
 public class ConfigurationInstanceImpl implements ConfigurationInstance {
 
     private static Map serviceNameMap = new HashMap();
-    private static SSOToken adminToken =
-        (SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance());
     private ServiceSchemaManager ssm;
     private ServiceConfigManager scm;
     private String componentName = null;
@@ -97,6 +95,8 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
                 "componentNameUnsupported", null);
         }
         try {
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
             ssm = new ServiceSchemaManager(serviceName, adminToken);
             ServiceSchema oss = ssm.getOrganizationSchema();
             if (oss != null) {

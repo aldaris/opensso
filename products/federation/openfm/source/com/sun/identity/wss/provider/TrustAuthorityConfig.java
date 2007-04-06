@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.1 2007-03-23 00:01:52 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.2 2007-04-06 21:06:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,199 +53,195 @@ import com.sun.identity.shared.Constants;
  */
 public abstract class TrustAuthorityConfig {
 
-      protected String endpoint;
-      protected String keyAlias;
-      protected String name;
-      protected String type;
-      private static Class discoveryConfigClass;
-      private static Debug debug = ProviderUtils.debug;
-       /**
+    protected String endpoint;
+    protected String keyAlias;
+    protected String name;
+    protected String type;
+    private static Class discoveryConfigClass;
+    private static Debug debug = ProviderUtils.debug;
+
+    /**
      * Property string for the web services discovery configuration plugin.
-     */
-      public static final String WSS_DISCOVERY_CONFIG_PLUGIN =
-                   "com.sun.identity.wss.discovery.config.plugin";
+    */
+    public static final String WSS_DISCOVERY_CONFIG_PLUGIN =
+        "com.sun.identity.wss.discovery.config.plugin";
  
-      /**
-       * Discovery service configuration type.
-       */
-      public static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
+    /**
+     * Discovery service configuration type.
+     */
+    public static final String DISCOVERY_TRUST_AUTHORITY = "Discovery";
 
-      /**
-       * Returns the trust authority name.
-       * @return the name of the trust authority.
-       */
-      public String getName() {
-          return name;
-      }
+    /**
+     * Returns the trust authority name.
+     * @return the name of the trust authority.
+     */
+    public String getName() {
+        return name;
+    }
 
-      /**
-       * Returns the trust authority type.
-       * @return the type of the trust authority.
-       */
-      public String getType() {
-          return type;
-      }
+    /**
+     * Returns the trust authority type.
+     * @return the type of the trust authority.
+     */
+    public String getType() {
+        return type;
+    }
 
-      /**
-       * Sets the trust authority type.
-       * @param type the type of the trust authority.
-       */
-      private void setType(String type) {
-          this.type = type;
-      }
+    /**
+     * Sets the trust authority type.
+     * @param type the type of the trust authority.
+     */
+    private void setType(String type) {
+        this.type = type;
+    }
 
-      /**
-       * Returns the authority end point.
-       *
-       * @return the endpoint of the trust authority. 
-       */
-      public String getEndpoint() {
-           return endpoint;
-      }
+    /**
+     * Returns the authority end point.
+     *
+     * @return the endpoint of the trust authority. 
+     */
+    public String getEndpoint() {
+        return endpoint;
+    }
 
-      /**
-       * Sets the end point.
-       *
-       * @param endpoint the end point for the trust authority.
-       */
-      public void setEndpoint(String endpoint) {
-          this.endpoint = endpoint;
-      }
+    /**
+     * Sets the end point.
+     *
+     * @param endpoint the end point for the trust authority.
+     */
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
-      /**
-       * Returns the key alias of the trust authority.
-       * 
-       * @return the key alias name.
-       */
-      public String getKeyAlias() {
-          return keyAlias;
-      }
+    /**
+     * Returns the key alias of the trust authority.
+     * 
+     * @return the key alias name.
+     */
+    public String getKeyAlias() {
+        return keyAlias;
+    }
 
-      /**
-       * Sets the key alias for the trust authority.
-       *
-       * @param keyAlias the key alias for the trust authority.
-       */
-      public void setKeyAlias(String keyAlias) {
-          this.keyAlias = keyAlias; 
-      }
+    /**
+     * Sets the key alias for the trust authority.
+     *
+     * @param keyAlias the key alias for the trust authority.
+     */
+    public void setKeyAlias(String keyAlias) {
+        this.keyAlias = keyAlias; 
+    }
 
-      /**
-       * Initialize the trust authority.
-       * @param name the name of the trust authority.
-       * @param type the type of the trust authority.
-       * @param ssoToken Single sign-on token.
-       * @exception ProviderException if the initialization fails.
-       */
-      protected abstract void init(String name, String type, SSOToken ssoToken) 
-                  throws ProviderException;
+    /**
+     * Initialize the trust authority.
+     * @param name the name of the trust authority.
+     * @param type the type of the trust authority.
+     * @param ssoToken Single sign-on token.
+     * @exception ProviderException if the initialization fails.
+     */
+    protected abstract void init(String name, String type, SSOToken ssoToken) 
+        throws ProviderException;
 
-      /**
-       * Saves the trust authority configuration.
-       * @exception ProviderException if the trust authority configuration 
-       *            is unable to save.
-       */
-      protected abstract void store() throws ProviderException;
+    /**
+     * Saves the trust authority configuration.
+     * @exception ProviderException if the trust authority configuration 
+     *            is unable to save.
+     */
+    protected abstract void store() throws ProviderException;
 
-      /**
-       * Deletes the trust authrority configuration.
-       * @exception ProviderException
-       */
-      protected abstract void delete() throws ProviderException;
+    /**
+     * Deletes the trust authrority configuration.
+     * @exception ProviderException
+     */
+    protected abstract void delete() throws ProviderException;
 
-      /**
-       * Returns the trust authority configuration object.
-       *
-       * @param name the name of the trust authority.
-       *
-       * @param type the type of the trust authority. The type must have
-       *         one of the following values.
-       *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
-       *
-       * @exception ProviderException if any failure in 
-       *                retrieving the trust authority configuration.
-       */
-      public static TrustAuthorityConfig getConfig(String name, String type)
-                throws ProviderException {
+    /**
+     * Returns the trust authority configuration object.
+     *
+     * @param name the name of the trust authority.
+     * @param type the type of the trust authority. The type must have
+     *         one of the following values.
+     *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
+     * @exception ProviderException if any failure in 
+     *                retrieving the trust authority configuration.
+     */
+    public static TrustAuthorityConfig getConfig(String name, String type)
+        throws ProviderException {
+        TrustAuthorityConfig config = null;
 
-          TrustAuthorityConfig config = null;
-          if(DISCOVERY_TRUST_AUTHORITY.equals(type)) {
-             config = getDiscoveryConfig();
-             config.init(name, type, getAdminToken());
-          } else {
-             throw new ProviderException(
-                   ProviderUtils.bundle.getString("unsupportedConfigType"));
-          }
-          return config;
-      }
+        if (DISCOVERY_TRUST_AUTHORITY.equals(type)) {
+            config = getDiscoveryConfig();
+            config.init(name, type, getAdminToken());
+        } else {
+            throw new ProviderException(
+               ProviderUtils.bundle.getString("unsupportedConfigType"));
+        }
+        return config;
+    }
 
-      /**
-       * Saves the trust authority configuration.
-       *
-       * @param config the trust authority configuration.
-       *
-       * @exception ProviderException if any failure in 
-       *                saving the configuration.
-       */
-      public static void saveConfig(TrustAuthorityConfig config) 
-              throws ProviderException {
-          config.store();
-      }
+    /**
+     * Saves the trust authority configuration.
+     *
+     * @param config the trust authority configuration.
+     * @exception ProviderException if any failure in 
+     *            saving the configuration.
+     */
+    public static void saveConfig(TrustAuthorityConfig config) 
+        throws ProviderException {
+        config.store();
+    }
 
-      /**
-       * Deletes the trust authority configuration.
-       *
-       * @param name the name of the trust authority configuration.
-       *
-       * @param type the type of the trust authority. The type must have
-       *         one of the values.
-       *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
-       *
-       * @exception ProviderException if any failure in 
-       *                deleting the trust authority configuration.
-       */
-      public static void deleteConfig(String name, String type ) 
-                throws ProviderException {
-          TrustAuthorityConfig config = getConfig(name, type);
-          config.delete();
-      }
+    /**
+     * Deletes the trust authority configuration.
+     *
+     * @param name the name of the trust authority configuration.
+     * @param type the type of the trust authority. The type must have
+     *         one of the values.
+     *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
+     *
+     * @exception ProviderException if any failure in 
+     *            deleting the trust authority configuration.
+     */
+    public static void deleteConfig(String name, String type ) 
+        throws ProviderException {
+        TrustAuthorityConfig config = getConfig(name, type);
+        config.delete();
+    }
 
-      private static DiscoveryConfig getDiscoveryConfig() 
-                                 throws ProviderException {
-          if(discoveryConfigClass == null) {
-             String adapterName = SystemProperties.get(
-                     WSS_DISCOVERY_CONFIG_PLUGIN, 
-                    "com.sun.identity.wss.provider.plugins.DiscoveryAgent");
-             try {
-                 discoveryConfigClass = Class.forName(adapterName);
-             }  catch (Exception ex) {
-                 debug.error("TrustAuthorityConfig.getDiscoveryConfig: " +
-                 " Failed in creating the discovery config class.");
-                 throw new ProviderException(ex.getMessage());
-             }
-          }
-          try {
-              return ((DiscoveryConfig) discoveryConfigClass.newInstance());
-          } catch (Exception ex) {
-              debug.error("TrustAuthorityConfig.getDiscoveryConfig: " +
-                          "Failed in initialization", ex);
-              throw new ProviderException(ex.getMessage());
-          }
-      }
+    private static DiscoveryConfig getDiscoveryConfig() 
+        throws ProviderException {
+        if (discoveryConfigClass == null) {
+            String adapterName = SystemProperties.get(
+                WSS_DISCOVERY_CONFIG_PLUGIN, 
+                "com.sun.identity.wss.provider.plugins.DiscoveryAgent");
+            try {
+                discoveryConfigClass = Class.forName(adapterName);
+            }  catch (Exception ex) {
+                debug.error("TrustAuthorityConfig.getDiscoveryConfig: " +
+                    " Failed in creating the discovery config class.");
+                throw new ProviderException(ex.getMessage());
+            }
+        }
+        try {
+            return ((DiscoveryConfig) discoveryConfigClass.newInstance());
+        } catch (Exception ex) {
+            debug.error("TrustAuthorityConfig.getDiscoveryConfig: " +
+                "Failed in initialization", ex);
+            throw new ProviderException(ex.getMessage());
+        }
+    }
 
-      private static SSOToken getAdminToken() throws ProviderException {
-          SSOToken adminToken =  null;
-          try {
-              adminToken = (SSOToken) AccessController.doPrivileged(
-                           AdminTokenAction.getInstance());
-              SSOTokenManager.getInstance().refreshSession(adminToken);
-          } catch (SSOException se) {
-              ProviderUtils.debug.message("TrustAuthorityConfig.getAdminToken:"+
-                    "Trying second time...");
-              adminToken = (SSOToken) AccessController.doPrivileged(
-                           AdminTokenAction.getInstance());
-          }
-          return adminToken;
-      }
-
+    private static SSOToken getAdminToken() throws ProviderException {
+        SSOToken adminToken =  null;
+        try {
+            adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            SSOTokenManager.getInstance().refreshSession(adminToken);
+        } catch (SSOException se) {
+            ProviderUtils.debug.message(
+                "TrustAuthorityConfig.getAdminToken: Trying second time...");
+            adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        }
+        return adminToken;
+    }
 }

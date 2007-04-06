@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultSPAdapter.java,v 1.2 2007-03-27 06:03:01 veiming Exp $
+ * $Id: FSDefaultSPAdapter.java,v 1.3 2007-04-06 21:06:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -241,7 +241,6 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
                     ((SSOToken) ssoToken).getProperty(
                         ISAuthConstants.ORGANIZATION));
                 IdSearchControl searchControl = new IdSearchControl();
-                searchControl.setRecursive(true);
                 searchControl.setTimeOut(0);
                 searchControl.setMaxResults(0);
                 searchControl.setAllReturnAttributes(false);

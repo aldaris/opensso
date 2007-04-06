@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoDataStoreProvider.java,v 1.3 2007-03-09 05:51:06 veiming Exp $
+ * $Id: IdRepoDataStoreProvider.java,v 1.4 2007-04-06 21:06:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,11 +340,10 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
     private static IdSearchControl getIdSearchControl(
         Map avPairs, IdSearchOpModifier modifier) 
     {
-        if ((avPairs == null) || (avPairs.size() == 0)) {
+        if ((avPairs == null) || avPairs.isEmpty()) {
             return null;
         }
         IdSearchControl searchControl = new IdSearchControl();
-        searchControl.setRecursive(true);
         searchControl.setTimeOut(0);
         searchControl.setMaxResults(0);
         searchControl.setAllReturnAttributes(false);

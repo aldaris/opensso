@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogProvider.java,v 1.1 2006-10-30 23:18:06 qcheng Exp $
+ * $Id: LogProvider.java,v 1.2 2007-04-06 21:06:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,24 +52,17 @@ import com.sun.identity.security.AdminTokenAction;
 /**
  * This class is the AM implementation of the Open Federation Logger interface.
  */
-
 public class LogProvider implements com.sun.identity.plugin.log.Logger {
     
-    protected Logger accessLogger = null;
-    protected Logger errorLogger = null;
+    protected Logger accessLogger;
+    protected Logger errorLogger;
 
-    private String ACCESS_LOG_NAME = null;
-    private String ERROR_LOG_NAME  = null;
-    private LogMessageProvider msgProvider = null;
+    private LogMessageProvider msgProvider;
 
     private static Debug debug = Debug.getInstance("amLogProvider");
     private static boolean logStatus = false;
-    private static SSOToken authSSOToken = null;
 
     static {
-        authSSOToken = (SSOToken) AccessController.doPrivileged(
-		AdminTokenAction.getInstance());
-
         String status = SystemPropertiesManager.get(
             com.sun.identity.shared.Constants.AM_LOGSTATUS);
         logStatus = (status != null) && status.equalsIgnoreCase("ACTIVE");
@@ -83,18 +76,15 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      *	  during initialization.
      */
     public void init(String componentName) throws LogException {
-        ACCESS_LOG_NAME = new StringBuffer().append(componentName)
-                                            .append(".access").toString();
-        ERROR_LOG_NAME  = new StringBuffer().append(componentName)
-                                            .append(".error").toString();
-        accessLogger = 
-                (com.sun.identity.log.Logger) Logger.getLogger(ACCESS_LOG_NAME);
-        errorLogger =
-                (com.sun.identity.log.Logger) Logger.getLogger(ERROR_LOG_NAME);
+        accessLogger = (com.sun.identity.log.Logger)Logger.getLogger(
+            componentName + ".access");
+        errorLogger = (com.sun.identity.log.Logger)Logger.getLogger(
+            componentName + ".error");
         try {
             msgProvider = MessageProviderFactory.getProvider(componentName);
-        } catch (IOException ioe) {
-            debug.error("<init>: unable to create log message provider", ioe);
+        } catch (IOException e) {
+            debug.error(
+                "LogProvider.<init>: unable to create log message provider", e);
         }
     }
     
@@ -105,24 +95,24 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      *		defined in java.util.logging.Level, the values for
      *		level can be any one of the following : <br>
      *          <ul>
-     *		- SEVERE (highest value) <br>
-     *		- WARNING <br>
-     *		- INFO <br>
-     *		- CONFIG <br>
-     *		- FINE <br>
-     *		- FINER <br>
-     *		- FINEST (lowest value) <br>
+     *		<li>SEVERE (highest value)</li>
+     *		<li>WARNING</li>
+     *		<li>INFO</li>
+     *		<li>CONFIG</li>
+     *		<li>FINE</li>
+     *		<li>FINER</li>
+     *		<li>FINEST (lowest value)</li>
      *          </ul>
      * @param messageID the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's session object
      * @exception LogException if there is an error.
      */
-    
     public void access(Level level,
-                       String messageID,
-                       String data[],
-                       Object session) throws LogException {
+        String messageID,
+        String data[],
+        Object session
+    ) throws LogException {
         if (isAccessLoggable(level)) {
             SSOToken ssoToken = null;
             if (session != null) {
@@ -137,9 +127,11 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
                     debug.message("Error creating SSOToken: " , soe);
                 }
             }
-            SSOToken realToken=(ssoToken != null) ? ssoToken : authSSOToken;
+            SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            SSOToken realToken = (ssoToken != null) ? ssoToken : authSSOToken;
             LogRecord lr = msgProvider.createLogRecord(
-                    messageID,data,realToken);
+                messageID, data, realToken);
             if (lr != null) {
                 accessLogger.log(lr, authSSOToken);
             }
@@ -154,20 +146,20 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      *		defined in java.util.logging.Level, the values for
      *          level can be any one of the following : <br>
      *          <ul>
-     *          - SEVERE (highest value) <br>
-     *          - WARNING <br>
-     *          - INFO <br>
-     *          - CONFIG <br>
-     *          - FINE <br>
-     *          - FINER <br>
-     *          - FINEST (lowest value) <br>
+     *		<li>SEVERE (highest value)</li>
+     *		<li>WARNING</li>
+     *		<li>INFO</li>
+     *		<li>CONFIG</li>
+     *		<li>FINE</li>
+     *		<li>FINER</li>
+     *		<li>FINEST (lowest value)</li>
      *          </ul>
      * @param messageId the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's Session object.
      * @exception LogException if there is an error.
      */
-    public void error(Level level,String messageId,String data[],
+    public void error(Level level, String messageId, String data[],
             Object session) throws LogException {
         
         if (isErrorLoggable(level)) {
@@ -184,10 +176,11 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
                     debug.message("Error creating SSOToken :" , soe);
                 }
             }
-            SSOToken realToken =
-                    (ssoToken != null) ? ssoToken : authSSOToken;
+            SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            SSOToken realToken = (ssoToken != null) ? ssoToken : authSSOToken;
             LogRecord lr = msgProvider.createLogRecord(
-                    messageId,data,realToken);
+                messageId, data, realToken);
             if (lr != null) {
                 errorLogger.log(lr, authSSOToken);
             }
@@ -195,9 +188,9 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
     }
     
     /**
-     * Checks if the logging is enabled.
+     * Returns <code>true</code> if logging is enabled.
      *
-     * @return true if logging is enabled.
+     * @return <code>true</code> if logging is enabled.
      */
     public boolean isLogEnabled() {
         return logStatus;
@@ -211,7 +204,9 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      * @return true if the given message level is currently being logged.
      */
     public boolean isAccessLoggable(Level level) {
-        if (authSSOToken==null || !logStatus) {
+        SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        if ((authSSOToken == null) || !logStatus) {
             return false;
 	}
         return accessLogger.isLoggable(level);
@@ -225,7 +220,9 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
      * @return true if the given message level is currently being logged.
      */
     public boolean isErrorLoggable(Level level) {
-       if (authSSOToken==null || !logStatus) {
+        SSOToken authSSOToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        if ((authSSOToken == null) || !logStatus) {
             return false;
 	}
         return errorLogger.isLoggable(level);

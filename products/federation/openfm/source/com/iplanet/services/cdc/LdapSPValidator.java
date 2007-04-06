@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LdapSPValidator.java,v 1.1 2006-12-05 21:59:12 veiming Exp $
+ * $Id: LdapSPValidator.java,v 1.2 2007-04-06 21:06:07 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,11 +66,10 @@ public class LdapSPValidator implements SPValidator {
     
     private AMIdentityRepository amIdRepo = null;
     private Exception exception;
-    private SSOToken adminToken = null;
 
     public LdapSPValidator() {
         try {
-            adminToken = (SSOToken) AccessController.doPrivileged(
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             amIdRepo = new AMIdentityRepository(adminToken, null);
             if (amIdRepo == null) {
@@ -218,7 +217,6 @@ public class LdapSPValidator implements SPValidator {
         searchParams.put(LDAP_ATTR_NAME, attrValues);
         
         IdSearchControl idsc = new IdSearchControl();
-        idsc.setRecursive(true);
         idsc.setTimeOut(0);
         idsc.setMaxResults(0);
         idsc.setSearchModifiers(IdSearchOpModifier.AND, searchParams);
@@ -229,6 +227,8 @@ public class LdapSPValidator implements SPValidator {
         idsc.setReturnAttributes(returnAttrs);
         
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
             IdSearchResults sr = null;
             if ((realm != null) && (realm.trim().length() > 0)) {
                 AMIdentityRepository idRepo = new AMIdentityRepository(

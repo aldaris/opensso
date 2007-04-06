@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.1 2007-03-23 00:01:50 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.2 2007-04-06 21:06:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -514,7 +514,6 @@ public abstract class ProviderConfig {
     }
 
     private static ProviderConfig getConfigAdapter() throws ProviderException {
-
         if (adapterClass == null) {
             String adapterName =   SystemProperties.get(
                 WSS_PROVIDER_CONFIG_PLUGIN, 
@@ -538,12 +537,11 @@ public abstract class ProviderConfig {
         }
     }
 
-    public static SSOToken getAdminToken() throws ProviderException {
-
+    private  static SSOToken getAdminToken() throws ProviderException {
         SSOToken adminToken = null;
         try {
             adminToken = (SSOToken) AccessController.doPrivileged(
-                         AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance());
             SSOTokenManager.getInstance().refreshSession(adminToken);
         } catch (SSOException se) {
             ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
