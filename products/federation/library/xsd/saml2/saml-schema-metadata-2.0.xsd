@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saml-schema-metadata-2.0.xsd,v 1.1 2006-10-30 23:17:36 qcheng Exp $
+   $Id: saml-schema-metadata-2.0.xsd,v 1.2 2007-04-07 01:37:27 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -129,6 +129,9 @@
                     <element ref="md:AuthnAuthorityDescriptor"/>
                     <element ref="md:AttributeAuthorityDescriptor"/>
                     <element ref="md:PDPDescriptor"/>
+                    <element ref="md:XACMLPDPDescriptor"/>
+                    <element ref="md:QueryDescriptor"/>
+                    <element ref="md:XACMLAuthzDecisionQueryDescriptor"/>
                 </choice>
                 <element ref="md:AffiliationDescriptor"/>
             </choice>
@@ -329,6 +332,18 @@
     </complexType>
     <element name="AuthzService" type="md:EndpointType"/>
 
+    <element name="XACMLPDPDescriptor" type="md:XACMLPDPDescriptorType"/>
+    <complexType name="XACMLPDPDescriptorType">
+        <complexContent>
+            <extension base="md:RoleDescriptorType">
+                <sequence>
+                    <element ref="md:XACMLAuthzService" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <element name="XACMLAuthzService" type="md:EndpointType"/>
+
     <element name="AttributeAuthorityDescriptor" type="md:AttributeAuthorityDescriptorType"/>
     <complexType name="AttributeAuthorityDescriptorType">
         <complexContent>
@@ -360,4 +375,25 @@
         <anyAttribute namespace="##other" processContents="lax"/>
     </complexType>
     <element name="AffiliateMember" type="md:entityIDType"/>
+
+    <element name="QueryDescriptor" type="md:QueryDescriptorType"/>
+    <complexType name="QueryDescriptorType" abstract="true">
+    <complexContent>
+        <extension base="md:RoleDescriptorType">
+            <sequence>
+                 <element ref="md:NameIDFormat" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <attribute name="WantAssertionsSigned" type="boolean" use="optional"/>
+        </extension>
+    </complexContent>
+  </complexType>
+
+    <element name="XACMLAuthzDecisionQueryDescriptor" type="md:XACMLAuthzDecisionQueryDescriptorType"/>
+        <complexType name="XACMLAuthzDecisionQueryDescriptorType">
+            <complexContent>
+                <extension base="md:QueryDescriptorType">
+                </extension>
+            </complexContent>
+    </complexType>
+
 </schema>
