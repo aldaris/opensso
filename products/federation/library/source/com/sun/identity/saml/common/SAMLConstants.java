@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.3 2007-03-10 00:29:22 qcheng Exp $
+ * $Id: SAMLConstants.java,v 1.4 2007-04-07 00:46:00 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -382,7 +382,7 @@ public final class SAMLConstants
      * @supported.api
      */
     public static final String CONFIRMATION_METHOD_SENDERVOUCHES =
-                "urn:oasis:names:tc:SAML:1.0:cm:sendervouches";
+                "urn:oasis:names:tc:SAML:1.0:cm:sender-vouches";
 
     // used by SAML service schema related operations
 
