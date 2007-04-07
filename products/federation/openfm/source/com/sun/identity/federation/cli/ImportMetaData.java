@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.3 2007-02-16 02:02:52 veiming Exp $
+ * $Id: ImportMetaData.java,v 1.4 2007-04-07 00:33:15 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,9 @@ import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
-import com.sun.identity.cot.COTUtils;
+import com.sun.identity.federation.jaxb.entityconfig.IDPDescriptorConfigElement;
+import com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
@@ -50,6 +52,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.w3c.dom.Document;
 
@@ -61,12 +64,12 @@ public class ImportMetaData extends AuthenticatedCommand {
     private String metadata;
     private String extendedData;
     private String cot;
-    private String realm = "/";
+    private String realm;
     private String spec;
     private boolean webAccess;
 
     /**
-     * Imports Meta Data.
+ * Imports Meta Data.
      *
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
@@ -75,6 +78,7 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
         extendedData = getStringOptionValue(
             FedCLIConstants.ARGUMENT_EXTENDED_DATA);
@@ -107,12 +111,37 @@ public class ImportMetaData extends AuthenticatedCommand {
         try {
             SAML2MetaManager metaManager = new SAML2MetaManager();
             String entityID = null;
+            EntityConfigElement configElt = null;
+            
+            if (extendedData != null) {
+                configElt = geEntityConfigElement();
+                /*
+                 * see note at the end of this class for how we decide
+                 * the realm value
+                 */
+                if (configElt != null && configElt.isHosted()) {
+                    List config = configElt.
+                       getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                    if (!config.isEmpty()) {
+                        BaseConfigType bConfig = (BaseConfigType)
+                            config.iterator().next();
+                        realm = SAML2MetaUtils.getRealmByMetaAlias(
+                            bConfig.getMetaAlias());
+                    }
+                }
+            }
             
             if (metadata != null) {
                 entityID = importMetaData(metaManager);
             }
-            if (extendedData != null) {
-                importExtendedData(metaManager);
+            
+            if (configElt != null) {
+                metaManager.createEntityConfig(realm, configElt);
+                
+                String out = (webAccess) ? "web" : extendedData;
+                Object[] objs = { out };
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("import-entity-succeeded"), objs));
             }
 
             if ((cot != null) && (cot.length() > 0) &&
@@ -135,12 +164,42 @@ public class ImportMetaData extends AuthenticatedCommand {
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getAdminSSOToken());
             String entityID = null;
+            com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
+                configElt = null;
+            
+            if (extendedData != null) {
+                configElt = getIDFFEntityConfigElement();
+                
+                /*
+                 * see note at the end of this class for how we decide
+                 * the realm value
+                 */
+                if ((configElt != null) && configElt.isHosted()) {
+                    IDPDescriptorConfigElement idpConfig = 
+                        IDFFMetaUtils.getIDPDescriptorConfig(configElt);
+                    if (idpConfig != null) {
+                        realm = SAML2MetaUtils.getRealmByMetaAlias(
+                            idpConfig.getMetaAlias());
+                    } else {
+                        SPDescriptorConfigElement spConfig =
+                            IDFFMetaUtils.getSPDescriptorConfig(configElt);
+                        if (spConfig != null) {
+                            realm = SAML2MetaUtils.getRealmByMetaAlias(
+                                spConfig.getMetaAlias());
+                        }
+                    }
+                }
+            }
             
             if (metadata != null) {
                 entityID = importIDFFMetaData(metaManager);
             }
-            if (extendedData != null) {
-                importIDFFExtendedData(metaManager, entityID);
+            if (configElt != null) {
+                String out = (webAccess) ? "web" : extendedData;
+                Object[] objs = { out };
+                metaManager.createEntityConfig(configElt);
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("import-entity-succeeded"), objs));
             }
 
             if ((cot != null) && (cot.length() > 0) &&
@@ -182,6 +241,7 @@ public class ImportMetaData extends AuthenticatedCommand {
                     (EntityDescriptorElement)obj;
                 entityID = descriptor.getEntityID();
                 SAML2MetaSecurityUtils.verifySignature(doc);
+
                 metaManager.createEntityDescriptor(realm, descriptor);
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("import-entity-succeeded"), objs));
@@ -274,9 +334,8 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
    
-    private void importExtendedData(SAML2MetaManager metaManager)
-        throws SAML2MetaException, CLIException
-    {
+    private EntityConfigElement geEntityConfigElement()
+        throws SAML2MetaException, CLIException {
         String out = (webAccess) ? "web" : extendedData;
         Object[] objs = { out };
         InputStream is = null;
@@ -290,12 +349,8 @@ public class ImportMetaData extends AuthenticatedCommand {
                 obj = SAML2MetaUtils.convertInputStreamToJAXB(is);
             }
 
-            if (obj instanceof EntityConfigElement) {
-                metaManager.createEntityConfig(realm,
-                    (EntityConfigElement)obj);
-                getOutputWriter().printlnMessage(MessageFormat.format(
-                    getResourceString("import-entity-succeeded"), objs));
-            }
+            return (obj instanceof EntityConfigElement) ?
+                (EntityConfigElement)obj : null;
         } catch (FileNotFoundException e) {
             throw new CLIException(MessageFormat.format(
                 getResourceString("file-not-found"), objs),
@@ -323,10 +378,8 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
 
-    private void importIDFFExtendedData(
-        IDFFMetaManager metaManager,
-        String entityID
-    ) throws IDFFMetaException, CLIException {
+    private com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
+        getIDFFEntityConfigElement() throws IDFFMetaException, CLIException {
         String out = (webAccess) ? "web" : extendedData;
         Object[] objs = { out };
 
@@ -340,15 +393,10 @@ public class ImportMetaData extends AuthenticatedCommand {
                     getFileContent(extendedData));
             }
 
-            if (obj instanceof 
-               com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
-            ) {
-                metaManager.createEntityConfig(
+            return (obj instanceof 
+            com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement) ?
              (com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement)
-                    obj);
-                getOutputWriter().printlnMessage(MessageFormat.format(
-                    getResourceString("import-entity-succeeded"), objs));
-            }
+                obj : null;
         } catch (IOException e) {
             throw new CLIException(MessageFormat.format(
                 getResourceString("file-not-found"), objs),
@@ -386,5 +434,17 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
         return buff.toString();
     }
-
 }
+
+/* Deciding realm value
+if (extended metadata xml exists) {
+    if (hosted) {
+        get the realm value from meta alias either from IDP or SP
+        config element.
+    } else {
+        use the value provide by --realm/-e option
+    }
+} else {
+    use the value provide by --realm/-e option
+}
+ */
