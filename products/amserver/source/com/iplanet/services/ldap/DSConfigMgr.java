@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.5 2006-12-20 23:07:10 rarcot Exp $
+ * $Id: DSConfigMgr.java,v 1.6 2007-04-09 23:27:12 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,7 +228,37 @@ public class DSConfigMgr {
      * 
      */
     public LDAPConnection getNewAdminConnection() throws LDAPServiceException {
-        return getNewConnection(DEFAULT, LDAPUser.Type.AUTH_ADMIN);
+
+        // This api getNewAdminConnection() is used by SMDataLayer.java and
+        // EventService.java.
+        debugger.message("in DSConfigMgr.getNewAdminConnection()");
+        String serverGroupID = DEFAULT;
+        LDAPUser.Type type = LDAPUser.Type.AUTH_ADMIN;
+
+        String hostName = getHostName(serverGroupID);
+        if(hostName.length() == 0) {
+            throw new LDAPServiceException(getString(
+                IUMSConstants.DSCFG_SERVER_NOT_FOUND));
+        }
+
+        if(debugger.messageEnabled()) {
+            debugger.message("DSConfigMgr:getNewAdminConnection():Hostname ="+
+                hostName);
+        }
+
+        ServerInstance sCfg = getServerInstance(serverGroupID, type);
+
+        String authID = null;
+        String passwd = null;
+        authID = sCfg.getAuthID();
+        passwd = (String) AccessController.doPrivileged(
+          new ServerInstanceAction(sCfg));
+
+        // The 389 port number passed is overridden by the hostName:port
+        // constructed by the getHostName method.  So, this is not
+        // a hardcoded port number.
+        return getConnection(hostName, 389, sCfg.getConnectionType(),
+            authID, passwd);
     }
 
     /**
@@ -309,7 +339,7 @@ public class DSConfigMgr {
      */
     public LDAPConnection getNewFailoverConnection(String serverGroupID,
             LDAPUser.Type type) throws LDAPServiceException {
-        debugger.message("in DSConfigMgr.getNewFailoverConneciton()");
+        debugger.message("in DSConfigMgr.getNewFailoverConnection()");
         String hostName = getHostName(serverGroupID);
         if (hostName.length() == 0) {
             throw new LDAPServiceException(
@@ -334,14 +364,90 @@ public class DSConfigMgr {
         // The 389 port number passed is overridden by the hostName:port
         // constructed by the getHostName method. So, this is not
         // a hardcoded port number.
-        return getConnection(hostName, 389, sCfg.getConnectionType(), authID,
-                passwd);
+        if (type.equals(LDAPUser.Type.AUTH_ANONYMOUS)) {
+            return getConnection(hostName, 389, sCfg.getConnectionType(),
+                authID, passwd);
+        }
+        return getPrimaryConnection(hostName, 389, sCfg.getConnectionType(),
+                             authID, passwd);
     }
+
+    private LDAPConnection getPrimaryConnection(String hostName, int port,
+                                         Server.Type type, String authID,
+                                         String passwd)
+        throws LDAPServiceException {
+
+        LDAPConnection conn = null;
+
+        if(type == Server.Type.CONN_SSL) {
+            try {
+                conn = new LDAPConnection(
+                    SSLSocketFactoryManager.getSSLSocketFactory());
+            } catch (Exception e) {
+                debugger.error("getConnection.JSSSocketFactory", e);
+                throw new LDAPServiceException(getString(
+                    IUMSConstants.DSCFG_JSSSFFAIL));
+            }
+        } else {
+            conn = new LDAPConnection();
+        }
+        StringTokenizer st = new StringTokenizer(hostName);
+        String hpName = null;
+        while (st.hasMoreElements()) {
+            hpName = (String)st.nextToken();
+            if (hpName != null && hpName.length() != 0) {
+                debugger.message("DSConfigMgr:getPrimaryConnection(): "+
+                    "host name & port number "+hpName);
+                break;
+            }
+        }
+        int retry = 0;
+        while(retry <= connNumRetry) {
+            if (debugger.messageEnabled()) {
+                debugger.message("DSConfigMgr.getConnection retry: " + retry);
+            }
+            try {
+                StringTokenizer stn = new StringTokenizer(hpName,":");
+                String upHost = (String)stn.nextToken();
+                String upPort = (String)stn.nextToken();
+                if ((upHost != null) && (upHost.length() != 0)
+                    && (upPort != null) && (upPort.length() != 0)) {
+                    int intPort = (Integer.valueOf(upPort)).intValue();
+                    if ((authID != null) && (passwd != null)) {
+                        conn.connect(3, upHost, intPort, authID, passwd);
+                    } else {
+                        conn.setOption(LDAPv3.PROTOCOL_VERSION,
+                            new Integer(3));
+                        conn.connect(upHost, intPort);
+                    }
+                    conn.setOption(LDAPv2.SIZELIMIT, new Integer(0));
+                }
+            } catch (LDAPException e) {
+                if (!retryErrorCodes.contains(""+ e.getLDAPResultCode())||
+                    retry == connNumRetry ) {
+                    debugger.error("Connection to LDAP server threw exception:",
+                        e);
+                    throw new LDAPServiceException(getString(
+                        IUMSConstants.DSCFG_CONNECTFAIL), e);
+                }
+                retry++;
+                try {
+                    Thread.currentThread().sleep(connRetryInterval);
+                }
+                catch (InterruptedException ex) {
+                }
+            }
+            retry++;
+        }
+        return conn;
+    }
+
 
     private LDAPConnection getConnection(String hostName, int port,
             Server.Type type, String authID, String passwd)
             throws LDAPServiceException {
 
+        debugger.message("in DSConfigMgr.getConnection()");
         LDAPConnection conn = null;
 
         if (type == Server.Type.CONN_SSL) {
