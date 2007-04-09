@@ -21,7 +21,7 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.1 2007-01-17 23:15:21 subbae Exp $
+# $Id: README.txt,v 1.2 2007-04-09 23:49:55 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -38,6 +38,7 @@ README file for Open Web Single Sign-On - Web Agents
 	%% 2.7 Download SJS Web Server 7.0 Header files 
         %% 2.8 Obtaining OpenSSO Agents Common Installer libraries
     %% 3. Building the workspace
+    %% 4. Building 64-bit agent (optional)
 
 %% 1. Build requirements
 
@@ -188,3 +189,61 @@ name is in this format: sjsws_v70_<OS>_agent.zip.
     - <OS> : SunOS, Linux, WINNT, SunOS_x86
 
 Example: sjsws_v70_SunOS_agent.zip
+
+
+4. Building 64-bit agent. (Optional)
+
+Web Server 7 also has 64-bit support on Solaris sparc and x86 platforms.  
+The above information helps in building 32-bit agent i.e. agent works with 32-bit Web Server7. 
+
+In order to build 64-bit agent, all the above information is applicable, 
+but 64-bit libxml2, nss and nspr libraries need to exist in extlib/ directory. 
+
+Also make sure that the Solaris system supports 64-bit kernel. Try the following command:
+#isainfo -v (or isainfo -kv)
+64-bit sparcv9 applications
+32-bit sparc applications
+
+If the result shows 64-bit, then 64-bit agent works.
+
+Please follow these instructions:
+
+%% 4.1 64-bit LIBXML2 2.6.23
+
+4.1.1 Open the web page: ftp://xmlsoft.org/libxml2/
+4.1.2 Download the latest libxml2 source (libxml2-2.6.23.tar.gz)
+4.1.3 Uncompress the the archive.
+4.1.4 cd libxml2-2.6.23
+4.1.4 ./configure --prefix=<libxml2-install-dir> CC=<SunStudio c compiler path> CFLAGS="-fast -xarch=generic64"
+4.1.5 make
+4.1.6 make install
+4.1.7 cp <libxml2-install-dir>/include/libxml2/libxml/* <opensso_webagent>/extlib/SunOS/libxml2_64/include/libxml2/libxml
+4.1.8 cp <libxml2-install-dir>/lib/* <opensso_webagent>/extlib/SunOS/libxml2_64/lib
+
+%%4.2 64-bit NSS 3.11
+
+Follow these steps to obtain the binaries:
+
+4.2.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_11_RTM/SunOS5.8_64_OPT.OBJ/nss-3.11.tar.gz
+4.2.2 Download nss-3.11.tar.gz.
+4.2.3 Uncompress the the archive.
+4.2.4 cp nss-3.11/bin/* <opensso_webagent>/extlib/SunOS/nss_64/bin
+4.2.5 cp nss-3.11/include/* <opensso_webagent>/extlib/SunOS/nss_64/include
+4.2.6 cp nss-3.11/lib/* <opensso_webagent>/extlib/SunOS/nss_64/lib
+
+
+%% 4.3 64-bit  NSPR 4.6.1
+
+Follow these steps to obtain the binaries:
+
+4.3.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.6.1/SunOS5.8_64_OPT.OBJ/nspr-4.6.1.tar.gz
+4.3.2 Download nspr-4.6.1.tar.gz.
+4.3.3 Uncompress the the archive. 
+4.3.4 cp <nspr-install-dir>/include/*.h <opensso_webagent>/extlib/SunOS/nspr_64/include
+4.3.5 cp -r <nspr-install-dir>/include/obsolete <opensso_webagent>/extlib/SunOS/nspr_64/include
+4.3.6 cp -r <nspr-install-dir>/include/private <opensso_webagent>/extlib/SunOS/nspr_64/include
+4.3.7 cp <nspr-install-dir>/lib/* <opensso_webagent>/extlib/SunOS/nspr_64/lib
+
+%% 4.4 Building the 64-bit agent
+
+4.4.1 ant sjsws -Dbuild.type=64

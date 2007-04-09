@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-01-17 23:15:17 subbae Exp $
+   $Id: build.xml,v 1.3 2007-04-09 23:49:53 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -106,6 +106,7 @@
         <exec executable="gmake" failonerror="true">
            <arg value="BUILD_DEBUG=${build.debug}" />
            <arg value="BUILD_AGENT=${containername}" />
+           <arg value="BUILD_TYPE=${build.type}" />
         </exec>
     </target>
 

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_SunOS.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
+# $Id: defines_SunOS.mk,v 1.3 2007-04-09 23:49:54 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -45,6 +45,12 @@ CXX := CC
 
 CFLAGS += -DSOLARIS -mt
 CXXFLAGS += -DSOLARIS -mt
+
+ifeq ($(BUILD_TYPE), 64)
+CFLAGS += -KPIC -fast -xarch=generic64
+CXXFLAGS += -fast -xarch=generic64 -DSOLARIS_64
+endif
+
 CXX_STD_LIBS := -lCstd -lCrun
 LDFLAGS += -mt -R /usr/lib/mps 
 LD_ORIGIN_FLAG := '-R$$ORIGIN'
@@ -52,6 +58,9 @@ LD_COMMON_ORIGIN_FLAG := '-R/opt/SUNWam/lib:/usr/lib/mps'
 # NOTE: '-z defs' should probably be added to the following definition.
 LD_FILTER_SYMS_FLAG = -M$(filter %.mapfile, $^)
 LD_MAKE_SHARED_LIB_FLAG := -G -znodelete
+ifeq ($(BUILD_TYPE), 64)
+LD_MAKE_SHARED_LIB_FLAG += -fast -xarch=generic64
+endif
 LD_SHARED_FLAG := -Bdynamic
 LD_STATIC_FLAG := -Bstatic
 LD_VERSION_LIB_FLAG = -h$@

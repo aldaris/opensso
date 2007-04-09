@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.5 2007-01-17 23:15:19 subbae Exp $
+# $Id: components.mk,v 1.6 2007-04-09 23:49:54 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -66,6 +66,9 @@ SJSWS_LIB_DIR = $(SJSWS_DIR)/lib
 # LIBXML defines
 ##########################################
 LIBXML_DIR := $(EXTERNAL_DIR)/libxml2
+ifeq ($(BUILD_TYPE), 64)
+LIBXML_DIR := $(EXTERNAL_DIR)/libxml2_64
+endif
 LIBXML_INC_DIR := $(LIBXML_DIR)/include/libxml2
 LIBXML_LIB_DIR := $(LIBXML_DIR)/lib
 ifndef LIBXML_LIBS
@@ -82,6 +85,9 @@ endif
 ##########################################
 
 NSPR_DIR := $(EXTERNAL_DIR)/nspr
+ifeq ($(BUILD_TYPE), 64)
+NSPR_DIR := $(EXTERNAL_DIR)/nspr_64
+endif
 NSPR_INC_DIR := $(NSPR_DIR)/include
 NSPR_LIB_DIR := $(NSPR_DIR)/lib
 
@@ -98,6 +104,9 @@ endif
 ##########################################
 
 NSS_DIR := $(EXTERNAL_DIR)/nss
+ifeq ($(BUILD_TYPE), 64)
+NSS_DIR := $(EXTERNAL_DIR)/nss_64
+endif
 NSS_BIN_DIR := $(NSS_DIR)/bin
 NSS_INC_DIR := $(NSS_DIR)/include
 NSS_LIB_DIR := $(NSS_DIR)/lib
