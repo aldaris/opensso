@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.7 2006-12-15 00:51:27 goodearth Exp $
+ * $Id: EventService.java,v 1.8 2007-04-09 23:26:01 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -631,7 +631,7 @@ public class EventService implements Runnable {
      * @param clearCaches
      * @return
      */
-    protected synchronized boolean resetAllSearches(boolean clearCaches) {
+    public synchronized boolean resetAllSearches(boolean clearCaches) {
 
         Hashtable tmpReqList = (Hashtable) _requestList.clone();
         _requestList.clear(); // Will be updated in addListener method
@@ -655,8 +655,9 @@ public class EventService implements Runnable {
                             + "retrying = " + str);
                 }
 
-                // Re-initialize message queue
-                _msgQueue = null;
+                // Note: Avoid setting the messageQueue to null and just
+                // try to disconnect the connections. That way we can be sure
+                // that we have not lost any responses.
 
                 // we want to do the addListener in a seperate loop from the
                 // above removeListener because we want to remove all the
@@ -664,12 +665,14 @@ public class EventService implements Runnable {
                 Iterator iter = reqList.iterator();
                 while (iter.hasNext()) {
                     Request request = (Request) iter.next();
-                    // Abandon the search & disconnect
-                    // keep remove and add together to minimum down time.
-                    removeListener(request);
+
+                    // First add a new listener and then remove the old one
+                    // that we do don't loose any responses to the message
+                    // Queue.
                     addListener(request.getRequester(), request.getListener(),
-                            request.getBaseDn(), request.getScope(), request
-                                    .getFilter(), request.getOperations());
+                        request.getBaseDn(), request.getScope(), 
+                        request.getFilter(), request.getOperations());
+                    removeListener(request);
                 }
                 return true;
             } catch (LDAPServiceException e) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeOut.java,v 1.2 2006-08-25 21:19:54 veiming Exp $
+ * $Id: TimeOut.java,v 1.3 2007-04-09 23:26:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,10 +56,6 @@ import com.sun.identity.shared.debug.Debug;
  * EventServicePolling thread to issue and interrupt after it has successfully
  * re-established its searches.
  * 
- * <p>
- * Both these threads (EventServicePolling & TimeOut) synchronize by means of a
- * monitor object (_monitor) shared between the 2 threads.
- * </p>
  */
 class TimeOut implements Runnable {
 
@@ -67,19 +63,16 @@ class TimeOut implements Runnable {
 
     private long _timeOut;
 
-    private Object _monitor;
-
     private boolean _exitStatus = false;
 
     private Debug debug = EventService.debugger;
 
     private EventServicePolling _serviceInstance;
 
-    TimeOut(EventServicePolling serviceInstance, long timeOut, Object monitor) {
+    TimeOut(EventServicePolling serviceInstance, long timeOut) {
         setServiceInstance(serviceInstance);
         setServiceThread(getServiceInstance().getServiceThread());
         setTimeOutValue(timeOut);
-        setMonitor(monitor);
     }
 
     public void run() {
@@ -95,31 +88,17 @@ class TimeOut implements Runnable {
                 // Sleep for the time out period
                 Thread.sleep(updatedTimeOut);
 
-                // Need a monitor to avoid a race condition to interrupt the
-                // EventServicePolling thread while it is in the middle of
-                // processing a request. Once this thread gets a handle to the
-                // lock the monitor object, the ES should wait before starting
-                // to process until this thread interrupts.
-                synchronized (_monitor) {
-                    // Notify the service thread that it needs to reset
-                    // listeners that might have timed out.
-                    if (debug.messageEnabled()) {
-                        debug.message("TimeOut.run() - Notifying "
-                                + "EventServicePolling thread about timeout");
-                    }
-
-                    // Interrupt the EventServicePolling thread to notify
-                    // timeout
-                    getServiceThread().interrupt();
-
-                    // Wait until the service thread, updated the time out
-                    // value and notifies this thread to start.
-                    if (debug.messageEnabled()) {
-                        debug.message("TimeOut.run() - Waiting for "
-                                + "EventServicePolling thread to notify");
-                    }
-                    _monitor.wait(); // lock on _monitor is now released
+                // Notify the service thread that it needs to reset
+                // listeners that might have timed out.
+                if (debug.messageEnabled()) {
+                    debug.message("TimeOut.run() - Notifying " +
+                    "EventServicePolling thread about timeout");
                 }
+
+                // Just try to remove a connection
+                // and add a new connection.
+                getServiceInstance().resetTimedOutConnections();
+
             } catch (InterruptedException ie) {
                 // Mostly the Service thread has interrupted this thread.
                 // Ignore the exception as the state of timeout values and
@@ -167,7 +146,4 @@ class TimeOut implements Runnable {
         return (_exitStatus || !getServiceThread().isAlive());
     }
 
-    private void setMonitor(Object monitor) {
-        _monitor = monitor;
-    }
 }
