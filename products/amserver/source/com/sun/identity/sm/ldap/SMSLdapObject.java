@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.10 2007-03-21 22:33:51 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.11 2007-04-09 23:20:22 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -235,6 +235,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
         LDAPAttributeSet attrSet = null;
         LDAPConnection conn = getConnection(token.getPrincipal());
+        int errorCode = 0;
         try {
             LDAPEntry ldapEntry = null;
             int retry = 0;
@@ -247,6 +248,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                         getAttributeNames());
                     break;
                 } catch (LDAPException e) {
+                    errorCode = e.getLDAPResultCode();
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -272,6 +274,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 debug.message("SMSLdapObject: reading entry: " + dn);
             }
         } catch (LDAPException ex) {
+            errorCode = ex.getLDAPResultCode();
             // Check if the entry is not present
             if (ex.getLDAPResultCode() == LDAPException.NO_SUCH_OBJECT) {
                 // Add to not present Set
@@ -288,7 +291,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 throw (new SMSException(ex, "sms-entry-cannot-access"));
             }
         } finally {
-            releaseConnection(conn);
+            releaseConnection(conn, errorCode);
         }
 
         // Convert LDAPAttributeSet to Map
@@ -620,6 +623,20 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 dlayer.releaseConnection(conn);
             } else {
                 smdlayer.releaseConnection(conn);
+            }
+        }
+    }
+
+    /**
+     * Releases a LDAPConnection.
+     */
+    private static void releaseConnection(LDAPConnection conn, int errorCode){
+
+        if (conn != null) {
+            if (enableProxy) {
+              dlayer.releaseConnection(conn, errorCode);
+            } else {
+              smdlayer.releaseConnection(conn);
             }
         }
     }

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.4 2007-04-02 06:02:12 veiming Exp $
+ * $Id: SMDataLayer.java,v 1.5 2007-04-09 23:20:22 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm.ldap;
 
+import java.util.HashMap;
 import netscape.ldap.LDAPBind;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
@@ -45,7 +46,7 @@ import com.sun.identity.common.LDAPConnectionPool;
  * DataLayer as DSLayer for ldap specific operations 2. Improvements needed for
  * _ldapPool: destroy(), initial bind user, tunning for MIN and MAX initial
  * settings etc 3. May choose to extend implementation of _ldapPool from
- * ConnectionPool so that there is load balance between connections.Also
+ * LdapConnectionPool so that there is load balance between connections.Also
  * _ldapPool may be implemented with a HashTable of (host,port) for multiple
  * pools of connections for mulitple (host,port) to DS servers instead of single
  * host and port.
@@ -165,8 +166,12 @@ class SMDataLayer {
         // Initialize the pool with minimum and maximum connections settings
         // retrieved from configuration
         ServerInstance svrCfg = null;
+        String hostName = null;
+        HashMap connOptions = new HashMap();
+
         try {
             DSConfigMgr dsCfg = DSConfigMgr.getDSConfigMgr();
+            hostName = dsCfg.getHostName("default");
 
             // Get "sms" ServerGroup if present
             ServerGroup sg = dsCfg.getServerGroup("sms");
@@ -236,8 +241,16 @@ class SMDataLayer {
             _defaultSearchConstraints = _trialConn.getSearchConstraints();
 
             // Construct the pool by cloning the successful connection
-            _ldapPool =
-                new LDAPConnectionPool("SMS", poolMin, poolMax, _trialConn);
+            // Set the default options too for failover and fallback features.
+
+            connOptions.put("maxbacklog", new Integer(maxBackLog));
+            connOptions.put("referrals", new Boolean(referrals));
+            connOptions.put("searchconstraints", _defaultSearchConstraints);
+
+            _ldapPool = new LDAPConnectionPool("SMS", poolMin, poolMax,
+                hostName, 389, _trialConn.getAuthenticationDN(),
+                _trialConn.getAuthenticationPassword(), connOptions);
+
         } catch (LDAPException e) {
             debug.error("SMDataLayer:initLdapPool()-"
                     + "Exception in SMDataLayer.initLdapPool:", e);
