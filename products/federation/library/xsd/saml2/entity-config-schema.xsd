@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entity-config-schema.xsd,v 1.1 2006-10-30 23:17:36 qcheng Exp $
+   $Id: entity-config-schema.xsd,v 1.2 2007-04-09 21:23:30 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,6 +47,8 @@
 		    <element ref="fm:AuthnAuthorityConfig"/>
 		    <element ref="fm:AttributeAuthorityConfig"/>
 		    <element ref="fm:PDPConfig"/>
+		    <element ref="fm:XACMLPDPConfig"/>
+		    <element ref="fm:XACMLAuthzDecisionQueryConfig"/>
 		</choice>
 		<element ref="fm:AffiliationConfig"/>
             </choice>
@@ -60,6 +62,8 @@
     <element name="AuthnAuthorityConfig" type="fm:BaseConfigType"/>
     <element name="AttributeAuthorityConfig" type="fm:BaseConfigType"/>
     <element name="PDPConfig" type="fm:BaseConfigType"/>
+    <element name="XACMLPDPConfig" type="fm:BaseConfigType"/>
+    <element name="XACMLAuthzDecisionQueryConfig" type="fm:BaseConfigType"/>
     <element name="AffiliationConfig" type="fm:BaseConfigType"/>
     <complexType name="BaseConfigType" abstract="true">
         <sequence>
