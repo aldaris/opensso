@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.7 2007-03-27 06:03:03 veiming Exp $
+ * $Id: Constants.java,v 1.8 2007-04-09 23:29:15 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -921,6 +921,12 @@ public interface Constants {
      */
     String LDAP_CONN_IDLE_TIME_IN_SECS =
         "com.sun.am.ldap.connnection.idle.seconds";
+
+    /**
+     *  Property string for Fallback Monitoring thread polling interval
+     */
+    public static final String LDAP_FALLBACK_SLEEP_TIME_IN_MINS =
+        "com.sun.am.ldap.fallback.sleep.minutes";
 
     /**
      * Constant for file separator.
