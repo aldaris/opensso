@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.3 2007-01-12 00:49:06 goodearth Exp $
+ * $Id: LDAPConnectionPool.java,v 1.4 2007-04-09 23:22:58 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,10 +28,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.DSConfigMgr;
+import com.iplanet.services.ldap.LDAPServiceException;
+import com.sun.identity.common.FallBackManager;
+import com.sun.identity.shared.debug.Debug;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
-import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.shared.debug.Debug;
+import netscape.ldap.LDAPSearchConstraints;
 
 /**
  * Class to maintain a pool of individual connections to the
@@ -44,9 +53,9 @@ import com.sun.identity.shared.debug.Debug;
  * Call destroy() to release all connections.
  *<BR><BR>Example:<BR>
  *<PRE>
- * ConnectionPool pool = null;
+ * LDAPConnectionPool pool = null;
  * try {
- *     pool = new ConnectionPool("test", 10, 30,
+ *     pool = new LDAPConnectionPool("test", 10, 30,
  *                                "foo.acme.com",389,
  *                                "uid=me, o=acme.com",
  *                                "password" );
@@ -68,10 +77,17 @@ import com.sun.identity.shared.debug.Debug;
  */
 
 /**
- * Connection pool, typically used by a server to avoid creating
+ * LDAPConnection pool, typically used by a server to avoid creating
  * a new connection for each client
+ *
  **/
 public class LDAPConnectionPool {
+
+    private static ArrayList hostArrList = new ArrayList();
+    private static Debug debug;  // Debug object
+    private static HashSet retryErrorCodes = new HashSet();
+    private static final String LDAP_CONNECTION_ERROR_CODES =
+        "com.iplanet.am.ldap.connection.ldap.error.codes.retries";
  
     /**
      * Constructor for specifying all parameters
@@ -94,7 +110,8 @@ public class LDAPConnectionPool {
         String authdn,
         String authpw
     ) throws LDAPException {
-        this(name, min, max, host, port, authdn, authpw, null);
+        /////this(name, min, max, host, port, authdn, authpw, null);
+        this(name, min, max, host, port, authdn, authpw, null, null);
     }
 
     /**
@@ -119,6 +136,33 @@ public class LDAPConnectionPool {
     }
 
     /**
+     * Constructor for specifying connection option parameters in addition
+     * to all other parameters.
+     *
+     * @param name name of connection pool
+     * @param min initial number of connections
+     * @param max maximum number of connections
+     * @param host hostname of LDAP server
+     * @param port port number of LDAP server
+     * @param authdn DN to authenticate as
+     * @param authpw password for authentication
+     * @param connOptions connection option parameters set at serviceconfig
+     * @exception LDAPException on failure to create connections
+     */
+    public LDAPConnectionPool(
+        String name, 
+        int min, 
+        int max,
+        String host, 
+        int port,
+        String authdn, 
+        String authpw,
+        HashMap connOptions
+    ) throws LDAPException {
+        this(name, min, max, host, port, authdn, authpw, null, connOptions);
+    }
+
+    /**
      * Constructor for using default parameters, anonymous identity
      *
      * @param name name of connection pool
@@ -131,7 +175,7 @@ public class LDAPConnectionPool {
     {
         // poolsize=10,max=20,host,port,
         // noauth,nopswd
-        this(name, 10, 20, host, port, "", "");
+        this(name, 10, 20, host, port, "", "", null);
     }
 
     /** 
@@ -155,7 +199,7 @@ public class LDAPConnectionPool {
     ) throws LDAPException {
         this(name, min, max, ldc.getHost(), ldc.getPort(),
               ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(),
-              (LDAPConnection)ldc.clone());
+              (LDAPConnection)ldc.clone(), null);
     }
 
     /* 
@@ -170,6 +214,7 @@ public class LDAPConnectionPool {
      * @param authdn DN to authenticate as
      * @param authpw password for authentication
      * @param ldc connection to clone 
+     * @param connOptions connection option parameters set at serviceconfig
      * @exception LDAPException on failure to create connections 
      */ 
     private LDAPConnectionPool(
@@ -180,10 +225,11 @@ public class LDAPConnectionPool {
         int port,
         String authdn,
         String authpw,
-        LDAPConnection ldc
+        LDAPConnection ldc,
+        HashMap connOptions
     ) throws LDAPException {
         this(name, min, max, host, port,
-             authdn, authpw, ldc, getIdleTime(name));
+             authdn, authpw, ldc, getIdleTime(name), connOptions);
     }
 
     private static final int getIdleTime(String poolName) {
@@ -194,7 +240,7 @@ public class LDAPConnectionPool {
             try {
                 idleTimeInSecs = Integer.parseInt(idleStr);
             } catch(NumberFormatException nex) {
-                debug.error("Connection pool: " + poolName +
+                debug.error("LDAPConnection pool: " + poolName +
                             ": Cannot parse idle time: " + idleStr +
                             " Connection reaping is disabled.");
             }
@@ -215,13 +261,14 @@ public class LDAPConnectionPool {
         String authdn,
         String authpw,
         LDAPConnection ldc,
-        int idleTimeInSecs
+        int idleTimeInSecs,
+        HashMap connOptions
     ) throws LDAPException {
         this.name = name;
         this.minSize = min;
         this.maxSize  = max;
-        this.host = host;
-        this.port = port;
+        //createHostList and assign the first one to the this.host & this.port
+        createHostList(host);
         this.authdn = authdn;
         this.authpw = authpw;
         this.ldc = ldc;
@@ -231,7 +278,7 @@ public class LDAPConnectionPool {
 
         createPool();
         if (debug.messageEnabled()) {
-            debug.message("Connection pool: " + name +
+            debug.message("LDAPConnection pool: " + name +
                           ": successfully created: Min:" + minSize +
                           " Max:" + maxSize + " Idle time:" + idleTimeInSecs);
         }
@@ -353,7 +400,7 @@ public class LDAPConnectionPool {
                         pool.add(ldapconnobj);
                     }
                 } else {
-                    debug.message("Connection pool:" + name +
+                    debug.message("LDAPConnection pool:" + name +
                                   ":All pool connections in use");
                 }
             }
@@ -381,6 +428,39 @@ public class LDAPConnectionPool {
         }
     }
 
+    /**
+     * This is our soft close - all we do is mark
+     * the connection as available for others to use.
+     * We also reset the auth credentials in case
+     * they were changed by the caller.
+     *
+     * @param ld a connection to return to the pool
+     */
+    public void close( LDAPConnection ld , int errCode) {
+        if (debug.messageEnabled()) {
+            debug.message("LDAPConnectionPool:close(): errCode "+errCode);
+        }
+        // Do manual failover to the secondary server, if ldap error code is
+        // 80 or 81 or 91.
+        if (retryErrorCodes.contains(Integer.toString(errCode))) {
+            failOver(ld);
+            if ( (LDAPConnPoolUtils.connectionPoolsStatus != null)
+                && (!LDAPConnPoolUtils.connectionPoolsStatus.isEmpty()) ) {
+                // Initiate the fallback to primary server by invoking a
+                // FallBackManager thread which pings if the primary is up.
+                if (fMgr == null || !fMgr.isAlive()) {
+                    fMgr = new FallBackManager();
+                    fMgr.start();
+                }
+            }
+        }
+        if(find(deprecatedPool, ld) != -1) {
+            removeFromPool(deprecatedPool, ld);
+        } else {
+            removeFromPool(pool, ld);
+        }
+    }
+
     private void removeFromPool(ArrayList thePool, LDAPConnection ld) {
         int index = find(thePool, ld);
         if (index != -1) {
@@ -396,6 +476,9 @@ public class LDAPConnectionPool {
   
     private void disconnect(LDAPConnectionObject ldapconnObject) {
         if (ldapconnObject != null) {
+            if (debug.messageEnabled()) {
+                debug.message("In LDAPConnectionPool:disconnect()");
+            }
             if (ldapconnObject.isAvailable()) {
                 ldapconnObject.setAsDestroyed();
                 LDAPConnection ld = ldapconnObject.getLDAPConn();
@@ -403,7 +486,7 @@ public class LDAPConnectionPool {
                     try {
                         ld.disconnect();
                     } catch (LDAPException e) {
-                        debug.error("Connection pool:" + name +
+                        debug.error("LDAPConnection pool:" + name +
                                     ":Error during disconnect.", e);
                     }
                  }
@@ -415,11 +498,11 @@ public class LDAPConnectionPool {
     private void createPool() throws LDAPException {
         // Called by the constructors
         if (minSize <= 0) {
-            throw new LDAPException("Connection pool:" + name +
+            throw new LDAPException("LDAPConnection pool:" + name +
                                     ":ConnectionPoolSize invalid");
         }
         if (maxSize < minSize) {
-            debug.error("Connection pool:" + name +
+            debug.error("LDAPConnection pool:" + name +
                         ":ConnectionPoolMax is invalid, set to " +
                         minSize);
             maxSize = minSize;
@@ -433,6 +516,8 @@ public class LDAPConnectionPool {
             buf.append(" Port =").append(port);
             buf.append(" Min =").append(minSize);
             buf.append(" Max =").append(maxSize);
+            debug.message("LDAPConnectionPool:createPool(): buf.toString()" +
+                buf.toString());
         }
 
         // To avoid resizing we set the size to twice the max pool size.
@@ -445,19 +530,20 @@ public class LDAPConnectionPool {
         LDAPConnectionObject ldapconnobj = null;
 
         if (defunct) {
-            debug.error("Connection pool:" + name +
+            debug.error("LDAPConnection pool:" + name +
                           ":Defunct connection pool object.  " +
                           "Cannot add connections.");
             return ldapconnobj;
         }
         try {
-            ldapconnobj = createConnection();
+            ldapconnobj = 
+                createConnection(LDAPConnPoolUtils.connectionPoolsStatus);
         } catch (Exception ex) {
-            debug.error("Connection pool:" + name +
+            debug.error("LDAPConnection pool:" + name +
                         ":Error while adding a connection.", ex);
         }
         if (ldapconnobj != null) {
-            debug.message("Connection pool:" + name +
+            debug.message("LDAPConnection pool:" + name +
                           ":adding a connection to pool...");
         }
         return ldapconnobj;
@@ -467,18 +553,23 @@ public class LDAPConnectionPool {
         synchronized (pool) {
             // Loop on creating connections
             while (pool.size() < size) {
-                pool.add(createConnection());
+                pool.add(createConnection(
+                    LDAPConnPoolUtils.connectionPoolsStatus));
             }
         }
     }
 
-    private LDAPConnectionObject createConnection() throws LDAPException {
+    private LDAPConnectionObject createConnection(
+        HashMap aConnectionPoolsStatus
+    ) throws LDAPException {
+
         LDAPConnectionObject co = new LDAPConnectionObject();
         // Make LDAP connection, using template if available
         LDAPConnection newConn =
             (ldc != null) ? (LDAPConnection)ldc.clone() :
             new LDAPConnection();
         co.setLDAPConn(newConn);
+        String key = name + ":" + host + ":" + port + ":" + authdn;
         try {
             if (newConn.isConnected()) {
                 /*
@@ -486,6 +577,11 @@ public class LDAPConnectionPool {
                  * to create a separate physical connection
                  */
                 newConn.reconnect();
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPConnectionPool: "+
+                        "createConnection(): with template primary host: " +
+                         host + "primary port: " + port);
+                }
             } else {
                 /*
                  * Not using a template, so connect with
@@ -493,20 +589,49 @@ public class LDAPConnectionPool {
                  */
                 try { 
                     newConn.connect (3, host, port, authdn, authpw); 
+                   if (debug.messageEnabled()) {
+                       debug.message("LDAPConnectionPool: "+
+                           "createConnection():No template primary host: " +
+                           host + "primary port: " + port);
+                   }
                 } catch (LDAPException connEx) {
                     // fallback to ldap v2 if v3 is not supported
                     if (connEx.getLDAPResultCode() ==
                         LDAPException.PROTOCOL_ERROR)
                     {
                         newConn.connect (2, host, port, authdn, authpw); 
-                    }
-                    else {
-                        throw connEx;
+                        if (debug.messageEnabled()) {
+                            debug.message("LDAPConnectionPool: "+
+                            "createConnection():No template primary host: " +
+                            host + "primary port: with v2 " + port);
+                        }
+                    } else {
+                        // Mark the host to be down and failover
+                        // to the next server in line.
+                        if (aConnectionPoolsStatus != null) {
+                            synchronized(aConnectionPoolsStatus) {
+                                aConnectionPoolsStatus.put(key, this);
+                            }
+                        }
+                        if (debug.messageEnabled()) {
+                            debug.message("LDAPConnectionPool: "+
+                                "createConnection():primary host" + host +
+                                    "primary port-" + port + " :is down."+
+                                    "Failover to the secondary server.");
+                        }
                     }
                 }
             }
         } catch (LDAPException le) {
-            debug.error("Connection pool:" + "Error while Creating pool.", le);
+            debug.error("LDAPConnection pool:createConnection():" + 
+                "Error while Creating pool.", le);
+            // Mark the host to be down and failover
+            // to the next server in line.
+            if (aConnectionPoolsStatus != null) {
+                synchronized(aConnectionPoolsStatus) {
+                    aConnectionPoolsStatus.put(key, this);
+                }
+            }
             throw le;
         }
         co.setInUse (false); // Mark not in use
@@ -633,7 +758,7 @@ public class LDAPConnectionPool {
             cleanupThread = new Thread(cleaner, name + "-cleanupThread");
             cleanupThread.start();
             if (debug.messageEnabled()) {
-                debug.message("Connection pool: " + name +
+                debug.message("LDAPConnection pool: " + name +
                               ": Cleanup thread created successfully.");
             }
         }
@@ -642,6 +767,35 @@ public class LDAPConnectionPool {
 
     static {
         debug = Debug.getInstance("LDAPConnectionPool");
+        String retryErrs = SystemProperties.get(LDAP_CONNECTION_ERROR_CODES);
+        if (retryErrs != null) {
+            StringTokenizer stz = new StringTokenizer(retryErrs, ",");
+            while(stz.hasMoreTokens()) {
+                retryErrorCodes.add(stz.nextToken().trim());
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("LDAPConnectionPool: retry error codes = " +
+                             retryErrorCodes);
+        }
+    }
+
+    private void createHostList(String hostNameFromConfig) {
+        StringTokenizer st = new StringTokenizer(hostNameFromConfig);
+        while(st.hasMoreElements()) {
+            String str = (String)st.nextToken();
+            if (str != null && str.length() != 0) {
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPConnectionPool:createHostList():" +
+                        "host name:"+str);
+                }
+                hostArrList.add(str);
+            }
+        }
+        String hpName = (String) hostArrList.get(0);
+        StringTokenizer stn = new StringTokenizer(hpName,":");
+        this.host = (String)stn.nextToken();
+        this.port = (Integer.valueOf((String)stn.nextToken())).intValue();
     }
 
     /**
@@ -678,14 +832,14 @@ public class LDAPConnectionPool {
                 this.authpw = ld.getAuthenticationPassword();
                 this.ldc = (LDAPConnection)ld.clone();
                 if (debug.messageEnabled()) {
-                    debug.message("Connection pool: " + name +
+                    debug.message("LDAPConnection pool: " + name +
                                   ": reinitializing connection pool: Host:" +
                                   host + " Port:" + port + "Auth DN:" + authdn);
                 }
                 createPool();
                 createIdleCleanupThread();
                 if (debug.messageEnabled()) {
-                    debug.message("Connection pool: " + name +
+                    debug.message("LDAPConnection pool: " + name +
                                   ": reinitialized successfully.");
                 }
             }
@@ -712,7 +866,7 @@ public class LDAPConnectionPool {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException iex) {
-                        debug.error ("Connection pool:" + name +
+                        debug.error ("LDAPConnection pool:" + name +
                                     ":Interrupted in destroy method while " +
                                     "waiting for connections to be released.");
                     }
@@ -731,7 +885,7 @@ public class LDAPConnectionPool {
     public synchronized void resetPoolLimits(int min, int max) {
         if ((maxSize > 0) && (maxSize != max) && (min < max)) {
             if (debug.messageEnabled()) {
-                debug.message ("Connection pool:" + name +
+                debug.message ("LDAPConnection pool:" + name +
                                ": is being resized: Old Min/Old Max:" +
                                minSize + '/' + maxSize + ": New Min/Max:" +
                                min + '/' + max);
@@ -769,7 +923,7 @@ public class LDAPConnectionPool {
                     }
                 } else {
                     if (debug.messageEnabled()) {
-                        debug.message("Connection pool:" + name +
+                        debug.message("LDAPConnection pool:" + name +
                                ":Ensuring pool buffer capacity to:" +
                                max * 2);
                     }
@@ -787,7 +941,7 @@ public class LDAPConnectionPool {
         private void checkDeprecatedConnections() {
             synchronized (deprecatedPool) {
                 if (debug.messageEnabled()) {
-                    debug.message("Connection pool:" + name +
+                    debug.message("LDAPConnection pool:" + name +
                            ": found " + deprecatedPool.size() +
                            " connection(s) to clean.");
                 }
@@ -815,7 +969,7 @@ public class LDAPConnectionPool {
                 }
 
                 if (debug.messageEnabled()) {
-                    debug.message("Connection pool: " + name +
+                    debug.message("LDAPConnection pool: " + name +
                                   ": starting cleanup.");
                 }
 
@@ -867,7 +1021,7 @@ public class LDAPConnectionPool {
                                 try {
                                     ld.disconnect();
                                 } catch (LDAPException e) {
-                                    debug.error("Connection pool:" + name +
+                                    debug.error("LDAPConnection pool:" + name +
                                                 ":Error during disconnect.", e);
                                 }
                             }
@@ -875,7 +1029,7 @@ public class LDAPConnectionPool {
                     }
                 }
                 if (debug.messageEnabled()) {
-                    debug.message("Connection pool: " + name +
+                    debug.message("LDAPConnection pool: " + name +
                                 ": finished cleanup: Start pool size:" +
                                 startPoolSize + ": end pool size:" +
                                 cleanupPool.size());
@@ -886,7 +1040,265 @@ public class LDAPConnectionPool {
         private ArrayList cleanupPool = null;
     }
 
-    private static Debug debug;   // Debug object
+    /**
+     * Sets a valid ldapconnection after fallback to primary server.
+     * @param con ldapconnection
+     */
+    public void fallBack(LDAPConnection con) {
+
+        /*
+         * Logic here is first get the HashMap key and value where the key
+         * is the hostname:portnumber and value is this LDAPConnection pool
+         * object, for each server configured in the serverconfig.xml.
+         * Then go through the arraylist which has the list of servers
+         * configured in serverconfig.xml and check the status of the primary
+         * server and connect to that server if it up as well create a new
+         * pool for this connection. Also remove the key from the HashMap if
+         * primary is up and if there is a successfull fallback.
+         */
+
+        // If primary is up, do not fallback to any other server,eventhough
+        // there are servers that are down in the HashMap.
+        if (!isPrimaryUP()) {
+
+            LDAPConnection newConn = new LDAPConnection();
+            int sze = hostArrList.size();
+
+            for (int i = 0; i < sze; i++) {
+                String hpName = (String) hostArrList.get(i);
+                StringTokenizer stn = new StringTokenizer(hpName,":");
+                String upHost = (String)stn.nextToken();
+                String upPort = (String)stn.nextToken();
+
+                /*
+                 * This 'if' check is to ensure that the shutdown server from
+                 * the incoming LDAPConnection from the FallBackManager
+                 * thread which got pinged and succeeded by the FallBackManager
+                 * thread, matches with the host array list and gets connected
+                 * for fallback to happen exactly for that shutdown server.
+                 */
+                if ( (upHost != null) && (upHost.length() != 0)
+                    && (upPort != null) && (upPort.length() != 0)
+                    && ((con.getHost()!=null) && (con.getHost().
+                        equalsIgnoreCase(upHost))) ) {
+                    newConn =
+                        failoverAndfallback(upHost,upPort,newConn,"fallback");
+                    break;
+                }
+            }
+            reinit(newConn);
+        }
+    }
+
+    /**
+     * Sets a valid ldapconnection after failover to secondary server.
+     * @param ld ldapconnection
+     */
+    public void failOver(LDAPConnection ld) {
+
+        /* Since we are supporting fallback in FallBackManager class,
+         * do the failover here, instead of relying on
+         * jdk's failover mechanism.
+         * Logic is look for retry error codes from releaseConnection()
+         * and in the close() api,
+         * from LDAPException and do the failover by calling this api.
+         * Then go through the arraylist which has the list of servers
+         * configured in serverconfig.xml and check the status of the
+         * secondary server and connect to that server as well create a new
+         * pool for this connection.
+         * Also update the HashMap with the key and this LDAPConnectionPool
+         * object if the server is down.
+         */
+        LDAPConnection newConn = new LDAPConnection();
+        // Update the HashMap with the key and this LDAPConnectionPool
+        // object if the server is down.
+        String downKey = name + ":" + ld.getHost() + ":" +
+            ld.getPort() + ":" + authdn;
+        if (LDAPConnPoolUtils.connectionPoolsStatus != null) {
+            synchronized(LDAPConnPoolUtils.connectionPoolsStatus) {
+                LDAPConnPoolUtils.connectionPoolsStatus.put(downKey, this);
+            }
+        }
+
+        int size = hostArrList.size();
+        for (int i = 0; i < size; i++) {
+            String hpName = (String) hostArrList.get(i);
+            StringTokenizer stn = new StringTokenizer(hpName,":");
+            String upHost = (String)stn.nextToken();
+            String upPort = (String)stn.nextToken();
+
+            /*
+             * This 'if' check is to ensure that the shutdown server from
+             * the incoming LDAPConnection from the close() method
+             * do not get tried to failover.
+             * failover is to happen for the next available server in line.
+             */
+            if ((upHost != null) && (upHost.length() != 0)
+                && (upPort != null) && (upPort.length() != 0)
+                && ((ld.getHost() !=null) && (!ld.getHost().
+                    equalsIgnoreCase(upHost)))) {
+                newConn =
+                    failoverAndfallback(upHost,upPort,newConn,"failover");
+                break;
+            }
+        }
+        reinit(newConn);
+    }
+
+    private LDAPConnection failoverAndfallback(
+        String upHost,
+        String upPort,
+        LDAPConnection newConn,
+        String caller) {
+
+        if (debug.messageEnabled()) {
+            debug.message("In LDAPConnectionPool:failoverAndfallback()");
+        }
+        int intPort = (Integer.valueOf(upPort)).intValue();
+        String upKey = name + ":" + upHost + ":" +upPort + ":" + authdn;
+        try {
+            newConn.connect(3, upHost, intPort, authdn, authpw);
+            // After successful connection, remove the key/value
+            // from the hashmap to denote that the server which was
+            // down earlier is up now.
+            if (LDAPConnPoolUtils.connectionPoolsStatus != null) {
+                synchronized(LDAPConnPoolUtils.connectionPoolsStatus) {
+                    if (LDAPConnPoolUtils.connectionPoolsStatus.containsKey(
+                        upKey)) {
+                        LDAPConnPoolUtils.connectionPoolsStatus.remove(upKey);
+                    }
+                }
+            }
+            if (debug.messageEnabled()) {
+                if (caller.equalsIgnoreCase("fallback")) {
+                    debug.message("LDAPConnectionPool.failoverAndfallback()"+
+                        "fall back successfully to primary host- " + upHost +
+                        " primary port: " + upPort);
+
+                } else {
+                    debug.message("LDAPConnectionPool.failoverAndfallback()"+
+                        "fail over success to secondary host- " + upHost +
+                        " secondary port: " + upPort );
+                }
+            }
+            return (newConn);
+        } catch (LDAPException connEx) {
+            // fallback to ldap v2 if v3 is not
+            // supported
+            if (connEx.getLDAPResultCode() == LDAPException.PROTOCOL_ERROR) {
+                try {
+                    newConn.connect(2, upHost, intPort, authdn, authpw);
+                } catch (LDAPException conn2Ex) {
+                    if (debug.messageEnabled()) {
+                        if (caller.equalsIgnoreCase("fallback")) {
+                            debug.message("LDAPConnectionPool."+
+                                "failoverAndfallback():fallback failed.");
+                        } else {
+                            // Mark the host to be down and failover
+                            // to the next server in line.
+                            if (LDAPConnPoolUtils.
+                                connectionPoolsStatus != null) {
+                                synchronized(LDAPConnPoolUtils.
+                                    connectionPoolsStatus) {
+                                    LDAPConnPoolUtils.
+                                    connectionPoolsStatus.put(upKey, this);
+                                }
+                            }
+                            debug.message("LDAPConnectionPool."+
+                                "failoverAndfallback():primary host-" +
+                                upHost +" primary port-" + upPort +
+                                " :is down. Failover to the"+
+                                " secondary server. in catch1 ");
+                        }
+                    }
+                }
+            } else {
+                if (debug.messageEnabled()) {
+                    if (caller.equalsIgnoreCase("fallback")) {
+                         debug.message("LDAPConnectionPool."+
+                             "failoverAndfallback():continue fallback"+
+                             " to next server");
+                    } else {
+                         // Mark the host to be down and failover
+                         // to the next server in line.
+                         if (LDAPConnPoolUtils.connectionPoolsStatus != null) {
+                             synchronized(LDAPConnPoolUtils.
+                                 connectionPoolsStatus) {
+                                 LDAPConnPoolUtils.connectionPoolsStatus.put(
+                                 upKey, this);
+                             }
+                         }
+                         debug.message("LDAPConnectionPool. "+
+                             "failoverAndfallback():primary host-" + upHost +
+                             "primary port-" + upPort +
+                             " :is down. Failover to the" +
+                             " secondary server. in else");
+                    }
+                }
+            }
+        }
+        return (newConn);
+    }
+
+    private boolean isPrimaryUP() {
+        boolean retVal = false;
+        String hpName = (String) hostArrList.get(0);
+        StringTokenizer stn = new StringTokenizer(hpName,":");
+        String upHost = (String)stn.nextToken();
+        String upPort = (String)stn.nextToken();
+        if ( (upHost != null) && (upHost.length() != 0)
+            && (upPort != null) && (upPort.length() != 0) ) {
+            String upKey = name + ":" + upHost + ":" +upPort + ":" + authdn;
+            if (LDAPConnPoolUtils.connectionPoolsStatus != null) {
+                synchronized(LDAPConnPoolUtils.connectionPoolsStatus) {
+                    if (!LDAPConnPoolUtils.connectionPoolsStatus.
+                        containsKey(upKey)) {
+                        retVal = true;
+                    }
+                }
+            }
+        }
+        return (retVal);
+    }
+
+    private void reinit(LDAPConnection newConn) {
+        try {
+            reinitialize(newConn);
+            /*
+             * Set the following default LDAPConnection options for failover
+             * and fallback servers/connections.
+             * searchConstraints, LDAPConnection.MAXBACKLOG,
+             * LDAPConnection.REFERRALS
+             */
+            if ( (connOptions != null) && (!connOptions.isEmpty()) ) {
+                Iterator itr = connOptions.keySet().iterator();
+                while (itr.hasNext()) {
+                    String optName = (String) itr.next();
+                    if (optName.equalsIgnoreCase("maxbacklog")) {
+                        newConn.setOption(newConn.MAXBACKLOG,
+                            connOptions.get(optName));
+                    }
+                    if (optName.equalsIgnoreCase("referrals")) {
+                        newConn.setOption(newConn.REFERRALS,
+                            connOptions.get(optName));
+                    }
+                    if (optName.equalsIgnoreCase("searchconstraints")) {
+                        newConn.setSearchConstraints(
+                            (LDAPSearchConstraints)connOptions.get(optName));
+                    }
+                }
+            }
+        } catch ( LDAPException lde ) {
+            debug.error("LDAPConnectionPool:reinit()" +
+                ":Error while reinitializing connection from pool.", lde);
+        }
+        LDAPConnectionObject ldapco = new LDAPConnectionObject();
+        ldapco.setLDAPConn(newConn);
+        //Since reinitialize is cloning the LDAPConnection, disconnect the
+        //original one here to avoid memory leak.
+        disconnect(ldapco);
+    }
+
     private String name;          // name of connection pool;
     private int minSize;          // Min pool size
     private int maxSize;          // Max pool size
@@ -894,6 +1306,11 @@ public class LDAPConnectionPool {
     private int port;             // Port to connect at
     private String authdn;        // Identity of connections
     private String authpw;        // Password for authdn
+    // Following default LDAPConnection options are sent by
+    // DataLayer/SMDataLayer thru constructor and are in the HashMap
+    // 'connOptions'.
+    // searchConstraints,LDAPConnection.MAXBACKLOG,LDAPConnection.REFERRALS
+    private HashMap connOptions;
     private LDAPConnection ldc = null;          // Connection to clone
     private java.util.ArrayList pool;           // the actual pool
     private java.util.ArrayList deprecatedPool; // the pool to be purged.
@@ -902,5 +1319,6 @@ public class LDAPConnectionPool {
     private boolean defunct;      // becomes true after calling destroy
     private Thread cleanupThread; // cleanup thread
     private CleanupTask cleaner;  // cleaner object
+    static FallBackManager fMgr;
 }
 
