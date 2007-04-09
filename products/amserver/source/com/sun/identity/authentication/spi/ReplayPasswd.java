@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReplayPasswd.java,v 1.1 2007-01-12 19:38:22 manish_rustagi Exp $
+ * $Id: ReplayPasswd.java,v 1.2 2007-04-09 19:19:34 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,15 @@
 package com.sun.identity.authentication.spi;
 
 import com.iplanet.am.util.Debug;
+import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
 import java.io.IOException;
 import java.lang.System;
 import java.security.Provider;
@@ -36,7 +42,9 @@ import java.security.Signature;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -46,8 +54,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
 import sun.misc.BASE64Encoder;
 import sun.misc.BASE64Decoder;
+
 
 /**
  * This class is used to set the encrypted password as a session property.
@@ -58,17 +68,29 @@ import sun.misc.BASE64Decoder;
  */
 public class ReplayPasswd implements AMPostAuthProcessInterface {
 
-    private static final String REPLAY_PASSWORD_KEY =
-        "com.sun.am.replaypasswd.key";
-
     private static final String CIPHER_INSTANCE_NAME =
         "DES/ECB/NoPadding";
 
     private static final String PASSWORD_TOKEN =
         "IDToken2";
-
+    
+    private static final String REPLAY_PASSWORD_KEY =
+        "com.sun.am.replaypasswd.key";
+    
     private static final String SUN_IDENTITY_USER_PASSWORD =
         "sunIdentityUserPassword";
+    
+    private static final String IIS_OWA_ENABLED =
+        "com.sun.am.iis_owa_enabled";  
+
+    private static final String OWA_AUTH_COOKIE =
+        "owaAuthCookie";
+
+    private static final String SHAREPOINT_LOGIN_ATTR_NAME =
+        "com.sun.am.sharepoint_login_attr_name";  
+
+    private static final String SHAREPOINT_LOGIN_ATTR_VALUE =
+        "sharepoint_login_attr_value";
 
     private static Debug debug = Debug.getInstance("ReplayPasswd");
 
@@ -93,6 +115,10 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
 
         String userpasswd = request.getParameter(PASSWORD_TOKEN);
         String deskeystr = SystemProperties.get(REPLAY_PASSWORD_KEY);
+        String iisOwaEnabled = 
+            SystemProperties.get(IIS_OWA_ENABLED);
+        String strAttributeName = 
+            SystemProperties.get(SHAREPOINT_LOGIN_ATTR_NAME);
 
         try {
             BASE64Decoder decoder = new BASE64Decoder();
@@ -114,10 +140,44 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
                ssoToken.setProperty(SUN_IDENTITY_USER_PASSWORD, encodedpasswd);
             }
 
+            if(iisOwaEnabled != null && !iisOwaEnabled.trim().equals("")) {
+	        // Set OWA Auth Cookie
+	        Cookie owaAuthCookie = new Cookie(OWA_AUTH_COOKIE, 
+                                                  OWA_AUTH_COOKIE);
+	        AuthUtils authUtils = new AuthUtils();
+	        Set domains = authUtils.getCookieDomains();
+	        if (!domains.isEmpty()) {
+		    for (Iterator it = domains.iterator(); it.hasNext(); ) {
+		         String domain = (String)it.next();
+		         owaAuthCookie.setDomain(domain);
+		         owaAuthCookie.setPath("/");
+                         response.addCookie(owaAuthCookie);
+                    }
+                }
+            }
+
+            if(strAttributeName != null && !strAttributeName.trim().equals("")){
+                AMIdentity amIdentityUser = IdUtils.getIdentity(ssoToken);
+                Map attrMap = amIdentityUser.getAttributes();
+                String strAttributeValue = Misc.getMapAttr(
+                    attrMap, strAttributeName, null);
+                if(strAttributeValue != null){
+            	    ssoToken.setProperty(
+                        SHAREPOINT_LOGIN_ATTR_VALUE, strAttributeValue);
+                }
+                if (debug.messageEnabled()) {
+                    debug.message("ReplayPasswd.onLoginSuccess: " + 
+                        strAttributeName + "=" + strAttributeValue);
+                }	            
+            }
+
             if (debug.messageEnabled()) {
                 debug.message("ReplayPasswd.onLoginSuccess: Replay password " +
                     "concluded successfully");
             }
+        } catch (IdRepoException ire) {
+            debug.error("ReplayPasswd.onLoginSuccess: IOException while " +
+                "fetching user attributes: " + ire);
         } catch (IOException ioe) {
             debug.error("ReplayPasswd.onLoginSuccess: IOException while " +
                 "setting session password property: " + ioe);
