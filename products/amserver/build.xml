@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.43 2007-03-29 19:39:19 veiming Exp $
+   $Id: build.xml,v 1.44 2007-04-09 23:34:20 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -271,6 +271,7 @@
         <delete dir="${amserver.classes.dir}/jaxrpc"/>
         <delete dir="${amserver.classes.dir}"/>
         <delete dir="${amserver.built.dir}"/>
+        <delete file="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
         <delete file="${tracker}" />
     </target>
 

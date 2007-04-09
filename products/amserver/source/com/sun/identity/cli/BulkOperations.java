@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkOperations.java,v 1.3 2006-12-08 21:02:17 veiming Exp $
+ * $Id: BulkOperations.java,v 1.4 2007-04-09 23:34:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,8 @@ import java.util.List;
  * Multiple requests command.
  */
 public class BulkOperations extends AuthenticatedCommand {
+    private static final String STATUS_FILE = "batchstatus";
+    
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
@@ -41,6 +43,7 @@ public class BulkOperations extends AuthenticatedCommand {
         SSOToken ssoToken = getAdminSSOToken();
 
         boolean continueFlag = isOptionSet(IArgument.CONTINUE);
+        String statusFileName = getStringOptionValue(STATUS_FILE);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
         List entries = AttributeValues.parseValues(datafile);
 
@@ -58,7 +61,8 @@ public class BulkOperations extends AuthenticatedCommand {
         CLIRequest req = rc.getCLIRequest();
         CommandManager mgr = getCommandManager();
         mgr.setContinueFlag(continueFlag);
-
+        mgr.setStatusFileName(statusFileName);
+        
         for (Iterator i = entries.iterator(); i.hasNext(); ) {
             String argv = (String)i.next();
             mgr.addToRequestQueue(new CLIRequest(

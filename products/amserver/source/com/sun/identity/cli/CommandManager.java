@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.10 2007-04-04 01:51:21 veiming Exp $
+ * $Id: CommandManager.java,v 1.11 2007-04-09 23:34:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,9 @@ import com.iplanet.services.util.Crypt;
 import com.sun.identity.security.AdminTokenAction;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.debug.Debug;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +56,7 @@ public class CommandManager {
     private Map environment;
     private String commandName;
     private String logName;
+    private FileOutputStream statusOS;
     private IOutput outputWriter;
     private List definitionObjects;
     private List requestQueue = new Vector();
@@ -310,6 +314,25 @@ public class CommandManager {
     public String getCommandName() {
         return commandName;
     }
+    
+    /**
+     * Sets status file name.
+     *
+     * @param statusFileName Status file name.
+     * @throws CLIException if status file cannot be created.
+     */
+    public void setStatusFileName(String statusFileName) 
+        throws CLIException {
+        if ((statusFileName != null) && (statusFileName.trim().length() > 0)
+        ) {
+            try {
+                statusOS = new FileOutputStream(statusFileName);
+            } catch (FileNotFoundException ex) {
+                throw new CLIException(ex, 
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        }
+    }
 
     /**
      * Returns a list of definition objects. Since this class is just
@@ -426,28 +449,68 @@ public class CommandManager {
      *
      * @throws CLIException if request cannot be processed.
      */
-    public void serviceRequestQueue()
+    public void serviceRequestQueue() 
         throws CLIException {
         if (isVerbose()) {
             outputWriter.printlnMessage(
                 rbMessages.getString("verbose-processing-request"));
         }
-
-        while (!requestQueue.isEmpty()) {
-            CLIRequest req = (CLIRequest)requestQueue.remove(0);
-            try {
-                req.process(this);
-            } catch (CLIException e) {
-                if (isVerbose()) {
-                    e.printStackTrace(System.out);
-                }
-                if (bContinue) {
-                    outputWriter.printlnError(e.getMessage());
-                } else {
-                    throw e;
+        
+        try {
+            while (!requestQueue.isEmpty()) {
+                CLIRequest req = (CLIRequest)requestQueue.remove(0);
+                try {
+                    req.process(this);
+                    if (statusOS != null) {
+                        String status = formatStatus(req.getOptions(), 0);
+                        statusOS.write(status.getBytes());
+                    }
+                } catch (CLIException e) {
+                    if (isVerbose()) {
+                        e.printStackTrace(System.out);
+                    }
+                    if (statusOS != null) {
+                        String status = formatStatus(req.getOptions(), 
+                            e.getExitCode());
+                        statusOS.write(status.getBytes());
+                    }
+                    if (bContinue) {
+                        outputWriter.printlnError(e.getMessage());
+                    } else {
+                        throw e;
+                    }
                 }
             }
+        } catch (IOException e) {
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (statusOS != null) {
+                try {
+                    statusOS.close();
+                } catch (IOException ex) {
+                    // ignored
+                }
+                statusOS = null;
+            }
         }
+    }
+    
+    private static String formatStatus(String[] options, int exitCode) {
+        String strCode = Integer.toString(exitCode);
+        if (exitCode < 10) {
+            strCode = "  " + strCode;
+        } else if (exitCode < 100) {
+            strCode = " " + strCode;
+        }
+        
+        StringBuffer buff = new StringBuffer();
+        buff.append(strCode).append(" ");
+        
+        for (int i = 0; i < options.length; i++) {
+            buff.append(options[i]).append(" ");
+        }
+        
+        return buff.toString() + "\n";
     }
 
     private static boolean getFlag(

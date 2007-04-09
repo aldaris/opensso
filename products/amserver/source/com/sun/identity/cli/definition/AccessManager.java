@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.17 2007-04-04 00:26:06 veiming Exp $
+ * $Id: AccessManager.java,v 1.18 2007-04-09 23:34:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,8 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "continue|c|u|Continue processing the rest of the request when preceeding request is errornous."},
+            "batchstatus|b|s|Name of status file.",
+            "continue|c|u|Continue processing the rest of the request when preceeding request is erroneous."},
         resourceStrings={
             "bulk-op-empty-datafile=Data file, {0} is empty.",
             "unmatch-quote=Unmatched '.",

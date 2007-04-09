@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.4 2007-03-21 22:33:39 veiming Exp $
+ * $Id: CLIRequest.java,v 1.5 2007-04-09 23:34:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,7 +129,7 @@ public class CLIRequest {
             process(mgr, argv, null);
         }
     }
-
+    
     private void process(CommandManager mgr, String arg, SSOToken ssoToken)
         throws CLIException {
         String commandName = mgr.getCommandName();
