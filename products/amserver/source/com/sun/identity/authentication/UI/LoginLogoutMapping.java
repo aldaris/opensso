@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.4 2006-08-25 21:20:07 veiming Exp $
+ * $Id: LoginLogoutMapping.java,v 1.5 2007-04-10 17:38:16 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,8 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import com.sun.identity.shared.debug.Debug;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -41,6 +43,8 @@ import javax.servlet.http.*;
 public class LoginLogoutMapping extends HttpServlet {
 
     private static boolean isProductInitialize = true;
+    private static final String bundleName = "amAuthUI";
+    private static final String CANNOT_INIT_AUTH = "cannotInitAuth";
 
     ServletConfig config = null;
     
@@ -53,7 +57,13 @@ public class LoginLogoutMapping extends HttpServlet {
         super.init(config);
         this.config = config;
         if (isProductInitialize) {
-            initializeAuth(config.getServletContext());
+            boolean initialized = initializeAuth(config.getServletContext());
+            if (!initialized) {
+                Locale locale = java.util.Locale.getDefault();
+                ResourceBundle rb =  ResourceBundle.getBundle(
+                    bundleName, locale);
+                throw new ServletException(rb.getString(CANNOT_INIT_AUTH));
+            }
         }
     }
 
@@ -71,8 +81,13 @@ public class LoginLogoutMapping extends HttpServlet {
      **
      * @param servletCtx Servlet Context.
      */
-    public void initializeAuth(ServletContext servletCtx) {
-        AuthD.getAuth().setServletContext(servletCtx);
+    public boolean initializeAuth(ServletContext servletCtx) {
+        AuthD authD = AuthD.getAuth();
+        if (authD == null) {
+            return false;
+        } else {
+            authD.setServletContext(servletCtx);
+        }
 
         // Intialize AdminTokenAction
         if (Debug.getInstance("amLoginLogoutMapping").messageEnabled()) {
@@ -82,6 +97,7 @@ public class LoginLogoutMapping extends HttpServlet {
         }
         com.sun.identity.security.AdminTokenAction
                     .getInstance().authenticationInitialized();
+        return true;
     }
 
     /**
