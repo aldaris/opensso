@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaConstants.java,v 1.2 2007-03-15 18:00:59 veiming Exp $
+ * $Id: SAML2MetaConstants.java,v 1.3 2007-04-10 06:28:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,10 +40,10 @@ public interface SAML2MetaConstants {
     
     String COT_WRITER_SERVICE = "sun-saml2-writerservice-url";
     
-    String COT_READER_SERVICE = "sun-saml2-readerservice-url"; 
-    
-    String COT_TRUSTED_PROVIDERS = "sun-saml2-trusted-providers";                  
-    
+    String COT_READER_SERVICE = "sun-saml2-readerservice-url";
+
+    String COT_TRUSTED_PROVIDERS = "sun-saml2-trusted-providers";
+
     String ACTIVE= "active"; 
     
     String INACTIVE = "inactive";         

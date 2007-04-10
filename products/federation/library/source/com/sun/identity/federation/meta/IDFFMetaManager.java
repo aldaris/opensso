@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.2 2006-12-09 06:21:15 veiming Exp $
+ * $Id: IDFFMetaManager.java,v 1.3 2007-04-10 06:28:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,7 @@
 
 package com.sun.identity.federation.meta;
 
-
-import javax.xml.bind.JAXBException;
-
 import com.sun.identity.shared.debug.Debug;
-
-import com.sun.identity.cot.COTUtils;
-import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.COTConstants;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.CircleOfTrustManager;
@@ -52,7 +46,6 @@ import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationManager;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -130,11 +123,11 @@ public class IDFFMetaManager {
      * The metadata is created under the root realm.
      *
      * @param entityDescriptor The standard entity descriptor object to
-     *                         be created.
+     *        be created.
      * @throws IDFFMetaException if unable to create the entity descriptor.
      */
     public void createEntityDescriptor(EntityDescriptorElement entityDescriptor)
-    throws IDFFMetaException {
+        throws IDFFMetaException {
         String classMethod = "IDFFMetaManager.createEntityDescriptor:";
         String entityId= null;
         if (entityDescriptor == null) {
@@ -150,28 +143,55 @@ public class IDFFMetaManager {
         }
         
         String[] args = { entityId };
-        try {
-            Map attrs = IDFFMetaUtils.convertJAXBToAttrMap(IDFF_METADATA_ATTR,
-                    entityDescriptor);
+        EntityDescriptorElement descriptor = getEntityDescriptor(entityId);
+        
+        if (descriptor != null) {
+            List idps = descriptor.getIDPDescriptor();
+            boolean hasIDP = (idps != null) && !idps.isEmpty();
+            List sps = descriptor.getSPDescriptor();
+            boolean hasSP = (sps != null) && !sps.isEmpty();
             
-            if (debug.messageEnabled()) {
-                debug.message(classMethod + attrs);
+            List newIDPs = entityDescriptor.getIDPDescriptor();
+            List newSPs = entityDescriptor.getSPDescriptor();
+            
+            if ((newIDPs != null) && !newIDPs.isEmpty() && hasIDP) {
+                LogUtil.error(Level.INFO, LogUtil.SET_ENTITY_FAILED, args);
+                throw new IDFFMetaException("idpAlreadyExisted", args);
             }
-            idffMetaConfigInstance.createConfiguration(
-                    ROOT_REALM,entityId,attrs);
-            LogUtil.access(Level.INFO, LogUtil.CREATE_ENTITY_SUCCEEDED, args);
-        } catch (ConfigurationException ce) {
-            debug.error("Cannot create entity descriptor",ce);
-            LogUtil.error(Level.INFO, LogUtil.CREATE_ENTITY_FAILED, args);
-            throw new IDFFMetaException(ce);
-        } catch (UnsupportedOperationException uoe) {
-            debug.error("Creating EntityDescriptor : Unsupported operation");
-            LogUtil.error(Level.INFO, LogUtil.UNSUPPORTED_OPERATION, null);
-            throw new IDFFMetaException("unsupportedOperation",null);
-        } catch (JAXBException jaxbe) {
-            debug.error(classMethod , jaxbe);
-            LogUtil.error(Level.INFO, LogUtil.INVALID_ENTITY_DESCRIPTOR, args);
-            throw new IDFFMetaException("invalidEntityDescriptor",args);
+            if ((newSPs != null) && !newSPs.isEmpty() && hasSP) {
+                LogUtil.error(Level.INFO, LogUtil.SET_ENTITY_FAILED, args);
+                throw new IDFFMetaException("spAlreadyExisted", args);
+            }
+            
+            idps.addAll(newIDPs);
+            sps.addAll(newSPs);
+            setEntityDescriptor(descriptor);
+        } else {
+            try {
+                Map attrs = IDFFMetaUtils.convertJAXBToAttrMap(IDFF_METADATA_ATTR,
+                    entityDescriptor);
+                if (debug.messageEnabled()) {
+                    debug.message(classMethod + attrs);
+                }
+                idffMetaConfigInstance.createConfiguration(
+                    ROOT_REALM, entityId, attrs);
+                LogUtil.access(Level.INFO, LogUtil.CREATE_ENTITY_SUCCEEDED,
+                    args);
+            } catch (ConfigurationException ce) {
+                debug.error("Cannot create entity descriptor",ce);
+                LogUtil.error(Level.INFO, LogUtil.CREATE_ENTITY_FAILED, args);
+                throw new IDFFMetaException(ce);
+            } catch (UnsupportedOperationException uoe) {
+                debug.error(
+                    "Creating EntityDescriptor : Unsupported operation");
+                LogUtil.error(Level.INFO, LogUtil.UNSUPPORTED_OPERATION, null);
+                throw new IDFFMetaException("unsupportedOperation",null);
+            } catch (JAXBException jaxbe) {
+                debug.error(classMethod , jaxbe);
+                LogUtil.error(Level.INFO, LogUtil.INVALID_ENTITY_DESCRIPTOR, 
+                    args);
+                throw new IDFFMetaException("invalidEntityDescriptor",args);
+            }
         }
     }
     

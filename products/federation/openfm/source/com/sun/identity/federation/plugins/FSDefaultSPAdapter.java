@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultSPAdapter.java,v 1.3 2007-04-06 21:06:38 veiming Exp $
+ * $Id: FSDefaultSPAdapter.java,v 1.4 2007-04-10 06:28:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -492,7 +492,7 @@ public class FSDefaultSPAdapter implements FederationSPAdapter {
     /**
      * Invokes after single logout is successful completed, i.e. user token
      * has been invalidated.
-     * @param hostedProviderID provider ID for the hosted SP
+     *
      * @param hostedProviderID provider ID for the hosted SP
      * @param request servlet request
      * @param response servlet response
