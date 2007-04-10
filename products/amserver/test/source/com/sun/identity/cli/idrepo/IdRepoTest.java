@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoTest.java,v 1.1 2007-02-02 18:05:36 veiming Exp $
+ * $Id: IdRepoTest.java,v 1.2 2007-04-10 20:47:40 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,8 +178,7 @@ public class IdRepoTest extends TestBase{
             CLIConstants.PREFIX_ARGUMENT_LONG +
                 IdentityCommand.ARGUMENT_ID_TYPE,
             "User",
-            CLIConstants.PREFIX_ARGUMENT_LONG +
-                SearchIdentities.ARGUMENT_FILTER,
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.FILTER,
             uid,
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             realm};

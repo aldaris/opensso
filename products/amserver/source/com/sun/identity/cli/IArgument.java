@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.2 2007-03-21 22:33:40 veiming Exp $
+ * $Id: IArgument.java,v 1.3 2007-04-10 20:47:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,7 +112,7 @@ public interface IArgument {
     /**
      * Filter pattern argument.
      */
-    String PATTERN = "pattern";
+    String FILTER = "filter";
 
     /**
      * Continue argument.

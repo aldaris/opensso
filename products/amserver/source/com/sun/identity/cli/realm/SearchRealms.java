@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchRealms.java,v 1.1 2006-05-31 21:49:58 veiming Exp $
+ * $Id: SearchRealms.java,v 1.2 2007-04-10 20:47:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public class SearchRealms extends AuthenticatedCommand {
         ldapLogin();
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
-        String pattern = getStringOptionValue(IArgument.PATTERN);
+        String pattern = getStringOptionValue(IArgument.FILTER);
         boolean recursive = isOptionSet(IArgument.RECURSIVE);
         String strRecursive = (recursive) ? "recursive" : "non recursive";
 

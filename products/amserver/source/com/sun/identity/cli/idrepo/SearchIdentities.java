@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.3 2007-02-02 18:05:34 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.4 2007-04-10 20:47:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,6 @@ import java.util.logging.Level;
  * This command searches for Identities.
  */
 public class SearchIdentities extends IdentityCommand {
-    static final String ARGUMENT_FILTER = "filter";
     static final String ARGUMENT_RECURSIVE = "recursive";
 
     /**
@@ -65,7 +64,7 @@ public class SearchIdentities extends IdentityCommand {
         IOutput outputWriter = getOutputWriter();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
-        String filter = getStringOptionValue(ARGUMENT_FILTER);
+        String filter = getStringOptionValue(IArgument.FILTER);
         boolean recursive = isOptionSet(ARGUMENT_RECURSIVE);
 
         String[] params = {realm, type, filter};

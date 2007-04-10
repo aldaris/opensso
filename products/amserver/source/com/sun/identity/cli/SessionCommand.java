@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.2 2006-12-08 21:02:20 veiming Exp $
+ * $Id: SessionCommand.java,v 1.3 2007-04-10 20:47:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,6 @@ import netscape.ldap.util.DN;
  */
 public class SessionCommand extends AuthenticatedCommand {
     private static final String ARGUMENT_HOST_NAME = "host";
-    private static final String ARGUMENT_FILTER = "filter";
     private final static String USER_ID = "UserId";
 
     private Session curSession;
@@ -225,7 +224,7 @@ public class SessionCommand extends AuthenticatedCommand {
         }
 
         curSessionID = new SessionID(ssoToken.getTokenID().toString());
-        String filter = getStringOptionValue(ARGUMENT_FILTER);
+        String filter = getStringOptionValue(IArgument.FILTER);
         if ((filter == null) || (filter.trim().length() == 0)) {
             filter = "*";
         }

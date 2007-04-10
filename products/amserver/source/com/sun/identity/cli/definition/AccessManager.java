@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.18 2007-04-09 23:34:21 veiming Exp $
+ * $Id: AccessManager.java,v 1.19 2007-04-10 20:47:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -260,7 +260,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "pattern|p|s|Filter pattern.",
+            "filter|x|s|Filter (Pattern).",
             "recursive|r|u|Search recursively"},
         resourceStrings={
             "search-realm-succeed=Search completed.",

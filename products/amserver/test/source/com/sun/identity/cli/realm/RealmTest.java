@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmTest.java,v 1.5 2007-02-02 18:05:36 veiming Exp $
+ * $Id: RealmTest.java,v 1.6 2007-04-10 20:47:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,7 @@ public class RealmTest extends TestBase{
         entering("listRealms", param);
         String[] args = {
             "list-realms",
-            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.PATTERN,
+            CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.FILTER,
             "*",
             CLIConstants.PREFIX_ARGUMENT_LONG + IArgument.REALM_NAME,
             parentRealm};
