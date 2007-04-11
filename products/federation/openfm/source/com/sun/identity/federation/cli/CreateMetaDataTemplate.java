@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.6 2007-02-16 02:02:50 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.7 2007-04-11 05:24:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         Writer pw = null;
         try {
-            if ((metadata != null) && (metadata.length() > 0)) {
+            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
                 pw = new PrintWriter(new FileWriter(metadata));
             } else {
                 pw = new StringWriter();
@@ -235,14 +235,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 addServiceProviderTemplate(pw, url);
             }
-            pw.write(
-                    "</EntityDescriptor>\n");
+            pw.write("</EntityDescriptor>\n");
             
-            Object[] objs = { metadata, realm };
-            getOutputWriter().printlnMessage(MessageFormat.format(
+            if (!isWebBased) {
+                Object[] objs = { metadata, realm };
+                getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
-            
+            }
         } catch (SAML2MetaException e) {
             throw new CLIException(e.getMessage(),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -312,13 +312,15 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            isDefault=\"1\"/>\n" +
                 
                 "        <SingleLogoutService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +"            Location=\"" + url + "/IDPSloRedirect" + maStr + "\"\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
+                "            Location=\"" + url + "/IDPSloRedirect" + maStr + "\"\n" +
                 "            ResponseLocation=\"" + url + "/IDPSloRedirect" + maStr + "\"/>\n" +
                 "        <SingleLogoutService\n" +
                 "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
                 "            Location=\"" + url + "/IDPSloSoap" + maStr + "\"/>\n" +
                 "        <ManageNameIDService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +"            Location=\"" + url + "/IDPMniRedirect" + maStr + "\"\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
+                "            Location=\"" + url + "/IDPMniRedirect" + maStr + "\"\n" +
                 "            ResponseLocation=\"" + url + "/IDPMniRedirect" + maStr + "\"/>\n" +
                 "        <ManageNameIDService\n" +
                 "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
@@ -330,9 +332,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
                 "        </NameIDFormat>\n" +
                 "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +"            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
+                "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
                 "        <SingleSignOnService\n" +
-                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +"            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
+                "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
+                "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
                 "    </IDPSSODescriptor>\n"
                 );
     }
@@ -447,11 +451,13 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             
             pw.write("</EntityConfig>\n");
             
-            Object[] objs = {extendedData, realm};
-            getOutputWriter().printlnMessage(MessageFormat.format(
+            if (!isWebBased) {
+                Object[] objs = {extendedData, realm};
+                getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-configuration-template"),
                     objs));
+            }
         } catch (IOException ex) {
             Object[] objs = { extendedData };
             throw new CLIException(MessageFormat.format(
@@ -651,7 +657,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            if ((extendedData != null) && (extendedData.length() > 0)) {
+            if (!isWebBased && (extendedData != null) && 
+                (extendedData.length() > 0)
+            ) {
                 pw = new PrintWriter(new FileWriter(extendedData));
             } else {
                 pw = new StringWriter();
@@ -667,14 +675,16 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 buildIDFFSPConfigTemplate(pw);
             }
-            
+
             pw.write("</EntityConfig>\n");
-            
-            Object[] objs = {extendedData, realm};
-            getOutputWriter().printlnMessage(MessageFormat.format(
+
+            if (!isWebBased) {
+                Object[] objs = {extendedData, realm};
+                getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-configuration-template"),
                     objs));
+            }
         } catch (IOException ex) {
             Object[] objs = { extendedData };
             throw new CLIException(MessageFormat.format(
@@ -685,7 +695,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 ((PrintWriter)pw).close();
             } else {
                 this.getOutputWriter().printlnMessage(
-                        ((StringWriter)pw).toString());
+                    ((StringWriter)pw).toString());
             }
         }
     }
@@ -922,7 +932,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         Writer pw = null;
         try {
-            if ((metadata != null) && (metadata.length() > 0)) {
+            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
                 pw = new PrintWriter(new FileWriter(metadata));
             } else {
                 pw = new StringWriter();
@@ -938,14 +948,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 addIDFFServiceProviderTemplate(pw, url);
             }
-            pw.write(
-                    "</EntityDescriptor>\n");
+            pw.write("</EntityDescriptor>\n");
             
-            Object[] objs = { metadata, realm };
-            getOutputWriter().printlnMessage(MessageFormat.format(
+            if (!isWebBased) {
+                Object[] objs = { metadata, realm };
+                getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
-            
+            }
         } catch (IDFFMetaException e) {
             throw new CLIException(e.getMessage(),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
