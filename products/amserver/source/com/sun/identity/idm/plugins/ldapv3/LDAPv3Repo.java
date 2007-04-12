@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.18 2007-04-02 06:02:10 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.19 2007-04-12 23:32:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -439,6 +439,9 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String statusInactive = "Inactive";
 
+    private static final String sunIdentityServerDeviceStatus =
+        "sunIdentityServerDeviceStatus";
+
     private static SSOToken internalToken = null;
 
     private static final String SCHEMA_BUG_PROPERTY = 
@@ -457,6 +460,15 @@ public class LDAPv3Repo extends IdRepo {
     public LDAPv3Repo() {
         debug = Debug.getInstance(LDAPv3Repo);
         loadSupportedOps();
+    }
+
+    private void enableCache(LDAPConnection ld) {
+        if ((cacheEnabled) && (ld.getCache() == null)) {
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo: isExists. ldapcache is null.");
+                }
+                ld.setCache(ldapCache);
+        }
     }
 
     private String getLDAPServerName(Map configParams) {
@@ -943,7 +955,7 @@ public class LDAPv3Repo extends IdRepo {
             debug.message("LDAPv3Repo: isActive called: type:" + type
                     + "; name:" + name);
         }
-        if (!type.equals(IdType.USER)) {
+        if (!type.equals(IdType.USER) && !type.equals(IdType.AGENT)) {
             Object[] args = { CLASS_NAME, IdOperation.READ.getName(),
                     type.getName() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
@@ -958,11 +970,23 @@ public class LDAPv3Repo extends IdRepo {
                 return false;
             }
         }
+        // agents sunIdentityServerDeviceStatus: Active
+        String tmpActiveAttrName = null;
+        String tmpInactiveAttrVal = null;
+        if (type.equals(IdType.USER)) {
+            tmpActiveAttrName = isActiveAttrName;
+            tmpInactiveAttrVal = inetUserInactive;
+        } else {
+            tmpActiveAttrName = sunIdentityServerDeviceStatus;
+            tmpInactiveAttrVal = statusInactive;
+        }
+
         Map attrMap = null;
         HashSet attrNameSet = new HashSet();
-        attrNameSet.add(isActiveAttrName);
+        attrNameSet.add(tmpActiveAttrName);
         try {
             attrMap = getAttributes(token, type, name, attrNameSet);
+            attrMap = new CaseInsensitiveHashMap(attrMap);
         } catch (IdRepoException idrepoerr) {
             if (debug.messageEnabled()) {
                 debug.message("  LDAPv3Repo: isActive idrepoerr=" + idrepoerr);
@@ -973,12 +997,12 @@ public class LDAPv3Repo extends IdRepo {
         if (debug.messageEnabled()) {
             debug.message("  LDAPv3Repo: isActive attrMap=" + attrMap);
         }
-        Set attrSet = (Set) (attrMap.get(isActiveAttrName));
+        Set attrSet = (Set)(attrMap.get(tmpActiveAttrName));
         String attrValue = null;
 
         if ((attrSet != null) && (attrSet.size() == 1)) {
             attrValue = (String) attrSet.iterator().next();
-            return !attrValue.equalsIgnoreCase("inactive");
+            return !attrValue.equalsIgnoreCase(tmpInactiveAttrVal);
         } else {
             return (true);
         }
@@ -1003,15 +1027,27 @@ public class LDAPv3Repo extends IdRepo {
             Object[] args = { CLASS_NAME };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "206", args);
         }
-
+        String tmpActiveAttrName = null;
+        String tmpActiveAttrVal = null;
+        String tmpInactiveAttrVal = null;
+        if (type.equals(IdType.USER)) {
+            tmpActiveAttrName = isActiveAttrName;
+            tmpActiveAttrVal = inetUserActive;
+            tmpInactiveAttrVal = inetUserInactive;
+        } else {
+            // agents sunIdentityServerDeviceStatus: Active
+            tmpActiveAttrName = sunIdentityServerDeviceStatus;
+            tmpActiveAttrVal = statusActive;
+            tmpInactiveAttrVal = statusInactive;
+        }
         Map attrs = new HashMap();
         Set vals = new HashSet();
         if (active) {
-            vals.add(statusActive);
+            vals.add(tmpActiveAttrVal);
         } else {
-            vals.add(statusInactive);
+            vals.add(tmpInactiveAttrVal);
         }
-        attrs.put(statusAttribute, vals);
+        attrs.put(tmpActiveAttrName, vals);
         setAttributes(token, type, name, attrs, false);
     }
 
@@ -1039,9 +1075,7 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         try {
             foundEntry = ld.read(dn);
         } catch (LDAPException e) {
@@ -1327,9 +1361,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String eDN = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         Set theOC = null;
         if (type.equals(IdType.USER)) {
             theOC = userObjClassSet;
@@ -1439,9 +1471,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String eDN = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         try {
             ld.delete(eDN);
         } catch (LDAPException lde) {
@@ -1498,9 +1528,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String dn = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -1688,9 +1716,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -1755,9 +1781,7 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPEntry groupEntry = null;
         try {
             groupEntry = ld.read(dn);
@@ -1810,9 +1834,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -1892,9 +1914,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-           ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -2048,9 +2068,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -2096,9 +2114,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -2185,9 +2201,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -2225,9 +2239,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints constraints = ld.getSearchConstraints();
         constraints.setMaxResults(defaultMaxResults);
         constraints.setServerTimeLimit(timeLimit);
@@ -2335,9 +2347,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String groupDN = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         Iterator it = usersSet.iterator();
         while (it.hasNext()) {
             String userDN = (String) it.next();
@@ -2401,9 +2411,7 @@ public class LDAPv3Repo extends IdRepo {
         // is controlled by a filtered.
         String roleDN = getDN(type, name);
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         Iterator it = usersSet.iterator();
         while (it.hasNext()) {
             LDAPModification mod = null;
@@ -2543,9 +2551,7 @@ public class LDAPv3Repo extends IdRepo {
                 ldapModSet.add(LDAPModification.REPLACE, theAttr);
             } // while
             LDAPConnection ld = connPool.getConnection();
-            if (cacheEnabled) {
-                ld.setCache(ldapCache);
-            }
+            enableCache(ld);
             try {
                 ld.modify(eDN, ldapModSet);
                 if (cacheEnabled) {
@@ -2601,9 +2607,7 @@ public class LDAPv3Repo extends IdRepo {
         boolean attrsOnly = false;
 
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         LDAPSearchConstraints searchConstraints = new LDAPSearchConstraints();
         if (maxResults < 1) {
             searchConstraints.setMaxResults(defaultMaxResults);
@@ -3021,9 +3025,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
         LDAPConnection ld = connPool.getConnection();
-        if (cacheEnabled) {
-            ld.setCache(ldapCache);
-        }
+        enableCache(ld);
         try {
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: setAttributes. Calling ld.modify");
@@ -3164,7 +3166,7 @@ public class LDAPv3Repo extends IdRepo {
             removeOCs = AMCommonUtils.updateAndGetRemovableOCs(OCValues,
                     removeOCs);
             // Get the attributes that need to be removed
-            Set removeAttrs = new HashSet();
+            Set removeAttrs = new CaseInsensitiveHashSet();
             Iterator iter1 = removeOCs.iterator();
             while (iter1.hasNext()) {
                 String oc = (String) iter1.next();
@@ -3319,10 +3321,11 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 return (userAttrs);
             } else {
+                Set attrNamesCase = new CaseInsensitiveHashSet(attrNames);
                 Iterator itr = srvCfgAttrMap.keySet().iterator();
                 while (itr.hasNext()) {
                     String attrName = (String) itr.next();
-                    if (attrNames.contains(attrName)) {
+                    if (attrNamesCase.contains(attrName)) {
                         mySrvAttrMap.put(attrName, srvCfgAttrMap.get(attrName));
                     }
                 }
@@ -3334,7 +3337,7 @@ public class LDAPv3Repo extends IdRepo {
             }
 
             // merge the attributes found from user and service map.
-            Set userAttrsNameSet = userAttrs.keySet();
+            Set userAttrsNameSet = new CaseInsensitiveHashSet(userAttrs.keySet());
             Iterator itr = mySrvAttrMap.keySet().iterator();
             while (itr.hasNext()) {
                 String attrName = (String) itr.next();
@@ -3364,7 +3367,7 @@ public class LDAPv3Repo extends IdRepo {
                 return (new HashMap(srvCfgAttrMap));
             } else {
                 Map resultMap = new HashMap();
-                Set srvCfgAttrNameSet = srvCfgAttrMap.keySet();
+                Set srvCfgAttrNameSet = new CaseInsensitiveHashSet(srvCfgAttrMap.keySet());
                 Iterator itr = attrNames.iterator();
                 while (itr.hasNext()) {
                     String attrName = (String) itr.next();
@@ -3420,7 +3423,8 @@ public class LDAPv3Repo extends IdRepo {
             if ((srvCfgAttrMap == null) || (srvCfgAttrMap.isEmpty())) {
                 myServiceMap.put(serviceName, new HashMap(attrMap));
             } else {
-                Set myServiceNameSet = srvCfgAttrMap.keySet();
+                Set myServiceNameSet =
+                    new CaseInsensitiveHashSet(srvCfgAttrMap.keySet());
                 Iterator itr = attrMap.keySet().iterator();
                 while (itr.hasNext()) {
                     String attrName = (String) itr.next();
@@ -3533,7 +3537,11 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ldc = connPool.getConnection();
-        if (cacheEnabled) {
+        if ((cacheEnabled) && (ldc.getCache() == null)) {
+            if (debug.messageEnabled()) {
+                debug.message("LDAPv3Repo.searchForName."
+                    + " ldapcache is null.");
+            }
             ldc.setCache(ldapCache);
         }
         try {
@@ -3988,37 +3996,41 @@ public class LDAPv3Repo extends IdRepo {
         return NO_PASSWORD_CONTROLS;
     }
 
-
-    private Collection getOCAttributes(String objClassName)
+    private Collection getOCAttributes( String objClassName )
         throws LDAPException, IdRepoException {
-        Collection attributes = getRequiredAttributes(objClassName);
-        attributes.addAll(getOptionalAttributes(objClassName));
+        LDAPSchema dirSchema = getLDAPSchema();
+        Collection attributes = getRequiredAttributes(dirSchema,
+            objClassName );
+        attributes.addAll(getOptionalAttributes(dirSchema,
+            objClassName ) );
         return attributes;
     }
 
-    private Collection getRequiredAttributes(String objClassName)
+    private Collection getRequiredAttributes(LDAPSchema dirSchema,
+        String objClassName )
         throws LDAPException, IdRepoException  {
         Collection attributeNames = new ArrayList();
-        LDAPObjectClassSchema objClass = getLDAPSchema().getObjectClass(
-                objClassName);
-        if (objClass != null) {
+        LDAPObjectClassSchema objClass =
+            dirSchema.getObjectClass( objClassName );
+        if ( objClass != null ) {
             Enumeration en = objClass.getRequiredAttributes();
-            while (en.hasMoreElements()) {
-                attributeNames.add( (String)en.nextElement());
+            while( en.hasMoreElements() ) {
+                attributeNames.add( (String)en.nextElement() );
             }
         }
         return attributeNames;
     }
 
-    private Collection getOptionalAttributes(String objClassName)
+    private Collection getOptionalAttributes(LDAPSchema dirSchema,
+        String objClassName )
         throws LDAPException, IdRepoException {
         Collection attributeNames = new ArrayList();
-        LDAPObjectClassSchema objClass = getLDAPSchema().getObjectClass(
-                objClassName);
-        if (objClass != null) {
+        LDAPObjectClassSchema objClass =
+            dirSchema.getObjectClass( objClassName );
+        if( objClass != null ) {
             Enumeration en = objClass.getOptionalAttributes();
-            while (en.hasMoreElements()) {
-                attributeNames.add( (String)en.nextElement());
+            while( en.hasMoreElements() ) {
+                attributeNames.add( (String)en.nextElement() );
             }
         }
         return attributeNames;
@@ -4029,51 +4041,17 @@ public class LDAPv3Repo extends IdRepo {
         LDAPSchema dirSchema = new LDAPSchema();
         checkConnPool();
         LDAPConnection conn = connPool.getConnection();
-        if (cacheEnabled) {
+        if ((cacheEnabled) && (conn.getCache() == null)) {
+            if (debug.messageEnabled()) {
+                debug.message("LDAPv3Repo.getLDAPSchema."
+                    + " ldapcache is null.");
+            }
             conn.setCache(ldapCache);
         }
-        Object previousProp = null;
+        dirSchema.fetchSchema(conn);
+        connPool.close(conn);
+        return (dirSchema);
 
-        try {
-            // disable the checking of attribute syntax quoting and the read on
-            // ""
-            previousProp = conn.getProperty(SCHEMA_BUG_PROPERTY);
-            conn.setProperty(SCHEMA_BUG_PROPERTY, VAL_STANDARD);
-
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPv3Repo.getLDAPSchema retry: " + retry);
-                }
-                try {
-                    // after connection is down, fetchSchema will not try to
-                    // reconnect. So use read to force it to reconnect
-                    if (retry > 0) {
-                        try {
-                            conn.read("fake=fake");
-                        } catch (Exception ex) {
-                        }
-                    }
-                    dirSchema.fetchSchema(conn, "cn=schema");
-                    return dirSchema;
-                } catch (LDAPException e) {
-                    retry++;
-                    try {
-                        Thread.currentThread().sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
-                } // catch
-            } // while
-        } catch (LDAPException e) {
-            debug.error("LDAPv3Repo.getLDAPSchema Exception: ", e);
-            throw e;
-        } finally {
-            if (previousProp != null) {
-                conn.setProperty(SCHEMA_BUG_PROPERTY, previousProp);
-            }
-            connPool.close(conn);
-        }
-        return dirSchema;
     }
 
     private Set readObjectClass(SSOToken token, IdType type, String name)
@@ -4282,9 +4260,7 @@ public class LDAPv3Repo extends IdRepo {
                 LDAPConnection ld = null;
                 try {
                     ld = connPool.getConnection();
-                    if (cacheEnabled) {
-                        ld.setCache(ldapCache);
-                    }
+                    enableCache(ld);
                     LDAPSearchResults results = ld.search(orgDN,
                             LDAPv2.SCOPE_SUB, filter, null, false);
                     if (results != null && results.hasMoreElements()) {
