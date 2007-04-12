@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.5 2007-03-15 18:00:58 veiming Exp $
+ * $Id: SAML2Constants.java,v 1.6 2007-04-12 16:08:07 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -867,4 +867,14 @@ public interface SAML2Constants {
     // Escape string for the <code>DELIMITER</code> contained in the values
     // of multi-valued property set in SSO token
     public static final String ESCAPE_DELIMITER = "&#124;";
+
+    /**
+     * Namespace declaration for XML Encryption
+     */
+    public String NS_XMLENC = "http://www.w3.org/2001/04/xmlenc#";
+
+    /**
+     * Namespace declaration for XML Digital Signature
+     */
+    public String NS_XMLSIG = "http://www.w3.org/2000/09/xmldsig#";
 }
