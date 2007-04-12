@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.2 2006-12-05 21:56:16 weisun2 Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.3 2007-04-12 16:07:21 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,10 +340,13 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
         List list = statement.getAttribute();
         List encList = statement.getEncryptedAttribute();
         if (encList != null && encList.size() != 0) {
+            // a new list to hold the union of clear and encrypted attributes
+            List allList = new ArrayList();
+            if (list != null && !list.isEmpty()) {
+                allList.addAll(list);
+            }
+            list = allList;
             for (Iterator encIter = encList.iterator(); encIter.hasNext();) {
-                if (list == null) {
-                    list = new ArrayList();
-                }
                 try {
                     if (decryptionKey == null) {
                         decryptionKey = KeyUtil.getDecryptionKey(
