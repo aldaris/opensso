@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.22 2007-03-21 22:33:47 veiming Exp $
+ * $Id: SMSEntry.java,v 1.23 2007-04-12 20:11:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,7 +355,8 @@ public class SMSEntry implements Cloneable {
             boolean checkForJAXRPCVersion = false;
 
             /*
-             * Check for the SMSObject (JAXRPC) version (which is 10 currently)
+             * Check for the SMSObject (JAXRPC) version 
+             * (which is 10 in AM 7.0 patch 5 and 11 in AM 7.1 patch1 & opensso)
              * and determine whether to make calls for new APIs implemented
              * in the latest AM server, but not in older version.
              * This is to take care of the compatibility issue between
@@ -374,7 +375,11 @@ public class SMSEntry implements Cloneable {
                     (String) versionMap.get(SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
                 if (verStr != null && verStr.length() > 0) {
                     int version = Integer.valueOf(verStr).intValue();
-                    checkForJAXRPCVersion = (version > 9);
+                    /*
+                     * Since getAMSdkBaseDN() got introduced in AM 7.1 &
+                     * opensso, check the version for > 10.
+                     */
+                    checkForJAXRPCVersion = (version > 10);
                 }
             } catch (NumberFormatException nfe) {
                 debug.warning("SMSEntry:<init>.", nfe);

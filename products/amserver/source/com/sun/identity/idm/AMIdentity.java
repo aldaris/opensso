@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.19 2007-02-15 17:01:28 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.20 2007-04-12 20:12:02 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -172,6 +172,7 @@ public final class AMIdentity {
             // obtain DN and univIdWithoutDN
             univDN = univIdWithoutDN.substring(index + 9);
             univIdWithoutDN = univIdWithoutDN.substring(0, index);
+            dnObject = new DN(univIdWithoutDN);
 
         }
         name = array[0];

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.7 2007-04-02 06:02:12 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.8 2007-04-12 20:11:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,9 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     /**
      * JAXRPC Version String.
      */
-    public static final String AMJAXRPCVERSION = "10";
+    // Since we introduced the new API getAMSdkBaseDN, now the client
+    // version is 11 in opensso & AM 7.1 patch 1.
+    public static final String AMJAXRPCVERSION = "11";
     
     public static final String NOTIFICATION_PROPERTY = 
         "com.sun.identity.sm.notification.enabled";

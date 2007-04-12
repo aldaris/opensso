@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.9 2007-04-02 06:02:11 veiming Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.10 2007-04-12 20:11:19 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,13 +142,19 @@ public class OrgConfigViaAMSDK {
 
         try {
             // Check if the user has realm privileges, if yes use
-            // admin SSOToken to bypass directory ACIs
-            if (checkRealmPermission(token, smsOrgName,
+            // admin SSOToken to bypass directory ACIs.
+            // Look if the incoming request is from client or server.
+            // If client,(SMSJAXRPCObjectFlg=true), and since it is a JAXRPC
+            // call, the permission checking would be done at the server.
+            // So client need not have this check.(checkRealmPermission)
+            if (!SMSEntry.SMSJAXRPCObjectFlg) {
+                if (checkRealmPermission(token, smsOrgName,
                     SMSEntry.modifyActionSet)) {
-                token = adminToken;
-            } else if (checkRealmPermission(token, smsOrgName,
+                    token = adminToken;
+                } else if (checkRealmPermission(token, smsOrgName,
                     SMSEntry.readActionSet)) {
-                hasReadPermissionOnly = true;
+                    hasReadPermissionOnly = true;
+                }
             }
             AMStoreConnection amcom = new AMStoreConnection(token);
             parentOrg = amcom.getOrganization(orgName);
