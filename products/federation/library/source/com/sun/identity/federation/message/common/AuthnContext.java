@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnContext.java,v 1.1 2006-10-30 23:14:13 qcheng Exp $
+ * $Id: AuthnContext.java,v 1.2 2007-04-12 16:04:00 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,7 +265,7 @@ public class AuthnContext {
         } else {
             xml.append("<").append(prefixLIB).
                     append("AuthnContextClassRef").append(">");
-            xml.append(IFSConstants.PASSWORD);
+            xml.append(IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD);
             xml.append("</").append(prefixLIB).
                     append("AuthnContextClassRef").append(">");
             
@@ -281,7 +281,7 @@ public class AuthnContext {
         } else {
             xml.append("<").append(prefixLIB).
                     append("AuthnContextStatementRef").append(">");
-            xml.append(IFSConstants.PASSWORD);
+            xml.append(IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD);
             xml.append("</").append(prefixLIB).
                     append("AuthnContextStatementRef").append(">");
         }
