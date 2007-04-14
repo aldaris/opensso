@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2007-03-29 19:39:18 veiming Exp $
+   $Id: build.xml,v 1.12 2007-04-14 05:08:56 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -47,10 +47,19 @@
         <antcall target="j2ee-agents-nightly" />
     </target>
 
+    <target name="full-nightly">
+        <mkdir dir="${prd.nightly.dist.dir}" />
+        <antcall target="update-am-index" />
+        <antcall target="update-fmlib-index" />
+        <antcall target="update-openfm-index" />
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
+        <antcall target="update-j2ee-index" />
+    </target>
+
     <target name="update-am-index" depends="amserver-nightly">
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="update-index" />
-        <move file="${prd.nightly.dist.dir}/amserver/${nightly.date}/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
+        <move file="${amserver.base.dir}/built/dist/top.index.html" tofile="${prd.nightly.dist.dir}/amserver/index.html" />
     </target>
     
     <target name="amserver-nightly">
@@ -72,7 +81,7 @@
             <arg value="${nightly.date}" />
             <arg value="http://download.java.net/general/opensso/nightly/fedlibrary/index.html" />
         </java>
-        <move file="${prd.nightly.dist.dir}/fedlibrary/top.index.html" tofile="${prd.nightly.dist.dir}/fedlibrary/index.html" />
+        <move file="${fedlibrary.base.dir}/built/dist/index.html" tofile="${prd.nightly.dist.dir}/fedlibrary/index.html" />
     </target>
     
     <target name="fedlibrary-nightly">
@@ -96,7 +105,7 @@
             <arg value="${nightly.date}" />
             <arg value="http://download.java.net/general/opensso/nightly/openfm/index.html" />
         </java>
-        <move file="${prd.nightly.dist.dir}/openfm/top.index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
+        <move file="${fm.base.dir}/built/dist/index.html" tofile="${prd.nightly.dist.dir}/openfm/index.html" />
     </target>
         
     <target name="openfm-nightly">
@@ -128,7 +137,7 @@
             <arg value="${nightly.date}" />
             <arg value="http://download.java.net/general/opensso/nightly/j2eeagents/index.html" />
         </java>
-        <move file="${prd.nightly.dist.dir}/j2eeagents/top.index.html" tofile="${prd.nightly.dist.dir}/j2eeagents/index.html" />
+        <move file="${j2eeagents.basedir}/built/dist/index.html" tofile="${prd.nightly.dist.dir}/j2eeagents/index.html" />
     </target>
     
     <target name="j2ee-agents-nightly">
