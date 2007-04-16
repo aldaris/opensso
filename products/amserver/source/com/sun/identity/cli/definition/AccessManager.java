@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.19 2007-04-10 20:47:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.20 2007-04-16 07:14:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1566,7 +1566,8 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.schema.ExportServiceConfiguration",
         description="Export service configuration.",
         webSupport="false",
-        mandatoryOptions={},
+        mandatoryOptions={
+            "encryptsecret|e|s|Secret key for encrypting password."},
         optionAliases={},
         macro="authentication",
         optionalOptions={"outfile|o|s|Filename where configuration is written."},
@@ -1581,6 +1582,7 @@ public class AccessManager {
         description="Import service configuration.",
         webSupport="false",
         mandatoryOptions={
+            "encryptsecret|e|s|Secret key for decrypting password.",
             "datastoretype|t|s|Type of datastore either file, sunds or ad. Flat File, Sun Directory Server and Microsoft's Active Directory respectively.",
             "xmlfile|X|s|XML file that contains configuration data."},
         optionAliases={},

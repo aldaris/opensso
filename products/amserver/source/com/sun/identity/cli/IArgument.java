@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.3 2007-04-10 20:47:39 veiming Exp $
+ * $Id: IArgument.java,v 1.4 2007-04-16 07:14:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,4 +138,9 @@ public interface IArgument {
      * Output file name.
      */
     String OUTPUT_FILE = "outfile";
+
+    /**
+     * Secret key for encrypting and decrypting password.
+     */
+    String ENCRYPT_SECRET = "encryptsecret";
 }

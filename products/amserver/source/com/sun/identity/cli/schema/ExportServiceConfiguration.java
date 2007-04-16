@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportServiceConfiguration.java,v 1.1 2007-03-21 22:33:43 veiming Exp $
+ * $Id: ExportServiceConfiguration.java,v 1.2 2007-04-16 07:14:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.schema;
 
+import com.iplanet.services.util.AMEncryption;
+import com.iplanet.services.util.ConfigurableKey;
+import com.iplanet.services.util.JCEEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;
@@ -53,6 +56,7 @@ public class ExportServiceConfiguration extends AuthenticatedCommand {
         ldapLogin();
         SSOToken adminSSOToken = getAdminSSOToken();
         String outputFile = getStringOptionValue(IArgument.OUTPUT_FILE);
+        String encryptSecret = getStringOptionValue(IArgument.ENCRYPT_SECRET);
         FileOutputStream fout = null;
         String[] param = {"tty"};
         String[] paramException = {"tty", ""};
@@ -68,11 +72,13 @@ public class ExportServiceConfiguration extends AuthenticatedCommand {
                 "ATTEMPT_EXPORT_SM_CONFIG_DATA", param);
 
             ServiceManager sm = new ServiceManager(adminSSOToken);
-
+            AMEncryption encryptObj = new JCEEncryption();
+            ((ConfigurableKey)encryptObj).setPassword(encryptSecret);
+ 
             if (fout != null) {
-                fout.write(sm.toXML().getBytes("ISO-8859-1"));
+                fout.write(sm.toXML(encryptObj).getBytes("ISO-8859-1"));
             } else {
-                System.out.write(sm.toXML().getBytes("ISO-8859-1"));
+                System.out.write(sm.toXML(encryptObj).getBytes("ISO-8859-1"));
             }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_IMPORT_SM_CONFIG_DATA", param);
@@ -96,6 +102,11 @@ public class ExportServiceConfiguration extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "FAILED_EXPORT_SM_CONFIG_DATA", paramException);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (Exception e) {
+            paramException[1] = e.getMessage();
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_EXPORT_SM_CONFIG_DATA", paramException);
+           throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
             if (fout != null) {
                 try {

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.9 2007-03-21 22:33:50 veiming Exp $
+ * $Id: ServiceManager.java,v 1.10 2007-04-16 07:14:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -410,15 +411,34 @@ public class ServiceManager {
      *            the input stream of service metadata in XML conforming to SMS
      *            DTD.
      * @return set of registered service names.
-     * @throws SMSException
-     *             if an error occurred while performing the operation
-     * @throws SSOException
-     *             if the user's single sign on token is invalid or expired
+     * @throws SMSException if an error occurred while performing the operation.
+     * @throws SSOException if the user's single sign on token is invalid or 
+     *         expired.
      *
      * @supported.api
      */
     public Set registerServices(InputStream xmlServiceSchema)
-            throws SMSException, SSOException {
+        throws SMSException, SSOException {
+        return registerServices(xmlServiceSchema, null);
+    }
+    
+    /**
+     * Registers one or more services, defined by the XML
+     * input stream that follows the SMS DTD.
+     *
+     * @param xmlServiceSchema
+     *        the input stream of service metadata in XML conforming to SMS
+     *        DTD.
+     * @param decryptObj Object to decrypt the password in the XML.
+     * @return set of registered service names.
+     * @throws SMSException if an error occurred while performing the operation
+     * @throws SSOException if the user's single sign on token is invalid or
+     *         expired.
+     */
+    public Set registerServices(
+        InputStream xmlServiceSchema,
+        AMEncryption decryptObj
+    ) throws SMSException, SSOException {
         // Validate SSO Token
         SMSEntry.validateToken(token);
         Set sNames = new HashSet();
@@ -434,7 +454,7 @@ public class ServiceManager {
         // Before validating service schema, we need to check
         // for AttributeSchema having the syntax of "password"
         // and if present, encrypt the DefaultValues if any
-        checkAndEncryptPasswordSyntax(doc);
+        checkAndEncryptPasswordSyntax(doc, true, decryptObj);
 
         // Create service schema
         NodeList nodes = doc.getElementsByTagName(SMSUtils.SERVICE);
@@ -862,13 +882,16 @@ public class ServiceManager {
         }
     }
 
-    protected static void checkAndEncryptPasswordSyntax(Document doc)
-        throws SMSException {
-        checkAndEncryptPasswordSyntax(doc, true);
-    }
-
     protected static void checkAndEncryptPasswordSyntax(Document doc,
         boolean encrypt
+    ) throws SMSException {
+         checkAndEncryptPasswordSyntax(doc, encrypt, null);
+    }
+
+    protected static void checkAndEncryptPasswordSyntax(
+        Document doc,
+        boolean encrypt,
+        AMEncryption encryptObj
     ) throws SMSException {
         // Get the node list of all AttributeSchema
         NodeList nl = doc.getElementsByTagName(SMSUtils.SCHEMA_ATTRIBUTE);
@@ -891,12 +914,29 @@ public class ServiceManager {
                             .hasNext();) {
                         Node valueNode = (Node) items.next();
                         String value = XMLUtils.getValueOfValueNode(valueNode);
-                        String encValue = (encrypt) ?
-                            (String)AccessController
-                                .doPrivileged(new EncodeAction(value)):
-                            (String)AccessController
-                                .doPrivileged(new DecodeAction(value));
-                        if (!encrypt) {
+                        String encValue;
+
+                        if (encrypt) {
+                            if (encryptObj != null) {
+                                value = (String)AccessController
+                                    .doPrivileged(new DecodeAction(
+                                        value, encryptObj));
+                                if (value.equals("&amp;#160;")) {
+                                    try {
+                                        byte[] b = new byte[1];
+                                        b[0] = -96;
+                                        value = new String(b, "ISO-8859-1");
+                                    } catch (UnsupportedEncodingException e) {
+                                        //ignore
+                                    }
+                                }
+                            }
+                            encValue = (String)AccessController.doPrivileged(
+                                new EncodeAction(value));
+                        } else {
+                            encValue = (String)AccessController.doPrivileged(
+                                new DecodeAction(value));
+
                             try {
                                 //this is catch the whitespace for password
                                 byte[] b = encValue.getBytes("ISO-8859-1");
@@ -906,9 +946,11 @@ public class ServiceManager {
                             } catch (UnsupportedEncodingException e) {
                                 //ignore
                             }
-                        } else {
-                            String x =(String)AccessController
-                                .doPrivileged(new DecodeAction(encValue));
+                            if (encryptObj != null) {
+                                encValue = (String)AccessController
+                                    .doPrivileged(new EncodeAction(
+                                        encValue, encryptObj));
+                            }
                         }
 
                         // Construct the encrypted "Value" node
@@ -1048,7 +1090,7 @@ public class ServiceManager {
         }
     }
     
-    public String toXML()
+    public String toXML(AMEncryption encryptObj)
         throws SMSException, SSOException
     {
         StringBuffer buff = new StringBuffer();
@@ -1070,7 +1112,7 @@ public class ServiceManager {
                 String version = (String)j.next();
                 ServiceSchemaManager ssm = new 
                     ServiceSchemaManager(token, serviceName, version);
-                String xml = ssm.toXML();
+                String xml = ssm.toXML(encryptObj);
                 ServiceConfigManager scm = new ServiceConfigManager(
                     serviceName, token);
                 int idx = xml.lastIndexOf("</" + SMSUtils.SERVICE + ">");

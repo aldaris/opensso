@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.1 2007-03-21 22:33:43 veiming Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.2 2007-04-16 07:14:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,9 @@ import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.LDAPUser;
 import com.iplanet.services.ldap.ServerGroup;
+import com.iplanet.services.util.AMEncryption;
+import com.iplanet.services.util.ConfigurableKey;
+import com.iplanet.services.util.JCEEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.LDAPUtils;
@@ -80,6 +83,7 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
 
         String xmlFile = getStringOptionValue(IArgument.XML_FILE);
         String dbType = getStringOptionValue(DB_TYPE);
+        String encryptSecret = getStringOptionValue(IArgument.ENCRYPT_SECRET);
 
         if (!dbType.equals(TYPE_SUN_DS) && !dbType.equals(TYPE_AD) &&
             !dbType.equals(TYPE_FLATFILE)
@@ -98,13 +102,13 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
                 disconnectDServer(ldConnection);
                 ldConnection = null;
             }
-            importData(xmlFile);
+            importData(xmlFile, encryptSecret);
         } finally {
             disconnectDServer(ldConnection);
         }
     }
        
-    private void importData(String xmlFile)
+    private void importData(String xmlFile, String encryptSecret)
         throws CLIException { 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();        
@@ -116,9 +120,12 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
         FileInputStream fis = null;
 
         try {
+            AMEncryption encryptObj = new JCEEncryption();
+            ((ConfigurableKey)encryptObj).setPassword(encryptSecret);
+            
             ServiceManager ssm = new ServiceManager(adminSSOToken);
             fis = new FileInputStream(xmlFile);
-            ssm.registerServices(fis);
+            ssm.registerServices(fis, encryptObj);
 
             outputWriter.printlnMessage(getResourceString(
                 "import-service-configuration-succeeded"));
@@ -135,6 +142,11 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
                 "FAILED_IMPORT_SM_CONFIG_DATA", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
+            String[] args = {xmlFile, e.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_IMPORT_SM_CONFIG_DATA", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (Exception e) {
             String[] args = {xmlFile, e.getMessage()};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "FAILED_IMPORT_SM_CONFIG_DATA", args);

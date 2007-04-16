@@ -17,17 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManagerImpl.java,v 1.3 2007-03-21 22:33:50 veiming Exp $
+ * $Id: ServiceSchemaManagerImpl.java,v 1.4 2007-04-16 07:14:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.xml.XMLUtils;
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -497,10 +498,10 @@ class ServiceSchemaManagerImpl {
 
     private static final int REVISION_ERROR = -1;
     
-    public String toXML()
+    public String toXML(AMEncryption encryptObj)
         throws SMSException {
         Document doc = getDocumentCopy();
-        ServiceManager.checkAndEncryptPasswordSyntax(doc, false);
+        ServiceManager.checkAndEncryptPasswordSyntax(doc, false, encryptObj);
         return SMSSchema.nodeToString(
             XMLUtils.getRootNode(doc, SMSUtils.SERVICE));
     }

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.5 2007-03-21 22:33:50 veiming Exp $
+ * $Id: ServiceSchemaManager.java,v 1.6 2007-04-16 07:14:14 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
@@ -826,9 +827,9 @@ public class ServiceSchemaManager {
         cEntry.refresh(smsEntry);
     }
     
-    public String toXML()
+    public String toXML(AMEncryption encryptObj)
         throws SMSException {
-        String xml = ssm.toXML();
+        String xml = ssm.toXML(encryptObj);
         int idx = xml.lastIndexOf("</" + SMSUtils.SERVICE + ">");
         StringBuffer buff = new StringBuffer();
         buff.append(xml.substring(0, idx));
