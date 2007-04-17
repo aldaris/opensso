@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2007-04-03 21:14:34 veiming Exp $
+   $Id: build.xml,v 1.23 2007-04-17 19:39:43 ww203982 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,8 +46,8 @@
         <antcall target="tools" />
     </target>
     <target name="tools">
-        <ant antfile="${amserver.src.dir}/com/sun/identity/tools/bundles/build.xml"
-             dir="${amserver.src.dir}/com/sun/identity/tools/bundles" 
+        <ant antfile="${amserver.base.dir}/build-tools.xml"
+             dir="${amserver.base.dir}" 
              inheritRefs="true"/>
     </target>
 

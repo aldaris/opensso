@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.1 2007-03-02 18:59:06 ak138937 Exp $
+: $Id: setup.bat,v 1.1 2007-04-17 19:39:41 ww203982 Exp $
 :
 : Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 

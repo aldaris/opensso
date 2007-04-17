@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.44 2007-04-09 23:34:20 veiming Exp $
+   $Id: build.xml,v 1.45 2007-04-17 19:39:41 ww203982 Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -91,7 +91,6 @@
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="**/*.properties"/>
                 <exclude name="Services.properties"/>
-                <exclude name="DSConfig.properties"/>
                 <exclude name="ums.properties"/>
                 <exclude name="sso.properties"/>
                 <exclude name="SMS.properties"/>

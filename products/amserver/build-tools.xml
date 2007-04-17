@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build-tools.xml,v 1.1 2007-04-17 19:39:40 ww203982 Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="amadm" default="createZipFile" basedir=".">
+    <description>OpenWebSingle Sign-On: Tools.zip Creation</description>
+    <fail message="*** nightly build may be built from top level only ***">
+        <condition>
+            <or>
+                <not><isset property="amserver.warbase.dir"/></not>
+            </or>
+        </condition>
+    </fail>
+    <property file="${amserver.res.dir}/tools/amadm.properties"/>
+    <property name="amadm.unix.scripts.dir"
+        value="${amserver.basedir}/scripts/bin"/>
+    <property name="amadm.windows.scripts.dir"
+        value="${amserver.basedir}/scripts/bin"/>
+    <property name="amadm.tools.dir" value="${amserver.built.dir}/tools"/>
+    <property name="amadm.locale.dir" value="${amadm.tools.dir}/locale"/>
+    <property name="amadm.lib.dir" value="${amadm.tools.dir}/lib"/>
+    <property name="amadm.template.dir" value="${amadm.tools.dir}/template"/>
+    <property name="amadm.windows.dir" value="${amadm.template.dir}/windows"/>
+    <property name="amadm.windows.bin.dir" value="${amadm.windows.dir}/bin"/>
+    <property name="amadm.unix.dir" value="${amadm.template.dir}/unix"/>
+    <property name="amadm.unix.bin.dir" value="${amadm.unix.dir}/bin"/>
+    <property name="amadm.classes.dir" value="${amadm.tools.dir}/classes"/>
+    <property name="amadm.package.dir"
+        value="${amadm.classes.dir}/${amadm.package.path}"/>
+    <property name="amadm.tools.scripts.dir"
+        value="${amserver.script.dir}/tools"/>
+    <target name="prepareBuild">
+        <mkdir dir="${amadm.locale.dir}"/>
+        <mkdir dir="${amadm.lib.dir}"/>
+        <mkdir dir="${amadm.template.dir}"/>
+        <mkdir dir="${amadm.windows.dir}"/>
+        <mkdir dir="${amadm.windows.bin.dir}"/>
+        <mkdir dir="${amadm.unix.dir}"/>
+        <mkdir dir="${amadm.unix.bin.dir}"/>
+        <mkdir dir="${amadm.classes.dir}"/>
+        <mkdir dir="${amadm.package.dir}"/>
+    </target>
+    <target name="makeJar" depends="prepareBuild">
+        <copy todir="${amadm.package.dir}"
+            overwrite="yes" encoding="UTF-8">
+            <fileset dir="${amserver.built.dir}/classes/${amadm.package.path}"
+                includes="*"/>
+            <fileset dir="${amserver.res.dir}/locale"
+                includes="amadmtoolssetup.properties"/>
+        </copy>
+        <jar destfile="${amadm.lib.dir}/amadm_setup.jar"
+            basedir="${amadm.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class"
+                    value="com.sun.identity.tools.bundles.Main"/>
+            </manifest>
+        </jar>
+    </target>
+    <target name="copyNeededFiles" depends="makeJar">
+        <copy todir="${amadm.lib.dir}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${extlib.dir}"
+                includes="j2ee.jar, jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, ldapjdk.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, saaj-api.jar, saaj-impl.jar"/>
+            <fileset dir="${sharedlib.dist.dir}"
+                includes="opensso-sharedlib.jar"/>
+            <fileset dir="${amserver.dist.dir}"
+                includes="opensso.jar"/>
+        </copy>
+        <copy todir="${amadm.locale.dir}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amserver.built.res.dir}" includes="*.properties"/>
+            <fileset dir="${amserver.dtd.xml.dir}" includes="*.dtd"/>
+        </copy>
+        <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
+            encoding="UTF-8">
+            <fileset dir="${amserver.basedir}" includes="license.txt"/>
+            <fileset dir="${amadm.windows.scripts.dir}"
+                includes="README.amadm"/>
+            <fileset dir="${amadm.tools.scripts.dir}"
+                includes="setup, setup.bat, README.setup"/>
+        </copy>
+        <copy todir="${amadm.windows.bin.dir}"
+            overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.windows.scripts.dir}"
+                includes="${amadm.windows.amadm.bat.file}, ${amadm.windows.ampassword.bat.file}"/>
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+        <copy todir="${amadm.unix.bin.dir}"
+              overwrite="yes" flatten="yes" encoding="UTF-8">
+            <fileset dir="${amadm.unix.scripts.dir}"
+                includes="${amadm.unix.amadm.file}, ${amadm.unix.ampassword.file}"/>
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+    </target>
+    <target name="createZipFile" depends="copyNeededFiles">
+        <zip destfile="${amserver.dist.dir}/amAdminTools.zip"
+            whenempty="create">
+            <zipfileset dir="${amadm.tools.dir}"
+                filemode="755">
+                <include name="setup"/>
+                <include name="setup.bat"/>
+                <include name="license.txt"/>
+                <include name="README.amadm"/>
+                <include name="README.setup"/>
+            </zipfileset>
+            <zipfileset dir="${amserver.built.dir}" filemode="755"
+                includes="classes/**/*"/>
+            <zipfileset dir="${amadm.tools.dir}" filemode="755">
+                <include name="lib/**/*"/>
+                <include name="locale/**/*"/>
+                <include name="template/**/*"/>
+            </zipfileset>
+        </zip>
+    </target>
+</project>
