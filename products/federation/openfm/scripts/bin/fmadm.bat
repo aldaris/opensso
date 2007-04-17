@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fmadm.bat,v 1.2 2006-11-01 07:04:29 hengming Exp $
+: $Id: fmadm.bat,v 1.3 2007-04-17 04:50:04 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -31,5 +31,5 @@ shift
 goto WHILE
 :WEND
 
-java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar;lib/opensso.jar;lib/opensso-sharedlib.jar -D"definitionFiles=com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
+java  -Xms64m -Xmx256m -cp classes;lib/ldapjdk.jar;lib/mail.jar;lib/j2ee.jar;lib/jaxb-api.jar;lib/jaxb-impl.jar;lib/jaxb-libs.jar;lib/xsdlib.jar;lib/xmlsec.jar;lib/opensso.jar;lib/opensso-sharedlib.jar -D"definitionFiles=com.sun.identity.cli.AccessManager,com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
 endlocal
