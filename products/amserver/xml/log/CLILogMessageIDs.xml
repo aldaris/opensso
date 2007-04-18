@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.5 2007-03-21 22:33:53 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.6 2007-04-18 23:45:23 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -422,7 +422,7 @@
     </logmessage>
     <logmessage name="SUCCEED_CREATE_REALM" id="2011"
         loglevel="LL_INFO"
-        description="Realm deleted.">
+        description="Realm created.">
         <datainfo>
             <item>name of realm</item>
         </datainfo>
@@ -446,7 +446,7 @@
         </actions>
     </logmessage>
 
-    <logmessage name="ATTEMPT_SEARCH_REALM" id="2010"
+    <logmessage name="ATTEMPT_SEARCH_REALM" id="3020"
         loglevel="LL_INFO"
         description="Attempt to search for realms by name.">
         <datainfo>
@@ -459,7 +459,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEED_SEARCH_REALM" id="2011"
+    <logmessage name="SUCCEED_SEARCH_REALM" id="3021"
         loglevel="LL_INFO"
         description="Completed searching for realms.">
         <datainfo>
@@ -472,7 +472,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="FAILED_SEARCH_REALM" id="2012"
+    <logmessage name="FAILED_SEARCH_REALM" id="3022"
         loglevel="LL_INFO"
         description="Search for realms failed.">
         <datainfo>
