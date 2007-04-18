@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.45 2007-04-17 19:39:41 ww203982 Exp $
+   $Id: build.xml,v 1.46 2007-04-18 00:28:39 kevinserwin Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -312,24 +312,6 @@
         <ant antfile="${amserver.distauth.dir}/build.xml" inheritRefs="true"/>
     </target>
 
-    <target name="update-index" depends="nightly">   
-       <tstamp>
-            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
-        </tstamp>
-
-        <filter token="DATE" value="${nightly.date}" />
-          <echo>$${nightly.date}=${nightly.date}</echo>
-          
-          
-        <copy file="${amserver.docs.dir}/nightly.html" tofile="${amserver.dist.dir}/index.html" filtering="true" />
-        <java classname="com.sun.identity.tools.nightly.NightlyIndexHtml">
-            <classpath refid="build.class.path"/>
-            <arg value="${amserver.dist.dir}" />
-            <arg value="${nightly.date}" />
-            <arg value="http://download.java.net/general/opensso/nightly/amserver/index.html" />
-        </java>
-    </target>
-    
     <target name="nightly" depends="tools,publicdoc,doc,clientsdk,demo,samples,distauth,unittest">
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
@@ -342,6 +324,8 @@
             tofile="${amserver.dist.dir}/opensso-sharedlib.jar" />
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar.sha"
             tofile="${amserver.dist.dir}/opensso-sharedlib.jar.sha" />
+        <copy file="${amserver.docs.dir}/nightly.html"
+            tofile="${amserver.dist.dir}/index.html" filtering="true" />
     </target>
 
     <target name="nightly-clean">
