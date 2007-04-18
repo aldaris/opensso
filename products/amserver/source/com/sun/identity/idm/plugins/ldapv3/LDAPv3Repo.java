@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.19 2007-04-12 23:32:02 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.20 2007-04-18 15:25:24 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -552,6 +552,10 @@ public class LDAPv3Repo extends IdRepo {
     }
 
     private void initConnectionPool(Map configParams) {
+
+        // connOptions has the default options set for failover and 
+        // fallback features.
+        HashMap connOptions = new HashMap();
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: initConnectionPool ");
         }
@@ -612,6 +616,7 @@ public class LDAPv3Repo extends IdRepo {
             constraints.setMaxResults(defaultMaxResults);
             constraints.setServerTimeLimit(timeLimit);
             ldc.setSearchConstraints(constraints);
+            connOptions.put("searchconstraints", constraints);
             if (cacheEnabled) {
                 ldapCache = new LDAPCache(cacheTTL, cacheSize);
                 ldc.setCache(ldapCache);
@@ -636,8 +641,15 @@ public class LDAPv3Repo extends IdRepo {
                 ldc.setConnectTimeout(3);
             }
             ldc.connect(ldapServerName, ldapPort, authid, authpw);
-            connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize,
-                           maxPoolSize, ldc);
+
+            connOptions.put("referrals", new Boolean(referrals));
+
+            // Construct the pool by cloning the successful connection
+            connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize, 
+                maxPoolSize, ldapServerName, ldapPort, 
+                ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(), 
+                connOptions);
+
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
             ldapConnError = Integer.toString(resultCode);
