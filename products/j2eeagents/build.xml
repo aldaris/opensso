@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2007-01-25 20:50:47 madan_ranganath Exp $
+   $Id: build.xml,v 1.7 2007-04-18 21:29:07 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,25 +46,25 @@
         <mkdir dir="${j2eeagents.dist.dir}"/>
     </target>
 
-    <target name="clean_appserver_v81">
+    <target name="clean_appserver_v9">
         <property name="containername" value="appserver"/>
-        <property name="containerversion" value="v81"/>
+        <property name="containerversion" value="v9"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
 
-    <target name="clean" depends="clean_appserver_v81">
+    <target name="clean" depends="clean_appserver_v9">
         <delete dir="${j2eeagents.dist.dir}"/>
         <delete dir="${j2eeagents.built.dir}"/>
     </target>
 
     <target name="all">
-        <antcall target="appserver_v81" />
+        <antcall target="appserver_v9" />
     </target>
 
-    <target name="appserver_v81" depends="preparebuild">
-        <echo message="Dispatch to appserver_v81"/>
+    <target name="appserver_v9" depends="preparebuild">
+        <echo message="Dispatch to appserver_v9"/>
         <property name="containername" value="appserver"/>
-        <property name="containerversion" value="v81"/>
+        <property name="containerversion" value="v9"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
 
@@ -74,7 +74,7 @@
     </target>
 
     <target name="prenightly">
-        <copy todir="${j2eeagents.basedir}/appserver/v81/extlib" >
+        <copy todir="${j2eeagents.basedir}/appserver/v9/extlib" >
             <fileset dir="${prd.nightly.dist.dir}/amserver/${nightly.date}">
                 <include name="amclientsdk.jar" />
             </fileset>
@@ -100,8 +100,8 @@
         <echo message=" "/>
         <echo message=" all                 : builds all the J2EE agents"/>
         <echo message=" clean               : deletes all the generated files"/>
-        <echo message=" appserver_v81       : builds the Sun Appserver 8.1/8.2 agent"/>
-        <echo message=" clean_appserver_v81 : deletes the generated files for appserver_v81 agent"/>
+        <echo message=" appserver_v9       : builds the Sun Appserver 8.1/8.2/9.0/9.1 agent"/>
+        <echo message=" clean_appserver_v9 : deletes the generated files for appserver_v9 agent"/>
         <echo message=" usage               : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
