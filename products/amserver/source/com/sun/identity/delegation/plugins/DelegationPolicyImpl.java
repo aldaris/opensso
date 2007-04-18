@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.4 2007-03-21 22:33:45 veiming Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.5 2007-04-18 19:42:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -292,17 +292,18 @@ public class DelegationPolicyImpl implements DelegationInterface,
     }
 
     /**
-     * Adds a delegation privilege to a specific realm.
-     * 
+     * Adds a delegation privilege to a specific realm. The permission will be
+     * added to the existing privilege in the event that this method is trying
+     * to add to an existing privilege.
+     *
      * @param token  The <code>SSOToken</code> of the requesting user
      * @param orgName The name of the realm to which the delegation privilege 
      *        is to be added.
      * @param privilege  The delegation privilege to be added.
      * 
      * @throws SSOException invalid or expired single-sign-on token
-     * @throws DelegationException  for any abnormal condition
+     * @throws DelegationException if any abnormal condition occurred.
      */
-
     public void addPrivilege(SSOToken token, String orgName, 
       DelegationPrivilege privilege) throws SSOException, DelegationException {
         if (privilege != null) {
@@ -314,26 +315,15 @@ public class DelegationPolicyImpl implements DelegationInterface,
                         AdminTokenAction.getInstance());
                 }
                 PolicyManager pm = new PolicyManager(token,
-                                    POLICY_REPOSITORY_REALM);
-                Policy p = privilegeToPolicy(pm, privilege);
+                    POLICY_REPOSITORY_REALM);
+                Policy p = privilegeToPolicy(pm, privilege, orgName);
                 if (p != null) {
-                /* the name of the policy is in the form of 
-                 * orgName^^privilegeName, the privilegeName is the
-                 * name of the delegation privilege that the policy 
-                 * is corresponding to. In case the orgName is in a 
-                 * DN format, the special char ',' is replaced to 
-                 * avoid saving problem.
-                 */
-                    String prefix = null;
-                    if (orgName != null) {
-                        prefix = orgName.toLowerCase() + NAME_DELIMITER;
-                        prefix = prefix.replace(',', 
-                                             REPLACEMENT_FOR_COMMA);
+                    Set existingPolicies = pm.getPolicyNames();
+                    if (existingPolicies.contains(p.getName())) {
+                        pm.replacePolicy(p);
                     } else {
-                        prefix = NAME_DELIMITER;
-                    }  
-                    p.setName(prefix + p.getName());
-                    pm.addPolicy(p);
+                        pm.addPolicy(p);
+                    }
                 } else {
                     throw new DelegationException(ResBundleUtils.rbName,
                         "invalid_delegation_privilege", null, null);
@@ -772,11 +762,29 @@ public class DelegationPolicyImpl implements DelegationInterface,
                converted.
      * @return policy object.
      */
-    private Policy privilegeToPolicy(PolicyManager pm, 
-               DelegationPrivilege priv) throws DelegationException {
+    private Policy privilegeToPolicy(
+        PolicyManager pm,
+        DelegationPrivilege priv,
+        String orgName
+    ) throws DelegationException {
         try {
-            String name = priv.getName();
+            /* the name of the policy is in the form of 
+             * orgName^^privilegeName, the privilegeName is the
+             * name of the delegation privilege that the policy 
+             * is corresponding to. In case the orgName is in a 
+             * DN format, the special char ',' is replaced to 
+             * avoid saving problem.
+             */
+            String prefix = null;
+            if (orgName != null) {
+                prefix = orgName.toLowerCase() + NAME_DELIMITER;
+                prefix = prefix.replace(',', REPLACEMENT_FOR_COMMA);
+            } else {
+                prefix = NAME_DELIMITER;
+            }
+            String name = prefix + priv.getName();
             Policy policy = new Policy(name);
+            
             Set permissions = priv.getPermissions();
             if ((permissions != null) && (!permissions.isEmpty())) {
                 Iterator pmit = permissions.iterator();

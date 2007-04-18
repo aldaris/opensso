@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationUtils.java,v 1.4 2006-08-25 21:20:43 veiming Exp $
+ * $Id: DelegationUtils.java,v 1.5 2007-04-18 19:42:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,13 +68,8 @@ public class DelegationUtils {
      *        to be created.
      */
     public static void createRealmPrivileges(SSOToken token, String realmName)
-            throws SSOException, DelegationException {
-
-        DelegationPrivilege priv = null;
-        Set subjects = null;
-        ServiceConfig perm = null;
+        throws SSOException, DelegationException {
         String realmId = DNMapper.orgNameToDN(realmName);
-
         DelegationManager dm = new DelegationManager(token, realmName);
         Set privs = dm.getConfiguredPrivilegeNames();
 
@@ -88,13 +83,14 @@ public class DelegationUtils {
         int revisionNum = getRevisionNumber();
         Iterator it = privs.iterator();
         while (it.hasNext()) {
+            ServiceConfig perm = null;
             String privName = (String) it.next();
             if (revisionNum == AM70_DELEGATION_REVISION) {
                 perm = DelegationUtils.getPermissionConfig(
-                           null, privName, true);
+                    null, privName, true);
             } else {
                 perm = DelegationUtils.getPrivilegeConfig(
-                           null, privName, true);
+                    null, privName, true);
             }
             // get the defaultSubjectInLegacyMode in the privilege
             Map attrs = perm.getAttributes();
@@ -103,6 +99,7 @@ public class DelegationUtils {
                         "get_privilege_attrs_failed", null, null);
             }
 
+            Set subjects = null;
             Set configSubjects = (Set) attrs.get(SUBJECTS_IN_LEGACY_MODE);
             if ((configSubjects != null) && (!configSubjects.isEmpty())) {
                 Iterator sIter = configSubjects.iterator();
@@ -112,7 +109,8 @@ public class DelegationUtils {
                     subjects.add(swapRealmTag(realmId, sv));
                 }
             }
-            priv = new DelegationPrivilege(privName, subjects, realmName);
+            DelegationPrivilege priv = new DelegationPrivilege(
+                privName, subjects, realmName);
             dm.addPrivilege(priv);
             if (debug.messageEnabled()) {
                 debug.message("added " + privName + " privilege in realm "
@@ -169,15 +167,13 @@ public class DelegationUtils {
                 try {
                     AMIdentity id = IdUtils.getIdentity(token, sName);
                     // Construct a new AMIdentity object with child realm
-                    AMIdentity newId = new AMIdentity(token, id.getName(), id
-                            .getType(), childOrgName, id.getDN());
+                    AMIdentity newId = new AMIdentity(token, id.getName(), 
+                        id.getType(), childOrgName, id.getDN());
                     newSubjects.add(IdUtils.getUniversalId(newId));
                 } catch (IdRepoException ide) {
                     if (debug.messageEnabled()) {
-                        debug
-                                .message("DelegationUtils.copyRealmPrivileges"
-                                        + "FromParent: IdRepoException for: "
-                                        + dp, ide);
+                        debug.message("DelegationUtils.copyRealmPrivileges" +
+                            "FromParent: IdRepoException for: " + dp, ide);
                     }
                     continue;
                 }
@@ -187,8 +183,7 @@ public class DelegationUtils {
             if ((permissions != null) && (!permissions.isEmpty())) {
                 Iterator it = permissions.iterator();
                 while (it.hasNext()) {
-                    DelegationPermission perm = (DelegationPermission) it
-                            .next();
+                    DelegationPermission perm = (DelegationPermission)it.next();
                     perm.setOrganizationName("*" + childOrgName);
                 }
             }

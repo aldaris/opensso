@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationModelImpl.java,v 1.1 2007-02-07 20:21:23 jonnelson Exp $
+ * $Id: DelegationModelImpl.java,v 1.2 2007-04-18 19:42:10 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -167,7 +167,6 @@ public class DelegationModelImpl
 
                     if (modified) {
                         logEvent("ATTEMPT_MODIFY_DELEGATION_PRIVILEGE", params);
-                        mgr.removePrivilege(name);
                         mgr.addPrivilege(dp);
                         logEvent("SUCCEED_MODIFY_DELEGATION_PRIVILEGE", params);
                     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManager.java,v 1.8 2007-03-21 22:33:45 veiming Exp $
+ * $Id: DelegationManager.java,v 1.9 2007-04-18 19:42:10 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -244,15 +244,15 @@ public final class DelegationManager {
     }
     
     /**
-     * Adds a delegation privilege to the realm.
+     * Adds a delegation privilege to a specific realm. The permission will be
+     * added to the existing privilege in the event that this method is trying
+     * to add to an existing privilege.
      *
      * @param privilege The delegation privilege to be added.
-     *
-     * @throws DelegationException  for any abnormal condition
+     * @throws DelegationException if any abnormal condition occurred.
      */
-    
     public void addPrivilege(DelegationPrivilege privilege)
-    throws DelegationException {
+        throws DelegationException {
         if (debug.messageEnabled()) {
             debug.message("privilege=" + privilege);
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemovePrivileges.java,v 1.1 2006-05-31 21:49:53 veiming Exp $
+ * $Id: RemovePrivileges.java,v 1.2 2007-04-18 19:42:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,6 @@ public class RemovePrivileges extends IdentityCommand {
                     Set subjects = dp.getSubjects();
                     if (subjects.contains(uid)) {
                         subjects.remove(uid);
-                        mgr.removePrivilege(name);
                         mgr.addPrivilege(dp);
                         removed = true;
                     }

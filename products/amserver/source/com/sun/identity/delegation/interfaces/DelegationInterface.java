@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationInterface.java,v 1.3 2006-04-17 17:29:27 bhavnab Exp $
+ * $Id: DelegationInterface.java,v 1.4 2007-04-18 19:42:11 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,9 @@ public interface DelegationInterface {
             throws SSOException, DelegationException;
 
     /**
-     * Adds a delegation privilege to a specific realm.
+     * Adds a delegation privilege to a specific realm. The permission will be
+     * added to the existing privilege in the event that this method is trying
+     * to add to an existing privilege.
      * 
      * @param token  The <code>SSOToken</code> of the requesting user
      * @param orgName The name of the realm to which the delegation privilege 
@@ -87,9 +89,8 @@ public interface DelegationInterface {
      * @param privilege  The delegation privilege to be added.
      * 
      * @throws SSOException if invalid or expired single-sign-on token
-     * @throws DelegationException  for any abnormal condition
+     * @throws DelegationException if any abnormal condition occurred.
      */
-
     public void addPrivilege(SSOToken token, String orgName,
             DelegationPrivilege privilege) throws SSOException,
             DelegationException;
