@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.20 2007-04-18 15:25:24 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.21 2007-04-19 02:53:13 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -648,7 +648,7 @@ public class LDAPv3Repo extends IdRepo {
             connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize, 
                 maxPoolSize, ldapServerName, ldapPort, 
                 ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(), 
-                connOptions);
+                ldc, connOptions);
 
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
