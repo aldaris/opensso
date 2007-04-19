@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.4 2007-04-10 06:28:34 veiming Exp $
+ * $Id: SAML2MetaManager.java,v 1.5 2007-04-19 18:28:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,9 +44,13 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.shared.debug.Debug;
@@ -58,7 +62,7 @@ import com.sun.identity.shared.debug.Debug;
 public class SAML2MetaManager {
     private static final String ATTR_METADATA = "sun-fm-saml2-metadata";
     private static final String ATTR_ENTITY_CONFIG =
-                                            "sun-fm-saml2-entityconfig";
+        "sun-fm-saml2-entityconfig";
     private static final String SUBCONFIG_ID = "EntityDescriptor";
     private static final int SUBCONFIG_PRIORITY = 0;
 
@@ -181,17 +185,51 @@ public class SAML2MetaManager {
      * @return <code>SPSSODescriptorElement</code> for the entity or null if
      *         not found. 
      * @throws SAML2MetaException if unable to retrieve the first service 
-     *                            provider's SSO descriptor.
+     *         provider's SSO descriptor.
      */
-    public SPSSODescriptorElement getSPSSODescriptor(String realm,
-                                                     String entityId) 
+    public SPSSODescriptorElement getSPSSODescriptor(
+        String realm,
+        String entityId) 
         throws SAML2MetaException {
-
-        EntityDescriptorElement eDescriptor = getEntityDescriptor(realm,
-                                                                  entityId);
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(
+            realm, entityId);
         return SAML2MetaUtils.getSPSSODescriptor(eDescriptor);
     }
 
+ 
+    /**
+     * Returns first policy decision point descriptor in an entity under the
+     * realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved. 
+     * @return policy decision point descriptor.
+     * @throws SAML2MetaException if unable to retrieve the descriptor.
+     */
+    public XACMLPDPDescriptorElement getPolicyDecisionPointDescriptor(
+        String realm, String entityId
+    ) throws SAML2MetaException {
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(
+            realm, entityId);
+        return SAML2MetaUtils.getPolicyDecisionPointDescriptor(eDescriptor);
+    }
+
+    /**
+     * Returns first policy enforcement point descriptor in an entity under the
+     * realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved. 
+     * @return policy enforcement point descriptor.
+     * @throws SAML2MetaException if unable to retrieve the descriptor.
+     */
+    public XACMLAuthzDecisionQueryDescriptorElement 
+        getPolicyEnforcementPointDescriptor(
+        String realm, String entityId
+    ) throws SAML2MetaException {
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(
+            realm, entityId);
+        return SAML2MetaUtils.getPolicyEnforcementPointDescriptor(eDescriptor);
+    }
+    
     /**
      * Returns first identity provider's SSO descriptor in an entity under the
      * realm.
@@ -490,6 +528,60 @@ public class SAML2MetaManager {
         }
 
         return null;
+    }
+    
+    /**
+     * Returns first policy decision point configuration in an entity under
+     * the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved.
+     * @return policy decision point configuration or null if it is not found.
+     * @throws SAML2MetaException if unable to retrieve the configuration.
+     */
+    public XACMLPDPConfigElement getPolicyDecisionPointConfig(
+        String realm, String entityId
+    ) throws SAML2MetaException {
+        XACMLPDPConfigElement elm = null;
+        EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+        
+        if (eConfig != null) {
+            List list = 
+                eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+            for (Iterator i = list.iterator(); i.hasNext() && (elm == null);) {
+                Object obj = i.next();
+                if (obj instanceof XACMLPDPConfigElement) {
+                    elm = (XACMLPDPConfigElement)obj;
+                }
+            }
+        }
+        return elm;
+    }
+    
+    /**
+     * Returns first policy enforcement point configuration in an entity under
+     * the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved.
+     * @return policy decision point configuration or null if it is not found.
+     * @throws SAML2MetaException if unable to retrieve the configuration.
+     */
+    public XACMLAuthzDecisionQueryConfigElement getPolicyEnforcementPointConfig(
+        String realm, String entityId
+    ) throws SAML2MetaException {
+        XACMLAuthzDecisionQueryConfigElement elm = null;
+        EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+        
+        if (eConfig != null) {
+            List list = 
+                eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+            for (Iterator i = list.iterator(); i.hasNext() && (elm == null);) {
+                Object obj = i.next();
+                if (obj instanceof XACMLAuthzDecisionQueryConfigElement) {
+                    elm = (XACMLAuthzDecisionQueryConfigElement)obj;
+                }
+            }
+        }
+        return elm;
     }
 
     /**
@@ -814,6 +906,93 @@ public class SAML2MetaManager {
     }
 
     /**
+     * Returns all hosted policy decision point entities under the realm.
+     *
+     * @param realm The realm under which the hosted policy decision point 
+     *        entities reside.
+     * @return a list of entity ID.
+     * @throws SAML2MetaException if unable to retrieve the entity ids.
+     */
+    public List getAllHostedPolicyDecisionPointEntities(String realm)
+        throws SAML2MetaException {
+        return getHostedPolicyDecisionPointEntities(realm, true);
+    }
+    
+    /**
+     * Returns all remote policy decision point entities under the realm.
+     *
+     * @param realm The realm under which the remote policy decision point 
+     *        entities reside.
+     * @return a list of entity ID.
+     * @throws SAML2MetaException if unable to retrieve the entity ids.
+     */
+    public List getAllRemotePolicyDecisionPointEntities(String realm)
+        throws SAML2MetaException {
+        return getHostedPolicyDecisionPointEntities(realm, false);
+    }
+    
+    private List getHostedPolicyDecisionPointEntities(
+        String realm, 
+        boolean hosted
+    ) throws SAML2MetaException {
+        List hostedPDPEntityIds = new ArrayList();
+        List hostedEntityIds = (hosted) ? getAllHostedEntities(realm) :
+            getAllRemoteEntities(realm);
+
+        for(Iterator i = hostedEntityIds.iterator(); i.hasNext();) {
+            String entityId = (String)i.next();
+            if (getPolicyDecisionPointDescriptor(realm, entityId) != null) {
+                hostedPDPEntityIds.add(entityId);
+            }
+        }
+        return hostedPDPEntityIds;
+    }
+    
+    /**
+     * Returns all hosted policy enforcement point entities under the realm.
+     *
+     * @param realm The realm under which the hosted policy enforcement point 
+     *        entities reside.
+     * @return a list of entity ID.
+     * @throws SAML2MetaException if unable to retrieve the entity ids.
+     */
+    public List getAllHostedPolicyEnforcementPointEntities(String realm)
+        throws SAML2MetaException {
+        return getAllPolicyEnforcementPointEntities(realm, true);
+    }
+    
+    /**
+     * Returns all remote policy enforcement point entities under the realm.
+     *
+     * @param realm The realm under which the remote policy enforcement point 
+     *        entities reside.
+     * @return a list of entity ID.
+     * @throws SAML2MetaException if unable to retrieve the entity ids.
+     */
+    public List getAllRemotePolicyEnforcementPointEntities(String realm)
+        throws SAML2MetaException {
+        return getAllPolicyEnforcementPointEntities(realm, false);
+    }
+        
+    private List getAllPolicyEnforcementPointEntities(
+        String realm,
+        boolean hosted
+    ) throws SAML2MetaException {
+
+        List hostedPEPEntityIds = new ArrayList();
+        List hostedEntityIds = (hosted) ? getAllHostedEntities(realm) :
+            getAllRemoteEntities(realm);
+
+        for (Iterator i = hostedEntityIds.iterator(); i.hasNext();) {
+            String entityId = (String)i.next();
+            if (getPolicyEnforcementPointDescriptor(realm, entityId) != null) {
+                hostedPEPEntityIds.add(entityId);
+            }
+        }
+        return hostedPEPEntityIds;
+    }
+    
+    /**
      * Returns all hosted identity provider entities under the realm.
      * @param realm The realm under which the hosted identity provider entities
      *              reside.
@@ -978,27 +1157,30 @@ public class SAML2MetaManager {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
             IDPSSOConfigElement idpConfig = getIDPSSOConfig(realm, entityId);
             SPSSOConfigElement spConfig = getSPSSOConfig(realm, entityId);
+            XACMLPDPConfigElement pdpConfig = getPolicyDecisionPointConfig(
+                realm, entityId);
+            XACMLAuthzDecisionQueryConfigElement pepConfig = 
+                getPolicyEnforcementPointConfig(realm, entityId);
             
-            if (idpConfig == null) {
-                String m = spConfig.getMetaAlias();
-                if ((m != null) && m.equals(metaAlias)) {
-                    role = SAML2Constants.SP_ROLE;
-                }
-            } else if (spConfig == null) {
+            if (idpConfig != null) {
                 String m = idpConfig.getMetaAlias();
                 if ((m != null) && m.equals(metaAlias)) {
                     role = SAML2Constants.IDP_ROLE;
                 }
-            } else {
-                //Assuming that sp and idp cannot have the same metaAlias
+            } else if (spConfig != null) {
                 String m = spConfig.getMetaAlias();
                 if ((m != null) && m.equals(metaAlias)) {
                     role = SAML2Constants.SP_ROLE;
-                } else {
-                    m = idpConfig.getMetaAlias();
-                    if ((m != null) && m.equals(metaAlias)) {
-                        role = SAML2Constants.IDP_ROLE;
-                    }
+                }
+            } else if (pdpConfig != null) {
+                String m = pdpConfig.getMetaAlias();
+                if ((m != null) && m.equals(metaAlias)) {
+                    role = SAML2Constants.PDP_ROLE;
+                }
+            } else if (pepConfig != null) {
+                String m = pepConfig.getMetaAlias();
+                if ((m != null) && m.equals(metaAlias)) {
+                    role = SAML2Constants.PEP_ROLE;
                 }
             }
         }
@@ -1051,7 +1233,54 @@ public class SAML2MetaManager {
         }
         return metaAliases;
     }
-
+    
+    /**
+     * Returns meta aliases of all hosted policy decision point under the realm.
+     * @param realm The realm under which the policy decision point resides.
+     * @return list of meta aliases 
+     * @throws SAML2MetaException if unable to retrieve meta aliases.
+     */
+    public List getAllHostedPolicyDecisionPointMetaAliases(String realm)
+        throws SAML2MetaException {
+        List metaAliases = new ArrayList();
+        List hostedEntityIds = getAllHostedPolicyDecisionPointEntities(realm);
+        
+        for (Iterator i = hostedEntityIds.iterator(); i.hasNext();) {
+            String entityId = (String)i.next();
+            XACMLPDPConfigElement elm = getPolicyDecisionPointConfig(
+                realm, entityId);
+            if (elm != null) {
+                metaAliases.add(elm.getMetaAlias());
+            }
+        }
+        return metaAliases;
+    }
+    
+    /**
+     * Returns meta aliases of all hosted policy enforcement point under the 
+     * realm.
+     *
+     * @param realm The realm under which the policy enforcement point resides.
+     * @return list of meta aliases 
+     * @throws SAML2MetaException if unable to retrieve meta aliases.
+     */
+    public List getAllHostedPolicyEnforcementPointMetaAliases(String realm)
+        throws SAML2MetaException {
+        List metaAliases = new ArrayList();
+        List hostedEntityIds = getAllHostedPolicyEnforcementPointEntities(
+            realm);
+        
+        for (Iterator i = hostedEntityIds.iterator(); i.hasNext();) {
+            String entityId = (String)i.next();
+            XACMLAuthzDecisionQueryConfigElement elm = 
+                getPolicyEnforcementPointConfig(realm, entityId);
+            if (elm != null) {
+                metaAliases.add(elm.getMetaAlias());
+            }
+        }
+        return metaAliases;
+    }
+    
     /**
      * Determines whether two entities are in the same circle of trust
      * under the realm.

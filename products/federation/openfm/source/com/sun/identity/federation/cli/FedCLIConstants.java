@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.1 2007-02-16 02:02:51 veiming Exp $
+ * $Id: FedCLIConstants.java,v 1.2 2007-04-19 18:28:55 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,16 @@ public interface FedCLIConstants {
     String ARGUMENT_IDENTITY_PROVIDER = "identityprovider";
 
     /**
+     * Policy Decision Point.
+     */
+    String ARGUMENT_PDP = "xacmlpdp";
+
+    /**
+     * Policy Enforcement Point.
+     */
+    String ARGUMENT_PEP = "xacmlpep";
+
+    /**
      * Service Provider Signing Certificate Alias.
      */
     String ARGUMENT_SP_S_CERT_ALIAS = "spscertalias";
@@ -89,6 +99,16 @@ public interface FedCLIConstants {
     String ARGUMENT_IDP_S_CERT_ALIAS = "idpscertalias";
 
     /**
+     * Policy Decision Point Signing Certificate Alias.
+     */
+    String ARGUMENT_PDP_S_CERT_ALIAS = "xacmlpdpscertalias";
+
+    /**
+     * Policy Enforcement Point Signing Certificate Alias.
+     */
+    String ARGUMENT_PEP_S_CERT_ALIAS = "xacmlpepscertalias";
+
+    /**
      * Service Provider Encryption Certificate Alias.
      */
     String ARGUMENT_SP_E_CERT_ALIAS = "specertalias";
@@ -97,6 +117,16 @@ public interface FedCLIConstants {
      * Service Provider Encryption Certificate Alias.
      */
     String ARGUMENT_IDP_E_CERT_ALIAS = "idpecertalias";
+
+    /**
+     * Policy Decision Point Encryption Certificate Alias.
+     */
+    String ARGUMENT_PDP_E_CERT_ALIAS = "xacmlpdpecertalias";
+
+    /**
+     * Policy Enforcement Point Encryption Certificate Alias.
+     */
+    String ARGUMENT_PEP_E_CERT_ALIAS = "xacmlpepecertalias";
 
     /**
      * Extended Configuration Data only option.

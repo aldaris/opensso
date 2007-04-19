@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.7 2007-04-11 05:24:01 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.8 2007-04-19 18:28:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,16 +51,21 @@ import java.text.MessageFormat;
  */
 public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
-    
     private String entityID;
     private String metadata;
     private String extendedData;
     private String idpAlias;
     private String spAlias;
+    private String pdpAlias;
+    private String pepAlias;
     private String idpSCertAlias;
     private String idpECertAlias;
+    private String pdpSCertAlias;
+    private String pdpECertAlias;
     private String spSCertAlias;
     private String spECertAlias;
+    private String pepSCertAlias;
+    private String pepECertAlias;
     private String protocol;
     private String host;
     private String port;
@@ -122,18 +127,33 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER);
         spAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_SERVICE_PROVIDER);
-        metadata = getStringOptionValue(
-            FedCLIConstants.ARGUMENT_METADATA);
+        pdpAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PDP);
+        pepAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PEP);
+        
+        metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
         extendedData = getStringOptionValue(
             FedCLIConstants.ARGUMENT_EXTENDED_DATA);
+        
         idpSCertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_IDP_S_CERT_ALIAS);
         idpECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_IDP_E_CERT_ALIAS);
+        
         spSCertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_SP_S_CERT_ALIAS);
         spECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_SP_E_CERT_ALIAS);
+        
+        pdpSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_PDP_S_CERT_ALIAS);
+        pdpECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_PDP_E_CERT_ALIAS);
+
+        pepSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_PEP_S_CERT_ALIAS);
+        pepECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_PEP_E_CERT_ALIAS);
+
         protocol = SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
         host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
         port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
@@ -150,6 +170,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if ((spAlias != null) && !spAlias.startsWith("/")) {
             spAlias = "/" + spAlias;
         }
+        if ((pdpAlias != null) && !pdpAlias.startsWith("/")) {
+            pdpAlias = "/" + pdpAlias;
+        }
+        if ((pepAlias != null) && !pepAlias.startsWith("/")) {
+            pepAlias = "/" + pepAlias;
+        }
         if (entityID == null) {
             entityID = host + realm;
         }
@@ -165,14 +191,28 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if (spECertAlias == null) {
             spECertAlias = "";
         }
+        if (pdpSCertAlias == null) {
+            pdpSCertAlias = "";
+        }
+        if (pdpECertAlias == null) {
+            pdpECertAlias = "";
+        }
+        if (pepSCertAlias == null) {
+            pepSCertAlias = "";
+        }
+        if (pepECertAlias == null) {
+            pepECertAlias = "";
+        }
     }
     
     private void validateOptions()
     throws CLIException {
-        if ((idpAlias == null) && (spAlias == null)) {
+        if ((idpAlias == null) && (spAlias == null) && (pdpAlias == null) && 
+            (pepAlias == null)
+        ) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-idp-sp-null"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-role-null"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
         if ((idpAlias == null) &&
@@ -188,6 +228,22 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             ) {
             throw new CLIException(getResourceString(
                     "create-meta-template-exception-sp-null-with-cert-alias"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        
+        if ((pdpAlias == null) &&
+            ((pdpSCertAlias != null) || (pdpECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                    "create-meta-template-exception-pdp-null-with-cert-alias"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        
+        if ((pepAlias == null) &&
+            ((pepSCertAlias != null) || (pepECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                    "create-meta-template-exception-pep-null-with-cert-alias"),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
@@ -235,6 +291,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 addServiceProviderTemplate(pw, url);
             }
+            if (pdpAlias != null) {
+                addPDPTemplate(pw, url);
+            }
+            if (pepAlias != null) {
+                addPEPTemplate(pw, url);
+            }
             pw.write("</EntityDescriptor>\n");
             
             if (!isWebBased) {
@@ -262,7 +324,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void addIdentityProviderTemplate(Writer pw, String url)
-    throws IOException, SAML2MetaException {
+        throws IOException, SAML2MetaException {
         String maStr = buildMetaAliasInURI(idpAlias);
         
         pw.write(
@@ -420,6 +482,24 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 );
     }
     
+    private void addPDPTemplate(Writer pw, String url)
+        throws IOException, SAML2MetaException {
+        String maStr = buildMetaAliasInURI(pdpAlias);
+        pw.write(
+            "    <XACMLPDPDescriptor " + 
+            "protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n" +
+            "         <XACMLAuthzService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"" +
+            " Location=\"" + url + "/saml2query" + maStr + "\"/>\n" +
+            "    </XACMLPDPDescriptor>\n");
+    }
+    
+    private void addPEPTemplate(Writer pw, String url)
+        throws IOException, SAML2MetaException {
+        pw.write("    <XACMLAuthzDecisionQueryDescriptor " +
+            "wantAssertionSigned=\"true\" " +
+            "protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"/>\n");
+    }
+    
     private static String buildMetaAliasInURI(String alias) {
         return "/" + SAML2MetaManager.NAME_META_ALIAS_IN_URI + alias;
     }
@@ -448,6 +528,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             if (spAlias != null) {
                 buildSPConfigTemplate(pw);
             }
+            if (pdpAlias != null) {
+                buildPDPConfigTemplate(pw);
+            }
+            if (pepAlias != null) {
+                buildPEPConfigTemplate(pw);
+            }
             
             pw.write("</EntityConfig>\n");
             
@@ -474,7 +560,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void buildIDPConfigTemplate(Writer pw)
-    throws IOException {
+        throws IOException {
         pw.write(
                 "    <IDPSSOConfig metaAlias=\"" + idpAlias + "\">\n" +
                 "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
@@ -553,7 +639,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void buildSPConfigTemplate(Writer pw)
-    throws IOException {
+        throws IOException {
         pw.write(
                 "    <SPSSOConfig metaAlias=\"" + spAlias + "\">\n" +
                 "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
@@ -651,6 +737,66 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
                 "       </Attribute>\n" +
                 "    </SPSSOConfig>\n");
+    }
+    
+    private void buildPDPConfigTemplate(Writer pw)
+        throws IOException {
+        pw.write(
+                "    <XACMLPDPConfig metaAlias=\"" + pdpAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
+                "            <Value>" + pdpSCertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+                "            <Value>" + pdpECertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER +  "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD +  "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
+                "        </Attribute>\n" +
+                "   </XACMLPDPConfig>\n");
+    }
+    
+    private void buildPEPConfigTemplate(Writer pw)
+        throws IOException {
+        pw.write(
+                "   <XACMLAuthzDecisionQueryConfig metaAlias=\"" + pepAlias + "\">\n" +
+                "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS + "\">\n" +
+                "            <Value>" + pepSCertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+                "            <Value>" + pepECertAlias + "</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_ON +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_USER +  "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.BASIC_AUTH_PASSWD +  "\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + SAML2Constants.WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED +  "\">\n" +
+                "            <Value>false</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
+                "        </Attribute>\n" +            
+                "  </XACMLAuthzDecisionQueryConfig>\n");
     }
     
     private void buildIDFFConfigTemplate()

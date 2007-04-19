@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.3 2007-02-16 02:02:53 veiming Exp $
+ * $Id: SAML2Test.java,v 1.4 2007-04-19 18:28:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,15 @@ import com.sun.identity.cli.DevNullOutputWriter;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.test.common.TestBase;
@@ -111,6 +119,12 @@ public class SAML2Test extends TestBase {
                 FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER,
             "/idp",
             CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_PDP,
+            "/pdp",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
+                FedCLIConstants.ARGUMENT_PEP,
+            "/pep",
+            CLIConstants.PREFIX_ARGUMENT_LONG +
                 FedCLIConstants.SPECIFICATION_VERSION,
             FedCLIConstants.SAML2_SPECIFICATION
         };
@@ -149,6 +163,29 @@ public class SAML2Test extends TestBase {
         EntityDescriptorElement entity = mgr.getEntityDescriptor(
             "/", NAME_IDP);
         assert (entity != null);
+
+        SPSSODescriptorElement spElt = mgr.getSPSSODescriptor("/", NAME_IDP);
+        assert(spElt != null);
+        IDPSSODescriptorElement idpElt = mgr.getIDPSSODescriptor("/", NAME_IDP);
+        assert(idpElt != null);
+        XACMLPDPDescriptorElement pdpElt = mgr.getPolicyDecisionPointDescriptor(
+            "/", NAME_IDP);
+        assert(pdpElt != null);
+        XACMLAuthzDecisionQueryDescriptorElement pepElt =
+            mgr.getPolicyEnforcementPointDescriptor("/", NAME_IDP);
+        assert(pepElt != null);
+
+        IDPSSOConfigElement idpConfig = mgr.getIDPSSOConfig("/", NAME_IDP);
+        assert(idpConfig != null);
+        SPSSOConfigElement spConfig = mgr.getSPSSOConfig("/", NAME_IDP);
+        assert(spConfig != null);
+        XACMLPDPConfigElement pdpConfig = mgr.getPolicyDecisionPointConfig(
+            "/", NAME_IDP);
+        assert(pdpConfig != null);
+        XACMLAuthzDecisionQueryConfigElement pepConfig = 
+            mgr.getPolicyEnforcementPointConfig("/", NAME_IDP);
+        assert(pepConfig != null);
+
         exiting("importEntity");
     }
 

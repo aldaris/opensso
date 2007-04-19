@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.6 2007-04-12 16:08:07 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.7 2007-04-19 18:28:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -590,6 +590,16 @@ public interface SAML2Constants {
     public String IDP_ROLE = "IDPRole";
     
     /**
+     * Policy Decision Point Role
+     */
+    String PDP_ROLE = "PDPRole";
+
+    /**
+     * Policy Enforcement Point Role
+     */
+    String PEP_ROLE = "PEPRole";
+    
+    /**
      * Unknown Role
      */
     public String UNKNOWN_ROLE = "UNKNOWN";
@@ -877,4 +887,16 @@ public interface SAML2Constants {
      * Namespace declaration for XML Digital Signature
      */
     public String NS_XMLSIG = "http://www.w3.org/2000/09/xmldsig#";
+
+    /**
+     * Want XACML Authorization Decision Query Signed.
+     */
+    String WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED =
+        "wantXACMLAuthzDecisionQuerySigned";
+
+    /**
+     * Want Authorization Decision Response Signed.
+     */
+    String WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED =
+        "wantXACMLAuthzDecisionResponseSigned";
 }

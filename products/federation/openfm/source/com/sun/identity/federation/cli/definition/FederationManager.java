@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.11 2007-04-17 04:50:04 veiming Exp $
+ * $Id: FederationManager.java,v 1.12 2007-04-19 18:28:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,17 +63,25 @@ public class FederationManager {
         optionalOptions={
             "metadata|m|s|c|Specify file name for the standard metadata to be created.",
             "extended|x|s|c|Specify file name for the standard metadata to be created.",
-            "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm>/<unique string without /> for non-root realm or /<unique string without /> for root realm.",
-            "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm>/<unique string without /> for non-root realm or /<unique string without /> for root realm.",
+            "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
+            "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
+            "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
+            "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
+            "xacmlpdpscertalias|t|s|Policy decision point signing certificate alias",
+            "xacmlpepscertalias|k|s|Policy enforcement point signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
             "idpecertalias|g|s|Identity provider encryption certificate alias.",
+            "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
+            "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "create-meta-template-exception-idp-sp-null=Identity or Service Provider are required.",
-            "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias is provided with Identity Provider Name.",
-            "create-meta-template-exception-dp-null-with-cert-alias=Service Provider Certificate Alias is provided with Service Provider Name.",
+            "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point are required.",
+            "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias is provided without Identity Provider Name.",
+            "create-meta-template-exception-dp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
+            "create-meta-template-exception-pdp-null-with-cert-alias=Policy Decision Point Certificate Alias is provided without Policy Decision Point Name",
+            "create-meta-template-exception-pep-null-with-cert-alias=Policy Enforcement Point Certificate Alias is provided without Policy Enforcement Point Name",
             "create-meta-template-exception-protocol-not-found=Protocol is not found in configuration file.",
             "create-meta-template-exception-host-not-found=Host is not found in configuration file.",
             "create-meta-template-exception-port-not-found=Port is not found in configuration file.",
