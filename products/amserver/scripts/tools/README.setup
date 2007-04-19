@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.1 2007-04-17 19:39:41 ww203982 Exp $
+   $Id: README.setup,v 1.2 2007-04-19 18:26:33 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -81,8 +81,6 @@ Step 3: After step 2 is performed, the CLI's can be run under the following
 |----locale
 |      |
 |      |----*.properties (properties file for binaries)
-|      |
-|      |----*.dtd (schema needed for xml parser)
 |
 |----setup (setup script for linux and unix)
 |

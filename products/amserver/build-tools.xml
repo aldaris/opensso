@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.1 2007-04-17 19:39:40 ww203982 Exp $
+   $Id: build-tools.xml,v 1.2 2007-04-19 18:26:32 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,7 +92,6 @@
         <copy todir="${amadm.locale.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amserver.built.res.dir}" includes="*.properties"/>
-            <fileset dir="${amserver.dtd.xml.dir}" includes="*.dtd"/>
         </copy>
         <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">

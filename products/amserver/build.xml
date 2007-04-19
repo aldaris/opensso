@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.46 2007-04-18 00:28:39 kevinserwin Exp $
+   $Id: build.xml,v 1.47 2007-04-19 18:26:32 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -271,6 +271,7 @@
         <delete dir="${amserver.classes.dir}"/>
         <delete dir="${amserver.built.dir}"/>
         <delete file="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
+        <delete file="${amserver.unittest.dir}/source/com/sun/identity/cli/stubs/MockCLI.java"/>
         <delete file="${tracker}" />
     </target>
 
