@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.4 2007-04-09 23:22:58 goodearth Exp $
+ * $Id: LDAPConnectionPool.java,v 1.5 2007-04-19 02:51:41 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,7 +217,7 @@ public class LDAPConnectionPool {
      * @param connOptions connection option parameters set at serviceconfig
      * @exception LDAPException on failure to create connections 
      */ 
-    private LDAPConnectionPool(
+    public LDAPConnectionPool(
         String name,
         int min,
         int max,
