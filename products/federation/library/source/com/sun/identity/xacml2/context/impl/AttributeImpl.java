@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.1 2007-03-15 06:19:08 bhavnab Exp $
+ * $Id: AttributeImpl.java,v 1.2 2007-04-19 19:14:28 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,6 @@ public class AttributeImpl implements Attribute {
     String issuer = null;
     private List values ;
     private boolean isMutable = true;
-    private static XACML2Constants xc;
 
    /** 
     * Default constructor
@@ -120,7 +119,7 @@ public class AttributeImpl implements Attribute {
         }
 
       // First check that we're really parsing an Attribute
-      if (! element.getLocalName().equals(xc.ATTRIBUTE)) {
+      if (! element.getLocalName().equals(XACML2Constants.ATTRIBUTE)) {
             XACML2SDKUtils.debug.error(
                 "AttributeImpl.processElement(): invalid root element");
             throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
@@ -129,10 +128,12 @@ public class AttributeImpl implements Attribute {
       NamedNodeMap attrs = element.getAttributes();
 
       try {
-          id = new URI(attrs.getNamedItem(xc.ATTRIBUTE_ID).getNodeValue());
+          id = new URI(attrs.getNamedItem(XACML2Constants.ATTRIBUTE_ID)
+                .getNodeValue());
       } catch (Exception e) {
           throw new XACML2Exception("AttributeImpl.processElement():"
-              + "Error parsing required attribute "+ xc.ATTRIBUTE_ID +"in "
+              + "Error parsing required attribute "
+              + XACML2Constants.ATTRIBUTE_ID +"in "
               + "AttributeType"); // TODO add i18n
       }
       if (id == null) {
@@ -141,10 +142,12 @@ public class AttributeImpl implements Attribute {
           // TODO add 118n debug
       }
       try {
-          type = new URI(attrs.getNamedItem(xc.DATATYPE).getNodeValue());
+          type = new URI(attrs.getNamedItem(XACML2Constants.DATATYPE)
+                .getNodeValue());
       } catch (Exception e) {
           throw new XACML2Exception("AttributeImpl.processElement():"
-              + "Error parsing required attribute "+ xc.DATATYPE +"in "
+              + "Error parsing required attribute "
+              + XACML2Constants.DATATYPE +"in "
               + "DataType:"+e.getMessage()); // TODO add i18n
       }
       if (type == null) {
@@ -153,13 +156,14 @@ public class AttributeImpl implements Attribute {
           // TODO add 118n debug
       }
       try {
-          Node issuerNode = attrs.getNamedItem(xc.ISSUER);
+          Node issuerNode = attrs.getNamedItem(XACML2Constants.ISSUER);
           if (issuerNode != null)
               issuer = issuerNode.getNodeValue();
   
       } catch (Exception e) {
           throw new XACML2Exception("AttributeImpl.processElement():"
-              + "Error parsing optional attribute "+ xc.ISSUER +"in "
+              + "Error parsing optional attribute "
+              + XACML2Constants.ISSUER +"in "
               + "AttributeType:"+e.getMessage()); // TODO add i18n
       }
  
@@ -169,7 +173,7 @@ public class AttributeImpl implements Attribute {
           Node node = nodes.item(i);
           if ((node.getNodeType() == Node.ELEMENT_NODE) ||
               (node.getNodeType() == Node.ATTRIBUTE_NODE)) {
-              if (node.getLocalName().equals(xc.ATTRIBUTE_VALUE)) {
+              if (node.getLocalName().equals(XACML2Constants.ATTRIBUTE_VALUE)) {
                   if (values == null) {
                       values = new ArrayList();
                   }
@@ -315,6 +319,50 @@ public class AttributeImpl implements Attribute {
         }
     }
 
+    /**
+     * Sets the attribute values for this object
+     *
+     * @param values a <code>List</code> containing <code>String<code> values
+     * of this object.
+     *
+     * @exception XACML2Exception if the object is immutable
+     * An object is considered <code>immutable</code> if <code>
+     * makeImmutable()</code> has been invoked on it. It can
+     * be determined by calling <code>isMutable</code> on the object.
+     */
+    public void setAttributeStringValues(List stringValues) 
+            throws XACML2Exception {
+        if (!isMutable) {
+            throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
+                "objectImmutable"));
+        }
+        if (this.values == null) {
+            this.values = new ArrayList();
+        }
+        if (stringValues == null || stringValues.isEmpty()) {
+            throw new XACML2Exception(
+                XACML2SDKUtils.bundle.getString("null_not_valid")); 
+
+        }
+        for (int i=0; i < stringValues.size(); i++) {
+            String value = (String)(stringValues.get(i));
+            StringBuffer sb = new StringBuffer(200);
+            sb.append("<").append(XACML2Constants.ATTRIBUTE_VALUE)
+                    .append(">").append(value)
+                    .append("</").append(XACML2Constants.ATTRIBUTE_VALUE)
+                    .append(">\n");
+            Document document = XMLUtils.toDOMDocument(sb.toString(),
+                    XACML2SDKUtils.debug);
+            Element element = null;
+            if (document != null) {
+                element = document.getDocumentElement();
+            }
+            if (element != null) {
+                this.values.add(element);
+            }
+        }
+    }
+
    /**
     * Returns a <code>String</code> representation of this object
     * @param includeNSPrefix Determines whether or not the namespace qualifier
@@ -329,32 +377,40 @@ public class AttributeImpl implements Attribute {
     {
         StringBuffer sb = new StringBuffer(2000);
         StringBuffer NS = new StringBuffer(100);
+
+        //TODO: remove the following 2 lines
+        includeNSPrefix = false;
+        declareNS = false;
+
         String appendNS = "";
         if (declareNS) {
-            NS.append(xc.CONTEXT_DECLARE_STR).append(xc.SPACE);
-            NS.append(xc.NS_XML).append(xc.SPACE).append(
-                    xc.CONTEXT_SCHEMA_LOCATION);
+            NS.append(XACML2Constants.CONTEXT_DECLARE_STR)
+            .append(XACML2Constants.SPACE);
+            NS.append(XACML2Constants.NS_XML).append(XACML2Constants.SPACE)
+            .append(XACML2Constants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            appendNS = xc.CONTEXT_PREFIX;
+            appendNS = XACML2Constants.CONTEXT_PREFIX;
         }
-        sb.append("<").append(appendNS).append(xc.ATTRIBUTE).append(NS);
-        sb.append(xc.SPACE);
+        sb.append("<").append(appendNS).append(XACML2Constants.ATTRIBUTE)
+                .append(NS);
+        sb.append(XACML2Constants.SPACE);
         if (type != null) {
-            sb.append(xc.DATATYPE).append("=").append("\"").
+            sb.append(XACML2Constants.DATATYPE).append("=").append("\"").
                     append(type.toString());
-            sb.append("\"").append(xc.SPACE);
+            sb.append("\"").append(XACML2Constants.SPACE);
         }
         if (id != null) {
-            sb.append(xc.ATTRIBUTE_ID).append("=").append("\"").
+            sb.append(XACML2Constants.ATTRIBUTE_ID).append("=").append("\"").
                     append(id.toString());
-            sb.append("\"").append(xc.SPACE);
+            sb.append("\"").append(XACML2Constants.SPACE);
         }
         if (issuer != null) {
-            sb.append(xc.ISSUER).append("=").append("\"").append(issuer).
+            sb.append(XACML2Constants.ISSUER).append("=").append("\"")
+                    .append(issuer).
                     append("\"");
         }
-        sb.append(xc.END_TAG);
+        sb.append(XACML2Constants.END_TAG);
         int length = 0;
         String xmlString = null;
         if (values != null && !values.isEmpty()) {
@@ -369,8 +425,6 @@ public class AttributeImpl implements Attribute {
                     int index = NS.indexOf("=");
                     String namespaceName = NS.substring(0, index);
                     String namespaceURI = NS.substring(index+1);
-                    System.out.println("namespace:"+namespaceName);
-                    System.out.println("namespaceURI:"+namespaceURI);
                     if (value.getNamespaceURI() == null) {
                         value.setAttribute(namespaceName, namespaceURI);
                         // does not seem to work to append namespace TODO
@@ -379,12 +433,14 @@ public class AttributeImpl implements Attribute {
                 sb.append(XMLUtils.print(value));
              }
         } else { // values are empty put empty tags
-             sb.append("<").append(appendNS).append(xc.ATTRIBUTE_VALUE);
+             sb.append("<").append(appendNS)
+                     .append(XACML2Constants.ATTRIBUTE_VALUE);
              sb.append(NS).append(">").append("\n"); 
-             sb.append("</").append(appendNS).append(xc.ATTRIBUTE_VALUE);
+             sb.append("</").append(appendNS)
+                     .append(XACML2Constants.ATTRIBUTE_VALUE);
              sb.append(">").append("\n");
         }
-        sb.append("</").append(appendNS).append(xc.ATTRIBUTE);
+        sb.append("\n</").append(appendNS).append(XACML2Constants.ATTRIBUTE);
         sb.append(">\n");
         return  sb.toString();
     }

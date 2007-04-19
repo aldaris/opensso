@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusDetailImpl.java,v 1.1 2007-03-24 01:25:58 dillidorai Exp $
+ * $Id: StatusDetailImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -167,7 +167,7 @@ public class StatusDetailImpl implements StatusDetail {
                     element.setAttribute(nsName, nsUri);
                 }
             }
-            xmlString = XMLUtils.print(element);
+            xmlString = XMLUtils.print(element) + "\n";
         } else {
             StringBuffer sb = new StringBuffer(2000);
             sb.append("<").append(nsPrefix)
@@ -178,7 +178,7 @@ public class StatusDetailImpl implements StatusDetail {
                     .append("</")
                     .append(nsPrefix)
                     .append(XACML2Constants.STATUS_DETAIL_ELEMENT)
-                    .append(">");
+                    .append(">\n");
             xmlString = sb.toString();
         }
         return xmlString;

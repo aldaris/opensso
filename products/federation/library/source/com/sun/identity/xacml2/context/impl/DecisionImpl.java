@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionImpl.java,v 1.1 2007-03-24 01:25:54 dillidorai Exp $
+ * $Id: DecisionImpl.java,v 1.2 2007-04-19 19:14:28 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,7 @@ public class DecisionImpl implements Decision {
      * Constructs a <code>Decision</code> object from an XML string
      *
      * @param xml string representing a <code>Decision</code> object
-     * @throws SAMLException if the XML string could not be processed
+     * @throws XACML2Exception if the XML string could not be processed
      */
     public DecisionImpl(String xml) throws XACML2Exception {
         Document document = XMLUtils.toDOMDocument(xml, XACML2SDKUtils.debug);
@@ -90,7 +90,7 @@ public class DecisionImpl implements Decision {
      * @param element XML DOM element representing a <code>Decision</code> 
      * object
      *
-     * @throws SAMLException if the DOM element could not be processed
+     * @throws XACML2Exception if the DOM element could not be processed
      */
     public DecisionImpl(Element element) throws XACML2Exception {
         processElement(element);
@@ -166,7 +166,7 @@ public class DecisionImpl implements Decision {
             sb.append(value);
         }
         sb.append("</").append(nsPrefix).append(XACML2Constants.DECISION_ELEMENT)
-                .append(">");
+                .append(">\n");
         return sb.toString();
     }
 

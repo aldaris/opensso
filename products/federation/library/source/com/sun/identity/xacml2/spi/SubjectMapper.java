@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectMapper.java,v 1.2 2007-03-24 01:26:07 dillidorai Exp $
+ * $Id: SubjectMapper.java,v 1.3 2007-04-19 19:14:30 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,15 +63,13 @@ public interface SubjectMapper {
      * This is the main API which does the mapping of XACML <code>Subject</code>
      * to native subject ( native being subject in the context of the federation
      * manager).
-     * @param xacmlContextSubject <code>xacml-context:Subject</code> from the
+     * @param xacmlContextSubjects <code>xacml-context:Subject</code>s from the
      * <code>xacml-context:Request</code> object.
-     * @return <code>Object</code> representing the native mapped subject 
-     * which in the default implementation would be a <code>SSOToken</code>.
-     * if mapping is successful. In case of failure to match on the part of the
-     * PDP, then null would be returned.
+     * @return OpenSSO <code>SSOToken</code> representing the mapped native subject. 
+     * If the mapping fails, <code>null<code> would be returned
      * @exception XACML2Exception if an error conditions occurs.
      */
-    public Object mapToNativeSubject(Subject xacmlContextSubject) 
+    public Object mapToNativeSubject(Subject[] xacmlContextSubjects) 
             throws XACML2Exception;
 
 }

@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceContent.java,v 1.1 2007-03-15 06:19:07 bhavnab Exp $
+ * $Id: ResourceContent.java,v 1.2 2007-04-19 19:14:28 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.context;

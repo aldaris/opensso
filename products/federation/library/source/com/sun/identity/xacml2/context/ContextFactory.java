@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ContextFactory.java,v 1.3 2007-04-03 17:00:34 pawand Exp $
+ * $Id: ContextFactory.java,v 1.4 2007-04-19 19:14:28 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 package com.sun.identity.xacml2.context;
 
 import org.w3c.dom.Element;
+import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.common.XACML2SDKUtils;
 import com.sun.identity.xacml2.common.XACML2Constants;
@@ -35,8 +36,6 @@ import com.sun.identity.xacml2.context.impl.EnvironmentImpl;
 import com.sun.identity.xacml2.context.impl.RequestImpl;
 import com.sun.identity.xacml2.context.impl.ResourceImpl;
 import com.sun.identity.xacml2.context.impl.SubjectImpl;
-import com.sun.identity.xacml2.saml2.impl.XACMLAuthzDecisionQueryImpl;
-import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
 import com.sun.identity.xacml2.context.impl.DecisionImpl;
 import com.sun.identity.xacml2.context.impl.StatusCodeImpl;
 import com.sun.identity.xacml2.context.impl.StatusDetailImpl;
@@ -44,6 +43,11 @@ import com.sun.identity.xacml2.context.impl.StatusImpl;
 import com.sun.identity.xacml2.context.impl.StatusMessageImpl;
 import com.sun.identity.xacml2.context.impl.ResponseImpl;
 import com.sun.identity.xacml2.context.impl.ResultImpl;
+import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
+import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
+import com.sun.identity.xacml2.saml2.impl.XACMLAuthzDecisionQueryImpl;
+import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionStatement;
+import com.sun.identity.xacml2.saml2.impl.XACMLAuthzDecisionStatementImpl;
 
 /**
  * This is the factory class to obtain instances of the objects defined
@@ -56,7 +60,6 @@ import com.sun.identity.xacml2.context.impl.ResultImpl;
 public class ContextFactory {
 
     private static ContextFactory instance = new ContextFactory();
-    
 
     /**
      * Sole Constructor.
@@ -449,10 +452,12 @@ public class ContextFactory {
      * @return a new instance of <code>XACMLAuthzDecisionQuery</code>.
      * @throws XACML2Exception if error occurs while processing the
      *                <code>Element</code>.
+     * @throws SAMLL2Exception if not able to create the base saml
+     * <code>RequestAbstract</code>
      * 
      */
     public XACMLAuthzDecisionQuery createXACMLAuthzDecisionQuery(Element elem)
-                throws XACML2Exception
+                throws XACML2Exception, SAML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
             XACML2Constants.XACMLAUTHZDECISIONQUERY, elem);
@@ -471,10 +476,12 @@ public class ContextFactory {
      * <code>XACMLAuthzDecisionQuery</code>.
      * @return a new instance of <code>XACMLAuthzDecisionQuery</code>.
      * @throws XACML2Exception if error occurs while processing the XML string.
+     * @throws SAMLL2Exception if not able to create the base saml
+     * <code>RequestAbstract</code>
      * 
      */
     public XACMLAuthzDecisionQuery createXACMLAuthzDecisionQuery(String xml)
-                throws XACML2Exception
+                throws XACML2Exception, SAML2Exception
     {
         Object obj = XACML2SDKUtils.getObjectInstance(
             XACML2Constants.XACMLAUTHZDECISIONQUERY, xml);
@@ -482,6 +489,66 @@ public class ContextFactory {
             return new XACMLAuthzDecisionQueryImpl(xml);
         } else {
             return (XACMLAuthzDecisionQuery) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>XACMLAuthzDecisionStatement</code>.
+     * Caller may need to call setters of the class to populate the object.
+     *
+     * @return a new instance of <code>XACMLAuthzDecisionStatement</code>.
+     * 
+     */
+    public XACMLAuthzDecisionStatement createXACMLAuthzDecisionStatement() {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+                XACML2Constants.XACML_AUTHZ_DECISION_STATEMENT);
+        if (obj == null) {
+            return new XACMLAuthzDecisionStatementImpl();
+        } else {
+            return (XACMLAuthzDecisionStatement) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>XACMLAuthzDecisionStatement</code>. 
+     * The return object is immutable.
+     *
+     * @param elem an <code>Element</code> representation of
+     *                <code>XACMLAuthzDecisionStatement</code>.
+     * @return a new instance of <code>XACMLAuthzDecisionStatement</code>.
+     * @throws XACML2Exception if error occurs while processing the
+     *                <code>Element</code>.
+     * 
+     */
+    public XACMLAuthzDecisionStatement createXACMLAuthzDecisionStatement(
+            Element elem) throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.XACML_AUTHZ_DECISION_STATEMENT, elem);
+        if (obj == null) {
+            return new XACMLAuthzDecisionStatementImpl(elem);
+        } else {
+            return (XACMLAuthzDecisionStatement) obj;
+        }
+    }
+
+    /**
+     * Returns a new instance of <code>XACMLAuthzDecisionStatement</code>. 
+     * The return object is immutable.
+     *
+     * @param xml an XML String representing 
+     * <code>XACMLAuthzDecisionStatement</code>.
+     * @return a new instance of <code>XACMLAuthzDecisionStatement</code>.
+     * @throws XACML2Exception if error occurs while processing the XML string.
+     * 
+     */
+    public XACMLAuthzDecisionStatement createXACMLAuthzDecisionStatement(String xml)
+            throws XACML2Exception {
+        Object obj = XACML2SDKUtils.getObjectInstance(
+            XACML2Constants.XACML_AUTHZ_DECISION_STATEMENT, xml);
+        if (obj == null) {
+            return new XACMLAuthzDecisionStatementImpl(xml);
+        } else {
+            return (XACMLAuthzDecisionStatement) obj;
         }
     }
 
@@ -792,7 +859,7 @@ public class ContextFactory {
      * 
      */
     public StatusMessage createStatusMessage(Element elem)
-        throws XACML2Exception {
+            throws XACML2Exception {
         Object object = XACML2SDKUtils.getObjectInstance(
                 XACML2Constants.STATUS_MESSAGE_ELEMENT, elem);
         if (object == null) {

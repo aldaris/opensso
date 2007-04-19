@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResultImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionStatementImpl.java,v 1.1 2007-04-19 19:14:27 dillidorai Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.xacml2.context.impl;
+
+
+package com.sun.identity.xacml2.saml2.impl;
 
 import com.sun.identity.shared.xml.XMLUtils;
 
@@ -30,12 +32,11 @@ import com.sun.identity.xacml2.common.XACML2Constants;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.common.XACML2SDKUtils;
 import com.sun.identity.xacml2.context.ContextFactory;
-import com.sun.identity.xacml2.context.Result;
-import com.sun.identity.xacml2.context.Decision;
-import com.sun.identity.xacml2.context.Status;
+import com.sun.identity.xacml2.context.Request;
+import com.sun.identity.xacml2.context.Response;
+import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionStatement;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -44,44 +45,62 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * The <code>Result</code> element contains decision, status and obligations
- * per resource id
+ * This is the default implementation of interface <code>XACMLAuthzDecisionStatement</code>.
  *
- * <p/>
- * schema
+ * <p>
  * <pre>
- *  &lt;xs:complexType name="ResultType">
+ * &lt;xs:element name="XACMLAuthzDecisionStatement"
+ *          type="xacml-saml:XACMLAuthzDecisionStatementType"/>
+ * &lt;xs:complexType name="XACMLAuthzDecisionStatementType">
+ *   &lt;xs:complexContent>
+ *     &lt;xs:extension base="saml:StatementAbstractType">
  *      &lt;xs:sequence>
- *          &lt;xs:element ref="xacml-context:Decision"/>
- *          &lt;xs:element ref="xacml-context:Status" minOccurs="0"/>
- *          &lt;xs:element ref="xacml:Obligations" minOccurs="0"/>
+ *        &lt;xs:element ref="xacml-context:Response"/>
+ *        &lt;xs:element ref="xacml-context:Request"  minOccurs="0"/>
  *      &lt;xs:sequence>
- *      &lt;xs:attribute name="ResourceId" type="xs:string" use="optional"/>
- *  &lt;xs:complexType>
- *
+ *    &lt;xs:extension>
+ *  &lt;xs:complexContent>
+ *&lt;xs:complexType>
  * </pre>
+ * </p>
+ *
+ * Schema for the base type is
+ * <p>
+ * <pre>
+ * &lt;complexType name="StatementAbstractType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * </p>
+ *
  */
-public class ResultImpl implements Result {
+public class XACMLAuthzDecisionStatementImpl 
+        implements XACMLAuthzDecisionStatement {
 
-    private String resourceId = null; //optional
-    private Decision decision = null; //required
-    private Status status = null; //optional
-
+    private Response response = null;
+    private Request request = null;
     private boolean mutable = true;
 
-    /** 
-     * Constructs a <code>Result</code> object
+    /**
+     * Constructs an <code>XACMLAuthzDecisionStatement</code> object
      */
-    public ResultImpl() throws XACML2Exception {
+    public XACMLAuthzDecisionStatementImpl() {
     }
 
     /** 
-     * Constructs a <code>Result</code> object from an XML string
+     * Constructs an <code>XACMLAuthzDecisionStatementImpl</code> object 
+     * from an XML string
      *
-     * @param xml string representing a <code>Result</code> object
-     * @throws SAMLException if the XML string could not be processed
+     * @param xml string representing an 
+     * <code>XACMLAuthzDecisionStatementImpl</code> object
+     *
+     * @exception XACML2Exception if the XML string could not be processed
      */
-    public ResultImpl(String xml) throws XACML2Exception {
+    public XACMLAuthzDecisionStatementImpl(String xml)
+            throws XACML2Exception {
         Document document = XMLUtils.toDOMDocument(xml, XACML2SDKUtils.debug);
         if (document != null) {
             Element rootElement = document.getDocumentElement();
@@ -89,143 +108,134 @@ public class ResultImpl implements Result {
             makeImmutable();
         } else {
             XACML2SDKUtils.debug.error(
-                "ResultImpl.processElement(): invalid XML input");
+                "DecisionImpl.processElement(): invalid XML input");
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
                 "errorObtainingElement"));
         }
     }
 
     /** 
-     * Constructs a <code>Result</code> object from an XML DOM element
+     * Constructs an <code>XACMLAuthzDecisionStatementImpl</code> object 
+     * from an XML DOM element
      *
-     * @param element XML DOM element representing a <code>Result</code> 
+     * @param element XML DOM element representing an 
+     * <code>XACMLAuthzDecisionStatementImpl</code> 
      * object
      *
-     * @throws SAMLException if the DOM element could not be processed
+     * @throws XACML2Exception if the DOM element could not be processed
      */
-    public ResultImpl(Element element) throws XACML2Exception {
+    public XACMLAuthzDecisionStatementImpl(org.w3c.dom.Element element)
+            throws XACML2Exception {
         processElement(element);
         makeImmutable();
     }
 
     /**
-     * Returns <code>resourceId</code> of this object
-     * @return  <code>resourceId</code> of this object
-     */
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    /**
-     * Sets <code>resourceId</code> of this object
-     * @param  <code>resourceId</code> of this object
-     * @exception XACML2Exception if the object is immutable
-     */
-    public void setResourceId(String resourceId) throws XACML2Exception {
-        if (!mutable) {
-            throw new XACML2Exception(
-                XACML2SDKUtils.bundle.getString("objectImmutable"));
-        }
-        this.resourceId = resourceId;
-    }
-
-    /**
-     * Returns the <code>Decision</code> of this object
+     * Returns <code>Response</code> element of this object
      *
-     * @return the <code>Decision</code> of this object
+     * @return the <code>Response</code> element of this object
      */
-    public Decision getDecision() {
-        return decision;
-    }
+   public Response getResponse() {
+       return response;
+   }
 
     /**
-     * Sets the <code>Decision</code> of this object
-     *
-     * @exception XACML2Exception if the object is immutable
-     * 
-     */
-    public void setDecision(Decision decision) throws XACML2Exception {
-        if (!mutable) {
-            throw new XACML2Exception(
-                XACML2SDKUtils.bundle.getString("objectImmutable"));
-        }
-        if (decision == null) {
-            throw new XACML2Exception(
-                XACML2SDKUtils.bundle.getString("null_not_valid")); //add i18n
-        }
-        this.decision = decision;
-    }
-
-    /**
-     * Returns the <code>Status</code> of this object
-     *
-     * @return the <code>Status</code> of this object
-     */
-    public Status getStatus() {
-        return status; 
-    }
-
-    /**
-     * Sets the <code>Status</code> of this object
+     * Sets <code>Response</code> element of this object
+     * @parameter response XACML context <code>Response</code> element to be 
+     * set in this object
      *
      * @exception XACML2Exception if the object is immutable
      */
-    public void setStatus(Status status) throws XACML2Exception {
-        if (!mutable) {
+   public void setResponse(Response response) 
+        throws XACML2Exception {
+           if (!mutable) {
             throw new XACML2Exception(
                 XACML2SDKUtils.bundle.getString("objectImmutable"));
         }
-        this.status = status;
+
+        if (response == null) {
+            throw new XACML2Exception(
+                XACML2SDKUtils.bundle.getString("null_not_valid")); //i18n
+        }
+
+        this.response = response; 
     }
 
+
+    /**
+     * Returns <code>Request</code> element of this object
+     *
+     * @return the <code>Request</code> element of this object
+     */
+   public Request getRequest() {
+       return request;
+   }
+
+    /**
+     * Sets <code>Request</code> element of this object
+     * @parameter request XACML context <code>Request</code> element to be 
+     * set in this object
+     *
+     * @exception XACML2Exception if the object is immutable
+     */
+   public void setRequest(Request request) 
+        throws XACML2Exception {
+           if (!mutable) {
+            throw new XACML2Exception(
+                XACML2SDKUtils.bundle.getString("objectImmutable"));
+        }
+        this.request = request; 
+   }
 
    /**
-    * Returns a string representation of this object
+    * Returns a string representation
     *
-    * @return a string representation of this object
+    * @return a string representation
     * @exception XACML2Exception if conversion fails for any reason
     */
     public String toXMLString() throws XACML2Exception {
-        return this.toXMLString(true, false);
+        //top level element, declare namespace
+        return toXMLString(true, true);
     }
 
    /**
-    * Returns a string representation of this object
+    * Returns a string representation
     * @param includeNSPrefix Determines whether or not the namespace qualifier
     *        is prepended to the Element when converted
     * @param declareNS Determines whether or not the namespace is declared
     *        within the Element.
-    * @return a string representation of this object
+    * @return a string representation
     * @exception XACML2Exception if conversion fails for any reason
      */
     public String toXMLString(boolean includeNSPrefix, boolean declareNS)
             throws XACML2Exception {
         StringBuffer sb = new StringBuffer(2000);
-        String nsDeclaration = "";
-        String nsPrefix = "";
+        String xacmlSamlNsPrefix = "";
+        String xacmlSamlNsDeclaration = "";
         if (declareNS) {
-            nsDeclaration = XACML2Constants.CONTEXT_DECLARE_STR;
+            xacmlSamlNsDeclaration = XACML2Constants.XACML_SAML_NS_DECLARATION;
         }
         if (includeNSPrefix) {
-            nsPrefix = XACML2Constants.CONTEXT_PREFIX;
+            xacmlSamlNsPrefix = XACML2Constants.XACML_SAML_NS_PREFIX;
         }
-        sb.append("<").append(nsPrefix).append(XACML2Constants.RESULT_ELEMENT)
-                .append(nsDeclaration);
-        sb.append(" ");
-        if (resourceId != null) {
-            sb.append(XACML2Constants.RESOURCE_ID_ATTRIBUTE)
-                .append("=")
-                .append(XACML2SDKUtils.quote(resourceId));
-        }
-        sb.append(">\n");
-        if (decision != null) {
-            sb.append(decision.toXMLString(includeNSPrefix, false));
-        }
-        if (status != null) {
-            sb.append(status.toXMLString(includeNSPrefix, false));
-        }
-        sb.append("</").append(nsPrefix).append(XACML2Constants.RESULT_ELEMENT)
+        sb.append("\n<")
+                .append(XACML2Constants.SAML_NS_PREFIX)
+                .append(XACML2Constants.SAML_STATEMENT)
+                .append(XACML2Constants.SAML_NS_DECLARATION)
+                .append(XACML2Constants.XSI_TYPE_XACML_AUTHZ_DECISION_STATEMENT)
+                .append(XACML2Constants.XSI_NS_DECLARATION)
+                .append(XACML2Constants.XACML_SAML_NS_DECLARATION)
                 .append(">\n");
+        if (response != null) {
+            sb.append(response.toXMLString(includeNSPrefix, true));
+        }
+        if (request != null) {
+            sb.append(request.toXMLString(includeNSPrefix, true));
+        }
+        sb.append("</")
+                .append(XACML2Constants.SAML_NS_PREFIX)
+                .append(XACML2Constants.SAML_STATEMENT)
+                .append(">");
         return sb.toString();
     }
 
@@ -238,50 +248,37 @@ public class ResultImpl implements Result {
     public boolean isMutable() {
         return mutable;
     }
-    
 
    /**
     * Makes the object immutable
     */
     public void makeImmutable() {
-        if (mutable) {
-            if (decision != null) {
-                decision.makeImmutable();
-            }
-            if (status != null) {
-                status.makeImmutable();
-            }
-            mutable = false;
-        }
+        mutable = false;
     }
 
     private void processElement(Element element) throws XACML2Exception {
         if (element == null) {
             XACML2SDKUtils.debug.error(
-                "ResultImpl.processElement(): invalid root element");
+                "DecisionImpl.processElement(): invalid root element");
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACML2SDKUtils.debug.error(
-                "ResultImpl.processElement(): local name missing");
+                "DecisionImpl.processElement(): local name missing");
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACML2Constants.RESULT_ELEMENT)) {
+        if (!elemName.equals(XACML2Constants.SAML_STATEMENT)) {
             XACML2SDKUtils.debug.error(
-                "ResultImpl.processElement(): invalid local name " + elemName);
+                    "DecisionImpl.processElement(): invalid local name " 
+                    + elemName);
             throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
-                "invalid_local_name"));
+                    "invalid_local_name"));
         }
-
-        String resourceIdValue 
-                = element.getAttribute(XACML2Constants.RESOURCE_ID_ATTRIBUTE);
-        if ((resourceIdValue != null) || (resourceIdValue.length() != 0)) {
-            resourceId = resourceIdValue;
-        } 
+        //TODO: add a check for xsi:type
 
         NodeList nodes = element.getChildNodes();
         int numOfNodes = nodes.getLength();
@@ -309,12 +306,12 @@ public class ResultImpl implements Result {
                 "invalid_child_count")); //FIXME: add i18n key
         }
 
-        //process decision element
+        //process Response element
         Element firstChild = (Element)childElements.get(0);
         String firstChildName = firstChild.getLocalName();
-        if (firstChildName.equals(XACML2Constants.DECISION_ELEMENT)) {
-            decision =  ContextFactory.getInstance()
-                    .createDecision(firstChild);
+        if (firstChildName.equals(XACML2Constants.RESPONSE_ELEMENT)) {
+            response =  ContextFactory.getInstance()
+                    .createResponse(firstChild);
         } else {
             XACML2SDKUtils.debug.error(
                 "ResultImpl.processElement(): invalid first child element: " 
@@ -323,13 +320,13 @@ public class ResultImpl implements Result {
                 "invalid_first_child")); //FIXME: add i18n key
         }
 
-        //process status element
+        //process Request element
         if (childCount > 1) {
             Element secondChild = (Element)childElements.get(1);
             String secondChildName = secondChild.getLocalName();
-            if (secondChildName.equals(XACML2Constants.STATUS_ELEMENT)) {
-                status =  ContextFactory.getInstance()
-                        .createStatus(secondChild);
+            if (secondChildName.equals(XACML2Constants.REQUEST)) {
+                request =  ContextFactory.getInstance()
+                        .createRequest(secondChild);
 
             } else {
                 XACML2SDKUtils.debug.error(
@@ -348,6 +345,7 @@ public class ResultImpl implements Result {
                     "invalid_third_child")); //FIXME: add i18n key
             }
         }
+
     }
 
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseImpl.java,v 1.1 2007-03-24 01:25:55 dillidorai Exp $
+ * $Id: ResponseImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,7 +163,8 @@ public class ResponseImpl implements Response {
     * @exception XACML2Exception if conversion fails for any reason
     */
     public String toXMLString() throws XACML2Exception {
-        return this.toXMLString(true, false);
+        //top level element, declare namespace
+        return this.toXMLString(true, true);
     }
 
    /**
@@ -193,11 +194,11 @@ public class ResponseImpl implements Response {
             length = results.size();
             for (int i = 0; i < length; i++) {
                 Result result = (Result)results.get(i);
-                sb.append(result.toXMLString(includeNSPrefix, declareNS));
+                sb.append(result.toXMLString(includeNSPrefix, false));
             }
         }
         sb.append("</").append(nsPrefix)
-                .append(XACML2Constants.RESPONSE_ELEMENT).append(">");
+                .append(XACML2Constants.RESPONSE_ELEMENT).append(">\n");
         return sb.toString();
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestImpl.java,v 1.2 2007-04-03 16:59:08 pawand Exp $
+ * $Id: RequestImpl.java,v 1.3 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,12 +66,11 @@ import org.w3c.dom.NodeList;
  *@supported.all.api
  */
 public class RequestImpl implements Request {
+
     private List subjects = new ArrayList();
     private List resources = new ArrayList();
     private Action action = null;
     private Environment env = null;
-    private Subject subject;
-    private Resource resource;
     private boolean isMutable = true;
     
     private  static Set supportedSubjectCategory = new HashSet();
@@ -181,7 +180,7 @@ public class RequestImpl implements Request {
         throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
             "missing_subelement_subject"));
         }
-        subject = factory.getInstance().createSubject((Element)child);
+        Subject subject = factory.getInstance().createSubject((Element)child);
         if (!supportedSubjectCategory.contains(
             subject.getSubjectCategory().toString())) 
         {
@@ -213,8 +212,9 @@ public class RequestImpl implements Request {
                                 XACML2SDKUtils.bundle.getString(
                                     "element_out_of_place")); //TODO i18n string
                         } else { // found another resource
-                            resource = factory.getInstance().createResource((
-                                Element)child);
+                            Resource resource = factory.getInstance()
+                                    .createResource((
+                                    Element)child);
                             resources.add(resource);
                         }
                     } else if (childName.equals(XACML2Constants.SUBJECT)) {
@@ -223,8 +223,9 @@ public class RequestImpl implements Request {
                             subjects.add(subject);
                     } else { // childname is resource
                             resourceFound = true;
-                            resource = factory.getInstance().createResource((
-                                Element)child);
+                            Resource resource = factory.getInstance()
+                                    .createResource((
+                                    Element)child);
                             resources.add(resource);
                     }
             } else if ((childName != null) && (childName.
@@ -422,20 +423,18 @@ public class RequestImpl implements Request {
         if (includeNSPrefix) {
             nsDeclaration = XACML2Constants.CONTEXT_PREFIX;
         }
-        sb.append("<").append(nsDeclaration).append(XACML2Constants.REQUEST).
+        sb.append("\n<").append(nsDeclaration).append(XACML2Constants.REQUEST).
             append(namespaceBuffer);
         sb.append(">");
         int length = 0;
         if (subjects != null && !subjects.isEmpty()) {
-            sb.append("\n");
             length = subjects.size();
             for (int i = 0; i < length; i++) {
                 Subject sub = (Subject)subjects.get(i);
-                sb.append(subject.toXMLString(includeNSPrefix, false));
+                sb.append(sub.toXMLString(includeNSPrefix, false));
             }
         }
         if (resources != null && !resources.isEmpty()) {
-            sb.append("\n");
             length = resources.size();
             for (int i = 0; i < length; i++) {
                 Resource resource = (Resource)resources.get(i);
@@ -443,11 +442,9 @@ public class RequestImpl implements Request {
             }
         }
         if (action != null) {
-            sb.append("\n");
             sb.append(action.toXMLString(includeNSPrefix, false));
         }
         if (env != null) {
-            sb.append("\n");
             sb.append(env.toXMLString(includeNSPrefix, false));
         }
         sb.append("</").append(nsDeclaration).append(XACML2Constants.REQUEST).

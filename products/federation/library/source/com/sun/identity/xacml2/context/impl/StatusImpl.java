@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusImpl.java,v 1.1 2007-03-24 01:25:59 dillidorai Exp $
+ * $Id: StatusImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -213,16 +213,16 @@ public class StatusImpl implements Status {
         sb.append("<").append(nsPrefix).append(XACML2Constants.STATUS_ELEMENT).
                 append(nsDeclaration).append(">\n");
         if (statusCode != null) {
-            sb.append(statusCode.toXMLString(includeNSPrefix, declareNS)); 
+            sb.append(statusCode.toXMLString(includeNSPrefix, false)); 
         }
         if (statusMessage != null) {
-            sb.append(statusMessage.toXMLString(includeNSPrefix, declareNS)); 
+            sb.append(statusMessage.toXMLString(includeNSPrefix, false)); 
         }
         if (statusDetail != null) {
-            sb.append(statusDetail.toXMLString(includeNSPrefix, declareNS));
+            sb.append(statusDetail.toXMLString(includeNSPrefix, false));
         }
         sb.append("</").append(nsPrefix).append(XACML2Constants.STATUS_ELEMENT)
-                .append(">");
+                .append(">\n");
         return sb.toString();
     }
 

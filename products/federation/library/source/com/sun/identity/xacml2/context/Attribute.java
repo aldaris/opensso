@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.1 2007-03-15 06:19:06 bhavnab Exp $
+ * $Id: Attribute.java,v 1.2 2007-04-19 19:14:27 dillidorai Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.context;
@@ -123,6 +123,19 @@ public interface Attribute {
      * be determined by calling <code>isMutable</code> on the object.
      */
     public void setAttributeValues(List attrValues) throws XACML2Exception;
+
+    /**
+     * Sets the attribute values for this object
+     *
+     * @param values a <code>List</code> containing <code>String<code> values
+     * of this object.
+     *
+     * @exception XACML2Exception if the object is immutable
+     * An object is considered <code>immutable</code> if <code>
+     * makeImmutable()</code> has been invoked on it. It can
+     * be determined by calling <code>isMutable</code> on the object.
+     */
+    public void setAttributeStringValues(List attrValues) throws XACML2Exception;
 
    /**
     * Returns a <code>String</code> representation of this object

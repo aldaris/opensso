@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusMessageImpl.java,v 1.1 2007-03-24 01:26:00 dillidorai Exp $
+ * $Id: StatusMessageImpl.java,v 1.2 2007-04-19 19:14:30 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,7 +158,7 @@ public class StatusMessageImpl implements StatusMessage {
                 .append(value)
                 .append("</").append(nsPrefix)
                 .append(XACML2Constants.STATUS_MESSAGE_ELEMENT)
-                .append(">");
+                .append(">\n");
         return sb.toString();
     }
 

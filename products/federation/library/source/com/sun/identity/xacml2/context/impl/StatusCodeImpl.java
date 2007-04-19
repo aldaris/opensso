@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusCodeImpl.java,v 1.1 2007-03-24 01:25:57 dillidorai Exp $
+ * $Id: StatusCodeImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -221,7 +221,7 @@ public class StatusCodeImpl implements StatusCode {
                             .append(">");
         }
         sb.append("</").append(nsPrefix).append(XACML2Constants.STATUS_CODE_ELEMENT)
-                .append(">");
+                .append(">\n");
         return sb.toString();
     }
 

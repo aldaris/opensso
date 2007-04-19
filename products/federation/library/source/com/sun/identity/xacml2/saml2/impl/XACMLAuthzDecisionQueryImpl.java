@@ -17,33 +17,43 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.2 2007-04-03 17:02:09 pawand Exp $
+ * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.3 2007-04-19 19:14:27 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.saml2.impl;
 
+import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.protocol.impl.RequestAbstractImpl;
+import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.DateUtils;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.common.XACML2Constants;
 import com.sun.identity.xacml2.common.XACML2SDKUtils;
 import com.sun.identity.xacml2.context.Request;
 import com.sun.identity.xacml2.saml2.XACMLAuthzDecisionQuery;
 import com.sun.identity.xacml2.context.ContextFactory;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import java.text.ParseException;
 
 /**
  * The <code>XACMLAuthzDecisionQueryImpl</code> is an impelmentation
- * of <code>XACMLAuthzDecisionQuery</code> interface which is a SAML Query
- * that extends Protocol schema. It allows a PEP to submit an XACML Request
- * Context in a  SAML Request along with other information. This element is
- * an alternative to SAML-defined <code><samlp:AuthzDecisionQuery></code>
- * that allows a PEP to use the full capabilities of an XACML PDP.
+ * of <code>XACMLAuthzDecisionQuery</code> interface.
+ *
+ * The <code>XACMLAuthzDecisionQuery</code> element is a SAML Query that 
+ * extends SAML Protocol schema type <code>RequestAbstractType</code>.
+ * It allows an XACML PEP to submit an XACML Request Context in a  SAML
+ * Query along with other information. This element is an alternative to 
+ * SAML defined <code><samlp:AuthzDecisionQuery></code> that allows an 
+ * XACML2 PEP  to communicate with an XACML PDP using SAML2 protocol.
  * <p>
  * <pre>
  *&lt;xs:element name="XACMLAuthzDecisionQuery"
@@ -66,41 +76,40 @@ import org.w3c.dom.NodeList;
  *  &lt;xs:complexContent>
  *&lt;xs:complexType>
  * </pre>
+ *
+ * Schema for Base:
+ * <pre>
+ *  &lt;complexType name="RequestAbstractType" abstract="true">
+ *      &lt;sequence>
+ *          &lt;element ref="saml:Issuer" minOccurs="0"/>
+ *          &lt;element ref="ds:Signature" minOccurs="0"/>
+ *          &lt;element ref="samlp:Extensions" minOccurs="0"/>
+ *      &lt;sequence>
+ *      &lt;attribute name="ID" type="ID" use="required"/>
+ *      &lt;attribute name="Version" type="string" use="required"/>
+ *      &lt;attribute name="IssueInstant" type="dateTime" use="required"/>
+ *      &lt;attribute name="Destination" type="anyURI" use="optional"/>
+ *  	&lt;attribute name="Consent" type="anyURI" use="optional"/>
+ *  &lt;complexType>
+ * </pre>
  *@supported.all.api
  */
-public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
+public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl 
+        implements XACMLAuthzDecisionQuery {
     
+    //TODO: need to reimplement toXML, toXML, process,
+    //makeImmutable, isMutable methods
     private boolean inputContextOnly = false;
     private boolean returnContext = false;
-    private boolean isMutable = true;
     private Request request;
+
+    private String xmlString;
+
     /**
      * Default constructor
      */
     public XACMLAuthzDecisionQueryImpl() {
-    }
-    
-    /**
-     * This constructor is used to build <code>XACMLAuthzDecisionQuery</code>
-     * object from a XML string.
-     *
-     * @param xml A <code>java.lang.String</code> representing
-     *        an <code>XACMLAuthzDecisionQuery</code> object
-     * @exception XACML2Exception if it could not process the XML string
-     */
-    public XACMLAuthzDecisionQueryImpl(String xml) throws XACML2Exception {
-        Document document = XMLUtils.toDOMDocument(xml, XACML2SDKUtils.debug);
-        if (document != null) {
-            Element rootElement = document.getDocumentElement();
-            processElement(rootElement);
-            makeImmutable();
-        } else {
-            XACML2SDKUtils.debug.error(
-                    "XACMLAuthzDecisionQueryImpl.processElement(): invalid XML "
-                     +"input");
-            throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
-                    "errorObtainingElement"));
-        }
+        isMutable = true;
     }
     
     /**
@@ -112,74 +121,37 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
      *        DOM tree for <code>XACMLAuthzDecisionQuery</code> object
      * @exception XACML22Exception if it could not process the Element
      */
-    public XACMLAuthzDecisionQueryImpl(Element element) throws XACML2Exception {
-        processElement(element);
-        makeImmutable();
+    public XACMLAuthzDecisionQueryImpl(Element element) throws SAML2Exception {
+        parseDOMElement(element);
+        if (isSigned) {
+            signedXMLString = XMLUtils.print(element);
+        }
     }
     
-    private void processElement(Element element) throws XACML2Exception {
-        String value = null;
-        if (element == null) {
-            XACML2SDKUtils.debug.error(
-                    "XACMLAuthzDecisionQueryImpl.processElement():invalid root "
-                    +"element");
-            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
-                    "invalid_element"));
-        }
-        
-        // First check that we're really parsing an XACMLAuthzDecisionQuery
-        if (! element.getLocalName().equals(XACML2Constants.
-            XACMLAUTHZDECISIONQUERY)) {
-            XACML2SDKUtils.debug.error(
-                    "XACMLAuthzDecisionQueryImpl.processElement():invalid root "
-                    +"element");
-            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
-                    "missing_local_name"));
-        }
-        
-        // now we get the request
-        NodeList nodes = element.getChildNodes();
-        ContextFactory factory = ContextFactory.getInstance();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if ((node.getNodeType() == Node.ELEMENT_NODE) ||
-                    (node.getNodeType() == Node.ATTRIBUTE_NODE)) {
-                if (node.getLocalName().equals(XACML2Constants.REQUEST)) {
-                    request = factory.getInstance().
-                        createRequest((Element)node);
-                }
+    /**
+     * This constructor is used to build <code>XACMLAuthzDecisionQuery</code>
+     * object from a XML string.
+     *
+     * @param xml A <code>java.lang.String</code> representing
+     *        an <code>XACMLAuthzDecisionQuery</code> object
+     * @exception XACML2Exception if it could not process the XML string
+     */
+    public XACMLAuthzDecisionQueryImpl(String xml) throws SAML2Exception {
+        Document document = XMLUtils.toDOMDocument(xml, XACML2SDKUtils.debug);
+        if (document != null) {
+            Element rootElement = document.getDocumentElement();
+            parseDOMElement(rootElement);
+            this.xmlString = xml;
+            if(isSigned) {
+                signedXMLString = xml;
             }
+        } else {
+            XACML2SDKUtils.debug.error(
+                    "XACMLAuthzDecisionQueryImpl.processElement(): invalid XML "
+                     +"input");
+            throw new XACML2Exception(XACML2SDKUtils.bundle.getString(
+                    "errorObtainingElement"));
         }
-        // make sure we got a request
-        if (request == null) {
-            throw new XACML2Exception(
-                    XACML2SDKUtils.bundle.getString("null_not_valid"));
-        }
-        
-        NamedNodeMap attrs = element.getAttributes();
-        try {
-            returnContext = Boolean.valueOf(attrs.getNamedItem(
-                XACML2Constants.RETURNCONTEXT).
-                    getNodeValue()).booleanValue();
-        } catch (Exception e) {
-            throw new XACML2Exception("XACMLAuthzDecisionQueryImpl."
-                    +"processElement():"
-                    + "Error parsing optional attribute " 
-                    + XACML2Constants.RETURNCONTEXT+":" 
-                    +e.getMessage());
-        }
-        try {
-            inputContextOnly = Boolean.valueOf(attrs.getNamedItem(
-                    XACML2Constants.INPUTCONTEXTONLY).getNodeValue()).
-                    booleanValue();
-        } catch (Exception e) {
-            throw new XACML2Exception("XACMLAuthzDecisionQueryImpl."
-                    +"processElement():"
-                    + "Error parsing optional attribute "
-                    + XACML2Constants.INPUTCONTEXTONLY 
-                    +":"+e.getMessage());
-        }
-        
     }
     
     
@@ -290,12 +262,23 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
     public void setRequest(Request request) throws XACML2Exception {
         if (request == null) {
             throw new XACML2Exception(
+                    //TODO i18n string
                     XACML2SDKUtils.bundle.getString("null_not_valid")); 
-                   //TODO i18n string
         }
         this.request = request;
     }
     
+    /**
+     * Returns a string representation of this object
+     *
+     * @return a string representation of this object
+     * @exception XACML2Exception if conversion fails for any reason
+     */
+    public String toXMLString() throws XACML2Exception {
+        //top level element
+        return toXMLString(true, true);
+    }
+
     /**
      * Returns a <code>String</code> representation of this object
      * @param includeNSPrefix Determines whether or not the namespace qualifier
@@ -307,61 +290,267 @@ public class XACMLAuthzDecisionQueryImpl implements XACMLAuthzDecisionQuery {
      */
     public String toXMLString(boolean includeNSPrefix, boolean declareNS)
     throws XACML2Exception {
-        StringBuffer sb = new StringBuffer(2000);
-        StringBuffer NS = new StringBuffer(100);
-        String appendNS = "";
+	if (isSigned && signedXMLString != null) {
+	    return signedXMLString;
+	}
+
+	//validateData();
+        StringBuffer sb = new StringBuffer(1000);
+        String nsPrefix = "";
+        String nsDeclaration = "";
         if (declareNS) {
-            NS.append(XACML2Constants.SAMLP_DECLARE_STR).
-                append(XACML2Constants.SPACE);
-            NS.append(XACML2Constants.CONTEXT_DECLARE_STR);
-            NS.append(XACML2Constants.SPACE).append(XACML2Constants.NS_XML).
-                append(XACML2Constants.SPACE);
+            nsDeclaration = XACML2Constants.SAMLP_NS_DECLARATION;
         }
         if (includeNSPrefix) {
-            appendNS = XACML2Constants.SAMLP_PREFIX;
+            nsPrefix = XACML2Constants.SAMLP_NS_PREFIX;
         }
-        sb.append("<").append(appendNS).append(XACML2Constants.
-            XACMLAUTHZDECISIONQUERY).append(XACML2Constants.SPACE).
-            append(NS);
-        sb.append(XACML2Constants.SPACE).append(XACML2Constants.
-            INPUTCONTEXTONLY).append("=").append("\"");
-        sb.append(Boolean.toString(inputContextOnly));
-        sb.append("\"").append(XACML2Constants.SPACE);
-        sb.append(XACML2Constants.RETURNCONTEXT).append("=").append("\"");
-        sb.append(Boolean.toString(returnContext));
-        sb.append("\"").append(XACML2Constants.SPACE).append(">").append("\n");
-        sb.append(request.toXMLString(true,false)).append("\n");
-        sb.append("</").append(appendNS).
-            append(XACML2Constants.XACMLAUTHZDECISIONQUERY);
-        sb.append(">\n");
+
+        sb.append("\n<")
+                .append(XACML2Constants.SAMLP_NS_PREFIX)
+                .append(XACML2Constants.SAMLP_REQUEST_ABSTRACT)
+                .append(XACML2Constants.SAMLP_NS_DECLARATION)
+                .append(XACML2Constants.XSI_TYPE_XACML_AUTHZ_DECISION_QUERY)
+                .append(XACML2Constants.XSI_NS_DECLARATION)
+                .append(XACML2Constants.XACML_SAMLP_NS_DECLARATION)
+            .append(XACML2Constants.SPACE)
+            .append(XACML2Constants.XACML_SAMLP_NS_PREFIX)
+            .append(XACML2Constants.INPUTCONTEXTONLY).append("=")
+            .append(XACML2SDKUtils.quote(Boolean.toString(inputContextOnly)))
+            .append(XACML2Constants.SPACE)
+            .append(XACML2Constants.XACML_SAMLP_NS_PREFIX)
+            .append(XACML2Constants.RETURNCONTEXT).append("=")
+            .append(XACML2SDKUtils.quote(Boolean.toString(returnContext)))
+            .append(XACML2Constants.SPACE)
+            .append("ID").append("=")
+            .append(XACML2SDKUtils.quote(requestId))
+            .append(XACML2Constants.SPACE)
+            .append("Version").append("=")
+            .append(XACML2SDKUtils.quote(version))
+            .append(XACML2Constants.SPACE)
+            .append("IssueInstant").append("=")
+            .append(XACML2SDKUtils.quote(DateUtils.toUTCDateFormat(
+                    issueInstant)));
+	if (destinationURI != null && destinationURI.trim().length() != 0) {
+	    sb.append(" Destination=\"").append(destinationURI).
+		append("\"");
+	}
+	if (consent != null && consent.trim().length() != 0) {
+	    sb.append(" Consent=\"").append(consent).append("\"");
+	}
+	sb.append(">\n");
+        try {
+	if (nameID != null) {
+	    sb.append(nameID.toXMLString(includeNSPrefix, declareNS));
+	}
+	if (signatureString != null) {
+	    sb.append(signatureString);
+	}
+	if (extensions != null) {
+	    sb.append(extensions.toXMLString(includeNSPrefix, declareNS));
+	}
+        } catch (Exception e) {
+        }
+
+        if (request != null) {
+            sb.append(request.toXMLString(true, true)).append("\n");
+        }
+
+        sb.append("\n</")
+                .append(XACML2Constants.SAMLP_NS_PREFIX)
+                .append(XACML2Constants.SAMLP_REQUEST_ABSTRACT)
+                .append(">\n");
         return  sb.toString();
     }
     
-    /**
-     * Returns a string representation of this object
-     *
-     * @return a string representation of this object
-     * @exception XACML2Exception if conversion fails for any reason
-     */
-    public String toXMLString() throws XACML2Exception {
-        return toXMLString(true, false);
+    
+    private void parseDOMElement(Element element) throws SAML2Exception {
+        //TODO: fix
+        String value = null;
+        if (element == null) {
+            XACML2SDKUtils.debug.error(
+                    "XACMLAuthzDecisionQueryImpl.processElement(): "
+                    + "invalid root element");
+            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
+                    "invalid_element"));
+        }
+        
+        // First check that we're really parsing an XACMLAuthzDecisionQuery
+        if (! element.getLocalName().equals(
+            XACML2Constants.SAMLP_REQUEST_ABSTRACT)) {
+            XACML2SDKUtils.debug.error(
+                    "XACMLAuthzDecisionQueryImpl.processElement(): "
+                    + "invalid root element");
+            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
+                    "missing_local_name"));
+        }
+        
+        //TODO: check for xsi:type=
+        
+        // now we get the request
+        NodeList nodes = element.getChildNodes();
+        ContextFactory factory = ContextFactory.getInstance();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if ((node.getNodeType() == Node.ELEMENT_NODE) ||
+                    (node.getNodeType() == Node.ATTRIBUTE_NODE)) {
+                if (node.getLocalName().equals(XACML2Constants.REQUEST)) {
+                    if (request != null) {
+                        //validation error, throw error
+                    } else {
+                        request = factory.getInstance().createRequest(
+                                (Element)node);
+                    }
+                }
+            }
+        }
+
+        // make sure we got a request
+        if (request == null) {
+            //throw new XACML2Exception(
+             //       XACML2SDKUtils.bundle.getString("null_not_valid"));
+        }
+        
+        System.out.println("ReturnContex:" + element.getAttributeNS(
+                XACML2Constants.XACML_SAMLP_NS,
+                XACML2Constants.RETURNCONTEXT));
+        System.out.println("InputContextOnly:" + element.getAttributeNS(
+                XACML2Constants.XACML_SAMLP_NS,
+                XACML2Constants.INPUTCONTEXTONLY));
+        String returnContextString = element.getAttributeNS(
+                XACML2Constants.XACML_SAMLP_NS,
+                XACML2Constants.RETURNCONTEXT);
+        if (returnContextString != null) {
+            returnContext = Boolean.valueOf(returnContextString).booleanValue();
+        }
+
+        String inputContextOnlyString = element.getAttributeNS(
+                XACML2Constants.XACML_SAMLP_NS,
+                XACML2Constants.INPUTCONTEXTONLY);
+        if (inputContextOnlyString != null) {
+            inputContextOnly = Boolean.valueOf(inputContextOnlyString)
+                    .booleanValue();
+        }
+
+        NamedNodeMap attrs = element.getAttributes();
+
+        //TODO: change the baseclass impl and call super.parse...
+
+        //parse the attributes of base class RequestAbstract
+        NamedNodeMap atts = ((Node)element).getAttributes();
+        if (atts != null) {
+	    int length = atts.getLength();
+            for (int i = 0; i < length; i++) {
+                Attr attr = (Attr) atts.item(i);
+                String attrName = attr.getName();
+                String attrValue = attr.getValue().trim();
+                if (attrName.equals("ID")) {
+                    requestId = attrValue;
+                } else if (attrName.equals("Version")) {
+                    version = attrValue;
+                } else if (attrName.equals("IssueInstant")) {
+		    try {
+			issueInstant = DateUtils.stringToDate(attrValue);
+		    } catch (ParseException pe) {
+			throw new XACML2Exception(pe.getMessage());
+		    }
+                } else if (attrName.equals("Destination")) {
+		    destinationURI = attrValue;
+		}
+            }
+        }
+
+	//parse the elements of base class RequestAbstract
+	NodeList nl = element.getChildNodes();
+        Node child;
+        String childName;
+        int length = nl.getLength();
+        for (int i = 0; i < length; i++) {
+            child = nl.item(i);
+            if ((childName = child.getLocalName()) != null) {
+                if (childName.equals("Issuer")) {
+		    if (nameID != null) {
+			if (XACML2SDKUtils.debug.messageEnabled()) {
+                            XACML2SDKUtils.debug.message(
+                                "ArtifactResolveImpl.parse"
+                                + "Element: included more than one Issuer.");
+                        }
+                        throw new XACML2Exception(
+                            XACML2SDKUtils.bundle.getString("moreElement"));
+		    }
+		    if (signatureString != null ||
+			extensions != null )
+		    {
+			if (XACML2SDKUtils.debug.messageEnabled()) {
+                            XACML2SDKUtils.debug.message(
+                                    "ArtifactResolveImpl.parse"	
+                                    + "Element:wrong sequence.");
+			}
+			throw new XACML2Exception(
+			    XACML2SDKUtils.bundle.getString("schemaViolation"));
+		    }
+		    nameID = AssertionFactory.getInstance().createIssuer(
+			(Element) child);
+		} else if (childName.equals("Signature")) {
+		    if (signatureString != null) {
+			if (XACML2SDKUtils.debug.messageEnabled()) {
+                            XACML2SDKUtils.debug.message(
+                                "ArtifactResolveImpl.parse"
+                                + "Element:included more than one Signature.");
+                        }
+                        throw new XACML2Exception(
+                            XACML2SDKUtils.bundle.getString("moreElement"));
+		    }
+		    if (extensions != null ) {
+			if (XACML2SDKUtils.debug.messageEnabled()) {
+                            XACML2SDKUtils.debug.message(
+                                    "ArtifactResolveImpl.parse"	
+                                    + "Element:wrong sequence.");
+			}
+			throw new XACML2Exception(
+			    XACML2SDKUtils.bundle.getString("schemaViolation"));
+		    }
+		    signatureString = XMLUtils.print((Element) child);
+		    isSigned = true;
+		} else if (childName.equals("Extensions")) {
+		    if (extensions != null) {
+			if (XACML2SDKUtils.debug.messageEnabled()) {
+                            XACML2SDKUtils.debug.message(
+                                "ArtifactResolveImpl.parse"
+                                + "Element:included more than one Extensions.");
+                        }
+                        throw new XACML2Exception(
+                            XACML2SDKUtils.bundle.getString("moreElement"));
+		    }
+		    extensions = ProtocolFactory.getInstance().createExtensions(
+			(Element) child);
+		} else if (childName.equals("Request")) {
+                    //no action, it has been processd already
+		} else {
+		    if (XACML2SDKUtils.debug.messageEnabled()) {
+                        XACML2SDKUtils.debug.message(
+                            "XACMLAuthzDecisionQueryImpl.parseDOMElement"
+                            + "Element: Invalid element:" + childName);
+                    }
+                    throw new XACML2Exception(
+                        XACML2SDKUtils.bundle.getString("invalidElement"));
+		}
+	    }
+	}
+
+        validateData();
+        
     }
     
     /**
      * Makes the object immutable
      */
     public void makeImmutable() {
-        //TODO
+        //TODO: fix
     }
     
-    /**
-     * Checks if the object is mutable
-     *
-     * @return <code>true</code> if the object is mutable,
-     *         <code>false</code> otherwise
-     */
-    public boolean isMutable() {
-        return isMutable;
+    protected void validateData() throws SAML2Exception {
+        //TODO: fix or remove?
+        super.validateData();
     }
-    
+
 }

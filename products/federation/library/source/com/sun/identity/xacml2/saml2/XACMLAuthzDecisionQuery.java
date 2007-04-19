@@ -17,24 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQuery.java,v 1.1 2007-03-15 06:19:10 bhavnab Exp $
+ * $Id: XACMLAuthzDecisionQuery.java,v 1.2 2007-04-19 19:14:27 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.xacml2.saml2;
 
+import com.sun.identity.saml2.protocol.RequestAbstract;
 import com.sun.identity.xacml2.common.XACML2Exception;
 import com.sun.identity.xacml2.context.Request;
 
 
 /**
- * The <code>XACMLAuthzDecisionQuery</code> element is a SAML Query that extends
- * Protocol schema. It allows a PEP to submit an XACML Request Context in a  SAML
- * Request along with other information. This element is an alternative to 
- * SAML-defined <code><samlp:AuthzDecisionQuery></code> that alloaws a PEP to
- * use the full capabilities of an XACML PDP.
+ * The <code>XACMLAuthzDecisionQuery</code> element is a SAML Query that 
+ * extends SAML Protocol schema type <code>RequestAbstractType</code>.
+ * It allows an XACML PEP to submit an XACML Request Context in a  SAML
+ * Query along with other information. This element is an alternative to 
+ * SAML defined <code><samlp:AuthzDecisionQuery></code> that allows an 
+ * XACML2 PEP  to communicate with an XACML PDP using SAML2 protocol.
  * <p>
+ * Schema:
  * <pre>
  *&lt;xs:element name="XACMLAuthzDecisionQuery"
  *         type="XACMLAuthzDecisionQueryType"/>
@@ -56,9 +59,26 @@ import com.sun.identity.xacml2.context.Request;
  *  &lt;xs:complexContent>
  *&lt;xs:complexType>
  * </pre>
+ *
+ * Schema for base:
+ * <pre>
+ *  &lt;complexType name="RequestAbstractType" abstract="true">
+ *      &lt;sequence>
+ *          &lt;element ref="saml:Issuer" minOccurs="0"/>
+ *          &lt;element ref="ds:Signature" minOccurs="0"/>
+ *          &lt;element ref="samlp:Extensions" minOccurs="0"/>
+ *      &lt;sequence>
+ *      &lt;attribute name="ID" type="ID" use="required"/>
+ *      &lt;attribute name="Version" type="string" use="required"/>
+ *      &lt;attribute name="IssueInstant" type="dateTime" use="required"/>
+ *      &lt;attribute name="Destination" type="anyURI" use="optional"/>
+ *  	&lt;attribute name="Consent" type="anyURI" use="optional"/>
+ *  &lt;complexType>
+ * </pre>
+ *
  *@supported.all.api
  */
-public interface XACMLAuthzDecisionQuery {
+public interface XACMLAuthzDecisionQuery extends RequestAbstract {
 
     /**
      * Returns the XML attribute boolean value which governs the
@@ -104,7 +124,7 @@ public interface XACMLAuthzDecisionQuery {
      * <code.Request</code> element. If this attribite is "true" then the
      * PDP SHALL include the <code>xacml-context:Request</code> element in the
      * <code>XACMLAuthzDecisionStatement</code> element in the 
-     * <code>XACMLResponse</code>.  The <code>xacml-context:Request</code> SHALL 
+     * <code>XACMLResponse</code>.  The <code>xacml-context:Request</code> SHALL
      * include all the attributes supplied by the PEP in the
      * <code>AuthzDecisionQuery</code> which were used in making 
      * the authz decision. Other addtional attributes which may have been used 

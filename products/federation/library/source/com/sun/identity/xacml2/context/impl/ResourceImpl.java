@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceImpl.java,v 1.1 2007-03-15 06:19:09 bhavnab Exp $
+ * $Id: ResourceImpl.java,v 1.2 2007-04-19 19:14:29 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,6 @@ public class ResourceImpl implements Resource {
     private List  attributes;
     private ResourceContent resourceContent;
     private boolean isMutable = true;
-    private static XACML2Constants xc;
 
    /** 
     * Default constructor
@@ -121,7 +120,7 @@ public class ResourceImpl implements Resource {
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(xc.RESOURCE)) {
+        if (!elemName.equals(XACML2Constants.RESOURCE)) {
             XACML2SDKUtils.debug.error(
                 "ResourceImpl.processElement(): invalid local name " +
                  elemName);
@@ -132,13 +131,7 @@ public class ResourceImpl implements Resource {
         // starts processing subelements
         NodeList nodes = element.getChildNodes();
         int numOfNodes = nodes.getLength();
-        if (numOfNodes <= 0) {
-             XACML2SDKUtils.debug.error(
-                "ResourceImpl.processElement(): no attributes or resource "
-                +"content");
-            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
-                "missing_subelements"));
-        } else { 
+        if (numOfNodes > 0) {
             ContextFactory factory = ContextFactory.getInstance();
             for (int i=0; i< numOfNodes; i++) {
                 Node child = (Node)nodes.item(i);
@@ -146,18 +139,27 @@ public class ResourceImpl implements Resource {
                     String childName = child.getLocalName();
                     // The child nodes should be <Attribute> or 
                     // <ResourceContent>
-                    if (childName.equals(xc.ATTRIBUTE)) {
+                    if (childName.equals(XACML2Constants.ATTRIBUTE)) {
                         if (attributes == null) {
                             attributes = new ArrayList();
                         }
                         Attribute attribute = factory.getInstance().
                             createAttribute((Element)child);
                         attributes.add(attribute);
-                    } else if (childName.equals(xc.RESOURCE_CONTENT)) {
+                    } else if (childName.equals(
+                            XACML2Constants.RESOURCE_CONTENT)) {
                         // do nothing for time being TODO
                     }
                 }
             }
+         } else {
+             /*
+             XACML2SDKUtils.debug.error(
+                "ResourceImpl.processElement(): no attributes or resource "
+                +"content");
+            throw new XACML2Exception( XACML2SDKUtils.bundle.getString(
+                "missing_subelements"));
+            */
          }
     }
 
@@ -249,15 +251,17 @@ public class ResourceImpl implements Resource {
         StringBuffer NS = new StringBuffer(100);
         String appendNS = "";
         if (declareNS) {
-            NS.append(xc.CONTEXT_DECLARE_STR).append(xc.SPACE);
-            NS.append(xc.NS_XML).append(xc.SPACE).append(
-                    xc.CONTEXT_SCHEMA_LOCATION);
+            NS.append(XACML2Constants.CONTEXT_DECLARE_STR)
+                    .append(XACML2Constants.SPACE);
+            NS.append(XACML2Constants.NS_XML).append(XACML2Constants.SPACE)
+                    .append(XACML2Constants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
             appendNS = XACML2Constants.CONTEXT_PREFIX;
         }
-        sb.append("<").append(appendNS).append(xc.RESOURCE).append(NS);
-        sb.append(xc.END_TAG);
+        sb.append("<").append(appendNS).append(XACML2Constants.RESOURCE)
+                .append(NS);
+        sb.append(XACML2Constants.END_TAG);
         int length = 0;
         if (attributes != null) {
             sb.append("\n");
@@ -270,7 +274,7 @@ public class ResourceImpl implements Resource {
         if (resourceContent != null) {
                 // do nothing , TODO later
         }
-        sb.append("</").append(appendNS).append(xc.RESOURCE);
+        sb.append("</").append(appendNS).append(XACML2Constants.RESOURCE);
         sb.append(">\n");
         return sb.toString();
     }
@@ -285,7 +289,7 @@ public class ResourceImpl implements Resource {
         return  toXMLString(true, false);
     }
 
-   /**
+   /*
     * Makes the object immutable
     */
     public void makeImmutable() {// TODO 

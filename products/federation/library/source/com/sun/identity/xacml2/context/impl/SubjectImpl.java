@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectImpl.java,v 1.1 2007-03-15 06:19:09 bhavnab Exp $
+ * $Id: SubjectImpl.java,v 1.2 2007-04-19 19:14:30 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,6 @@ public class SubjectImpl implements Subject {
     private Attribute subjectCategoryAttribute;
     private boolean isMutable = true;
     private boolean needToCreateSubjectCategory = false;
-    private static XACML2Constants xc;
 
    /** 
     * Default constructor
@@ -122,7 +121,7 @@ public class SubjectImpl implements Subject {
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(xc.SUBJECT)) {
+        if (!elemName.equals(XACML2Constants.SUBJECT)) {
             XACML2SDKUtils.debug.error(
                 "SubjectImpl.processElement(): invalid local name " +
                  elemName);
@@ -141,14 +140,15 @@ public class SubjectImpl implements Subject {
                     // The child nodes should be <Attribute> 
                     // or <SubjectCategory>
                     String attrChildName = child.getLocalName();
-                    if (attrChildName.equals(xc.ATTRIBUTE)) {
+                    if (attrChildName.equals(XACML2Constants.ATTRIBUTE)) {
                         if (this.attributes == null) {
                         this.attributes = new ArrayList();
                         }
                         Attribute attribute = factory.getInstance().
                                 createAttribute((Element)child);
                         attributes.add(attribute);
-                    } else if (attrChildName.equals(xc.SUBJECT_CATEGORY)) {
+                    } else if (attrChildName.equals(
+                            XACML2Constants.SUBJECT_CATEGORY)) {
                         try {
                             subjectCategory = new URI (child.getNodeValue());
                         } catch ( Exception e) {
@@ -222,7 +222,8 @@ public class SubjectImpl implements Subject {
     public URI getSubjectCategory() {
         try {
             if (subjectCategory == null) {
-                subjectCategory = new URI(xc.SUBJECT_CATEGORY_DEFAULT);
+                subjectCategory 
+                        = new URI(XACML2Constants.SUBJECT_CATEGORY_DEFAULT);
             }
         } catch (Exception e) { // cant do anything, return null
         }
@@ -277,21 +278,28 @@ public class SubjectImpl implements Subject {
     {
         StringBuffer sb = new StringBuffer(2000);
         StringBuffer NS = new StringBuffer(100);
+
+        //TODO: remove the 2 following line
+        includeNSPrefix = false;
+        declareNS = false;
+
         String appendNS = "";
         if (declareNS) {
-            NS.append(xc.CONTEXT_DECLARE_STR).append(xc.SPACE);
-            NS.append(xc.NS_XML).append(xc.SPACE).append(
-                    xc.CONTEXT_SCHEMA_LOCATION);
+            NS.append(XACML2Constants.CONTEXT_DECLARE_STR)
+                    .append(XACML2Constants.SPACE);
+            NS.append(XACML2Constants.NS_XML).append(XACML2Constants.SPACE)
+                    .append(XACML2Constants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
             appendNS = XACML2Constants.CONTEXT_PREFIX;
         }
-        sb.append("<").append(appendNS).append(xc.SUBJECT).append(NS);
+        sb.append("<").append(appendNS).append(XACML2Constants.SUBJECT)
+                .append(NS);
         if (subjectCategory != null) {
-            sb.append(" ").append(xc.SUBJECT_CATEGORY).append("=");
+            sb.append(" ").append(XACML2Constants.SUBJECT_CATEGORY).append("=");
             sb.append("\"").append(subjectCategory.toString()).append("\"");
         }
-        sb.append(xc.END_TAG);
+        sb.append(XACML2Constants.END_TAG);
         int length = 0;
         if (attributes != null) {
             sb.append("\n");
@@ -306,7 +314,7 @@ public class SubjectImpl implements Subject {
                     includeNSPrefix, false));
         }// its already covered in the previous list of attrs.
       */
-        sb.append("</").append(appendNS).append(xc.SUBJECT);
+        sb.append("</").append(appendNS).append(XACML2Constants.SUBJECT);
         sb.append(">\n");
         return sb.toString();
     }
