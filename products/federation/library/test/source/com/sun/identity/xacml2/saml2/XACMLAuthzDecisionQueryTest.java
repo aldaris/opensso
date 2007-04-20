@@ -17,11 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryTest.java,v 1.1 2007-03-15 06:21:04 bhavnab Exp $
+ * $Id: XACMLAuthzDecisionQueryTest.java,v 1.2 2007-04-20 22:38:31 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.xacml2.saml2;
+
+import com.sun.identity.saml2.common.SAML2Exception;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -66,7 +68,7 @@ public class XACMLAuthzDecisionQueryTest extends UnitTestBase {
     @Test(groups = {"xacml2"})
     public void validateXACMLAuthzDecisionQuery(String xmlFile) throws XACML2Exception,
             ParserConfigurationException, IOException,
-            SAXException {
+            SAXException, SAML2Exception {
         entering("validateXACMLAuthzDecisionQuery",null);
         try {
             log(Level.INFO, "validateXACMLAuthzDecisionQuery",xmlFile);
