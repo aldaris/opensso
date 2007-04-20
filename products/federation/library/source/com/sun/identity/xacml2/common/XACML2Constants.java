@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.3 2007-04-03 17:01:30 pawand Exp $
+ * $Id: XACML2Constants.java,v 1.4 2007-04-20 21:33:07 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,7 +112,7 @@ public class  XACML2Constants {
     public static String XACMLAUTHZDECISIONQUERY =
             "XACMLAuthzDecisionQuery";
     
-      /**
+    /**
      * The standard URI for the default subject category value
      */
     public static String SUBJECT_CATEGORY_DEFAULT =
@@ -148,17 +148,68 @@ public class  XACML2Constants {
     "xsi:schemaLocation=\"urn:oasis:names:tc:xacml:2.0:context:schema:os http:"
         +"//docs.oasis-open.org/xacml/access_control-xacml"
         +"-2.0-context-schema-os.xsd\"";
+
+    
+    /**
+     * String used for SAML namespac prefix
+     */
+    public static String SAML_NS_PREFIX = "saml:";
+
+    /**
+     * String used for SAML namespac declaration
+     */
+    public static String SAML_NS_DECLARATION 
+            = " xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" ";
+
+    /**
+     * XACML2 SAML schema location 
+     */
+    public static String SAML_SCHEMA_LOCATION=
+    "xsi:schemaLocation=\"urn:oasis:names:tc:xacml:2.0:context:schema:os http:"
+        +"//docs.oasis-open.org/xacml/access_control-xacml"
+        +"-2.0-saml-assertion-schema-cd-os.xsd\"";
+
     /**
      * String used to declare SAML2 Protocol namespace prefix.
      */
-    public static String SAMLP_PREFIX = "samlp:";
+    public static String SAMLP_NS_PREFIX = "samlp:";
     
     /**
      * String used to declare SAML2 protocol namespace.
      */
-    public static String SAMLP_DECLARE_STR =
-        "xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"";
+    public static String SAMLP_NS_DECLARATION =
+        " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"";
     
+    /**
+     * String used to declare XACML SAML2 Protocol namespace prefix.
+     */
+    public static String XACML_SAMLP_NS_PREFIX = "xacml-samlp:";
+    
+    /**
+     * String used for XACML SAML2 protocol namespace.
+     */
+    public static String XACML_SAMLP_NS =
+        "urn:oasis:xacml:2.0:saml:protocol:schema:os";
+
+    /**
+     * String used to declare XACML SAML2 protocol namespace.
+     */
+    public static String XACML_SAMLP_NS_DECLARATION =
+        " xmlns:xacml-samlp=\"urn:oasis:xacml:2.0:saml:protocol:schema:os\" ";
+
+    /**
+     * String used to declare samlp:RequestAbstract
+     */
+    public static String SAMLP_REQUEST_ABSTRACT =
+        "RequestAbstract";
+
+
+    /**
+     * constant for xsi:type="xacml-samlp:XACMLAuthzDEcisionQeury
+     */
+    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_QUERY
+            = " xsi:type=\"xacml-samlp:XAMLAuthzDecisionQuery\"";
+
     /** 
      * Start Tag for XML String
      */
@@ -217,9 +268,47 @@ public class  XACML2Constants {
      */
     public static String SUBJECT_CATEGORY_ID =
         "urn:oasis:names:tc:xacml:1.0:subject-category";
+
+    /*
+     * constant for XACMLAuthzDecisionStatementElement
+     */
+    public final static String XACML_AUTHZ_DECISION_STATEMENT
+            = "XACMLAuthzDecisionStatement";
+
     
 
+    /**
+     * constant for SAML Statement 
+     */
+    public final static String SAML_STATEMENT
+            = "Statement";
 
+    /**
+     * constant for xsi:type
+     */
+    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_STATEMENT
+            = " xsi:type=\"xacml-saml:XAMLAuthzDecisionStatement\"";
+
+    /**
+     * constant for xsi name space delcaration
+     */
+    public final static String XSI_NS_DECLARATION
+            = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
+
+    /**
+     * constant for xacml-saml namespace prefix
+     */
+    public final static String XACML_SAML_NS_PREFIX
+            = " xacml-saml:";
+
+    /**
+     * constant for xacml-saml namespace declaration
+     */
+    public final static String XACML_SAML_NS_DECLARATION
+            = " xmlns:xacml-saml=\"urn:oasis:names:tc:xacml:2.0:saml:assertion:schema:os\" ";
+
+
+    /**
     /**
      * constant for Response element
      */
@@ -264,6 +353,7 @@ public class  XACML2Constants {
      * constant for StatusDetail element
      */
     public final static String STATUS_DETAIL_ELEMENT = "StatusDetail";
+
 
     /**
      * constant for Permit
