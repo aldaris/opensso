@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.11 2007-04-09 23:34:21 veiming Exp $
+ * $Id: CommandManager.java,v 1.12 2007-04-20 22:15:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,7 @@ public class CommandManager {
         getIsInstallTime();
         Crypt.checkCaller();
         new CommandManager(argv);
+        System.exit(0);
     }
 
     /**
