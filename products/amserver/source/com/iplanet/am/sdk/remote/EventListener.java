@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.8 2007-03-22 00:49:00 rarcot Exp $
+ * $Id: EventListener.java,v 1.9 2007-04-20 07:14:56 rarcot Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,7 +118,8 @@ class EventListener {
 
                 // Register for notification with AM Server
                 notificationID = (String) client.send(
-                        "registerNotificationURL", url.toString(), null);
+                        "registerNotificationURL", url.toString(), null, 
+                        null);
 
                 // Register with PLLClient for notificaiton
                 PLLClient.addNotificationHandler(
@@ -127,7 +128,8 @@ class EventListener {
 
                 // Register for IdRepo Service
                 idRepoNotificationID = (String) client.send(
-                        "registerNotificationURL_idrepo", url.toString(), null);
+                        "registerNotificationURL_idrepo", url.toString(), null, 
+                        null);
 
                 // Register with PLLClient for notificaiton
                 PLLClient.addNotificationHandler(

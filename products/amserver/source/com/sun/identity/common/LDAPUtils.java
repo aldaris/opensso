@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.1 2007-03-21 22:33:45 veiming Exp $
+ * $Id: LDAPUtils.java,v 1.2 2007-04-20 07:14:56 rarcot Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,6 +96,7 @@ public class LDAPUtils {
                 if (content instanceof LDIFModifyContent) {
                     ld.modify(DN, 
                         ((LDIFModifyContent)content).getModifications());
+                    
                 } else if ((content instanceof LDIFAttributeContent) ||
                     (content instanceof LDIFAddContent)
                     ) {
@@ -109,12 +110,14 @@ public class LDAPUtils {
                     ld.add(amEntry);
                 }
                 
+                
             } catch (LDAPException e) {
                 switch (e.getLDAPResultCode()) {
                     case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
                         throw e;
                     case LDAPException.NO_SUCH_ATTRIBUTE:
-                        throw e;
+		        // Ignore some attributes need to be deleted if present
+                        break; 
                     case LDAPException.ENTRY_ALREADY_EXISTS:
                         LDAPModificationSet modSet =
                             new LDAPModificationSet();

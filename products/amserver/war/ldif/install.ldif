@@ -61,11 +61,6 @@ sunNameSpaceUniqueAttrs:@ORG_NAMING_ATTR@,sunPreferredDomain,associatedDomain,su
 dn:@NORMALIZED_RS@
 changetype:modify
 add:objectclass
-objectclass:sunManagedOrganization
-
-dn:@NORMALIZED_RS@
-changetype:modify
-add:objectclass
 objectclass: sunISManagedOrganization
 -
 add:sunOrganizationAlias
@@ -359,11 +354,6 @@ objectClass: top
 objectClass: organizationalunit
 objectClass: iplanet-am-managed-people-container
 
-dn: ou=People,@NORMALIZED_RS@
-changetype:modify
-add:objectclass
-objectClass: iplanet-am-managed-people-container
-
 dn: cn=ou=@People_NM_ORG_ROOT_SUFFIX@,@NORMALIZED_RS@
 objectClass: top
 objectClass: nsmanagedroledefinition
@@ -391,11 +381,6 @@ iplanet-am-role-display-options: actionentityproperties=noaccessobject
 dn: ou=Groups,@NORMALIZED_RS@
 objectClass: top
 objectClass: organizationalunit
-objectclass: iplanet-am-managed-group-container
-
-dn: ou=Groups,@NORMALIZED_RS@
-changetype:modify
-add:objectclass
 objectclass: iplanet-am-managed-group-container
 
 dn: cn=puser,ou=DSAME Users,@NORMALIZED_RS@
