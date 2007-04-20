@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.5 2007-04-19 02:51:41 goodearth Exp $
+ * $Id: LDAPConnectionPool.java,v 1.6 2007-04-20 21:17:46 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,8 +267,14 @@ public class LDAPConnectionPool {
         this.name = name;
         this.minSize = min;
         this.maxSize  = max;
-        //createHostList and assign the first one to the this.host & this.port
-        createHostList(host);
+        if (connOptions != null) {
+            // createHostList and assign the first one to the this.host & 
+            // this.port
+            createHostList(host);
+        } else {
+            this.host = host;
+            this.port = port;
+        }
         this.authdn = authdn;
         this.authpw = authpw;
         this.ldc = ldc;
