@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptedResourceID.java,v 1.1 2006-10-30 23:14:50 qcheng Exp $
+ * $Id: EncryptedResourceID.java,v 1.2 2007-04-23 03:32:11 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,12 +30,8 @@ import org.w3c.dom.*;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
 import com.sun.identity.liberty.ws.disco.common.DiscoUtils;
-import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
-import com.sun.identity.federation.common.FSUtils;
-import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
-import com.sun.identity.federation.key.EncInfo;
-import com.sun.identity.federation.key.KeyUtil;
-import com.sun.identity.federation.services.util.FSServiceUtils;
+import com.sun.identity.liberty.ws.util.ProviderManager;
+import com.sun.identity.liberty.ws.util.ProviderUtil;
 import com.sun.identity.xmlenc.*;
 
 /**
@@ -224,25 +220,21 @@ public class EncryptedResourceID {
      * @throws DiscoveryException if error occurs during the operation.
      */ 
     public static ResourceID getDecryptedResourceID(
-        EncryptedResourceID eri,
-        String providerID
-    ) throws DiscoveryException {
+        EncryptedResourceID eri, String providerID)
+        throws DiscoveryException {
+
         if ((eri == null) || (providerID == null)) {
             throw new DiscoveryException(
                 DiscoUtils.bundle.getString("nullInput"));
         }
         ResourceID result = null;
         try {
-            // TODO: assume it is sp always.
-            BaseConfigType providerConfig =
-                FSUtils.getIDFFMetaManager().getSPDescriptorConfig(providerID);
-
             XMLEncryptionManager manager = XMLEncryptionManager.getInstance();
             Document encDoc = XMLUtils.toDOMDocument(eri.toString(),
                                                 DiscoUtils.debug);
 
             Document decryptDoc = manager.decryptAndReplace(encDoc,
-                                KeyUtil.getDecryptionKey(providerConfig));
+                ProviderUtil.getProviderManager().getDecryptionKey(providerID));
             Element riEl = (Element) decryptDoc.getElementsByTagNameNS(
                                 DiscoConstants.DISCO_NS,
                                 "ResourceID").item(0);
@@ -263,6 +255,7 @@ public class EncryptedResourceID {
      * @param ri The resource ID instance that needs to be encrypted.
      * @param providerID The provider ID whose encryption key needs to be used
      *        for encryption.
+     * @param providerManager <code>ProviderManager</code>.
      * @throws DiscoveryException if error occurs during this operation.
      */ 
     public static EncryptedResourceID getEncryptedResourceID(
@@ -277,20 +270,16 @@ public class EncryptedResourceID {
         }
         EncryptedResourceID eri = null;
         try {
-            // assume it is sp always
-            SPDescriptorType providerDesc = 
-                FSUtils.getIDFFMetaManager().getSPDescriptor(providerID);
-            EncInfo encInfo = KeyUtil.getEncInfo(
-                providerDesc, providerID, false);
+            ProviderManager pm = ProviderUtil.getProviderManager();
             Document doc = XMLUtils.toDOMDocument(ri.toString(),
                                                 DiscoUtils.debug);
 
             XMLEncryptionManager manager = XMLEncryptionManager.getInstance();
             Document encDoc = manager.encryptAndReplaceResourceID(doc,
                 doc.getDocumentElement(),
-                encInfo.getDataEncAlgorithm(),
-                encInfo.getDataEncStrength(),
-                encInfo.getWrappingKey(),
+                pm.getEncryptionKeyAlgorithm(providerID),
+                pm.getEncryptionKeyStrength(providerID),
+                pm.getEncryptionKey(providerID),
                 0,
                 providerID);
             eri = new EncryptedResourceID(encDoc.getDocumentElement());

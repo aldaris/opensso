@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.1 2006-10-30 23:16:14 qcheng Exp $
+ * $Id: SAML2SDKUtils.java,v 1.2 2007-04-23 03:35:04 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,15 +25,24 @@
 
 package com.sun.identity.saml2.common;
 
+import com.sun.identity.liberty.ws.disco.ResourceOffering;
+import com.sun.identity.liberty.ws.security.SecurityAssertion;
+import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.security.SecureRandom;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -552,4 +561,95 @@ public class SAML2SDKUtils {
         return (SAML2ID_PREFIX + byteArrayToHexString(bytes));
     }    
 
+    /**
+     * Gets the Discovery bootstrap resource offering in an attribute
+     * statement. After a single sign-on with an Identity Provider, a service
+     * provider may get Discovery service esource Offerings through a SAML2
+     * assertion. This APIs helps in retrieving the resource offerings
+     * if the user has been authenticated through the SAML2 SSO. It will
+     * need to have a valid single sign on token (generated through the
+     * SAML2 SSO).
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *        session.
+     * @return <code>ResourceOffering</code> Discovery Resource Offering,
+     *         null if there is any failure  or if there is not one
+     */
+    public static ResourceOffering getDiscoveryBootStrapResourceOffering(
+        HttpServletRequest request) {
+
+        if (request == null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.getDiscoveryBootStrapResource" +
+                    "Offerings: null Input params");
+            }
+            return null;
+        }
+        try {
+            SessionProvider sessionProvider = SessionManager.getProvider();
+            Object session = sessionProvider.getSession(request);
+
+            String[] roStr = sessionProvider.getProperty(session,
+                SAML2Constants.DISCOVERY_BOOTSTRAP_ATTRIBUTE_NAME);
+            if ((roStr == null) || (roStr.length == 0)) {
+                return null;
+            }
+
+            return new ResourceOffering(
+                XMLUtils.toDOMDocument(roStr[0], debug).getDocumentElement());
+
+        } catch(Exception ex) {
+            debug.error("SAML2Utils.getDiscoveryBootStrapResourceOfferings: " +
+                " Exception while retrieving discovery boot strap info.", ex);
+            return null;
+        }
+       
+    }
+    
+    /**
+     * Gets the Discovery bootstrap credentials.
+     * After a single sign-on with an Identity Provider, a service
+     * provider may get Discovery bootstrap resource offerings and credentials
+     * through a SAML assertion. This APIs helps in retrieving the credentials
+     * if the user has been authenticated through the SAML2 SSO. It will
+     * need to have a valid single sign on token (generated through the
+     * SAML2 SSO).
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *     session.
+     * @return <code>List</code> of <code>SecurityAssertions</code>,
+     *     null if there is any failure  or if there is not one
+     */
+    public static List getDiscoveryBootStrapCredentials(
+        HttpServletRequest request) {
+  
+        if (request == null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.getDiscoveryBootStrapCredentials: " +
+                    " null Input params");
+            }
+            return null;
+        }
+        try {
+            SessionProvider sessionProvider = SessionManager.getProvider();
+            Object session = sessionProvider.getSession(request);
+            String[] credentials = sessionProvider.getProperty(session,
+                SAML2Constants.DISCOVERY_BOOTSTRAP_CREDENTIALS);
+            if ((credentials == null) || (credentials.length == 0)) {
+                return null;
+            }
+
+            List securityAssertions = new ArrayList(); 
+            for(int i=0; i< credentials.length; i++) {
+                SecurityAssertion securityAssertion = new SecurityAssertion(
+                    XMLUtils.toDOMDocument(credentials[i], debug)
+                    .getDocumentElement());
+                securityAssertions.add(securityAssertion);
+            }
+            return securityAssertions;
+        } catch(Exception ex) {
+            debug.error("SAML2Utils.getDiscoveryBootStrapCredentials: ", ex);
+            return null;
+        }
+    }
 }

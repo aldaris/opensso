@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoUtils.java,v 1.1 2006-10-30 23:14:54 qcheng Exp $
+ * $Id: DiscoUtils.java,v 1.2 2007-04-23 03:32:11 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,13 +35,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.BitSet;
 
-import com.sun.identity.federation.common.IFSConstants;
-import com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement;
-import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
-import com.sun.identity.federation.key.KeyUtil;
-import com.sun.identity.federation.meta.IDFFMetaException;
-import com.sun.identity.federation.meta.IDFFMetaManager;
-import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.liberty.ws.disco.DiscoveryException;
@@ -58,22 +51,14 @@ import com.sun.identity.liberty.ws.security.*;
 import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.liberty.ws.soapbinding.ProviderHeader;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
+import com.sun.identity.liberty.ws.util.ProviderManager;
+import com.sun.identity.liberty.ws.util.ProviderUtil;
 import com.sun.identity.federation.message.common.EncryptedNameIdentifier;
 
 /**
  * Provides utility methods to discovery service.
  */
 public class DiscoUtils extends DiscoSDKUtils {
-    private static IDFFMetaManager idffMetaManager = null;
-
-    static {
-        try {
-            // TODO
-            idffMetaManager = new IDFFMetaManager(null);
-        } catch (IDFFMetaException imex) {
-            debug.error("DiscoUtils.static: ", imex);
-        }
-     }
 
     /**
      * Constructor
@@ -294,7 +279,7 @@ public class DiscoUtils extends DiscoSDKUtils {
             EncryptedResourceID eri =
                         EncryptedResourceID.getEncryptedResourceID(
                                 ri,
-                                current.getServiceInstance().getProviderID()); 
+                                current.getServiceInstance().getProviderID());
             current.setResourceID(null);
             current.setEncryptedResourceID(eri);
         } catch (Exception e) {
@@ -376,22 +361,28 @@ public class DiscoUtils extends DiscoSDKUtils {
             if (invocatorSession == null) {
                 invocatorSession = getSessionContext(message.getAssertion());
             }
+
             if (invocatorSession != null) {
                 try {
+                    ProviderManager pm = ProviderUtil.getProviderManager();
                     SessionSubject sub = invocatorSession.getSessionSubject();
                     NameIdentifier ni = sub.getNameIdentifier();
                     if ((ni.getFormat() != null) && (ni.getFormat().equals(
                         "urn:liberty:iff:nameid:encrypted")))
                     {
                         ni =EncryptedNameIdentifier.getDecryptedNameIdentifier(
-                                ni, DiscoServiceManager.getDiscoProviderID());
+                            ni, pm.getDecryptionKey(
+                            DiscoServiceManager.getDiscoProviderID()));
                     }
                     String tproviderID =
                         current.getServiceInstance().getProviderID();
-                    if (needNameIdentifierEncryption(tproviderID)) {
+		    if (pm.isNameIDEncryptionEnabled(tproviderID)){
                         sub.setNameIdentifier(
                             EncryptedNameIdentifier.getEncryptedNameIdentifier(
-                            ni, tproviderID));
+                            ni, tproviderID,
+                            pm.getEncryptionKey(tproviderID),
+                            pm.getEncryptionKeyAlgorithm(tproviderID),
+                            pm.getEncryptionKeyStrength(tproviderID)));
                     } else {
                         sub.setNameIdentifier(ni);
                     }
@@ -447,7 +438,8 @@ public class DiscoUtils extends DiscoSDKUtils {
                     senderIdentity = new NameIdentifier(userDN);
                 }
                 if (providerID != null) {
-                    secuMgr.setCertificate(getProviderCert(providerID));
+                    secuMgr.setCertAlias(ProviderUtil.getProviderManager()
+                        .getSigningKeyAlias(providerID));
                 } else {
                     X509Certificate wscCert = message.getPeerCertificate();
                     if (wscCert == null) {
@@ -492,63 +484,6 @@ public class DiscoUtils extends DiscoSDKUtils {
         } else {
             credentials.add(assertion);
             return assertion.getAssertionID();
-        }
-    }
-
-    private static boolean needNameIdentifierEncryption(String providerID) {
-        EntityConfigElement entityConfig = null;
-        try {
-            entityConfig = idffMetaManager.getEntityConfig(providerID);
-        } catch (IDFFMetaException imex) {
-            if (debug.messageEnabled()) {
-                debug.message("DiscoUtils.needNameIdentifierEncryption:",imex);
-            }
-        }
-
-        if (entityConfig == null) {
-            return false;
-        }
-
-        BaseConfigType baseConfig =
-            IDFFMetaUtils.getSPDescriptorConfig(entityConfig);
-        if (baseConfig == null) {
-            baseConfig = IDFFMetaUtils.getIDPDescriptorConfig(entityConfig);
-            if (baseConfig == null) {
-                return false;
-            }
-        }
-
-        Map attrMap = IDFFMetaUtils.getAttributes(baseConfig);
-        if ((attrMap == null) || (attrMap.isEmpty())) {
-            return false;
-        }
-
-        List values = (List)attrMap.get(IFSConstants.ENABLE_NAMEID_ENCRYPTION);
-        if ((values == null) || values.isEmpty()) {
-            return false;
-        }
-
-        return ((String)values.get(0)).equalsIgnoreCase("true");
-    }
-
-
-    /**
-     * Gets the provider certificate.
-     * @param providerID Provider ID of the WSC.
-     * @return Provider Certificate.
-     * @exception DiscoveryException
-     */
-    private static X509Certificate getProviderCert (String providerID)
-        throws DiscoveryException
-    {
-        SPDescriptorType spDescriptor = null;
-        try {
-            spDescriptor = idffMetaManager.getSPDescriptor(providerID);
-            return KeyUtil.getCert(spDescriptor, IFSConstants.KEYTYPE_SIGNING);
-        } catch(Exception ex) {
-            debug.error("DiscoUtils.getProviderCertAlias:" +
-                "Exception while trying to get the certificate.", ex);
-            throw new DiscoveryException(ex);
         }
     }
 

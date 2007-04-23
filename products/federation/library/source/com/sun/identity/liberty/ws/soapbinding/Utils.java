@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.3 2007-03-23 00:01:42 mallas Exp $
+ * $Id: Utils.java,v 1.4 2007-04-23 03:32:57 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,9 +53,8 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
 import java.util.ResourceBundle;
-import com.sun.identity.federation.meta.IDFFMetaException;
-import com.sun.identity.federation.meta.IDFFMetaManager;
-import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
+import com.sun.identity.liberty.ws.util.ProviderManager;
+import com.sun.identity.liberty.ws.util.ProviderUtil;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
@@ -472,7 +471,7 @@ public class Utils {
      * @throws SOAPBindingException if the message violates rules on client.
      * @throws SOAPFaultException if the message violates rules on server.
      */
-    public static void enforceProcessingRules(Message message,String requestMessageID,
+    public static void enforceProcessingRules(Message message, String requestMessageID,
             boolean isServer)
             throws SOAPBindingException, SOAPFaultException {
         CorrelationHeader corrH = message.getCorrelationHeader();
@@ -629,18 +628,9 @@ public class Utils {
         
         if (isServer) {
             String providerID = provH.getProviderID();
-            SPDescriptorType spDescriptor = null;
-            IDFFMetaManager idffMetaManager = null;
-            try {
-                idffMetaManager = new IDFFMetaManager(null);
-                spDescriptor = idffMetaManager.getSPDescriptor(providerID);
-            } catch (IDFFMetaException imex) {
-                if (debug.messageEnabled()) {
-                    debug.message("Utils.checkProviderHeader:", imex);
-                }
-            }
+            ProviderManager providerManager = ProviderUtil.getProviderManager();
 
-            if (spDescriptor == null) {
+            if (!providerManager.containsProvider(providerID)) {
                 SOAPFaultDetail sfd = new SOAPFaultDetail(
                     SOAPFaultDetail.PROVIDER_ID_NOT_VALID, messageID, null);
                 sfd.setProviderHeader(provH);
@@ -650,17 +640,9 @@ public class Utils {
             }
             
             String affID = provH.getAffiliationID();
-            if (affID != null) {
-                try {
-                    if ((idffMetaManager != null) &&
-                        idffMetaManager.isAffiliateMember(providerID, affID)) {
-                        return;
-                    }
-                } catch (IDFFMetaException imex) {
-                    if (debug.messageEnabled()) {
-                        debug.message("Utils.checkProviderHeader:", imex);
-                    }
-                }
+            if ((affID != null) &&
+                (!providerManager.isAffiliationMember(providerID, affID))) {
+
                 SOAPFaultDetail sfd = new SOAPFaultDetail(
                     SOAPFaultDetail.AFFILIATION_ID_NOT_VALID, messageID, null);
                 sfd.setProviderHeader(provH);

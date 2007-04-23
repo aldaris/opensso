@@ -18,13 +18,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptedNameIdentifier.java,v 1.1 2006-10-30 23:14:13 qcheng Exp $
+ * $Id: EncryptedNameIdentifier.java,v 1.2 2007-04-23 03:31:03 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.message.common;
 
+import java.security.Key;
+import java.security.PrivateKey;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -105,9 +107,10 @@ public class EncryptedNameIdentifier {
             IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
             if (metaManager != null) {
                 providerDesc = metaManager.getSPDescriptor(providerID);
-            }
-            if (providerDesc == null) {
-                providerDesc = metaManager.getIDPDescriptor(providerID);
+
+                if (providerDesc == null) {
+                    providerDesc = metaManager.getIDPDescriptor(providerID);
+                }
             }
             if (providerDesc == null) {
                 throw new IDFFMetaException((String) null);
@@ -117,7 +120,35 @@ public class EncryptedNameIdentifier {
                     "not retrieve the meta for provider" + providerID);
             throw new FSException(ae);
         }
-        
+
+        EncInfo encInfo = KeyUtil.getEncInfo(providerDesc, providerID, false);
+        return getEncryptedNameIdentifier(ni, providerID, 
+            encInfo.getWrappingKey(), encInfo.getDataEncAlgorithm(),
+            encInfo.getDataEncStrength());
+    }
+
+    /**
+     * Gets then Encrypted NameIdentifier for a given name identifier 
+     * and the provider ID.
+     * @param ni NameIdentifier.
+     * @param providerID Remote Provider ID.
+     * @param enckey Key Encryption Key
+     * @param dataEncAlgorithm Data encryption algorithm
+     * @param dataEncStrength Data encryption key size
+     *
+     * @return NameIdentifier EncryptedNameIdentifier. 
+     * @exception FSException for failure.
+     */
+    public static NameIdentifier getEncryptedNameIdentifier(
+        NameIdentifier ni, String providerID, Key enckey,
+        String dataEncAlgorithm, int dataEncStrength) throws FSException {
+
+        if(ni == null || providerID == null) {
+           FSUtils.debug.error("EncryptedNameIdentifier.construct: " +
+               "nullInputParameter");
+           throw new FSException("nullInputParameter", null);
+	}
+
         EncryptableNameIdentifier eni = new EncryptableNameIdentifier(ni);
         Document encryptableDoc = getEncryptableDocument(eni);
         Document encryptedDoc = null;
@@ -127,16 +158,14 @@ public class EncryptedNameIdentifier {
                     getElementsByTagNameNS(IFSConstants.FF_12_XML_NS,
                     "EncryptableNameIdentifier").item(0);
             
-            EncInfo encInfo = KeyUtil.getEncInfo(
-                providerDesc, providerID, false);
             
             XMLEncryptionManager manager = XMLEncryptionManager.getInstance();
             encryptedDoc = manager.encryptAndReplace(
                     encryptableDoc,
                     encryptElement,
-                    encInfo.getDataEncAlgorithm(),
-                    encInfo.getDataEncStrength(),
-                    encInfo.getWrappingKey(),
+                    dataEncAlgorithm,
+                    dataEncStrength,
+                    enckey,
                     0, // TODO: should we pick it up from extended meta?
                     providerID);
             
@@ -182,19 +211,6 @@ public class EncryptedNameIdentifier {
             throw new FSException("nullInputParameter", null);
         }
         
-        if(encNI.getFormat() == null ||
-                !encNI.getFormat().equals(
-                                   IFSConstants.NI_ENCRYPTED_FORMAT_URI)) {
-            throw new FSException("notValidFormat", null);
-        }
-        
-        String name = encNI.getName();
-        name = FSUtils.removeNewLineChars(name);
-        String decodeStr = SAMLUtils.byteArrayToString(Base64.decode(name));
-        
-        Document encryptedDoc =
-                XMLUtils.toDOMDocument(decodeStr, FSUtils.debug);
-        
         BaseConfigType providerConfig = null;
         try {
             providerConfig = FSUtils.getIDFFMetaManager().
@@ -214,10 +230,39 @@ public class EncryptedNameIdentifier {
                 "Identifier: Unable to find provider " + providerID);
             throw new FSException("noProviderFound", null);
         }
+
+        return getDecryptedNameIdentifier(encNI,
+            KeyUtil.getDecryptionKey(providerConfig));
+   }
+
+    /**
+     * Gets the decrypted NameIdentifier. 
+     * @param encNI EncryptedNameIdentifier. 
+     * @param decKey decryption key.
+     * 
+     * @return NameIdentifier Decrypted NameIdentifier.
+     * @exception FSException for failures
+     */ 
+    public static NameIdentifier getDecryptedNameIdentifier(
+        NameIdentifier encNI, PrivateKey decKey) throws FSException {
+
+
+        if(encNI.getFormat() == null ||
+                !encNI.getFormat().equals(
+                                   IFSConstants.NI_ENCRYPTED_FORMAT_URI)) {
+            throw new FSException("notValidFormat", null);
+        }
+        
+        String name = encNI.getName();
+        name = FSUtils.removeNewLineChars(name);
+        String decodeStr = SAMLUtils.byteArrayToString(Base64.decode(name));
+        
+        Document encryptedDoc =
+                XMLUtils.toDOMDocument(decodeStr, FSUtils.debug);
+        
         try {
             XMLEncryptionManager manager = XMLEncryptionManager.getInstance();
-            Document doc = manager.decryptAndReplace(
-                    encryptedDoc, KeyUtil.getDecryptionKey(providerConfig));
+            Document doc = manager.decryptAndReplace(encryptedDoc, decKey);
             
             Element element = (Element)doc.getElementsByTagNameNS(
                     IFSConstants.FF_12_XML_NS,

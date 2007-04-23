@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptableNameIdentifier.java,v 1.2 2006-11-30 05:47:34 qcheng Exp $
+ * $Id: EncryptableNameIdentifier.java,v 1.3 2007-04-23 03:31:03 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,7 @@ public class EncryptableNameIdentifier {
            throw new FSException("nullInput", null) ;   
         }
         _format = ni.getFormat();
-        if(_format == null || 
-           !_format.equals(IFSConstants.NI_FEDERATED_FORMAT_URI)) {
+        if(_format == null) {
            throw new FSException("notValidFormat", null) ;   
         }
         _nonce = FSUtils.generateID();    

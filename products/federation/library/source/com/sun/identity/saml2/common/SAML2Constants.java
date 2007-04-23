@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.7 2007-04-19 18:28:54 veiming Exp $
+ * $Id: SAML2Constants.java,v 1.8 2007-04-23 03:35:04 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -899,4 +899,29 @@ public interface SAML2Constants {
      */
     String WANT_XACML_AUTHZ_DECISION_RESPONSED_SIGNED =
         "wantXACMLAuthzDecisionResponseSigned";
+
+    /**
+     * Generate Discovery Bootstrapping
+     */
+    public static final String DISCO_BOOTSTRAPPING_ENABLED =
+        "discoveryBootstrappingEnabled";
+
+    /**
+     * Attribute name format for ID-WSF 1.1 Discovery bootstrap
+     */    
+    public static final String DISCOVERY_BOOTSTRAP_ATTRIBUTE_NAME_FORMAT =
+        "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+
+    /**
+     * Attribute name for ID-WSF 1.1 Discovery bootstrap
+     */    
+    public static final String DISCOVERY_BOOTSTRAP_ATTRIBUTE_NAME =
+        "urn:liberty:disco:2003-08:DiscoveryResourceOffering";
+
+    /**
+     * Constant for Discovery bootstrap credentials SSO token
+     * property
+     */
+    public static final String DISCOVERY_BOOTSTRAP_CREDENTIALS =
+        "DiscoveryBootstrapCrendentials";
 }

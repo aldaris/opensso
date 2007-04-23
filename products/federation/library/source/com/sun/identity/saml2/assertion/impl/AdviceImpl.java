@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdviceImpl.java,v 1.1 2006-10-30 23:16:04 qcheng Exp $
+ * $Id: AdviceImpl.java,v 1.2 2007-04-23 03:34:07 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,25 +137,34 @@ public class AdviceImpl implements Advice {
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 String childName = child.getLocalName();
                 if (childName != null) {
-                    if (childName.equals(ASSERTION_ID_REF_ELEMENT)) {
-                        assertionIDRefs.add(
-                            XMLUtils.getElementValue((Element)child));
-                    } else if (childName.equals(ASSERTION_URI_REF_ELEMENT)) {
-                        assertionURIRefs.add(
-                            XMLUtils.getElementValue((Element)child));
-                    } else if (childName.equals(ASSERTION_ELEMENT)) {
-                        assertions.add(AssertionFactory.getInstance().
-                            createAssertion((Element)child));
-                    } else if (childName.equals(ENCRYPTED_ASSERTION_ELEMENT)) {
-                        encryptedAssertions.add(AssertionFactory.
-                            getInstance().createEncryptedAssertion(
-                            (Element)child));
-                    } else if (childName.equals(ASSERTION_URI_REF_ELEMENT)) {
-                        assertionURIRefs.add(
-                            XMLUtils.getElementValue((Element)child));
+                    String ns = child.getNamespaceURI();
+                    if (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(ns)) {
+
+                        if (childName.equals(ASSERTION_ID_REF_ELEMENT)) {
+                            assertionIDRefs.add(
+                                XMLUtils.getElementValue((Element)child));
+                        } else if (childName.equals(
+                            ASSERTION_URI_REF_ELEMENT)) {
+                            assertionURIRefs.add(
+                                XMLUtils.getElementValue((Element)child));
+                        } else if (childName.equals(ASSERTION_ELEMENT)) {
+                            assertions.add(AssertionFactory.getInstance().
+                                createAssertion((Element)child));
+                        } else if (childName.equals(
+                            ENCRYPTED_ASSERTION_ELEMENT)) {
+                            encryptedAssertions.add(AssertionFactory.
+                                getInstance().createEncryptedAssertion(
+                                (Element)child));
+                        } else if (childName.equals(
+                            ASSERTION_URI_REF_ELEMENT)) {
+                            assertionURIRefs.add(
+                                XMLUtils.getElementValue((Element)child));
+                        } else {
+                            additionalInfo.add(
+                                XMLUtils.print((Element)child));
+                        }
                     } else {
-                        additionalInfo.add(
-                            XMLUtils.print((Element)child));
+                        additionalInfo.add(XMLUtils.print((Element)child));
                     }
                 }
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.4 2007-04-02 23:34:25 veiming Exp $
+ * $Id: SPACSUtils.java,v 1.5 2007-04-23 03:36:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.sun.identity.shared.encode.CookieUtils;
 
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml2.assertion.Advice;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.Assertion;
@@ -921,6 +923,8 @@ public class SPACSUtils {
             session = sessionProvider.createSession(
                 sessionInfoMap, request, response, null);
             setAttrMapInSession(sessionProvider, attrMap, session);
+            setDiscoBootstrapCredsInSSOToken(sessionProvider, authnAssertion,
+                session);
         } catch (SessionException se) {
             throw new SAML2Exception(se);
         }
@@ -1133,6 +1137,40 @@ public class SPACSUtils {
                    }
                 }
             }
+        }
+    }
+
+    /** Sets Discovery bootstrap credentials in the SSOToken
+     *
+     *  @param sessionProvider session provider.
+     *  @param asserion assertion.
+     *  @param session the valid session object.
+     */
+    private static void setDiscoBootstrapCredsInSSOToken(
+        SessionProvider sessionProvider, Assertion assertion, Object session)
+        throws SessionException, SAML2Exception {
+
+        if (assertion == null) {
+            return;
+        }
+
+        Set discoBootstrapCreds = null;
+        Advice advice = assertion.getAdvice();
+        if (advice != null) {
+            List creds = advice.getAdditionalInfo();
+            if ((creds != null) && !creds.isEmpty()) {
+                if (discoBootstrapCreds == null) {
+                    discoBootstrapCreds = new HashSet();
+                }
+                discoBootstrapCreds.addAll(creds);
+            }
+        }
+
+        if (discoBootstrapCreds != null) {
+            sessionProvider.setProperty(session,
+                SAML2Constants.DISCOVERY_BOOTSTRAP_CREDENTIALS,
+                (String[])discoBootstrapCreds.toArray(
+                new String[discoBootstrapCreds.size()]));
         }
     }
 

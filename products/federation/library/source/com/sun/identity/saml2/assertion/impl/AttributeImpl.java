@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.1 2006-10-30 23:16:04 qcheng Exp $
+ * $Id: AttributeImpl.java,v 1.2 2007-04-23 03:34:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,7 +121,7 @@ public class AttributeImpl implements Attribute {
             throw new SAML2Exception(
                       SAML2SDKUtils.bundle.getString("wrongInput"));
         }
-        return XMLUtils.getElementValue(element);
+        return XMLUtils.getChildrenValue(element);
     }
 
     // used by the constructors.
@@ -191,7 +191,7 @@ public class AttributeImpl implements Attribute {
                     if (valueStrings == null) {
                         valueStrings = new ArrayList();
                     }
-                    valueStrings.add(XMLUtils.getElementValue((Element) child));
+                    valueStrings.add(XMLUtils.getChildrenValue((Element)child));
                 } else {
                     if (SAML2SDKUtils.debug.messageEnabled()) {
                         SAML2SDKUtils.debug.message("Attributempl.parseElement"
