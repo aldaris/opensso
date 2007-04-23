@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.4 2007-01-09 18:41:25 manish_rustagi Exp $
+ * $Id: XMLUtils.java,v 1.5 2007-04-23 03:44:17 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -445,6 +445,27 @@ public class XMLUtils {
         }
 
         return sb.toString().trim();
+    }
+
+    /**
+     * Gets the children value of an element. This method returns a
+     * concatenated String from all its children.
+     * @param element a DOM tree element.
+     * @return A String that contained in its TEXT children; 
+     *		or null if an error occurred.
+     */
+    public static String getChildrenValue(Element element) {
+        if (element == null) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer(1000);
+        NodeList nl = element.getChildNodes();
+        int length = nl.getLength();
+        for (int i = 0; i < length; i++) {
+            sb.append(XMLUtils.print(nl.item(i)));
+        }
+
+	return sb.toString().trim();
     }
 
     /**

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.4 2006-11-08 21:12:26 hengming Exp $
+   $Id: index.jsp,v 1.5 2007-04-23 03:42:12 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -28,7 +28,6 @@ import="
 java.io.*, 
 java.util.*,
 com.iplanet.am.util.SystemProperties,
-com.sun.identity.common.SystemConfigurationUtil,
 com.sun.identity.liberty.ws.disco.ResourceOffering,
 com.sun.identity.liberty.ws.security.SecurityAssertion,
 com.sun.identity.plugin.session.SessionManager,
@@ -78,7 +77,7 @@ public void jspInit() {
             props = new Properties();
             props.load(fin);
             props.setProperty(Constants.AM_LOGSTATUS, "INACTIVE");
-            SystemConfigurationUtil.initializeProperties(props);
+            SystemProperties.initializeProperties(props);
             fin.close();
         }
     } catch (Exception ex) {
@@ -100,7 +99,7 @@ public void jspInit() {
 
         SessionProvider sessionProvider = SessionManager.getProvider();
         Object sessionObj = sessionProvider.getSession(request);
-        if(session != null && sessionProvider.isValid(sessionObj)) {
+        if(sessionObj != null && sessionProvider.isValid(sessionObj)) {
             LibertyManagerClient lmc = new LibertyManagerClient();
             ResourceOffering offering = lmc.getDiscoveryResourceOffering(
                 sessionObj, providerID);
