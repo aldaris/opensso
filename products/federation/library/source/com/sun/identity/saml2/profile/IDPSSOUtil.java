@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.4 2007-04-12 16:09:13 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.5 2007-04-23 04:11:22 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -770,6 +770,27 @@ public class IDPSSOUtil {
         assertion.setSubject(subject);
         Conditions conditions = getConditions(recipientEntityID, effectiveTime);
         assertion.setConditions(conditions);
+
+        String discoBootstrapEnabled = getAttributeValueFromIDPSSOConfig(
+            realm, idpEntityID, SAML2Constants.DISCO_BOOTSTRAPPING_ENABLED);
+
+        if ((discoBootstrapEnabled != null) &&
+            discoBootstrapEnabled.equalsIgnoreCase("true")) {
+
+            List attrStatementList = assertion.getAttributeStatements();
+            if (attrStatementList == null) {
+                attrStatementList = new ArrayList();
+                assertion.setAttributeStatements(attrStatementList);
+            }
+
+            DiscoveryBootstrap bootstrap = new DiscoveryBootstrap(session,
+                subject,
+                authnStatement.getAuthnContext().getAuthnContextClassRef(),
+                spEntityID, realm);
+            attrStatementList.add(bootstrap.getBootstrapStatement());
+            assertion.setAdvice(bootstrap.getCredentials());
+        }
+
         return assertion;
     }
 
