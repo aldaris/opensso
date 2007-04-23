@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerIF.java,v 1.1 2006-10-30 23:15:17 qcheng Exp $
+ * $Id: SecurityTokenManagerIF.java,v 1.2 2007-04-23 16:53:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,6 +105,17 @@ public interface SecurityTokenManagerIF extends Remote {
      *        is encrypted.
      * @param includeAuthN boolean value to deteremine if the authentication
      *        information should be included.
+     * @param includeResourceAccessStatement if true, a
+     *        <code>ResourceAccessStatement</code> will be included in the
+     *        Assertion (for <code>AuthorizeRequester</code> directive). If
+     *        false, a <code>SessionContextStatement</code> will be included in
+     *        the Assertion (for <code>AuthenticationSessionContext</code>
+     *        directive). In the case when both <code>AuthorizeRequester</code>
+     *        and <code>AuthenticationSessionContext</code> directive need to be
+     *        handled, use "true" as parameter here since the
+     *        <code>SessionContext</code> will always be included in the
+     *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return the SAML Authorization Token String.
      * @throws SecurityTokenException if there is an error.
      * @throws SAMLException if there is an error.
@@ -114,6 +125,7 @@ public interface SecurityTokenManagerIF extends Remote {
     public String getSAMLAuthorizationToken(String senderIdentity,
 			String invocatorSession,String resourceID,
 			boolean encryptedID,boolean includeAuthN,
-			boolean includeResourceAccessStatement)
+			boolean includeResourceAccessStatement,
+                        String recipientProviderID)
 	throws SecurityTokenException, SAMLException, RemoteException;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerImpl.java,v 1.1 2006-10-30 23:15:17 qcheng Exp $
+ * $Id: SecurityTokenManagerImpl.java,v 1.2 2007-04-23 16:53:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,6 +130,17 @@ public class SecurityTokenManagerImpl implements SecurityTokenManagerIF {
      *        is encrypted.
      * @param includeAuthN boolean value to deteremine if the authentication
      *        information should be included.
+     * @param includeResourceAccessStatement if true, a
+     *        <code>ResourceAccessStatement</code> will be included in the
+     *        Assertion (for <code>AuthorizeRequester</code> directive). If
+     *        false, a <code>SessionContextStatement</code> will be included i
+     *        the Assertion (for <code>AuthenticationSessionContext</code>
+     *        directive). In the case when both <code>AuthorizeRequester</code
+     *        and <code>AuthenticationSessionContext</code> directive need to be
+     *        handled, use "true" as parameter here since the
+     *        <code>SessionContext</code> will always be included in the
+     *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return the SAML Authentication Token String.
      * @throws SecurityTokenException if there is an error.
      * @throws SAMLException if there is an error.
@@ -137,7 +148,8 @@ public class SecurityTokenManagerImpl implements SecurityTokenManagerIF {
     
     public String  getSAMLAuthorizationToken(String senderIdentity,
             String invocatorSession,String resourceID,boolean encryptedID,
-            boolean includeAuthN,boolean includeResourceAccessStatement)
+            boolean includeAuthN,boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException, SAMLException {
         NameIdentifier ni = new NameIdentifier(XMLUtils.toDOMDocument(
                 senderIdentity,SecurityTokenManager.debug).getDocumentElement());
@@ -150,7 +162,7 @@ public class SecurityTokenManagerImpl implements SecurityTokenManagerIF {
         } else {
             assertion = securityTokenManager.getSAMLAuthorizationToken(
                     ni, sc, resourceID, includeAuthN,
-                    includeResourceAccessStatement);
+                    includeResourceAccessStatement, recipientProviderID);
         }
         return assertion.toString(true, true);
     }

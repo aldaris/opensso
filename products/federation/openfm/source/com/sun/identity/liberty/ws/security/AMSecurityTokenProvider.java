@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSecurityTokenProvider.java,v 1.1 2006-10-30 23:18:04 qcheng Exp $
+ * $Id: AMSecurityTokenProvider.java,v 1.2 2007-04-23 16:49:05 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,9 @@ import com.sun.identity.liberty.ws.disco.EncryptedResourceID;
 import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 
 import com.sun.identity.saml.assertion.AttributeStatement;
+import com.sun.identity.saml.assertion.AudienceRestrictionCondition;
 import com.sun.identity.saml.assertion.AuthenticationStatement;
+import com.sun.identity.saml.assertion.Conditions;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.assertion.Subject;
 import com.sun.identity.saml.assertion.SubjectConfirmation;
@@ -266,7 +268,8 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
      */
     public SecurityAssertion getSAMLAuthenticationToken(
             NameIdentifier senderIdentity) throws SecurityTokenException {
-        return getSAMLToken(senderIdentity, null, null, true, false, false);
+        return getSAMLToken(senderIdentity, null, null, true, false, null,
+            false);
     }
     
     /**
@@ -295,6 +298,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>Assertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained.
      */
@@ -303,10 +307,12 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             SessionContext invocatorSession,
             String resourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return getSAMLToken(senderIdentity, invocatorSession, resourceID,
-                includeAuthN,includeResourceAccessStatement, false);
+                includeAuthN,includeResourceAccessStatement,
+                recipientProviderID, false);
     }
     
     /**
@@ -333,6 +339,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>Assertion</code> object
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -341,10 +348,12 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             SessionContext invocatorSession,
             EncryptedResourceID encResourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return getSAMLToken(senderIdentity, invocatorSession, encResourceID,
-                includeAuthN, includeResourceAccessStatement, false);
+                includeAuthN, includeResourceAccessStatement,
+                recipientProviderID, false);
     }
     
     /**
@@ -372,6 +381,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code>
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -380,10 +390,12 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             SessionContext invocatorSession,
             String resourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return getSAMLToken(senderIdentity, invocatorSession, resourceID,
-                includeAuthN, includeResourceAccessStatement, true);
+                includeAuthN, includeResourceAccessStatement,
+                recipientProviderID, true);
     }
     
     /**
@@ -411,6 +423,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>Assertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -419,10 +432,12 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             SessionContext invocatorSession,
             EncryptedResourceID encResourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return getSAMLToken(senderIdentity, invocatorSession, encResourceID,
-                includeAuthN,includeResourceAccessStatement, true);
+                includeAuthN,includeResourceAccessStatement,
+                recipientProviderID, true);
     }
     
     /**
@@ -434,6 +449,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             Object resourceID,
             boolean includeAuthN,
             boolean includeResourceAccessStatement,
+            String recipientProviderID,
             boolean isBear)
             throws SecurityTokenException {
         if (debug.messageEnabled()) {
@@ -501,11 +517,24 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
                 }
             }
         }
+
         
         Date issueInstant = new Date();
         try {
-            assertion = new SecurityAssertion("", issuer, issueInstant,
+            if (recipientProviderID != null) {
+                List audience = new ArrayList();
+                audience.add(recipientProviderID);
+                AudienceRestrictionCondition arc =
+                    new AudienceRestrictionCondition(audience);
+                Conditions conditions = new Conditions();
+                conditions.addAudienceRestrictionCondition(arc);
+
+                assertion = new SecurityAssertion("", issuer, issueInstant,
+                    conditions, statements);
+            } else {
+                assertion = new SecurityAssertion("", issuer, issueInstant,
                     statements);
+            }
             assertion.signXML(DEFAULT_TA_CERT_ALIAS_VALUE);
         } catch (Exception e) {
             debug.error("getSAMLToken.signXML", e);

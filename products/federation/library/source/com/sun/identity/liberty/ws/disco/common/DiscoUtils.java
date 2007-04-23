@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoUtils.java,v 1.2 2007-04-23 03:32:11 hengming Exp $
+ * $Id: DiscoUtils.java,v 1.3 2007-04-23 16:51:16 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -362,6 +362,7 @@ public class DiscoUtils extends DiscoSDKUtils {
                 invocatorSession = getSessionContext(message.getAssertion());
             }
 
+            String tproviderID = current.getServiceInstance().getProviderID();
             if (invocatorSession != null) {
                 try {
                     ProviderManager pm = ProviderUtil.getProviderManager();
@@ -374,8 +375,7 @@ public class DiscoUtils extends DiscoSDKUtils {
                             ni, pm.getDecryptionKey(
                             DiscoServiceManager.getDiscoProviderID()));
                     }
-                    String tproviderID =
-                        current.getServiceInstance().getProviderID();
+
 		    if (pm.isNameIDEncryptionEnabled(tproviderID)){
                         sub.setNameIdentifier(
                             EncryptedNameIdentifier.getEncryptedNameIdentifier(
@@ -418,14 +418,16 @@ public class DiscoUtils extends DiscoSDKUtils {
                                         invocatorSession,
                                         (String) resourceID,
                                         dirs.get(AUTHN),
-                                        dirs.get(AUTHO));
+                                        dirs.get(AUTHO),
+                                        tproviderID);
                     } else {
                         assertion = secuMgr.getSAMLBearerToken(
                                         senderIdentity,
                                         invocatorSession,
                                         (EncryptedResourceID) resourceID,
                                         dirs.get(AUTHN),
-                                        dirs.get(AUTHO));
+                                        dirs.get(AUTHO),
+                                        tproviderID);
                     }
                 }
             } else {
@@ -462,14 +464,16 @@ public class DiscoUtils extends DiscoSDKUtils {
                                         invocatorSession,
                                         (String) resourceID,
                                         dirs.get(AUTHN),
-                                        dirs.get(AUTHO));
+                                        dirs.get(AUTHO),
+                                        tproviderID);
                 } else {
                     assertion = secuMgr.getSAMLAuthorizationToken(
                                         senderIdentity,
                                         invocatorSession,
                                         (EncryptedResourceID) resourceID,
                                         dirs.get(AUTHN),
-                                        dirs.get(AUTHO));
+                                        dirs.get(AUTHO),
+                                        tproviderID);
                 }
             }
         } catch (Exception ex) {

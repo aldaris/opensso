@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.4 2006-12-23 05:09:08 hengming Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.5 2007-04-23 16:53:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,7 @@ public final class SecurityTokenManagerClient {
                     SystemPropertiesManager.get(SAMLConstants.SERVER_PROTOCOL),
                     SystemPropertiesManager.get(SAMLConstants.SERVER_HOST),
                     SystemPropertiesManager.get(SAMLConstants.SERVER_PORT));
-                remoteStub.send("checkForLocal", null, null);
+                remoteStub.send("checkForLocal", null, null, null);
                 if (SecurityTokenManagerImpl.isLocal) {
                     isLocal = true;
                     SecurityTokenManager.debug.warning(
@@ -142,7 +142,7 @@ public final class SecurityTokenManagerClient {
             try {
                 ssoToken =
                     SessionManager.getProvider().getSessionID(credential);
-                stub.send("initialization", ssoToken, ssoToken); 
+                stub.send("initialization", ssoToken, null, ssoToken); 
             } catch (Exception e) {
                 if (SecurityTokenManager.debug.warningEnabled()) {
                     SecurityTokenManager.debug.warning(
@@ -173,7 +173,7 @@ public final class SecurityTokenManagerClient {
             ssoToken = SessionManager.getProvider().getSessionID(credential);
             String[] urls = {url};
             stub = new SOAPClient(urls);
-            stub.send("initialization", ssoToken, ssoToken);
+            stub.send("initialization", ssoToken, null, ssoToken);
             useLocal = false;
         } catch (Exception e) {
             if (SecurityTokenManager.debug.warningEnabled()) {
@@ -217,7 +217,7 @@ public final class SecurityTokenManagerClient {
 		// Check if the server is active
 		try {
 		    // this call will throw an exception if server is down
-		    remoteStub.send("checkForLocal", null, null);
+		    remoteStub.send("checkForLocal", null, null, null);
 		    if (SecurityTokenManager.debug.messageEnabled()) {
 			SecurityTokenManager.debug.message(
 			    "STMC(): Using the remote URL: " + u.toString());
@@ -330,7 +330,8 @@ public final class SecurityTokenManagerClient {
 
 	String bst = null;
 	try {
-            bst = (String) stub.send("getX509CertificateToken", null, ssoToken);
+            bst = (String) stub.send("getX509CertificateToken", null, null,
+                ssoToken);
             return (new BinarySecurityToken(XMLUtils.toDOMDocument(bst,
                     SecurityTokenManager.debug).getDocumentElement()));
 	} catch (Exception e) {
@@ -361,7 +362,7 @@ public final class SecurityTokenManagerClient {
 	try {
             String ni = senderIdentity.toString(true, true);
             String assertion = (String) stub.send("getSAMLAuthenticationToken", 
-                ni, ssoToken);
+                ni, null, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,
                     SecurityTokenManager.debug).getDocumentElement()));
 	} catch (Exception re) {
@@ -399,6 +400,7 @@ public final class SecurityTokenManagerClient {
      *        handled, use "true" as parameter here since the 
      *        <code>SessionContext</code> will always be included in the 
      *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained.
      * @throws SAMLException if unable to generate the SAML Assertion.
@@ -408,12 +410,14 @@ public final class SecurityTokenManagerClient {
             SessionContext invocatorSession,
             String resourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException, SAMLException {
 	if (useLocal) {
 	    return (securityTokenManager.getSAMLAuthorizationToken(
 			senderIdentity, invocatorSession, resourceID,
-			includeAuthN, includeResourceAccessStatement));
+			includeAuthN, includeResourceAccessStatement,
+                        recipientProviderID));
 	}
 
 	try {
@@ -421,7 +425,8 @@ public final class SecurityTokenManagerClient {
             String sc = invocatorSession.toXMLString(true, true);
             Object[] obj = {ni, sc, resourceID, Boolean.FALSE, 
                 Boolean.valueOf(includeAuthN),
-                Boolean.valueOf(includeResourceAccessStatement)};
+                Boolean.valueOf(includeResourceAccessStatement),
+                recipientProviderID};
             String assertion = (String) stub.send("getSAMLAuthorizationToken",
                 obj, null, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,
@@ -460,6 +465,7 @@ public final class SecurityTokenManagerClient {
      *        handled, use "true" as parameter here since the 
      *        <code>SessionContext</code> will always be included in the 
      *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained.
      * @throws SAMLException if unable to generate the SAML Assertion.
@@ -469,12 +475,14 @@ public final class SecurityTokenManagerClient {
 		SessionContext invocatorSession,
 		EncryptedResourceID encResourceID,
 		boolean includeAuthN,
-		boolean includeResourceAccessStatement)
+		boolean includeResourceAccessStatement,
+                String recipientProviderID)
 	throws SecurityTokenException, SAMLException {
         if (useLocal) {
             return (securityTokenManager.getSAMLAuthorizationToken(
                 senderIdentity, invocatorSession, encResourceID,
-                includeAuthN, includeResourceAccessStatement));
+                includeAuthN, includeResourceAccessStatement,
+                recipientProviderID));
         }
 
         String assertion = null;
@@ -485,7 +493,8 @@ public final class SecurityTokenManagerClient {
             String resourceID = encResourceID.toString();
             Object[] obj = {ni, sc, resourceID,  Boolean.TRUE,
                 Boolean.valueOf(includeAuthN),
-                Boolean.valueOf(includeResourceAccessStatement)};
+                Boolean.valueOf(includeResourceAccessStatement),
+                recipientProviderID};
             assertion = (String) stub.send("getSAMLAuthorizationToken",
                 obj, null, ssoToken);
             return (new SecurityAssertion(XMLUtils.toDOMDocument(assertion,

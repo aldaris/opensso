@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenProvider.java,v 1.1 2006-10-30 23:15:18 qcheng Exp $
+ * $Id: SecurityTokenProvider.java,v 1.2 2007-04-23 16:53:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,6 +133,7 @@ public interface SecurityTokenProvider {
      *        handled, use "true" as parameter here since the
      *        <code>SessionContext</code> will always be included in the
      *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      * @throws SAMLException
@@ -142,7 +143,8 @@ public interface SecurityTokenProvider {
                                 SessionContext invocatorSession,
                                 String resourceID,
                                 boolean includeAuthN,
-                                boolean includeResourceAccessStatement)
+                                boolean includeResourceAccessStatement,
+                                String recipientProviderID)
 	throws SecurityTokenException, SAMLException;
 
     /**
@@ -171,6 +173,7 @@ public interface SecurityTokenProvider {
      *        handled, use "true" as parameter here since the
      *        <code>SessionContext</code> will always be included in the
      *        <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -179,7 +182,8 @@ public interface SecurityTokenProvider {
                                 SessionContext invocatorSession,
                                 EncryptedResourceID encResourceID,
                                 boolean includeAuthN,
-                                boolean includeResourceAccessStatement)
+                                boolean includeResourceAccessStatement,
+                                String recipientProviderID)
 	throws SecurityTokenException;
 
 
@@ -208,6 +212,7 @@ public interface SecurityTokenProvider {
      *	      handled, use "true" as parameter here since the
      *        <code>SessionContext</code> will always be included in the
      *	      <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      * @throws SAMLException if the assertion could not be obtained
@@ -217,7 +222,8 @@ public interface SecurityTokenProvider {
                                 SessionContext invocatorSession,
                                 String resourceID,
                                 boolean includeAuthN,
-                                boolean includeResourceAccessStatement)
+                                boolean includeResourceAccessStatement,
+                                String recipientProviderID)
 	throws SecurityTokenException, SAMLException;
 
 
@@ -246,6 +252,7 @@ public interface SecurityTokenProvider {
      *	      handled, use "true" as parameter here since the
      *	      <code>SessionContext</code> will always be included in the
      *	      <code>ResourceAccessStatement</code>.
+     * @param recipientProviderID recipient's provider ID.
      * @return <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -254,7 +261,8 @@ public interface SecurityTokenProvider {
                                 SessionContext invocatorSession,
                                 EncryptedResourceID encResourceID,
                                 boolean includeAuthN,
-                                boolean includeResourceAccessStatement)
+                                boolean includeResourceAccessStatement,
+                                String recipientProviderID)
 	throws SecurityTokenException;
 
 }

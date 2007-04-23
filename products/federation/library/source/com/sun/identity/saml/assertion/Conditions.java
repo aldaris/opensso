@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Conditions.java,v 1.1 2006-10-30 23:15:38 qcheng Exp $
+ * $Id: Conditions.java,v 1.2 2007-04-23 16:50:10 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -429,10 +429,10 @@ public class Conditions {
                 .append("=\"")
                 .append(DateUtils.toUTCDateFormat(_notOnOrAfter))
                 .append("\"")
-                .append(" ")
-                .append(">")
-                .append(sc.NL);
+                .append(" ");
         }
+
+        xml.append(">").append(sc.NL);
 
         Iterator it;
         if (_arcs.size() > 0 ) {

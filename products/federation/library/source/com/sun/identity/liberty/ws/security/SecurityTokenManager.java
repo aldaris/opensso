@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManager.java,v 1.1 2006-10-30 23:15:16 qcheng Exp $
+ * $Id: SecurityTokenManager.java,v 1.2 2007-04-23 16:53:21 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,6 +227,7 @@ public final class SecurityTokenManager {
      *        AuthenticationSessionContext directive need to be handled, use
      *        "true" as parameter here since the SessionContext will always be 
      *        included in the ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained.
      */
@@ -235,13 +236,15 @@ public final class SecurityTokenManager {
             SessionContext invocatorSession,
             String resourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException, SAMLException {
         return provider.getSAMLAuthorizationToken(senderIdentity,
                 invocatorSession,
                 resourceID,
                 includeAuthN,
-                includeResourceAccessStatement);
+                includeResourceAccessStatement,
+                recipientProviderID);
     }
     
     /**
@@ -264,6 +267,7 @@ public final class SecurityTokenManager {
      *        AuthenticationSessionContext directive need to be handled, use
      *        "true" as parameter here since the SessionContext will always be 
      *        included in the ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained.
      */
@@ -272,13 +276,15 @@ public final class SecurityTokenManager {
             SessionContext invocatorSession,
             EncryptedResourceID encResourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return provider.getSAMLAuthorizationToken(senderIdentity,
                 invocatorSession,
                 encResourceID,
                 includeAuthN,
-                includeResourceAccessStatement);
+                includeResourceAccessStatement,
+                recipientProviderID);
     }
     
     
@@ -307,6 +313,7 @@ public final class SecurityTokenManager {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      */
@@ -315,13 +322,15 @@ public final class SecurityTokenManager {
             SessionContext invocatorSession,
             String resourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException, SAMLException {
         return provider.getSAMLBearerToken(senderIdentity,
                 invocatorSession,
                 resourceID,
                 includeAuthN,
-                includeResourceAccessStatement);
+                includeResourceAccessStatement,
+                recipientProviderID);
     }
     
     
@@ -350,6 +359,7 @@ public final class SecurityTokenManager {
      *			handled, use "true" as parameter here since the
      *			SessionContext will always be included in the
      *			ResourceAccessStatement.
+     * @param recipientProviderID recipient's provider ID.
      * @return the <code>SecurityAssertion</code> object.
      * @throws SecurityTokenException if the assertion could not be obtained
      * @supported.api
@@ -359,12 +369,14 @@ public final class SecurityTokenManager {
             SessionContext invocatorSession,
             EncryptedResourceID encResourceID,
             boolean includeAuthN,
-            boolean includeResourceAccessStatement)
+            boolean includeResourceAccessStatement,
+            String recipientProviderID)
             throws SecurityTokenException {
         return provider.getSAMLBearerToken(senderIdentity,
                 invocatorSession,
                 encResourceID,
                 includeAuthN,
-                includeResourceAccessStatement);
+                includeResourceAccessStatement,
+                recipientProviderID);
     }   
 }
