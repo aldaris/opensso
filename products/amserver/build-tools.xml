@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.2 2007-04-19 18:26:32 veiming Exp $
+   $Id: build-tools.xml,v 1.3 2007-04-24 06:07:31 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -90,8 +90,9 @@
                 includes="opensso.jar"/>
         </copy>
         <copy todir="${amadm.locale.dir}"
-            overwrite="yes" flatten="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.res.dir}" includes="*.properties"/>
+            overwrite="yes" encoding="UTF-8">
+            <fileset dir="${amserver.built.res.dir}" includes="*.properties"
+                excludes="AMConfig.properties" />
         </copy>
         <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">
@@ -125,8 +126,6 @@
                 <include name="README.amadm"/>
                 <include name="README.setup"/>
             </zipfileset>
-            <zipfileset dir="${amserver.built.dir}" filemode="755"
-                includes="classes/**/*"/>
             <zipfileset dir="${amadm.tools.dir}" filemode="755">
                 <include name="lib/**/*"/>
                 <include name="locale/**/*"/>

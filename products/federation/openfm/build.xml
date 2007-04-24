@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2007-03-28 05:41:06 veiming Exp $
+   $Id: build.xml,v 1.11 2007-04-24 06:07:33 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -95,6 +95,7 @@
 
     <target name="nightly">
         <antcall target="war" />
+        <antcall target="tools" />
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="samples" />
@@ -105,8 +106,34 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="war" depends="build">
+    <target name="war" depends="jars">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="tools" depends="jars">
+        <ant antfile="${openfm.dir}/build-tools.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="jars" depends="build">
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${fm.dist.dir}/openfm.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <fileset dir="${openfm.xml.dir}" includes="*.xml"
+                excludes="SAML.xml,Federation.xml" />
+            <zipfileset dir="${openfm.classes.dir}" />
+        </jar>
+
+        <checksum file="${fm.dist.dir}/openfm.jar" 
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="samples" depends="war">
@@ -148,12 +175,13 @@
 
     <target name="preparebuild" depends="checklib" >
         <mkdir dir="${openfm.built.dir}"/>
+        <mkdir dir="${fm.dist.dir}"/>
         <mkdir dir="${openfm.classes.dir}"/>
         <mkdir dir="${openfm.built.docs.dir}"/>
         <mkdir dir="${openfm.built.apidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="war-clean,samples-clean,unittest-clean,clientsdk-clean,clientsamples-clean">
+    <target name="clean" depends="war-clean,tools-clean,samples-clean,unittest-clean,clientsdk-clean,clientsamples-clean">
         <delete dir="${openfm.built.apidocs.dir}"/>
         <delete dir="${openfm.built.docs.dir}"/>
         <delete dir="${openfm.classes.dir}"/>
@@ -162,6 +190,10 @@
   
     <target name="war-clean">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true" target="clean"/>
+    </target>
+  
+    <target name="tools-clean">
+        <ant antfile="${openfm.dir}/build-tools.xml" inheritRefs="true" target="clean"/>
     </target>
 
     <target name="clientsdk-clean">
@@ -220,6 +252,7 @@
         <echo message=" clientsamples       : generates client samples war file"/>
         <echo message=" idpdiscovery        : generates IDP discovery service war file"/>
         <echo message=" war                 : creates WAR for deployment"/>
+        <echo message=" tools               : creates tools zip"/>
         <echo message=" clientsdk           : creates client SDK jar file"/>
         <echo message=" doc                 : creates javadocs"/>
         <echo message=" clean               : deletes the generated files"/>

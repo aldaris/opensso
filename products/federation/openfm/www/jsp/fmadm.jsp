@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: fmadm.jsp,v 1.5 2007-02-20 08:52:30 veiming Exp $
+   $Id: fmadm.jsp,v 1.6 2007-04-24 06:07:34 veiming Exp $
   
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -61,7 +61,7 @@
         manager.validateToken(ssoToken);
 
         WebCLIHelper helper = new WebCLIHelper(request,
-            "com.sun.identity.federation.cli.FederationManager",
+            "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
             "fmadm", "fmadm.jsp");
         out.println(helper.getHTML(request, ssoToken));
     } catch (SSOException e) {

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-03-19 21:01:32 veiming Exp $
+   $Id: build.xml,v 1.6 2007-04-24 06:07:32 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -120,6 +120,25 @@
                 <include name="*.dtd" />
               </fileset>
         </copy>
+
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${fedlibrary.dist.dir}/openfedlib.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <fileset dir="${library.xml.dir}" includes="*.xml" />
+            <zipfileset dir="${library.classes.dir}" />
+        </jar>
+
+        <checksum file="${fedlibrary.dist.dir}/openfedlib.jar" 
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="jaxrpc" unless="library.jaxrpc.done">
@@ -232,6 +251,7 @@
 
     <target name="preparebuild" depends="checklib">
         <mkdir dir="${library.built.dir}"/>
+        <mkdir dir="${fedlibrary.dist.dir}" />
         <mkdir dir="${library.classes.dir}"/>
         <mkdir dir="${library.built.docs.dir}"/>
         <mkdir dir="${library.built.apidocs.dir}"/>

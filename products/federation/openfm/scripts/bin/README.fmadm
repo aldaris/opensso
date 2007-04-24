@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README.fmadm,v 1.2 2006-11-03 00:19:19 hengming Exp $
+   $Id: README.fmadm,v 1.3 2007-04-24 06:07:34 veiming Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,9 +29,12 @@ Steps:
  1. Install Open Federation server
      - deploy the openfm.war and configure it
  2. Setup the CLI
-     - unzip openfm/built/dist/fmadm.zip to a directory
+     - unzip openfm/built/dist/fmAdminTools.zip to a directory
        in the same machine where openfm.war is deployed.
-     - copy the AMConfig.properties and FederationConfig.properties that was
-       generated in Step One to the "classes" directory
- 3. Run the CLI 
-     - type "fmadm" or "fmadm.bat" to run the CLI. 
+     - run the setup
+     - provide the path to the configured AMConfig.properties
+       that was generated in Step One
+ 3. Run the CLI
+     - type "fmadm" or "fmadm.bat" to run the CLI.
+~                                                                               
+~                                                              

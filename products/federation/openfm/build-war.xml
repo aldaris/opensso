@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.9 2007-03-28 05:41:05 veiming Exp $
+   $Id: build-war.xml,v 1.10 2007-04-24 06:07:33 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,47 +34,14 @@
         </condition>
     </fail>
 
-    <property name="war.classes.dir" location="${openfm.built.war.dir}/classes"/>
     <property name="war.package.dir" location="${openfm.built.war.dir}/package"/>
     <property name="war.webinf.classes.dir" location="${openfm.built.war.dir}/package/WEB-INF/classes"/>
-    <property name="war.cli.package.dir" location="${openfm.built.war.dir}/cli/package"/>
     <property name="war.packageweb.dir" location="${openfm.built.war.dir}/packageweb"/>
 
     <target name="all">
-        <antcall target="cli" inheritRefs="true"/>
+        <antcall target="war" inheritRefs="true"/>
     </target>
     
-    <target name="cli" depends="war">
-        <tstamp>
-            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
-        </tstamp>
-        <echo file="${war.cli.package.dir}/.manifest"
-            message="version=${openfm.version}, ${touch.time}" />
-        <copy file="${openfm.basedir}/license.txt" todir="${war.cli.package.dir}" />
-        <copy file="${openfm.script.dir}/bin/README.fmadm" tofile="${war.cli.package.dir}/README" />
-
-        <copy todir="${war.cli.package.dir}/classes">
-            <fileset dir="${war.package.dir}/WEB-INF/classes"
-                includes="*.properties"
-                excludes="amConsole.properties,amClientData.properties,amClientDetection.properties,configuration.properties,configuratorPlugins.properties,debug.properties,AMConfig.properties,serviceDefaultValues.properties,serviceNames.properties" />
-            <fileset dir="${library.classes.dir}" />
-            <fileset dir="${openfm.classes.dir}" />
-        </copy>
-        <copy todir="${war.cli.package.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="ldapjdk.jar,mail.jar,j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,xsdlib.jar,xmlsec.jar,relaxngDatatype.jar" />
-            <fileset dir="${library.extlib.dir}" includes="opensso-sharedlib.jar" />
-            <fileset dir="${openfm.extlib.dir}" includes="opensso.jar" />
-        </copy>
-        <copy file="${openfm.script.dir}/bin/fmadm"
-            tofile="${war.cli.package.dir}/fmadm" />
-        <copy file="${openfm.script.dir}/bin/fmadm.bat"
-            tofile="${war.cli.package.dir}/fmadm.bat" />
-        <copy file="${openfm.res.i18n.dir}/FederationManagerCLI.properties"
-            tofile="${war.cli.package.dir}/classes/FederationManagerCLI.properties" />
-        <zip destfile="${fm.dist.dir}/fmadm.zip" basedir="${war.cli.package.dir}" />
-        <checksum file="${fm.dist.dir}/fmadm.zip" algorithm="SHA" fileext=".sha" />
-    </target>
-
     <target name="war" depends="preparebuild">
         <delete dir="${war.package.dir}" />
         <unjar src="${openfm.extlib.dir}/opensso.war" dest="${war.package.dir}" />
@@ -95,13 +62,12 @@
             <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
-            <fileset dir="${library.classes.dir}" />
-            <fileset dir="${openfm.classes.dir}" />
-            <fileset dir="${library.xml.dir}" includes="*.xml" /> 
-            <fileset dir="${openfm.xml.dir}" includes="*.xml" 
-                excludes="SAML.xml,Federation.xml" />
             <fileset dir="${library.xml.dir}" includes="*.xsl" />
         </copy>
+        <copy file="${fedlibrary.dist.dir}/openfedlib.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/openfedlib.jar" />
+        <copy file="${fm.dist.dir}/openfm.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/openfm.jar" />
 
         <copy todir="${war.package.dir}/config/auth/default">
             <fileset dir="${openfm.xml.dir}" 
@@ -315,11 +281,9 @@
 
     <target name="preparebuild">
         <mkdir dir="${fm.dist.dir}"/>
-        <mkdir dir="${war.cli.package.dir}"/>
     </target>
 
     <target name="clean">
-        <delete dir="${war.cli.package.dir}" />
         <delete dir="${war.package.dir}" />
         <delete dir="${fm.dist.dir}" />
     </target>
