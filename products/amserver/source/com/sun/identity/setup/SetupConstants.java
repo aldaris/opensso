@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.7 2007-02-20 22:43:16 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.8 2007-04-25 22:22:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,11 +47,6 @@ public interface SetupConstants {
      * Encryption property in configuration file.
      */
     String ENC_PWD_PROPERTY = "am.encryption.pwd";
-
-    /**
-     * Bootstrap directory prefix.
-     */
-    String BOOTSTRAP_FILE_PREFIX = "com.sun.identity.bootClassPath";
 
     /**
      * Configurator plugins properties file name.
@@ -362,5 +357,15 @@ public interface SetupConstants {
      * Configuration Variable for service management root suffix.
      */
     String SM_CONFIG_ROOT_SUFFIX = "SM_CONFIG_ROOT_SUFFIX";
+
+    /**
+     * Properties file that contain bootstrap information.
+     */
+    String BOOTSTRAP_PROPERTIES_FILE = "bootstrap";
+
+    /**
+     * Property to set the root of configuration directory.
+     */
+    String PRESET_CONFIG_DIR = "configuration.dir";
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.16 2007-04-03 17:43:47 ak138937 Exp $
+ * $Id: AMSetupServlet.java,v 1.17 2007-04-25 22:22:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,11 +124,7 @@ public class AMSetupServlet extends HttpServlet {
         if (overrideAMC != null && overrideAMC.equalsIgnoreCase("true")) {
             try {
                 if (servletCtx != null) {
-                    String bootstrap = getBootStrapFile();
-                    FileReader frdr = new FileReader(bootstrap);
-                    BufferedReader brdr = new BufferedReader(frdr);
-                    String configLocation = brdr.readLine();
-                    frdr.close();
+                    String configLocation = getConfigDirectory();
                     String overridingAMC =  configLocation + "/" +
                         SetupConstants.AMCONFIG_PROPERTIES; 
                     FileInputStream fin = new FileInputStream(overridingAMC);
@@ -148,8 +144,10 @@ public class AMSetupServlet extends HttpServlet {
                         "AMSetupServlet.checkConfigProperties: " +
                         "Context is null");
                 }
-            } catch (FileNotFoundException fex) {
-                //nothing to do
+            } catch (ConfiguratorException e) {
+                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupServlet.checkConfigProperties: " +
+                    "Exception in getting bootstrap information", e);
             } catch (IOException ioex) {
                 if (Debug.getInstance(
                     SetupConstants.DEBUG_NAME).messageEnabled()
@@ -188,83 +186,71 @@ public class AMSetupServlet extends HttpServlet {
     ) {
         ServicesDefaultValues.setServiceConfigValues(request);
         Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get(
-            SetupConstants.CONFIG_VAR_BASE_DIR);
-        String bootstrap = getBootStrapFile();
 
         try {
-            if (bootstrap != null) {
-                File btsFile = new File(bootstrap);
-                if (!btsFile.getParentFile().exists()) {
-                    btsFile.getParentFile().mkdirs();
-                }
-                FileWriter bfout = new FileWriter(bootstrap);
-                bfout.write(basedir+"\n");
-                bfout.close();
-
-                initializeConfigProperties();
-                reInitConfigProperties();
-                boolean isDITLoaded = ((String)map.get(
-                    SetupConstants.DIT_LOADED)).equals("true");
+            createBootstrapFile(map);
+            initializeConfigProperties();
+            reInitConfigProperties();
+            boolean isDITLoaded = ((String)map.get(
+                SetupConstants.DIT_LOADED)).equals("true");
                 
-                String dataStore = (String)map.get(
-                    SetupConstants.CONFIG_VAR_DATA_STORE);
-                boolean isDSServer = dataStore.equals(
-                    SetupConstants.SMS_DS_DATASTORE);
-                boolean isADServer = (isDSServer) ? false : dataStore.equals(
-                    SetupConstants.SMS_AD_DATASTORE);
+            String dataStore = (String)map.get(
+                SetupConstants.CONFIG_VAR_DATA_STORE);
+            boolean isDSServer = dataStore.equals(
+                SetupConstants.SMS_DS_DATASTORE);
+            boolean isADServer = (isDSServer) ? false : dataStore.equals(
+                SetupConstants.SMS_AD_DATASTORE);
 
-                if ((isDSServer || isADServer) && !isDITLoaded) {
-                    boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
-                        SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
-                            "sdkSchema") : false;
-                    List schemaFiles = getSchemaFiles(dataStore, loadSDKSchema);
-                    writeSchemaFiles(basedir, schemaFiles);
-                }
-
-                String hostname = (String)map.get(
-                    SetupConstants.CONFIG_VAR_SERVER_HOST);
-                String serverURL = (String)map.get(
-                    SetupConstants.CONFIG_VAR_SERVER_URL);
-                SSOToken adminSSOToken = getAdminSSOToken();
-                if (!isDITLoaded) {
-                    RegisterServices regService = new RegisterServices();
-                    regService.registers(adminSSOToken);
-                    processDataRequests("WEB-INF/template/sms");
-                } else {
-                    if (isDSServer || isADServer) {
-                       //Update the platform server list
-                       updatePlatformServerList(serverURL, hostname);
-                    }
-                }
-                handlePostPlugins(adminSSOToken);
-
-                reInitConfigProperties();
-                AMAuthenticationManager.reInitializeAuthServices();
-                
-                AMIdentityRepository.clearCache();
-                ServiceManager svcMgr = new ServiceManager(adminSSOToken);
-                svcMgr.clearCache();
-                LoginLogoutMapping lmp = new LoginLogoutMapping();
-                lmp.initializeAuth(servletCtx);
-                String deployuri = (String)map.get(
-                    SetupConstants.CONFIG_VAR_SERVER_URI);
-                /*
-                 * requiring the keystore.jks file in OpenSSO workspace. The
-                 * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
-                 * integration that we had done.
-                 * TODO: Uncomment these two line after we have fixed all 
-                 *       related issue in OpenSSO workspace.
-                 */
-                //createPasswordFiles(basedir, deployuri);
-                //createIdentitiesForWSSecurity(serverURL, deployuri);
-                isConfiguredFlag = true;
-                LoginLogoutMapping.setProductInitialized(true);
-                return true;
-            } else {      
-                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet.processRequest: Bootstrap file is missing");
+            if ((isDSServer || isADServer) && !isDITLoaded) {
+                boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
+                    SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
+                        "sdkSchema") : false;
+                List schemaFiles = getSchemaFiles(dataStore, loadSDKSchema);
+                String basedir = (String)map.get(
+                    SetupConstants.CONFIG_VAR_BASE_DIR);
+                writeSchemaFiles(basedir, schemaFiles);
             }
+
+            String hostname = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_HOST);
+            String serverURL = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_URL);
+            SSOToken adminSSOToken = getAdminSSOToken();
+
+            if (!isDITLoaded) {
+                RegisterServices regService = new RegisterServices();
+                regService.registers(adminSSOToken);
+                processDataRequests("WEB-INF/template/sms");
+            } else {
+                if (isDSServer || isADServer) {
+                    //Update the platform server list
+                    updatePlatformServerList(serverURL, hostname);
+                }
+            }
+            handlePostPlugins(adminSSOToken);
+
+            reInitConfigProperties();
+            AMAuthenticationManager.reInitializeAuthServices();
+                
+            AMIdentityRepository.clearCache();
+            ServiceManager svcMgr = new ServiceManager(adminSSOToken);
+            svcMgr.clearCache();
+            LoginLogoutMapping lmp = new LoginLogoutMapping();
+            lmp.initializeAuth(servletCtx);
+            String deployuri = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_URI);
+            /*
+             * requiring the keystore.jks file in OpenSSO workspace. The
+             * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
+             * integration that we had done.
+             * TODO: Uncomment these two line after we have fixed all 
+             *       related issue in OpenSSO workspace.
+             */
+            //createPasswordFiles(basedir, deployuri);
+            //createIdentitiesForWSSecurity(serverURL, deployuri);
+            isConfiguredFlag = true;
+            LoginLogoutMapping.setProductInitialized(true);
+            return true;
         } catch (FileNotFoundException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest: " +
@@ -283,6 +269,10 @@ public class AMSetupServlet extends HttpServlet {
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
         } catch (PolicyException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.processRequest", e);
+            e.printStackTrace();
+        } catch (ConfiguratorException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processRequest", e);
             e.printStackTrace();
@@ -390,15 +380,107 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
+    private static String getPresetConfigDir() {
+        String configDir = null;
+        try {
+            ResourceBundle rb = ResourceBundle.getBundle(
+                SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
+            configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
+        } catch (MissingResourceException e) {
+            //ignored because bootstrap properties file maybe absent.
+        }
+        return configDir;
+    }
+
+    private static String getConfigDirectory()
+        throws IOException {
+        String configDir = null;
+        String presetConfigDir = getPresetConfigDir();
+        if ((presetConfigDir != null) && (presetConfigDir.length() > 0)) {
+            String realPath = getNormalizedRealPath(servletCtx);
+            if (realPath != null) {
+                configDir = presetConfigDir + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + realPath;
+                File f = new File(configDir);
+                if (!f.exists()) {
+                    configDir = null;
+                }
+            } else {
+                throw new ConfiguratorException(
+                    "cannot get configuration path");
+            }
+        } else {
+            try {
+                String bootstrap = getBootStrapFile();
+                FileReader frdr = new FileReader(bootstrap);
+                BufferedReader brdr = new BufferedReader(frdr);
+                configDir = brdr.readLine();
+                frdr.close();
+            } catch (FileNotFoundException e) {
+                //ignore: war is not configured
+            }
+        }
+        return configDir;
+    }
+
+    private static void createBootstrapFile(Map configMap)
+        throws ConfiguratorException, IOException {
+        String configDir = getPresetConfigDir();
+        if ((configDir != null) && (configDir.length() > 0)) {
+            String realPath = getNormalizedRealPath(servletCtx);
+            if (realPath != null) {
+                String basedir = configDir + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + realPath;
+                configMap.put(SetupConstants.CONFIG_VAR_BASE_DIR, basedir);
+            } else {
+                throw new ConfiguratorException(
+                    "cannot get configuration path");
+            }
+        } else {
+            String bootstrap = getBootStrapFile();
+            File btsFile = new File(bootstrap);
+            if (!btsFile.getParentFile().exists()) {
+                btsFile.getParentFile().mkdirs();
+            }
+            String basedir = (String)configMap.get(
+                SetupConstants.CONFIG_VAR_BASE_DIR);
+            FileWriter bfout = new FileWriter(bootstrap);
+            bfout.write(basedir + "\n");
+            bfout.close();
+        }
+    }
+
     /**
      * Returns location of the bootstrap file.
      *
      * @return Location of the bootstrap file. Returns null if the file
      *         cannot be located 
+     * @throws ConfiguratorException if servlet context is null or deployment
+     *         application real path cannot be determined.
      */
-    private static String getBootStrapFile() {
+    private static String getBootStrapFile()
+        throws ConfiguratorException {
+        String bootFile = null;
         if (servletCtx != null) {
-            String path = getAppResource();
+            String path = getNormalizedRealPath(servletCtx);
+            if (path != null) {
+                bootFile = System.getProperty("user.home") + "/" +
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" + 
+                    SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
+            } else {
+                throw new ConfiguratorException(
+                    "Cannot read the bootstrap path");
+            }
+        } else {
+            throw new ConfiguratorException("Servlet Context is null");
+        }
+        return bootFile;
+    }
+
+    public static String getNormalizedRealPath(ServletContext servletCtx) {
+        String path = null;
+        if (servletCtx != null) {
+            path = getAppResource(servletCtx);
             
             if (path != null) {
                 int idx1 = path.lastIndexOf("/");
@@ -425,28 +507,9 @@ public class AMSetupServlet extends HttpServlet {
                 if (idx != -1) {
                     path = path.substring(idx + 1);
                 }
-                String bootFile = servletCtx.getInitParameter(
-                    SetupConstants.BOOTSTRAP_FILE_PREFIX);
-                if ((bootFile != null) && (bootFile.length() > 0)) {
-                    bootFile = bootFile + "/" + 
-                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" + 
-                        SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
-                } else {
-                    bootFile = System.getProperty("user.home") + "/" +
-                         SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_DIR + "/" + 
-                         SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX + path;
-                }
-                return bootFile;
-            } else {
-                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet.getBootStrapFile: " +
-                    "Cannot read the bootstrap path");
             }
-        } else {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.getBootStrapFile: Context is null");
         }
-        return null;
+        return path;
     }
 
     /**
@@ -455,7 +518,7 @@ public class AMSetupServlet extends HttpServlet {
      * @return URL of the default resource. Returns null of servlet context is
      *         null.
      */
-    private static String getAppResource() {
+    private static String getAppResource(ServletContext servletCtx) {
         if (servletCtx != null) {
             try {
                 java.net.URL turl = servletCtx.getResource("/");

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.8 2007-02-26 19:01:15 veiming Exp $
+   $Id: configurator.jsp,v 1.9 2007-04-25 22:21:49 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -26,6 +26,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ page import="com.sun.identity.setup.AMSetupServlet"%>
+<%@ page import="com.sun.identity.setup.SetupConstants"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="javax.servlet.ServletContext"%>
@@ -89,6 +90,7 @@ border="0" height="10" width="108" /></td></tr></table>
     String locale = "en_US";
     String adminPwd;
     String serverURL;
+    boolean presetConfigDir = false;
 
     if (request.getMethod().equals("POST")) {
         serverURL = request.getParameter("serverURL");
@@ -150,9 +152,26 @@ border="0" height="10" width="108" /></td></tr></table>
                 deployuri = deployuri.substring(0, idx);
             }
         }
-        basedir = System.getProperty("user.home");
-        if (File.separatorChar == '\\') {
-            basedir = basedir.replace('\\', '/');
+
+        String configDir = null;
+        try {
+            ResourceBundle rb = ResourceBundle.getBundle(
+                SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
+            configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
+        } catch (MissingResourceException e) {
+            //ignored because bootstrap properties file maybe absent.
+        }
+
+        if ((configDir == null) || (configDir.length() == 0)) {
+            basedir = System.getProperty("user.home");
+            if (File.separatorChar == '\\') {
+                basedir = basedir.replace('\\', '/');
+            }
+        } else {
+            presetConfigDir = true;
+            basedir = configDir + "/" +
+                SetupConstants.CONFIG_VAR_BOOTSTRAP_BASE_PREFIX +
+            AMSetupServlet.getNormalizedRealPath(config.getServletContext());
         }
         
         String subDomain;
@@ -320,7 +339,14 @@ onblur="javascript: if (this.disabled==0) this.className='Btn1'" onfocus="javasc
              <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configdirectory"/></span></div></div>
              </td>
              <td valign="top"> 
-             <div class="ConTblCl2Div"><input value="<%= basedir %>" name="BASE_DIR" id="psLbl3" size="50" class="TxtFld"></div><div class="HlpFldTxt"><config:message i18nKey="configurator.amconfigdatadir"/></div>
+             <div class="ConTblCl2Div">
+        <% if (presetConfigDir) { %>
+             <%= basedir %>
+             <input type='hidden value="<%= basedir %>" name="BASE_DIR">
+        <% } else { %>
+             <input value="<%= basedir %>" name="BASE_DIR" id="psLbl3" size="50" class="TxtFld">
+        <% } %>
+             </div><div class="HlpFldTxt"><config:message i18nKey="configurator.amconfigdatadir"/></div>
              </td>
          </tr>
 <!-- Space between the section -->
