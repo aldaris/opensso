@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.1 2007-04-24 06:07:32 veiming Exp $
+   $Id: build-tools.xml,v 1.2 2007-04-25 22:59:05 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,6 +72,9 @@
                 <exclude name="setup"/>
             </zipfileset>
         </zip>
+
+        <checksum file="${fm.dist.dir}/fmAdmintools.zip"
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="clean">

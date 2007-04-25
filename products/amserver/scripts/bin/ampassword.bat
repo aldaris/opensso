@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: ampassword.bat,v 1.2 2007-03-06 03:03:59 ak138937 Exp $
+: $Id: ampassword.bat,v 1.3 2007-04-25 22:58:40 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -36,7 +36,7 @@ goto WHILE
 
 set TOOLS_HOME=@TOOLS_HOME@
 
-set TOOLS_CLASSPATH=%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/db.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxrpc-api.jar;%TOOLS_HOME%/lib/jaxrpc-impl.jar;%TOOLS_HOME%/lib/jaxrpc-spi.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/saaj-api.jar;%TOOLS_HOME%/lib/saaj-impl.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/locale;%TOOLS_HOME%/config
+set TOOLS_CLASSPATH=@CONFIG_DIR@;%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/db.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxrpc-api.jar;%TOOLS_HOME%/lib/jaxrpc-impl.jar;%TOOLS_HOME%/lib/jaxrpc-spi.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/saaj-api.jar;%TOOLS_HOME%/lib/saaj-impl.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/locale;%TOOLS_HOME%/config
 
 
 java -Xms64m -Xmx256m -classpath %TOOLS_CLASSPATH% com.iplanet.services.ldap.ServerConfigMgr %PARAM%
