@@ -238,6 +238,7 @@ crtn['changeupgrade'] ='Upgrade Changed'; mandatorygrp['changeupgrade'] = 'compo
 crtn['changelogging'] ='Logging Changed'; mandatorygrp['changelogging'] = 'component';
 crtn['changej2eeagent'] ='J2EE Agent Changed'; mandatorygrp['changej2eeagent'] = 'component';
 crtn['changewebagent'] ='Web Agent Changed'; mandatorygrp['changewebagent'] = 'component';
+crtn['changeqa'] ='QA Test Changed'; mandatorygrp['changeqa'] = 'component';
 crtn['uireviewer'] ='UI Reviewer';
 crtn['userdocs'] ='User Docs Changed';
 crtn['tddocs'] ='Diagnostics/Troubleshooting Docs Changed';
