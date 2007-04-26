@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.8 2007-04-09 23:29:15 goodearth Exp $
+ * $Id: Constants.java,v 1.9 2007-04-26 18:23:19 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -955,42 +955,53 @@ public interface Constants {
      * Attribute name for the load balancer cookie in the
      * Naming Response.
      */
-    public static final String NAMING_AM_LB_COOKIE = "am_load_balancer_cookie";
+    String NAMING_AM_LB_COOKIE = "am_load_balancer_cookie";
 
     /**
-     *  Property string for Site Monitoring thread polling interval
+     * Property string for Site Monitoring thread polling interval
      */
-    public static final String MONITORING_INTERVAL = 
-	          "com.sun.identity.sitemonitor.interval";
-    /**
-     *  Property string for URL Checker Target URL
-     */
-    public static final String URLCHECKER_TARGET_URL = 
-	          "com.sun.identity.urlchecker.targeturl";
-    /**
-     *  Property string for URL Checker Target URL
-     */
-    public static final String URLCHECKER_INVALIDATE_INTERVAL = 
-	          "com.sun.identity.urlchecker.invalidate.interval";
-    /**
-     *  Property string for URL Checker Sleep Interval
-     */
-    public static final String URLCHECKER_SLEEP_INTERVAL = 
-	          "com.sun.identity.urlchecker.sleep.interval";
-    /**
-     *  Property string for Site Monitor Class name
-     */
-    public static final String SITE_MONITOR_CLASS = 
-	          "com.sun.identity.sitemonitor.class";
-    /**
-     *  Property string for Site Status Check Class name
-     */
-    public static final String SITE_STATUS_CHECK_CLASS = 
-	          "com.sun.identity.sitemonitor.SiteStatusCheck.class";
+    String MONITORING_INTERVAL = "com.sun.identity.sitemonitor.interval";
 
     /**
-     *  Property string for Site Status Check timeout
+     * Property string for URL Checker Target URL
      */
-    public static final String MONITORING_TIMEOUT = 
-	          "com.sun.identity.sitemonitor.timeout";
+    String URLCHECKER_TARGET_URL = "com.sun.identity.urlchecker.targeturl";
+
+    /**
+     * Property string for URL Checker Target URL
+     */
+    String URLCHECKER_INVALIDATE_INTERVAL =
+        "com.sun.identity.urlchecker.invalidate.interval";
+
+    /**
+     * Property string for URL Checker Sleep Interval
+     */
+    String URLCHECKER_SLEEP_INTERVAL =
+        "com.sun.identity.urlchecker.sleep.interval";
+
+    /**
+     * Property string for Site Monitor Class name
+     */
+    String SITE_MONITOR_CLASS = "com.sun.identity.sitemonitor.class";
+
+    /**
+     * Property string for Site Status Check Class name
+     */
+    String SITE_STATUS_CHECK_CLASS =
+        "com.sun.identity.sitemonitor.SiteStatusCheck.class";
+
+    /**
+     * Property string for Site Status Check timeout
+     */
+    String MONITORING_TIMEOUT = "com.sun.identity.sitemonitor.timeout";
+
+    /**
+     * Property Name for cache polling interval.
+     */
+    String CACHE_POLLING_TIME_PROPERTY = "com.sun.identity.sm.cacheTime";
+
+    /**
+     * Default cache polling interval (1 minute).
+     */
+    int DEFAULT_CACHE_POLLING_TIME = 1;
 }
