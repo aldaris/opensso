@@ -17,26 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.2 2007-03-20 22:02:30 rmisra Exp $
+ * $Id: TestCommon.java,v 1.3 2007-04-26 21:53:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -220,9 +221,10 @@ public class TestCommon implements TestConstants
     protected void destroyToken(SSOToken ssotoken)
         throws Exception {
         log(logLevel, "destroyToken", "Inside destroy token");
-        SSOTokenManager stMgr = SSOTokenManager.getInstance();
-        if (stMgr.isValidToken(ssotoken))
+        if (validateToken(ssotoken)) {
+            SSOTokenManager stMgr = SSOTokenManager.getInstance();
             stMgr.destroyToken(ssotoken);
+        }
     }
 
     /**
@@ -239,7 +241,8 @@ public class TestCommon implements TestConstants
     }
 
     /**
-     * Reads a file containing data-value pairs and returns that as a list object.
+     * Reads a file containing data-value pairs and returns that as a list
+     * object.
      */
     protected List getListFromFile(String fileName)
         throws Exception {
@@ -259,7 +262,7 @@ public class TestCommon implements TestConstants
     }
 
     /**
-     * Login to console using htmlunit
+     * Login to admin console using htmlunit
      */ 
     public void consoleLogin(
         WebClient webclient,
@@ -286,6 +289,226 @@ public class TestCommon implements TestConstants
         exiting("consoleLogin");
     }
 
+    /**
+     * Creates a map object and adds all the configutaion properties to that.
+     */
+     public Map getConfigurationMap(String rb) 
+     throws Exception {
+         entering("getConfigurationMap", null);
+         ResourceBundle cfg = ResourceBundle.getBundle(rb);
+         Map<String, String> map = new HashMap<String, String>();
+         map.put("serverurl",protocol + ":" + "//" + host + ":" + port);
+         map.put("serveruri",uri);
+         map.put("cookiedomain",cfg.getString("cookiedomain"));
+         map.put("configdir",cfg.getString("configdir"));
+         map.put("datastore",cfg.getString("datastore"));
+         map.put("dirservername",cfg.getString("dirservername"));
+         map.put("dirserverport",cfg.getString("dirserverport"));
+         map.put("dirserversuffixconfigdata",
+                 cfg.getString("dirserversuffixconfigdata"));
+         map.put("dirserversuffixsmdata",
+                 cfg.getString("dirserversuffixsmdata"));
+         map.put("dirserveradmindn",cfg.getString("dirserveradmindn"));
+         map.put("dirserveradminpassword",
+                 cfg.getString("dirserveradminpassword"));
+         map.put("dirloadums",cfg.getString("dirloadums"));
+         exiting("getConfigurationMap");
+
+         return map;
+     }
+
+    /**
+     * Configures opensso using the configurator page. It map needs to set the
+     * following values:
+     * serverurl                 <protocol + ":" + "//" + host + ":" + port>
+     * serveruri                 <URI for configured instance>
+     * cookiedomain              <full cookie domain name>
+     * configdir                 <directory where product will be installed>
+     * datastore                 <type of statstore: faltfile, dirServer or 
+     *                            activeDir>
+     * dirservername             <directory server hostname>
+     * dirserverport             <directory server port>
+     * dirserversuffixconfigdata <suffix under which configuration data will
+     *                            be stored>
+     * dirserversuffixsmdata     <suffix where sms data will be stored>
+     * dirserveradmindn          <directory user with administration privilages>
+     * dirserveradminpassword    <password for directory user with
+     *                            administration privilages>
+     * dirloadums                <to load user schema or not(yes or no)>
+     */
+     public boolean configureProduct(Map map) 
+     throws Exception {
+         entering("configureProduct", null);
+
+         WebClient webclient = new WebClient();
+         String strURL = (String)map.get("serverurl") +
+                 (String)map.get("serveruri");
+         log(logLevel, "configureProduct", "url:" + strURL);
+         URL url = new URL(strURL);
+         HtmlPage page = (HtmlPage)webclient.getPage(url);
+
+         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
+            log(logLevel, "configureProduct", "Product Configuration was not" +
+                    " successfull." + strURL + "was not found." +
+                    "Please check if war is deployed properly.");
+            exiting("configureProduct");
+            return false;
+         }
+
+         if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
+             HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+             HtmlTextInput txtServer =
+                    (HtmlTextInput)form.getInputByName("SERVER_URL");
+             txtServer.setValueAttribute((String)map.get("serverurl"));
+
+             HtmlTextInput txtCookieDomain =
+                    (HtmlTextInput)form.getInputByName("COOKIE_DOMAIN");
+             txtCookieDomain.setValueAttribute((String)map.get("cookiedomain"));
+
+             HtmlPasswordInput txtAmadminPassword =
+                    (HtmlPasswordInput)form.getInputByName("ADMIN_PWD");
+             txtAmadminPassword.setValueAttribute(adminPassword);
+             HtmlPasswordInput txtAmadminPasswordR =
+                    (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
+             txtAmadminPasswordR.setValueAttribute(adminPassword);
+
+             HtmlTextInput txtConfigDir =
+                    (HtmlTextInput)form.getInputByName("BASE_DIR");
+             txtConfigDir.setValueAttribute((String)map.get("configdir"));
+
+             HtmlRadioButtonInput rbDataStore =
+                    (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
+             if (((String)map.get("datastore")).equals("flatfile"))
+                  rbDataStore.setDefaultValue("flatfile");
+             else {
+                 if (((String)map.get("datastore")).equals("dirServer"))
+                     rbDataStore.setDefaultValue("dirServer");
+                 else if (((String)map.get("datastore")).equals("activeDir"))
+                     rbDataStore.setDefaultValue("activeDir");
+
+                 HtmlTextInput txtDirServerName =
+                       (HtmlTextInput)form.getInputByName("DIRECTORY_SERVER");
+                 txtDirServerName.
+                         setValueAttribute((String)map.get("dirservername"));
+
+                 HtmlTextInput txtDirServerPort =
+                       (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
+                 txtDirServerPort.
+                         setValueAttribute((String)map.get("dirserverport"));
+
+                 HtmlTextInput txtDirConfigData =
+                       (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
+                 txtDirConfigData.setValueAttribute((String)map.
+                         get("dirserversuffixconfigdata"));
+
+                 HtmlTextInput txtDirSMData =
+                       (HtmlTextInput)form.
+                         getInputByName("SM_CONFIG_ROOT_SUFFIX");
+                 txtDirSMData.setValueAttribute((String)map.
+                         get("dirserversuffixsmdata"));
+
+                 HtmlTextInput txtDirAdminDN =
+                       (HtmlTextInput)form.getInputByName("DS_DIRMGRDN");
+                 txtDirAdminDN.setValueAttribute((String)map.
+                         get("dirserveradmindn"));
+
+                 HtmlPasswordInput txtDirAdminPassword =
+                       (HtmlPasswordInput)form.
+                         getInputByName("DS_DIRMGRPASSWD");
+                 txtDirAdminPassword.setValueAttribute((String)map.
+                         get("dirserveradminpassword"));
+                 HtmlPasswordInput txtDirAdminPasswordR =
+                       (HtmlPasswordInput)form.
+                         getInputByName("DS_CONFIRM_PWD");
+                 txtDirAdminPasswordR.setValueAttribute((String)map.
+                         get("dirserveradminpassword"));
+
+                 HtmlCheckBoxInput chkLoadUMS =
+                       (HtmlCheckBoxInput)form.getInputByName("DS_UM_SCHEMA");
+                 if (((String)map.get("dirloadums")).equals("yes"))
+                     chkLoadUMS.setChecked(true);
+                 else
+                     chkLoadUMS.setChecked(false);
+            }
+            try {
+                form.submit();
+            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+            }
+            strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
+                    adminPassword;
+            log(logLevel, "configureProduct", "url:" + strURL);
+            url = new URL(strURL);
+            page = (HtmlPage)webclient.getPage(url);
+            if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
+                log(logLevel, "configureProduct", "Product Configuration was" +
+                        " not successfull. Configuration failed.");
+                exiting("configureProduct");
+                return false;
+            } else {
+                log(logLevel, "configureProduct", "Product Configuration was" +
+                        " successfull. New bits were successfully configured.");
+                exiting("configureProduct");
+                return true;
+            }
+        } else {
+            strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
+                    adminPassword;
+            log(logLevel, "configureProduct", "url:" + strURL);
+            url = new URL(strURL);
+            page = (HtmlPage)webclient.getPage(url);
+            if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
+                log(logLevel, "configureProduct", "Product was already" +
+                        " configured. Super admin login failed.");
+                exiting("configureProduct");
+                return false;
+            } else {
+                log(logLevel, "configureProduct", "Product was already" +
+                        " configured. Super admin login successfull.");
+                exiting("configureProduct");
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Logout from admin console using htmlunit
+     */
+    public void consoleLogout(
+        WebClient webclient,
+        String amUrl
+    ) throws Exception {
+        entering("consoleLogout", null);
+        log(logLevel, "consoleLogout", "JavaScript Enabled:" +
+                webclient.isJavaScriptEnabled());
+        log(logLevel, "consoleLogout", "Redirect Enabled:" +
+                webclient.isRedirectEnabled());
+        URL url = new URL(amUrl);
+        HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
+        log(logLevel, "consoleLogout", page.getTitleText());
+        exiting("consoleLogout");
+    }
+
+    /**
+     * Checks whether the string exists on the page
+     */
+    public int getHtmlPageStringIndex(
+        HtmlPage page,
+        String searchStr
+    ) throws Exception {
+        entering("getHtmlPageStringIndex", null);
+        String strPage = page.asXml();
+        log(logLevel, "getHtmlPageStringIndex", "Search string:" + searchStr);
+        int iIdx = strPage.indexOf(searchStr);
+        if (iIdx != -1)
+            log(logLevel, "getHtmlPageStringIndex",
+                    "Search string found on page:" + iIdx);
+        else
+            log(logLevel, "getHtmlPageStringIndex",
+                    "Search string not found on page:" + iIdx);
+        exiting("getHtmlPageStringIndex");
+        return iIdx;
+    }
 
     /**
      * Returns a map of String to Set of String from a formatted string.
