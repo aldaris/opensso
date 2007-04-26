@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.12 2007-04-19 18:28:55 veiming Exp $
+ * $Id: FederationManager.java,v 1.13 2007-04-26 18:24:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -270,7 +270,7 @@ public class FederationManager {
             "metaalias|m|s|Specify metaAlias for local provider.",
             "remoteentityid|r|s|Remote entity Id",
             "useridmapping|g|s|File name of local to remote user Id mapping. Format <local-user-id>|<remote-user-id>",
-            "nameidmapping|e|Name of file that will be created by this sub command. It contains remote user Id to name identifier. It shall be used by remote provider to update user profile."},
+            "nameidmapping|e|s|Name of file that will be created by this sub command. It contains remote user Id to name identifier. It shall be used by remote provider to update user profile."},
         optionAliases={},
         macro="authentication",
         optionalOptions={
