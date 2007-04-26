@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.8 2007-04-12 20:11:19 goodearth Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.9 2007-04-26 17:40:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,6 @@ import javax.naming.directory.ModificationItem;
 
 import netscape.ldap.util.DN;
 
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.services.comm.client.NotificationHandler;
@@ -49,6 +48,8 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
@@ -74,11 +75,6 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     public static final String NOTIFICATION_PROPERTY = 
         "com.sun.identity.sm.notification.enabled";
     
-    private static final String CACHE_POLLING_TIME_PROPERTY = 
-        "com.sun.identity.sm.cacheTime";   
-    
-    private static final int DEFAULT_CACHE_POLLING_TIME = 1;
-
     public SMSJAXRPCObject() {
         if (!initialized) {
             synchronized (SERVICE_NAME) {
@@ -136,16 +132,16 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     private int getCachePollingInterval() {
         // If the property is not configured, default it to 1 minute. 
         String cachePollingTimeStr = SystemProperties.get(
-                CACHE_POLLING_TIME_PROPERTY);
-        int cachePollingInterval = DEFAULT_CACHE_POLLING_TIME;
+            Constants.CACHE_POLLING_TIME_PROPERTY);
+        int cachePollingInterval = Constants.DEFAULT_CACHE_POLLING_TIME;
         if (cachePollingTimeStr != null) { 
             try {
                 cachePollingInterval = Integer.parseInt(cachePollingTimeStr);            
             } catch (NumberFormatException nfe) {
                 debug.error("EventListener::NotificationThread:: "
                         + "Invalid Polling Time: " + cachePollingTimeStr + 
-                        " Defaulting to " + DEFAULT_CACHE_POLLING_TIME  + 
-                        " minute");
+                        " Defaulting to " +
+                        Constants.DEFAULT_CACHE_POLLING_TIME  + " minute");
             }
         }        
         return cachePollingInterval;
@@ -164,8 +160,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         } else {
             if (debug.warningEnabled()) {
                 debug.warning("EventListener: Polling mode DISABLED. " +
-                         CACHE_POLLING_TIME_PROPERTY + "=" + 
-                         cachePollingInterval);
+                    Constants.CACHE_POLLING_TIME_PROPERTY + "=" +
+                    cachePollingInterval);
             }
         }
     }

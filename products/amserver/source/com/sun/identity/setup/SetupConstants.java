@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.8 2007-04-25 22:22:21 veiming Exp $
+ * $Id: SetupConstants.java,v 1.9 2007-04-26 17:40:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -357,6 +357,11 @@ public interface SetupConstants {
      * Configuration Variable for service management root suffix.
      */
     String SM_CONFIG_ROOT_SUFFIX = "SM_CONFIG_ROOT_SUFFIX";
+
+    /**
+     * Datastore notification flag.
+     */
+    String DATASTORE_NOTIFICATION = "DATASTORE_NOTIFICATION";
 
     /**
      * Properties file that contain bootstrap information.

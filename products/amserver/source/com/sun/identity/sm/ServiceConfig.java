@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.5 2007-03-21 22:33:47 veiming Exp $
+ * $Id: ServiceConfig.java,v 1.6 2007-04-26 17:40:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -778,6 +778,7 @@ public class ServiceConfig {
             e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_TOP);
             e.addAttribute(SMSEntry.ATTR_OBJECTCLASS, SMSEntry.OC_SERVICE_COMP);
             e.save(token);
+            entry.refresh(e);
         }
     }
     

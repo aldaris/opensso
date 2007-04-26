@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEnhancedFlatFileObject.java,v 1.5 2007-03-21 22:33:50 veiming Exp $
+ * $Id: SMSEnhancedFlatFileObject.java,v 1.6 2007-04-26 17:40:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.common.CaseInsensitiveTreeSet;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SchemaException;
 import com.sun.identity.sm.ServiceAlreadyExistsException;
 import com.sun.identity.sm.ServiceNotFoundException;
@@ -743,5 +744,23 @@ public class SMSEnhancedFlatFileObject extends SMSFlatFileObjectBase {
                 attr + "=" + id + "," + node.getDN());
             node.addChild(child);        
         }
+    }
+
+    /**
+     * Register a listener.
+     */
+    public String registerCallbackHandler(
+        SSOToken token,
+        SMSObjectListener changeListener)
+        throws SMSException, SSOException {
+        return FlatFileEventManager.getInstance().addObjectChangeListener(
+            changeListener);
+    }
+
+    /**
+     * De-Register a listener.
+     */
+    public void deregisterCallbackHandler(String id) {
+        FlatFileEventManager.getInstance().removeObjectChangeListener(id);
     }
 }
