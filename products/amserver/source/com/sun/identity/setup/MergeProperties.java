@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MergeProperties.java,v 1.4 2006-12-08 21:02:34 veiming Exp $
+ * $Id: MergeProperties.java,v 1.5 2007-04-26 20:14:54 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,7 @@ public class MergeProperties {
             }
         }
 
-        writeToFile(outfile, buff.toString());
+        writeToFile(outfile, buff);
     }
 
     private Map getProperties(String propertyName) {
@@ -90,15 +90,24 @@ public class MergeProperties {
         return results;
     }
 
-    private void writeToFile(String filename, String content)
+    private void writeToFile(String filename, StringBuffer content)
         throws IOException
     {
+        int idx = 0;
+        while (idx != -1) {
+            idx = content.indexOf("\\", idx);
+            if (idx != -1) {
+                content.insert(idx, '\\');
+                idx += 2;
+            }
+        }
+
         if (filename != null) {
             File fileHandle = new File(filename);
             FileWriter out = null;
             try {
                 out = new FileWriter(filename);
-                out.write(content);
+                out.write(content.toString());
             } finally {
                 if (out != null) {
                     out.close();
