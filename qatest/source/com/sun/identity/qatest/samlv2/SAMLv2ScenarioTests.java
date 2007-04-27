@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.1 2007-03-29 21:40:53 mrudulahg Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.2 2007-04-27 22:24:47 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -63,10 +62,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
     private AccessManager amC;
     private DefaultTaskHandler task1;
     private Map<String, String> configMap;
-//    private List<String> spuserlist ;
- //   private List<String> idpuserlist ;
-        ArrayList spuserlist = new ArrayList();
-        ArrayList idpuserlist = new ArrayList();
+    ArrayList spuserlist = new ArrayList();
+    ArrayList idpuserlist = new ArrayList();
     private String  baseDir;
     private HtmlPage page;
     private URL url;
@@ -78,7 +75,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test. 
      */
-    @BeforeMethod(groups={"client"})
+    @BeforeMethod(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
+    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     private void getWebClient() throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
@@ -92,12 +90,15 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"client"})
+    @BeforeClass(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
+    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void setup() throws Exception {
         AccessManager amCidp;
         List<String> list;
         try {
-            baseDir = getBaseDir() + "/built/classes/";
+            baseDir = getBaseDir() + SAMLv2Common.fileseparator + "built" 
+                    + SAMLv2Common.fileseparator + "classes" 
+                    + SAMLv2Common.fileseparator;
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -130,12 +131,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 "samlv2Scen4", "samlv2Scen5", "samlv2Scen6", "samlv2Scen7",
                 "samlv2Scen8"};
             for(int i=0; i < scenArray.length; i++){
-                SAMLv2Common.getEntriesFromResourceBundle(scenArray[i], configMap);
+                SAMLv2Common.getEntriesFromResourceBundle(scenArray[i], 
+                        configMap);
                 //create sp user first
-
+                list.clear();
                 list.add("sn=" + configMap.get("sp_user"));
                 list.add("cn=" + configMap.get("sp_user"));
                 list.add("userpassword=" + configMap.get("sp_userpw"));
+                list.add("inetuserstatus=Active");
                 amC.createIdentity(webClient, configMap.get("sp_realm"), 
                         configMap.get("sp_user"), "User", list);
                 spuserlist.add(configMap.get("sp_user"));
@@ -145,6 +148,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 list.add("sn=" + configMap.get("idp_user"));
                 list.add("cn=" + configMap.get("idp_user"));
                 list.add("userpassword=" + configMap.get("idp_userpw"));
+                list.add("inetuserstatus=Active");
                 amCidp.createIdentity(webClient, configMap.get("idp_realm"), 
                         configMap.get("idp_user"), "User", list);
                 idpuserlist.add(configMap.get("idp_user"));
@@ -175,12 +179,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 1 
      * @DocTest: SAML2|Perform SP initiated SSO, SLO & Termination. 
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
+    "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario1()
         throws Exception {
         entering("samlv2Scenario1", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario1\n");
+            log(logLevel, "samlv2Scenario1", "\nRunning: samlv2Scenario1\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -191,7 +196,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen1spsamlv2ssoinit", "scen1spsamlv2slo", 
             "scen1spsamlv2terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact");
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact", 
+                    false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");            
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
@@ -221,12 +227,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 2 
      * @DocTest: SAML2|Perform IDP initiated SSO, SLO & Termination. 
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
+    "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario2()
         throws Exception {
         entering("samlv2Scenario2", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario2\n");
+            log(logLevel, "samlv2Scenario2", "\nRunning: samlv2Scenario2\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -238,7 +245,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);            
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact");  
+            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact", 
+                    false);  
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");            
             String terminatexmlfile = baseDir + arrActions[3] + ".xml";
@@ -269,12 +277,12 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 3 
      * @DocTest: SAML2|Perform SP init SSO, SLO, Term with post/soap binding
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario3()
         throws Exception {
         entering("samlv2Scenario3", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario3\n");
+            log(logLevel, "samlv2Scenario3", "\nRunning: samlv2Scenario3\n");
             getWebClient(); 
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -285,7 +293,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen3spsamlv2ssoinit", "scen3spsamlv2slo", 
             "scen3spsamlv2terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post");  
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);  
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");            
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
@@ -315,12 +323,12 @@ public class SAMLv2ScenarioTests extends TestCommon {
     * Run saml2 scenario 4 
     * @DocTest: SAML2|IDP Init SSO, SLO, Term with Post/SOAP binding. 
     */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario4()
         throws Exception {
         entering("samlv2Scenario4", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario4\n");
+            log(logLevel, "samlv2Scenario4", "\nRunning: samlv2Scenario4\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -332,7 +340,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);            
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "post");    
+            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "post", false);    
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "soap");            
             String terminatexmlfile = baseDir + arrActions[3] + ".xml";
@@ -363,12 +371,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
     * Run saml2 scenario 5 
     * @DocTest: SAML2|Perform SP Init SSO & SLO with transient federation. 
     */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
+    "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario5()
         throws Exception {
         entering("samlv2Scenario5", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario5\n");
+            log(logLevel, "samlv2Scenario5", "\nRunning: samlv2Scenario5\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -380,7 +389,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen5spsamlv2ssoinit", "scen5spsamlv2slo", 
             "scen5spsamlv2ssoinit", "scen5spsamlv2slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact"); 
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact", 
+                    false); 
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");            
             
@@ -408,12 +418,12 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 6 
      * @DocTest: SAML2|SP Init SSO, SLO with transient fed with POST/SOAP 
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario6()
         throws Exception {
         entering("samlv2Scenario6", null);
         try {
-            Reporter.log("Running: samlv2Scenario6");
+            log(logLevel, "samlv2Scenario6", "Running: samlv2Scenario6");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -425,7 +435,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen6spsamlv2ssoinit", "scen6spsamlv2slo",
             "scen6spsamlv2ssoinit", "scen6spsamlv2slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post");            
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);            
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");            
             
@@ -454,12 +464,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 7 
      * @DocTest: SAML2| IDP initiated SSO, SLO with transient federation. 
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
+    "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario7()
         throws Exception {
         entering("samlv2Scenario7", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario7\n");
+            log(logLevel, "samlv2Scenario7", "\nRunning: samlv2Scenario7\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -474,7 +485,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);            
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact");    
+            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact", 
+                    false);    
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");            
             
@@ -502,12 +514,12 @@ public class SAMLv2ScenarioTests extends TestCommon {
      * Run saml2 scenario 8 
      * @DocTest: SAML2|IDP Init SSO, SLO with transient fed POST/SOAP binding
      */
-    @Test(groups={"client"})
+    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void samlv2Scenario8()
         throws Exception {
         entering("samlv2Scenario8", null);
         try {
-            Reporter.log("\nRunning: samlv2Scenario8\n");
+            log(logLevel, "samlv2Scenario8", "\nRunning: samlv2Scenario8\n");
             
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
@@ -522,7 +534,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);            
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "post");            
+            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "post", false);            
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");            
             
@@ -550,12 +562,13 @@ public class SAMLv2ScenarioTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"client"})
+  //  @AfterClass(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
+ //   "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
     public void cleanup()
         throws Exception {
         entering("cleanup", null);
         try {
-            Reporter.log("Cleanup: ");
+            log(logLevel, "Cleanup", "Entering Cleanup: ");
             getWebClient();
  
             // delete sp users 
