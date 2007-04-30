@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateQuery.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: AssociateQuery.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -29,7 +29,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 /**
- * TODO: Description.
+ * Represents the OpenID associate request message.
  *
  * @author pbryan
  */
@@ -62,17 +62,17 @@ public class AssociateQuery extends Message
     private BigInteger consumerPublic;
 
     /**
-     * TODO: Description.
+     * Constructs an empty associate query.
      */
     public AssociateQuery() {
         super();
     }
 
     /**
-     * TODO: Description.
+     * Decodes an associate query from a map of key-value pairs.
      *
-     * @param map TODO.
-     * @throws DecodeException TODO.
+     * @param map key-value pairs to decode into associate query.
+     * @throws DecodeException if the query is malformed.
      */
     protected void decode(Map<String,String> map)
     throws DecodeException
@@ -115,90 +115,92 @@ public class AssociateQuery extends Message
     }
 
     /**
-     * TODO: Description.
+     * Returns the algorithm to be used to sign subsequent messages.
      *
-     * @return TODO.
+     * @return HMAC_SHA1.
      */
     public AssocType getAssocType() {
         return assocType;
     }
 
     /**
-     * TODO: Description.
+     * Returns the Diffie-Hellman public key from consumer used in key
+     * negotiation.
      *
-     * @return TODO.
+     * @return consumer public key.
      */
     public BigInteger getConsumerPublic() {
         return consumerPublic;
     }
 
     /**
-     * TODO: Description.
+     * Returns the Diffie-Hellman base generator (g) used in key negotiation.
      *
-     * @return TODO.
+     * @return base generator.
      */
     public BigInteger getGenerator() {
         return generator;
     }
 
     /**
-     * TODO: Description.
+     * Returns the Diffie-Hellman prime modulus (p) used in key negotiation.
      *
-     * @return TODO.
+     * @return prime modulus.
      */
     public BigInteger getModulus() {
         return modulus;
     }
 
     /**
-     * TODO: Description.
+     * Returns the method used to encode the association's MAC key in transit.
      *
-     * @return TODO.
+     * @return DH_SHA1 or CLEAR.
      */
     public SessionType getSessionType() {
         return sessionType;
     }
 
     /**
-     * TODO: Description.
+     * Sets the algorithm to be used to sign subsequent messages.
      *
-     * @param value TODO.
+     * @param value HMAC_SHA1.
      */
     public void setAssocType(AssocType value) {
         assocType = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the Diffie-Hellman public key from consumer used in key
+     * negotiation.
      *
-     * @param value TODO.
+     * @param value consumer public key.
      */
     public void setConsumerPublic(BigInteger value) {
         consumerPublic = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the Diffie-Hellman base generator (g) used in key negotiation.
      *
-     * @param value TODO.
+     * @param value base generator.
      */
     public void setGenerator(BigInteger value) {
         generator = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the Diffie-Hellman prime modulus (p) used in key negotiation.
      *
-     * @param value TODO.
+     * @param value prime modulus.
      */
     public void setModulus(BigInteger value) {
         modulus = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the method used to encode the association's MAC key in transit.
      *
-     * @param value TODO.
+     * @param value DH_SHA1 or CLEAR.
      */
     public void setSessionType(SessionType value) {
         sessionType = value;

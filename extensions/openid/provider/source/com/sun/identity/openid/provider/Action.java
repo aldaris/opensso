@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Action.java,v 1.1 2007-04-30 01:28:27 pbryan Exp $
+ * $Id: Action.java,v 1.2 2007-04-30 05:36:12 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -30,23 +30,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO: Description.
+ * An implementation that is subclassed to implement functionality that is
+ * dispatched from a servlet.
  *
  * @author pbryan
  */
 public abstract class Action
 {
-    /** TODO: Description. Initialized by constructor. */
+    /** The request dispatched from the servlet. */
     protected final HttpServletRequest request;
 
-    /** TODO: Description. Initialized by constructor. */
+    /** The response to provide to the dispatching servlet. */
     protected final HttpServletResponse response;
 
     /**
-     * TODO: Description.
+     * Creates a new instance of the action.
      *
-     * @param request TODO.
-     * @param response TODO.
+     * @param request the request dispatched from the servlet.
+     * @param response the response to provide to the dispatching servlet.
      */
     public Action(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
@@ -54,10 +55,10 @@ public abstract class Action
     }
 
     /**
-     * TODO: Description.
+     * Performs the dispatched action.
      *
-     * @throws BadRequestException TODO.
-     * @throws IOException TODO.
+     * @throws BadRequestException if the request was malformed.
+     * @throws IOException if an input/output error occurs.
      */
     public abstract void perform() throws BadRequestException, IOException;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateAction.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: AssociateAction.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -44,33 +44,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO: Description.
+ * An action that is performed in response to an OpenID associate request.
  *
  * @author pbryan
  */
 public class AssociateAction extends Action
 {
-    /** TODO: Description. */
+    /** OpenID message representing the parameters of an associate query. */
     AssociateQuery query = new AssociateQuery();
 
-    /** TODO: Description. */
+    /** OpenID message representing body of response to associate query. */
     AssociateResult result = new AssociateResult();
 
     /**
-     * TODO: Description.
-     * 
-     * @param request TODO.
-     * @param response TODO.
+     * Constructs a new instance of the action.
+     *
+     * @param request the request dispatched from the servlet.
+     * @param response the response to provide to the dispatching servlet.
      */
     public AssociateAction(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
     }
 
     /**
-     * TODO: Description.
+     * Returns the SHA-1 hash function result against the input bytes.
      *
-     * @param TODO.
-     * @return TODO.
+     * @param input bytes to hash.
+     * @return SHA-1 hash for input bytes.
      */
     private static byte[] sha1(byte[] input)
     {
@@ -105,11 +105,12 @@ public class AssociateAction extends Action
     }
 
     /**
-     * TODO: Description.
+     * Generates the server's Diffie-Hellman key pair based on the supplied
+     * modulus and generator.
      *
-     * @param modulus Diffie-Hellman prime modulus.
-     * @param generator Diffie-Hellman base generator.
-     * @return TODO.
+     * @param modulus Diffie-Hellman prime modulus (p).
+     * @param generator Diffie-Hellman base generator (g).
+     * @return the generated Diffie-Hellman keypair.
      */
     private static KeyPair generateKeyPair(BigInteger modulus, BigInteger generator)
     {
@@ -137,7 +138,8 @@ public class AssociateAction extends Action
     }
 
     /**
-     * TODO: Description.
+     * Performs Diffie-Hellman shared key exchange to securely transmit the
+     * shared secret to the consumer.
      *
      * @param secret the shared MAC key used to verify checkid_* requests.
      */
@@ -163,10 +165,10 @@ public class AssociateAction extends Action
     }
 
     /**
-     * TODO: Description.
+     * Processes the OpenID associate request.
      *
-     * @throws BadRequestException TODO.
-     * @throws IOException TODO.
+     * @throws BadRequestException if the associate request is malformed.
+     * @throws IOException if an input/output error occurs.
      */
     public void perform() throws BadRequestException, IOException
     {

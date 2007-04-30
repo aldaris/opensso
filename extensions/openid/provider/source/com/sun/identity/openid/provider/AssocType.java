@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssocType.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: AssocType.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -37,34 +37,30 @@ import java.util.List;
  */
 public class AssocType implements Serializable
 {
-    /** TODO: Description. */
+    /** Signatures to be validated through HMAC-SHA1 algorithm. */
     public static final AssocType HMAC_SHA1 = new AssocType("HMAC-SHA1");
 
-    /** TODO: Description. */
+    /** Valid values for enumeration. */
     private static final AssocType[] VALUES_ARRAY = { HMAC_SHA1 };
-
-    /** TODO: Description. */
-    private static final List VALUES =
-     Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
     /** The encoded value represented by this enumeration value. */
     private final String value;
 
     /**
-     * TODO: Description.
+     * Constructs a new association type with the associated value.
      *
-     * @param encoded TODO.
+     * @param value the value used to encode and decode enumeration value.
      */
     private AssocType(String value) {
         this.value = value;
     }
 
     /**
-     * TODO: Description.
+     * Returns the enumeration value constant with the specified string value.
      *
-     * @param value TODO.
-     * @return TODO.
-     * @throws DecodeException TODO.
+     * @param value the string value to decode into an enumeration value.
+     * @return the associated enumeration value constant.
+     * @throws DecodeException if the enumeration type has no such constant.
      */
     public static AssocType decode(String value) throws DecodeException
     {
@@ -83,9 +79,10 @@ public class AssocType implements Serializable
     }
 
     /**
-     * TODO: Description.
+     * Returns the value of the enumeration constant, exactly as declared in
+     * its constructor.
      *
-     * @return TODO.
+     * @return string value of enumeration constant.
      */
     public String encode() {
         return value; 

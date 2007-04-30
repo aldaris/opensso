@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Mode.java,v 1.1 2007-04-30 01:28:31 pbryan Exp $
+ * $Id: Mode.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -37,50 +37,46 @@ import java.util.List;
  */
 public class Mode implements Serializable
 {
-    /** TODO: Description. */
+    /** Establish association between consumer and provider. */
     public static final Mode ASSOCIATE = new Mode("associate");
 
-    /** TODO: Description. */
+    /** Provides negative assertion for a checkid_setup request. */
     public static final Mode CANCEL = new Mode("cancel");
 
-    /** TODO: Description. */
+    /** Requests authentication without user interaction. */
     public static final Mode CHECKID_IMMEDIATE = new Mode("checkid_immediate");
 
-    /** TODO: Description. */
+    /** Requests authentication with potential user interaction. */
     public static final Mode CHECKID_SETUP = new Mode("checkid_setup");
 
-    /** TODO: Description. */
+    /** Requests verification of a checkid_* positive assertion. */
     public static final Mode CHECK_AUTHENTICATION = new Mode("check_authentication");
 
-    /** TODO: Description. */
+    /** Response to various requests to provider. */
     public static final Mode ID_RES = new Mode("id_res");
 
-    /** TODO: Description. */
-    private static final Mode[] VALUES_ARRAY = { ASSOCIATE, CANCEL,
+    /** Valid values for enumeration. */
+    public static final Mode[] VALUES_ARRAY = { ASSOCIATE, CANCEL,
      CHECKID_IMMEDIATE, CHECKID_SETUP, CHECK_AUTHENTICATION, ID_RES };
-
-    /** TODO: Description. */
-    private static final List VALUES =
-     Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
     /** The encoded value represented by this enumeration value. */
     private final String value;
 
     /**
-     * TODO: Description.
+     * Constructs a new mode with the associated value.
      *
-     * @param encoded TODO.
+     * @param value the value used to encode and decode enumeration value.
      */
     private Mode(String value) {
         this.value = value;
     }
 
     /**
-     * TODO: Description.
+     * Returns the enumeration value constant with the specified string value.
      *
-     * @param value TODO.
-     * @return TODO.
-     * @throws DecodeException TODO.
+     * @param value the string value to decode into an enumeration value.
+     * @return the associated enumeration value constant.
+     * @throws DecodeException if the enumeration type has no such constant.
      */
     public static Mode decode(String value) throws DecodeException
     {
@@ -98,9 +94,10 @@ public class Mode implements Serializable
     }
 
     /**
-     * TODO: Description.
+     * Returns the value of the enumeration constant, exactly as declared in
+     * its constructor.
      *
-     * @return TODO.
+     * @return string value of enumeration constant.
      */
     public String encode() {
         return value; 

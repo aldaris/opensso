@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssocHandle.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: AssocHandle.java,v 1.2 2007-04-30 05:36:12 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -33,7 +33,12 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 /**
- * TODO: Description.
+ * Represents the association handle in OpenID messages.
+ *
+ * In this OpenID implementation, the association handle encapsulates the
+ * shared secret key for authenticating OpenID identities. This allows
+ * multiple OpenID providers to be clustered without sharing anything except
+ * the actual encryption key (which is a configuration option).
  *
  * @author pbryan
  */
@@ -42,22 +47,23 @@ public class AssocHandle implements Serializable
     /** Handle to return for invalid decodes. */
     private static final AssocHandle INVALID = new AssocHandle();
 
-    /** TODO: Description. */
+    /** Determines if handle created in associate request or because of invalid supplied handle. */
     public enum Type { ASSOCIATED, STATELESS };
 
     /** Number of seconds to allow an association to be valid. */
+// TODO: consider making this a configuration option
     private static final int ASSOC_SECONDS = 15 * 60;
 
     /** Number of bits to be used for shared secret. */
     private static final int HMAC_SIZE = 160;
 
-    /** TODO: Description. */
+    /** The secret key being encapsulated by the association handle. */
     private SecretKey secret = null;
 
     /** Specifies date at which point association handle expires. */
     private Long expiry = null;
 
-    /** TODO: Description. */
+    /** Establishes how the handle can be used by the consumer in requests. */
     private Type type = null;
 
     /** String version of association handle. */
@@ -67,7 +73,7 @@ public class AssocHandle implements Serializable
     private boolean valid = false;
 
     /**
-     * TODO: Description.
+     * Constructs an empty association handle.
      */
     private AssocHandle() {
     }
@@ -96,21 +102,23 @@ public class AssocHandle implements Serializable
     }
 
     /**
-     * TODO: Description.
+     * Generates the association handle as it will be expressed in a response:
+     * encrypted and Base64-encoded.
      *
-     * @return TODO.
+     * @return encrypted, Base64-encoded association handle.
      */
-    private String generateValue()
-    {
+    private String generateValue() {
         return Crypt.encrypt(type + " " +
          Codec.encodeLong(expiry) + " " + Codec.encodeSecretKey(secret));
     }
 
     /**
-     * TODO: Description.
+     * Decodes an association handle from its encoded string value. If the
+     * parsed value yields an invalid handle, then a handle with invalid state
+     * is returned.
      *
-     * @param value TODO.
-     * @return TODO.
+     * @param value string value to decode association handle from.
+     * @return decoded association handle, or invalid handle if decode fails.
      */
     public static AssocHandle decode(String value)
     {
@@ -157,13 +165,16 @@ public class AssocHandle implements Serializable
         }
 
         handle.valid = true;
+
         return handle;
     }
 
     /**
-     * TODO: Description.
+     * Generates a new association handle, complete with new secret key and
+     * expiry time.
      *
-     * @param type TODO.
+     * @param type indicates if handle should be associated or stateless.
+     * @return new association handle object.
      */
     public static AssocHandle generate(Type type)
     {
@@ -179,36 +190,46 @@ public class AssocHandle implements Serializable
     }
 
     /**
-     * TODO: Description.
+     * Returns the association handle as it will be expressed in a response:
+     * encrypted and Base64-encoded.
      *
-     * @return TODO.
+     * @return string value of assoication handle.
      */
     public String encode() {
         return value;
     }
 
     /**
-     * TODO: Description.
+     * Returns the secret key for the association handle. If the handle is not
+     * valid (for example, failed to parse from request), null is returned.
      *
-     * @return TODO.
+     * @return secret key if handle is valid; otherwise null.
      */
     public SecretKey getSecret() {
         return (valid ? secret : null);
     }
 
     /**
-     * TODO: Description.
+     * Returns the type of association handle. If the handle is not
+     * valid (for example, failed to parse from request), null is returned.
      *
-     * @return TODO.
+     * There are two types of handle: ASSOCIATED (created from an OpenID
+     * associate request by a consumer, which allows the consumer to validate
+     * signatures from the identity provider itself) and STATLESS (created
+     * when a checkid_* request is made by the consumer with an invalid (or
+     * no) association handle.
+     *
+     * @return the type of handle if handle is valid; otherwise null.
      */
     public Type getType() {
         return (valid ? type : null);
     }
 
     /**
-     * TODO: Description.
+     * Returns true if association handle was parsed or generated correctly
+     * and has not yet expired.
      *
-     * @return TODO.
+     * @return true if handle valid and not expired.
      */
     public boolean isValid() {
         return (valid && getExpiresIn().longValue() > 0L);
@@ -217,7 +238,7 @@ public class AssocHandle implements Serializable
     /**
      * Returns the number of seconds the association handle expires in.
      *
-     * @return TODO.
+     * @return handle expiry, in number of seconds.
      */
     public Long getExpiresIn() {
         return (valid ? (expiry.longValue() - System.currentTimeMillis()) / 1000 : null);

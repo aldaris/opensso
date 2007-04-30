@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateResult.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: AssociateResult.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -30,7 +30,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 /**
- * TODO: Description.
+ * Represents the response to an OpenID associate request.
  *
  * @author pbryan
  */
@@ -58,142 +58,144 @@ public class AssociateResult extends Message
     private SessionType sessionType;
 
     /**
-     * TODO: Description.
+     * Constructs an empty associate result.
      */
     public AssociateResult() {
         super();
     }
 
     /**
-     * TODO: Description.
+     * Returns the association handle to be provided in future transactions.
      *
-     * @return TODO.
+     * @return association handle.
      */
     public AssocHandle getAssocHandle() {
         return assocHandle;
     }
 
     /**
-     * TODO: Description.
+     * Returns the algorithm to be used to sign subsequent messages.
      *
-     * @return TODO.
+     * @return HMAC_SHA1.
      */
     public AssocType getAssocType() {
         return assocType;
     }
 
     /**
-     * TODO: Description.
+     * Returns the encrypted shared secret, if using DH-SHA1.
      *
-     * @return TODO.
+     * @return encrypted shared secret.
      */
     public byte[] getEncMacKey() {
         return encMacKey;
     }
 
     /**
-     * TODO: Description.
+     * Returns the number of seconds the association handle is good for.
      *
-     * @return TODO.
+     * @return number of seconds until handle expiry.
      */
     public Long getExpiresIn() {
         return expiresIn;
     }
 
     /**
-     * TODO: Description.
+     * Returns the plaintext shared secret, if not using DH-SHA1.
      *
-     * @return TODO.
+     * @return plaintext shared secret.
      */
     public SecretKey getMacKey() {
         return macKey;
     }
 
     /**
-     * TODO: Description.
+     * Returns the Diffie-Hellman public key from server used in shared key
+     * negotiation.
      *
-     * @return TODO.
+     * @return server public key.
      */
     public BigInteger getServerPublic() {
         return serverPublic;
     }
 
     /**
-     * TODO: Description.
+     * Returns method used to encode the association's MAC key in transit.
      *
-     * @return TODO.
+     * @return DH_SHA1 or CLEAR.
      */
     public SessionType getSessionType() {
         return sessionType;
     }
 
     /**
-     * TODO: Description.
+     * Sets the association handle to be provided in future transactions.
      *
-     * @param value TODO.
+     * @param value association handle.
      */
     public void setAssocHandle(AssocHandle value) {
         assocHandle = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the algorithm to be used to sign subsequent messages.
      *
-     * @param value TODO.
+     * @param value HMAC_SHA1.
      */
     public void setAssocType(AssocType value) {
         assocType = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the encrypted shared secret, if using DH-SHA1.
      *
-     * @param value TODO.
+     * @param value encrypted shared secret.
      */
     public void setEncMacKey(byte[] value) {
         encMacKey = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the number of seconds the association handle is good for.
      *
-     * @param value TODO.
+     * @param value number of seconds until handle expiry.
      */
     public void setExpiresIn(Long value) {
         expiresIn = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the plaintext shared secret, if not using DH-SHA1.
      *
-     * @param value TODO.
+     * @param value plaintext shared secret.
      */
     public void setMacKey(SecretKey value) {
         macKey = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets the Diffie-Hellman public key from server used in shared key
+     * negotiation.
      *
-     * @param value TODO.
+     * @param value server public key.
      */
     public void setServerPublic(BigInteger value) {
         serverPublic = value;
     }
 
     /**
-     * TODO: Description.
+     * Sets method used to encode the association's MAC key in transit.
      *
-     * @param value TODO.
+     * @param value DH_SHA1 or CLEAR.
      */
     public void setSessionType(SessionType value) {
         sessionType = value;
     }
 
     /**
-     * TODO: Description.
+     * Encodes the associate response into a map of key-value pairs.
      *
-     * @return TODO.
+     * @return map containing the associate result.
      */
     public Map<String,String> encode()
     {
