@@ -18,13 +18,22 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fmConsoleConfiguration.xml,v 1.1 2007-03-14 19:33:48 jonnelson Exp $
+   $Id: fmConsoleConfiguration.xml,v 1.2 2007-04-30 18:49:14 jonnelson Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <consoleconfig>
 <tabs>
+    <tab id="2" viewbean="com.sun.identity.console.federation.FederationViewBean"
+        url="../federation/Federation"
+        label="tab.federation.label"
+        tooltip="tab.federation.tooltip"
+        status="tab.federation.tooltip"
+        controller="com.sun.identity.console.controller.FedTabController"
+        permissions="iPlanetAMProviderConfigService"
+        accesslevel="globalConfig" />
+        
     <tab id="3" viewbean="none"
         url="none"
         label="tab.webservices.label"
@@ -66,5 +75,11 @@
             accesslevel="globalconfig"/>
     </tab>
 </tabs>
+
+<profile id="entities">
+    <tab id="1" viewbean="com.sun.identity.console.federation.EntityGeneralViewBean" url="../federation/EntityGeneral" label="General" tooltip="user.general.tooltip" status="user.general.status" permissions="iPlanetAMProviderConfigService"/>
+    <tab id="2" viewbean="com.sun.identity.console.federation.EntitySPViewBean" url="../federation/EntitySP" label="Service Provider" tooltip="user.roles.tooltip" status="user.roles.status" permissions="iPlanetAMProviderConfigService"/>
+    <tab id="3" viewbean="com.sun.identity.console.federation.EntityIDPViewBean" url="../federation/EntityIDP" label="Identity Provider" tooltip="user.groups.tooltip" status="user.groups.status" permissions="iPlanetAMProviderConfigService"/>
+</profile>
 
 </consoleconfig>

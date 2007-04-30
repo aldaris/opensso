@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.10 2007-04-24 06:07:33 veiming Exp $
+   $Id: build-war.xml,v 1.11 2007-04-30 18:51:22 jonnelson Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,7 @@
     <target name="all">
         <antcall target="war" inheritRefs="true"/>
     </target>
-    
+
     <target name="war" depends="preparebuild">
         <delete dir="${war.package.dir}" />
         <unjar src="${openfm.extlib.dir}/opensso.war" dest="${war.package.dir}" />
@@ -181,6 +181,15 @@
             <arg value="&lt;tab id=\&quot;4\&quot;" />
         </java>
 
+        <!-- entities profile tabs -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;profile id=\&quot;entities\&quot;&gt;.+?&lt;/profile&gt;" />
+            <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
+            <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
+            <arg value="&lt;/profiletabs&gt;" />
+        </java>
+        
 	<!-- update web.xml with fed servlet info -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
