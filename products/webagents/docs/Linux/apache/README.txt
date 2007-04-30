@@ -21,7 +21,7 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.6 2007-04-30 17:29:25 subbae Exp $
+# $Id: README.txt,v 1.7 2007-04-30 22:12:36 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -36,7 +36,8 @@ README file for Open Web Single Sign-On - Web Agents
 	%% 2.5 Obtaining libpthread, libCstd, and libCrun
 	%% 2.6 Download Apache Header files (if using Apache Agent)
         %% 2.7 Obtaining OpenSSO Agents Common Installer libraries
-    %% 3. Building the workspace
+    %% 3. Building the workspace - builds 32-bit agent by default.
+    %% 4. Building the 64-bit agent (Optional)
 
 %% 1. Build requirements
 
@@ -216,3 +217,63 @@ in the built/dist/ directory.
 
 Apache 2.0.x agent: apache_v20_Linux_agent.zip
 Apache 2.2.x agent: apache_v22_Linux_agent.zip
+
+
+
+4. Building 64-bit agent. (Optional)
+
+The above information helps in building 32-bit agent i.e. agent works with 32-bit Apache web server. 
+
+In order to build 64-bit agent, all the above information is applicable, 
+but 64-bit libxml2, nss and nspr libraries need to exist in extlib/ directory. 
+
+Also make sure that the RHEL is 64-bit kernel. Try the following command:
+# uname -m
+x86_64
+
+If the result shows 64-bit, then 64-bit agent works.
+
+Please follow these instructions:
+
+%% 4.1 64-bit LIBXML2 2.6.23
+
+4.1.1 Open the web page: ftp://xmlsoft.org/libxml2/
+4.1.2 Download the latest libxml2 source (libxml2-2.6.23.tar.gz)
+4.1.3 Uncompress the the archive.
+4.1.4 cd libxml2-2.6.23
+4.1.4 ./configure --prefix=<libxml2-install-dir>
+4.1.5 make
+4.1.6 make install
+4.1.7 cp <libxml2-install-dir>/include/libxml2/libxml/* <opensso_webagent>/extlib/Linux/libxml2_64/include/libxml2/libxml
+4.1.8 cp <libxml2-install-dir>/lib/* <opensso_webagent>/extlib/Linux/libxml2_64/lib
+
+%%4.2 64-bit NSS 3.11
+
+Follow these steps to obtain the binaries:
+
+4.2.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_11_RTM/Linux2.4_64_OPT.OBJ/
+4.2.2 Download nss-3.11.tar.gz.
+4.2.3 Uncompress the the archive.
+4.2.4 cp nss-3.11/bin/* <opensso_webagent>/extlib/Linux/nss_64/bin
+4.2.5 cp nss-3.11/include/* <opensso_webagent>/extlib/Linux/nss_64/include
+4.2.6 cp nss-3.11/lib/* <opensso_webagent>/extlib/Linux/nss_64/lib
+
+
+%% 4.3 64-bit  NSPR 4.6.1
+
+Follow these steps to obtain the binaries:
+
+4.3.1 Open the web page : ftp://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.6.1/Linux2.4_64_OPT.OBJ/nspr-4.6.1.tar.gz
+4.3.2 Download nspr-4.6.1.tar.gz.
+4.3.3 Uncompress the the archive. 
+4.3.4 cp -r <nspr-install-dir>/include/ <opensso_webagent>/extlib/Linux/nspr_64/include
+4.3.5 cp -r <nspr-install-dir>/lib/ <opensso_webagent>/extlib/Linux/nspr_64/lib
+
+%% 4.4 Building the 64-bit agent
+
+4.4.1 Apache 2.0.x agent:
+	ant apache -Dbuild.type=64
+
+4.4.2 Apache 2.2.x agent:
+	ant apache22 -Dbuild.type=64
+
