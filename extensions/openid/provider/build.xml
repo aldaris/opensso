@@ -18,7 +18,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.1 2007-04-30 01:28:25 pbryan Exp $
+  $Id: build.xml,v 1.2 2007-04-30 14:52:26 pbryan Exp $
 
   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
   Portions Copyright 2007 Paul C. Bryan
@@ -84,8 +84,12 @@
       </lib>
 
       <zipfileset dir="${web.dir}"/>
+
       <zipfileset dir="${classes.dir}" prefix="WEB-INF/classes"/>
-      <zipfileset dir="${resources.dir}" prefix="WEB-INF/classes"/>
+
+      <zipfileset dir="${resources.dir}" prefix="WEB-INF/classes">
+        <include name="**/*.properties"/>
+      </zipfileset>
 
     </war>
 
@@ -102,7 +106,7 @@
     <echo message=" "/>
     <echo message="To run a target, issue the following command:"/>
     <echo message=" "/>
-    <echo message="  ant &lt;target-name&gt;"/>
+    <echo message="  ant (target-name)"/>
     <echo message=" "/>
   </target>
 
