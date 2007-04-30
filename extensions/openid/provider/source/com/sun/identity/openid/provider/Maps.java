@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Maps.java,v 1.1 2007-04-30 01:28:31 pbryan Exp $
+ * $Id: Maps.java,v 1.2 2007-04-30 05:52:18 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -41,24 +41,25 @@ import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * TODO: Description.
+ * Provides functions to convert OpenID messages to and from maps of key-value
+ * pairs.
  *
  * @author pbryan
  */
 public class Maps
 {
-    /** TODO: Description. */
+    /** Prefix for HTTP request parameters. */
     private static final String PREFIX = "openid.";
 
     /**
      * Returns the hashed message authentication code for the specified map
      * keys, Base64 encoded.
      *
-     * @param map TODO.
-     * @param algorithm TODO.
-     * @param secret TODO.
-     * @param keys TODO.
-     * @return TODO.
+     * @param map map of key-value pairs to compute HMAC for.
+     * @param algorithm algorithm to use to compute HMAC.
+     * @param secret secret key to use to compute HMAC
+     * @param keys specifies which entries, in what order to compute HMAC for.
+     * @return the HMAC in Base64 encoding.
      */
     private static String hmac(Map<String,String> map,
     String algorithm, SecretKey secret, List<String> keys)
@@ -92,10 +93,11 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Provides a map of key-value pairs for all parameters in the specified
+     * request that begin with the OpenID parmeter prefix.
      *
-     * @param request TODO.
-     * @return TODO.
+     * @param request the HTTP request to retrieve parameters from.
+     * @return the request parameters as a map of key-value pairs.
      */
     public static Map<String,String> fromRequest(HttpServletRequest request)
     {
@@ -119,10 +121,12 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Provides the map in the OpenID key-value form encoding, in which each
+     * entry begins with a key, followed by a colon, the value associated with
+     * the key and a newline terminator.
      *
-     * @param map TODO.
-     * @return TODO.
+     * @param map key-value pairs to encode into OpenID key-value form encoding.
+     * @return key-value form encoding, expressed as UTF-8 byte encoding.
      */
     public static byte[] toBytes(Map<String,String> map)
     {
@@ -137,10 +141,12 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Provides the map in the OpenID key-value form encoding, in which each
+     * entry begins with a key, followed by a colon, the value associated with
+     * the key and a newline terminator.
      *
-     * @param map TODO.
-     * @return TODO.
+     * @param map key-value pairs to encode into OpenID key-value form encoding.
+     * @return key-value form encoding as a string.
      */
     public static String toResponseString(Map<String,String> map)
     {
@@ -160,11 +166,12 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Appends the specified map key-value pairs to the specified URL as a
+     * query string of parameters.
      *
-     * @param url TODO.
-     * @param map TODO.
-     * @return TODO.
+     * @param url the URL, expressed as a string, to append query string to.
+     * @param map the map of key-value pairs to append to URL.
+     * @return the supplied URL with appended query string parameters.
      */
     public static String toQueryString(String url, Map<String,String> map)
     {
@@ -208,11 +215,12 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Appends the specified map key-value pairs to the specified URL as a
+     * query string of parameters.
      *
-     * @param url TODO.
-     * @param map TODO.
-     * @return TODO.
+     * @param url the URL to append query string to.
+     * @param map the map of key-value pairs to append to URL.
+     * @return the supplied URL with appended query string parameters.
      */
     public static String toQueryString(URL url, Map<String,String> map)
     {
@@ -224,11 +232,12 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Signs the map of key-value pairs, and adds the associated "signed" and
+     * "sig" entries to the map.
      *
-     * @param map TODO.
-     * @param algorithm TODO.
-     * @param secret TODO.
+     * @param map the map of key-value pairs to sign.
+     * @param algorithm the HMAC algorithm used to generate signature.
+     * @param secret the shared secret key to compute HMAC with.
      */
     public static void sign(Map<String,String> map,
     String algorithm, SecretKey secret)
@@ -239,12 +248,13 @@ public class Maps
     }
 
     /**
-     * TODO: Description.
+     * Verifies the map of key-value pairs against its "signed" and "sig"
+     * entries using.
      *
-     * @param map TODO.
-     * @param algorithm TODO.
-     * @param secret TODO.
-     * @return TODO.
+     * @param map the map of key-value pairs to verify.
+     * @param algorithm the HMAC algorithm used to verify signature.
+     * @param secret the shared secret key to compute HMAC with.
+     * @return true if the signature was verified successfully.
      */
     public static Boolean verify(Map<String,String> map,
     String algorithm, SecretKey secret)
