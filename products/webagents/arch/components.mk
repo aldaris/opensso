@@ -22,9 +22,9 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.6 2007-04-09 23:49:54 subbae Exp $
+# $Id: components.mk,v 1.7 2007-04-30 17:29:25 subbae Exp $
 # 
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
 
 #
@@ -49,7 +49,7 @@ include $(USERX_ROOT)/arch/defines.mk
 ##########################################################
 
 ##########################################
-# Apache 2.x defines
+# Apache 2.0 defines
 ##########################################
 APACHE_DIR = $(EXTERNAL_DIR)/apache
 APACHE_INC_DIR = $(APACHE_DIR)/include
@@ -61,6 +61,13 @@ APACHE_LIB_DIR = $(APACHE_DIR)/lib
 SJSWS_DIR = $(EXTERNAL_DIR)/sjsws
 SJSWS_INC_DIR = $(SJSWS_DIR)/include
 SJSWS_LIB_DIR = $(SJSWS_DIR)/lib
+
+##########################################
+# Apache 2.2 defines
+##########################################
+APACHE22_DIR = $(EXTERNAL_DIR)/apache22
+APACHE22_INC_DIR = $(APACHE22_DIR)/include
+APACHE22_LIB_DIR = $(APACHE22_DIR)/lib
 
 ##########################################
 # LIBXML defines

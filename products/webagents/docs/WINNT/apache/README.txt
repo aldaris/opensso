@@ -21,7 +21,7 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.5 2007-01-17 23:15:22 subbae Exp $
+# $Id: README.txt,v 1.6 2007-04-30 17:29:26 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -120,19 +120,31 @@ Follow these steps to obtain the binaries:
 2.4.6 cp -r <nspr-install-dir>\include\private <opensso_webagent>\extlib\WINNT\nspr\include
 2.4.7 cp <nspr-install-dir>\lib\* <opensso_webagent>\extlib\WINNT\nspr\lib
 
+%% 2.5 Download Apache Header files
 
-%% 2.5 Download Apache Header files (if using Apache Agent)
+2.5.1 If building 2.0.x agent then 
 
-2.5.1 Open the web page: http://httpd.apache.org/download.cgi
-2.5.2 Download httpd-2.0.55-win32-src.zip
-2.5.3 Uncompress the the archive. 
-2.5.4 cd http-2.0.55
-2.5.5 nmake /f Makefile.win installr INSTDIR=<apache-install-dir>
-2.5.6 cp <apache-install-dir>\include\* <opensso_webagent>\extlib\WINNT\apache\include
-2.5.7 cp <apache-install-dir>\lib\* <opensso_webagent>\extlib\WINNT\apache\lib
-(For more information on compiling Apache, check-out the below url:)
-http://httpd.apache.org/docs/2.0/platform/win_compiling.html
+    2.5.1.1 Open the web page: http://httpd.apache.org/download.cgi
+    2.5.1.2 Download httpd-2.0.55-win32-src.zip
+    2.5.1.3 Uncompress the the archive. 
+    2.5.1.4 cd http-2.0.55
+    2.5.1.5 nmake /f Makefile.win installr INSTDIR=<apache-install-dir>
+    2.5.1.6 cp <apache-install-dir>\include\* <opensso_webagent>\extlib\WINNT\apache\include
+    2.5.1.7 cp <apache-install-dir>\lib\* <opensso_webagent>\extlib\WINNT\apache\lib
+    (For more information on compiling Apache, check-out the below url)
+    http://httpd.apache.org/docs/2.0/platform/win_compiling.html
 
+2.5.2 If building 2.2.x agent then 
+
+    2.5.2.1 Open the web page: http://httpd.apache.org/download.cgi
+    2.5.2.2 Download httpd-2.2.4-win32-src.zip
+    2.5.2.3 Uncompress the the archive. 
+    2.5.2.4 cd http-2.2.4
+    2.5.2.5 nmake /f Makefile.win installr INSTDIR=<apache-install-dir>
+    2.5.2.6 cp <apache-install-dir>\include\* <opensso_webagent>\extlib\WINNT\apache22\include
+    2.5.2.7 cp <apache-install-dir>\lib\* <opensso_webagent>\extlib\WINNT\apache22\lib
+    (For more information on compiling Apache, check-out the below url)
+    http://httpd.apache.org/docs/2.2/platform/win_compiling.html
 
 %% 2.6 Obtaining OpenSSO Agents Common Installer libraries
 
@@ -157,29 +169,32 @@ into extlib directory
 ** Execute ant usage to get information about all the supported options.
 ** Make sure gmake is in the system PATH.
 
-Building Apache agent:
+Building Apache 2.0.x agent:
 
-     - ant apache : builds Apache agent. C code compiled in optimized mode.
-     - ant apache -Dbuild.debug=full     : builds Apache agent. C code compiled in debug mode.
-     - ant apache -Dbuild.debug=optimize : builds Apache agent. C code compiled in optimized mode.
+     - ant apache : builds Apache 2.0.x agent. C code compiled in optimized mode.
+     - ant apache -Dbuild.debug=full     : builds Apache 2.0.x agent. C code compiled in debug mode.
+     - ant apache -Dbuild.debug=optimize : builds Apache 2.0.x agent. C code compiled in optimized mode.
+     - ant all    : builds all agents. C code compiled in optimized mode.
+
+Building Apache 2.2.x agent:
+
+     - ant apache22 : builds Apache 2.2.x agent. C code compiled in optimized mode.
+     - ant apache22 -Dbuild.debug=full     : builds Apache 2.2.x agent. C code compiled in debug mode.
+     - ant apache22 -Dbuild.debug=optimize : builds Apache 2.2.x agent. C code compiled in optimized mode.
      - ant all    : builds all agents. C code compiled in optimized mode.
 
 3.3 Creation of build output directories such as
-        <opensso_webagent>/built
-        <opensso_webagent>/built/dist
-        <opensso_webagent>/bin
-        <opensso_webagent>/drop
-        <opensso_webagent>/include
-        <opensso_webagent>/samples
+        <opensso_webagent>\built
+        <opensso_webagent>\built\dist
+        <opensso_webagent>\bin
+        <opensso_webagent>\drop
+        <opensso_webagent>\include
+        <opensso_webagent>\samples
 
 3.4 Build output
 
-Build generates agent installation bits either in .zip format,
-in the built/dist/ directory. The agent installer archive
-name is in this format: <agent_name>_v20_<OS>_agent.zip.
+Build generates agent installation bits in .zip format,
+in the built/dist/ directory. 
 
-    - <agent_name> : apache
-    - <OS> : SunOS, Linux, WINNT, SunOS_x86
-
-Example: apache_v20_WINNT_agent.zip
-
+Apache 2.0.x agent: apache_v20_WINNT_agent.zip
+Apache 2.2.x agent: apache_v22_WINNT_agent.zip

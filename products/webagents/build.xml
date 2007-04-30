@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2007-04-09 23:49:53 subbae Exp $
+   $Id: build.xml,v 1.4 2007-04-30 17:29:24 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -83,6 +83,7 @@
     <target name="all">
         <antcall target="apache" />
         <antcall target="sjsws" />
+        <antcall target="apache22" />
     </target>
 
     <target name="apache" depends="preparebuild">
@@ -96,6 +97,14 @@
     <target name="sjsws" depends="preparebuild">
         <echo message="Dispatch to SJSWS"/>
         <property name="containername" value="sjsws"/>
+        <antcall target="gmake" inheritRefs="true"/>
+        <ant antfile="${webagents.basedir}/build_agent.xml" 
+            target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="apache22" depends="preparebuild">
+        <echo message="Dispatch to Apache 22"/>
+        <property name="containername" value="apache22"/>
         <antcall target="gmake" inheritRefs="true"/>
         <ant antfile="${webagents.basedir}/build_agent.xml" 
             target="all" inheritRefs="true"/>
@@ -143,7 +152,8 @@
         <echo message=" all             : builds all the Web agents"/>
         <echo message=" clean           : deletes all the generated files"/>
         <echo message=" apache          : builds the Apache Web Server 2.0.x agent"/>
-        <echo message=" sjsws          : builds the Sun Java System Web Server 6.1/7.0 agent"/>
+        <echo message=" sjsws           : builds the Sun Java System Web Server 6.1/7.0 agent"/>
+        <echo message=" apache22        : builds the Apache Web Server 2.2.x agent"/>
         <echo message=" usage           : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

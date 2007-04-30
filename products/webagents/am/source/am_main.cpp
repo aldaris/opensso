@@ -77,7 +77,7 @@ void log_version_info() {
 	PUSH_BACK_CHAR(versionStr, ')');
     }
    
-    Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS, "Version: %s",
+    Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS, "%s",
 	     versionStr.c_str());
 
     if(Version::getBuildDate() != NULL) {
