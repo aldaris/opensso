@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrincipalFilter.java,v 1.1 2007-04-30 01:28:27 pbryan Exp $
+ * $Id: PrincipalFilter.java,v 1.2 2007-04-30 04:09:47 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -40,18 +40,23 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Servlet filter that uses OpenSSO client SDK to determine authenticated
- * principal and pass it to the servlet in the request. This filter constitutes
- * the sole binding between the OpenID extension and OpenSSO.
+ * principal and pass it to the servlet in the request.
+ *
+ * This filter constitutes the sole binding between the OpenID extension and
+ * OpenSSO. It was chosen as an alternative to using a full policy agent
+ * because it is far lighter-weight and far easier to deploy.
  *
  * @author pbryan
  */
 public class PrincipalFilter implements Filter
 {
     /**
-     * TODO: Description.
+     * Wraps the passed request with a PrincipalWrapper, which exposes the
+     * principal from OpenSSO. If for any reason an OpenSSO principal cannot
+     * be established, then the supplied request is returned.
      *
-     * @param request TODO.
-     * @return TODO.
+     * @param request the request to wrap with OpenSSO principal.
+     * @return the request, either wrapped or as supplied.
      */
     private ServletRequest wrapRequest(ServletRequest request)
     {
@@ -63,21 +68,25 @@ public class PrincipalFilter implements Filter
         HttpServletRequest httpRequest = (HttpServletRequest)request;
 
         SSOTokenManager manager;
-        
+
+        // get the singleton instance of the SSO token manager
         try {
             manager = SSOTokenManager.getInstance();
         }
 
+        // can't get instance; pass through existing request
         catch (SSOException ssoe) {
             return request;
         }
 
         SSOToken token;
 
+        // create single sign on token from the request
         try {
             token = manager.createSSOToken(httpRequest);
         }
 
+        // can't create single sign on token; pass through existing request
         catch (SSOException ssoe) {
             return request;
         }
@@ -87,10 +96,12 @@ public class PrincipalFilter implements Filter
             return request;
         }
 
+        // wrap request and expose principal from single signon token
         try {
             return new PrincipalWrapper(httpRequest, token.getPrincipal());
         }
 
+        // can't get principal; pass through existing request
         catch (SSOException ssoe) {
             return request;
         }

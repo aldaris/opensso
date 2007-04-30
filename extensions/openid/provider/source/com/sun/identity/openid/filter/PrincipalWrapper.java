@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrincipalWrapper.java,v 1.1 2007-04-30 01:28:27 pbryan Exp $
+ * $Id: PrincipalWrapper.java,v 1.2 2007-04-30 04:09:47 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -30,20 +30,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * TODO: Description.
+ * Provides an implementation of the HttpServletRequest interface that
+ * overrides the principal with a supplied principal.
  *
  * @author pbryan
  */
 public class PrincipalWrapper extends HttpServletRequestWrapper
 {
-    /** TODO: Description. */
+    /** The principal to override in the request. */
     private Principal principal;
 
-    /** TODO: Description. */
+    /** The request object to be wrapped. */
     private HttpServletRequest request;
 
     /**
-     * TODO: Description.
+     * Constructs a request object, wrapping the given request with the
+     * given principal.
      *
      * @param request the request object to be wrapped by this class.
      * @param principal the principal to override with this class.
