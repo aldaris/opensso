@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FlatFileEventManager.java,v 1.1 2007-04-26 17:40:32 veiming Exp $
+ * $Id: FlatFileEventManager.java,v 1.2 2007-04-30 17:27:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.sm.flatfile;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSUtils;
 import java.security.AccessController;
@@ -37,17 +38,13 @@ import java.util.Map;
  * This registers the listeners for flat file depository.
  */
 public class FlatFileEventManager {
-    private static FlatFileEventManager instance = new FlatFileEventManager();
-
     private static Debug debug = Debug.getInstance("amSMSEvent");
     private Map listeners = new HashMap();
     private FileObserver fObserver;
+    private SMSEnhancedFlatFileObject flatFileInstance;
 
-    private FlatFileEventManager() {
-    }
-
-    public static FlatFileEventManager getInstance() {
-        return instance;
+    public FlatFileEventManager(SMSEnhancedFlatFileObject flatFileInstance) {
+        this.flatFileInstance = flatFileInstance;
     }
 
     synchronized String addObjectChangeListener(
@@ -56,7 +53,7 @@ public class FlatFileEventManager {
         listeners.put(id, changeListener);
 
         if (fObserver == null) {
-            fObserver = new FileObserver();
+            fObserver = new FileObserver(this);
             fObserver.start();
         } else {
             if (!fObserver.isRunning()) {
@@ -81,6 +78,14 @@ public class FlatFileEventManager {
                 SMSObjectListener l = (SMSObjectListener)i.next();
                 l.objectChanged(dn, eventType);
             }
+        }
+    }
+    
+    void reloadRootNode() {
+        try {
+            flatFileInstance.loadMapper();
+        } catch (SMSException e) {
+            debug.error("FlatFileEventManager.reloadRootNode", e);
         }
     }
 }

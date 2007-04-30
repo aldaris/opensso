@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.8 2007-03-09 05:51:02 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.9 2007-04-30 17:27:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -754,7 +754,7 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
     /**
      * Loads the name mapper, create it if it doesn't exist.
      **/
-    abstract protected void loadMapper()
+    abstract void loadMapper()
         throws SMSException;
 
     /**

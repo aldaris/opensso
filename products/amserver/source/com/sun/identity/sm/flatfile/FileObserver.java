@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileObserver.java,v 1.1 2007-04-26 17:40:32 veiming Exp $
+ * $Id: FileObserver.java,v 1.2 2007-04-30 17:27:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,10 +41,12 @@ class FileObserver extends Thread {
     private Map snapShot;
     private int interval;
     private boolean running;
+    private FlatFileEventManager eventManager;
 
-    FileObserver() {
+    FileObserver(FlatFileEventManager eventManager) {
         setDaemon(true);
         getPollingInterval();
+        this.eventManager = eventManager;
     }
 
     private void getPollingInterval() {
@@ -83,12 +85,17 @@ class FileObserver extends Thread {
         snapShot = getCurrentSnapShot();
         try {
             while (running) {
+                /*
+                 * This flag set to false in the begin of the thread.
+                 * when a node is added/delete from the file system, we need
+                 * to toggle this flag which in turn ask the 
+                 * SMSEnhancedFlatFileObject to rebuild the directory tree.
+                 */
+                boolean needReloadRootNode = false;
                 sleep(interval);
                 Map newSnapShot = getCurrentSnapShot();
 
                 if (snapShot != null) {
-                    FlatFileEventManager mgr =
-                        FlatFileEventManager.getInstance();
                     for (Iterator i = newSnapShot.keySet().iterator();
                         i.hasNext();
                     ) {
@@ -99,11 +106,15 @@ class FileObserver extends Thread {
                             long curr =((Long)newSnapShot.get(filename))
                                 .longValue();
                             if (prev != curr) {
-                                mgr.notify(getDN(filename),
+                                eventManager.notify(getDN(filename),
                                     SMSObjectListener.MODIFY);
                             }
                         } else {
-                            mgr.notify(getDN(filename),
+                            if (!needReloadRootNode) {
+                                eventManager.reloadRootNode();
+                                needReloadRootNode = true;
+                            }
+                            eventManager.notify(getDN(filename),
                                 SMSObjectListener.ADD);
                         }
                     }
@@ -114,7 +125,11 @@ class FileObserver extends Thread {
                         String filename = (String)i.next();
     
                         if (!newSnapShot.containsKey(filename)) {
-                            mgr.notify(getDN(filename),
+                            if (!needReloadRootNode) {
+                                eventManager.reloadRootNode();
+                                needReloadRootNode = true;
+                            }
+                            eventManager.notify(getDN(filename),
                                 SMSObjectListener.DELETE);
                         }
                     }

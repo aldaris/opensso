@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEnhancedFlatFileObject.java,v 1.6 2007-04-26 17:40:32 veiming Exp $
+ * $Id: SMSEnhancedFlatFileObject.java,v 1.7 2007-04-30 17:27:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,19 +67,21 @@ import javax.naming.directory.ModificationItem;
 public class SMSEnhancedFlatFileObject extends SMSFlatFileObjectBase {
     private SMSFlatFileTreeNode root = null;
     static final String DIR_TREE_FILENAME = "DirectoryTree.xml";
-
+    private FlatFileEventManager eventManager;
+    
     /**
      * Constructor for SMSEnhancedFlatFileObject.
      */
     public SMSEnhancedFlatFileObject()
         throws SMSException {
         initialize();
+        eventManager = new FlatFileEventManager(this);
     }
-
+    
     /**
      * Loads the dirrectory mapper, create it if it doesn't exist.
      **/
-    protected void loadMapper()
+    synchronized void loadMapper()
         throws SMSException
     {
         String fileName = mRootDir + File.separator + DIR_TREE_FILENAME;
@@ -753,14 +755,13 @@ public class SMSEnhancedFlatFileObject extends SMSFlatFileObjectBase {
         SSOToken token,
         SMSObjectListener changeListener)
         throws SMSException, SSOException {
-        return FlatFileEventManager.getInstance().addObjectChangeListener(
-            changeListener);
+        return eventManager.addObjectChangeListener(changeListener);
     }
 
     /**
      * De-Register a listener.
      */
     public void deregisterCallbackHandler(String id) {
-        FlatFileEventManager.getInstance().removeObjectChangeListener(id);
+        eventManager.removeObjectChangeListener(id);
     }
 }
