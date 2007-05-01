@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionOpViewBeanBase.java,v 1.1 2007-02-07 20:23:11 jonnelson Exp $
+ * $Id: ConditionOpViewBeanBase.java,v 1.2 2007-05-01 21:25:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,8 +70,8 @@ public abstract class ConditionOpViewBeanBase
         "valuesMultipleChoiceValue";
 
     protected CCPageTitleModel ptModel;
-    private String realmName;
-    private CCAddRemoveModel addRemoveModel;
+    protected String realmName;
+    protected CCAddRemoveModel addRemoveModel;
     protected AMPropertySheetModel propertySheetModel;
     protected boolean canModify;
     protected boolean submitCycle;
@@ -339,7 +339,7 @@ public abstract class ConditionOpViewBeanBase
         vb.forwardTo(getRequestContext());
     }
 
-
+    
     protected String getConditionXML(
         String curRealm,
         String condType,

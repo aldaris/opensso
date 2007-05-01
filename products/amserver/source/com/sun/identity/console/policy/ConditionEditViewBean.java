@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionEditViewBean.java,v 1.1 2007-02-07 20:23:11 jonnelson Exp $
+ * $Id: ConditionEditViewBean.java,v 1.2 2007-05-01 21:25:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,6 +98,11 @@ public class ConditionEditViewBean
             "page.title.policy.condition.edit");
         String[] param = {i18nName};
         ptModel.setPageTitleText(MessageFormat.format(title, (Object[])param));
+
+        if (!canModify) {
+            disableButton("button1", true);
+            disableButton("button2", true);
+        }
     }
 
     public void handleButton2Request(RequestInvocationEvent event)

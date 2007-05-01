@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.4 2007-05-01 19:22:22 dillidorai Exp $
+    $Id: amPolicy.xml,v 1.5 2007-05-01 21:25:29 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -239,8 +239,8 @@
             interfaceName="Condition"
             className="com.sun.identity.policy.plugins.AMIdentityMembershipCondition"
             i18nFileName="amPolicy"
-            i18nKey="sun-amidentitymembership-condition-name" />
-
+            i18nKey="sun-amidentitymembership-condition-name"
+            propertiesViewBeanURL = "../policy/IdentityMembershipCondition" />
         <PluginSchema
             name="IDRepoResponseProvider"
             interfaceName="ResponseProvider"
