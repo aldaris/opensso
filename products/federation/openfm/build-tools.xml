@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.2 2007-04-25 22:59:05 veiming Exp $
+   $Id: build-tools.xml,v 1.3 2007-05-01 21:47:08 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -48,6 +48,9 @@
         <delete file="${tools.temp.dir}/README.amadm" />
         <delete file="${tools.temp.dir}/template/unix/bin/amadm.template" />
         <delete file="${tools.temp.dir}/template/windows/bin/amadm.bat.template" />
+        <replace file="${tools.temp.dir}/README.setup" token="amAdminTools"
+            value="fmAdminTools" />
+
         <copy file="${openfm.dir}/scripts/bin/README.fmadm"
             tofile="${tools.temp.dir}/README.fmadm" />
 
