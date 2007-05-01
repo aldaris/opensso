@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicyConfig.xml,v 1.1 2006-08-29 07:52:32 veiming Exp $
+    $Id: amPolicyConfig.xml,v 1.2 2007-05-01 19:22:23 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -353,6 +353,7 @@
                         <ChoiceValue i18nKey="a141">SessionCondition</ChoiceValue>
                         <ChoiceValue i18nKey="a141a">SessionPropertyCondition</ChoiceValue>
                         <ChoiceValue i18nKey="a141fc">LDAPFilterCondition</ChoiceValue>
+                        <ChoiceValue i18nKey="a141amc">AMIdentityMembershipCondition</ChoiceValue>
                     </ChoiceValues>
                     <DefaultValues>
                         <Value>AuthLevelCondition</Value>
@@ -365,6 +366,7 @@
                         <Value>SessionCondition</Value>
                         <Value>SessionPropertyCondition</Value>
                         <Value>LDAPFilterCondition</Value>
+                        <Value>AMIdentityMembershipCondition</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sun-am-policy-selected-responseproviders"

@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.3 2006-09-20 23:17:50 bigfatrat Exp $
+    $Id: amPolicy.xml,v 1.4 2007-05-01 19:22:22 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -234,6 +234,12 @@
             className="com.sun.identity.policy.plugins.LDAPFilterCondition"
             i18nFileName="amPolicy"
             i18nKey="sun-ldapfilter-condition-name" />
+        <PluginSchema
+            name="AMIdentityMembershipCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.AMIdentityMembershipCondition"
+            i18nFileName="amPolicy"
+            i18nKey="sun-amidentitymembership-condition-name" />
 
         <PluginSchema
             name="IDRepoResponseProvider"

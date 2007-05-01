@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Condition.java,v 1.3 2006-12-22 03:40:12 dillidorai Exp $
+ * $Id: Condition.java,v 1.4 2007-05-01 19:22:22 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -522,6 +522,28 @@ public interface Condition extends Cloneable {
      * the user's single sign on token.
      */
     public static final String VALUE_CASE_INSENSITIVE = "valueCaseInsensitive";
+
+    /** Key that is passed in the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of an
+     * <code>AMIdentityMembershipCondition</code>. The value specifies the 
+     * uuid(s)  for which the policy would apply.  The value should be
+     *  a <code>Set</code>. Each element of the <code>Set</code> should be a 
+     *  String, the uuid of the <code>AMIdentity</code> objet.
+     */
+    public static final String INVOCATOR_PRINCIPAL_UUID 
+            = "invocatorPrincipalUuid";
+
+    /** Key that is used in a <code>AMIdentityMembershipCondition</code> to 
+     *  specify the  uuid(s) of <code>AMIdentiy</code> objects to which the
+     *  policy would apply. These uuid(s) are specified in the condition
+     *  at policy definition time.
+     *
+     *  The value should be a <code>Set</code> 
+     *  Each element of the <code>Set</code> should be a  String, 
+     *  the uuid of the invocator.
+     */
+    public static final String AM_IDENTITY_NAME = "amIdentityName";
+
     /**
      * Returns a list of property names for the condition.
      *
