@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.3 2007-05-01 21:47:08 veiming Exp $
+   $Id: build-tools.xml,v 1.4 2007-05-02 04:01:26 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,7 +67,7 @@
             tofile="${tools.temp.dir}/template/unix/bin/fmadm.template" />
         <copy file="${openfm.dir}/scripts/bin/fmadm.bat"
             tofile="${tools.temp.dir}/template/windows/bin/fmadm.bat.template" />
-        <zip destfile="${fm.dist.dir}/fmAdmintools.zip" whenempty="create">
+        <zip destfile="${fm.dist.dir}/fmAdminTools.zip" whenempty="create">
             <zipfileset dir="${tools.temp.dir}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
@@ -76,7 +76,7 @@
             </zipfileset>
         </zip>
 
-        <checksum file="${fm.dist.dir}/fmAdmintools.zip"
+        <checksum file="${fm.dist.dir}/fmAdminTools.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
 
