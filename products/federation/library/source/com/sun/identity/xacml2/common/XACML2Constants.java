@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.4 2007-04-20 21:33:07 dillidorai Exp $
+ * $Id: XACML2Constants.java,v 1.5 2007-05-02 00:17:38 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,10 +205,10 @@ public class  XACML2Constants {
 
 
     /**
-     * constant for xsi:type="xacml-samlp:XACMLAuthzDEcisionQeury
+     * constant for xsi:type="xacml-samlp:XACMLAuthzDecisionQuery
      */
     public final static String XSI_TYPE_XACML_AUTHZ_DECISION_QUERY
-            = " xsi:type=\"xacml-samlp:XAMLAuthzDecisionQuery\"";
+            = " xsi:type=\"xacml-samlp:XACMLAuthzDecisionQuery\"";
 
     /** 
      * Start Tag for XML String
