@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amUser.xml,v 1.1 2006-08-29 07:52:33 veiming Exp $
+   $Id: amUser.xml,v 1.2 2007-05-03 06:11:37 jonnelson Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -144,7 +144,7 @@
                     any="display" 
                     uitype="link"
                     propertiesViewBeanURL="../user/UMChangeUserPassword"
-                    i18nKey="">
+                    i18nKey="u1051">
                 </AttributeSchema>  
 	        <AttributeSchema name="mail"
                     type="single"

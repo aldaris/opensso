@@ -1,4 +1,3 @@
-package com.sun.identity.console.idm;
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -18,12 +17,14 @@ package com.sun.identity.console.idm;
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceViewBeanBase.java,v 1.1 2007-02-07 20:21:55 jonnelson Exp $
+ * $Id: ServiceViewBeanBase.java,v 1.2 2007-05-03 06:13:57 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
+package com.sun.identity.console.idm;
 
+import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
@@ -47,8 +48,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.jato.RequestContext;
 
 public abstract class ServiceViewBeanBase
     extends AMPrimaryMastHeadViewBean
