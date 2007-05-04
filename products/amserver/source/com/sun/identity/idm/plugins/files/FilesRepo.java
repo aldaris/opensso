@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.14 2007-02-14 00:39:05 kenwho Exp $
+ * $Id: FilesRepo.java,v 1.15 2007-05-04 22:50:32 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1607,6 +1607,7 @@ public class FilesRepo extends IdRepo {
         FilesRepo repo;
 
         CacheUpdateThread(FilesRepo r) {
+            setDaemon(true);
             repo = r;
             debug.message("CacheUpdateThread initialized");
         }
