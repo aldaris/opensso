@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTestValidation.java,v 1.1 2007-05-04 20:47:43 sridharev Exp $
+ * $Id: ChainTestValidation.java,v 1.2 2007-05-04 22:05:34 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,7 @@ public class ChainTestValidation extends TestCommon {
    /**
     * Performs Negative Service based service Login
     */
-    @test(groups = {"client"})
+    @Test(groups = {"client"})
     public void testServicebasedNegative(){
         try{
             boolean isNegative = true;
