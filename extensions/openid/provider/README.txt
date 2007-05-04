@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 OpenID provider 1.0 alpha2
-README file (updated 2007-04-29)
+README file (updated 2007-05-30)
 ------------------------------------------------------------------------------
 
 The contents of this file are subject to the terms
@@ -22,10 +22,11 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.1 2007-04-30 01:28:25 pbryan Exp $
+$Id: README.txt,v 1.2 2007-05-04 06:51:30 pbryan Exp $
 
 Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted Paul C. Bryan
+
 ------------------------------------------------------------------------------
 
 
@@ -83,6 +84,12 @@ server environments:
 
  * Apache Tomcat 5.5.23
  * GlassFish v2 Build 44 25-April-07
+ * Sun Java System Web Server 7.0 Update 1 Technology Preview**
+
+** This web server has JavaServer Faces 1.2 pre-installed; you must remove the
+   Faces-related files from the resulting WAR file or else incompatibilities
+   will occur. See the "Deploying the application" section below for more
+   information.
 
 This provider is coded using features present in Java 2 Standard Edition 5
 and later. It was built, deployed and tested using the following JDK:
@@ -160,28 +167,47 @@ Deploying the application
 Deploy the provider.war file on your application server. The usual context
 path is /provider, though others should work fine (e.g. /openid).
 
+Note: If your application server already has JavaServer Faces installed,
+then you must ensure you remove all JSF-related files from your WAR file,
+causing only the following JAR files to remain in the lib directory:
+
+ * amclientsdk.jar
+ * commons-codec-1.3.jar
+ * jsf-facelets.jar
+
 
 Linking to your identity provider
 
 The main entry point to your identity provider is provided through the
 /service servlet. It dispatches to internal actions and Facelets as required.
 
-So, if you deployed the provider application in /provider on idp.example.com,
+So, if you deployed the provider application in /provider on example.com,
 then the URL for the OpenID provider service would be:
 
- * http://idp.example.com/provider/service
+ * http://example.com/provider/service
 
 This is what will be set in the <link /> tag in OpenID profile pages.
 For example:
 
- <link rel="openid.server" href="http://idp.example.com/provider/service" />
+ <link rel="openid.server" href="http://example.com/provider/service" />
 
 
 Customization
 
-The user interface of this application his highly templated, facilitating easy
+The user interface of this application is highly templated, facilitating easy
 customization. For a brief description of how files are used in this release,
 see docs/files.txt.
+
+
+Acknowledgments
+
+ * Thanks to Hubert Le Van Gong for the French translation, and testing effort
+   deploying on Sun Java System Web Server 7.0 Update 1 Technology Preview.
+ 
+ * Thanks to Gerald Beuchelt for the German translation.
+
+ * Thanks to Pat Patterson for blogging [http://blogs.sun.com/metadaddy] about
+   this project.
 
 
 Contact
