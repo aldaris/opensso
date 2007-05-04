@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.47 2007-04-19 18:26:32 veiming Exp $
+   $Id: build.xml,v 1.48 2007-05-04 19:12:27 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -386,6 +386,7 @@
         <echo message=" jars       : create jars"/>
         <echo message=" jars-clean : deletes generated jars"/>
         <echo message=" war        : builds the WAR"/>
+        <echo message=" tools      : builds the administration CLI tools.zip"/>
         <echo message=" war-clean  : deletes generated WAR"/>
         <echo message=" distauth   : builds the distauth zip"/>
         <echo message=" distauth-clean : deletes generated distauth zip"/>
