@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.13 2007-04-26 18:24:39 veiming Exp $
+ * $Id: FederationManager.java,v 1.14 2007-05-04 19:18:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,6 +147,7 @@ public class FederationManager {
             "extendedonly|x|u|Set to flag to delete only extended data.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
+            "delete-entity-entity-not-exist=Entity, {0} does not exist.",
             "delete-entity-config-deleted=Configuration is deleted for entity, {0}.",
             "delete-entity-descriptor-deleted=Descriptor is deleted for entity, {0}."})
     private String delete_entity;
