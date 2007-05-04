@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelperJCEImpl.java,v 1.3 2006-04-27 07:53:34 veiming Exp $
+ * $Id: SecureLogHelperJCEImpl.java,v 1.4 2007-05-04 21:49:54 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -189,7 +189,7 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
             store.deleteEntry(dataType);
         }
 
-        SecretKeySpec data = new SecretKeySpec(cryptoMaterial, "DES");
+        SecretKeySpec data = new SecretKeySpec(cryptoMaterial, "DESede");
         KeyStore.SecretKeyEntry secKeyEntry = 
             new KeyStore.SecretKeyEntry(data);
         KeyStore.ProtectionParameter params =

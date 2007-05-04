@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.4 2007-04-25 22:58:39 veiming Exp $
+   $Id: build-tools.xml,v 1.5 2007-05-04 21:51:22 bigfatrat Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,8 +37,12 @@
     <property file="${amserver.res.dir}/tools/amadm.properties"/>
     <property name="amadm.unix.scripts.dir"
         value="${amserver.basedir}/scripts/bin"/>
+    <property name="amadm.unix.scripts.log.dir"
+        value="${amserver.basedir}/scripts/log"/>
     <property name="amadm.windows.scripts.dir"
         value="${amserver.basedir}/scripts/bin"/>
+    <property name="amadm.windows.scripts.log.dir"
+        value="${amserver.basedir}/scripts/log"/>
     <property name="amadm.tools.dir" value="${amserver.built.dir}/tools"/>
     <property name="amadm.locale.dir" value="${amadm.tools.dir}/locale"/>
     <property name="amadm.lib.dir" value="${amadm.tools.dir}/lib"/>
@@ -106,12 +110,16 @@
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.windows.scripts.dir}"
                 includes="${amadm.windows.amadm.bat.file}, ${amadm.windows.ampassword.bat.file}"/>
+            <fileset dir="${amadm.windows.scripts.log.dir}"
+                includes="${amadm.windows.amverifyarchive.bat.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
         <copy todir="${amadm.unix.bin.dir}"
               overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.unix.scripts.dir}"
                 includes="${amadm.unix.amadm.file}, ${amadm.unix.ampassword.file}"/>
+            <fileset dir="${amadm.unix.scripts.log.dir}"
+                includes="${amadm.unix.amverifyarchive.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
     </target>

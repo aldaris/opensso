@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReader.java,v 1.2 2006-04-27 07:53:30 veiming Exp $
+ * $Id: LogReader.java,v 1.3 2007-05-04 21:48:22 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -745,14 +745,12 @@ public class LogReader {
         try {
             /* check type of log backend and instantiate appropriate object */
             if (logStorageType.compareToIgnoreCase(FILE_SOURCE) == 0 ) {
-                Class clz = ClassLoader.getSystemClassLoader().loadClass(
-                fileHandlerClass);
+                Class clz = Class.forName(fileHandlerClass);
                 currentHandler =(com.sun.identity.log.handlers.LogReadHandler)
                 clz.newInstance();
             } else if (logStorageType.compareToIgnoreCase("DB") == 0 ) {
                 /*  FOR DB Handler */
-                Class clz = ClassLoader.getSystemClassLoader().
-                    loadClass(dbHandlerClass);
+                Class clz = Class.forName(dbHandlerClass);
                 // Following type casting has to be changed for DB support
                 currentDBHandler =
                     (com.sun.identity.log.handlers.LogReadDBHandler)

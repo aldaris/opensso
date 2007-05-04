@@ -19,31 +19,29 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amverifyarchive.bat,v 1.2 2006-04-27 07:53:27 veiming Exp $
+: $Id: amverifyarchive.bat,v 1.3 2007-05-04 21:44:14 bigfatrat Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
 
-:
-: amverifyarchive.bat for Windows 2000
-:
+java -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+" -D"version.file=@CONFIG_DIR@/AMConfig.properties" -D"xml.config=@CONFIG_DIR@/serverconfig.xml" -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=7.5" -D"version.check=yes" -jar "@BASE_DIR@/lib/amadm_setup.jar" 
+IF %ERRORLEVEL% EQU 1 GOTO END 
 
-set OLD_PATH=%PATH%
-set OLD_CLASSPATH=%CLASSPATH%
-set AM_DIR=PLATDIR
-set DP_HOME=%AM_DIR%
-set JAVA_HOME=JDK_PATH\bin
-set AM_PKG_PREFIX=com.sun.identity.log
-set DPADMIN_JAR=%DP_HOME%\lib\am_services.jar;%DP_HOME%\lib\am_sdk.jar
-set DP_CONFIG=%DP_HOME%\config
-set DP_PROPERTIES=%DP_HOME%\locale
-set DP_LIB=%DP_HOME%\lib
-set SSO_CONFIG=%DP_CONFIG%\amadmin
-set DP_CLASSPATH=%SSO_CONFIG%;%DP_CONFIG%;%DP_PROPERTIES%;%DP_LIB%\jaxp.jar;%DP_LIB%\crimson.jar;%DP_LIB%\servlet.jar;%DP_LIB%\jaas.jar;%DP_LIB%\mail.jar;%DP_LIB%\activation.jar;%DPADMIN_JAR%;%DP_LIB%;%DP_HOME%\lib\preference_servlet.jar;%DP_HOME%\lib\jss311.jar;%DP_HOME%\lib\acm.jar;%DP_HOME%\lib\am_logging.jar
-set CLASSPATH=%DP_CLASSPATH%;%JAVA_HOME%
-set NSPR_NATIVE_THREADS_ONLY=1
-set PATH=%JAVA_HOME%;%DP_HOME%\lib;%PATH%
-java -Xms64m -Xmx256m -D"max_conn_pool=10" -D"min_conn_pool=1" -D"java.protocol.handler.pkgs=com.iplanet.services.comm" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -Xbootclasspath:"JDK_PATH\lib\tools.jar;JDK_PATH\jre\lib\rt.jar;%DP_HOME%\lib\jdk_logging.jar" %AM_PKG_PREFIX%.cli.ISArchiveVerify %*
+setlocal
+:WHILE
+if x%1==x goto WEND
+set PARAMS=%PARAMS% %1
+shift
+goto WHILE
+:WEND
 
-set PATH=%OLD_PATH%
-set CLASSPATH=%OLD_CLASSPATH%
+set TOOLS_HOME=@TOOLS_HOME@
+set OPENSSO_HOME=@CONFIG_DIR@
+
+set TOOLS_CLASSPATH=%OPENSSO_HOME%;%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/locale;%TOOLS_HOME%/config
+
+
+java -Xms64m -Xmx256m -classpath %TOOLS_CLASSPATH% -D"amconfig=AMConfig" -D"java.protocol.handler.pkgs=com.iplanet.services.comm" -D"max_conn_pool=10" -D"min_conn_pool=1" -D"s1is.java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"com.iplanet.services.configpath=@CONFIG_DIR@" -D"com.sun.identity.configFilePath=@CONFIG_DIR@" -D"com.iplanet.coreservices.configpath=@CONFIG_DIR@"  -D"LOG_COMPATMODE=Off" -D"com.iplanet.am.logstatus=INACTIVE" com.sun.identity.log.cli.ISArchiveVerify %PARAMS%
+endlocal
+:END
+

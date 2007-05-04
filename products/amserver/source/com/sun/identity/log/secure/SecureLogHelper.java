@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelper.java,v 1.3 2006-04-27 07:53:34 veiming Exp $
+ * $Id: SecureLogHelper.java,v 1.4 2007-05-04 21:49:54 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,7 +175,7 @@ public abstract class SecureLogHelper {
             initializeKeyStoreManager(LoggerPassword);
             
             // Generate an initial  key
-            KeyGenerator keygen = KeyGenerator.getInstance("DES3");
+            KeyGenerator keygen = KeyGenerator.getInstance("DESede");
             SecretKey k0 = keygen.generateKey();
             currentLoggerKey = k0.getEncoded();
             // Store the key securely

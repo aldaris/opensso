@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.4 2006-08-25 21:20:58 veiming Exp $
+ * $Id: ISArchiveVerify.java,v 1.5 2007-05-04 21:47:29 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -268,11 +268,11 @@ public class ISArchiveVerify{
                     ssoMngr.createSSOToken(new AuthPrincipal(uname), passwd);
         } catch (SSOException ssoe) {
             System.out.println(bundle.getString("archiveVerification")
-                                     + "SSOException: " + ssoe.getMessage());
+                + "SSOException: " + ssoe.getMessage());
             return false;
         } catch (UnsupportedOperationException uoe) {
             System.out.println(bundle.getString("archiveVerification")
-                     + "UnsupportedOperationException: " + uoe.getMessage());
+                + "UnsupportedOperationException: " + uoe.getMessage());
             return false;
         }
 
@@ -285,7 +285,7 @@ public class ISArchiveVerify{
         TreeMap tm = vl.getKeysAndFiles(new File(path), logName);
         if(tm.size() == 0){
             System.out.println(bundle.getString("archiveVerification") + 
-                bundle.getString("noFilesToVerify"));
+                bundle.getString("noFilesToVerify") + ", size == 0");
             return true;
         }
         
@@ -295,7 +295,8 @@ public class ISArchiveVerify{
 
         if (keyFiles.length == 1) {
             System.out.println(bundle.getString("archiveVerification") + 
-                bundle.getString("noFilesToVerify"));
+                bundle.getString("noFilesToVerify") +
+                ", keyFiles.length == 1");
         }
         for(int i = 1; i < keyFiles.length; i++) {
             helper = SecureFileHandler.getSecureLogHelperInst();

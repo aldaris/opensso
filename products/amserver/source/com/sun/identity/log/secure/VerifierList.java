@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VerifierList.java,v 1.3 2006-04-27 07:53:34 veiming Exp $
+ * $Id: VerifierList.java,v 1.4 2007-05-04 21:49:54 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,7 +62,7 @@ public class VerifierList {
         
         // Once key files are got sorted, get the corresponding log files
         for (int i = keyFiles.length - 1; i >= 0 ; i--) {
-            System.out.println("KeyFile ="+keyFiles[i]);
+//          System.out.println("KeyFile ="+keyFiles[i]);
             Vector logFiles = null;
             if(i > 0 ) {
                 logFiles = 
@@ -118,8 +118,10 @@ public class VerifierList {
     ) {
         Vector logList = new Vector();
         // get the list of logfiles for a log+type
+
         String[] logFiles = dir.list(new LogFileFilter("_secure."+log+"*") );
         Arrays.sort(logFiles);
+
         // find the logfiles for a given key file
         String startLog = "_secure." + key1.substring( key1.indexOf(log) );
         String endLog = null;
