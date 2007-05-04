@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.1 2007-03-20 22:02:28 rmisra Exp $
+ * $Id: AuthenticationCommon.java,v 1.1 2007-05-04 20:46:13 sridharev Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.qatest.common;
+package com.sun.identity.qatest.common.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;

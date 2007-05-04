@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.1 2007-03-20 22:02:25 rmisra Exp $
+ * $Id: AuthTest.java,v 1.2 2007-05-04 20:47:42 sridharev Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.AccessManager;
-import com.sun.identity.qatest.common.AuthenticationCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.List;
 import java.util.Map;
