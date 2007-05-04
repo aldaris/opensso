@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPAuthorizer.java,v 1.1 2006-10-30 23:18:04 qcheng Exp $
+ * $Id: IDPPAuthorizer.java,v 1.2 2007-05-04 22:38:31 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.liberty.ws.idpp.plugin;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.*;
+import com.sun.identity.policy.interfaces.Condition;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -121,8 +122,21 @@ public class IDPPAuthorizer implements Authorizer {
            Set actions = new HashSet(1);
            actions.add(action);
 
+           Map map = null; 
+           String userid = (String) env.get(USER_ID); 
+           if (debug.messageEnabled()) {
+               debug.message("IDPPAuthorizer.getAuthorizationDecision: uid="
+                   + userid);
+           }
+           if ((userid != null) && (userid.length() != 0)) {
+               HashSet set = new HashSet();
+               set.add(userid);
+               map = new HashMap();
+               map.put(Condition.INVOCATOR_PRINCIPAL_UUID, set);
+           } 
+ 
            PolicyDecision policyDecision =  evaluator.getPolicyDecision(
-                     token, resource, actions);
+                     token, resource, actions, map);
 
            if(policyDecision == null) {
               if(debug.messageEnabled()) {
