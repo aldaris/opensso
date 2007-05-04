@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2006-12-08 21:02:11 veiming Exp $
+$Id: README,v 1.5 2007-05-04 19:14:09 qcheng Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -76,10 +76,10 @@ The libraries needed for compiling OpenSSO sources are:
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
 
-Once these libraries are available, they should be placed under the extlib
-directory of the workspace. Any library placed in this directory is 
-automatically included in the classpath during the compilation phase of
-the build process.
+Once these libraries are available, they should be placed under the 
+"opensso/products/extlib" directory of your workspace. Any library placed 
+in this directory is automatically included in the classpath during the 
+compilation phase of the build process.
 
 The following subsections briefly describe how these libraries may be 
 obtained. These instructions are provided for your convenience only and
@@ -106,7 +106,7 @@ Follow these steps to obtain the J2EE SDK:
 
 Once the J2EE SDK is installed, you can get the javaee.jar and mail.jar from 
 the lib directory of this SDK. You must rename javaee.jar to j2ee.jar when 
-copying it to the extlib directory.
+copying it to the "opensso/products/extlib" directory of your workspace.
  
 
 %% 2.2 Obtaining jaxb-api.jar, jaxb-impl.jar, jaxb-libs.jar, 
