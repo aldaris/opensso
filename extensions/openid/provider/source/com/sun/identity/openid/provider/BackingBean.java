@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BackingBean.java,v 1.1 2007-04-30 01:28:28 pbryan Exp $
+ * $Id: BackingBean.java,v 1.2 2007-05-04 06:53:14 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -36,7 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO: Description.
+ * Base class for managed beans in the Facelets installation. Provides common
+ * methods to subclasses and overridable event methods for various phases in
+ * the request lifecycle.
  *
  * @author pbryan
  */
@@ -64,7 +66,7 @@ public class BackingBean
     protected final Map<String,Object> attributes;
 
     /**
-     * TODO: Description.
+     * Constructs a new backing bean instance.
      */
     protected BackingBean()
     {
@@ -78,9 +80,12 @@ public class BackingBean
     }
 
     /**
-     * TODO: Description.
+     * Dispatches to the method associated with the current phase of the
+     * request lifecycle. Catches bad message exceptions and internal server
+     * errors, and renders associated error pages.
      *
-     * @param event TODO.
+     * @param event the event that contains the current phase in the lifecycle.
+     * @param point specifies if before or after phase in lifecycle.
      */
     private void dispatch(PhaseEvent event, Point point)
     {
@@ -134,31 +139,46 @@ public class BackingBean
     }
 
     /**
-     * Reconstructs the URL the client should use to make a request of the
-     * OpenID provider service.
+     * Returns the externally-facing URL to access the OpenID provider service.
+     * If the service URL is defined in the configuration properties, it is
+     * returned; otherwise the URL is constructed from the incomingrequest.
      *
-     * @return the URL of the OpenID provider service.
+     * @return the externally-facing URL of the OpenID provider service.
      */
     protected String getServiceURL()
     {
+        // try to get explicit URL from properties file
+        String url = Config.getString(Config.SERVICE_URL);
+
+        // found one in the configuration, so use it
+        if (url != null) {
+            return url;
+        }
+
+        // begin constructing service URL from incoming request
         StringBuffer buf = new StringBuffer();
 
+        // get all of the requisite information from the request
         String scheme = request.getScheme();
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
         String contextPath = request.getContextPath();
 
+        // suppress explicit port number if it's the default for the scheme
         if ((scheme.equalsIgnoreCase("http") && serverPort == 80) ||
         (scheme.equalsIgnoreCase("https") && serverPort == 443) || serverPort < 0) {
             serverPort = 0;
         }
 
+        // http://host
         buf.append(scheme).append("://").append(serverName);
 
+        // :port (if required)
         if (serverPort != 0) {
             buf.append(':').append(serverPort);
         }
 
+        // /provider/service
         buf.append(contextPath).append("/service");
 
         return buf.toString();

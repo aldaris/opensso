@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Config.java,v 1.1 2007-04-30 01:28:29 pbryan Exp $
+ * $Id: Config.java,v 1.2 2007-05-04 06:53:15 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -56,6 +56,9 @@ public class Config
 
     /** TODO: Description. */
     public static final String PRINCIPAL_PATTERN = PREFIX + "principal_pattern";
+
+    /** TODO: Description. */
+    public static final String SERVICE_URL = PREFIX + "service_url";
 
     /** TODO: Description. */
     public static final String SIMPLE_REGISTRATION = PREFIX + "simple_registration";
