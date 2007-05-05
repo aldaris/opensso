@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPReceiver.java,v 1.1 2006-10-30 23:15:23 qcheng Exp $
+ * $Id: SOAPReceiver.java,v 1.2 2007-05-05 03:57:17 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -253,7 +253,7 @@ public class SOAPReceiver extends HttpServlet {
 
                     if (Utils.debug.messageEnabled()) {
                         Utils.debug.message("SOAPReceiver.onMessage: " +
-                                            "got SOAPFaultException");
+                            "got SOAPFaultException", sfe);
                     }
 
                     try {

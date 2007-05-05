@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoUtils.java,v 1.3 2007-04-23 16:51:16 hengming Exp $
+ * $Id: DiscoUtils.java,v 1.4 2007-05-05 03:56:39 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import com.sun.identity.liberty.ws.disco.ResourceID;
 import com.sun.identity.liberty.ws.disco.Description;
 import com.sun.identity.liberty.ws.disco.jaxb.*;
 import com.sun.identity.liberty.ws.disco.jaxb11.*;
+import com.sun.identity.liberty.ws.disco.plugins.NameIdentifierMapper;
 import com.sun.identity.liberty.ws.disco.plugins.jaxb.*;
 import com.sun.identity.liberty.ws.interfaces.Authorizer;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
@@ -54,6 +55,7 @@ import com.sun.identity.liberty.ws.soapbinding.Utils;
 import com.sun.identity.liberty.ws.util.ProviderManager;
 import com.sun.identity.liberty.ws.util.ProviderUtil;
 import com.sun.identity.federation.message.common.EncryptedNameIdentifier;
+import com.sun.identity.federation.message.common.IDPProvidedNameIdentifier;
 
 /**
  * Provides utility methods to discovery service.
@@ -375,8 +377,34 @@ public class DiscoUtils extends DiscoSDKUtils {
                             ni, pm.getDecryptionKey(
                             DiscoServiceManager.getDiscoProviderID()));
                     }
-
-		    if (pm.isNameIDEncryptionEnabled(tproviderID)){
+ 
+                    NameIdentifier newNi = null;
+                    NameIdentifierMapper niMapper = 
+                        DiscoServiceManager.getNameIdentifierMapper();
+                    if (niMapper != null) {
+                        String discoEntityID = 
+                            DiscoServiceManager.getDiscoProviderID();
+                        newNi = niMapper.getNameIdentifier(
+                            tproviderID, discoEntityID, ni, userDN);
+                    }
+                    if ((newNi != null) && !newNi.equals(ni)) {
+                         sub.setNameIdentifier(newNi);
+                         // modify IDPProvidedNameIdentifier, this should be
+                         // a EncryptedIDPProvidedNameIdentifier, but not 
+                         // defined by specification.
+                         // Or set this to null once we make it optional
+                         // in SessionSubject class implementation 
+                         IDPProvidedNameIdentifier idpNi =
+                             sub.getIDPProvidedNameIdentifier(); 
+                         if (idpNi != null) {
+                             IDPProvidedNameIdentifier newIdpNi =
+                                 new IDPProvidedNameIdentifier(
+                                     newNi.getName(),
+                                     newNi.getNameQualifier(),
+                                     newNi.getFormat());
+                             sub.setIDPProvidedNameIdentifier(newIdpNi); 
+                         }
+		    } else if (pm.isNameIDEncryptionEnabled(tproviderID)){
                         sub.setNameIdentifier(
                             EncryptedNameIdentifier.getEncryptedNameIdentifier(
                             ni, tproviderID,
@@ -389,7 +417,8 @@ public class DiscoUtils extends DiscoSDKUtils {
                     invocatorSession.setSessionSubject(sub);
                 } catch (Exception ex) {
                     debug.error("DiscoUtils.handleDirective: En/Decryption"
-                        + " Exception:" + ex);
+                        + " Exception:", ex);
+                    return null;
                 }
             }
 

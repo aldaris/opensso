@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoServiceManager.java,v 1.1 2006-10-30 23:14:54 qcheng Exp $
+ * $Id: DiscoServiceManager.java,v 1.2 2007-05-05 03:56:38 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,10 @@ import javax.xml.bind.*;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.liberty.ws.disco.plugins.Default64ResourceIDMapper;
+import com.sun.identity.liberty.ws.disco.plugins.DiscoEntryHandler;
+import com.sun.identity.liberty.ws.disco.plugins.NameIdentifierMapper;
 import com.sun.identity.liberty.ws.disco.plugins.jaxb.*;
-import com.sun.identity.liberty.ws.disco.plugins.*;
 import com.sun.identity.liberty.ws.interfaces.ResourceIDMapper;
 import com.sun.identity.liberty.ws.interfaces.Authorizer;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
@@ -93,6 +95,8 @@ public class DiscoServiceManager implements ConfigurationListener {
     private static final String ATTR_OPTION_SECURITY_RESPONSE =
                                 "sunIdentityServerDiscoOptionSecurityResponse";
     private static final String USE_RESPONSE_AUTHENTICATION_DEFAULT = "false";
+    private static final String ATTR_NAMEID_MAPPER = 
+        "sunIdentityServerDiscoNameIdentifierMapper";
 
 
     private static Debug debug = Debug.getInstance("libDisco");
@@ -111,6 +115,7 @@ public class DiscoServiceManager implements ConfigurationListener {
     private static boolean encryptNI = false;
     private static boolean useImpliedRes = false;
     private static boolean useRespAuth = false;
+    private static NameIdentifierMapper nameIdMapper = null;
 
     private DiscoServiceManager() {
     }
@@ -200,6 +205,17 @@ public class DiscoServiceManager implements ConfigurationListener {
      */
     public static Authorizer getAuthorizer() {
         return authorizer;
+    }
+
+    /**
+     * Returns the <code>NameIdentifierMapper</code> class specified in the 
+     * discovery service.
+     * @return instance of <code>NameIdentifierMapper</code> class. 
+     *     <code>null</code> if no handler is configured, or unable to
+     *     instantiate the mapper class.
+     */
+    public static synchronized NameIdentifierMapper getNameIdentifierMapper() {
+        return nameIdMapper;
     }
 
     /**
@@ -320,6 +336,25 @@ public class DiscoServiceManager implements ConfigurationListener {
                     if (debug.messageEnabled()) {
                         debug.error("DiscoServiceManager.setValues: "
                         + "Exception when instantiating entry handler:", e);
+                    }
+                }
+            }
+
+            // Name Identifier Mapper 
+            String niMapperName = CollectionHelper.getMapAttr(
+                attrsMap, ATTR_NAMEID_MAPPER);
+            if ((niMapperName != null) && (niMapperName.length() != 0)) {
+                try {
+                    if (debug.messageEnabled()) {
+                        debug.message("DiscoServiceManager.setValues: "
+                            + "disco name id mapper=" + niMapperName);
+                    }
+                    nameIdMapper = (NameIdentifierMapper) Class.
+                        forName(niMapperName).newInstance();
+                } catch (Exception e) {
+                    if (debug.messageEnabled()) {
+                        debug.error("DiscoServiceManager.setValues: "
+                        + "Exception when instantiating nameid mapper:", e);
                     }
                 }
             }
