@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.23 2007-04-12 20:11:19 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.24 2007-05-05 07:18:06 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
@@ -410,9 +411,7 @@ public class SMSEntry implements Cloneable {
         // if UM and SM root suffix are different, then inmemory
         // notification is enabled through
         // enableDataStoreNotification=false
-
-        if (!SMSEntry.baseDN.equalsIgnoreCase(
-            SMSEntry.amsdkbaseDN)) {
+        if (!SMSEntry.baseDN.equalsIgnoreCase(SMSEntry.amsdkbaseDN)) {
             enableDataStoreNotification = false;
         }
     }
@@ -1867,11 +1866,16 @@ public class SMSEntry implements Cloneable {
                 return;
             }
 
+            String configTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            boolean bConfigTime = configTime.equalsIgnoreCase("true");
+
             // Send local notification only if datastore notification is
             // not enabled.  Local notifications should always be sent on the
             // client side.
             if ((SMSJAXRPCObjectFlg) || (ServiceManager.isRealmEnabled() &&
-                    !enableDataStoreNotification)) {
+                    !enableDataStoreNotification) || bConfigTime
+            ) {
                 
                 if (eventDebug.messageEnabled()) {
                     eventDebug.message("SMSEntry::NotificationThread:run "
