@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.15 2007-05-04 22:50:32 veiming Exp $
+ * $Id: FilesRepo.java,v 1.16 2007-05-05 01:09:26 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1422,6 +1422,10 @@ public class FilesRepo extends IdRepo {
             identityCache.put(fileName, values);
             identityTimeCache.put(fileName, new Long(file.lastModified()));
             identityCache.put(fileName.toLowerCase(), values);
+            if (debug.messageEnabled()) {
+                debug.message("FilesRepo:writeFile-Identity Cache "+
+                    identityCache);
+            }
         } catch (IOException e) {
             if (debug.messageEnabled()) {
                 debug.message("FilesRepo.writeFile: file = " + fileName, e);
@@ -1444,6 +1448,20 @@ public class FilesRepo extends IdRepo {
             (lastModified.longValue() == file.lastModified()) &&
             ((answer = (Map) identityCache.get(fileName)) != null)) {
             return (answer);
+        }
+        for (Iterator it = identityCache.keySet().iterator(); it.hasNext();) {
+            String origFileName = (String) it.next();
+            // At times the incoming object name is all normalized to 
+            // lowercase. This avoids the filenotfound exception when the 
+            // object in flatfile repository is saved as mixed case filenames.
+            if (!fileName.equals(origFileName)) {
+                if (fileName.equalsIgnoreCase(origFileName)) {
+                    fileName = origFileName;
+                    break;
+                }
+            } else {
+                break;
+            } 
         }
         BufferedReader br = null;
         try {
