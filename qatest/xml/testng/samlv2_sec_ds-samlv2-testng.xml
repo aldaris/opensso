@@ -20,19 +20,21 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: samlv2_sec_ds-samlv2-testng.xml,v 1.1 2007-04-27 22:23:46 mrudulahg Exp $
+ $Id: samlv2_sec_ds-samlv2-testng.xml,v 1.2 2007-05-08 17:01:02 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="samlv2_sec_ds-samlv2" verbose="1">
     <test name="SAMLv2SmokeTest">
+    <parameter name="groupName" value="ds_sec"/>
         <groups>
             <run>
                 <include name="samlv2_sec_ds"/>
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.samlv2.ConfigureSAMLv2"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
         </classes>
