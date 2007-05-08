@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkOperations.java,v 1.4 2007-04-09 23:34:20 veiming Exp $
+ * $Id: BulkOperations.java,v 1.5 2007-05-08 19:06:22 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.List;
  * Multiple requests command.
  */
 public class BulkOperations extends AuthenticatedCommand {
+    private static final String BATCH_FILE = "batchfile";
     private static final String STATUS_FILE = "batchstatus";
     
     public void handleRequest(RequestContext rc) 
@@ -44,15 +45,15 @@ public class BulkOperations extends AuthenticatedCommand {
 
         boolean continueFlag = isOptionSet(IArgument.CONTINUE);
         String statusFileName = getStringOptionValue(STATUS_FILE);
-        String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List entries = AttributeValues.parseValues(datafile);
+        String batchfile = getStringOptionValue(BATCH_FILE);
+        List entries = AttributeValues.parseValues(batchfile);
 
         if ((entries != null) && !entries.isEmpty()) {
             removeEmptyEntries(entries);
         }
 
         if ((entries == null) || entries.isEmpty()) {
-            String[] arg = {datafile};
+            String[] arg = {batchfile};
             throw new CLIException(
                 MessageFormat.format("bulk-op-empty-datafile", (Object[])arg),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);

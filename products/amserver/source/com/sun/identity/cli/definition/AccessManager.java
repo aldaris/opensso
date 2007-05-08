@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.20 2007-04-16 07:14:13 veiming Exp $
+ * $Id: AccessManager.java,v 1.21 2007-05-08 19:06:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,14 +59,14 @@ public class AccessManager {
         description="Do multiple requests in one command.",
         webSupport="true",
         mandatoryOptions={
-            "datafile|D|s|Name of file that contains commands and options."},
+            "batchfile|D|s|Name of file that contains commands and options."},
         optionAliases={},
         macro="authentication",
         optionalOptions={
             "batchstatus|b|s|Name of status file.",
             "continue|c|u|Continue processing the rest of the request when preceeding request is erroneous."},
         resourceStrings={
-            "bulk-op-empty-datafile=Data file, {0} is empty.",
+            "bulk-op-empty-datafile=Batch file, {0} is empty.",
             "unmatch-quote=Unmatched '.",
             "unmatch-doublequote=Unmatched \"."})
     private String do_batch;
