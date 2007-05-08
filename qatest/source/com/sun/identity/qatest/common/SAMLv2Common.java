@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.2 2007-04-27 18:09:23 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.3 2007-05-08 16:53:08 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ public class SAMLv2Common extends TestCommon {
     public static String newline = System.getProperty("line.separator");
     public static String fileseparator = System.getProperty("file.separator");
 
+    /** Creates a new instance of SAMLv2Common */
     public SAMLv2Common() {
         super("SAMLv2Common");
     }
@@ -734,7 +735,6 @@ public class SAMLv2Common extends TestCommon {
         out.close();
     }
 
-
     /**
     * This method creates spconsolelogout xml 
     * Logs the user out 
@@ -815,8 +815,8 @@ public class SAMLv2Common extends TestCommon {
         try{
             String metaPage = page.getWebResponse().getContentAsString();
             metadata = metaPage.substring(metaPage.
-                    indexOf("EntityDescriptor")-4,
-                    metaPage.lastIndexOf("EntityDescriptor")+17);
+                    indexOf("EntityDescriptor") - 4,
+                    metaPage.lastIndexOf("EntityDescriptor") + 17);
             metadata = metadata.replaceAll("&lt;", "<");
             metadata = metadata.replaceAll("&gt;", ">");
         } catch (Exception e){
@@ -834,8 +834,8 @@ public class SAMLv2Common extends TestCommon {
         try{
             String metaPage = page.getWebResponse().getContentAsString();
             metadata = metaPage.substring(metaPage.
-                    indexOf("EntityConfig")-4,
-                    metaPage.lastIndexOf("EntityConfig")+13);
+                    indexOf("EntityConfig") - 4,
+                    metaPage.lastIndexOf("EntityConfig") + 13);
             metadata = metadata.replaceAll("&lt;", "<");
             metadata = metadata.replaceAll("&gt;", ">");        
         } catch (Exception e){
@@ -862,19 +862,29 @@ public class SAMLv2Common extends TestCommon {
             
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
-          
-            HtmlPage spmetaPage = spfm.createMetadataTemplate(webClient,
-                    (String)m.get("sp_entity_name"), true, true, 
-                    (String)m.get("sp_alias"), null,
-                    (String)m.get("sp_certalias"), null,
-                    (String)m.get("sp_certalias"), null, "saml2");
+            HtmlPage spmetaPage;
+            if(signed){
+                spmetaPage = spfm.createMetadataTemplate(webClient,
+                        (String)m.get("sp_entity_name"), true, true, 
+                        (String)m.get("sp_alias"), null, null, null,
+                        (String)m.get("sp_certalias"), null, null, null,
+                        (String)m.get("sp_certalias"), null, null, null, 
+                        "saml2");
+            } else {
+                 spmetaPage = spfm.createMetadataTemplate(webClient,
+                        (String)m.get("sp_entity_name"), true, true, 
+                        (String)m.get("sp_alias"), null, null, null,
+                        null, null, null, null, null, null, null, null, 
+                         "saml2");
+            }
+            
             String spPage = spmetaPage.getWebResponse().getContentAsString();
             arrMetadata[0] = spPage.substring(
-                    spPage.indexOf("EntityDescriptor")-4, 
-                    spPage.lastIndexOf("EntityDescriptor")+17);
+                    spPage.indexOf("EntityDescriptor") - 4, 
+                    spPage.lastIndexOf("EntityDescriptor") + 17);
             arrMetadata[1] = spPage.substring(
-                    spPage.indexOf("EntityConfig")-4, 
-                    spPage.lastIndexOf("EntityConfig")+13);
+                    spPage.indexOf("EntityConfig") - 4, 
+                    spPage.lastIndexOf("EntityConfig") + 13);
             if((arrMetadata[0].equals(null))||(arrMetadata[1].equals(null))){
                 assert(false);
             } else {   
@@ -883,8 +893,8 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 HtmlPage importMeta = spfm.importEntity(webClient, 
-                        arrMetadata[0], arrMetadata[1], (String)m.get("sp_cot"),
-                        "saml2");
+                        (String)m.get("sp_realm"), arrMetadata[0], 
+                        arrMetadata[1], (String)m.get("sp_cot"), "saml2");
                 if(!importMeta.getWebResponse().getContentAsString().
                         contains("Import file, web.")) {
                     assert(false);
@@ -915,19 +925,28 @@ public class SAMLv2Common extends TestCommon {
             
             //get sp & idp extended metadata
             FederationManager idpfm = new FederationManager(idpurl);
-           
-            HtmlPage idpmetaPage = idpfm.createMetadataTemplate(webClient,
-                    (String)m.get("idp_entity_name"), true, true, 
-                    null, (String)m.get("idp_alias"), 
-                    null, (String)m.get("idp_certalias"), 
-                    null, (String)m.get("idp_certalias"), "saml2");
+            HtmlPage idpmetaPage;
+            if(signed){
+                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                        (String)m.get("idp_entity_name"), true, true, 
+                        null, (String)m.get("idp_alias"), null, null,
+                        null, (String)m.get("idp_certalias"), null, null,
+                        null, (String)m.get("idp_certalias"), null, null, 
+                        "saml2");
+            } else {
+                idpmetaPage = idpfm.createMetadataTemplate(webClient,
+                        (String)m.get("idp_entity_name"), true, true, 
+                        null, (String)m.get("idp_alias"), null, null,
+                        null, null, null, null, null, null, null, null, 
+                        "saml2");
+            }
             String idpPage = idpmetaPage.getWebResponse().getContentAsString();
             arrMetadata[0] = idpPage.substring(
-                    idpPage.indexOf("EntityDescriptor")-4, 
-                    idpPage.lastIndexOf("EntityDescriptor")+17);
+                    idpPage.indexOf("EntityDescriptor") - 4, 
+                    idpPage.lastIndexOf("EntityDescriptor") + 17);
             arrMetadata[1] = idpPage.substring(
-                    idpPage.indexOf("EntityConfig")-4, 
-                    idpPage.lastIndexOf("EntityConfig")+13);
+                    idpPage.indexOf("EntityConfig") - 4, 
+                    idpPage.lastIndexOf("EntityConfig") + 13);
             if((arrMetadata[0].equals(null))||(arrMetadata[1].equals(null))){
                 assert(false);
             } else {   
@@ -936,8 +955,8 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 HtmlPage importMeta = idpfm.importEntity(webClient, 
-                        arrMetadata[0], arrMetadata[1], 
-                        (String)m.get("idp_cot"), "saml2");
+                        (String)m.get("idp_realm"), arrMetadata[0], 
+                        arrMetadata[1], (String)m.get("idp_cot"), "saml2");
                 if(!importMeta.getWebResponse().getContentAsString().
                         contains("Import file, web.")) {
                     assert(false);
@@ -950,6 +969,4 @@ public class SAMLv2Common extends TestCommon {
         }
         return arrMetadata;
     } 
-    
-
 }

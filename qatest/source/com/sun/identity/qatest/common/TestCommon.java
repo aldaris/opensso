@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.3 2007-04-26 21:53:32 rmisra Exp $
+ * $Id: TestCommon.java,v 1.4 2007-05-08 16:53:37 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,6 +300,7 @@ public class TestCommon implements TestConstants
          map.put("serverurl",protocol + ":" + "//" + host + ":" + port);
          map.put("serveruri",uri);
          map.put("cookiedomain",cfg.getString("cookiedomain"));
+         map.put("adminPassword", adminPassword);
          map.put("configdir",cfg.getString("configdir"));
          map.put("datastore",cfg.getString("datastore"));
          map.put("dirservername",cfg.getString("dirservername"));
@@ -323,6 +324,7 @@ public class TestCommon implements TestConstants
      * serverurl                 <protocol + ":" + "//" + host + ":" + port>
      * serveruri                 <URI for configured instance>
      * cookiedomain              <full cookie domain name>
+     * adminPassword             <amadmin password>
      * configdir                 <directory where product will be installed>
      * datastore                 <type of statstore: faltfile, dirServer or 
      *                            activeDir>
@@ -368,10 +370,10 @@ public class TestCommon implements TestConstants
 
              HtmlPasswordInput txtAmadminPassword =
                     (HtmlPasswordInput)form.getInputByName("ADMIN_PWD");
-             txtAmadminPassword.setValueAttribute(adminPassword);
+             txtAmadminPassword.setValueAttribute((String)map.get("adminPassword"));
              HtmlPasswordInput txtAmadminPasswordR =
                     (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
-             txtAmadminPasswordR.setValueAttribute(adminPassword);
+             txtAmadminPasswordR.setValueAttribute((String)map.get("adminPassword"));
 
              HtmlTextInput txtConfigDir =
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
@@ -448,6 +450,9 @@ public class TestCommon implements TestConstants
             } else {
                 log(logLevel, "configureProduct", "Product Configuration was" +
                         " successfull. New bits were successfully configured.");
+                strURL = (String)map.get("serverurl") +
+                         (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return true;
             }
@@ -465,6 +470,9 @@ public class TestCommon implements TestConstants
             } else {
                 log(logLevel, "configureProduct", "Product was already" +
                         " configured. Super admin login successfull.");
+                strURL = (String)map.get("serverurl") +
+                         (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return true;
             }
