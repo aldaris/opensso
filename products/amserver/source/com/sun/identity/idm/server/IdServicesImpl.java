@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.15 2007-03-22 00:49:02 rarcot Exp $
+ * $Id: IdServicesImpl.java,v 1.16 2007-05-10 18:03:27 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2092,6 +2092,13 @@ public class IdServicesImpl implements IdServices {
 
         // First get the list of plugins that support the create operation.
         Set unionSupportedTypes = new HashSet();
+        if (!orgExist(token, amOrgName)) {
+            debug.error("IdServicesImpl.getSupportedTypes: "
+                + "Realm " + amOrgName + " does not exist.");
+            Object[] args = { amOrgName };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "312", args);
+        }
         SSOToken stoken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         Set plugIns = getIdRepoPlugins(stoken, amOrgName);
