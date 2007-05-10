@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.5 2007-03-21 22:33:46 veiming Exp $
+ * $Id: CreateServiceConfig.java,v 1.6 2007-05-10 00:16:43 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -460,8 +460,20 @@ public class CreateServiceConfig {
      */
     static void createOrganization(SSOToken token, String orgDN)
         throws SMSException {
+
         // Check if the organization already exists
         try {
+            // Normalize DN, so it can be parsed and compared
+            Object args1[] = {orgDN};
+            orgDN = DNUtils.normalizeDN(orgDN);
+            if (orgDN == null) {
+                SMSEntry.debug.error("CreateServiceConfig."+
+                    "createOrganization() : Detected invalid characters. "+
+                    "Invalid realm name: "+ args1[0]);
+                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                    "sms-invalid-org-name", args1));
+            }
+
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN,
                 null);
             SMSEntry e = cEntry.getClonedSMSEntry();
@@ -472,8 +484,6 @@ public class CreateServiceConfig {
                         IUMSConstants.SMS_organization_already_exists_no_args,
                         null));
             }
-            // Normalize DN, so it can be parsed and compared
-            orgDN = DNUtils.normalizeDN(orgDN);
             
             // Need to start from baseDN, to create intermediate nodes
             String[] dns = LDAPDN.explodeDN(orgDN, false);
