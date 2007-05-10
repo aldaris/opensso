@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.1 2007-03-20 22:02:28 rmisra Exp $
+ * $Id: AccessManager.java,v 1.2 2007-05-10 17:21:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,37 +48,13 @@ public class AccessManager {
         amadmUrl = url + "/amadm.jsp?cmd=";
     }
 
-
-    /**
-     * Do multiple requests in one command.
-     *
-     * @param webClient HTML Unit Web Client object.
-     * @datafile Name of file that contains commands and options.
-     */
-    public HtmlPage doBatch(
-        WebClient webClient,
-        String datafile
-    ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "do-batch");
-        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
-        HtmlForm form = (HtmlForm)page.getForms().get(0);
-
-        if (datafile != null) {
-            HtmlTextArea tadatafile = (HtmlTextArea)form.getTextAreasByName("datafile").get(0);
-            tadatafile.setText(datafile);
-        }
-
-
-        return (HtmlPage)form.submit();
-    }
-
     /**
      * List Sessions.
      *
      * @param webClient HTML Unit Web Client object.
-     * @host Host Name.
-     * @filter Filter (Pattern).
-     * @quiet Do not prompt for session invalidation.
+     * @param host Host Name.
+     * @param filter Filter (Pattern).
+     * @param quiet Do not prompt for session invalidation.
      */
     public HtmlPage listSessions(
         WebClient webClient,
@@ -113,9 +89,9 @@ public class AccessManager {
      * Add resource bundle to data store.
      *
      * @param webClient HTML Unit Web Client object.
-     * @bundlename Resource Bundle Name.
-     * @bundlefilename Resource bundle physical file name.
-     * @bundlelocale Locale of the resource bundle.
+     * @param bundlename Resource Bundle Name.
+     * @param bundlefilename Resource bundle physical file name.
+     * @param bundlelocale Locale of the resource bundle.
      */
     public HtmlPage addResourceBundle(
         WebClient webClient,
@@ -150,8 +126,8 @@ public class AccessManager {
      * List resource bundle in data store.
      *
      * @param webClient HTML Unit Web Client object.
-     * @bundlename Resource Bundle Name.
-     * @bundlelocale Locale of the resource bundle.
+     * @param bundlename Resource Bundle Name.
+     * @param bundlelocale Locale of the resource bundle.
      */
     public HtmlPage listResourceBundle(
         WebClient webClient,
@@ -180,8 +156,8 @@ public class AccessManager {
      * Remove resource bundle from data store.
      *
      * @param webClient HTML Unit Web Client object.
-     * @bundlename Resource Bundle Name.
-     * @bundlelocale Locale of the resource bundle.
+     * @param bundlename Resource Bundle Name.
+     * @param bundlelocale Locale of the resource bundle.
      */
     public HtmlPage removeResourceBundle(
         WebClient webClient,
@@ -210,7 +186,7 @@ public class AccessManager {
      * Create a new service in server.
      *
      * @param webClient HTML Unit Web Client object.
-     * @xmlfile XML file(s) that contains schema.
+     * @param xmlfile XML file(s) that contains schema.
      */
     public HtmlPage createService(
         WebClient webClient,
@@ -233,8 +209,8 @@ public class AccessManager {
      * Delete service from the server.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Service Name(s).
-     * @deletepolicyrule Delete policy rule.
+     * @param servicename Service Name(s).
+     * @param deletepolicyrule Delete policy rule.
      */
     public HtmlPage deleteService(
         WebClient webClient,
@@ -266,7 +242,7 @@ public class AccessManager {
      * Update service.
      *
      * @param webClient HTML Unit Web Client object.
-     * @xmlfile XML file(s) that contains schema.
+     * @param xmlfile XML file(s) that contains schema.
      */
     public HtmlPage updateService(
         WebClient webClient,
@@ -289,10 +265,10 @@ public class AccessManager {
      * Add attribute schema to an existing service.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Service Name.
-     * @schematype Schema Type.
-     * @attributeschemafile XML file containing attribute schema definition.
-     * @subschemaname Name of sub schema.
+     * @param servicename Service Name.
+     * @param schematype Schema Type.
+     * @param attributeschemafile XML file containing attribute schema definition.
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage addAttributes(
         WebClient webClient,
@@ -333,7 +309,7 @@ public class AccessManager {
      * Migrate organization to realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @entrydn Distinguished name of organization to be migrated.
+     * @param entrydn Distinguished name of organization to be migrated.
      */
     public HtmlPage doMigration70(
         WebClient webClient,
@@ -356,7 +332,7 @@ public class AccessManager {
      * Create realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm to be created.
+     * @param realm Name of realm to be created.
      */
     public HtmlPage createRealm(
         WebClient webClient,
@@ -379,8 +355,8 @@ public class AccessManager {
      * Delete realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm to be deleted.
-     * @recursive Delete descendent realms recursively.
+     * @param realm Name of realm to be deleted.
+     * @param recursive Delete descendent realms recursively.
      */
     public HtmlPage deleteRealm(
         WebClient webClient,
@@ -407,14 +383,14 @@ public class AccessManager {
      * List realms by name.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm where search begins.
-     * @pattern Filter pattern.
-     * @recursive Search recursively
+     * @param realm Name of realm where search begins.
+     * @param filter Filter (Pattern).
+     * @param recursive Search recursively
      */
     public HtmlPage listRealms(
         WebClient webClient,
         String realm,
-        String pattern,
+        String filter,
         boolean recursive
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "list-realms");
@@ -426,9 +402,9 @@ public class AccessManager {
             txtrealm.setValueAttribute(realm);
         }
 
-        if (pattern != null) {
-            HtmlTextInput txtpattern = (HtmlTextInput)form.getInputByName("pattern");
-            txtpattern.setValueAttribute(pattern);
+        if (filter != null) {
+            HtmlTextInput txtfilter = (HtmlTextInput)form.getInputByName("filter");
+            txtfilter.setValueAttribute(filter);
         }
 
         HtmlCheckBoxInput cbrecursive = (HtmlCheckBoxInput)form.getInputByName("recursive");
@@ -442,9 +418,9 @@ public class AccessManager {
      * Add service to a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Service Name.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param servicename Service Name.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage addServiceRealm(
         WebClient webClient,
@@ -484,8 +460,8 @@ public class AccessManager {
      * Show services in a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @mandatory Include Mandatory services.
+     * @param realm Name of realm.
+     * @param mandatory Include Mandatory services.
      */
     public HtmlPage showRealmServices(
         WebClient webClient,
@@ -512,7 +488,7 @@ public class AccessManager {
      * List the assignable services to a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
+     * @param realm Name of realm.
      */
     public HtmlPage listRealmAssignableServices(
         WebClient webClient,
@@ -535,8 +511,8 @@ public class AccessManager {
      * Remove service from a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service to be removed.
+     * @param realm Name of realm.
+     * @param servicename Name of service to be removed.
      */
     public HtmlPage removeServiceRealm(
         WebClient webClient,
@@ -565,8 +541,8 @@ public class AccessManager {
      * Get realm property values.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
      */
     public HtmlPage getRealm(
         WebClient webClient,
@@ -595,8 +571,8 @@ public class AccessManager {
      * Show realm's service attribute values.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
      */
     public HtmlPage showRealmServiceAttributes(
         WebClient webClient,
@@ -625,9 +601,9 @@ public class AccessManager {
      * Delete attribute from a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
-     * @attributename Name of attribute to be removed.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributename Name of attribute to be removed.
      */
     public HtmlPage deleteRealmAttribute(
         WebClient webClient,
@@ -662,9 +638,9 @@ public class AccessManager {
      * Set service attribute values in a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage setServiceAttributes(
         WebClient webClient,
@@ -704,9 +680,9 @@ public class AccessManager {
      * Add attribute value to a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage addRealmAttributes(
         WebClient webClient,
@@ -746,9 +722,9 @@ public class AccessManager {
      * Set attribute values of a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @servicename Name of service.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage setRealmAttributes(
         WebClient webClient,
@@ -788,8 +764,8 @@ public class AccessManager {
      * Create policies in a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @xmlfile Name of file that contains policy XML definition.
+     * @param realm Name of realm.
+     * @param xmlfile Name of file that contains policy XML definition.
      */
     public HtmlPage createPolicies(
         WebClient webClient,
@@ -818,8 +794,8 @@ public class AccessManager {
      * Delete policies from a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @policynames Names of policy to be deleted.
+     * @param realm Name of realm.
+     * @param policynames Names of policy to be deleted.
      */
     public HtmlPage deletePolicies(
         WebClient webClient,
@@ -853,8 +829,8 @@ public class AccessManager {
      * List policy definitions in a realm.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @policynames Names of policy. This can be an wildcard. All policy definition in the realm will be returned if this option is not provided.
+     * @param realm Name of realm.
+     * @param policynames Names of policy. This can be an wildcard. All policy definition in the realm will be returned if this option is not provided.
      */
     public HtmlPage listPolicies(
         WebClient webClient,
@@ -888,10 +864,10 @@ public class AccessManager {
      * Remove default attribute values in schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributenames Attribute name(s).
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributenames Attribute name(s).
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage removeAttributeDefaults(
         WebClient webClient,
@@ -937,10 +913,10 @@ public class AccessManager {
      * Add default attribute values in schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributevalues Attribute values e.g. homeaddress=here.
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage addAttributeDefaults(
         WebClient webClient,
@@ -986,10 +962,10 @@ public class AccessManager {
      * Show default attribute values in schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @subschemaname Name of sub schema.
-     * @attributenames Attribute name(s).
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param subschemaname Name of sub schema.
+     * @param attributenames Attribute name(s).
      */
     public HtmlPage showAttributeDefaults(
         WebClient webClient,
@@ -1035,10 +1011,10 @@ public class AccessManager {
      * Set default attribute values in schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @subschemaname Name of sub schema.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param subschemaname Name of sub schema.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage setAttributeDefaults(
         WebClient webClient,
@@ -1084,12 +1060,12 @@ public class AccessManager {
      * Set choice values of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributename Name of attribute.
-     * @add Set this flag to append the choice values to existing ones.
-     * @subschemaname Name of sub schema.
-     * @choicevalues Choice value e.g. o102=Inactive.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributename Name of attribute.
+     * @param add Set this flag to append the choice values to existing ones.
+     * @param subschemaname Name of sub schema.
+     * @param choicevalues Choice value e.g. o102=Inactive.
      */
     public HtmlPage setAttributeChoiceValues(
         WebClient webClient,
@@ -1145,14 +1121,14 @@ public class AccessManager {
      * Set boolean values of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributename Name of attribute.
-     * @truevalue Value for true.
-     * @truei18nkey Internationalization key for true value.
-     * @falsevalue Value for false.
-     * @falsei18nkey Internationalization key for false value.
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributename Name of attribute.
+     * @param truevalue Value for true.
+     * @param truei18nkey Internationalization key for true value.
+     * @param falsevalue Value for false.
+     * @param falsei18nkey Internationalization key for false value.
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeBooleanValues(
         WebClient webClient,
@@ -1217,11 +1193,11 @@ public class AccessManager {
      * Remove choice values from attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributename Name of attribute.
-     * @choicevalues Choice values e.g. Inactive
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributename Name of attribute.
+     * @param choicevalues Choice values e.g. Inactive
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage removeAttributeChoiceValues(
         WebClient webClient,
@@ -1273,11 +1249,11 @@ public class AccessManager {
      * Set type member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @type Attribute Schema Type
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param type Attribute Schema Type
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeType(
         WebClient webClient,
@@ -1324,11 +1300,11 @@ public class AccessManager {
      * Set UI type member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @uitype Attribute Schema UI Type
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param uitype Attribute Schema UI Type
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeUiType(
         WebClient webClient,
@@ -1375,11 +1351,11 @@ public class AccessManager {
      * Set syntax member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @syntax Attribute Schema Syntax
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param syntax Attribute Schema Syntax
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeSyntax(
         WebClient webClient,
@@ -1426,11 +1402,11 @@ public class AccessManager {
      * Set i18nKey member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @i18nkey Attribute Schema I18n Key
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param i18nkey Attribute Schema I18n Key
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeI18nKey(
         WebClient webClient,
@@ -1477,11 +1453,11 @@ public class AccessManager {
      * Set properties view bean URL member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @url Attribute Schema Properties View Bean URL
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param url Attribute Schema Properties View Bean URL
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeViewBeanUrl(
         WebClient webClient,
@@ -1528,11 +1504,11 @@ public class AccessManager {
      * Set any member of attribute schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @any Attribute Schema Any value
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param any Attribute Schema Any value
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeAny(
         WebClient webClient,
@@ -1579,11 +1555,11 @@ public class AccessManager {
      * Delete attribute schema default values.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @defaultvalues Default value(s) to be deleted
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param defaultvalues Default value(s) to be deleted
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage deleteAttributeDefaultValues(
         WebClient webClient,
@@ -1635,11 +1611,11 @@ public class AccessManager {
      * Set attribute schema validator.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @validator validator class name
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param validator validator class name
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeValidator(
         WebClient webClient,
@@ -1686,11 +1662,11 @@ public class AccessManager {
      * Set attribute schema start range.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @range Start range
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param range Start range
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeStartRange(
         WebClient webClient,
@@ -1737,11 +1713,11 @@ public class AccessManager {
      * Set attribute schema end range.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema
-     * @range End range
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema
+     * @param range End range
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage setAttributeEndRange(
         WebClient webClient,
@@ -1788,10 +1764,10 @@ public class AccessManager {
      * Delete attribute schemas from a service
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @attributeschema Name of attribute schema to be removed.
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param attributeschema Name of attribute schema to be removed.
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage deleteAttribute(
         WebClient webClient,
@@ -1837,8 +1813,8 @@ public class AccessManager {
      * Set service schema i18n key.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @i18nkey I18n Key.
+     * @param servicename Name of service.
+     * @param i18nkey I18n Key.
      */
     public HtmlPage setServiceI18nKey(
         WebClient webClient,
@@ -1867,8 +1843,8 @@ public class AccessManager {
      * Set service schema properties view bean URL.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @url Service Schema Properties View Bean URL
+     * @param servicename Name of service.
+     * @param url Service Schema Properties View Bean URL
      */
     public HtmlPage setServiceViewBeanUrl(
         WebClient webClient,
@@ -1897,8 +1873,8 @@ public class AccessManager {
      * Set service schema revision number.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @revisionnumber Revision Number
+     * @param servicename Name of service.
+     * @param revisionnumber Revision Number
      */
     public HtmlPage setRevisionNumber(
         WebClient webClient,
@@ -1927,7 +1903,7 @@ public class AccessManager {
      * Get service schema revision number.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
+     * @param servicename Name of service.
      */
     public HtmlPage getRevisionNumber(
         WebClient webClient,
@@ -1950,11 +1926,11 @@ public class AccessManager {
      * Create a new sub configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @subconfigname Name of sub configuration.
-     * @attributevalues Attribute values e.g. homeaddress=here.
-     * @realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
-     * @subconfigid ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).
+     * @param servicename Name of service.
+     * @param subconfigname Name of sub configuration.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
+     * @param subconfigid ID of parent configuration(Sub Configuration shall be added to root configuration if this option is not provided).
      */
     public HtmlPage createSubConfiguration(
         WebClient webClient,
@@ -2006,9 +1982,9 @@ public class AccessManager {
      * Remove Sub Configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @subconfigname Name of sub configuration.
-     * @realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
+     * @param servicename Name of service.
+     * @param subconfigname Name of sub configuration.
+     * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
      */
     public HtmlPage deleteSubConfiguration(
         WebClient webClient,
@@ -2043,11 +2019,11 @@ public class AccessManager {
      * Set sub configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @subconfigname Name of sub configuration.
-     * @operation Operation (either add/set/modify) to be performed on the sub configuration.
-     * @attributevalues Attribute values e.g. homeaddress=here.
-     * @realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
+     * @param servicename Name of service.
+     * @param subconfigname Name of sub configuration.
+     * @param operation Operation (either add/set/modify) to be performed on the sub configuration.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm (Sub Configuration shall be added to global configuration if this option is not provided).
      */
     public HtmlPage setSubConfiguration(
         WebClient webClient,
@@ -2099,10 +2075,10 @@ public class AccessManager {
      * Add sub schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @filename Name of file that contains the schema
-     * @subschemaname Name of sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param filename Name of file that contains the schema
+     * @param subschemaname Name of sub schema.
      */
     public HtmlPage addSubSchema(
         WebClient webClient,
@@ -2143,10 +2119,10 @@ public class AccessManager {
      * Remove sub schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @subschemanames Name(s) of sub schema to be removed.
-     * @subschemaname Name of parent sub schema.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param subschemanames Name(s) of sub schema to be removed.
+     * @param subschemaname Name of parent sub schema.
      */
     public HtmlPage removeSubSchema(
         WebClient webClient,
@@ -2192,10 +2168,10 @@ public class AccessManager {
      * Set Inheritance value of Sub Schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @schematype Type of schema.
-     * @subschemaname Name of sub schema.
-     * @inheritance Value of Inheritance.
+     * @param servicename Name of service.
+     * @param schematype Type of schema.
+     * @param subschemaname Name of sub schema.
+     * @param inheritance Value of Inheritance.
      */
     public HtmlPage setInheritance(
         WebClient webClient,
@@ -2236,10 +2212,10 @@ public class AccessManager {
      * Add Plug-in interface to service.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @interfacename Name of interface.
-     * @pluginname Name of Plug-in.
-     * @i18nkey Plug-in I18n Key.
+     * @param servicename Name of service.
+     * @param interfacename Name of interface.
+     * @param pluginname Name of Plug-in.
+     * @param i18nkey Plug-in I18n Key.
      */
     public HtmlPage addPluginInterface(
         WebClient webClient,
@@ -2280,10 +2256,10 @@ public class AccessManager {
      * Set properties view bean URL of plug-in schema.
      *
      * @param webClient HTML Unit Web Client object.
-     * @servicename Name of service.
-     * @interfacename Name of interface.
-     * @pluginname Name of Plug-in.
-     * @url Properties view bean URL.
+     * @param servicename Name of service.
+     * @param interfacename Name of interface.
+     * @param pluginname Name of Plug-in.
+     * @param url Properties view bean URL.
      */
     public HtmlPage setPluginSchemaViewBeanUrl(
         WebClient webClient,
@@ -2324,10 +2300,10 @@ public class AccessManager {
      * Create identity in a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @attributevalues Attribute values e.g. sunIdentityServerDeviceStatus=Active.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param attributevalues Attribute values e.g. sunIdentityServerDeviceStatus=Active.
      */
     public HtmlPage createIdentity(
         WebClient webClient,
@@ -2373,9 +2349,9 @@ public class AccessManager {
      * Delete identities in a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idnames Names of identites.
-     * @idtype Type of Identity such as User, Role and Group.
+     * @param realm Name of realm.
+     * @param idnames Names of identites.
+     * @param idtype Type of Identity such as User, Role and Group.
      */
     public HtmlPage deleteIdentities(
         WebClient webClient,
@@ -2415,10 +2391,10 @@ public class AccessManager {
      * List identities in a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @filter Filter (Pattern).
-     * @idtype Type of Identity such as User, Role and Group.
-     * @recursive Do recursive search.
+     * @param realm Name of realm.
+     * @param filter Filter (Pattern).
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param recursive Do recursive search.
      */
     public HtmlPage listIdentities(
         WebClient webClient,
@@ -2457,8 +2433,8 @@ public class AccessManager {
      * Show the allowed operations of an identity a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idtype Type of Identity such as User, Role and Group.
+     * @param realm Name of realm.
+     * @param idtype Type of Identity such as User, Role and Group.
      */
     public HtmlPage showIdentityOperations(
         WebClient webClient,
@@ -2487,7 +2463,7 @@ public class AccessManager {
      * Show the supported identity type in a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
+     * @param realm Name of realm.
      */
     public HtmlPage showIdentityTypes(
         WebClient webClient,
@@ -2510,9 +2486,9 @@ public class AccessManager {
      * List the assignable service to an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
      */
     public HtmlPage listIdentityAssignableServices(
         WebClient webClient,
@@ -2547,9 +2523,9 @@ public class AccessManager {
      * Show the service in an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
      */
     public HtmlPage showIdentityServices(
         WebClient webClient,
@@ -2584,10 +2560,10 @@ public class AccessManager {
      * Show the service attribute values of an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @servicename Name of service.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param servicename Name of service.
      */
     public HtmlPage showIdentityServiceAttributes(
         WebClient webClient,
@@ -2628,10 +2604,10 @@ public class AccessManager {
      * Get identity property values
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @attributenames Attribute name(s). All attribute values shall be returned if the option is not provided.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param attributenames Attribute name(s). All attribute values shall be returned if the option is not provided.
      */
     public HtmlPage getIdentity(
         WebClient webClient,
@@ -2674,13 +2650,13 @@ public class AccessManager {
     }
 
     /**
-     * Show the memberships of an identity
+     * Show the memberships of an identity. For sample show the memberships of an user.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @membershipidtype Membership identity type.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param membershipidtype Membership identity type.
      */
     public HtmlPage showMemberships(
         WebClient webClient,
@@ -2718,13 +2694,13 @@ public class AccessManager {
     }
 
     /**
-     * Show the memberships of an identity.
+     * Show the members of an identity. For example show the members of a role
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @membershipidtype Membership identity type.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param membershipidtype Membership identity type.
      */
     public HtmlPage showMembers(
         WebClient webClient,
@@ -2765,11 +2741,11 @@ public class AccessManager {
      * Add an identity as member of another identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @memberidname Name of identity that is member.
-     * @memberidtype Type of Identity of member such as User, Role and Group.
-     * @idname Name of identity.
-     * @idtype Type of Identity
+     * @param realm Name of realm.
+     * @param memberidname Name of identity that is member.
+     * @param memberidtype Type of Identity of member such as User, Role and Group.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity
      */
     public HtmlPage addMember(
         WebClient webClient,
@@ -2816,11 +2792,11 @@ public class AccessManager {
      * Remove membership of identity from another identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @memberidname Name of identity that is member.
-     * @memberidtype Type of Identity of member such as User, Role and Group.
-     * @idname Name of identity.
-     * @idtype Type of Identity
+     * @param realm Name of realm.
+     * @param memberidname Name of identity that is member.
+     * @param memberidtype Type of Identity of member such as User, Role and Group.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity
      */
     public HtmlPage removeMember(
         WebClient webClient,
@@ -2867,11 +2843,11 @@ public class AccessManager {
      * Add Service to an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @servicename Name of service.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage addServiceIdentity(
         WebClient webClient,
@@ -2923,10 +2899,10 @@ public class AccessManager {
      * Remove Service from an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @servicename Name of service.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param servicename Name of service.
      */
     public HtmlPage removeServiceIdentity(
         WebClient webClient,
@@ -2967,11 +2943,11 @@ public class AccessManager {
      * Set service attribute values of an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @servicename Name of service.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param servicename Name of service.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage setIdentityServiceAttributes(
         WebClient webClient,
@@ -3023,10 +2999,10 @@ public class AccessManager {
      * Set attribute values of an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as User, Role and Group.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as User, Role and Group.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage setIdentityAttributes(
         WebClient webClient,
@@ -3072,9 +3048,9 @@ public class AccessManager {
      * Show privileges assigned to an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such Role and Group.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such Role and Group.
      */
     public HtmlPage showPrivileges(
         WebClient webClient,
@@ -3109,10 +3085,10 @@ public class AccessManager {
      * Add privileges to an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as Role and Group.
-     * @privileges Name of privileges to be added.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as Role and Group.
+     * @param privileges Name of privileges to be added.
      */
     public HtmlPage addPrivileges(
         WebClient webClient,
@@ -3158,10 +3134,10 @@ public class AccessManager {
      * Remove privileges from an identity
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @idname Name of identity.
-     * @idtype Type of Identity such as Role and Group.
-     * @privileges Name of privileges to be removed.
+     * @param realm Name of realm.
+     * @param idname Name of identity.
+     * @param idtype Type of Identity such as Role and Group.
+     * @param privileges Name of privileges to be removed.
      */
     public HtmlPage removePrivileges(
         WebClient webClient,
@@ -3207,7 +3183,7 @@ public class AccessManager {
      * List authentication instances
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
+     * @param realm Name of realm.
      */
     public HtmlPage listAuthInstances(
         WebClient webClient,
@@ -3230,9 +3206,9 @@ public class AccessManager {
      * Create authentication instance
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication instance.
-     * @authtype Type of authentication instance e.g. LDAP, Datastore.
+     * @param realm Name of realm.
+     * @param name Name of authentication instance.
+     * @param authtype Type of authentication instance e.g. LDAP, Datastore.
      */
     public HtmlPage createAuthInstance(
         WebClient webClient,
@@ -3267,8 +3243,8 @@ public class AccessManager {
      * Delete authentication instances
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @names Name of authentication instances.
+     * @param realm Name of realm.
+     * @param names Name of authentication instances.
      */
     public HtmlPage deleteAuthInstances(
         WebClient webClient,
@@ -3302,9 +3278,9 @@ public class AccessManager {
      * Update authentication instance values
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication instance.
-     * @attributevalues Attribute values e.g. homeaddress=here.
+     * @param realm Name of realm.
+     * @param name Name of authentication instance.
+     * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage updateAuthInstance(
         WebClient webClient,
@@ -3344,8 +3320,8 @@ public class AccessManager {
      * Get authentication instance values
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication instance.
+     * @param realm Name of realm.
+     * @param name Name of authentication instance.
      */
     public HtmlPage getAuthInstance(
         WebClient webClient,
@@ -3374,7 +3350,7 @@ public class AccessManager {
      * List authentication configurations
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
+     * @param realm Name of realm.
      */
     public HtmlPage listAuthConfigurations(
         WebClient webClient,
@@ -3397,8 +3373,8 @@ public class AccessManager {
      * Create authentication configuration
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication configuration.
+     * @param realm Name of realm.
+     * @param name Name of authentication configuration.
      */
     public HtmlPage createAuthConfiguration(
         WebClient webClient,
@@ -3427,8 +3403,8 @@ public class AccessManager {
      * Delete authentication configurations
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @names Name of authentication configurations.
+     * @param realm Name of realm.
+     * @param names Name of authentication configurations.
      */
     public HtmlPage deleteAuthConfigurations(
         WebClient webClient,
@@ -3462,8 +3438,8 @@ public class AccessManager {
      * Get authentication configuration entries
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication configuration.
+     * @param realm Name of realm.
+     * @param name Name of authentication configuration.
      */
     public HtmlPage getAuthConfigurationEntries(
         WebClient webClient,
@@ -3492,10 +3468,10 @@ public class AccessManager {
      * Set authentication configuration entries
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of authentication configuration.
-     * @entries formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
-     * @datafile Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
+     * @param realm Name of realm.
+     * @param name Name of authentication configuration.
+     * @param entries formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
+     * @param datafile Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.
      */
     public HtmlPage updateAuthConfigurationEntries(
         WebClient webClient,
@@ -3541,7 +3517,7 @@ public class AccessManager {
      * List data stores under a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
+     * @param realm Name of realm.
      */
     public HtmlPage listDatastores(
         WebClient webClient,
@@ -3564,10 +3540,10 @@ public class AccessManager {
      * Create data store under a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of datastore.
-     * @datatype Type of datastore.
-     * @attributevalues Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.
+     * @param realm Name of realm.
+     * @param name Name of datastore.
+     * @param datatype Type of datastore.
+     * @param attributevalues Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.
      */
     public HtmlPage createDatastore(
         WebClient webClient,
@@ -3613,8 +3589,8 @@ public class AccessManager {
      * Delete data stores under a realm
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @names Names of datastore.
+     * @param realm Name of realm.
+     * @param names Names of datastore.
      */
     public HtmlPage deleteDatastores(
         WebClient webClient,
@@ -3648,9 +3624,9 @@ public class AccessManager {
      * Update data store profile.
      *
      * @param webClient HTML Unit Web Client object.
-     * @realm Name of realm.
-     * @name Name of datastore.
-     * @attributevalues Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.
+     * @param realm Name of realm.
+     * @param name Name of datastore.
+     * @param attributevalues Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.
      */
     public HtmlPage updateDatastore(
         WebClient webClient,
@@ -3685,4 +3661,551 @@ public class AccessManager {
 
         return (HtmlPage)form.submit();
     }
-} 
+
+    /**
+     * Create new metadata template.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param entityid Entity ID
+     * @param metadata Specify file name for the standard metadata to be created.
+     * @param extended Specify file name for the standard metadata to be created.
+     * @param serviceprovider Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.
+     * @param identityprovider Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.
+     * @param xacmlpep Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.
+     * @param xacmlpdp Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.
+     * @param spscertalias Service provider signing certificate alias
+     * @param idpscertalias Identity provider signing certificate alias
+     * @param xacmlpdpscertalias Policy decision point signing certificate alias
+     * @param xacmlpepscertalias Policy enforcement point signing certificate alias
+     * @param specertalias Service provider encryption certificate alias
+     * @param idpecertalias Identity provider encryption certificate alias.
+     * @param xacmlpdpecertalias Policy decision point encryption certificate alias
+     * @param xacmlpepecertalias Policy enforcement point encryption certificate alias
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage createMetadataTemplate(
+        WebClient webClient,
+        String entityid,
+        boolean metadata,
+        boolean extended,
+        String serviceprovider,
+        String identityprovider,
+        String xacmlpep,
+        String xacmlpdp,
+        String spscertalias,
+        String idpscertalias,
+        String xacmlpdpscertalias,
+        String xacmlpepscertalias,
+        String specertalias,
+        String idpecertalias,
+        String xacmlpdpecertalias,
+        String xacmlpepecertalias,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-metadata-template");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (entityid != null) {
+            HtmlTextInput txtentityid = (HtmlTextInput)form.getInputByName("entityid");
+            txtentityid.setValueAttribute(entityid);
+        }
+
+        HtmlCheckBoxInput cbmetadata = (HtmlCheckBoxInput)form.getInputByName("metadata");
+        cbmetadata.setChecked(metadata);
+
+        HtmlCheckBoxInput cbextended = (HtmlCheckBoxInput)form.getInputByName("extended");
+        cbextended.setChecked(extended);
+
+        if (serviceprovider != null) {
+            HtmlTextInput txtserviceprovider = (HtmlTextInput)form.getInputByName("serviceprovider");
+            txtserviceprovider.setValueAttribute(serviceprovider);
+        }
+
+        if (identityprovider != null) {
+            HtmlTextInput txtidentityprovider = (HtmlTextInput)form.getInputByName("identityprovider");
+            txtidentityprovider.setValueAttribute(identityprovider);
+        }
+
+        if (xacmlpep != null) {
+            HtmlTextInput txtxacmlpep = (HtmlTextInput)form.getInputByName("xacmlpep");
+            txtxacmlpep.setValueAttribute(xacmlpep);
+        }
+
+        if (xacmlpdp != null) {
+            HtmlTextInput txtxacmlpdp = (HtmlTextInput)form.getInputByName("xacmlpdp");
+            txtxacmlpdp.setValueAttribute(xacmlpdp);
+        }
+
+        if (spscertalias != null) {
+            HtmlTextInput txtspscertalias = (HtmlTextInput)form.getInputByName("spscertalias");
+            txtspscertalias.setValueAttribute(spscertalias);
+        }
+
+        if (idpscertalias != null) {
+            HtmlTextInput txtidpscertalias = (HtmlTextInput)form.getInputByName("idpscertalias");
+            txtidpscertalias.setValueAttribute(idpscertalias);
+        }
+
+        if (xacmlpdpscertalias != null) {
+            HtmlTextInput txtxacmlpdpscertalias = (HtmlTextInput)form.getInputByName("xacmlpdpscertalias");
+            txtxacmlpdpscertalias.setValueAttribute(xacmlpdpscertalias);
+        }
+
+        if (xacmlpepscertalias != null) {
+            HtmlTextInput txtxacmlpepscertalias = (HtmlTextInput)form.getInputByName("xacmlpepscertalias");
+            txtxacmlpepscertalias.setValueAttribute(xacmlpepscertalias);
+        }
+
+        if (specertalias != null) {
+            HtmlTextInput txtspecertalias = (HtmlTextInput)form.getInputByName("specertalias");
+            txtspecertalias.setValueAttribute(specertalias);
+        }
+
+        if (idpecertalias != null) {
+            HtmlTextInput txtidpecertalias = (HtmlTextInput)form.getInputByName("idpecertalias");
+            txtidpecertalias.setValueAttribute(idpecertalias);
+        }
+
+        if (xacmlpdpecertalias != null) {
+            HtmlTextInput txtxacmlpdpecertalias = (HtmlTextInput)form.getInputByName("xacmlpdpecertalias");
+            txtxacmlpdpecertalias.setValueAttribute(xacmlpdpecertalias);
+        }
+
+        if (xacmlpepecertalias != null) {
+            HtmlTextInput txtxacmlpepecertalias = (HtmlTextInput)form.getInputByName("xacmlpepecertalias");
+            txtxacmlpepecertalias.setValueAttribute(xacmlpepecertalias);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Import entity.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Realm where entity resides.
+     * @param metadata Specify file name for the standard metadata to be imported.
+     * @param extended Specify file name for the extended entity configuration to be imported.
+     * @param cot Specify name of the Circle of Trust this entity belongs.
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage importEntity(
+        WebClient webClient,
+        String realm,
+        String metadata,
+        String extended,
+        String cot,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "import-entity");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (metadata != null) {
+            HtmlTextArea tametadata = (HtmlTextArea)form.getTextAreasByName("metadata").get(0);
+            tametadata.setText(metadata);
+        }
+
+        if (extended != null) {
+            HtmlTextArea taextended = (HtmlTextArea)form.getTextAreasByName("extended").get(0);
+            taextended.setText(extended);
+        }
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Export entity.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param entityid Entity ID
+     * @param realm Realm where data resides
+     * @param sign Set this flag to sign the metadata
+     * @param metadata Metadata
+     * @param extended Extended data
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage exportEntity(
+        WebClient webClient,
+        String entityid,
+        String realm,
+        boolean sign,
+        boolean metadata,
+        boolean extended,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "export-entity");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (entityid != null) {
+            HtmlTextInput txtentityid = (HtmlTextInput)form.getInputByName("entityid");
+            txtentityid.setValueAttribute(entityid);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        HtmlCheckBoxInput cbsign = (HtmlCheckBoxInput)form.getInputByName("sign");
+        cbsign.setChecked(sign);
+
+        HtmlCheckBoxInput cbmetadata = (HtmlCheckBoxInput)form.getInputByName("metadata");
+        cbmetadata.setChecked(metadata);
+
+        HtmlCheckBoxInput cbextended = (HtmlCheckBoxInput)form.getInputByName("extended");
+        cbextended.setChecked(extended);
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param entityid Entity ID
+     * @param realm Realm where data resides
+     * @param extendedonly Set to flag to delete only extended data.
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage deleteEntity(
+        WebClient webClient,
+        String entityid,
+        String realm,
+        boolean extendedonly,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-entity");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (entityid != null) {
+            HtmlTextInput txtentityid = (HtmlTextInput)form.getInputByName("entityid");
+            txtentityid.setValueAttribute(entityid);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        HtmlCheckBoxInput cbextendedonly = (HtmlCheckBoxInput)form.getInputByName("extendedonly");
+        cbextendedonly.setChecked(extendedonly);
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List entities under a realm.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Realm where entities reside.
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage listEntities(
+        WebClient webClient,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-entities");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Create circle of trust.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param cot Circle of Trust
+     * @param realm Realm where circle of trust resides
+     * @param trustedproviders Trusted Providers
+     * @param prefix Prefix URL for idp discovery reader and writer URL.
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage createCircleOfTrust(
+        WebClient webClient,
+        String cot,
+        String realm,
+        List trustedproviders,
+        String prefix,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "create-circle-of-trust");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (trustedproviders != null) {
+            HtmlSelect sltrustedproviders= (HtmlSelect)form.getSelectByName("trustedproviders");
+            String[] fakeOptions = new String[trustedproviders.size()];
+            int cnt = 0;
+            for (Iterator i = trustedproviders.iterator(); i.hasNext(); ) {
+                fakeOptions[cnt++] = (String)i.next();
+            }
+            sltrustedproviders.fakeSelectedAttribute(fakeOptions);
+        }
+
+        if (prefix != null) {
+            HtmlTextInput txtprefix = (HtmlTextInput)form.getInputByName("prefix");
+            txtprefix.setValueAttribute(prefix);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Delete circle of trust.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param cot Circle of Trust
+     * @param realm Realm where circle of trust resides
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage deleteCircleOfTrust(
+        WebClient webClient,
+        String cot,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "delete-circle-of-trust");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List circle of trusts.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param realm Realm where circle of trusts reside
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage listCircleOfTrusts(
+        WebClient webClient,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-circle-of-trusts");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * List the members in a circle of trust.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param cot Circle of Trust
+     * @param realm Realm where circle of trust resides
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage listCircleOfTrustMembers(
+        WebClient webClient,
+        String cot,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-circle-of-trust-members");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Remove a member from a circle of trust.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param cot Circle of Trust
+     * @param entityid Entity ID
+     * @param realm Realm where circle of trust resides
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage removeCircleOfTrustMember(
+        WebClient webClient,
+        String cot,
+        String entityid,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "remove-circle-of-trust-member");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (entityid != null) {
+            HtmlTextInput txtentityid = (HtmlTextInput)form.getInputByName("entityid");
+            txtentityid.setValueAttribute(entityid);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
+     * Add a member to a circle of trust.
+     *
+     * @param webClient HTML Unit Web Client object.
+     * @param cot Circle of Trust
+     * @param entityid Entity ID
+     * @param realm Realm where circle of trust resides
+     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
+     */
+    public HtmlPage addCircleOfTrustMember(
+        WebClient webClient,
+        String cot,
+        String entityid,
+        String realm,
+        String spec
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "add-circle-of-trust-member");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        if (cot != null) {
+            HtmlTextInput txtcot = (HtmlTextInput)form.getInputByName("cot");
+            txtcot.setValueAttribute(cot);
+        }
+
+        if (entityid != null) {
+            HtmlTextInput txtentityid = (HtmlTextInput)form.getInputByName("entityid");
+            txtentityid.setValueAttribute(entityid);
+        }
+
+        if (realm != null) {
+            HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
+            txtrealm.setValueAttribute(realm);
+        }
+
+        if (spec != null) {
+            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
+            txtspec.setValueAttribute(spec);
+        }
+
+
+        return (HtmlPage)form.submit();
+    }
+}

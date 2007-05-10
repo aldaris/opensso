@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.4 2007-05-08 16:53:37 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.5 2007-05-10 17:21:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
@@ -35,14 +36,18 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.StringBuffer;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,32 +79,43 @@ public class TestCommon implements TestConstants
     static protected String port;
     static protected String uri; 
     static protected String realm; 
+    static protected String serverName; 
     static protected Level logLevel;
     static private Logger logger;
+    private String productSetupResult; 
+
+    protected static String newline = System.getProperty("line.separator");
+    protected static String fileseparator =
+            System.getProperty("file.separator");
 
     static {
         try {
             rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             logger = Logger.getLogger("com.sun.identity.qatest");
-            FileHandler fileH = new FileHandler("logs");
+            serverName = rb_amconfig.getString(
+                    TestConstants.KEY_ATT_SERVER_NAME);
+            FileHandler fileH = new FileHandler(serverName + fileseparator +
+                    "logs");
             SimpleFormatter simpleF = new SimpleFormatter();
             fileH.setFormatter(simpleF);
             logger.addHandler(fileH);
-            String logL = rb_amconfig.getString(TestConstants.KEY_LOG_LEVEL);
+            String logL = rb_amconfig.getString(
+                    TestConstants.KEY_ATT_LOG_LEVEL);
             if ((logL != null)) {
                 logger.setLevel(Level.parse(logL));
             }
             logLevel = logger.getLevel();
-            adminUser = rb_amconfig.getString(TestConstants.KEY_AMADMIN_USER); 
+            adminUser = rb_amconfig.getString(
+                    TestConstants.KEY_ATT_AMADMIN_USER); 
             adminPassword = rb_amconfig.getString(
-                    TestConstants.KEY_AMADMIN_PASSWORD); 
-            basedn = rb_amconfig.getString(TestConstants.KEY_BASEDN); 
-            protocol = rb_amconfig.getString(TestConstants.KEY_PROTOCOL); 
-            host = rb_amconfig.getString(TestConstants.KEY_HOST); 
-            port = rb_amconfig.getString(TestConstants.KEY_PORT); 
-            uri = rb_amconfig.getString(TestConstants.KEY_URI); 
-            realm = rb_amconfig.getString(TestConstants.KEY_REALM); 
+                    TestConstants.KEY_ATT_AMADMIN_PASSWORD); 
+            basedn = rb_amconfig.getString(TestConstants.KEY_AMC_BASEDN); 
+            protocol = rb_amconfig.getString(TestConstants.KEY_AMC_PROTOCOL); 
+            host = rb_amconfig.getString(TestConstants.KEY_AMC_HOST); 
+            port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT); 
+            uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI); 
+            realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM); 
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,6 +127,9 @@ public class TestCommon implements TestConstants
     protected TestCommon(String componentName) {
         logEntryTemplate = this.getClass().getName() + ".{0}: {1}";
         className = this.getClass().getName();
+        productSetupResult = rb_amconfig.getString(
+                TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT);
+        assert (productSetupResult.equals("pass"));
     }
 
     /**
@@ -252,7 +271,8 @@ public class TestCommon implements TestConstants
             BufferedReader input = new BufferedReader(new FileReader(fileName));
             String line = null;
             while ((line=input.readLine()) != null) {
-                list.add(line);
+                if ((line.indexOf("=")) != -1)
+                    list.add(line);
             }
             log(logLevel, "getListFromFile", "List :" + list);
             if (input != null)
@@ -264,7 +284,7 @@ public class TestCommon implements TestConstants
     /**
      * Login to admin console using htmlunit
      */ 
-    public void consoleLogin(
+    protected void consoleLogin(
         WebClient webclient,
         String amUrl,
         String amadmUser,
@@ -289,75 +309,94 @@ public class TestCommon implements TestConstants
         exiting("consoleLogin");
     }
 
-    /**
-     * Creates a map object and adds all the configutaion properties to that.
-     */
-     public Map getConfigurationMap(String rb) 
+     /**
+      * Creates a map object and adds all the configutaion properties to that.
+      */
+     protected Map getConfigurationMap(String rb) 
      throws Exception {
          entering("getConfigurationMap", null);
          ResourceBundle cfg = ResourceBundle.getBundle(rb);
          Map<String, String> map = new HashMap<String, String>();
          map.put("serverurl",protocol + ":" + "//" + host + ":" + port);
          map.put("serveruri",uri);
-         map.put("cookiedomain",cfg.getString("cookiedomain"));
-         map.put("adminPassword", adminPassword);
-         map.put("configdir",cfg.getString("configdir"));
-         map.put("datastore",cfg.getString("datastore"));
-         map.put("dirservername",cfg.getString("dirservername"));
-         map.put("dirserverport",cfg.getString("dirserverport"));
-         map.put("dirserversuffixconfigdata",
-                 cfg.getString("dirserversuffixconfigdata"));
-         map.put("dirserversuffixsmdata",
-                 cfg.getString("dirserversuffixsmdata"));
-         map.put("dirserveradmindn",cfg.getString("dirserveradmindn"));
-         map.put("dirserveradminpassword",
-                 cfg.getString("dirserveradminpassword"));
-         map.put("dirloadums",cfg.getString("dirloadums"));
+         map.put(TestConstants.KEY_ATT_COOKIE_DOMAIN, cfg.getString(
+                 TestConstants.KEY_ATT_COOKIE_DOMAIN));
+         map.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, cfg.getString(
+                 TestConstants.KEY_ATT_AMADMIN_PASSWORD));
+         map.put(TestConstants.KEY_ATT_CONFIG_DIR, cfg.getString(
+                 TestConstants.KEY_ATT_CONFIG_DIR));
+         map.put(TestConstants.KEY_ATT_CONFIG_DATASTORE, cfg.getString(
+                 TestConstants.KEY_ATT_CONFIG_DATASTORE));
+         map.put(TestConstants.KEY_ATT_DIRECTORY_SERVER, cfg.getString(
+                 TestConstants.KEY_ATT_DIRECTORY_SERVER));
+         map.put(TestConstants.KEY_ATT_DIRECTORY_PORT, cfg.getString(
+                 TestConstants.KEY_ATT_DIRECTORY_PORT));
+         map.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
+                 cfg.getString(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
+         map.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
+                 cfg.getString(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
+         map.put(TestConstants.KEY_ATT_DS_DIRMGRDN, cfg.getString(
+                 TestConstants.KEY_ATT_DS_DIRMGRDN));
+         map.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
+                 cfg.getString(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
+         map.put(TestConstants.KEY_ATT_LOAD_UMS, cfg.getString(
+                 TestConstants.KEY_ATT_LOAD_UMS));
          exiting("getConfigurationMap");
 
          return map;
      }
 
-    /**
-     * Configures opensso using the configurator page. It map needs to set the
-     * following values:
-     * serverurl                 <protocol + ":" + "//" + host + ":" + port>
-     * serveruri                 <URI for configured instance>
-     * cookiedomain              <full cookie domain name>
-     * adminPassword             <amadmin password>
-     * configdir                 <directory where product will be installed>
-     * datastore                 <type of statstore: faltfile, dirServer or 
-     *                            activeDir>
-     * dirservername             <directory server hostname>
-     * dirserverport             <directory server port>
-     * dirserversuffixconfigdata <suffix under which configuration data will
-     *                            be stored>
-     * dirserversuffixsmdata     <suffix where sms data will be stored>
-     * dirserveradmindn          <directory user with administration privilages>
-     * dirserveradminpassword    <password for directory user with
-     *                            administration privilages>
-     * dirloadums                <to load user schema or not(yes or no)>
-     */
-     public boolean configureProduct(Map map) 
+     /**
+      * Configures opensso using the configurator page. It map needs to set the
+      * following values:
+      * serverurl                 <protocol + ":" + "//" + host + ":" + port>
+      * serveruri                 <URI for configured instance>
+      * cookiedomain              <full cookie domain name>
+      * amadmin_password          <password for amadmin user>
+      * config_dir                <directory where product will be installed>
+      * datastore                 <type of statstore: faltfile, dirServer or 
+      *                            activeDir>
+      * directory_server          <directory server hostname>
+      * directory_port            <directory server port>
+      * config_root_suffix        <suffix under which configuration data will
+      *                            be stored>
+      * sm_root_suffix            <suffix where sms data will be stored>
+      * ds_dirmgrdn               <directory user with administration 
+      *                            privilages>
+      * ds_dirmgrpasswd           <password for directory user with
+      *                            administration privilages>
+      * load_ums                  <to load user schema or not(yes or no)>
+      */
+     protected boolean configureProduct(Map map) 
      throws Exception {
          entering("configureProduct", null);
+
+         log(logLevel, "configureProduct", "Configuration Map:" + map);
 
          WebClient webclient = new WebClient();
          String strURL = (String)map.get("serverurl") +
                  (String)map.get("serveruri");
-         log(logLevel, "configureProduct", "url:" + strURL);
+         log(logLevel, "configureProduct", "strURL:" + strURL);
          URL url = new URL(strURL);
-         HtmlPage page = (HtmlPage)webclient.getPage(url);
+         HtmlPage page = null;
+         try {
+             page = (HtmlPage)webclient.getPage(url);
+         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
+         {
+             log(logLevel, "configureProduct", strURL + " cannot be reached.");
+             return false;
+         }
 
          if (getHtmlPageStringIndex(page, "Not Found") != -1) {
             log(logLevel, "configureProduct", "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
-                    "Please check if war is deployed properly.");
+                    " Please check if war is deployed properly.");
             exiting("configureProduct");
             return false;
          }
 
          if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
+             log(logLevel, "configureProduct", "Inside configurator.");
              HtmlForm form = (HtmlForm)page.getForms().get(0);
 
              HtmlTextInput txtServer =
@@ -366,69 +405,83 @@ public class TestCommon implements TestConstants
 
              HtmlTextInput txtCookieDomain =
                     (HtmlTextInput)form.getInputByName("COOKIE_DOMAIN");
-             txtCookieDomain.setValueAttribute((String)map.get("cookiedomain"));
+             txtCookieDomain.setValueAttribute((String)map.get(
+                     TestConstants.KEY_ATT_COOKIE_DOMAIN));
 
              HtmlPasswordInput txtAmadminPassword =
                     (HtmlPasswordInput)form.getInputByName("ADMIN_PWD");
-             txtAmadminPassword.setValueAttribute((String)map.get("adminPassword"));
+             txtAmadminPassword.setValueAttribute((String)map.get(
+                     TestConstants.KEY_ATT_AMADMIN_PASSWORD));
              HtmlPasswordInput txtAmadminPasswordR =
                     (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
-             txtAmadminPasswordR.setValueAttribute((String)map.get("adminPassword"));
+             txtAmadminPasswordR.setValueAttribute((String)map.get(
+                     TestConstants.KEY_ATT_AMADMIN_PASSWORD));
 
              HtmlTextInput txtConfigDir =
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
-             txtConfigDir.setValueAttribute((String)map.get("configdir"));
+             txtConfigDir.setValueAttribute((String)map.get(
+                     TestConstants.KEY_ATT_CONFIG_DIR));
 
              HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
-             if (((String)map.get("datastore")).equals("flatfile"))
+             if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE)).
+                     equals("flatfile")) {
+                  log(logLevel, "configureProduct",
+                          "Doing flat file configuration.");
                   rbDataStore.setDefaultValue("flatfile");
-             else {
-                 if (((String)map.get("datastore")).equals("dirServer"))
+             } else {
+                 log(logLevel, "configureProduct",
+                         "Doing directory configuration.");
+                 if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DIR)).
+                         equals("dirServer"))
                      rbDataStore.setDefaultValue("dirServer");
-                 else if (((String)map.get("datastore")).equals("activeDir"))
+                 else if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DIR)).
+                         equals("activeDir"))
                      rbDataStore.setDefaultValue("activeDir");
 
                  HtmlTextInput txtDirServerName =
                        (HtmlTextInput)form.getInputByName("DIRECTORY_SERVER");
                  txtDirServerName.
-                         setValueAttribute((String)map.get("dirservername"));
+                         setValueAttribute((String)map.get(
+                         TestConstants.KEY_ATT_DIRECTORY_SERVER));
 
                  HtmlTextInput txtDirServerPort =
                        (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
                  txtDirServerPort.
-                         setValueAttribute((String)map.get("dirserverport"));
+                         setValueAttribute((String)map.get(
+                         TestConstants.KEY_ATT_DIRECTORY_PORT));
 
                  HtmlTextInput txtDirConfigData =
                        (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
                  txtDirConfigData.setValueAttribute((String)map.
-                         get("dirserversuffixconfigdata"));
+                         get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
 
                  HtmlTextInput txtDirSMData =
                        (HtmlTextInput)form.
                          getInputByName("SM_CONFIG_ROOT_SUFFIX");
                  txtDirSMData.setValueAttribute((String)map.
-                         get("dirserversuffixsmdata"));
+                         get(TestConstants.KEY_ATT_SM_ROOT_SUFFIX));
 
                  HtmlTextInput txtDirAdminDN =
                        (HtmlTextInput)form.getInputByName("DS_DIRMGRDN");
                  txtDirAdminDN.setValueAttribute((String)map.
-                         get("dirserveradmindn"));
+                         get(TestConstants.KEY_ATT_DS_DIRMGRDN));
 
                  HtmlPasswordInput txtDirAdminPassword =
                        (HtmlPasswordInput)form.
                          getInputByName("DS_DIRMGRPASSWD");
                  txtDirAdminPassword.setValueAttribute((String)map.
-                         get("dirserveradminpassword"));
+                         get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
                  HtmlPasswordInput txtDirAdminPasswordR =
                        (HtmlPasswordInput)form.
                          getInputByName("DS_CONFIRM_PWD");
                  txtDirAdminPasswordR.setValueAttribute((String)map.
-                         get("dirserveradminpassword"));
+                         get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
 
                  HtmlCheckBoxInput chkLoadUMS =
                        (HtmlCheckBoxInput)form.getInputByName("DS_UM_SCHEMA");
-                 if (((String)map.get("dirloadums")).equals("yes"))
+                 if (((String)map.get(TestConstants.KEY_ATT_LOAD_UMS)).
+                         equals("yes"))
                      chkLoadUMS.setChecked(true);
                  else
                      chkLoadUMS.setChecked(false);
@@ -439,20 +492,21 @@ public class TestCommon implements TestConstants
             }
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
                     adminPassword;
-            log(logLevel, "configureProduct", "url:" + strURL);
+            log(logLevel, "configureProduct", "strURL:" + strURL);
             url = new URL(strURL);
             page = (HtmlPage)webclient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
+            if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
+                    (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
                 log(logLevel, "configureProduct", "Product Configuration was" +
                         " not successfull. Configuration failed.");
+                strURL = (String)map.get("serverurl") +
+                         (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return false;
             } else {
                 log(logLevel, "configureProduct", "Product Configuration was" +
                         " successfull. New bits were successfully configured.");
-                strURL = (String)map.get("serverurl") +
-                         (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return true;
             }
@@ -465,14 +519,14 @@ public class TestCommon implements TestConstants
             if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
                 log(logLevel, "configureProduct", "Product was already" +
                         " configured. Super admin login failed.");
+                strURL = (String)map.get("serverurl") +
+                         (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return false;
             } else {
                 log(logLevel, "configureProduct", "Product was already" +
                         " configured. Super admin login successfull.");
-                strURL = (String)map.get("serverurl") +
-                         (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strURL);
                 exiting("configureProduct");
                 return true;
             }
@@ -482,7 +536,7 @@ public class TestCommon implements TestConstants
     /**
      * Logout from admin console using htmlunit
      */
-    public void consoleLogout(
+    protected void consoleLogout(
         WebClient webclient,
         String amUrl
     ) throws Exception {
@@ -500,7 +554,7 @@ public class TestCommon implements TestConstants
     /**
      * Checks whether the string exists on the page
      */
-    public int getHtmlPageStringIndex(
+    protected int getHtmlPageStringIndex(
         HtmlPage page,
         String searchStr
     ) throws Exception {
@@ -519,6 +573,54 @@ public class TestCommon implements TestConstants
     }
 
     /**
+     * Reads data from a Map object, creates a new file and writes data to that
+     * file
+     */
+    protected void createFileFromMap(Map properties, String fileName)
+        throws Exception
+    {
+        log(logLevel, "createFileFromMap", "Map:" + properties);
+        log(logLevel, "createFileFromMap", "fileName:" + fileName);
+        StringBuffer buff = new StringBuffer();
+        for (Iterator i = properties.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry entry = (Map.Entry)i.next();
+            buff.append(entry.getKey())
+                .append("=")
+                .append(entry.getValue())
+                .append("\n");
+        }
+
+        BufferedWriter out = new BufferedWriter(new FileWriter(
+            fileName));
+        out.write(buff.toString());
+        out.close();
+    }
+
+    /**
+     * Reads data from a ResourceBundle object and creates a Map containing all
+     * the attribute keys and values. It also takes in a Set of attribute key
+     * names, which if specified, are not put into the Map. This is to ensure
+     * selective selection of attribute key and value pairs.
+     */
+    protected Map getMapFromResourceBundle(String rbName, Set set)
+        throws Exception
+    {
+        Map map = new HashMap();
+        ResourceBundle rb = ResourceBundle.getBundle(rbName);
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)rb.getString(key);
+            if (set != null) {
+                if (!set.contains(key))
+                    map.put(key, value);
+            } else {
+                map.put(key, value);
+            }
+        }
+        return (map);
+    }
+
+    /**
      * Returns a map of String to Set of String from a formatted string.
      * The format is
      * <pre>
@@ -527,7 +629,7 @@ public class TestCommon implements TestConstants
      * &lt;keyn&gt;=&lt;valuen1&gt;,&lt;valuen2&gt;...,&lt;valuen3&gt;
      * </pre>
      */
-    public static Map<String, Set<String>> parseStringToMap(String str) {
+    protected static Map<String, Set<String>> parseStringToMap(String str) {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         StringTokenizer st = new StringTokenizer(str, ";");
         while (st.hasMoreTokens()) {
@@ -552,7 +654,7 @@ public class TestCommon implements TestConstants
      * <code>Map&lt;String, Set&lt;String&gt;&gt; and many times, we just
      * want to add a string to the map.
      */
-    public static Set<String> putSetIntoMap(
+    protected static Set<String> putSetIntoMap(
         String key,
         Map<String, Set<String>> map,
         String value

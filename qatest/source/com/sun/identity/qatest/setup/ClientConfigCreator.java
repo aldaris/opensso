@@ -17,61 +17,281 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.1 2007-02-06 19:55:35 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.2 2007-05-10 17:21:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.setup;
 
+import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.PropertyResourceBundle;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.PropertyResourceBundle;
 
 /**
- * This setup the OpenSSO samples.
+ * This class does the following:
+ * (a) This class creates the tag swapped AMConfig.properties file. It takes 
+ *     AMClient.properties and Configurator-<server name> files under resources 
+ *     directory and create a new file called AMConfig.properties file by tag
+ *     swapping attribute annotated with values as @COPY_FROM_CONFIG@ with
+ *     values read from Configurator-<server name> file specified under the
+ *     resources directory. This  AMConfig.properties is  the client side
+ *     AMConfig.properties file.
+ * (b) This class creates the tag swapped multi server config data properties
+ *     file. It takes the two Configurator-<server name> files under resources 
+ *     directory and create a new config file (the name of this file is 
+ *     specific to the multi server mode under execution. For eg for samlv2 its
+ *     called  samlv2TestConfigData) by tag swapping attribute annotated with
+ *     values as @COPY_FROM_CONFIG@ with values read from
+ *     Configurator-<server name> file specified under the resources directory.
+ *     This file is consumed by the respective module to do its configuration.
  */
-public class ClientConfigCreator {
-    private Map properties = new HashMap();
-    private Map labels = new HashMap();
+public class ClientConfigCreator { 
 
-    private static final String FILE_CLIENT_PROPERTIES = 
-        "resources/AMConfig.properties";
-    
-    public ClientConfigCreator(String pdtDir, String testDir)
+    private String newline = System.getProperty("line.separator");
+    private String fileseparator = System.getProperty("file.separator");
+    private Map properties1 = new HashMap();
+    private Map properties2 = new HashMap();
+    private String ALL_FILE_CLIENT_PROPERTIES = "resources" + fileseparator +
+            "AMConfig.properties";
+    private String SAML_FILE_CLIENT_PROPERTIES =
+            "resources" + fileseparator + "samlv2" + fileseparator +
+            "samlv2TestConfigData.properties";
+    private String IDFF_FILE_CLIENT_PROPERTIES =
+            "resources" + fileseparator + "idff" + fileseparator +
+            "idffTestConfigData.properties";
+
+    /**
+     * Default constructor. Calls method to transfer properties from:
+     * (a) default AMClient.properties to client AMConfig.properties file. 
+     * (b) multiple configuration files to a single multi server execution mode
+     *     file.
+     */
+    public ClientConfigCreator(String testDir, String serverName1,
+            String serverName2, String executionMode)
         throws Exception {
-        getDefaultValues(pdtDir, testDir);
+        if ((serverName2.indexOf("SERVER_NAME2")) != -1) {
+            getDefaultValues(testDir, serverName1);
+        } else {
+            getDefaultValues(testDir, serverName1, serverName2);
+            if (executionMode.indexOf("saml") != -1)
+                createFileFromMap(properties2, SAML_FILE_CLIENT_PROPERTIES);
+            if (executionMode.indexOf("idff") != -1)
+                createFileFromMap(properties2, IDFF_FILE_CLIENT_PROPERTIES);
+        }
+        createFileFromMap(properties1, ALL_FILE_CLIENT_PROPERTIES);
     }
 
-    private void getDefaultValues(String pdtDir, String testDir)
+    /**
+     * Method to do the actual transfer of properties from  default
+     * AMClient.properties to client AMConfig.properties file.
+     */
+    private void getDefaultValues(String testDir, String serverName)
         throws Exception {
-        PropertyResourceBundle server = new PropertyResourceBundle(
-            new FileInputStream(pdtDir + "/AMConfig.properties"));
-        ResourceBundle client = ResourceBundle.getBundle("AMClient");
-        for (Enumeration e = client.getKeys(); e.hasMoreElements(); ) {
+
+        PropertyResourceBundle configDef = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "Configurator-" + serverName + ".properties"));
+
+        PropertyResourceBundle clientDef = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "AMClient.properties"));
+
+        String strNamingURL = configDef.getString(
+                TestConstants.KEY_ATT_NAMING_SVC);
+
+        int iFirstSep = strNamingURL.indexOf(":");
+        String strProtocol = strNamingURL.substring(0, iFirstSep);  
+
+        int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+
+        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+
+        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
+        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+
+        for (Enumeration e = clientDef.getKeys(); e.hasMoreElements(); ) {
             String key = (String)e.nextElement();
-            String value = (String)client.getString(key);
+            String value = (String)clientDef.getString(key);
 
             if (value.equals("@COPY_FROM_CONFIG@")) {
-                value = server.getString(key);
+                if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
+                    value = strProtocol;
+                else if (key.equals(TestConstants.KEY_AMC_HOST))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_AMC_PORT))
+                    value = strPort;
+                else if (key.equals(TestConstants.KEY_AMC_URI))
+                    value = strURI;
+                else if (key.equals(TestConstants.KEY_AMC_NAMING_URL))
+                    value = strNamingURL;
+                else if (key.equals(TestConstants.KEY_AMC_BASEDN))
+                    value = configDef.getString(
+                            TestConstants.KEY_ATT_DEFAULTORG);
+                else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
+                    value = configDef.getString(
+                            TestConstants.KEY_ATT_AMADMIN_USER);
             }
-            value = value.replace("@BASE_DIR@", testDir);
+            value = value.replace("@BASE_DIR@", testDir + fileseparator +
+                    serverName);
 
-            properties.put(key, value);
+            properties1.put(key, value);
+        }
+
+        for (Enumeration e = configDef.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)configDef.getString(key);
+            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
+                    !key.equals(TestConstants.KEY_ATT_METAALIAS)  &&
+                    !key.equals(TestConstants.KEY_ATT_ENTITY_NAME) &&
+                    !key.equals(TestConstants.KEY_ATT_COT) &&
+                    !key.equals(TestConstants.KEY_ATT_CERTALIAS) &&
+                    !key.equals(TestConstants.KEY_ATT_PROTOCOL) &&
+                    !key.equals(TestConstants.KEY_ATT_HOST) &&
+                    !key.equals(TestConstants.KEY_ATT_PORT) &&
+                    !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
+                properties1.put(key, value);
+            }
+        }
+        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName);
+    }
+
+    /**
+     * Method to do the actual transfer of properties from  default
+     * configuration files to single multi server execution mode config data
+     * file.
+     */
+    private void getDefaultValues(String testDir, String serverName1,
+            String serverName2)
+        throws Exception {
+
+        PropertyResourceBundle configDef1 = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "Configurator-" +
+                serverName1 + ".properties"));
+
+        String strNamingURL = configDef1.getString(
+                TestConstants.KEY_ATT_NAMING_SVC);
+
+        int iFirstSep = strNamingURL.indexOf(":");
+        String strProtocol = strNamingURL.substring(0, iFirstSep);  
+
+        int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+
+        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+
+        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
+        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+
+        for (Enumeration e = configDef1.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)configDef1.getString(key);
+
+            if (value.equals("@COPY_FROM_CONFIG@")) {
+                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                    value = strProtocol;
+                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                    value = strPort;
+                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                    value = strURI;
+                else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_COT))
+                    value = "idpcot";
+            }
+            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
+                    !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
+                    !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
+            properties2.put("idp_" + key, value);
+        }
+
+        properties1.put(TestConstants.KEY_ATT_AMADMIN_USER, 
+                configDef1.getString(TestConstants.KEY_ATT_AMADMIN_USER));
+        properties1.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, 
+                configDef1.getString(TestConstants.KEY_ATT_AMADMIN_PASSWORD));
+        properties1.put("log_level", configDef1.getString("log_level"));
+        properties1.put(TestConstants.KEY_AMC_PROTOCOL, strProtocol);
+        properties1.put(TestConstants.KEY_AMC_HOST, strHost);
+        properties1.put(TestConstants.KEY_AMC_PORT, strPort);
+        properties1.put(TestConstants.KEY_AMC_URI, strURI);
+        properties1.put(TestConstants.KEY_AMC_BASEDN, configDef1.getString(
+                TestConstants.KEY_ATT_DEFAULTORG));
+        properties1.put("realm", configDef1.getString("realm"));
+        properties1.put(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT, "pass");
+        properties1.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
+                serverName2);
+
+        PropertyResourceBundle configDef2 = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "Configurator-" +
+                serverName2 + ".properties"));
+
+        strNamingURL = configDef2.getString(TestConstants.KEY_ATT_NAMING_SVC);
+
+        iFirstSep = strNamingURL.indexOf(":");
+        strProtocol = strNamingURL.substring(0, iFirstSep);
+
+        iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+
+        iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+
+        iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
+        strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+
+        for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)configDef2.getString(key);
+
+            if (value.equals("@COPY_FROM_CONFIG@")) {
+                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                    value = strProtocol;
+                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                    value = strPort;
+                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                    value = strURI;
+                else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_COT))
+                    value = "spcot";
+            }
+            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
+                    !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
+                    !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
+            properties2.put("sp_" + key, value);
         }
     }
 
-    private void create()
+    /**
+     * Reads data from a Map object, creates a new file and writes data to that
+     * file
+     */
+    private void createFileFromMap(Map properties, String fileName)
         throws Exception
     {
         StringBuffer buff = new StringBuffer();
@@ -84,25 +304,15 @@ public class ClientConfigCreator {
         }
 
         BufferedWriter out = new BufferedWriter(new FileWriter(
-            FILE_CLIENT_PROPERTIES));
+            fileName));
         out.write(buff.toString());
         out.close();
     }
 
-    private static String getAnswer(String question)
-        throws IOException
-    {
-        System.out.print(question + ": ");
-        String value = (new BufferedReader(
-            new InputStreamReader(System.in))).readLine();
-        return value.trim();
-    }
-
     public static void main(String args[]) {
         try {
-            ClientConfigCreator creator = new ClientConfigCreator(
-                args[0], args[1]);
-            creator.create();
+            ClientConfigCreator creator = new ClientConfigCreator(args[0],
+                    args[1], args[2], args[3]);
         } catch (Exception e) {
             e.printStackTrace();
         }
