@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2007-05-04 19:14:09 qcheng Exp $
+$Id: README,v 1.6 2007-05-17 19:27:44 qcheng Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -121,8 +121,7 @@ jsr173_api.jar can be obtained from the JWSDP version 1.6 distribution.
 
 Follow these steps to obtain JWSDK 1.6:
 
-2.2.1 Visit URL, http://java.sun.com/webservices/archive.html
-      and click on "Java Web Services Developer Pack 1.6" hyperlink
+2.2.1 Visit URL http://java.sun.com/webservices/downloads/1.6/index.html. 
 2.2.2 Click on the Download button under "Java Web Services Developer Pack v1.6"
       section header
 2.2.3 If you are not already logged into Sun Developer Network, you may have
