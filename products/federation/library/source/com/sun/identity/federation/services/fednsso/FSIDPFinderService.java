@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIDPFinderService.java,v 1.1 2006-10-30 23:14:27 qcheng Exp $
+ * $Id: FSIDPFinderService.java,v 1.2 2007-05-17 19:31:57 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -262,12 +262,12 @@ public class FSIDPFinderService extends HttpServlet {
            try {
                CircleOfTrustManager cotManager = new CircleOfTrustManager();
                CircleOfTrustDescriptor cotDesc =
-                   cotManager.getCircleOfTrust("/", cotName, COTConstants.IDFF);
+                   cotManager.getCircleOfTrust("/", cotName);
                if (cotDesc != null &&
                    (cotDesc.getCircleOfTrustStatus())
                        .equalsIgnoreCase(IFSConstants.ACTIVE))
                {
-                   readerServiceURL = cotDesc.getReaderServiceURL();
+                   readerServiceURL = cotDesc.getIDFFReaderServiceURL();
                }
            } catch (COTException fe) {
                FSUtils.debug.error("FSIDPFinderService.getCommonDomainIDP:" +

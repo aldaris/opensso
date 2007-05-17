@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManager.java,v 1.2 2007-01-16 20:15:06 exu Exp $
+ * $Id: LibertyManager.java,v 1.3 2007-05-17 19:31:59 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -626,9 +626,8 @@ public class LibertyManager {
                     try {
                         CircleOfTrustManager cotManager = new CircleOfTrustManager();
                         CircleOfTrustDescriptor cotDesc =
-                            cotManager.getCircleOfTrust(
-                                "/", cotID, COTConstants.IDFF);
-                        String tldURL = cotDesc.getWriterServiceURL();
+                            cotManager.getCircleOfTrust("/", cotID);
+                        String tldURL = cotDesc.getIDFFWriterServiceURL();
                         String cotStatus = cotDesc.getCircleOfTrustStatus();
                         if (tldURL != null && tldURL.length() > 0 &&
                             cotStatus.equalsIgnoreCase(IFSConstants.ACTIVE)) 

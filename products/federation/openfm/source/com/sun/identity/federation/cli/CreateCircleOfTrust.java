@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCircleOfTrust.java,v 1.3 2007-02-16 02:02:50 veiming Exp $
+ * $Id: CreateCircleOfTrust.java,v 1.4 2007-05-17 19:32:00 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.cli;
@@ -47,7 +47,6 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
     
     private String realm;
     private String cot;
-    private String spec;
     private List trustedProviders;
     private String prefix;
     
@@ -63,7 +62,6 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         prefix = getStringOptionValue(FedCLIConstants.ARGUMENT_PREFIX);
-        spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
         trustedProviders = (List)rc.getOption(
             FedCLIConstants.ARGUMENT_TRUSTED_PROVIDERS);
@@ -72,25 +70,20 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
         if (trustedProviders != null) {
             providers.addAll(trustedProviders);
         }
-        String readerURL = "/saml2reader";
-        String writerURL = "/saml2writer";
-        
-        if (spec.equalsIgnoreCase(FedCLIConstants.IDFF_SPECIFICATION)) {
-            readerURL = "/idffreader";
-            writerURL = "/idffwriter";
-        }
         
         try {
             CircleOfTrustDescriptor descriptor =
                     ((prefix == null) || (prefix.trim().length() == 0)) ?
-                        new CircleOfTrustDescriptor(cot, spec,
-                    COTConstants.ACTIVE,"",
-                    null, null, providers) :
-                        new CircleOfTrustDescriptor(cot, spec,
-                    COTConstants.ACTIVE,"",
-                    prefix + readerURL,
-                    prefix + writerURL,
-                    providers);
+                        new CircleOfTrustDescriptor(cot, realm,
+                            COTConstants.ACTIVE,"",
+                            null, null, null, null, providers) :
+                        new CircleOfTrustDescriptor(cot, realm,
+                            COTConstants.ACTIVE,"",
+                            prefix + "/idffreader", 
+                            prefix + "/idffwriter", 
+                            prefix + "/saml2reader", 
+                            prefix + "/saml2writer", 
+                            providers);
             CircleOfTrustManager cotManager= new CircleOfTrustManager();
             cotManager.createCircleOfTrust(realm,descriptor);
             

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.5 2007-04-19 18:28:54 veiming Exp $
+ * $Id: SAML2MetaManager.java,v 1.6 2007-05-17 19:31:58 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 
 import com.sun.identity.cot.CircleOfTrustManager;
+import com.sun.identity.cot.COTConstants;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.plugin.configuration.ConfigurationManager;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
@@ -70,6 +71,7 @@ public class SAML2MetaManager {
     private static CircleOfTrustManager cotm;
     private static ConfigurationInstance configInst;
     private static final String SAML2 = "SAML2";
+
     /**
      * Constant used to identify meta alias.
      */
@@ -751,7 +753,7 @@ public class SAML2MetaManager {
                     for (Iterator iter = cotList.iterator(); 
                         iter.hasNext();) {
                         cotm.addCircleOfTrustMember(realm,
-                                       (String) iter.next(), SAML2, entityId); 
+                            (String) iter.next(), COTConstants.SAML2, entityId);
                      }               
                  }
              }
@@ -834,7 +836,7 @@ public class SAML2MetaManager {
                         iter.hasNext();) {
                         String a = (String) iter.next(); 
                         cotm.removeCircleOfTrustMember(realm, 
-                                       a, SAML2,entityId);
+                            a, COTConstants.SAML2, entityId);
                      }               
                  }
              }
@@ -1324,7 +1326,7 @@ public class SAML2MetaManager {
                         iter.hasNext();) {
                         String a = (String) iter.next(); 
                         if (cotm.isInCircleOfTrust(realm, 
-                                       a, SAML2,trustedEntityId)) {
+                            a, COTConstants.SAML2, trustedEntityId)) {
                             return true;
                         } 
                      }               

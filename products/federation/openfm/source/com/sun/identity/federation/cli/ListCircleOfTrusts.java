@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrusts.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
+ * $Id: ListCircleOfTrusts.java,v 1.3 2007-05-17 19:32:01 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.cli;
@@ -44,7 +44,6 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
     private static Debug debug = COTUtils.debug;
    
     private String realm;
-    private String spec;
     
     /**
      * Lists circle of trusts.
@@ -58,11 +57,10 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
         ldapLogin();
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         IOutput outputWriter = getOutputWriter();
-        spec=FederationManager.getIDFFSubCommandSpecification(rc);
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
-            Set members = cotManager.getAllCirclesOfTrust(realm,spec);
+            Set members = cotManager.getAllCirclesOfTrust(realm);
             
             if ((members == null) || members.isEmpty()) {
                 Object[] obj = {realm};

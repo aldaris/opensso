@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPostLogin.java,v 1.1 2006-10-30 23:14:06 qcheng Exp $
+ * $Id: FSPostLogin.java,v 1.2 2007-05-17 19:31:57 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -366,12 +366,12 @@ public class FSPostLogin {
             }
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             CircleOfTrustDescriptor cotDesc = cotManager.getCircleOfTrust(
-                "/", cotSelected, COTConstants.IDFF);
+                "/", cotSelected);
             if (cotDesc != null &&
                 (cotDesc.getCircleOfTrustStatus())
                     .equalsIgnoreCase(IFSConstants.ACTIVE)) 
             {
-                tldURL = cotDesc.getWriterServiceURL();
+                tldURL = cotDesc.getIDFFWriterServiceURL();
             }
         } catch (IDFFMetaException metaExp) {
             FSUtils.debug.error(

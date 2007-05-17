@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteCircleOfTrust.java,v 1.2 2007-02-16 02:02:51 veiming Exp $
+ * $Id: DeleteCircleOfTrust.java,v 1.3 2007-05-17 19:32:01 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.cli;
@@ -42,7 +42,6 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
     
     private String realm;
     private String cot;
-    private String spec;
     
     /**
      * Deletes a circle of trust.
@@ -56,11 +55,10 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
         ldapLogin();
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
-        spec = FederationManager.getIDFFSubCommandSpecification(rc);
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
-            cotManager.deleteCircleOfTrust(realm, cot, spec);
+            cotManager.deleteCircleOfTrust(realm, cot);
             
             Object[] obj = {cot};
             getOutputWriter().printlnMessage(MessageFormat.format(

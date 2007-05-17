@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.14 2007-05-04 19:18:32 veiming Exp $
+ * $Id: FederationManager.java,v 1.15 2007-05-17 19:32:01 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.cli.definition;
@@ -178,8 +178,7 @@ public class FederationManager {
         optionalOptions={
             "realm|e|s|Realm where circle of trust resides",
             "trustedproviders|k|m|Trusted Providers",
-            "prefix|p|s|Prefix URL for idp discovery reader and writer URL.",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "prefix|p|s|Prefix URL for idp discovery reader and writer URL."},
         resourceStrings={
             "create-circle-of-trust-succeeded=Circle of trust, {0} is created."})
     private String create_circle_of_trust;
@@ -193,8 +192,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|e|s|Realm where circle of trust resides",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "realm|e|s|Realm where circle of trust resides"},
         resourceStrings={
             "delete-circle-of-trust-succeeded=Circle of trust, {0} is deleted."})
     private String delete_circle_of_trust;
@@ -207,8 +205,7 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "realm|e|s|Realm where circle of trusts reside",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "realm|e|s|Realm where circle of trusts reside"},
         resourceStrings={
             "list-circle-of-trust-no-members=There are no circle of trusts.",
             "list-circle-of-trust-members=List of circle of trusts:"})

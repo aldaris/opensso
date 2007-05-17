@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLoginHelper.java,v 1.2 2007-01-10 06:29:31 exu Exp $
+ * $Id: FSLoginHelper.java,v 1.3 2007-05-17 19:31:57 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -676,7 +676,7 @@ public class FSLoginHelper {
                 while (iter.hasNext()) {
                     CircleOfTrustDescriptor cotDesc = 
                         cotManager.getCircleOfTrust(
-                            "/", (String)iter.next(), COTConstants.IDFF);
+                            "/", (String)iter.next());
                     if (cotDesc != null && 
                         (cotDesc.getCircleOfTrustStatus()).
                             equalsIgnoreCase(IFSConstants.ACTIVE)) 
@@ -686,7 +686,7 @@ public class FSLoginHelper {
                                 + "found a active cot with cotid : "
                                 + cotDesc.getCircleOfTrustName());
                         }
-                        tldURL = cotDesc.getReaderServiceURL();
+                        tldURL = cotDesc.getIDFFReaderServiceURL();
                         break;
                     }
                 }

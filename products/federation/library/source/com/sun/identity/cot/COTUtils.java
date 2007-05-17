@@ -17,14 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COTUtils.java,v 1.1 2006-10-30 23:13:59 qcheng Exp $
+ * $Id: COTUtils.java,v 1.2 2007-05-17 19:31:56 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cot;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import com.sun.identity.shared.debug.Debug;
@@ -36,10 +39,10 @@ import java.util.logging.Level;
 public class COTUtils {
     
     public static final String RESOURCE_BUNDLE_NAME = "libCOT";
-    public static final String IDFF = COTConstants.IDFF;
-    public static final String SAML2 = COTConstants.SAML2;
     public static Debug debug = Debug.getInstance("fmCOT");
-    public static final String COT_TYPE_ATTR = "sun-fm-cot-type";
+    static String WSFED_DELIM = COTConstants.DELIMITER + COTConstants.WS_FED;
+    static String SAML2_DELIM = COTConstants.DELIMITER + COTConstants.SAML2;
+    static String IDFF_DELIM = COTConstants.DELIMITER + COTConstants.IDFF;
     
     /**
      * Default Constructor.
@@ -91,21 +94,208 @@ public class COTUtils {
     }
     
     /**
-     * Checks if the circle of trust is valid. The valid values
-     * are idff or saml2.
+     * Checks if the federation protocol type is valid. The valid values
+     * are IDFF or SAML2.
      *
-     * @param cotType the circle of trust type.
+     * @param protocolType the federation protocol type.
      * @return true if value is idff or saml2.
      */
-    public static boolean isValidCOTType(String cotType) {       
-        boolean isValid =((cotType != null &&  cotType.trim().length() > 0)
-        && (cotType.equalsIgnoreCase(COTConstants.IDFF)
-        || (cotType.equalsIgnoreCase(COTConstants.SAML2))));
+    public static boolean isValidProtocolType(String protocolType) {       
+        boolean isValid = ((protocolType != null) 
+            && (protocolType.trim().length() > 0)
+            && (protocolType.equalsIgnoreCase(COTConstants.IDFF)
+            || (protocolType.equalsIgnoreCase(COTConstants.SAML2))));
         if (!isValid) {
-            String[] data = { cotType };
+            String[] data = { protocolType };
             LogUtil.error(Level.INFO,LogUtil.INVALID_COT_TYPE,data);
         }
         
         return isValid;
+    }
+
+    /**
+     * Converts set of COT trusted providers to map.
+     * Key of the map is the entity id name, value is a set of protocols the
+     * entity supports.
+     *
+     * @param providerSet A set of trusted providers, each entry value could 
+     *     contain both entity id and protocol in "|" separated format.
+     * @param realm The realm the providers resides.
+     * @return A map with entity id as key, protocols as value. 
+     */ 
+    static Map trustedProviderSetToEntityIDMap(Set providerSet, String realm) {
+        if ((providerSet == null) || providerSet.isEmpty()) {
+            return Collections.EMPTY_MAP;
+        }
+        Map map = new HashMap();
+        Iterator it = providerSet.iterator();
+        while (it.hasNext()) {
+            String val = (String) it.next();
+            if (debug.messageEnabled()) {
+                debug.message("COTUtils.setToEntityIDMap: check " + val);
+            } 
+            if (val.endsWith(SAML2_DELIM)) {
+                Set set = new HashSet();
+                set.add(COTConstants.SAML2);
+                map.put(val.substring(0, val.length() - SAML2_DELIM.length()),
+                    set); 
+            } else if (val.endsWith(IDFF_DELIM)) {
+                Set set = new HashSet();
+                set.add(COTConstants.IDFF);
+                map.put(val.substring(0, val.length() - IDFF_DELIM.length()),
+                    set); 
+            } else if (val.endsWith(WSFED_DELIM)) { 
+                Set set = new HashSet();
+                set.add(COTConstants.WS_FED);
+                map.put(val.substring(0, val.length() - WSFED_DELIM.length()),
+                    set); 
+            } else {
+                // find out protocol for this provider
+                Set protocolSet = findProtocolsForEntity(val, realm);
+                if ((protocolSet != null) && !protocolSet.isEmpty()) {
+                    map.put(val, protocolSet);
+                }       
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("COTUtils.setToEntityIDMap: return " + map);
+        } 
+        return map;
+    }
+
+    
+    /**
+     * Converts set of COT trusted providers to map.
+     * Key of the map is protocol name, value is a set of entity IDs which
+     * speaks the protocol. Protocl name is one of COTConstants.WS_FED, 
+     * COTConstants.SAML2 or COTConstants.IDFF.
+     *
+     * @param providerSet A set of trusted providers, each entry value could 
+     *     contain both entity id and protocol in "|" separated format.
+     * @param realm The realm the providers resides.
+     * @return A map with protocol name as key, set of entity IDs as value. 
+     */ 
+    static Map trustedProviderSetToProtocolMap(Set providerSet, String realm) {
+        if ((providerSet == null) || providerSet.isEmpty()) {
+            return Collections.EMPTY_MAP;
+        }
+        Map map = new HashMap();
+        Set wsfedSet = new HashSet();
+        Set saml2Set = new HashSet();
+        Set idffSet = new HashSet();
+        Iterator it = providerSet.iterator();
+        while (it.hasNext()) {
+            String val = (String) it.next();
+            if (debug.messageEnabled()) {
+                debug.message("COTUtils.setToPrototolMap: check " + val);
+            } 
+            if (val.endsWith(SAML2_DELIM)) {
+                saml2Set.add(
+                    val.substring(0, val.length() - SAML2_DELIM.length()));
+            } else if (val.endsWith(IDFF_DELIM)) {
+                idffSet.add(
+                    val.substring(0, val.length() - IDFF_DELIM.length())); 
+            } else if (val.endsWith(WSFED_DELIM)) { 
+                wsfedSet.add(
+                    val.substring(0, val.length() - WSFED_DELIM.length())); 
+            } else {
+                // find out protocol for this provider
+                Set protocolSet = findProtocolsForEntity(val, realm);
+                if ((protocolSet != null) && !protocolSet.isEmpty()) {
+                    Iterator pIt = protocolSet.iterator();
+                    while (pIt.hasNext()) {
+                        String proto = (String) pIt.next();
+                        if (proto.equals(COTConstants.SAML2)) {
+                            saml2Set.add(val);
+                        } else if (proto.equals(COTConstants.IDFF)) {
+                            idffSet.add(val);
+                        } else if (proto.equals(COTConstants.WS_FED)) {
+                            wsfedSet.add(val);
+                        }
+                    }
+                }
+            }
+        }
+        map.put(COTConstants.SAML2, saml2Set);
+        map.put(COTConstants.IDFF, idffSet);
+        map.put(COTConstants.WS_FED, wsfedSet);
+        if (debug.messageEnabled()) {
+            debug.message("COTUtils.setToProtocolMap: return " + map);
+        } 
+        return map;
+    }
+    
+    /**
+     * Returns set of protocol the entity supports.
+     * @param entityId The ID of the entity to be checked.
+     * @param the realm the entity resides.
+     * @return Set of protocol the entity supports, values could be 
+     *     <code>COTConstants.SAML2</code>, 
+     *     <code>COTConstants.IDFF</code> or 
+     *     <code>COTConstants.WS_FED</code>.
+     */
+    public static Set findProtocolsForEntity(String entityId, String realm) {
+        try {
+            Set retSet = new HashSet();
+            CircleOfTrustManager manager = new CircleOfTrustManager();
+            Set idffSet = manager.getAllEntities(realm, COTConstants.IDFF);
+            if (idffSet.contains(entityId)) {
+                retSet.add(COTConstants.IDFF);
+            }
+            Set saml2Set = manager.getAllEntities(realm, COTConstants.SAML2);
+            if ((saml2Set != null) && saml2Set.contains(entityId)) {
+                retSet.add(COTConstants.SAML2);
+            }
+            // TODO : hanlde WS-FED
+            return retSet;
+        } catch (COTException e) {
+            debug.error("COTUtils.findProtocolsForEntity", e);
+            return null;
+        }
+    }
+
+    /**
+     * Converts trusted provider protocol/entity IDs map to Set.
+     * This method returns a Set with value in per entity and per protocol
+     * format ("|" separated).
+     *
+     * @return A map with protocol name as key, set of entity IDs as value. 
+     * @return A set of trusted providers with each entry value containing 
+     *     both entity id and protocol in "|" separated format.
+     */ 
+    static Set trustedProviderProtocolMapToSet(Map providerMap) {
+        if ((providerMap == null) || providerMap.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+        Set retSet = new HashSet();
+        Set keys = providerMap.keySet();
+        Iterator it = keys.iterator();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            String suffix = null;
+            if (key.equals(COTConstants.SAML2)) {
+                suffix = SAML2_DELIM;
+            } else if (key.equals(COTConstants.IDFF)) {
+                suffix = IDFF_DELIM;
+            } else if (key.equals(COTConstants.WS_FED)) {
+                suffix = WSFED_DELIM;
+            } else {
+                if (debug.warningEnabled()) {
+                    debug.warning("COTUtils.protocolMapToSet: " + 
+                        "invalid protocol " + key);
+                }
+                continue;
+            }
+            Set vals = (Set) providerMap.get(key);
+            Iterator it2 = vals.iterator();
+            while (it2.hasNext()) {
+                String val = (String) it2.next();
+                retSet.add(val + suffix);
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("COTUtils.protocolMapToSet: return" + retSet);
+        }
+        return retSet;
     }
 }

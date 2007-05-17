@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.6 2007-04-26 23:40:10 veiming Exp $
+ * $Id: SAML2Utils.java,v 1.7 2007-05-17 19:31:58 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,7 +227,6 @@ public class SAML2Utils extends SAML2SDKUtils {
         String inRespToResp = response.getInResponseTo();
         if (inRespToResp != null && inRespToResp.length() != 0) {
             reqInfo = (AuthnRequestInfo)SPCache.requestHash.get(inRespToResp);
-            SPCache.requestHash.remove(inRespToResp);
             if (reqInfo == null) {
                 if (debug.messageEnabled()) {
                     debug.message(method + "InResponseTo attribute in Response"
@@ -2463,7 +2462,7 @@ public class SAML2Utils extends SAML2SDKUtils {
                 String cotListStr = (String) cotList.iterator().next();
                 CircleOfTrustDescriptor cotDesc =
                         cotManager.getCircleOfTrust(realm,cotListStr);
-                readerURL = cotDesc.getReaderServiceURL();
+                readerURL = cotDesc.getSAML2ReaderServiceURL();
             }
         } catch (COTException ce) {
             if (SAML2Utils.debug.messageEnabled()) {

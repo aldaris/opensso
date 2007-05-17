@@ -20,9 +20,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmCOTConfig.xml,v 1.1 2006-10-30 23:18:13 qcheng Exp $
+   $Id: fmCOTConfig.xml,v 1.2 2007-05-17 19:32:01 qcheng Exp $
                                                                                 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <!DOCTYPE ServicesConfiguration
@@ -34,7 +34,7 @@
         <Schema
             i18nFileName="fmCOTConfiguration"
             i18nKey=""
-            revisionNumber="10">
+            revisionNumber="20">
 
             <Organization>
                 <SubSchema name = "cot" inheritance = "multiple"
@@ -43,18 +43,6 @@
                         type="single"
                         syntax="string"
                         i18nKey="a201">
-                    </AttributeSchema>
-                    <AttributeSchema name="sun-fm-cot-type"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a202">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a203">IDFF</ChoiceValue>
-                            <ChoiceValue i18nKey="a204">SAML2</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues> 
-                            <Value>SAML2</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sun-fm-cot-status"
                         type="single_choice"
@@ -67,17 +55,27 @@
                              <Value>Active</Value>
                         </DefaultValues>
                     </AttributeSchema>
-                    <AttributeSchema name="sun-fm-writerservice-url"
+                    <AttributeSchema name="sun-fm-saml2-writerservice-url"
                         type="single"
                         syntax="url"
-                        i18nKey="a208">
+                        i18nKey="a211">
                     </AttributeSchema>
-                     <AttributeSchema name="sun-fm-readerservice-url"
+                    <AttributeSchema name="sun-fm-saml2-readerservice-url"
                         type="single"
                         syntax="url"
-                        i18nKey="a209">
+                        i18nKey="a212">
                     </AttributeSchema>
-                     <AttributeSchema name="sun-fm-trusted-providers"
+                    <AttributeSchema name="sun-fm-idff-writerservice-url"
+                        type="single"
+                        syntax="url"
+                        i18nKey="a213">
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-fm-idff-readerservice-url"
+                        type="single"
+                        syntax="url"
+                        i18nKey="a214">
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-fm-trusted-providers"
                         type="list"
                         syntax="string"
                         i18nKey="a210">

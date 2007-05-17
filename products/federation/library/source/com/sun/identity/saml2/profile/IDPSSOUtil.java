@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.5 2007-04-23 04:11:22 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.6 2007-05-17 19:31:59 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -2169,7 +2169,7 @@ public class IDPSSOUtil {
  
                CircleOfTrustDescriptor cotDescriptor = 
                    cotManager.getCircleOfTrust(realm, cotName);
-               writerURL = cotDescriptor.getWriterServiceURL();
+               writerURL = cotDescriptor.getSAML2WriterServiceURL();
                if ((writerURL != null) && (writerURL.trim().length() != 0)) {
                    break;
                }

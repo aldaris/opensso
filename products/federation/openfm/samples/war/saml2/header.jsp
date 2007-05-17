@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: header.jsp,v 1.2 2007-03-09 05:51:05 veiming Exp $
+   $Id: header.jsp,v 1.3 2007-05-17 19:32:00 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -98,12 +98,14 @@ import="java.io.IOException,
              }
          } else {
              Set<String> providers = new HashSet<String>();
-             providers.add(hostedEntityID);
-             providers.add(remoteEntityID);
+             providers.add(hostedEntityID + COTConstants.DELIMITER + 
+                 COTConstants.SAML2);
+             providers.add(remoteEntityID + COTConstants.DELIMITER +
+                 COTConstants.SAML2);
              cotManager = new CircleOfTrustManager();
              cotManager.createCircleOfTrust("/",
-                        new CircleOfTrustDescriptor(cotName,
-                            COTConstants.SAML2, COTConstants.ACTIVE, "",
+                        new CircleOfTrustDescriptor(cotName, "/",
+                            COTConstants.ACTIVE, "", null, null,
                             null, null, providers));
              // [END] Create Circle of Trust
         }

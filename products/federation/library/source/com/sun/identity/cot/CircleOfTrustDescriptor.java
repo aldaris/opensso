@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustDescriptor.java,v 1.1 2006-10-30 23:13:59 qcheng Exp $
+ * $Id: CircleOfTrustDescriptor.java,v 1.2 2007-05-17 19:31:56 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 
@@ -40,11 +40,18 @@ import com.sun.identity.shared.validation.URLValidator;
 public class CircleOfTrustDescriptor {
     private String circleOfTrustType = null;
     private String circleOfTrustName = null;
+    private String realm = null;
     private String circleOfTrustDescription = null;
     private String circleOfTrustStatus = null;
     private String writerServiceURL = null;
     private String readerServiceURL = null;
+    private String idffWriterServiceURL = null;
+    private String idffReaderServiceURL = null;
+    private String saml2WriterServiceURL = null;
+    private String saml2ReaderServiceURL = null;
     private Set    trustedProviders = null;
+    // map holding protocol to set of trusted providers
+    private Map    trustedProviderMap = null;
     
     /*
      * Private Constructor.
@@ -52,15 +59,15 @@ public class CircleOfTrustDescriptor {
      * Map received from the data store.
      *
      * @param name The name of circle of trust.
-     * @param type The circle of trust type.
+     * @param realm The realm the circle of trust resides.
      * @param attrMap The map which contains attributes of the circle
      *                      of trust.
      * @throws COTException if values in the map are invalid.
      */
-    CircleOfTrustDescriptor(String name,String type,Map attrMap)
+    CircleOfTrustDescriptor(String name, String realm, Map attrMap)
     throws COTException {
         setCircleOfTrustName(name);
-        setCircleOfTrustType(type);
+        this.realm = realm;
         setCircleOfTrustDescription(COTUtils.getFirstEntry(
                 attrMap, COTConstants.COT_DESC));
         setCircleOfTrustType(COTUtils.getFirstEntry(
@@ -71,23 +78,31 @@ public class CircleOfTrustDescriptor {
                 attrMap,COTConstants.COT_WRITER_SERVICE));
         setReaderServiceURL(COTUtils.getFirstEntry(
                 attrMap,COTConstants.COT_READER_SERVICE));
-        trustedProviders = Collections.unmodifiableSet(
-                (Set) attrMap.get(COTConstants.COT_TRUSTED_PROVIDERS));
+        setSAML2WriterServiceURL(COTUtils.getFirstEntry(
+                attrMap,COTConstants.COT_SAML2_WRITER_SERVICE));
+        setSAML2ReaderServiceURL(COTUtils.getFirstEntry(
+                attrMap,COTConstants.COT_SAML2_READER_SERVICE));
+        setIDFFWriterServiceURL(COTUtils.getFirstEntry(
+                attrMap,COTConstants.COT_IDFF_WRITER_SERVICE));
+        setIDFFReaderServiceURL(COTUtils.getFirstEntry(
+                attrMap,COTConstants.COT_IDFF_READER_SERVICE));
+        setTrustedProviders((Set) 
+            attrMap.get(COTConstants.COT_TRUSTED_PROVIDERS));
     }
     
     /**
      * Creates new <code>COTDescriptor</code> instance.
      *
      * @param circleOfTrustName name for the circleOfTrust
+     * @param realm The realm the circle of trust resides.
      * @param circleOfTrustStatus status of the CircleOfTrust.
      * @throws COTException if <code>circleOfTrustName</code>
      *         or <code>circleOfTrustStatus</code> is invalid.
      */
-    public CircleOfTrustDescriptor(String circleOfTrustName,
-            String circleOFTrustType,
+    public CircleOfTrustDescriptor(String circleOfTrustName, String realm,
             String circleOfTrustStatus) throws COTException {
         setCircleOfTrustName(circleOfTrustName);
-        setCircleOfTrustType(circleOfTrustType);
+        this.realm = realm;
         setCircleOfTrustStatus(circleOfTrustStatus);
     }
     
@@ -95,6 +110,7 @@ public class CircleOfTrustDescriptor {
      * Creates new <code>COTDescriptor</code> instance.
      *
      * @param circleOfTrustName name for the circleOfTrust
+     * @param realm The realm this circle of trust resides.
      * @param circleOfTrustStatus status of the CircleOfTrust.
      * @param circleOfTrustDescription description for the circleOfTrust.
      * @param circleOfTrustReaderURL the reader url of the CircleOfTrust.
@@ -103,22 +119,30 @@ public class CircleOfTrustDescriptor {
      * @throws COTException if any input parameter is invalid.
      */
     public CircleOfTrustDescriptor(String circleOfTrustName,
-            String circleOfTrustType,
+            String realm,
             String circleOfTrustStatus,
             String circleOfTrustDescription,
-            String circleOfTrustReaderURL,
-            String circleOfTrustWriterURL,
+            String circleOfTrustIDFFReaderURL,
+            String circleOfTrustIDFFWriterURL,
+            String circleOfTrustSAML2ReaderURL,
+            String circleOfTrustSAML2WriterURL,
             Set circleOfTrustProvider)
             throws COTException {
         setCircleOfTrustName(circleOfTrustName);
-        setCircleOfTrustType(circleOfTrustType);
+        this.realm = realm;
         setCircleOfTrustStatus(circleOfTrustStatus);
         setCircleOfTrustDescription(circleOfTrustDescription);
-        if (circleOfTrustReaderURL != null) {
-            setReaderServiceURL(circleOfTrustReaderURL);
+        if (circleOfTrustIDFFReaderURL != null) {
+            setIDFFReaderServiceURL(circleOfTrustIDFFReaderURL);
         }
-        if (circleOfTrustWriterURL !=null) {
-            setWriterServiceURL(circleOfTrustWriterURL);
+        if (circleOfTrustIDFFWriterURL != null) {
+            setIDFFWriterServiceURL(circleOfTrustIDFFWriterURL);
+        }
+        if (circleOfTrustSAML2ReaderURL != null) {
+            setSAML2ReaderServiceURL(circleOfTrustSAML2ReaderURL);
+        }
+        if (circleOfTrustSAML2WriterURL != null) {
+            setSAML2WriterServiceURL(circleOfTrustSAML2WriterURL);
         }
         setTrustedProviders(circleOfTrustProvider);
     }
@@ -138,9 +162,9 @@ public class CircleOfTrustDescriptor {
      * Validates and set the circle of trust type.
      */
     private void setCircleOfTrustType(String type) throws COTException {
-        if (!COTUtils.isValidCOTType(type)) {
+        if ((type != null) && !COTUtils.isValidProtocolType(type)) {
             String[] data = { type };
-            throw new COTException("invalidCOTType",data);
+            throw new COTException("invalidProtooclType",data);
         }
         COTUtils.debug.message("Circle of Trust type is : " + type);
         circleOfTrustType=type;
@@ -156,12 +180,12 @@ public class CircleOfTrustDescriptor {
     }
     
     /**
-     * Return the circle of trust type (idff or saml2).
+     * Returns name of the realm the Circle of Trust resides.
      *
-     * @return the circle of turst type (idff or saml2).
+     * @return realm name.
      */
-    public String getCircleOfTrustType() {
-        return circleOfTrustType;
+    public String getCircleOfTrustRealm() {
+        return realm;
     }
     
     /**
@@ -184,21 +208,71 @@ public class CircleOfTrustDescriptor {
     }
     
     /**
-     * Returns reader service URL of the Circle of Trust.
+     * Returns reader service URL of the Circle of Trust for ID-FF protocol.
      *
-     * @return Reader service URL.
+     * @return Reader service URL for ID-FF protocol.
      */
-    public String getReaderServiceURL() {
-        return readerServiceURL;
+    public String getIDFFReaderServiceURL() {
+        if (idffReaderServiceURL != null) {
+            return idffReaderServiceURL;
+        } else if ((circleOfTrustType != null) && 
+            circleOfTrustType.equals(COTConstants.IDFF)) { 
+            // handle legacy case
+            return readerServiceURL;
+        } else {
+            return null;
+        }
+    }
+ 
+    /**
+     * Returns reader service URL of the Circle of Trust for SAMLv2 protocol.
+     *
+     * @return Reader service URL for SAMLv2 protocol.
+     */
+    public String getSAML2ReaderServiceURL() {
+        if (saml2ReaderServiceURL != null) {
+            return saml2ReaderServiceURL;
+        } else if ((circleOfTrustType != null) && 
+            circleOfTrustType.equals(COTConstants.SAML2)) { 
+            // handle legacy case
+            return readerServiceURL;
+        } else {
+            return null;
+        }
     }
     
     /**
-     * Returns Writer Service URL of the Circle of Trust.
+     * Returns Writer Service URL of the Circle of Trust for ID-FF protocol.
      *
-     * @return the Writer service URL.
+     * @return the Writer service URL for ID-FF protocol.
      */
-    public String getWriterServiceURL() {
-        return writerServiceURL;
+    public String getIDFFWriterServiceURL() {
+        if (idffWriterServiceURL != null) {
+            return idffWriterServiceURL;
+        } else if ((circleOfTrustType != null) && 
+            circleOfTrustType.equals(COTConstants.IDFF)) { 
+            // handle legacy case
+            return writerServiceURL;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns Writer Service URL of the Circle of Trust for SAMLv2 protocol.
+     *
+     * @return the Writer service URL for SAMLv2 protocol.
+     */
+    public String getSAML2WriterServiceURL() {
+        if (saml2WriterServiceURL != null) {
+            return saml2WriterServiceURL;
+        } else if ((circleOfTrustType != null) && 
+            circleOfTrustType.equals(COTConstants.SAML2)) { 
+            // handle legacy case
+            return writerServiceURL;
+        } else {
+            return null;
+        }
     }
     
     /**
@@ -209,7 +283,7 @@ public class CircleOfTrustDescriptor {
     public void setCircleOfTrustDescription(String circleOfTrustDescription) {
         this.circleOfTrustDescription = circleOfTrustDescription;
     }
-    
+
     /**
      * Sets reader service URL.
      *
@@ -217,7 +291,29 @@ public class CircleOfTrustDescriptor {
      * @throws COTException if <code>readerServiceURL</code>
      *         is not an URL.
      */
-    public void setReaderServiceURL(String readerServiceURL)
+    private void setReaderServiceURL(String readerServiceURL)
+    throws COTException {
+        if ((readerServiceURL != null) &&
+                (readerServiceURL.trim().length() > 0)){
+            URLValidator validator = URLValidator.getInstance();
+            try {
+                validator.validate(readerServiceURL);
+            } catch (ValidationException e) {
+                throw new COTException("invalidReaderUrl",null);
+            }
+        }
+
+        this.readerServiceURL = readerServiceURL;
+    }
+
+    /**
+     * Sets reader service URL for ID-FF protocol.
+     *
+     * @param readerServiceURL reader service URL for ID-FF protocol.
+     * @throws COTException if <code>readerServiceURL</code>
+     *         is not an URL.
+     */
+    public void setIDFFReaderServiceURL(String readerServiceURL)
     throws COTException {
         if ((readerServiceURL != null) &&
                 (readerServiceURL.trim().length() > 0)){
@@ -229,7 +325,29 @@ public class CircleOfTrustDescriptor {
             }
         }
         
-        this.readerServiceURL = readerServiceURL;
+        this.idffReaderServiceURL = readerServiceURL;
+    }
+    
+    /**
+     * Sets reader service URL for SMALv2 protocol.
+     *
+     * @param readerServiceURL reader service URL of SAMLv2 protocol.
+     * @throws COTException if <code>readerServiceURL</code>
+     *         is not an URL.
+     */
+    public void setSAML2ReaderServiceURL(String readerServiceURL)
+    throws COTException {
+        if ((readerServiceURL != null) &&
+                (readerServiceURL.trim().length() > 0)){
+            URLValidator validator = URLValidator.getInstance();
+            try {
+                validator.validate(readerServiceURL);
+            } catch (ValidationException e) {
+                throw new COTException("invalidReaderUrl",null);
+            }
+        }
+        
+        this.saml2ReaderServiceURL = readerServiceURL;
     }
     
     /**
@@ -239,7 +357,7 @@ public class CircleOfTrustDescriptor {
      * @throws COTException if <code>writerServiceURL</code>
      *         is not an URL.
      */
-    public void setWriterServiceURL(String writerServiceURL)
+    private void setWriterServiceURL(String writerServiceURL)
     throws COTException {
         if ((writerServiceURL != null) &&
                 (writerServiceURL.trim().length() > 0)
@@ -254,7 +372,53 @@ public class CircleOfTrustDescriptor {
         
         this.writerServiceURL = writerServiceURL;
     }
-    
+
+    /**
+     * Sets writer service URL for IDFF protocol.
+     *
+     * @param writerServiceURL writer service URL of the Circle of Trust.
+     * @throws COTException if <code>writerServiceURL</code>
+     *         is not an URL.
+     */
+    public void setIDFFWriterServiceURL(String writerServiceURL)
+    throws COTException {
+        if ((writerServiceURL != null) &&
+                (writerServiceURL.trim().length() > 0)
+                ){
+            URLValidator validator = URLValidator.getInstance();
+            try {
+                validator.validate(writerServiceURL);
+            } catch (ValidationException e) {
+                throw new COTException("invalidWriterUrl",null);
+            }
+        }
+
+        this.idffWriterServiceURL = writerServiceURL;
+    }
+
+    /**
+     * Sets writer service URL for SAML2 protocol.
+     *
+     * @param writerServiceURL writer service URL of the Circle of Trust.
+     * @throws COTException if <code>writerServiceURL</code>
+     *         is not an URL.
+     */
+    public void setSAML2WriterServiceURL(String writerServiceURL)
+    throws COTException {
+        if ((writerServiceURL != null) &&
+                (writerServiceURL.trim().length() > 0)
+                ){
+            URLValidator validator = URLValidator.getInstance();
+            try {
+                validator.validate(writerServiceURL);
+            } catch (ValidationException e) {
+                throw new COTException("invalidWriterUrl",null);
+            }
+        }
+
+        this.saml2WriterServiceURL = writerServiceURL;
+    }
+ 
     /**
      * Sets status of a circle of trust.
      *
@@ -280,22 +444,58 @@ public class CircleOfTrustDescriptor {
      * @param circleOfTrustProvider A set of trusted providers
      */
     public void setTrustedProviders(Set circleOfTrustProvider) {
-        trustedProviders = Collections.unmodifiableSet(circleOfTrustProvider);
+        if ((circleOfTrustProvider != null) 
+            && !circleOfTrustProvider.isEmpty()) {
+            trustedProviderMap = Collections.unmodifiableMap(
+                COTUtils.trustedProviderSetToProtocolMap(
+                    circleOfTrustProvider, realm));
+            trustedProviders = Collections.unmodifiableSet(
+                COTUtils.trustedProviderProtocolMapToSet(trustedProviderMap));
+        }
     }
     
     /**
      * Returns a set of trusted providers in the circle of trust.
      *
-     * @return a set of trusted providers in the circle of trust.
+     * @return a set of trusted providers in the circle of trust, or null
+     * if there is no trusted providers in the circle of trust.
      */
     public Set getTrustedProviders() {
-        Set ret = new HashSet();
         if (trustedProviders == null) {
             return null;
         } else {
+            Set ret = new HashSet();
             ret.addAll(trustedProviders);
+            return ret;
         }
-        return ret;
+    }
+    
+    /**
+     * Returns a set of trusted providers in the circle of trust for a specific
+     * protocol.
+     * @param protocol name of the federation protocol
+     * @return a set of trusted providers in the circle of trust, or null if 
+     * such entity does not exist.
+     */
+    public Set getTrustedProviders(String protocol) {
+        if ((trustedProviderMap == null) || (protocol == null)) {
+            return null;
+        } else {
+            Set tmp = (Set) trustedProviderMap.get(protocol);
+            if (tmp != null) {
+                // handle legacy case
+                if ((circleOfTrustType == null) 
+                    || circleOfTrustType.equals(protocol)) {
+                    Set ret = new HashSet();
+                    ret.addAll(tmp);
+                    return ret;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
     }
     
     /**
@@ -303,16 +503,23 @@ public class CircleOfTrustDescriptor {
      * circle of trust.
      *
      * @param entityID the entity id of a provider .
+     * @param protocol name of protocol for the entity.
      * @return true if the set did not already contain the entityID.
      */
-    public boolean add(String entityID) throws COTException {
-        if (!trustedProviders.contains(entityID)) {
+    public boolean add(String entityID, String protocol) throws COTException {
+        if (!COTUtils.isValidProtocolType(protocol)) {
+            throw new COTException("invalidProtocolType", null);
+        }
+        if ((trustedProviderMap == null) 
+            || (trustedProviderMap.get(protocol) == null) 
+            || !((Set) trustedProviderMap.get(protocol)).contains(entityID)) {
             Set ret = new HashSet();
             if (trustedProviders != null) {
                 ret.addAll(trustedProviders);
             }
-            boolean result = ret.add(entityID);
-            trustedProviders = Collections.unmodifiableSet(ret);
+            boolean result = ret.add(entityID + COTConstants.DELIMITER 
+                + protocol);
+            setTrustedProviders(ret);
             return result;
         } else {
             throw new COTException("entityExistsInCot", null);
@@ -323,19 +530,30 @@ public class CircleOfTrustDescriptor {
      * Removes member from the trusted provider set within this circle
      * of trust.
      *
-     * @param entityID The entity id of a provider
+     * @param entityID The entity id of a provider.
+     * @param protocol name of protocol for the entity.
      * @return true if the set contained the entityID.
      */
-    public boolean remove(String entityID) {
-        if (trustedProviders != null && !trustedProviders.contains(entityID)) {
-            return true;
+    public boolean remove(String entityID, String protocol) {
+        if (!COTUtils.isValidProtocolType(protocol)) {
+            return false;
+        }
+        if ((trustedProviderMap == null) ||
+            (trustedProviderMap.get(protocol) == null) ||
+            !((Set) trustedProviderMap.get(protocol)).contains(entityID)) {
+            return false;
         }
         Set ret = new HashSet();
         if (trustedProviders != null) {
             ret.addAll(trustedProviders);
         }
-        boolean result = ret.remove(entityID);
-        trustedProviders = Collections.unmodifiableSet(ret);
+        boolean result = ret.remove(entityID + COTConstants.DELIMITER 
+            + protocol);
+        if (!result) {
+            // handle legacy case
+            result = ret.remove(entityID);
+        }
+        setTrustedProviders(ret);
         return result;
     }
     
@@ -350,20 +568,24 @@ public class CircleOfTrustDescriptor {
                 circleOfTrustDescription);
         COTUtils.fillEntriesInSet(
                 attrMap,
-                COTConstants.COT_TYPE,
-                circleOfTrustType);
-        COTUtils.fillEntriesInSet(
-                attrMap,
                 COTConstants.COT_STATUS,
                 circleOfTrustStatus);
         COTUtils.fillEntriesInSet(
                 attrMap,
-                COTConstants.COT_WRITER_SERVICE,
-                writerServiceURL);
+                COTConstants.COT_SAML2_WRITER_SERVICE,
+                saml2WriterServiceURL);
         COTUtils.fillEntriesInSet(
                 attrMap,
-                COTConstants.COT_READER_SERVICE,
-                readerServiceURL);
+                COTConstants.COT_IDFF_WRITER_SERVICE,
+                idffWriterServiceURL);
+        COTUtils.fillEntriesInSet(
+                attrMap,
+                COTConstants.COT_SAML2_READER_SERVICE,
+                saml2ReaderServiceURL);
+        COTUtils.fillEntriesInSet(
+                attrMap,
+                COTConstants.COT_IDFF_READER_SERVICE,
+                idffReaderServiceURL);
         attrMap.put(COTConstants.COT_TRUSTED_PROVIDERS, trustedProviders);
         return attrMap;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIntersiteTransferService.java,v 1.2 2007-01-10 06:29:32 exu Exp $
+ * $Id: FSIntersiteTransferService.java,v 1.3 2007-05-17 19:31:58 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,8 +85,7 @@ public class FSIntersiteTransferService extends HttpServlet {
                    (Set)session.getAttribute(IFSConstants.SESSION_COTSET_ATTR);
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             if(cotSet == null){
-                cotSet = cotManager.getAllCirclesOfTrust(
-                    "/", COTConstants.IDFF);
+                cotSet = cotManager.getAllCirclesOfTrust("/");
                 if(cotSet != null){
                     session.setAttribute(IFSConstants.SESSION_COTSET_ATTR, 
                                          cotSet);
@@ -122,8 +121,8 @@ public class FSIntersiteTransferService extends HttpServlet {
             cotSet.remove(cotName);
             session.setAttribute(IFSConstants.SESSION_COTSET_ATTR, cotSet);
             String readerServiceURL = 
-                cotManager.getCircleOfTrust("/", cotName, COTConstants.IDFF)
-                    .getReaderServiceURL();
+                cotManager.getCircleOfTrust("/", cotName)
+                    .getIDFFReaderServiceURL();
             if(readerServiceURL != null){
                 StringBuffer redirectURL = new StringBuffer(300);
                 StringBuffer returnURL = request.getRequestURL();

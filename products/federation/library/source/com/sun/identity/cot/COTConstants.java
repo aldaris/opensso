@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COTConstants.java,v 1.1 2006-10-30 23:13:58 qcheng Exp $
+ * $Id: COTConstants.java,v 1.2 2007-05-17 19:31:56 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cot;
@@ -69,6 +69,30 @@ public interface COTConstants {
     static final String COT_READER_SERVICE = "sun-fm-readerservice-url";
     
     /**
+     * IDFF Circle of Trust Writer Service URL Attribute name.
+     */
+    String COT_IDFF_WRITER_SERVICE = 
+        "sun-fm-idff-writerservice-url";
+    
+    /**
+     * IDFF Circle of Trust Reader Service URL Attribute name.
+     */
+    String COT_IDFF_READER_SERVICE = 
+        "sun-fm-idff-readerservice-url";
+    
+    /**
+     * SAMLv2 Circle of Trust Writer Service URL Attribute name.
+     */
+    String COT_SAML2_WRITER_SERVICE = 
+        "sun-fm-saml2-writerservice-url";
+    
+    /**
+     * SAMLv2 Circle of Trust Reader Service URL Attribute name.
+     */
+    String COT_SAML2_READER_SERVICE = 
+        "sun-fm-saml2-readerservice-url";
+    
+    /**
      * Trusted Providers in a Circle of Trust Attribute name.
      */
     static final String COT_TRUSTED_PROVIDERS = "sun-fm-trusted-providers";
@@ -89,14 +113,24 @@ public interface COTConstants {
     static final String COT_LIST = "cotlist";
     
     /**
-     * Circle of Trust Type IDFF
+     * ID-FF Protocol
      */
-    static final String IDFF = "IDFF";
+    public String IDFF = "idff";
     
     /**
-     * Circle of Trust Type SAML2
+     * SAML2 protocol
      */
-    static final String SAML2 = "SAML2";
+    public String SAML2 = "saml2";
+    
+    /**
+     * WS-Federation protocol
+     */
+    public String WS_FED = "wsfed";
+
+    /**
+     * delimiter 
+     */
+    public String DELIMITER = "|";
     
     /**
      * Circle of Trust Log Prefix

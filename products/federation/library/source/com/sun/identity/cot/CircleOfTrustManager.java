@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.3 2007-02-16 02:02:49 veiming Exp $
+ * $Id: CircleOfTrustManager.java,v 1.4 2007-05-17 19:31:57 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -122,39 +122,19 @@ public class CircleOfTrustManager {
             throw new COTException("cotExists",data);
         }
         
-        String cotType = cotDescriptor.getCircleOfTrustType();
-        COTUtils.isValidCOTType(cotType);
-        
         Map attrs = cotDescriptor.getAttributes();
         // Filter out the entityid which does not exist in the system
-        Set tp = cotDescriptor.getTrustedProviders();
-        if (tp != null && !tp.isEmpty()) {
-            Set entityIds = getAllEntities(realm,cotType);
-            if (entityIds == null || entityIds.isEmpty())  {
-                cotDescriptor.setTrustedProviders(new HashSet());
-                attrs = cotDescriptor.getAttributes();
-            } else {
-                if (entityIds.containsAll(tp)) {
-                    if (entityIds.retainAll(tp)) {
-                        if (debug.messageEnabled()) {
-                            debug.message(classMethod + "Following entity id: "
-                                    + entityIds +
-                                    " are valid and will be added to the " +
-                                    "circle of trust: " + name +
-                                    ". The rest will be ignored.");
-                        }
-                        cotDescriptor.setTrustedProviders(entityIds);
-                        attrs = cotDescriptor.getAttributes();
-                    }
-                }
-            }
-        }
+        Map tpMap = checkAndSetTrustedProviders(realm, cotDescriptor);
         
         // update the extended entity config
-        
-        Set newTP = cotDescriptor.getTrustedProviders();
-        
-        updateEntityConfig(realm,name,cotType,newTP);
+        if (tpMap != null) {
+            updateEntityConfig(realm, name, COTConstants.SAML2, 
+                (Set) tpMap.get(COTConstants.SAML2));
+            updateEntityConfig(realm, name, COTConstants.IDFF, 
+                (Set) tpMap.get(COTConstants.IDFF));
+            //updateEntityConfig(realm, name, COTConstants.WS_FED, 
+            //    (Set) tpMap.get(COTConstants.WS_FED));
+        }
         
         // create the cot node
         try {
@@ -170,6 +150,49 @@ public class CircleOfTrustManager {
             LogUtil.error(Level.INFO,
                     LogUtil.CONFIG_ERROR_CREATE_COT_DESCRIPTOR,data);
             throw new COTException(e);
+        }
+    }
+    
+    /**
+     * This method filters out invalid entities from the trusted provider list.
+     */
+    private Map checkAndSetTrustedProviders(String realm, 
+            CircleOfTrustDescriptor cotDescriptor) throws COTException {
+        Set tp = cotDescriptor.getTrustedProviders();
+        Map map = null;
+        if ((tp != null) && !tp.isEmpty()) { 
+            map = COTUtils.trustedProviderSetToProtocolMap(tp, realm);
+            retainValidEntityIDs(map, COTConstants.SAML2, realm);
+            retainValidEntityIDs(map, COTConstants.IDFF, realm);
+            //retrinValidEntityID(map, COTConstants.WS_FED, realm);
+        }
+        return map;
+    }
+
+    /**
+     * Retains only valid entity ID for a specific protocol
+     */
+    private void retainValidEntityIDs(Map map, String protocol, String realm) 
+        throws COTException {
+        Set pSet = (Set) map.get(protocol);
+        if ((pSet != null) && !pSet.isEmpty()) {
+            Set entityIds = getAllEntities(realm, protocol);     
+            if ((entityIds == null) || entityIds.isEmpty())  {
+                // no valid entity exists for this protocol, clear the map
+                map.remove(protocol);
+            } else {
+                if (!entityIds.containsAll(pSet)) {
+                    if (entityIds.retainAll(pSet)) {
+                        if (debug.messageEnabled()) {
+                            debug.message("COTDescriptor.retainValidEntityIDs:" 
+                                + " Following entity id: "
+                                + entityIds + " are valid and will be added to "
+                                + "the circle of trust");
+                        }
+                        map.put(protocol, entityIds);
+                    }
+                }
+            }
         }
     }
     
@@ -196,9 +219,6 @@ public class CircleOfTrustManager {
         String name = cotDescriptor.getCircleOfTrustName();
         isValidCOTName(realm,name);
         
-        String cotType = cotDescriptor.getCircleOfTrustType();
-        COTUtils.isValidCOTType(cotType);
-        
         try {
             Map attrs = cotDescriptor.getAttributes();
             configInst.setConfiguration(realm, name, attrs);
@@ -219,7 +239,7 @@ public class CircleOfTrustManager {
      * @return Set of names of all circle of trusts.
      * @throws COTException if unable to read circle of trust.
      */
-    public Set getAllCirclesOfTrust(String realm,String cotType)
+    public Set getAllCirclesOfTrust(String realm)
     throws COTException {
         Set valueSet = null;
         Set cotSet = new HashSet();
@@ -231,12 +251,8 @@ public class CircleOfTrustManager {
             valueSet = configInst.getAllConfigurationNames(realm);
             if ((valueSet != null) && !valueSet.isEmpty()) {
                 for (Iterator iter = valueSet.iterator(); iter.hasNext(); ) {
-                    String name = (String)iter.next();
-                    Map attrMap = configInst.getConfiguration(realm, name);
-                    if (COTUtils.getFirstEntry(attrMap,COTConstants.COT_TYPE).
-                            equalsIgnoreCase(cotType)) {
-                        cotSet.add(name);
-                    }
+                    String name = (String) iter.next();
+                    cotSet.add(name);
                 }
             }
         } catch (ConfigurationException e) {
@@ -249,45 +265,21 @@ public class CircleOfTrustManager {
         return cotSet;
     }
     
-    /**
-     * Returns a set of names of all circle of trusts.
-     *
-     * @param realm The realm under which the circle of trust resides.
-     * @return Set of names of all circle of trusts.
-     * @throws COTException if unable to read circle of trust.
-     */
-    public Set getAllCirclesOfTrust(String realm) throws COTException {
-        Set valueSet = null;
-        String classMethod = "COTManager.getAllCircleOfTrust: ";
-        try {
-            valueSet = configInst.getAllConfigurationNames(realm);
-        } catch (ConfigurationException e) {
-            debug.error(classMethod, e);
-            String[] data = { e.getMessage(), realm };
-            LogUtil.error(Level.INFO,
-                    LogUtil.CONFIG_ERROR_GET_ALL_COT_DESCRIPTOR,data);
-            throw new COTException(e);
-        }
-        if (debug.messageEnabled()) {
-            debug.message(classMethod + "trustedProviders are :" + valueSet);
-        }
-        return valueSet;
-    }
     
     /**
-     * Checks if the circle of trust type is IDFF or SAML2
+     * Checks if the federation protocol type is valid.
      *
-     * @param cotType the circle of trust type.
-     * @retrun true if circle of trust type is IDFF or SAML2.
+     * @param protocolType the federation protocol to be checked.
+     * @retrun true if the protocol type if valid.
      * @throws COTException if the circle of trust type is not valid.
      */
-    boolean isValidCOTType(String cotType) throws COTException {
-        String classMethod = "COTManager:isValidCOTType";
+    boolean isValidProtocolType(String protocolType) throws COTException {
+        String classMethod = "COTManager:isValidProtocolType";
         
-        if (!COTUtils.isValidCOTType(cotType)) {
-            debug.error(classMethod +"Invalid Circle of Trust Type " + cotType);
-            String[] data = { cotType };
-            throw new COTException("invalidCOTType",data);
+        if (!COTUtils.isValidProtocolType(protocolType)) {
+            debug.error(classMethod +"Invalid protocol Type " + protocolType);
+            String[] data = { protocolType };
+            throw new COTException("invalidProtocolType", data);
         }
         return true;
     }
@@ -296,11 +288,11 @@ public class CircleOfTrustManager {
      * Returns a set of entity identities based on the circle of
      * trust type IDFF or SAML2
      *
-     * @param realm the realm name
-     * @param type the circle of trust type.
+     * @param realm the realm name.
+     * @param type the protocol type.
      * @throws COTExcepton if the circle of trust type is invalid.
      */
-    Set getAllEntities(String realm,String type) throws COTException {
+    Set getAllEntities(String realm, String type) throws COTException {
         Set entityIds = Collections.EMPTY_SET;
         if (type != null) {
             if (type.equalsIgnoreCase(COTConstants.IDFF)) {
@@ -309,7 +301,7 @@ public class CircleOfTrustManager {
                 entityIds = getSAML2Entities(realm);
             } else {
                 String[] data = { type };
-                throw new COTException("invalidCOTType",data);
+                throw new COTException("invalidProtocolType",data);
             }
         }
         return entityIds;
@@ -346,21 +338,21 @@ public class CircleOfTrustManager {
      *
      * @param realm the realm in which the entity configuration is in.
      * @param cotName the name of the circle of trust.
-     * @param cotType the circle of trust type , IDFF or SAML2.
+     * @param protocolType the federation protocol type , IDFF or SAML2.
      * @param trustedProvider a set of trusted provider identifiers to
      *        be updated in the entity configuration.
      * @throws COTException if there is an error updating the entity
      *         configuration.
      */
-    void updateEntityConfig(String realm,String cotName,String cotType,
+    void updateEntityConfig(String realm, String cotName, String protocolType,
             Set trustedProviders) throws COTException {
-        if (cotType.equalsIgnoreCase(COTUtils.IDFF)) {
+        if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             updateIDFFEntityConfig(realm,cotName,trustedProviders);
-        } else if (cotType.equalsIgnoreCase(COTUtils.SAML2)) {
+        } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             updateSAML2EntityConfig(realm,cotName,trustedProviders);
         } else {
-            String[] args = { cotType };
-            throw new COTException("invalidCOTType",args);
+            String[] args = { protocolType };
+            throw new COTException("invalidProtocolType",args);
         }
     }
     
@@ -371,28 +363,28 @@ public class CircleOfTrustManager {
      *
      * @param realm the realm in which the entity configuration is in.
      * @param cotName the name of the circle of trust.
-     * @param cotType the circle of trust type , IDFF or SAML2.
+     * @param protocolType the federation protocol type , IDFF or SAML2.
      * @param entityID the entity identifier.
      * @throws COTException if there is an error updating the entity
      *         configuration.
      */
-    void updateEntityConfig(String realm,String cotName,
-            String cotType,String entityID) throws COTException,JAXBException {
-        if (cotType.equalsIgnoreCase(COTUtils.IDFF)) {
+    void updateEntityConfig(String realm, String cotName, String protocolType, 
+        String entityID) throws COTException,JAXBException {
+        if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
                 new IDFFCOTUtils().updateEntityConfig(cotName,entityID);
             } catch (IDFFMetaException idffe) {
                 throw new COTException(idffe);
             }
-        } else if (cotType.equalsIgnoreCase(COTUtils.SAML2)) {
+        } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             try {
                 new SAML2COTUtils().updateEntityConfig(realm,cotName,entityID);
             } catch (SAML2MetaException idffe) {
                 throw new COTException(idffe);
             }
         } else {
-            String[] args = { cotType };
-            throw new COTException("invalidCOTType",args);
+            String[] args = { protocolType };
+            throw new COTException("invalidProtocolType",args);
         }
     }
     
@@ -401,21 +393,21 @@ public class CircleOfTrustManager {
      *
      * @param realm the realm name.
      * @param cotName the circle of trust name.
-     * @param cotType the circle of trust type.
+     * @param protocolType the federation protocol type.
      * @param entityID the entity identifier to be updated.
      * @throws COTException if there is  error updating entity configuration.
      * @throws JAXBException if there is error retrieving entity configuration.
      */
-    void removeFromEntityConfig(String realm,String cotName,String cotType,
+    void removeFromEntityConfig(String realm,String cotName,String protocolType,
             String entityID)
-            throws COTException,JAXBException {
-        if (cotType.equalsIgnoreCase(COTConstants.IDFF)) {
+            throws COTException, JAXBException {
+        if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
                 new IDFFCOTUtils().removeFromEntityConfig(cotName,entityID);
             } catch (IDFFMetaException idme) {
                 throw new COTException(idme);
             }
-        } else if (cotType.equalsIgnoreCase(COTConstants.SAML2)) {
+        } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             try {
                 new SAML2COTUtils().removeFromEntityConfig(realm,cotName,
                         entityID);
@@ -423,8 +415,8 @@ public class CircleOfTrustManager {
                 throw new COTException(sme);
             }
         } else {
-            String[] data = { cotType };
-            throw new COTException("invalidCOTType",data);
+            String[] data = { protocolType };
+            throw new COTException("invalidProtocolType",data);
         }
         
     }
@@ -498,17 +490,18 @@ public class CircleOfTrustManager {
     }
     
     /**
-     * Adds entity identifier in a circle of trust under the realm.
+     * Adds entity identifier to a circle of trust under the realm.
      *
      * @param realm The realm under which the circle of trust will be
      *              modified.
-     * @param name the name of the circle of trust
-     * @param entityId the entity identifier
+     * @param cotName the name of the circle of trust.
+     * @param protocolType the federation protcol type the entity supports.
+     * @param entityId the entity identifier.
      * @throws COTException if unable to add member to the
      *         circle of trust.
      */
-    public void addCircleOfTrustMember(String realm,String cotName,
-            String cotType,String entityId)
+    public void addCircleOfTrustMember(String realm, String cotName,
+            String protocolType, String entityId)
             throws COTException {
         String classMethod = "COTManager.addCircleOfTrustMember: ";
         if (realm == null) {
@@ -528,20 +521,20 @@ public class CircleOfTrustManager {
         }
         try {
             Map attrs = configInst.getConfiguration(realm, cotName);
-            //validate cot type
-            isValidCotTypeInConfig(attrs,cotType);
+            //validate protocol type
+            isValidProtocolType(protocolType);
             // add the cot to the entity config descriptor
-            updateEntityConfig(realm, cotName,cotType, entityId);
+            updateEntityConfig(realm, cotName, protocolType, entityId);
             
             // add the entityid to the cot
             CircleOfTrustDescriptor cotDesc;
             if (attrs == null) {
-                cotDesc = new CircleOfTrustDescriptor(cotName,cotType,"active");
+                cotDesc = new CircleOfTrustDescriptor(cotName, realm, "active");
             } else {
-                cotDesc = new CircleOfTrustDescriptor(cotName,cotType,attrs);
+                cotDesc = new CircleOfTrustDescriptor(cotName, realm, attrs);
             }
             
-            if (!cotDesc.add(entityId)) {
+            if (!cotDesc.add(entityId, protocolType)) {
                 debug.error(classMethod +
                         "fail to add entityid to the circle of trust."
                         + entityId + " in Realm " + realm);
@@ -572,12 +565,13 @@ public class CircleOfTrustManager {
      *
      * @param realm the realm to which the circle of trust belongs.
      * @param cotName  the circle of trust name.
+     * @param protocolType the federation protocol type.
      * @param entityId the entity identifier.
      * @throws COTException if there is an error removing entity from the
      *         circle of trust.
      */
     public void removeCircleOfTrustMember(String realm,String cotName,
-            String cotType, String entityId)
+            String protocolType, String entityId)
             throws COTException {
         String classMethod = "COTManager.removeCircleOfTrustMember: ";
         if ((cotName == null) || (cotName.trim().length() == 0)) {
@@ -600,19 +594,19 @@ public class CircleOfTrustManager {
         try {
             // Remove the cot from the cotlist attribute in
             // the entity config.
-            removeFromEntityConfig(realm, cotName, cotType, entityId);
+            removeFromEntityConfig(realm, cotName, protocolType, entityId);
             
             // Remove entity id from the cot
             CircleOfTrustDescriptor cotDesc;
             Map attrs = configInst.getConfiguration(realm, cotName);
             if (attrs == null) {
-                cotDesc = new CircleOfTrustDescriptor(cotName,cotType,
-                        COTConstants.ACTIVE);
+                cotDesc = new CircleOfTrustDescriptor(cotName, realm,
+                    COTConstants.ACTIVE);
             } else {
-                cotDesc = new CircleOfTrustDescriptor(cotName, cotType,attrs);
+                cotDesc = new CircleOfTrustDescriptor(cotName, realm, attrs);
             }
             
-            if (!cotDesc.remove(entityId)) {
+            if (!cotDesc.remove(entityId, protocolType)) {
                 debug.error(classMethod +
                         "fail to remove entityid from the circle of trust." +
                         realm);
@@ -643,13 +637,14 @@ public class CircleOfTrustManager {
      * @param realm The realm under which the circle of trust will be
      *              modified.
      * @param cotName the name of the circle of trust
+     * @param protocolType the federation protocol for the entities.
      * @return Set of trusted providers or null if no member in the
      *                circle of trust
      * @throws COTException if unable to list member in the
      *         circle of trust.
      */
-    public Set listCircleOfTrustMember(String realm,String cotName,
-            String cotType) throws COTException {
+    public Set listCircleOfTrustMember(String realm, String cotName,
+            String protocolType) throws COTException {
         String classMethod = "COTManager.listCircleOfTrustMember: ";
         if ((cotName == null) || (cotName.trim().length() == 0)) {
             String[] data = { realm };
@@ -667,9 +662,9 @@ public class CircleOfTrustManager {
             if (attrs == null) {
                 return null;
             } else {
-                isValidCotTypeInConfig(attrs,cotType);
-                cotDesc = new CircleOfTrustDescriptor(cotName,cotType,attrs);
-                trustedProviders = cotDesc.getTrustedProviders();
+                isValidProtocolType(protocolType);
+                cotDesc = new CircleOfTrustDescriptor(cotName,  realm, attrs);
+                trustedProviders = cotDesc.getTrustedProviders(protocolType);
             }
         } catch (ConfigurationException e) {
             debug.error(classMethod, e);
@@ -687,7 +682,7 @@ public class CircleOfTrustManager {
      * @param cotName Name of the circle of trust.
      * @throws COTException if unable to delete the circle of trust.
      */
-    public void deleteCircleOfTrust(String realm,String cotName,String cotType)
+    public void deleteCircleOfTrust(String realm, String cotName)
     throws COTException {
         String classMethod = "COTManager.deleteCircleOfTrust:" ;
         if (realm == null) {
@@ -696,16 +691,14 @@ public class CircleOfTrustManager {
         String[] data = { cotName, realm };
         
         isValidCOTName(realm,cotName);
-        isValidCOTType(cotType);
-        
+
         try {
             Set trustProviders = null;
             Map attrs = configInst.getConfiguration(realm, cotName);
             
             if (attrs != null) {
-                isValidCotTypeInConfig(attrs,cotType);
                 CircleOfTrustDescriptor cotDesc=
-                        new CircleOfTrustDescriptor(cotName, cotType , attrs);
+                        new CircleOfTrustDescriptor(cotName, realm, attrs);
                 
                 trustProviders = cotDesc.getTrustedProviders();
             }
@@ -718,7 +711,7 @@ public class CircleOfTrustManager {
                         " is not allowed since it contains members.");
                 LogUtil.error(Level.INFO,
                         LogUtil.HAS_ENTITIES_DELETE_COT_DESCRIPTOR,data);
-                String[] args = { cotName , realm , cotType };
+                String[] args = { cotName , realm };
                 throw new COTException("deleteCOTFailedHasMembers", args);
             }
         } catch (ConfigurationException e) {
@@ -730,43 +723,36 @@ public class CircleOfTrustManager {
         }
     }
     
-    public CircleOfTrustDescriptor getCircleOfTrust(String realm,String name)
-    throws COTException {
-        return getCircleOfTrust(realm,name,COTUtils.SAML2);
-    }
     /**
      * Returns the circle of trust under the realm.
      *
      * @param realm The realm under which the circle of trust resides.
      * @param name Name of the circle of trust.
-     * @param cotType the circle of trust type indicating its a SAML2
-     *        or IDFF.
      * @return <code>SAML2CircleOfTrustDescriptor</code> containing the
      * attributes of the given CircleOfTrust.
      * @throws SAML2MetaException if unable to retrieve the circle of trust.
      */
-    public CircleOfTrustDescriptor getCircleOfTrust(String realm,String name,
-            String cotType) throws COTException {
+    public CircleOfTrustDescriptor getCircleOfTrust(String realm, String name)
+        throws COTException {
         String classMethod = "COTManager.getCircleOfTrust :";
         if (realm == null) {
             realm = "/";
         }
-        isValidCOTName(realm,name);
-        isValidCOTType(cotType);
+        isValidCOTName(realm, name);
         
         String[] data = { name, realm };
         
         CircleOfTrustDescriptor cotDesc = COTCache.getCircleOfTrust(realm,name);
         if (cotDesc != null) {
-            LogUtil.access(Level.FINE,LogUtil.COT_FROM_CACHE,data);
+            LogUtil.access(Level.FINE, LogUtil.COT_FROM_CACHE, data);
         } else {
             try {
                 Map attrs = configInst.getConfiguration(realm, name);
                 if (attrs == null) {
-                    cotDesc = new CircleOfTrustDescriptor(name,cotType,
+                    cotDesc = new CircleOfTrustDescriptor(name, realm,
                             COTConstants.ACTIVE);
                 } else {
-                    cotDesc = new CircleOfTrustDescriptor(name,cotType,attrs);
+                    cotDesc = new CircleOfTrustDescriptor(name, realm, attrs);
                 }
                 
                 COTCache.putCircleOfTrust(realm, name, cotDesc);
@@ -807,8 +793,7 @@ public class CircleOfTrustManager {
                     Map attrMap = configInst.getConfiguration(realm, name);
                     
                     if (COTUtils.getFirstEntry(attrMap,
-                            COTConstants.COT_STATUS).
-                            equalsIgnoreCase(
+                        COTConstants.COT_STATUS).equalsIgnoreCase(
                             COTConstants.ACTIVE)) {
                         activeAuthDomains.add(name);
                     }
@@ -824,65 +809,25 @@ public class CircleOfTrustManager {
         return activeAuthDomains;
     }
     
-    /**
-     * Returns a set of names of all active circle of trusts.
-     *
-     * @return Set of names of all active circle of trusts.
-     * @throws SAML2MetaException if the names of
-     *         circle of trusts cannot be read.
-     */
-    public Set getAllActiveIDFFCirclesOfTrust()
-    throws COTException {
-        String classMethod = "COTManager.getAllActiveCirclesOfTrust: ";
-        Set activeIDFFCots = new HashSet();
-        String realm = COTConstants.ROOT_REALM;
-        
-        try {
-            Set valueSet = configInst.getAllConfigurationNames(realm);
-            
-            if ((valueSet != null) && !valueSet.isEmpty()) {
-                for (Iterator iter = valueSet.iterator(); iter.hasNext(); ) {
-                    String name = (String)iter.next();
-                    Map attrMap = configInst.getConfiguration(realm, name);
-                    String cotType = COTUtils.getFirstEntry(attrMap,
-                            COTConstants.COT_TYPE);
-                    String cotStatus = COTUtils.getFirstEntry(attrMap,
-                            COTConstants.COT_STATUS);
-                    
-                    
-                    if (isValidCOTType(cotType) && isActiveCOT(cotStatus)) {
-                        activeIDFFCots.add(name);
-                    }
-                }
-            }
-        } catch (ConfigurationException se) {
-            debug.error(classMethod, se);
-            String[] data = { se.getMessage(), COTConstants.IDFF , realm };
-            
-            LogUtil.error(Level.INFO,
-                    LogUtil.CONFIG_ERROR_GET_ALL_ACTIVE_COT,data);
-            throw new COTException(se);
-        }
-        return activeIDFFCots;
-    }
-    
     
     /**
      * Determines if entity is in the circle of trust under the realm.
      *
      * @param realm The realm under which the circle of trust resides.
      * @param name Name of the Circle of Trust.
-     * @param cotType the Circle of Trust type IDFF or SAML2
-     * @param entityId the entity identifier
+     * @param protocolType the federation protocol type of the entity.
+     * @param entityId the entity identifier.
      * @throws COTException if unable to determine this entity in the
-     *                                  circle of trust.
+     *     circle of trust.
      */
-    public boolean isInCircleOfTrust(String realm, String name, String cotType,
-            String entityId) {
+    public boolean isInCircleOfTrust(String realm, String name, 
+            String protocolType, String entityId) {
         Set tProviders = new HashSet();
         try {
-            CircleOfTrustDescriptor cotd = getCircleOfTrust(realm,name,cotType);
-            tProviders = cotd.getTrustedProviders();
+            CircleOfTrustDescriptor cotd = getCircleOfTrust(realm, name);
+            Set pSet = cotd.getTrustedProviders(protocolType);
+            return ((pSet != null) && !pSet.isEmpty() 
+                && pSet.contains(entityId));
         } catch (Exception me) {
             debug.error("COTManager.isInCircleOfTrust", me);
             String[] data = {me.getMessage(), name, entityId , realm };
@@ -890,8 +835,7 @@ public class CircleOfTrustManager {
                     LogUtil.CONFIG_ERROR_RETREIVE_COT,
                     data);
         }
-        return (tProviders !=null && tProviders.size() > 0
-                && tProviders.contains(entityId)) ;
+        return false;
     }
     
     /**
@@ -915,27 +859,6 @@ public class CircleOfTrustManager {
         return true;
     }
     
-    /**
-     * Validates the COT Type in the configuration.
-     *
-     * @param attrs map of  circle of trust attributes where
-     *        key is the attribute name and value is the
-     *        value of the attribute.
-     * @param cotType the value of circle of trust type.
-     * @throws COTException if the circle of trust type in
-     *         the configuration is invalid.
-     */
-    boolean isValidCotTypeInConfig(Map attrs, String cotType)
-        throws COTException {
-        COTUtils.isValidCOTType(cotType);
-        String value = COTUtils.getFirstEntry(attrs,COTConstants.COT_TYPE);
-        if (value == null || !value.equalsIgnoreCase(cotType)) {
-            String[] data = { cotType };
-            throw new COTException("invalidCOTType",data);
-        }
-        
-        return true;
-    }
     
     /**
      * Checks if circle of trust status is active.
@@ -970,19 +893,19 @@ public class CircleOfTrustManager {
                 for (Iterator iter = valueSet.iterator(); iter.hasNext(); ) {
                     String name = (String)iter.next();
                     Map attrMap = configInst.getConfiguration(realm, name);
-                    String cotType = COTUtils.getFirstEntry(attrMap,
-                            COTConstants.COT_TYPE);
                     String cotStatus = COTUtils.getFirstEntry(attrMap,
                             COTConstants.COT_STATUS);
                     
                     
-                    if ((cotType != null 
-                            && cotType.equalsIgnoreCase(COTConstants.IDFF))
-                            && isActiveCOT(cotStatus)) {
-                        Set trustedProviders =
-                                (Set) attrMap.get(
-                                        COTConstants.COT_TRUSTED_PROVIDERS);
-                        cotMap.put(name,trustedProviders);
+                    if (isActiveCOT(cotStatus)) {
+                        Set trustedProviders = (Set) attrMap.get(
+                            COTConstants.COT_TRUSTED_PROVIDERS);
+                        Map map = COTUtils.trustedProviderSetToProtocolMap(
+                            trustedProviders, "/");
+                        Set idffSet = (Set) map.get(COTConstants.IDFF);
+                        if ((idffSet != null) && !idffSet.isEmpty()) {
+                            cotMap.put(name, idffSet);
+                        }
                     }
                 }
             }
