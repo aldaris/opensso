@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityToken.java,v 1.1 2007-03-23 00:02:03 mallas Exp $
+ * $Id: SecurityToken.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,11 @@ public interface SecurityToken {
       * The <code>URI</code> to identify the WS-Security SAML Security Token.
       */
      public static final String WSS_SAML_TOKEN = "urn:sun:wss:samltoken";
+     
+     /**
+      * The <code>URI</code> to identify the WS-Security SAML2 Security Token.
+      */
+     public static final String WSS_SAML2_TOKEN = "urn:sun:wss:saml2token";
 
      /**
       * The <code>URI</code> to identify the WS-Security X509 Security Token
@@ -59,6 +64,7 @@ public interface SecurityToken {
       *      {@link #WSS_SAML_TOKEN},
       *      {@link #WSS_X509_TOKEN}
       *      {@link #WSS_USERNAME_TOKEN}
+      *      {@link #WSS_SAML2_TOKEN}
       */
       public String getTokenType();
 

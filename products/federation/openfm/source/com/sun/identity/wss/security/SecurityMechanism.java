@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.1 2007-03-23 00:02:02 mallas Exp $
+ * $Id: SecurityMechanism.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,6 +187,46 @@ public class SecurityMechanism {
      */
     public static final String LIB_CLIENT_TLS_SAML_TOKEN_URI = 
                "urn:liberty:security:2005-02:ClientTLS:SAML";
+    
+    /**
+     * <code>URI</code> for the SAML2 Holder of Key security profile. 
+     */
+    public static final String WSS_NULL_SAML2_HK_URI = 
+               "urn:sun:wss:security:null:SAML2Token-HK";
+
+    /**
+     * <code>URI</code> for the SAML2 Holder of Key security profile with
+     *   <code>TLS</code> or <code>SSL</code> enabled.
+     */
+    public static final String WSS_TLS_SAML2_HK_URI = 
+               "urn:sun:wss:security:TLS:SAML2Token-HK";
+
+    /**
+     * <code>URI</code> for the SAML2 Holder of Key security profile with
+     *   <code>TLS</code> or <code>SSL</code>  and client auth enabled.
+     */
+    public static final String WSS_CLIENT_TLS_SAML2_HK_URI = 
+               "urn:sun:wss:security:ClientTLS:SAML2Token-HK";
+    
+    /**
+     * <code>URI</code> for the SAML2 Sender Vouches security profile. 
+     */
+    public static final String WSS_NULL_SAML2_SV_URI = 
+               "urn:sun:wss:security:null:SAML2Token-SV";
+
+    /**
+     * <code>URI</code> for the SAML2 Sender Vouches security profile with
+     *   <code>TLS</code> or <code>SSL</code> enabled.
+     */
+    public static final String WSS_TLS_SAML2_SV_URI = 
+               "urn:sun:wss:security:TLS:SAML2Token-SV";
+
+    /**
+     * <code>URI</code> for the SAML2 Sender Vouches security profile with
+     *   <code>TLS</code> or <code>SSL</code>  and client auth enabled.
+     */
+    public static final String WSS_CLIENT_TLS_SAML2_SV_URI = 
+               "urn:sun:wss:security:ClientTLS:SAML2Token-SV";
 
     static {
         map.put("ClientTLS-SAML-HolderOfKey", WSS_CLIENT_TLS_SAML_HK_URI);
@@ -212,6 +252,12 @@ public class SecurityMechanism {
         map.put("ClientTLS-LibertyBearerToken", 
                           LIB_CLIENT_TLS_SAML_BEARER_TOKEN_URI);
         map.put("ClientTLS-LibertySAMLToken", LIB_CLIENT_TLS_SAML_TOKEN_URI);
+        map.put("SAML2-HolderOfKey", WSS_NULL_SAML2_HK_URI);
+        map.put("TLS-SAML2-HolderOfKey", WSS_TLS_SAML2_HK_URI);
+        map.put("ClientTLS-SAML2-HolderOfKey", WSS_CLIENT_TLS_SAML2_HK_URI);
+        map.put("SAML2-SenderVouches", WSS_NULL_SAML2_SV_URI);
+        map.put("TLS-SAML2-SenderVouches", WSS_TLS_SAML2_SV_URI);
+        map.put("ClientTLS-SAML2-SenderVouches", WSS_CLIENT_TLS_SAML2_SV_URI); 
     }
 
     // The following defines Security mechanism objects.
@@ -360,6 +406,46 @@ public class SecurityMechanism {
      */
     public static final SecurityMechanism LIB_CLIENT_TLS_SAML_TOKEN = 
                       new SecurityMechanism("ClientTLS-LibertySAMLToken", true);
+    
+    /**
+     * Defines the security mechanism for the saml2 token holder of key
+     * with SSL and client auth enabled.
+     */
+    public static final SecurityMechanism WSS_CLIENT_TLS_SAML2_HK = 
+                      new SecurityMechanism("ClientTLS-SAML2-HolderOfKey");
+
+    /**
+     * Defines the security mechanism for the saml2 token holder of key
+     * with SSL enabled.
+     */
+    public static final SecurityMechanism WSS_TLS_SAML2_HK = 
+                      new SecurityMechanism("TLS-SAML2-HolderOfKey");
+
+    /**
+     * Defines the security mechanism for the saml2 token holder of key.
+     */
+    public static final SecurityMechanism WSS_NULL_SAML2_HK = 
+                      new SecurityMechanism("SAML2-HolderOfKey");
+
+    /**
+     * Defines the security mechanism for the saml2 token sender vouches
+     * with SSL and client auth enabled.
+     */
+    public static final SecurityMechanism WSS_CLIENT_TLS_SAML2_SV = 
+                      new SecurityMechanism("ClientTLS-SAML2-SenderVouches");
+
+    /**
+     * Defines the security mechanism for the saml2 token sender vouches
+     * with SSL enabled.
+     */
+    public static final SecurityMechanism WSS_TLS_SAML2_SV = 
+                      new SecurityMechanism("TLS-SAML2-SenderVouches");
+
+    /**
+     * Defines the security mechanism for the saml2 token sender vouches.
+     */
+    public static final SecurityMechanism WSS_NULL_SAML2_SV = 
+                      new SecurityMechanism("SAML2-SenderVouches");
 
     private String sechMech = null;
     private String uri = null;

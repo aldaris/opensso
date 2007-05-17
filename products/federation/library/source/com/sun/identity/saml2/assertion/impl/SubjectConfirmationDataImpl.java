@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectConfirmationDataImpl.java,v 1.1 2006-10-30 23:16:10 qcheng Exp $
+ * $Id: SubjectConfirmationDataImpl.java,v 1.2 2007-05-17 18:51:31 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
 
+
 /**
  *  The <code>SubjectConfirmationData</code> specifies additional data
  *  that allows the subject to be confirmed or constrains the circumstances
@@ -63,6 +64,7 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
     private String recipient = null;
     private Date notBefore = null;
     private String address = null;
+    private String contentType = null;
 
     public SubjectConfirmationDataImpl() {
         mutable = true;
@@ -127,7 +129,7 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
             for (int i = 0; i < nList.getLength(); i++) {
                 Node childNode = nList.item(i);
                 if (childNode.getLocalName() != null) {
-                    getContent().add(XMLUtils.print(childNode));
+                    getContent().add(childNode);
                 }
             }
         }
@@ -161,6 +163,8 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
                     notOnOrAfter = DateUtils.stringToDate(attrValue);
                 } else if (attrName.equals("Recipient")) {
                     recipient = attrValue;
+                } else if (attrName.equals("xsi:type")) {
+                    contentType = attrValue;    
                 } else {
                     continue;
                 }
@@ -363,6 +367,35 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
 
         address = value;
     }
+    
+    /**
+     *  Returns the content type attribute     
+     *
+     *  @return the content type attribute     
+     *  @see #setContentType(String)
+     */
+    public String getContentType()
+    {
+        return contentType;
+    }
+    
+    /**
+     *  Sets the content type attribute     
+     *
+     *  @param attribute attribute type value for the content that will be 
+     *         added
+     *  @exception SAML2Exception if the object is immutable
+     *  @see #getAnyAttribute
+     */
+    public void setContentType(String attribute) throws SAML2Exception
+    {
+        if (!mutable) {
+           throw new SAML2Exception(
+                    SAML2SDKUtils.bundle.getString("objectImmutable"));
+        }
+
+        contentType = attribute;                
+    }
 
     /**
      * Returns a String representation of the element
@@ -451,13 +484,25 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
             xml.append("\" ");        
         }
         
+        if(contentType != null) {
+            xml.append(SAML2Constants.NS_XSI).append(" ")                    
+               .append("xsi:type=\"")
+               .append(contentType)
+               .append("\" ");
+        }
+        
         xml.append(">");
         
         if (!getContent().isEmpty()) {
             Iterator it = getContent().iterator();
             while (it.hasNext()){
-                String any = (String) it.next();
-                xml.append(any).append(" ");
+                Object obj = it.next();
+                if(obj instanceof Element) {
+                   xml.append(XMLUtils.print((Element)obj)).append(" ");                   
+                } else if(obj instanceof String) {
+                    String any = (String) it.next();
+                    xml.append(any).append(" ");
+                }
             }
         }
                 

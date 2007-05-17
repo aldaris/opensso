@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.1 2007-03-23 00:01:56 mallas Exp $
+ * $Id: AssertionToken.java,v 1.2 2007-05-17 18:49:17 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -195,7 +195,7 @@ public class AssertionToken implements SecurityToken {
             String confirmationMethod) throws SecurityException {
 
           AuthenticationStatement authStatement = null;
-          String authMethod = SAMLServiceManager.getAuthMethodURI(authType);
+          String authMethod = WSSUtils.getAuthMethodURI(authType);
           try {
               Date authInstant = DateUtils.stringToDate(authTime);
               Subject subject = null;
@@ -240,7 +240,6 @@ public class AssertionToken implements SecurityToken {
 
           return authStatement;
       }
-
 
       /** 
        * Returns the security token type.

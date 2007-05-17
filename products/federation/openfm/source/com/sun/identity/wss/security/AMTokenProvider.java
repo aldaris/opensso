@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.1 2007-03-23 00:01:55 mallas Exp $
+ * $Id: AMTokenProvider.java,v 1.2 2007-05-17 18:49:17 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,15 @@ public class AMTokenProvider implements TokenProvider {
 
         } else if(tokenSpec instanceof UserNameTokenSpec) {
            return new UserNameToken((UserNameTokenSpec)tokenSpec);
-
+           
+        } else if(tokenSpec instanceof SAML2TokenSpec) {
+            SAML2Token saml2Token = 
+                    new SAML2Token((SAML2TokenSpec)tokenSpec, ssoToken);
+            String trustAlias = SystemProperties.get(
+                 Constants.SAML_XMLSIG_CERT_ALIAS);
+            saml2Token.sign(trustAlias);
+            return saml2Token;             
+            
         } else {
            debug.error("AMTokenProvider.getSecurityToken:: unsupported token" +
            " specification");

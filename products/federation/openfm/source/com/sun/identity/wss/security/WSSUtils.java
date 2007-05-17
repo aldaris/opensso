@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.1 2007-03-23 00:02:07 mallas Exp $
+ * $Id: WSSUtils.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,7 +162,7 @@ public class WSSUtils {
         return null;
      }
 
-     private static X509Certificate getCertificate(Element keyinfo) {
+     public static X509Certificate getCertificate(Element keyinfo) {
 
         X509Certificate cert = null;
 
@@ -402,6 +402,42 @@ public class WSSUtils {
 	    }
 	}
         return xmlSigManager;        	
+    }
+    
+    /**
+     * Returns corresponding Authentication method URI to be set in Assertion.
+     * @param authModuleName name of the authentication module used to
+     *          authenticate the user.
+     * @return String corresponding Authentication Method URI to be set in
+     *          Assertion.
+     */
+    public static String getAuthMethodURI(String authModuleName) {
+        if (authModuleName == null) {
+            return null;
+        }
+
+        if (authModuleName.equalsIgnoreCase(SAMLConstants.AUTH_METHOD_CERT)) {
+            return SAMLConstants.AUTH_METHOD_CERT_URI;
+        }
+        if (authModuleName.equalsIgnoreCase(SAMLConstants.AUTH_METHOD_KERBEROS))
+        {
+            return SAMLConstants.AUTH_METHOD_KERBEROS_URI;
+        }
+        if (SAMLConstants.passwordAuthMethods.contains(
+            authModuleName.toLowerCase()))
+        {
+            return SAMLConstants.AUTH_METHOD_PASSWORD_URI;
+        }
+        if (SAMLConstants.tokenAuthMethods.contains(
+            authModuleName.toLowerCase()))
+        {
+            return SAMLConstants.AUTH_METHOD_HARDWARE_TOKEN_URI;
+        } else {
+            StringBuffer sb = new StringBuffer(100);
+            sb.append(SAMLConstants.AUTH_METHOD_URI_PREFIX).
+                        append(authModuleName);
+            return sb.toString();
+        }
     }
 
 }

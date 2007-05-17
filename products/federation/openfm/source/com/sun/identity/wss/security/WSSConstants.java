@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.1 2007-03-23 00:02:06 mallas Exp $
+ * $Id: WSSConstants.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,12 +34,17 @@ public class WSSConstants {
 
      public static final String WSSE_NS = "http://docs.oasis-open.org/wss" +
                  "/2004/01/oasis-200401-wss-wssecurity-secext-01.xsd"; 
+     
+     public static final String WSSE11_NS = 
+           "http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"; 
 
      public static final String WSSE_TAG = "wsse";
 
      public static final String NS_XML =  "http://www.w3.org/2000/xmlns/";
 
      public static final String TAG_XML_WSSE = "xmlns:wsse";
+     
+     public static final String TAG_XML_WSSE11 = "xmlns:wsse11";
 
      public static final String WSU_NS = "http://docs.oasis-open.org/wss" +
                  "/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
@@ -73,17 +78,23 @@ public class WSSConstants {
      public static final String ASSERTION_VALUE_TYPE = 
                    "http://docs.oasis-open.org/" +
                    "wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID";
+     
+     public static final String SAML2_ASSERTION_VALUE_TYPE = 
+                   "http://docs.oasis-open.org/" +
+                   "wss/oasis-wss-saml-token-profile-1.1#SAMLID";
 
      public static final String XMLSIG_NAMESPACE_URI =   
                    "http://www.w3.org/2000/09/xmldsig#";
 
      public static final String PASSWORD_DIGEST_TYPE = 
                    "http://docs.oasis-open.org/" +
-                   "wss/oasis-wss-saml-token-profile-1.0#PasswordDigest";
+                   "wss/2004/01/oasis-200401-wss-username-token-profile-1.0" +
+                   "#PasswordDigest";
 
      public static final String PASSWORD_PLAIN_TYPE = 
                    "http://docs.oasis-open.org/" +
-                   "wss/oasis-wss-saml-token-profile-1.0#PasswordPlainText";
+                   "wss/2004/01/oasis-200401-wss-username-token-profile-1.0" +
+                   "#PasswordPlainText";
 
      public static final String TAG_USERNAME_TOKEN = "UsernameToken";
    
@@ -108,6 +119,28 @@ public class WSSConstants {
      
      public static final String SAML_VALUETYPE = "http://docs.oasis-open.org/" +
          "wss/oasis-wss-saml-token-profile-1.0#SAMLAssertionID";
+     
+     public static final String TAG_X509CERTIFICATE = "X509Certificate";
+     
+     public static final String TAG_KEYNAME = "KeyName";
+     
+     public static final String TAG_KEYVALUE = "KeyValue";
+     
+     public static final String TAG_KEYINFO = "KeyInfo";
+     
+     public static final String CLASSREF_AUTHN_CONTEXT_SOFTWARE_PKI = 
+             "urn:oasis:names:tc:SAML:2.0:ac:classes:SoftwarePKI";
+     
+     public static final String KEY_INFO_DATA_TYPE = 
+                         "saml:KeyInfoConfirmationDataType";
+     
+     public static final String TOKEN_TYPE = "wsse11:TokenType";
+     
+     public static final String SAML2_TOKEN_TYPE = 
+     "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0";
+     
+     public static final String SAML11_TOKEN_TYPE = 
+     "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
 
 }
 

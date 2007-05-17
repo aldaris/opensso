@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenReference.java,v 1.1 2007-03-23 00:02:04 mallas Exp $
+ * $Id: SecurityTokenReference.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,6 +228,10 @@ public class SecurityTokenReference {
             if(WSSConstants.ASSERTION_VALUE_TYPE.equals(valueType)) {
                tokenElement = (Element) XPathAPI.selectSingleNode(
                       doc,  "//*[@" + "AssertionID" + "=\"" + uri + "\"]");
+            } else if(
+                   WSSConstants.SAML2_ASSERTION_VALUE_TYPE.equals(valueType)) {
+               tokenElement = (Element) XPathAPI.selectSingleNode(
+                      doc,  "//*[@ID=\"" + uri + "\"]");
             } else {
                Element nscontext =  
                    com.sun.org.apache.xml.internal.security.utils.

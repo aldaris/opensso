@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.1 2007-03-23 00:02:11 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,8 @@ import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.SecurityPrincipal;
 import com.sun.identity.wss.security.BinarySecurityToken;
 import com.sun.identity.wss.security.UserNameToken;
+import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.wss.security.SAML2TokenUtils;
 
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.saml.common.SAMLConstants;
@@ -61,6 +63,8 @@ import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Exception;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
@@ -216,6 +220,32 @@ public class SecureSOAPMessage {
                     "Header: unable to parse the token", se);
                     throw new SecurityException(se.getMessage());
                 }
+                
+             } else if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
+                 (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(nameSpace)) ) {
+
+                if(debug.messageEnabled()) {
+                   debug.message("SecureSOAPMessage.parseSecurityHeader:: " +
+                   "SAML2 token found in the security header.");
+                }
+                try {
+                    securityToken = new SAML2Token((Element)currentNode);
+                    SAML2Token saml2Token = 
+                               (SAML2Token)securityToken;
+                    if(saml2Token.isSenderVouches()) {
+                       securityMechanism = 
+                                  SecurityMechanism.WSS_NULL_SAML2_SV;
+                    } else {
+                       securityMechanism = 
+                                  SecurityMechanism.WSS_NULL_SAML2_HK;
+                    }
+                    messageCertificate = 
+                           SAML2TokenUtils.getCertificate(saml2Token);
+                } catch (SAML2Exception se) {
+                    debug.error("SecureSOAPMessage.parseSecurity" +
+                    "Header: unable to parse the token", se);
+                    throw new SecurityException(se.getMessage());
+                }
 
              } else if( (WSSConstants.TAG_BINARY_SECURITY_TOKEN.
                          equals(localName)) && 
@@ -347,6 +377,10 @@ public class SecureSOAPMessage {
              wsseHeader.setAttributeNS(WSSConstants.NS_XML,
                           WSSConstants.TAG_XML_WSU,
                           WSSConstants.WSU_NS);
+             wsseHeader.setAttributeNS(
+                     WSSConstants.NS_XML,
+                     WSSConstants.TAG_XML_WSSE11,
+                     WSSConstants.WSSE11_NS);
 
              String envPrefix = envelope.getPrefix();
              if(envPrefix != null) {
@@ -414,7 +448,8 @@ public class SecureSOAPMessage {
          }
          String tokenType = securityToken.getTokenType();
 
-         if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType)) {
+         if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType) ||
+                 SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
             signWithAssertion(doc, certAlias);
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
             signWithBinaryToken(doc, certAlias);
@@ -439,12 +474,20 @@ public class SecureSOAPMessage {
              (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ) {
              cert = WSSUtils.getCertificate(securityToken);
-
+             
+         } else if( (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
+             (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ) {
+             cert = SAML2TokenUtils.getCertificate(securityToken);
+             
          } else if( (SecurityMechanism.WSS_NULL_SAML_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML_SV_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI.equals(uri)) ) {
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI.equals(uri)) ||
+             (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
+             (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri)) ) {
              cert =  keyProvider.getX509Certificate(certAlias);
-
+             
          } else {
              debug.error("SecureSOAPMessage.signWithSAMLAssertion:: " +
               "Unknown security mechanism");
@@ -454,9 +497,15 @@ public class SecureSOAPMessage {
  
          Element sigElement = null;
          try {
-             AssertionToken assertionToken = (AssertionToken)securityToken;
-             String assertionID = 
-                  assertionToken.getAssertion().getAssertionID();
+             String assertionID = null;
+             if(securityToken instanceof AssertionToken) {
+                AssertionToken assertionToken = (AssertionToken)securityToken;
+                assertionID = assertionToken.getAssertion().getAssertionID();
+             } else if (securityToken instanceof SAML2Token) {
+                SAML2Token saml2Token = (SAML2Token)securityToken;
+                assertionID = saml2Token.getAssertion().getID();
+             }
+                          
              sigElement = sigManager.signWithSAMLToken(doc,
                    cert, assertionID, "", getSigningIds());
 

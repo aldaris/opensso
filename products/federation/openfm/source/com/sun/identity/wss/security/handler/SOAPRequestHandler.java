@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.1 2007-03-23 00:02:10 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,7 @@ import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.security.SecurityToken;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.AssertionTokenSpec;
+import com.sun.identity.wss.security.SAML2TokenSpec;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.identity.wss.security.SecurityTokenFactory;
 import com.sun.identity.wss.security.BinarySecurityToken;
@@ -80,6 +81,8 @@ import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.saml.assertion.NameIdentifier;
+import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.assertion.NameID;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -614,6 +617,31 @@ public class SOAPRequestHandler {
             tokenSpec.setUserName(credential.getUserName());
             tokenSpec.setPassword(credential.getPassword());
             securityToken = factory.getSecurityToken(tokenSpec);
+        } else if(
+           (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri)) ) {
+
+           if(debug.messageEnabled()) {
+              debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+              "SAML2 token");
+           }
+           NameID ni = null;
+           try {
+               AssertionFactory assertionFactory = 
+                       AssertionFactory.getInstance();
+               ni = assertionFactory.createNameID();
+               ni.setValue(config.getProviderName());               
+           } catch (Exception ex) {
+               throw new SecurityException(ex.getMessage());
+           }
+
+           SAML2TokenSpec tokenSpec = new SAML2TokenSpec(ni,
+                 secMech, certAlias); 
+           securityToken = factory.getSecurityToken(tokenSpec);                                 
             
         } else {
             throw new SecurityException(

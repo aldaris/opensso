@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.2 2007-04-06 21:06:42 veiming Exp $
+ * $Id: ProviderConfig.java,v 1.3 2007-05-17 18:49:17 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -496,6 +496,12 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN);
         list.add(SecurityMechanism.WSS_TLS_USERNAME_TOKEN);
         list.add(SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN);
+        list.add(SecurityMechanism.WSS_NULL_SAML2_SV);
+        list.add(SecurityMechanism.WSS_TLS_SAML2_SV);
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV);
+        list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
+        list.add(SecurityMechanism.WSS_TLS_SAML2_HK);
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK);        
         return list;
     }
 
@@ -510,6 +516,8 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_SAML_HK);
         list.add(SecurityMechanism.WSS_NULL_X509_TOKEN);
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN);
+        list.add(SecurityMechanism.WSS_NULL_SAML2_SV);
+        list.add(SecurityMechanism.WSS_NULL_SAML2_HK);        
         return list;
     }
 

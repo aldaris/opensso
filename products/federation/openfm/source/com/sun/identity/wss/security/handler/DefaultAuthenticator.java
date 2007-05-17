@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.1 2007-03-23 00:02:08 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,8 @@ import com.sun.identity.saml.assertion.AuthenticationStatement;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.liberty.ws.security.SecurityAssertion;
+import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.wss.security.SAML2TokenUtils;
 
 /**
  * This class provides a default implementation for authenticating the
@@ -150,6 +152,24 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             }
             AssertionToken assertionToken = (AssertionToken)securityToken;
             if(!validateAssertion(assertionToken.getAssertion())) {
+               throw new SecurityException(
+                     bundle.getString("authenticationFailed"));
+            }
+        }  else if(
+            (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri))) {
+            
+            if(debug.messageEnabled()) {
+               debug.message("DefaultAuthenticator.authenticate:: saml2" +
+               " token authentication");
+            }
+            SAML2Token saml2Token = (SAML2Token)securityToken;
+            if(!SAML2TokenUtils.validateAssertion(saml2Token.getAssertion(),
+                    subject)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }

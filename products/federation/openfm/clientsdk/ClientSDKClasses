@@ -355,6 +355,7 @@ com/sun/identity/saml/protocol/Response.class
 com/sun/identity/saml/protocol/Status.class
 com/sun/identity/saml/protocol/StatusCode.class
 com/sun/identity/saml/protocol/SubjectQuery.class
+com/sun/identity/saml/plugins/*.class
 com/sun/identity/saml/SAMLClient.class
 com/sun/identity/saml/servlet/POSTCleanUpThread.class
 com/sun/identity/saml/xmlsig/AMSignatureProvider.class
@@ -500,6 +501,7 @@ com/sun/identity/saml2/xmlenc/FMEncProvider.class
 com/sun/identity/saml2/xmlsig/FMSigProvider.class
 com/sun/identity/saml2/xmlsig/SigManager.class
 com/sun/identity/saml2/xmlsig/SigProvider.class
+com/sun/identity/saml2/common/SAML2Utils.class
 com/sun/identity/shared/configuration/ConfigurationFileLocator.class
 com/sun/identity/shared/configuration/ISystemProperties.class
 com/sun/identity/shared/configuration/SystemPropertiesManager.class

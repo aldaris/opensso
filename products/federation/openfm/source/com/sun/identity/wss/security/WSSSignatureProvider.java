@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.1 2007-03-23 00:02:07 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ import com.sun.org.apache.xml.internal.security.transforms.Transform;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.saml2.common.SAML2Constants;
 
 
 /**
@@ -94,6 +95,15 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             throw new XMLSignatureException(
                       WSSUtils.bundle.getString("nullInput"));
         }
+        
+        boolean isSAML2Token = false;
+        Element assertionElement = (Element) doc.getDocumentElement().
+                getElementsByTagNameNS(SAML2Constants.ASSERTION_NAMESPACE_URI,
+                         "Assertion").item(0);
+        if(assertionElement != null) {
+           isSAML2Token = true; 
+        }
+        
         if (cert == null) {
             WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken: " +
                                         "Certificate is null");
@@ -180,9 +190,23 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                     WSSConstants.NS_XML,
                     WSSConstants.TAG_XML_WSU,
                     WSSConstants.WSU_NS);
+            securityTokenRef.setAttributeNS(
+                    WSSConstants.NS_XML,
+                    WSSConstants.TAG_XML_WSSE11,
+                    WSSConstants.WSSE11_NS);
+            
             String secRefId = SAMLUtils.generateID();
             securityTokenRef.setAttributeNS(WSSConstants.WSU_NS,
                     WSSConstants.WSU_ID, secRefId);
+
+            if(isSAML2Token) {
+               securityTokenRef.setAttributeNS(WSSConstants.WSSE11_NS,
+                    WSSConstants.TOKEN_TYPE, WSSConstants.SAML2_TOKEN_TYPE);
+            } else {
+               securityTokenRef.setAttributeNS(WSSConstants.WSSE11_NS,
+                    WSSConstants.TOKEN_TYPE, WSSConstants.SAML11_TOKEN_TYPE); 
+            }
+
             signature.addKeyInfo((X509Certificate)cert);
             KeyInfo keyInfo = signature.getKeyInfo();
             keyInfo.addUnknownElement(securityTokenRef);
@@ -215,8 +239,14 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                         SAMLUtils.generateID());
             Text value = doc.createTextNode(assertionID);
             keyIdentifier.appendChild(value);
-            keyIdentifier.setAttributeNS(null, SAMLConstants.TAG_VALUETYPE,
+            if(isSAML2Token) {
+               keyIdentifier.setAttributeNS(null, SAMLConstants.TAG_VALUETYPE,
+                        WSSConstants.SAML2_ASSERTION_VALUE_TYPE);
+            } else {
+                keyIdentifier.setAttributeNS(null, SAMLConstants.TAG_VALUETYPE,
                         WSSConstants.SAML_VALUETYPE);
+            }
+                                          
             securityTokenRef.appendChild(keyIdentifier);
             signature.sign(privateKey);
         } catch (Exception e) {

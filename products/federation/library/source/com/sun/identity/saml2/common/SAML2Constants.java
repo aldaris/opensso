@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.8 2007-04-23 03:35:04 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.9 2007-05-17 18:51:31 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,6 +150,18 @@ public interface SAML2Constants {
      */
     public static final String SUBJECT_CONFIRMATION_METHOD_BEARER =
         "urn:oasis:names:tc:SAML:2.0:cm:bearer";
+    
+    /**
+     * Confirmation method for holder of key
+     */
+    public static final String SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY =
+        "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key";
+    
+    /**
+     * Confirmation method for sender vouches
+     */
+    public static final String SUBJECT_CONFIRMATION_METHOD_SENDER_VOUCHES =
+        "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
 
     /**
      * Length for SAMLv2 IDs.
@@ -924,4 +936,7 @@ public interface SAML2Constants {
      */
     public static final String DISCOVERY_BOOTSTRAP_CREDENTIALS =
         "DiscoveryBootstrapCrendentials";
+    
+    public static final String NS_XSI = 
+            "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 }

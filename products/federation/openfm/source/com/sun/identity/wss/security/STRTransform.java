@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STRTransform.java,v 1.2 2007-03-23 19:54:39 mallas Exp $
+ * $Id: STRTransform.java,v 1.3 2007-05-17 18:49:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,8 +146,9 @@ public class STRTransform extends TransformSpi {
                   equals(refType)) {
            debug.message("STRTRansform.deferenceSTR:: keyidentifier reference");
            KeyIdentifier keyIdentifier = secRef.getKeyIdentifier();
-           if(WSSConstants.ASSERTION_VALUE_TYPE.equals(
-                      keyIdentifier.getValueType())) {
+           String valueType = keyIdentifier.getValueType();           
+           if(WSSConstants.ASSERTION_VALUE_TYPE.equals(valueType) ||
+                   WSSConstants.SAML2_ASSERTION_VALUE_TYPE.equals(valueType)) {
               tokenElement = keyIdentifier.getTokenElement(doc);
            } else {
               X509Certificate cert = keyIdentifier.getX509Certificate();
