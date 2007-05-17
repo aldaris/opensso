@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: xacml2-testng.xml,v 1.1 2007-04-19 19:18:48 dillidorai Exp $
+   $Id: xacml2-testng.xml,v 1.2 2007-05-17 22:47:06 pawand Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,4 +39,14 @@
         </classes>
     </test>
 
+    <test name="XACML2-d12" parallel="false">
+        <groups>
+            <run>
+                <include name="xacml2" />
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.xacml2.plugins.FMSubjectMapperTest"/>
+        </classes>
+    </test>
 </suite>
