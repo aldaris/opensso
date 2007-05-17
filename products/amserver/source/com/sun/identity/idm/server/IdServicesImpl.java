@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.16 2007-05-10 18:03:27 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.17 2007-05-17 23:44:13 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2600,10 +2600,10 @@ public class IdServicesImpl implements IdServices {
             while (it.hasNext()) {
                 String curr = (String) it.next();
                 if (reverseMap.containsKey(curr)) {
-                    resultMap.put((String) reverseMap.get(curr), (Set) attrMap
+                    resultMap.put((String) reverseMap.get(curr), attrMap
                             .get(curr));
                 } else {
-                    resultMap.put(curr, (Set) attrMap.get(curr));
+                    resultMap.put(curr, attrMap.get(curr));
                 }
             }
         }
