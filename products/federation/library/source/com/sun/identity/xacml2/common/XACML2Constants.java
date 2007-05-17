@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACML2Constants.java,v 1.5 2007-05-02 00:17:38 dillidorai Exp $
+ * $Id: XACML2Constants.java,v 1.6 2007-05-17 22:41:34 pawand Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,8 +115,19 @@ public class  XACML2Constants {
     /**
      * The standard URI for the default subject category value
      */
-    public static String SUBJECT_CATEGORY_DEFAULT =
+    public static String ACCESS_SUBJECT =
         "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
+   /**
+    * The URI for the subject-id value
+    */
+   public static String SUBJECT_ID =
+      "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+
+   /**
+    * The URI for the opensso-session-id value
+    */
+   public static String OPENSSO_SESSION_ID =
+      "urn:sun:names:xacml:2.0:data-type:opensso-session-id";
 
     /**
      * The URI for the intermediary subject category value

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSubjectMapper.java,v 1.1 2007-04-19 19:18:46 dillidorai Exp $
+ * $Id: FMSubjectMapper.java,v 1.2 2007-05-17 22:42:23 pawand Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,19 @@
 package com.sun.identity.xacml2.plugins;
 import com.sun.identity.xacml2.context.Subject;
 import com.sun.identity.xacml2.common.XACML2Exception;
+import com.sun.identity.xacml2.common.XACML2Constants;
+import com.sun.identity.xacml2.context.Attribute;
 import com.sun.identity.xacml2.spi.SubjectMapper;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.shared.xml.XMLUtils;
+
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Element;
 
 /**
  * This class implements SubjectMapper to map between XACML context 
@@ -78,8 +89,59 @@ public class FMSubjectMapper implements SubjectMapper {
      */
     public Object mapToNativeSubject(Subject[] xacmlContextSubjects) 
             throws XACML2Exception {
-        return null;
-    }
 
+        // Method curently supports only 
+        // urn:sun:names:xacml:2.0:data-type:opensso-session-id
+        // TODO : Support for
+        // urn:oasis:names:tc:xacml:1.0:data-type:x500Name
+        // urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid
+
+        if (xacmlContextSubjects == null) {
+            return null;
+        }
+        String sid = null;
+        for (int subCount=0;subCount<xacmlContextSubjects.length;subCount++) {
+            Subject subject = xacmlContextSubjects[subCount];
+            if (subject == null) {
+                continue;
+            }
+            URI subjectCategory = subject.getSubjectCategory();
+            if ((subjectCategory != null) && (!subjectCategory.toString().
+                equals(XACML2Constants.ACCESS_SUBJECT))) {
+                continue;
+            }
+            List attributes = subject.getAttributes();
+            if (attributes != null) {
+                for (int count = 0; count < attributes.size(); count++) {
+                    Attribute attr = (Attribute) attributes.get(count);
+                    if (attr != null) {
+                        URI tmpURI = attr.getAttributeID();
+                        if (tmpURI.toString().equals(XACML2Constants.
+                            SUBJECT_ID)) {
+                            tmpURI = attr.getDataType();
+                            if (tmpURI.toString().equals(XACML2Constants.
+                                OPENSSO_SESSION_ID)) {
+                                Element sidElement = (Element)attr.getAttributeValues().get(0);
+                                sid = XMLUtils.getElementValue(sidElement);
+                            }
+                        }
+                    }
+            	}
+            }
+            if (sid != null) {
+                break;
+            }
+        }
+        SSOToken ssoToken = null;
+        if (sid != null) {
+            try {
+                SSOTokenManager tokenManager = SSOTokenManager.getInstance();
+                ssoToken = tokenManager.createSSOToken(sid);
+            } catch (SSOException ssoExp) {
+                throw  new XACML2Exception(ssoExp);
+            }
+        }
+        return ssoToken;
+    }
 }
 
