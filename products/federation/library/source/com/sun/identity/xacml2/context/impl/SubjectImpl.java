@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectImpl.java,v 1.2 2007-04-19 19:14:30 dillidorai Exp $
+ * $Id: SubjectImpl.java,v 1.3 2007-05-18 20:44:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -222,8 +222,7 @@ public class SubjectImpl implements Subject {
     public URI getSubjectCategory() {
         try {
             if (subjectCategory == null) {
-                subjectCategory 
-                        = new URI(XACML2Constants.SUBJECT_CATEGORY_DEFAULT);
+                subjectCategory = new URI(XACML2Constants.ACCESS_SUBJECT);
             }
         } catch (Exception e) { // cant do anything, return null
         }

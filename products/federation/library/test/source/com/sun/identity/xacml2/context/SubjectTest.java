@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectTest.java,v 1.1 2007-03-15 06:21:04 bhavnab Exp $
+ * $Id: SubjectTest.java,v 1.2 2007-05-18 20:44:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,7 +76,7 @@ public class SubjectTest extends UnitTestBase {
         try {
             Subject subject =
                     ContextFactory.getInstance().createSubject();
-            subject.setSubjectCategory(new URI(xc.SUBJECT_CATEGORY_DEFAULT));
+            subject.setSubjectCategory(new URI(xc.ACCESS_SUBJECT));
             List attrs = new ArrayList();
             Attribute attr = ContextFactory.getInstance().createAttribute();
             attr.setAttributeID(new URI("testid1"));
