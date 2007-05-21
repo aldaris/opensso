@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.1 2007-03-23 00:01:58 mallas Exp $
+ * $Id: BinarySecurityToken.java,v 1.2 2007-05-21 23:13:44 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,10 +33,13 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml.common.SAMLUtilsCommon;
 import com.iplanet.am.util.Locale;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import java.security.cert.X509Certificate;
@@ -223,14 +226,28 @@ public class BinarySecurityToken implements SecurityToken {
                 bundle.getString("missingAttribute") + " : " + VALUE_TYPE);
         }
 
-        try {
-            this.value = token.getFirstChild().getNodeValue().trim();
+        try {            
+            NodeList nodelist = token.getChildNodes();
+            for (int i= 0; i < nodelist.getLength(); i++) {
+                Node childNode = nodelist.item(i);
+                if(childNode.getNodeType() == Node.ELEMENT_NODE) {
+                   continue; 
+                } else if (childNode.getNodeType() == Node.TEXT_NODE) {                  
+                  this.value = SAMLUtils.removeNewLineChars(
+                          childNode.getNodeValue().trim());        
+                }
+                
+            }
+         //   Node node = token.getFirstChild();
+            
+            
+            
         } catch (Exception e) {
             debug.error("BinarySecurityToken: unable to get value", e);
             this.value = null;
         }
 
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             debug.error("BinarySecurityToken: value missing");
             throw new SecurityException(bundle.getString("missingValue"));
         }
