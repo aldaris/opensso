@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.2 2007-05-10 17:21:21 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.3 2007-05-21 17:10:37 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,7 +139,7 @@ public class ClientConfigCreator {
                             TestConstants.KEY_ATT_DEFAULTORG);
                 else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
                     value = configDef.getString(
-                            TestConstants.KEY_ATT_AMADMIN_USER);
+                            TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
