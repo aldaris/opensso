@@ -20,20 +20,22 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-samlv2-testng.xml,v 1.1 2007-03-29 21:42:34 mrudulahg Exp $
+ $Id: ldapv3_sec-samlv2-testng.xml,v 1.1 2007-05-22 19:22:34 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="client-samlv2" verbose="1">
+<suite name="ldapv3_sec-samlv2" verbose="1">
     <test name="SAMLv2SmokeTest">
+    <parameter name="groupName" value="ldapv3_sec"/>
         <groups>
             <run>
-                <include name="client"/>
+                <include name="ldapv3_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/> 
+            <class name="com.sun.identity.qatest.samlv2.ConfigureSAMLv2"/>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
         </classes>
     </test>

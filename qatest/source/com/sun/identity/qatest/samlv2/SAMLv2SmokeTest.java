@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.2 2007-04-27 22:24:39 mrudulahg Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.3 2007-05-22 19:22:01 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,11 +31,13 @@ import com.gargoylesoftware.htmlunit.ScriptException;
 import com.sun.identity.qatest.common.AccessManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
+import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -46,142 +48,132 @@ import org.testng.annotations.Test;
  * SP & IDP initiated
  */
 public class SAMLv2SmokeTest extends TestCommon {
-
+    
     public WebClient webClient;
     private Map<String, String> configMap;
     private String baseDir ;
-    private String xmlfile; 
+    private String xmlfile;
     private DefaultTaskHandler task1;
     private HtmlPage page1;
     private AccessManager amC;
-
+    
+    /**
+     * This is constructor for this class.
+     */
     public SAMLv2SmokeTest() {
         super("SAMLv2SmokeTest");
     }
-
+    
     /**
-     * This setup method creates required users. 
+     * This setup method creates required users.
      */
-    @BeforeClass(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
-    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
-    public void setup() throws Exception {
+    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
+    "ldapv3_sec"})
+    public void setup() 
+    throws Exception {
         URL url;
         HtmlPage page;
         ArrayList list;
         try {
             log(logLevel, "setup", "Entering");
             //Upload global properties file in configMap
-            baseDir = getBaseDir() + SAMLv2Common.fileseparator + "built" 
-                    + SAMLv2Common.fileseparator + "classes" 
+            ResourceBundle rb_amconfig = ResourceBundle.getBundle(
+                    TestConstants.TEST_PROPERTY_AMCONFIG);
+            baseDir = getBaseDir() + SAMLv2Common.fileseparator
+                    + rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
+                    + SAMLv2Common.fileseparator + "built"
+                    + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2SmokeTest", 
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2SmokeTest",
                     configMap);
             log(logLevel, "setup", "ConfigMap is : " + configMap );
-    
-            // Create sp users 
-            String spurl = configMap.get("sp_proto") + "://" + 
-                    configMap.get("sp_host") + ":" + configMap.get("sp_port")
-                    + configMap.get("sp_deployment_uri");
+            
+            // Create sp users
+            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_SP_PORT) +
+                    configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             getWebClient();
-            try{
-                consoleLogin(webClient, spurl, configMap.get("sp_admin"), 
-                        configMap.get("sp_adminpw"));
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            consoleLogin(webClient, spurl,
+                    configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
+                    configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             amC = new AccessManager(spurl);
             list = new ArrayList();
-            list.add("sn=" + configMap.get("sp_user"));
-            list.add("cn=" + configMap.get("sp_user"));
-            list.add("userpassword=" + configMap.get("sp_userpw"));
+            list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER));
+            list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER));
+            list.add("userpassword=" +
+                    configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            amC.createIdentity(webClient, configMap.get("sp_realm"), 
-                    configMap.get("sp_user"), "User",
-                    list);
-            String splogoutxmlfile = baseDir +  "setupsplogout.xml";
-            SAMLv2Common.getxmlSPLogout(splogoutxmlfile, configMap);            
-            task1 = new DefaultTaskHandler(splogoutxmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-
-            // Create idp users 
-            String idpurl = configMap.get("idp_proto") + "://" + 
-                    configMap.get("idp_host") + ":" + configMap.get("idp_port")
-                    + configMap.get("idp_deployment_uri");
-            try{
-                consoleLogin(webClient, idpurl, configMap.get("idp_admin"), 
-                        configMap.get("idp_adminpw"));
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-    
+            amC.createIdentity(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_USER), "User", list);
+            consoleLogout(webClient, spurl + "/UI/Logout");
+            
+            // Create idp users
+            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_IDP_PORT) +
+                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+            consoleLogin(webClient, idpurl,
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+            
             amC = new AccessManager(idpurl);
             list.clear();
-            list.add("sn=" + configMap.get("idp_user"));
-            list.add("cn=" + configMap.get("idp_user"));
-            list.add("userpassword=" + configMap.get("idp_userpw"));
+            list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));
+            list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));
+            list.add("userpassword=" +
+                    configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            amC.createIdentity(webClient, configMap.get("idp_realm"), 
-                    configMap.get("idp_user"), "User", list);
-            String idplogoutxmlfile = baseDir +  "setupidplogout.xml";
-            SAMLv2Common.getxmlSPLogout(idplogoutxmlfile, configMap);            
-            task1 = new DefaultTaskHandler(idplogoutxmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-
-        }catch(Exception e) {
+            amC.createIdentity(webClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM),
+                    configMap.get(TestConstants.KEY_IDP_USER), "User", list);
+            consoleLogout(webClient, idpurl + "/UI/Logout");
+        } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
         exiting("setup");
     }
-
+    
     /**
-     * Create the webClient which will be used for the rest of the tests. 
+     * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
-    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
-    public void getWebClient() throws Exception {
+    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec",
+    "ldapv3_sec"})
+    public void getWebClient() 
+    throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
-       }catch(Exception e) {
+        } catch (Exception e) {
             log(Level.SEVERE, "getWebClient", e.getMessage(), null);
             e.printStackTrace();
             throw e;
-       }
+        }
     }
     
     /**
      * Run saml2 profile testcase 1.
-     * @DocTest: SAML2|Perform SP initiated sso. 
+     * @DocTest: SAML2|Perform SP initiated sso.
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void testSPSSOInit()
-        throws Exception {
+    throws Exception {
         entering("testSPSSOInit", null);
         try {
             log(logLevel, "testSPSSOInit", "Running: testSPSSOInit");
             getWebClient();
-            
             xmlfile = baseDir + "test1spssoinit.xml";
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);            
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);
             log(logLevel, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOInit", e.getMessage(), null);
             e.printStackTrace();
@@ -191,26 +183,21 @@ public class SAMLv2SmokeTest extends TestCommon {
     }
     
     /**
-     * Run saml2 slo 
-     * @DocTest: SAML2|Perform SP initiated slo. 
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform SP initiated slo.
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"}, dependsOnMethods={"testSPSSOInit"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testSPSSOInit"})
     public void testSPSLO()
-        throws Exception {
+    throws Exception {
         entering("testSPSLO", null);
         try {
             log(logLevel, "testSPSLO", "Running: testSPSLO");
-            
             xmlfile = baseDir + "test2spslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");            
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
             log(logLevel, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSLO", e.getMessage(), null);
             e.printStackTrace();
@@ -218,28 +205,23 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testSPSLO");
     }
-       
+    
     /**
-     * Run saml2 termination 
+     * Run saml2 termination
      * @DocTest: SAML2|Perform SP initiated termination
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"}, dependsOnMethods={"testSPSLO"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testSPSLO"})
     public void testSPTerminate()
-        throws Exception {
+    throws Exception {
         entering("testSPTerminate", null);
         try {
             log(logLevel, "testSPTerminate", "Running: testSPTerminate");
-            
             xmlfile = baseDir + "test3spterminate.xml";
-            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "http");            
+            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "http");
             log(logLevel, "testSPTerminate", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testSPTerminate", e.getMessage(), null);
             e.printStackTrace();
@@ -247,39 +229,30 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testSPTerminate");
     }
-
+    
     /**
      * Run saml2 profile .
-     * @DocTest: SAML2|Perform idp initiated sso. 
+     * @DocTest: SAML2|Perform idp initiated sso.
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
-            dependsOnMethods={"testSPTerminate"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testSPTerminate"})
     public void testIDPSSO()
-        throws Exception {
+    throws Exception {
         entering("testIDPSSO", null);
         try {
             log(logLevel, "testIDPSSO", "\nRunning: testIDPSSO\n");
             getWebClient();
             xmlfile = baseDir + "test7idplogin.xml";
-            SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);            
+            SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);
             log(logLevel, "testIDPSSO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-
+            page1 = task1.execute(webClient);
             xmlfile = baseDir + "test7idpssoinit.xml";
-            SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "artifact", false);            
+            SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "artifact",
+                    false);
             log(logLevel, "testIDPSSO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSO", e.getMessage(), null);
             e.printStackTrace();
@@ -289,26 +262,21 @@ public class SAMLv2SmokeTest extends TestCommon {
     }
     
     /**
-     * Run saml2 slo 
-     * @DocTest: SAML2|Perform idp initiated slo. 
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform idp initiated slo.
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"}, dependsOnMethods={"testIDPSSO"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testIDPSSO"})
     public void testIDPSLO()
-        throws Exception {
+    throws Exception {
         entering("testIDPSLO", null);
         try {
             log(logLevel, "testIDPSLO", "Running: testIDPSLO");
-            
             xmlfile = baseDir + "test8idpslo.xml";
-            SAMLv2Common.getxmlIDPSLO(xmlfile, configMap, "http");     
+            SAMLv2Common.getxmlIDPSLO(xmlfile, configMap, "http");
             log(logLevel, "testIDPSLO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSLO", e.getMessage(), null);
             e.printStackTrace();
@@ -316,28 +284,23 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testIDPSLO");
     }
-       
-     /**
-     * Run saml2 termination 
+    
+    /**
+     * Run saml2 termination
      * @DocTest: SAML2|Perform  idp initiated termination
      */
-    @Test(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", "samlv2_sec_ff", 
-    "samlv2_sec_ds", "samlv2_sec_ldapv3"}, dependsOnMethods={"testIDPSLO"})
+    @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testIDPSLO"})
     public void testIDPTerminate()
-        throws Exception {
+    throws Exception {
         entering("testIDPTerminate", null);
         try {
             log(logLevel, "testIDPTerminate", "Running: testIDPTerminate");
-            
             xmlfile = baseDir + "test9idpterminate.xml";
-            SAMLv2Common.getxmlIDPTerminate(xmlfile, configMap, "http");            
+            SAMLv2Common.getxmlIDPTerminate(xmlfile, configMap, "http");
             log(logLevel, "testIDPTerminate", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPTerminate", e.getMessage(), null);
             e.printStackTrace();
@@ -345,28 +308,24 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testIDPTerminate");
     }
-     
+    
     /**
      * Run saml2 profile testcase 4.
-     * @DocTest: SAML2|Perform SP initiated sso with post profile. 
+     * @DocTest: SAML2|Perform SP initiated sso with post profile.
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
     dependsOnMethods={"testIDPTerminate"})
     public void testSPSSOInitPost()
-        throws Exception {
+    throws Exception {
         entering("testSPSSOInitPost", null);
         try {
             log(logLevel, "testSPSSOInitPost", "Running: testSPSSOInitPost");
             getWebClient();
             xmlfile = baseDir + "test4spssoinit.xml";
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);            
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
             log(logLevel, "testSPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
             page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOInitPost", e.getMessage(), null);
             e.printStackTrace();
@@ -376,26 +335,21 @@ public class SAMLv2SmokeTest extends TestCommon {
     }
     
     /**
-     * Run saml2 slo 
-     * @DocTest: SAML2|Perform SP initiated slo with soap profile. 
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform SP initiated slo with soap profile.
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
-            dependsOnMethods={"testSPSSOInitPost"})
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testSPSSOInitPost"})
     public void testSPSLOSOAP()
-        throws Exception {
+    throws Exception {
         entering("testSPSLOSOAP", null);
         try {
             log(logLevel, "testSPSLOSOAP", "Running: testSPSLOSOAP");
-            
             xmlfile = baseDir + "test5spslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");            
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
             log(logLevel, "testSPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSLOSOAP", e.getMessage(), null);
             e.printStackTrace();
@@ -403,28 +357,24 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testSPSLOSOAP");
     }
-       
+    
     /**
-     * Run saml2 termination 
+     * Run saml2 termination
      * @DocTest: SAML2|Perform SP initiated termination with soap profile
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
     dependsOnMethods={"testSPSLOSOAP"})
     public void testSPTerminateSOAP()
-        throws Exception {
+    throws Exception {
         entering("testSPTerminateSOAP", null);
         try {
-            log(logLevel, "testSPTerminateSOAP", "Running: testSPTerminateSOAP");
-            
+            log(logLevel, "testSPTerminateSOAP", "Running: " +
+                    "testSPTerminateSOAP");
             xmlfile = baseDir + "test6spterminate.xml";
-            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");            
+            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");
             log(logLevel, "testSPTerminateSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testSPTerminateSOAP", e.getMessage(), null);
             e.printStackTrace();
@@ -432,39 +382,31 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testSPTerminateSOAP");
     }
-            
-          
+    
+    
     /**
      * Run saml2 profile testcase 1.
-     * @DocTest: SAML2|Perform  idp initiated sso with post profile. 
+     * @DocTest: SAML2|Perform  idp initiated sso with post profile.
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
-            dependsOnMethods={"testSPTerminateSOAP"})
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testSPTerminateSOAP"})
     public void testIDPSSOInitPost()
-        throws Exception {
+    throws Exception {
         entering("testIDPSSOInitPost", null);
         try {
             log(logLevel, "testIDPSSOInitPost", "Running: testIDPSSOInitPost");
             getWebClient();
             xmlfile = baseDir + "test10idplogin.xml";
-            SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);            
+            SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);
             log(logLevel, "testIDPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
             
             xmlfile = baseDir + "test10idpssoinit.xml";
-            SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "post", false);            
+            SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "post", false);
             log(logLevel, "testIDPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSOInitPost", e.getMessage(), null);
             e.printStackTrace();
@@ -474,26 +416,22 @@ public class SAMLv2SmokeTest extends TestCommon {
     }
     
     /**
-     * Run saml2 slo 
-     * @DocTest: SAML2|Perform  idp initiated slo with soap profile . 
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform  idp initiated slo with soap profile .
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
-            dependsOnMethods={"testIDPSSOInitPost"})
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
+    dependsOnMethods={"testIDPSSOInitPost"})
     public void testIDPSLOSOAP()
-        throws Exception {
+    throws Exception {
         entering("testIDPSLOSOAP", null);
         try {
             log(logLevel, "testIDPSLOSOAP", "Running: testIDPSLOSOAP");
             
             xmlfile = baseDir + "test11idpslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");            
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
             log(logLevel, "testIDPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSLOSOAP", e.getMessage(), null);
             e.printStackTrace();
@@ -501,27 +439,24 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testIDPSLOSOAP");
     }
-       
+    
     /**
-     * Run saml2 termination 
+     * Run saml2 termination
      * @DocTest: SAML2|Perform  idp initiated termination with soap profile
      */
-    @Test(groups={"samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"}, 
+    @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"},
     dependsOnMethods={"testIDPSLOSOAP"})
     public void testIDPTerminateSOAP()
-        throws Exception {
+    throws Exception {
         entering("testIDPTerminateSOAP", null);
         try {
-            log(logLevel, "testIDPTerminateSOAP", "Running: testIDPTerminateSOAP");
+            log(logLevel, "testIDPTerminateSOAP",
+                    "Running: testIDPTerminateSOAP");
             xmlfile = baseDir + "test12idpterminate.xml";
-            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");            
+            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");
             log(logLevel, "testIDPTerminateSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
-            try{
-                page1 = task1.execute(webClient);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            page1 = task1.execute(webClient);
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPTerminateSOAP", e.getMessage(), null);
             e.printStackTrace();
@@ -529,72 +464,58 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testIDPTerminateSOAP");
     }
-   
+    
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
- //   @AfterClass(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
-//    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
+    @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void cleanup()
-        throws Exception {
+    throws Exception {
         entering("cleanup", null);
-        HtmlPage page;
-        URL url;
         ArrayList idList;
         try {
             getWebClient();
-            // delete sp users 
-            String spurl = configMap.get("sp_proto") + "://" + 
-                    configMap.get("sp_host") + ":" + configMap.get("sp_port")
-                    + configMap.get("sp_deployment_uri");
-            try{
-                consoleLogin(webClient, spurl, configMap.get("sp_admin"), 
-                        configMap.get("sp_adminpw"));
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
+            // delete sp users
+            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_SP_PORT) +
+                    configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+            consoleLogin(webClient, spurl,
+                    configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
+                    configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             amC = new AccessManager(spurl);
             idList = new ArrayList();
-            idList.add(configMap.get("sp_user"));
-            log(logLevel, "cleanup", "sp users to delete :" + configMap.get("sp_user"));
-            amC.deleteIdentities(webClient, configMap.get("sp_realm"), 
-                    idList, "User");
-            url = new URL(spurl + "/UI/Logout");
-            try{
-                page = (HtmlPage)webClient.getPage(url);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-
-            // Create idp users 
-            String idpurl = configMap.get("idp_proto") + "://" + 
-                    configMap.get("idp_host") + ":" + configMap.get("idp_port")
-                    + configMap.get("idp_deployment_uri");
-            try{
-                consoleLogin(webClient, idpurl, configMap.get("idp_admin"), 
-                        configMap.get("idp_adminpw"));
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            } 
+            idList.add(configMap.get(TestConstants.KEY_SP_USER));
+            log(logLevel, "cleanup", "sp users to delete :" +
+                    configMap.get(TestConstants.KEY_SP_USER));
+            amC.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), idList,
+                    "User");
+            consoleLogout(webClient, spurl + "/UI/Logout");
+            
+            // Create idp users
+            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_IDP_PORT) +
+                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+            consoleLogin(webClient, idpurl,
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             amC = new AccessManager(idpurl);
             idList = new ArrayList();
-            idList.add(configMap.get("idp_user"));
-            log(logLevel, "cleanup", "idp users to delete :" + configMap.get("idp_user"));
-            amC.deleteIdentities(webClient, configMap.get("idp_realm"), 
-                    idList, "User");
-            url = new URL(idpurl + "/UI/Logout");
-            try{
-                page = (HtmlPage)webClient.getPage(url);
-            }catch (ScriptException e){
-                //Do nothing if there is javascript exception
-            }
-            
-        } catch(Exception e) {
+            idList.add(configMap.get(TestConstants.KEY_IDP_USER));
+            log(logLevel, "cleanup", "idp users to delete :" +
+                    configMap.get(TestConstants.KEY_IDP_USER));
+            amC.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM), idList,
+                    "User");
+            consoleLogout(webClient, idpurl + "/UI/Logout");
+        } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
         exiting("cleanup");
     }
-
+    
 }

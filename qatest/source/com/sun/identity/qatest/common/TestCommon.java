@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.5 2007-05-10 17:21:21 rmisra Exp $
+ * $Id: TestCommon.java,v 1.6 2007-05-22 19:21:24 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -491,7 +491,7 @@ public class TestCommon implements TestConstants
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
             }
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
-                    adminPassword;
+                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             log(logLevel, "configureProduct", "strURL:" + strURL);
             url = new URL(strURL);
             page = (HtmlPage)webclient.getPage(url);
@@ -512,7 +512,7 @@ public class TestCommon implements TestConstants
             }
         } else {
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
-                    adminPassword;
+                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             log(logLevel, "configureProduct", "url:" + strURL);
             url = new URL(strURL);
             page = (HtmlPage)webclient.getPage(url);

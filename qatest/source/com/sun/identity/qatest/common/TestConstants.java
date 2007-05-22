@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.2 2007-05-10 17:21:21 rmisra Exp $
+ * $Id: TestConstants.java,v 1.3 2007-05-22 19:21:24 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -196,4 +196,277 @@ public interface TestConstants {
      * Property key for <code>deployment_uri</code>.
      */
     String KEY_ATT_DEPLOYMENT_URI = "deployment_uri";
+    
+    /** 
+     * SAMLv2 SP related constants 
+     * Property key for <code>sp_host</code>
+     */
+    String KEY_SP_HOST = "sp_host";
+ 
+    /** 
+     * SAMLv2 Property key for <code>sp_protocol</code>
+     */
+    String KEY_SP_PROTOCOL = "sp_protocol";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_port</code>
+     */
+    String KEY_SP_PORT = "sp_port";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_deployment_uri</code>
+     */
+    String KEY_SP_DEPLOYMENT_URI = "sp_deployment_uri";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_metaalias</code>
+     */
+    String KEY_SP_METAALIAS = "sp_metaalias";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_entity_name</code>
+     */
+    String KEY_SP_ENTITY_NAME = "sp_entity_name";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_realm</code>
+     */
+    String KEY_SP_REALM = "sp_realm";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_cot</code>
+     */
+    String KEY_SP_COT = "sp_cot";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_certalias</code>
+     */
+    String KEY_SP_CERTALIAS = "sp_certalias";  
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_config_dir</code>
+     */
+    String KEY_SP_CONFIG_DIR = "sp_config_dir";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_datastore</code>
+     */
+    String KEY_SP_DATASTORE = "sp_datastore";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_amadmin_username</code>
+     */
+    String KEY_SP_AMADMIN_USER = "sp_amadmin_username";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_amadmin_password</code>
+     */
+    String KEY_SP_AMADMIN_PASSWORD = "sp_amadmin_password";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_directory_server</code>
+     */
+    String KEY_SP_DIRECTORY_SERVER = "sp_directory_server";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_directory_port</code>
+     */
+    String KEY_SP_DIRECTORY_PORT = "sp_directory_port";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_config_root_suffix</code>
+     */
+    String KEY_SP_CONFIG_ROOT_SUFFIX = "sp_config_root_suffix";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_sm_root_suffix</code>
+     */
+    String KEY_SP_SM_ROOT_SUFFIX = "sp_sm_root_suffix";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_ds_dirmgrdn</code>
+     */
+    String KEY_SP_DS_DIRMGRDN = "sp_ds_dirmgrdn";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_ds_dirmgrpasswd</code>
+     */
+    String KEY_SP_DS_DIRMGRPASSWORD = "sp_ds_dirmgrpasswd";      
+    
+    /** 
+     * SAMLv2 Property key for <code>sp_load_ums</code>
+     */
+    String KEY_SP_LOAD_UMS = "sp_load_ums";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_cookiedomain</code>
+     */
+    String KEY_SP_COOKIE_DOMAIN = "sp_cookiedomain";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_user</code>
+     */
+    String KEY_SP_USER = "sp_user";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_userpw</code>
+     */
+    String KEY_SP_USER_PASSWORD = "sp_userpw";  
+
+    /** 
+     * SAMLv2 Property key for <code>sp_mail</code>
+     */
+    String KEY_SP_USER_MAIL = "sp_mail";  
+
+    /** 
+     * SAMLv2 IDP related constants 
+     * Property key for <code>idp_host</code>
+     */
+    String KEY_IDP_HOST = "idp_host";
+ 
+    /** 
+     * SAMLv2 Property key for <code>idp_port</code>
+     */
+    String KEY_IDP_PORT = "idp_port";  
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_protocol</code>
+     */
+    String KEY_IDP_PROTOCOL = "idp_protocol";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_deployment_uri</code>
+     */
+    String KEY_IDP_DEPLOYMENT_URI = "idp_deployment_uri";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_metaalias</code>
+     */
+    String KEY_IDP_METAALIAS = "idp_metaalias";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_entity_name</code>
+     */
+    String KEY_IDP_ENTITY_NAME = "idp_entity_name";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_realm</code>
+     */
+    String KEY_IDP_REALM = "idp_realm";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_cot</code>
+     */
+    String KEY_IDP_COT = "idp_cot";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_certalias</code>
+     */
+    String KEY_IDP_CERTALIAS = "idp_certalias";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_config_dir</code>
+     */
+    String KEY_IDP_CONFIG_DIR = "idp_config_dir";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_datastore</code>
+     */
+    String KEY_IDP_DATASTORE = "idp_datastore";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_amadmin_username</code>
+     */
+    String KEY_IDP_AMADMIN_USER = "idp_amadmin_username";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_amadmin_password</code>
+     */
+    String KEY_IDP_AMADMIN_PASSWORD = "idp_amadmin_password";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_directory_server</code>
+     */
+    String KEY_IDP_DIRECTORY_SERVER = "idp_directory_server";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_directory_port</code>
+     */
+    String KEY_IDP_DIRECTORY_PORT = "idp_directory_port";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_config_root_suffix</code>
+     */
+    String KEY_IDP_CONFIG_ROOT_SUFFIX = "idp_config_root_suffix";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_sm_root_suffix</code>
+     */
+    String KEY_IDP_SM_ROOT_SUFFIX = "idp_sm_root_suffix";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_ds_dirmgrdn</code>
+     */
+    String KEY_IDP_DS_DIRMGRDN = "idp_ds_dirmgrdn";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_ds_dirmgrpasswd</code>
+     */
+    String KEY_IDP_DS_DIRMGRPASSWORD = "idp_ds_dirmgrpasswd";      
+    
+    /** 
+     * SAMLv2 Property key for <code>idp_load_ums</code>
+     */
+    String KEY_IDP_LOAD_UMS = "idp_load_ums";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_cookiedomain</code>
+     */
+    String KEY_IDP_COOKIE_DOMAIN = "idp_cookiedomain";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_user</code>
+     */
+    String KEY_IDP_USER = "idp_user";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_userpw</code>
+     */
+    String KEY_IDP_USER_PASSWORD = "idp_userpw";  
+
+    /** 
+     * SAMLv2 Property key for <code>idp_mail</code>
+     */
+    String KEY_IDP_USER_MAIL = "idp_mail";  
+
+    /** 
+     * SAMLv2 Property key for <code>ssoresult</code>
+     */
+    String KEY_SSO_RESULT = "ssoresult";  
+
+    /** 
+     * SAMLv2 Property key for <code>ssoinitresult</code>
+     */
+    String KEY_SSO_INIT_RESULT = "ssoinitresult";  
+
+    /** 
+     * SAMLv2 Property key for <code>spsloresult</code>
+     */
+    String KEY_SP_SLO_RESULT = "spsloresult";  
+
+    /** 
+     * SAMLv2 Property key for <code>terminateresult</code>
+     */
+    String KEY_TERMINATE_RESULT = "terminateresult";  
+
+    /** 
+     * SAMLv2 Property key for <code>idpsloresult</code>
+     */
+    String KEY_IDP_SLO_RESULT = "idpsloresult";  
+
+    /** 
+     * SAMLv2 Property key for <code>loginresult</code>
+     */
+    String KEY_LOGIN_RESULT = "loginresult";  
+    
 } 
