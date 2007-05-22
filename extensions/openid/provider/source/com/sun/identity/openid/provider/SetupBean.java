@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupBean.java,v 1.1 2007-04-30 01:28:32 pbryan Exp $
+ * $Id: SetupBean.java,v 1.2 2007-05-22 22:45:02 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -250,8 +250,7 @@ public class SetupBean extends CheckidBean
     private void redirectToLogin()
     {
         String loginURL = Config.getString(Config.LOGIN_URL);
-        String requestURL = request.getRequestURL().toString();
-        String gotoURL = Maps.toQueryString(requestURL, query.encode());
+        String gotoURL = Maps.toQueryString(getServiceURL(), query.encode());
 
         StringBuffer buf = new StringBuffer(loginURL);
 
