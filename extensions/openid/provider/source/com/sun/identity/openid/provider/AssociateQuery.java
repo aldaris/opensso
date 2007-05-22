@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateQuery.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
+ * $Id: AssociateQuery.java,v 1.3 2007-05-22 23:32:40 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -85,14 +85,16 @@ public class AssociateQuery extends Message
 
         assocType = AssocType.decode(map.get("assoc_type"));
 
+        // default: HMAC-SHA1
         if (assocType == null) {
             assocType = AssocType.HMAC_SHA1;
         }
 
         sessionType = SessionType.decode(map.get("session_type"));
 
+        // default: blank
         if (sessionType == null) {
-            throw new DecodeException("session_type is required");
+            sessionType = SessionType.CLEAR;
         }
 
         modulus = Codec.decodeBigInteger(map.get("dh_modulus"));
