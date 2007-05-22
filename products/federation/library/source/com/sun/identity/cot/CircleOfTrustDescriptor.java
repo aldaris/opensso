@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustDescriptor.java,v 1.2 2007-05-17 19:31:56 qcheng Exp $
+ * $Id: CircleOfTrustDescriptor.java,v 1.3 2007-05-22 21:53:43 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -444,14 +444,11 @@ public class CircleOfTrustDescriptor {
      * @param circleOfTrustProvider A set of trusted providers
      */
     public void setTrustedProviders(Set circleOfTrustProvider) {
-        if ((circleOfTrustProvider != null) 
-            && !circleOfTrustProvider.isEmpty()) {
-            trustedProviderMap = Collections.unmodifiableMap(
-                COTUtils.trustedProviderSetToProtocolMap(
-                    circleOfTrustProvider, realm));
-            trustedProviders = Collections.unmodifiableSet(
-                COTUtils.trustedProviderProtocolMapToSet(trustedProviderMap));
-        }
+        trustedProviderMap = Collections.unmodifiableMap(
+            COTUtils.trustedProviderSetToProtocolMap(
+                circleOfTrustProvider, realm));
+        trustedProviders = Collections.unmodifiableSet(
+            COTUtils.trustedProviderProtocolMapToSet(trustedProviderMap));
     }
     
     /**
