@@ -28,7 +28,6 @@ package com.sun.identity.qatest.policy;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.identity.policy.PolicyDecision;
-import com.sun.identity.qatest.common.AccessManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import java.util.ArrayList;

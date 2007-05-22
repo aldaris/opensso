@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.1 2007-05-04 20:47:42 sridharev Exp $
+ * $Id: ChainTest.java,v 1.2 2007-05-22 23:54:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.sun.identity.qatest.common.AccessManager;
+import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import java.util.ArrayList;
@@ -228,7 +228,7 @@ public class ChainTest extends TestCommon{
             while (moduleInstances.hasMoreTokens()) {
                 instanceNames.add(moduleInstances.nextToken());
             }
-            AccessManager am = new AccessManager(url);
+            FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage page = (HtmlPage)am.deleteAuthConfigurations
@@ -374,7 +374,7 @@ public class ChainTest extends TestCommon{
     
     /**
      * Get the list of users from Map, to create the
-     * users.This is need for the <code>AccessManager</code> to
+     * users.This is need for the <code>FederationManager</code> to
      * create users on the System
      * @param Map of users to be creared
      * @param moduleName

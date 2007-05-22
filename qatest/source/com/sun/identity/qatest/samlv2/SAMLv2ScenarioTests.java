@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.3 2007-05-22 19:22:01 mrudulahg Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.4 2007-05-22 23:54:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ScriptException;
-import com.sun.identity.qatest.common.AccessManager;
+import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestConstants;
@@ -59,7 +59,8 @@ import org.testng.annotations.Test;
 public class SAMLv2ScenarioTests extends TestCommon {
     
     private WebClient webClient;
-    private AccessManager amC;
+    private FederationManager fmSP;
+    private FederationManager fmIDP;
     private DefaultTaskHandler task1;
     private Map<String, String> configMap;
     ArrayList spuserlist = new ArrayList();
@@ -98,7 +99,6 @@ public class SAMLv2ScenarioTests extends TestCommon {
     "ldapv3_sec"})
     public void setup() 
     throws Exception {
-        AccessManager amCidp;
         List<String> list;
         try {
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
@@ -128,12 +128,11 @@ public class SAMLv2ScenarioTests extends TestCommon {
             consoleLogin(webClient, spurl,
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            
-            amC = new AccessManager(spurl);
+            fmSP = new FederationManager(spurl);
             consoleLogin(webClient, idpurl,
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            amCidp = new AccessManager(idpurl);
+            fmIDP = new FederationManager(idpurl);
             
             String scenArray[] = {"samlv2Scen1", "samlv2Scen2", "samlv2Scen3",
             "samlv2Scen4", "samlv2Scen5", "samlv2Scen6", "samlv2Scen7",
@@ -148,7 +147,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 list.add("userpassword=" +
                         configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
                 list.add("inetuserstatus=Active");
-                amC.createIdentity(webClient,
+                fmSP.createIdentity(webClient,
                         configMap.get(TestConstants.KEY_SP_REALM),
                         configMap.get(TestConstants.KEY_SP_USER), "User", list);
                 spuserlist.add(configMap.get(TestConstants.KEY_SP_USER));
@@ -160,7 +159,7 @@ public class SAMLv2ScenarioTests extends TestCommon {
                 list.add("userpassword=" +
                         configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
                 list.add("inetuserstatus=Active");
-                amCidp.createIdentity(webClient,
+                fmIDP.createIdentity(webClient,
                         configMap.get(TestConstants.KEY_IDP_REALM),
                         configMap.get(TestConstants.KEY_IDP_USER), "User",
                         list);
@@ -563,8 +562,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             consoleLogin(webClient, spurl,
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            amC = new AccessManager(spurl);
-            amC.deleteIdentities(webClient,
+            fmSP = new FederationManager(spurl);
+            fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
                     "User");
             consoleLogout(webClient, spurl + "/UI/Logout");
@@ -578,8 +577,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             consoleLogin(webClient, idpurl,
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            amC = new AccessManager(idpurl);
-            amC.deleteIdentities(webClient,
+            fmIDP = new FederationManager(idpurl);
+            fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
                     "User");
             consoleLogout(webClient, idpurl + "/UI/Logout");

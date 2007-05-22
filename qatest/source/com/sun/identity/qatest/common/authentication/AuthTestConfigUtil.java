@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.1 2007-05-04 20:46:13 sridharev Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.2 2007-05-22 23:54:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.qatest.common.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.AccessManager;
+import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -137,7 +137,7 @@ public class AuthTestConfigUtil extends TestCommon {
                 mod_subconfig);
         log(logLevel, "createModuleInstances", "mod_servicename:" +
                 mod_configId);
-        AccessManager am = new AccessManager(url);
+        FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
         am.createSubConfiguration(webClient, mod_servicename,
@@ -161,7 +161,7 @@ public class AuthTestConfigUtil extends TestCommon {
                 service_subconfigid);
         log(logLevel, "createServices", "service_subconfigname:" +
                 service_subconfigname);
-        AccessManager am = new AccessManager(url);
+        FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
         am.createSubConfiguration(webClient, service_servicename,
@@ -177,7 +177,7 @@ public class AuthTestConfigUtil extends TestCommon {
      */
     public void createUser(List user_list,String uname)
     throws Exception{
-        AccessManager am = new AccessManager(url);
+        FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
         am.createIdentity(webClient, realm, uname, "User", user_list);

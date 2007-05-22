@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.3 2007-05-22 19:22:01 mrudulahg Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.4 2007-05-22 23:54:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ScriptException;
-import com.sun.identity.qatest.common.AccessManager;
+import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestConstants;
@@ -55,7 +55,8 @@ public class SAMLv2SmokeTest extends TestCommon {
     private String xmlfile;
     private DefaultTaskHandler task1;
     private HtmlPage page1;
-    private AccessManager amC;
+    private FederationManager fmSP;
+    private FederationManager fmIDP;
     
     /**
      * This is constructor for this class.
@@ -102,14 +103,14 @@ public class SAMLv2SmokeTest extends TestCommon {
             consoleLogin(webClient, spurl,
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            amC = new AccessManager(spurl);
+            fmSP = new FederationManager(spurl);
             list = new ArrayList();
             list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            amC.createIdentity(webClient,
+            fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), "User", list);
             consoleLogout(webClient, spurl + "/UI/Logout");
@@ -123,14 +124,14 @@ public class SAMLv2SmokeTest extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
-            amC = new AccessManager(idpurl);
+            fmIDP = new FederationManager(idpurl);
             list.clear();
             list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            amC.createIdentity(webClient,
+            fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list);
             consoleLogout(webClient, idpurl + "/UI/Logout");
@@ -483,12 +484,12 @@ public class SAMLv2SmokeTest extends TestCommon {
             consoleLogin(webClient, spurl,
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            amC = new AccessManager(spurl);
+            fmSP = new FederationManager(spurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
             log(logLevel, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
-            amC.deleteIdentities(webClient,
+            fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
                     "User");
             consoleLogout(webClient, spurl + "/UI/Logout");
@@ -501,12 +502,12 @@ public class SAMLv2SmokeTest extends TestCommon {
             consoleLogin(webClient, idpurl,
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            amC = new AccessManager(idpurl);
+            fmIDP = new FederationManager(idpurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
             log(logLevel, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
-            amC.deleteIdentities(webClient,
+            fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
                     "User");
             consoleLogout(webClient, idpurl + "/UI/Logout");

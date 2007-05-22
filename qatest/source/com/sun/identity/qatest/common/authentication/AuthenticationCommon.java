@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.2 2007-05-21 17:10:37 rmisra Exp $
+ * $Id: AuthenticationCommon.java,v 1.3 2007-05-22 23:54:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.sun.identity.qatest.common.AccessManager;
 import com.sun.identity.qatest.common.TestCommon;
 import java.lang.String;
 import java.net.URL;

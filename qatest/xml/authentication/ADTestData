@@ -7,5 +7,5 @@ iplanet-am-auth-ldap-user-search-attributes=cn
 iplanet-am-auth-ldap-return-user-dn=false
 iplanet-am-auth-ldap-search-scope=SUBTREE
 iplanet-am-auth-ldap-ssl-enabled=false
-sunAMAuthADAuthLevel=22
+sunAMAuthADAuthLevel=20
 iplanet-am-auth-ldap-server-check=15

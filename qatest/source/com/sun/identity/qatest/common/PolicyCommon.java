@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.1 2007-05-16 17:05:42 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.2 2007-05-22 23:54:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class PolicyCommon extends TestCommon {
                     uri ;
             String logoutUrl = protocol + ":" + "//" + host + ":" + port
                     + uri + "/UI/Logout";
-            AccessManager am = new AccessManager(url);
+            FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage userCheckPage;
@@ -232,7 +232,7 @@ public class PolicyCommon extends TestCommon {
                     port + uri ;
             String logoutUrl = protocol + ":" + "//" + host + ":" + port
                     + uri + "/UI/Logout";
-            AccessManager am = new AccessManager(url);
+            FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage htmlpage;
@@ -340,7 +340,7 @@ public class PolicyCommon extends TestCommon {
             log(logLevel, "createPolicy - URL", url);
             String logoutUrl = protocol + ":" + "//" + host + ":" + port
                     + uri + "/UI/Logout";
-            AccessManager am = new AccessManager(url);
+            FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             String fileSeparator = System.getProperty("file.separator");
             consoleLogin(webClient, url, adminUser, adminPassword);
@@ -403,7 +403,7 @@ public class PolicyCommon extends TestCommon {
                     + port + uri ;
             String logoutUrl = protocol + ":" + "//" + host + ":" + port
                     + uri + "/UI/Logout";
-            AccessManager am = new AccessManager(url);
+            FederationManager am = new FederationManager(url);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage policyCheckPage  = am.deletePolicies(webClient,
