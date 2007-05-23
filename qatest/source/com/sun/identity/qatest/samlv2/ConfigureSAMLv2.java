@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.1 2007-05-08 16:52:42 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.2 2007-05-23 22:12:16 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.TestConstants;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+/**
+ * This class configures SP & IDP deployed war's if it hasn't done so.
+ * Also it creates COT on both instances, loads samlv2 meta on both side with
+ * one as SP & one as IDP.
+ */
 public class ConfigureSAMLv2 extends TestCommon {
     private WebClient spWebClient;
     private WebClient idpWebClient;
@@ -72,8 +78,7 @@ public class ConfigureSAMLv2 extends TestCommon {
      * @DocTest: SAML2|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeTest(groups={"samlv2_ff", "samlv2_ds", "samlv2_ldapv3", 
-    "samlv2_sec_ff", "samlv2_sec_ds", "samlv2_sec_ldapv3"})
+    @BeforeTest(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void configureSAMLv2(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
@@ -89,16 +94,19 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             log(logLevel, "configureSAMLv2", "GroupName received from " +
                     "testng is " + strGroupName);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Test", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+                    configMap);
             log(logLevel, "configureSAMLv2", "Map:" + configMap);
             
-            String spurl = configMap.get("sp_proto") + "://" +
-                    configMap.get("sp_host") + ":" + configMap.get("sp_port")
-                    + configMap.get("sp_deployment_uri");
-            String idpurl = configMap.get("idp_proto") + "://" +
-                    configMap.get("idp_host") + ":" + configMap.get("idp_port")
-                    + configMap.get("idp_deployment_uri");
-         
+            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
+            + "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":"
+                    + configMap.get(TestConstants.KEY_SP_PORT)
+                    + configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
+            + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
+                    + configMap.get(TestConstants.KEY_IDP_PORT)
+                    + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+            
             url = new URL(spurl);
             page = (HtmlPage)spWebClient.getPage(url);
             getSPConfigurationMap(spConfigMap, configMap);
@@ -112,7 +120,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                         "Exiting the SAMLv2 configuration");
                 assert false;
             }
-             
+            
             url = new URL(idpurl);
             page = (HtmlPage)idpWebClient.getPage(url);
             getIDPConfigurationMap(idpConfigMap, configMap);
@@ -126,23 +134,27 @@ public class ConfigureSAMLv2 extends TestCommon {
                         "Exiting the SAMLv2 configuration");
                 assert false;
             }
-
+            
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
             
             //on sp side create cot, load sp metadata
-            consoleLogin(spWebClient, spurl, (String)configMap.get("sp_admin"),
-                    (String)configMap.get("sp_adminpw"));
+            consoleLogin(spWebClient, spurl,
+                    (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
+                    (String)configMap.get(
+                    TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
             HtmlPage spcotPage = spfm.listCircleOfTrusts(spWebClient,
-                    configMap.get("sp_realm"),"saml2");
-            if(!spcotPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("sp_cot"))) {
+                    configMap.get(TestConstants.KEY_SP_REALM),"saml2");
+            if (!spcotPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 spcotPage = spfm.createCircleOfTrust(spWebClient,
-                        configMap.get("sp_cot"), configMap.get("sp_realm"), 
+                        configMap.get(TestConstants.KEY_SP_COT),
+                        configMap.get(TestConstants.KEY_SP_REALM),
                         null, null, "saml2");
-                if(!spcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " + configMap.get("sp_cot")
+                if (!spcotPage.getWebResponse().getContentAsString().
+                        contains("Circle of trust, "
+                        + configMap.get(TestConstants.KEY_SP_COT)
                         + " is created.")) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
                             "COT at SP side", null);
@@ -154,19 +166,19 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             String spMetadata[]= {"",""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
-                    configMap.get("sp_realm"), "saml2");
-            if(!spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("sp_entity_name"))) {
+                    configMap.get(TestConstants.KEY_SP_REALM), "saml2");
+            if (!spEntityPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log(logLevel, "configureSAMLv2", "sp entity doesnt exist. " +
                         "Get template & create the entity", null);
-                if(strGroupName.contains("sec")) {
-                    spMetadata = SAMLv2Common.configureSP(spWebClient, 
+                if (strGroupName.contains("sec")) {
+                    spMetadata = SAMLv2Common.configureSP(spWebClient,
                             configMap, true);
                 } else {
-                    spMetadata = SAMLv2Common.configureSP(spWebClient, 
+                    spMetadata = SAMLv2Common.configureSP(spWebClient,
                             configMap, false);
                 }
-                if((spMetadata[0].equals(null))||(spMetadata[1].equals(null))){
+                if ((spMetadata[0].equals(null)) || (spMetadata[1].equals(null))) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't configure " +
                             "SP", null);
                     assert false;
@@ -174,38 +186,41 @@ public class ConfigureSAMLv2 extends TestCommon {
             } else {
                 //If entity exists, export to get the metadata.
                 HtmlPage spExportEntityPage = spfm.exportEntity(spWebClient,
-                        configMap.get("sp_entity_name"),
-                        configMap.get("sp_realm"), false, true, true, "saml2");
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_SP_REALM), false, true,
+                        true, "saml2");
                 spMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         spExportEntityPage);
                 spMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
                         spExportEntityPage);
             }
             spMetadata[1] = spMetadata[1].replaceAll(
-                    configMap.get("sp_cot"), "");
-            log(logLevel, "configureSAMLv2", "sp metadata" + spMetadata[0], 
+                    configMap.get(TestConstants.KEY_SP_COT), "");
+            log(logLevel, "configureSAMLv2", "sp metadata" + spMetadata[0],
                     null);
-            log(logLevel, "configureSAMLv2", "sp Ext metadata" + spMetadata[1], 
+            log(logLevel, "configureSAMLv2", "sp Ext metadata" + spMetadata[1],
                     null);
             
             //idp side create cot, load idp metadata
-            consoleLogin(idpWebClient, idpurl, 
-                    (String)configMap.get("idp_admin"),
-                    (String)configMap.get("idp_adminpw"));
+            consoleLogin(idpWebClient, idpurl,
+                    (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
+                    (String)configMap.get(
+                    TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
             HtmlPage idpcotPage = idpfm.listCircleOfTrusts(idpWebClient,
-                    configMap.get("idp_realm"),"saml2");
-            if(idpcotPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("idp_cot"))) {
-                log(logLevel, "configureSAMLv2", "COT exists at IDP side" +
-                        idpcotPage.getWebResponse().getContentAsString(),
+                    configMap.get(TestConstants.KEY_IDP_REALM),"saml2");
+            if (idpcotPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_IDP_COT))) {
+                log(logLevel, "configureSAMLv2", "COT exists at IDP side",
                         null);
-            }else{
+            } else {
                 idpcotPage = idpfm.createCircleOfTrust(idpWebClient,
-                        configMap.get("idp_cot"), configMap.get("idp_realm"), 
+                        configMap.get(TestConstants.KEY_IDP_COT),
+                        configMap.get(TestConstants.KEY_IDP_REALM),
                         null, null, "saml2");
-                if(!idpcotPage.getWebResponse().getContentAsString().
-                        contains("Circle of trust, " + configMap.get("idp_cot")
+                if (!idpcotPage.getWebResponse().getContentAsString().
+                        contains("Circle of trust, " +
+                        configMap.get(TestConstants.KEY_IDP_COT)
                         + " is created.")) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
                             "COT at IDP side", null);
@@ -213,18 +228,18 @@ public class ConfigureSAMLv2 extends TestCommon {
                 }
             }
             
-            String[] idpMetadata ={"",""};
+            String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
-                    configMap.get("idp_realm"), "saml2");
-            if(!idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("idp_entity_name"))) {
+                    configMap.get(TestConstants.KEY_IDP_REALM), "saml2");
+            if (!idpEntityPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
                 log(logLevel, "configureSAMLv2", "idp entity doesnt exist. " +
                         "Get template & create the entity", null);
-                if(strGroupName.contains("sec")) {
-                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient, 
+                if (strGroupName.contains("sec")) {
+                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient,
                             configMap, true);
                 } else {
-                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient, 
+                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient,
                             configMap, false);
                 }
                 
@@ -232,9 +247,8 @@ public class ConfigureSAMLv2 extends TestCommon {
                         idpMetadata[0], null);
                 log(logLevel, "configureSAMLv2", "idp Ext metadata" +
                         idpMetadata[1], null);
-                if((idpMetadata[0].equals(null))||(
-                        idpMetadata[1].equals(null)))
-                {
+                if ((idpMetadata[0].equals(null)) || (
+                        idpMetadata[1].equals(null))) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't configure " +
                             "IDP", null);
                     assert false;
@@ -242,31 +256,33 @@ public class ConfigureSAMLv2 extends TestCommon {
             } else {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
-                        configMap.get("idp_entity_name"),
-                        configMap.get("idp_realm"), false, true, true, "saml2");
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_IDP_REALM), false, true,
+                        true, "saml2");
                 idpMetadata[0] = SAMLv2Common.getMetadataFromPage(
                         idpExportEntityPage);
                 idpMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
                         idpExportEntityPage);
             }
             idpMetadata[1] = idpMetadata[1].replaceAll(
-                    configMap.get("idp_cot"), "");
+                    configMap.get(TestConstants.KEY_IDP_COT), "");
             log(logLevel, "configureSAMLv2", "idp metadata" +
                     idpMetadata[0], null);
             log(logLevel, "configureSAMLv2", "idp Ext metadata" +
                     idpMetadata[1], null);
             
             //load spmetadata on idp
-            if(idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("sp_entity_name"))) {
+            if (idpEntityPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log(logLevel, "configureSAMLv2", "sp entity exists at idp. " +
                         "Delete & load the metadata ", null);
                 HtmlPage spDeleteEntityPage = idpfm.deleteEntity(idpWebClient,
-                        configMap.get("sp_entity_name"),
-                        configMap.get("sp_realm"), false, "saml2");
-                if(spDeleteEntityPage.getWebResponse().getContentAsString().
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        "saml2");
+                if (spDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
-                        configMap.get("sp_entity_name"))) {
+                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                     log(logLevel, "configureSAMLv2", "Delete sp entity on " +
                             "IDP side", null);
                 } else {
@@ -279,10 +295,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importSPMeta = idpfm.importEntity(idpWebClient, 
-                    configMap.get("idp_realm"), spMetadata[0], spMetadata[1], 
-                    (String)configMap.get("idp_cot"), "saml2");
-            if(!importSPMeta.getWebResponse().getContentAsString().
+            HtmlPage importSPMeta = idpfm.importEntity(idpWebClient,
+                    configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
+                    spMetadata[1],
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2");
+            if (!importSPMeta.getWebResponse().getContentAsString().
                     contains("Import file, web.")) {
                 log(Level.SEVERE, "configureSAMLv2", "Couldn't import SP " +
                         "metadata on IDP side" + importSPMeta.getWebResponse().
@@ -290,16 +307,17 @@ public class ConfigureSAMLv2 extends TestCommon {
                 assert false;
             }
             //load idpmetadata on sp
-            if(spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get("idp_entity_name"))) {
+            if (spEntityPage.getWebResponse().getContentAsString().
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
                 log(logLevel, "configureSAMLv2", "idp entity exists at sp. " +
                         "Delete & load the metadata ", null);
                 HtmlPage idpDeleteEntityPage = spfm.deleteEntity(spWebClient,
-                        configMap.get("idp_entity_name"),
-                        configMap.get("idp_realm"), false, "saml2");
-                if(idpDeleteEntityPage.getWebResponse().getContentAsString().
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        "saml2");
+                if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("Descriptor is deleted for entity, " +
-                        configMap.get("idp_entity_name"))) {
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
                     log(logLevel, "configureSAMLv2", "Delete idp entity on " +
                             "SP side", null);
                 } else {
@@ -312,10 +330,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                     "hosted=\"true\"", "hosted=\"false\"");
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
-            HtmlPage importIDPMeta = spfm.importEntity(spWebClient, 
-                    configMap.get("sp_realm"), idpMetadata[0], idpMetadata[1], 
-                    (String)configMap.get("sp_cot"), "saml2");
-            if(!importIDPMeta.getWebResponse().getContentAsString().
+            HtmlPage importIDPMeta = spfm.importEntity(spWebClient,
+                    configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
+                    idpMetadata[1],
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "saml2");
+            if (!importIDPMeta.getWebResponse().getContentAsString().
                     contains("Import file, web.")) {
                 log(Level.SEVERE, "configureSAMLv2", "Couldn't import IDP " +
                         "metadata on SP side" + importIDPMeta.getWebResponse().
@@ -333,60 +352,80 @@ public class ConfigureSAMLv2 extends TestCommon {
     }
     
     /**
-     * This method fills map with SP configuration data which is needed by 
-     * TestCommon.configureProduct method. 
+     * This method fills map with SP configuration data which is needed by
+     * TestCommon.configureProduct method.
      */
-    private void getSPConfigurationMap(Map spMap, Map confMap) 
+    private void getSPConfigurationMap(Map spMap, Map confMap)
     throws Exception {
         try {
-             spMap.put("serverurl",confMap.get("sp_proto") + ":" + "//" + 
-                     confMap.get("sp_host") + ":" + confMap.get("sp_port"));
-             spMap.put("serveruri",confMap.get("sp_deployment_uri"));
-             spMap.put("cookiedomain",confMap.get("sp_cookie_domain"));
-             spMap.put("configdir",confMap.get("sp_config_dir"));
-             spMap.put("adminPassword",confMap.get("sp_adminpw"));
-             spMap.put("datastore",confMap.get("sp_datastore"));
-             spMap.put("dirservername",confMap.get("sp_directory_server"));
-             spMap.put("dirserverport",confMap.get("sp_directory_port"));
-             spMap.put("dirserversuffixconfigdata",
-                     confMap.get("sp_config_root_suffix"));
-             spMap.put("dirserversuffixsmdata",
-                     confMap.get("sp_sm_root_suffix"));
-             spMap.put("dirserveradmindn",confMap.get("sp_ds_dirmgrdn"));
-             spMap.put("dirserveradminpassword",
-                     confMap.get("sp_ds_dirmgrpasswd"));
-             spMap.put("dirloadums",confMap.get("sp_load_ums"));
+            spMap.put("serverurl",confMap.get(TestConstants.KEY_SP_PROTOCOL)
+            + ":" + "//" + confMap.get(TestConstants.KEY_SP_HOST) + ":"
+                    + confMap.get(TestConstants.KEY_SP_PORT));
+            spMap.put("serveruri",
+                    confMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI));
+            spMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
+                    confMap.get(TestConstants.KEY_SP_COOKIE_DOMAIN));
+            spMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
+                    confMap.get(TestConstants.KEY_SP_CONFIG_DIR));
+            spMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
+                    confMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
+            spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
+                    confMap.get(TestConstants.KEY_SP_DATASTORE));
+            spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
+                    confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
+            spMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
+                    confMap.get(TestConstants.KEY_SP_DIRECTORY_PORT));
+            spMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
+                    confMap.get(TestConstants.KEY_SP_CONFIG_ROOT_SUFFIX));
+            spMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
+                    confMap.get(TestConstants.KEY_SP_SM_ROOT_SUFFIX));
+            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
+                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRDN));
+            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
+                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRPASSWORD));
+            spMap.put(TestConstants.KEY_ATT_LOAD_UMS,
+                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
         } catch(Exception e) {
             log(Level.SEVERE, "getspConfigurationMap", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
     }
-
+    
     /**
-     * This method fills map with IDP configuration data which is needed by 
-     * TestCommon.configureProduct method. 
+     * This method fills map with IDP configuration data which is needed by
+     * TestCommon.configureProduct method.
      */
-    private void getIDPConfigurationMap(Map idpMap, Map confMap) 
+    private void getIDPConfigurationMap(Map idpMap, Map confMap)
     throws Exception {
         try {
-             idpMap.put("serverurl",confMap.get("idp_proto") + ":" + "//" + 
-                     confMap.get("idp_host") + ":" + confMap.get("idp_port"));
-             idpMap.put("serveruri",confMap.get("idp_deployment_uri"));
-             idpMap.put("cookiedomain",confMap.get("idp_cookie_domain"));
-             idpMap.put("configdir",confMap.get("idp_config_dir"));
-             idpMap.put("adminPassword",confMap.get("idp_adminpw"));
-             idpMap.put("datastore",confMap.get("idp_datastore"));
-             idpMap.put("dirservername",confMap.get("idp_directory_server"));
-             idpMap.put("dirserverport",confMap.get("idp_directory_port"));
-             idpMap.put("dirserversuffixconfigdata",
-                     confMap.get("idp_config_root_suffix"));
-             idpMap.put("dirserversuffixsmdata",
-                     confMap.get("idp_sm_root_suffix"));
-             idpMap.put("dirserveradmindn",confMap.get("idp_ds_dirmgrdn"));
-             idpMap.put("dirserveradminpassword",
-                     confMap.get("idp_ds_dirmgrpasswd"));
-             idpMap.put("dirloadums",confMap.get("idp_load_ums"));
+            idpMap.put("serverurl",confMap.get(TestConstants.KEY_IDP_PROTOCOL)
+            + ":" + "//" + confMap.get(TestConstants.KEY_IDP_HOST) + ":"
+                    + confMap.get(TestConstants.KEY_IDP_PORT));
+            idpMap.put("serveruri",
+                    confMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI));
+            idpMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
+                    confMap.get(TestConstants.KEY_IDP_COOKIE_DOMAIN));
+            idpMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
+                    confMap.get(TestConstants.KEY_IDP_CONFIG_DIR));
+            idpMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
+                    confMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+            idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
+                    confMap.get(TestConstants.KEY_IDP_DATASTORE));
+            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
+                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));
+            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
+                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_PORT));
+            idpMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
+                    confMap.get(TestConstants.KEY_IDP_CONFIG_ROOT_SUFFIX));
+            idpMap.put(TestConstants.KEY_ATT_SM_ROOT_SUFFIX,
+                    confMap.get(TestConstants.KEY_IDP_SM_ROOT_SUFFIX));
+            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
+                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRDN));
+            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
+                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRPASSWORD));
+            idpMap.put(TestConstants.KEY_ATT_LOAD_UMS,
+                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
         } catch(Exception e) {
             log(Level.SEVERE, "getidpConfigurationMap", e.getMessage(), null);
             e.printStackTrace();
