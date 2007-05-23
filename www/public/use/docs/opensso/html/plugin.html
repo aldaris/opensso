@@ -53,20 +53,17 @@ Service plug-in. By default, the OpenSSO server includes the following plug-in i
 <li>
 <p><tt>com.sun.identity.idm.plugins.files.FilesRepo</tt> is the implementation for the flat file repository.</p></li></ul>
 
-<p>You can configure for any of these identity repositories with the OpenSSO administration
-console by selecting the realm under which the repository will be defined and
-clicking the Data Stores tab.</p>
+<p>You can configure for any of these identity repositories with the OpenSSO administration console by selecting the realm under which the repository will be defined and clicking the Data Stores tab.</p>
 
 <a name="gexzh"></a><h3>Writing Custom Identity Repository Service Plug-ins</h3>
 
-<p>Following is the process to write a custom plug-in for the Identity
-Repository Service.</p>
-<ol><li>
-<p>Write the plug-in module.</p></li>
-<li>
-<p>Set up the plug-in's configuration parameters (described in an XML file).</p></li>
-<li>
-<p>Modify <tt>amIdRepoService.properties</tt> and <tt>idRepoService.xml</tt> to display the new plug-in in the OpenSSO console.</p></li></ol>
+<p>Following is the process to write a custom plug-in for the Identity Repository Service.</p>
+<ol>
+<li><p>Write the plug-in module.</p></li>
+<li><p>Set up the plug-in's configuration parameters (described in an XML file).</p></li>
+<li><p>Modify <tt>amIdRepoService.properties</tt> and <tt>idRepoService.xml</tt> to display the new plug-in in the OpenSSO console.</p></li>
+<li><p>Rebuild and redeploy the <tt>openfm.war</tt>.</p></li>
+</ol>
 <a name="gexye"></a><h4>To Write A Custom Plug-in for the Identity Repository Service</h4><ol>
 <li><b>Implement the <tt>com.sun.identity.idm.IdRepo</tt> class.</b><p>The following methods should be implemented:</p>
 <hr><p><b>Note - </b>The sample code is taken from <tt>com.sun.identity.idm.plugins.files.FilesRepo.java</tt> which can be found in
