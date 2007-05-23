@@ -164,8 +164,7 @@ created by the web container.</b><p>Look in your web container's documentation f
 <li><b>Modify <tt>idRepoService.xml</tt> to create a schema for the plug-in's configuration parameters.</b><p>OpenSSO uses XML to define the configuration parameters for each plug-in. The schema for
 each plug-in is defined in <tt>idRepoService.xml</tt> using the <tt>&lt;SubSchema></tt> tag. For example, <tt>&lt;SubSchema name="LDAPv3"></tt>
 defines the configuration parameters for the generic LDAPv3 plug-in.</p>
-<hr><p><b>Note - </b><tt>idRepoService.xml</tt> can be found in the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserver/xml/services/">OpenSSO source code</a>.</p>
-<hr>
+<p><tt>idRepoService.xml</tt> can be viewed from the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserver/xml/services/">OpenSSO source code</a>.</p>
 
 <ul><li>
 <p>Each <tt>&lt;AttributeSchema></tt> defines the format and syntax for specific parameters to appear in the console.</p></li>
@@ -268,8 +267,8 @@ defines the configuration parameters for the generic LDAPv3 plug-in.</p>
                 &lt;/SubSchema></pre></li>
 <li><b>Put the modified <tt>idRepoService.xml</tt> in the <tt>openfm/WEB-INF/classes</tt> directory of the staging directory created by
 the web container.</b><p>Look in your web container's documentation for the exact path.</p></li>
-<li><b>Modify <tt>amIdRepoService.properties</tt> to display the plug-in's configuration parameters and names.</b><p>Information to do this is documented in Step 3. The file can
-be found in the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserver/resources/locale/">OpenSSO source code</a>.</p></li>
+<li><b>Modify <tt>amIdRepoService.properties</tt> to display the plug-in's configuration parameters and names.</b><p>Information to do this is documented in Step 3. <tt>amIdRepoService.properties</tt> can
+be viewed from the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserver/resources/locale/">OpenSSO source code</a>.</p></li>
 <li><b>Put the modified <tt>amIdRepoService.properties</tt> in the <tt>openfm/WEB-INF/classes</tt> directory of the staging directory created by
 the web container.</b><p>Look in your web container's documentation for the exact path.</p></li>
 <li><b>Rebuild <tt>openfm.war</tt> and redeploy it.</b></li></ol>
