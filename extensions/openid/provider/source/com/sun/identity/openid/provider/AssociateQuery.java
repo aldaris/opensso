@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateQuery.java,v 1.3 2007-05-22 23:32:40 pbryan Exp $
+ * $Id: AssociateQuery.java,v 1.4 2007-05-23 00:04:32 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -92,11 +92,6 @@ public class AssociateQuery extends Message
 
         sessionType = SessionType.decode(map.get("session_type"));
 
-        // default: blank
-        if (sessionType == null) {
-            sessionType = SessionType.CLEAR;
-        }
-
         modulus = Codec.decodeBigInteger(map.get("dh_modulus"));
 
         if (modulus == null) {
@@ -156,7 +151,7 @@ public class AssociateQuery extends Message
     /**
      * Returns the method used to encode the association's MAC key in transit.
      *
-     * @return DH_SHA1 or CLEAR.
+     * @return null, DH_SHA1 or CLEAR.
      */
     public SessionType getSessionType() {
         return sessionType;
@@ -202,7 +197,7 @@ public class AssociateQuery extends Message
     /**
      * Sets the method used to encode the association's MAC key in transit.
      *
-     * @param value DH_SHA1 or CLEAR.
+     * @param value null, DH_SHA1 or CLEAR.
      */
     public void setSessionType(SessionType value) {
         sessionType = value;

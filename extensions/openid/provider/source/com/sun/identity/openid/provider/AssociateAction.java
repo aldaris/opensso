@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociateAction.java,v 1.2 2007-04-30 05:36:13 pbryan Exp $
+ * $Id: AssociateAction.java,v 1.3 2007-05-23 00:04:32 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -193,7 +193,7 @@ public class AssociateAction extends Action
             dhSHA1(secret);
         }
 
-        else if (sessionType == SessionType.CLEAR) {
+        else if (sessionType == null || sessionType == SessionType.CLEAR) {
             result.setMacKey(secret);
         }
 
