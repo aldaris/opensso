@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.5 2007-01-09 19:07:29 manish_rustagi Exp $
+ * $Id: LDAP.java,v 1.6 2007-05-24 23:17:25 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -424,15 +424,36 @@ public class LDAP extends AMLoginModule {
                     }
                 } else {
                     if (initializeLDAP()) {
-                        //validate username and password
+                        //validate username
                         validateUserName(userName, regEx);
-                        validatePassword(userPassword);
                         ldapUtil.authenticateUser(userName, userPassword);
                         newState = ldapUtil.getState();
                     } else {
                         newState = LDAPAuthUtils.SERVER_DOWN;
                     }
-                    processLoginScreen(newState);
+                    boolean passwordValidationSuccessFlag = true;
+                    // Validating Password only if authentication
+                    // information entered is correct
+                    if (newState == LDAPAuthUtils.SUCCESS){
+                        try{
+                            validatePassword(userPassword);
+                        }catch(UserNamePasswordValidationException upve){
+                            if (debug.messageEnabled()) {
+                                debug.message("Password does not satisfy " +
+                                              "password policy rules specified"
+                                              + " in Access Manager");
+                            }
+                            isReset = true;
+                            String invalidMsg = bundle.getString(
+                                                   "PasswordInvalid");
+                            replaceHeader(PASSWORD_CHANGE, invalidMsg);
+                            currentState = PASSWORD_CHANGE;
+                            passwordValidationSuccessFlag = false;
+                        }
+                    }
+                    if (passwordValidationSuccessFlag) {
+                        processLoginScreen(newState);
+                    }
                     //processLoginScreen(LDAPAuthUtils.PASSWORD_EXPIRING);
                     return currentState;
                 }
@@ -451,13 +472,24 @@ public class LDAP extends AMLoginModule {
                     callbacks[1]).getPassword(), callbacks[1]);
                     String confirmPassword = charToString(((PasswordCallback)
                     callbacks[2]).getPassword(), callbacks[2]);
-                    validatePassword(newPassword);
-                    ldapUtil.changePassword(oldPassword, newPassword,
+                    try{
+                        validatePassword(newPassword);
+                        ldapUtil.changePassword(oldPassword, newPassword,
                         confirmPassword);
-                    newState = ldapUtil.getState();
-                    processPasswordScreen(newState);
-                    if (debug.messageEnabled()) {
-                        debug.message("Password change state :" + newState);
+                        newState = ldapUtil.getState();
+                        processPasswordScreen(newState);
+                        if (debug.messageEnabled()) {
+                            debug.message("Password change state :" + newState);
+                        }
+                    }catch(UserNamePasswordValidationException upve){
+                        if (debug.messageEnabled()) {
+                            debug.message("Password could not be validated, " +
+                                          "need a different password");
+                        }
+                        String invalidMsg = bundle.getString(
+                                                "NewPasswordInvalid");
+                        replaceHeader(PASSWORD_CHANGE, invalidMsg);
+                        currentState = PASSWORD_CHANGE;                    	
                     }
                     return currentState;
                 } else  {
