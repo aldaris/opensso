@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.4 2007-01-21 10:34:21 mrudul_uchil Exp $
+ * $Id: AMLoginContext.java,v 1.5 2007-05-24 23:13:08 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -631,7 +631,8 @@ public class AMLoginContext {
                 }
             }
             loginState.logLogout();
-            loginState.postLogin(indexType,indexName,false);
+            loginState.postProcess(indexType,indexName,
+                    LoginState.POSTPROCESS_LOGOUT);           
             destroySession();
             st.setStatus(LoginStatus.AUTH_COMPLETED);
         } catch (AuthLoginException le) {
@@ -1806,7 +1807,8 @@ public class AMLoginContext {
                 debug.message("postProcessOnFail ");
             }
             //setErrorMsgAndTemplate();
-            loginState.postLogin(indexType,indexName,false);
+            loginState.postProcess(indexType,indexName,
+                    LoginState.POSTPROCESS_FAILURE);            
             loginState.setFailureLoginURL(indexType,indexName);
             processDone = true;
         }
@@ -1822,7 +1824,8 @@ public class AMLoginContext {
             if (debug.messageEnabled()) {
                 debug.message("postProcessOnSuccess ");
             }
-            loginState.postLogin(indexType,indexName,true);
+            loginState.postProcess(indexType,indexName,
+                    LoginState.POSTPROCESS_SUCCESS);
             processDone = true;
         }
     }

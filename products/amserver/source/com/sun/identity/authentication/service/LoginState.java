@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.12 2007-04-02 06:02:08 veiming Exp $
+ * $Id: LoginState.java,v 1.13 2007-05-24 23:13:52 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -329,6 +329,10 @@ public class LoginState {
 
     int compositeAdviceType;
     String qualifiedOrgDN = null;
+    
+    static final int POSTPROCESS_SUCCESS = 1;
+    static final int POSTPROCESS_FAILURE = 2;
+    static final int POSTPROCESS_LOGOUT = 3;    
     
     // Variable indicating a request "forward" after 
     // authentication success
@@ -4724,20 +4728,22 @@ public class LoginState {
      *  1. Set at the service.
      *  2. Set at the user's role entry.
      *  3. Set at the user's org entry.
+     *  
+     * @param indexType Index type for post process
+     * @param indexName Index name for post process
+     * @param type indicates success, failure or logout
      */
-    void postLogin(
-        AuthContext.IndexType indexType,
-        String indexName, 
-        boolean success) {
+    void postProcess(AuthContext.IndexType indexType,String indexName, 
+            int type) {
         setPostLoginInstances(indexType,indexName);
         AMPostAuthProcessInterface postLoginInstance=null;
-        if ((postLoginInstanceSet != null) && (!postLoginInstanceSet.isEmpty())
-        ) {
+        if ((postLoginInstanceSet != null) && 
+            (!postLoginInstanceSet.isEmpty())) {
             for(Iterator iter = postLoginInstanceSet.iterator(); 
             iter.hasNext();) {
                 postLoginInstance = 
                 (AMPostAuthProcessInterface) iter.next();
-                executePostLoginSPI(postLoginInstance,success);
+                executePostProcessSPI(postLoginInstance,type);
             }
         }
     }
@@ -4746,32 +4752,45 @@ public class LoginState {
     /**
      * Returns an instance of the spi and execute it based on whether
      * the login status is success or failed
-     * @param postProcessInstance <code>AMPostAuthProcessInterface</code> object
-     *        to be processes in post login 
-     * @param isSuccess indicates if login success
+     * @param postProcessInstance <code>AMPostAuthProcessInterface</code>
+     * object to be processes in post login 
+     * @param type indicates success, failure or logout
      */
-    void executePostLoginSPI(
-        AMPostAuthProcessInterface postProcessInstance,
-        boolean isSuccess) {
+    void executePostProcessSPI(AMPostAuthProcessInterface postProcessInstance, 
+        int type) {
+        
         /* execute the post process spi */
         try{
-            if (isSuccess) {
+            switch (type) { 
+            case POSTPROCESS_SUCCESS:
                 postProcessInstance.onLoginSuccess(requestMap,servletRequest
                 ,servletResponse,getSSOToken());
-            } else {
+                break;
+            case POSTPROCESS_FAILURE:
                 postProcessInstance.onLoginFailure(requestMap,servletRequest,
                 servletResponse);
+                break;
+            case POSTPROCESS_LOGOUT:
+                postProcessInstance.onLogout(servletRequest,servletResponse,
+                        getSSOToken());
+                break;
+            default:
+                if (messageEnabled) {
+                    ad.debug.message("executePostProcessSPI: " +
+                        "invalid input type: "+type);
+                }
             }
         } catch (AuthenticationException ae) {
             if (messageEnabled){
-                debug.message("Error " , ae);
+                ad.debug.message("Error " , ae);
             }
         } catch (Exception e) {
             if (messageEnabled){
-                debug.message("Error " , e);
+                ad.debug.message("Error " , e);
             }
         }
-    }
+    }    
+    
     
     /**
      * Creates a set of instances that are implementation of classes of type 
