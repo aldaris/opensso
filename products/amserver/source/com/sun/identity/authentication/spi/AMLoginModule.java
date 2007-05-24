@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.5 2007-01-21 10:34:25 mrudul_uchil Exp $
+ * $Id: AMLoginModule.java,v 1.6 2007-05-24 23:10:01 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -561,6 +561,10 @@ public abstract class AMLoginModule implements LoginModule {
             if (idx != -1) {
                 String newHeader = origHeader.substring(0, idx) + header;
                 pc.setHeader(newHeader);
+            }else{
+                String newHeader = origHeader.substring(0, 
+                    origHeader.indexOf("<BR></BR>")) + "<BR></BR>" + header;
+                pc.setHeader(newHeader);            	
             }
         }
     }
@@ -1765,7 +1769,11 @@ public abstract class AMLoginModule implements LoginModule {
             AMUserPasswordValidation plugin = getUPValidationInstance();
             if (plugin != null) {
                 debug.message("Validating username...");
-                plugin.validateUserID(userName);
+                Map envMap = new HashMap(2);
+                envMap.put(
+                 com.sun.identity.common.Constants.ORGANIZATION_NAME,
+                 getRequestOrg());
+                plugin.validateUserID(userName, envMap);
             } else if (regEx != null && (regEx.length() != 0)) {
                 if (! (ISValidation.validate(userName, regEx, debug))) {
                     throw new UserNamePasswordValidationException(bundleName,
@@ -1868,7 +1876,7 @@ public abstract class AMLoginModule implements LoginModule {
             throw new UserNamePasswordValidationException(ame);
         } catch (Exception ex) {
             debug.message(
-            "Unknown Exception occured during username validation");
+            "Unknown Exception occured during password validation");
             throw new UserNamePasswordValidationException(ex);
         }
         
