@@ -1,3 +1,27 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
 package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -24,73 +48,6 @@ public class FederationManager {
         amadmUrl = url + "/fmadm.jsp?cmd=";
     }
 
-
-    /**
-     * Do multiple requests in one command.
-     *
-     * @param webClient HTML Unit Web Client object.
-     * @param datafile Name of file that contains commands and options.
-     * @param batchstatus Name of status file.
-     */
-    public HtmlPage doBatch(
-        WebClient webClient,
-        String datafile,
-        String batchstatus
-    ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "do-batch");
-        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
-        HtmlForm form = (HtmlForm)page.getForms().get(0);
-
-        if (datafile != null) {
-            HtmlTextArea tadatafile = (HtmlTextArea)form.getTextAreasByName("datafile").get(0);
-            tadatafile.setText(datafile);
-        }
-
-        if (batchstatus != null) {
-            HtmlTextInput txtbatchstatus = (HtmlTextInput)form.getInputByName("batchstatus");
-            txtbatchstatus.setValueAttribute(batchstatus);
-        }
-
-
-        return (HtmlPage)form.submit();
-    }
-
-    /**
-     * List Sessions.
-     *
-     * @param webClient HTML Unit Web Client object.
-     * @param host Host Name.
-     * @param filter Filter (Pattern).
-     * @param quiet Do not prompt for session invalidation.
-     */
-    public HtmlPage listSessions(
-        WebClient webClient,
-        String host,
-        String filter,
-        String quiet
-    ) throws Exception {
-        URL cmdUrl = new URL(amadmUrl + "list-sessions");
-        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
-        HtmlForm form = (HtmlForm)page.getForms().get(0);
-
-        if (host != null) {
-            HtmlTextInput txthost = (HtmlTextInput)form.getInputByName("host");
-            txthost.setValueAttribute(host);
-        }
-
-        if (filter != null) {
-            HtmlTextInput txtfilter = (HtmlTextInput)form.getInputByName("filter");
-            txtfilter.setValueAttribute(filter);
-        }
-
-        if (quiet != null) {
-            HtmlTextInput txtquiet = (HtmlTextInput)form.getInputByName("quiet");
-            txtquiet.setValueAttribute(quiet);
-        }
-
-
-        return (HtmlPage)form.submit();
-    }
 
     /**
      * Add resource bundle to data store.
@@ -3976,15 +3933,13 @@ public class FederationManager {
      * @param realm Realm where circle of trust resides
      * @param trustedproviders Trusted Providers
      * @param prefix Prefix URL for idp discovery reader and writer URL.
-     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage createCircleOfTrust(
         WebClient webClient,
         String cot,
         String realm,
         List trustedproviders,
-        String prefix,
-        String spec
+        String prefix
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "create-circle-of-trust");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -4015,11 +3970,6 @@ public class FederationManager {
             txtprefix.setValueAttribute(prefix);
         }
 
-        if (spec != null) {
-            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
-            txtspec.setValueAttribute(spec);
-        }
-
 
         return (HtmlPage)form.submit();
     }
@@ -4030,13 +3980,11 @@ public class FederationManager {
      * @param webClient HTML Unit Web Client object.
      * @param cot Circle of Trust
      * @param realm Realm where circle of trust resides
-     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage deleteCircleOfTrust(
         WebClient webClient,
         String cot,
-        String realm,
-        String spec
+        String realm
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "delete-circle-of-trust");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -4052,11 +4000,6 @@ public class FederationManager {
             txtrealm.setValueAttribute(realm);
         }
 
-        if (spec != null) {
-            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
-            txtspec.setValueAttribute(spec);
-        }
-
 
         return (HtmlPage)form.submit();
     }
@@ -4066,12 +4009,10 @@ public class FederationManager {
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Realm where circle of trusts reside
-     * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage listCircleOfTrusts(
         WebClient webClient,
-        String realm,
-        String spec
+        String realm
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "list-circle-of-trusts");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -4080,11 +4021,6 @@ public class FederationManager {
         if (realm != null) {
             HtmlTextInput txtrealm = (HtmlTextInput)form.getInputByName("realm");
             txtrealm.setValueAttribute(realm);
-        }
-
-        if (spec != null) {
-            HtmlTextInput txtspec = (HtmlTextInput)form.getInputByName("spec");
-            txtspec.setValueAttribute(spec);
         }
 
 

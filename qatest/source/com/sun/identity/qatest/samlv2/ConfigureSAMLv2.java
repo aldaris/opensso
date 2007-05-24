@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.2 2007-05-23 22:12:16 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.3 2007-05-24 23:39:17 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,13 +145,13 @@ public class ConfigureSAMLv2 extends TestCommon {
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
             HtmlPage spcotPage = spfm.listCircleOfTrusts(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM),"saml2");
+                    configMap.get(TestConstants.KEY_SP_REALM));
             if (!spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 spcotPage = spfm.createCircleOfTrust(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
                         configMap.get(TestConstants.KEY_SP_REALM),
-                        null, null, "saml2");
+                        null, null);
                 if (!spcotPage.getWebResponse().getContentAsString().
                         contains("Circle of trust, "
                         + configMap.get(TestConstants.KEY_SP_COT)
@@ -208,7 +208,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
             HtmlPage idpcotPage = idpfm.listCircleOfTrusts(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM),"saml2");
+                    configMap.get(TestConstants.KEY_IDP_REALM));
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(logLevel, "configureSAMLv2", "COT exists at IDP side",
@@ -217,7 +217,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                 idpcotPage = idpfm.createCircleOfTrust(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
                         configMap.get(TestConstants.KEY_IDP_REALM),
-                        null, null, "saml2");
+                        null, null);
                 if (!idpcotPage.getWebResponse().getContentAsString().
                         contains("Circle of trust, " +
                         configMap.get(TestConstants.KEY_IDP_COT)
