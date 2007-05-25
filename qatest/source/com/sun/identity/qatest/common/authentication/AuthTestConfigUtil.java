@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.2 2007-05-22 23:54:22 rmisra Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.3 2007-05-25 22:03:19 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,19 +46,20 @@ public class AuthTestConfigUtil extends TestCommon {
     private String moduleService;
     private String moduleSubConfigName;
     private ResourceBundle configdata;
-    private static final String module_subconfigid ="serverconfig";
-    private String  testbaseDir;
+    private static final String moduleSubconfigid = "serverconfig";
+    private String testbaseDir;
     private String url;
     private String logoutURL;
     private String configInfo;
+    private String testConfigRealm = "/";
     
     /**
      * Default Contructor
      * @param configuration data file name
      */
-    public AuthTestConfigUtil(String config_data){
+    public AuthTestConfigUtil(String config){
         super("AuthTestConfigUtil");
-        this.configInfo = config_data;
+        this.configInfo = config;
         this.configdata =  ResourceBundle.getBundle(configInfo);
         url = protocol + ":" + "//" + host + ":" + port + uri;
         logoutURL = url + "/UI/Logout";
@@ -80,9 +81,9 @@ public class AuthTestConfigUtil extends TestCommon {
         Enumeration bundleKeys = configdata.getKeys();
         while (bundleKeys.hasMoreElements()) {
             String key = (String)bundleKeys.nextElement();
-            if(key.startsWith(moduleName)){
+            if (key.startsWith(moduleName)) {
                 String value  = configdata.getString(key);
-                mapModData.put(key,value);
+                mapModData.put(key, value);
             }
         }
         log(logLevel, "getModuleData", "ModuleData:" + mapModData);
@@ -119,30 +120,39 @@ public class AuthTestConfigUtil extends TestCommon {
      * @return module subconfig Id
      */
     public String getModuleSubConfigId(){
-        return module_subconfigid;
+        return moduleSubconfigid;
+    }
+    
+    /**
+     * Sets test realm
+     * @param realm name
+     */
+    public void setTestConfigRealm(String realmName){
+        if (!(realmName.equals("/")))
+            testConfigRealm = testConfigRealm + realmName;
     }
     
     /**
      * Creates the module instances
-     * @param mod_servicename
-     * @param mod_subconfig
-     * @param mod_configdata
-     **@param mod_configId
+     * @param moduleServicename
+     * @param moduleSubconfig
+     * @param moduleConfigdata
+     **@param moduleConfigId
      */
-    public void createModuleInstances(String mod_servicename,String mod_subconfig,
-            List mod_configdata,String mod_configId) throws Exception {
-        log(logLevel, "createModuleInstances", "mod_servicename:" +
-                mod_servicename);
-        log(logLevel, "createModuleInstances", "mod_servicename:" +
-                mod_subconfig);
-        log(logLevel, "createModuleInstances", "mod_servicename:" +
-                mod_configId);
+    public void createModuleInstances(String modServname, String modSubconf,
+            List modConfdata, String modConfId) throws Exception {
+        log(logLevel, "createModuleInstances", "moduleServicename:" +
+                modServname);
+        log(logLevel, "createModuleInstances", "moduleServicename:" +
+                modSubconf);
+        log(logLevel, "createModuleInstances", "moduleServicename:" +
+                modConfId);
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubConfiguration(webClient, mod_servicename,
-                mod_subconfig, mod_configdata, realm, mod_configId);
-        consoleLogout(webClient,logoutURL);
+        am.createSubConfiguration(webClient, modServname,
+                modSubconf, modConfdata, realm, modConfId);
+        consoleLogout(webClient, logoutURL);
     }
     
     /**
@@ -150,24 +160,20 @@ public class AuthTestConfigUtil extends TestCommon {
      * @param chainname
      * @param List service_data
      */
-    public void createServices(String chainname,List service_data )
+    public void createServices(String chainname, List servData)
     throws Exception {
-        String service_servicename = "iPlanetAMAuthConfiguration";
-        String service_subconfigid="NamedConfiguration";
-        String service_subconfigname ="Configurations/" + chainname;
-        log(logLevel, "createServices", "service_servicename:" +
-                service_servicename);
-        log(logLevel, "createServices", "service_subconfigid:" +
-                service_subconfigid);
-        log(logLevel, "createServices", "service_subconfigname:" +
-                service_subconfigname);
+        String servicename = "iPlanetAMAuthConfiguration";
+        String subconfigid = "NamedConfiguration";
+        String subconfigname = "Configurations/" + chainname;
+        log(logLevel, "createServices", "servicename:" + servicename);
+        log(logLevel, "createServices", "subconfig " + subconfigid);
+        log(logLevel, "createServices", "subconfigname:" + subconfigname);
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createSubConfiguration(webClient, service_servicename,
-                service_subconfigname, service_data, realm,
-                service_subconfigid);
-        consoleLogout(webClient,logoutURL);
+        am.createSubConfiguration(webClient, servicename, subconfigname, 
+                servData, realm, subconfigid);
+        consoleLogout(webClient, logoutURL);
     }
     
     /**
@@ -175,14 +181,27 @@ public class AuthTestConfigUtil extends TestCommon {
      * @param List user list
      * @param username
      */
-    public void createUser(List user_list,String uname)
+    public void createUser(List userList, String uname)
     throws Exception{
         FederationManager am = new FederationManager(url);
         WebClient webClient = new WebClient();
         consoleLogin(webClient, url, adminUser, adminPassword);
-        am.createIdentity(webClient, realm, uname, "User", user_list);
-        log(logLevel, "createUser", "User:" + user_list);
-        consoleLogout(webClient,logoutURL);
+        am.createIdentity(webClient, realm, uname, "User", userList);
+        log(logLevel, "createUser", "User:" + userList);
+        consoleLogout(webClient, logoutURL);
     }
     
+    /**
+     * Creates the realm
+     * @param realmname
+     */
+    public void createRealms(String realmName)
+    throws Exception{
+        FederationManager am = new FederationManager(url);
+        WebClient webClient = new WebClient();
+        consoleLogin(webClient, url, adminUser, adminPassword);
+        am.createRealm(webClient, realmName);
+        log(logLevel, "createRealms", "Realm:" + realmName);
+        consoleLogout(webClient, logoutURL);
+    }
 }
