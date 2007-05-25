@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-authentication-testng.xml,v 1.3 2007-05-21 17:10:37 rmisra Exp $
+ $Id: client-authentication-testng.xml,v 1.4 2007-05-25 21:55:54 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -324,6 +324,26 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="ChainTest">
+        <groups>
+            <run>
+                <include name="client"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTestFactory"/>
+        </classes>
+    </test>
+    <test name="RedirectTest">
+        <groups>
+            <run>
+                <include name="client"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTestFactory"/>
         </classes>
     </test>
 </suite>
