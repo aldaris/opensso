@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: logout.php,v 1.1 2007-05-22 05:38:39 andreas1980 Exp $
+ * $Id: logout.php,v 1.2 2007-05-25 00:16:12 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@
     if ( federatedLogin() ) {
         header("Location: " . $LIGHTBULB_CONFIG['baseurl'] .  "spSLOInit.php?binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" . $_GET['RelayState'] );
     } else {
-        clearUserId();
+        spi_sessionhandling_clearUserId();
         header("Location: ". $_GET['RelayState']);
     }
     exit();
