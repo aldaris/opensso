@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.1 2007-05-30 19:07:13 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.2 2007-05-30 19:24:24 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,8 @@ public class UnconfigureSAMLv2 extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    private void getWebClient() throws Exception {
+    private void getWebClient() 
+    throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
@@ -130,6 +131,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
                     assert false;
                 }
             }
+            
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
                 log (logLevel, "UnconfigureSAMLv2", "sp entity exists at idp. ",
