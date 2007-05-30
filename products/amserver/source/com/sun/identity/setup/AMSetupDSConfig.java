@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.6 2007-03-21 22:33:46 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.7 2007-05-30 22:04:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -244,11 +244,7 @@ public class AMSetupDSConfig {
      *         specified as replaceWith. 
      */
     private String replaceDNDelimiter(String nSuffix, String replaceWith) {
-        String DN = null;
-        if (nSuffix.indexOf(",") != -1) {
-            DN = nSuffix.replaceAll(",",replaceWith);
-        }
-        return DN.trim();
+        return nSuffix.replaceAll("," ,replaceWith).trim();
     }
 
     /**
