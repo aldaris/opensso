@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
+ * $Id: WSSUtils.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,12 +34,18 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.ResourceBundle;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.math.BigInteger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.security.KeyStore;
+import java.security.Principal;
+import java.security.AccessController;
 import java.security.cert.CertificateFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -52,6 +58,14 @@ import com.sun.org.apache.xml.internal.security.keys.content.keyvalues.
        RSAKeyValue;
 import com.sun.org.apache.xml.internal.security.utils.Constants;
 import com.sun.org.apache.xml.internal.security.Init;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.locale.Locale;
@@ -438,6 +452,111 @@ public class WSSUtils {
                         append(authModuleName);
             return sb.toString();
         }
+    }
+    
+    /**
+     * Sets the memberships for a given user into the JAAS Subject.
+     * @param subject the JAAS subject where the role memberships need
+     * to be set.
+     * @param user the user's universal dn
+     */
+    public static void setRoles(javax.security.auth.Subject
+            subject, String user) {
+        List roles = getMemberShips(user);
+        if(roles == null || roles.isEmpty()) {
+           if(debug.messageEnabled()) {
+              debug.message("WSSUtils.setRoles:: " +
+                    "There are no memberships for this user");
+           }
+           return;
+        }
+        if(debug.messageEnabled()) {
+           debug.message("WSSUtils.setRoles:: " + roles);
+        }
+        Iterator iter = roles.iterator();
+        while(iter.hasNext()) {
+           String roleName = (String)iter.next();
+           Principal principal = new SecurityPrincipal(roleName);
+           subject.getPrincipals().add(principal);
+        }  
+    }
+    
+    private static List getMemberShips(String pattern) {
+        List roles = new ArrayList();
+        try {
+            SSOToken adminToken = getAdminToken();
+            if(adminToken == null) {
+               debug.error("WSSUtils.getRoleMemberShips: " +
+               "Admin Token is null");
+                return roles;
+            }
+            AMIdentity user = new AMIdentity(adminToken, pattern);
+            if(user == null) {
+               if(debug.messageEnabled()) {
+                  debug.message("WSSUtils.getMemberShips: " +
+                  "unable to get the user");
+               }
+               return roles;
+            }
+
+            AMIdentityRepository idRepo =
+                  new AMIdentityRepository(adminToken, user.getRealm());
+            Set supportedTypes = idRepo.getSupportedIdTypes();
+
+            Set enrolledTypes = new HashSet();
+            for (Iterator iter1 = supportedTypes.iterator(); iter1.hasNext();)
+            {
+                 IdType idType = (IdType)iter1.next();
+                 Set canHaveMembers = idType.canHaveMembers();
+                 if(!canHaveMembers.isEmpty()) {
+                    enrolledTypes.add(idType);
+                 }
+            }
+
+            if(enrolledTypes.isEmpty()) {
+               if(debug.messageEnabled()) {
+                  debug.message("WSSUtils.getMemberShips: " +
+                  "Can have enrolled types are empty");
+               }
+               return roles;
+            }
+            Iterator iter3 = enrolledTypes.iterator();
+            while(iter3.hasNext()) {
+               IdType idType = (IdType)iter3.next();
+               Set roleMemberships = user.getMemberships(idType);
+               Iterator roleI = roleMemberships.iterator();
+               while(roleI.hasNext()) {
+                  AMIdentity role = (AMIdentity)roleI.next();
+                  roles.add(role.getUniversalId());
+               }
+            }
+            return roles;
+
+        } catch (SSOException se) {
+            debug.error("WSSUtils.getRoleMemberShips: " +
+            "SSOException" + se);
+        } catch (IdRepoException ire) {
+            debug.error("WSSUtils.getRoleMemberShips: " +
+            "IdRepoException" + ire);
+        }
+        return roles;
+    }    
+    
+    private static SSOToken getAdminToken() {
+        SSOToken adminToken = null;
+        try {
+            adminToken = (SSOToken) AccessController.doPrivileged(
+                         AdminTokenAction.getInstance());
+            if(adminToken != null) {
+               SSOTokenManager.getInstance().refreshSession(adminToken);
+            }
+        } catch (Exception se) {
+            debug.message("DefaultAuthenticator.getAdminToken::" +
+               "Trying second time ....");
+            adminToken = (SSOToken) AccessController.doPrivileged(
+               AdminTokenAction.getInstance());
+        }
+        return adminToken;
     }
 
 }

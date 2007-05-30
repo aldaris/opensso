@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.1 2007-03-23 00:01:53 mallas Exp $
+ * $Id: AgentProvider.java,v 1.2 2007-05-30 20:12:14 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,10 @@ public class AgentProvider extends ProviderConfig {
      private static final String USER_PASSWORD = "UserPassword";
      private static final String USER_CREDENTIAL = "UserCredential";
      private static final String SERVICE_TYPE = "ServiceType";
-     private static final String USE_DEFAULT_KEYSTORE = "useDefaultStore"; 
+     private static final String USE_DEFAULT_KEYSTORE = "useDefaultStore";
+     private static final String FORCE_AUTHENTICATION = "forceUserAuthn";
+     private static final String KEEP_SECURITY_HEADERS = "keepSecurityHeaders";
+     private static final String AUTHENTICATION_CHAIN = "authenticationChain";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -140,11 +143,12 @@ public class AgentProvider extends ProviderConfig {
         Iterator iter = keyValues.iterator(); 
         while(iter.hasNext()) {
            String entry = (String)iter.next();
-           StringTokenizer st = new StringTokenizer(entry, "=");
-           if(st.countTokens() != 2) {
+           int index = entry.indexOf("=");
+           if(index == -1) {
               continue;
            }
-           setConfig(st.nextToken(), st.nextToken());
+           setConfig(entry.substring(0, index),
+                      entry.substring(index+1, entry.length()));
         }
     }
 
@@ -225,7 +229,12 @@ public class AgentProvider extends ProviderConfig {
               }
               usercredentials.add(credential);
            }
-
+        } else if(attr.equals(FORCE_AUTHENTICATION)) {
+           this.forceAuthn = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(KEEP_SECURITY_HEADERS)) {
+           this.preserveSecHeaders = Boolean.valueOf(value).booleanValue();
+        } else if(attr.equals(AUTHENTICATION_CHAIN)) {
+           this.authenticationChain = value;
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -273,6 +282,14 @@ public class AgentProvider extends ProviderConfig {
         set.add(getKeyValue(RESPONSE_SIGN, Boolean.toString(isResponseSigned)));
         set.add(getKeyValue(USE_DEFAULT_KEYSTORE, 
                        Boolean.toString(isDefaultKeyStore)));
+        set.add(getKeyValue(FORCE_AUTHENTICATION,
+                       Boolean.toString(forceAuthn)));
+        set.add(getKeyValue(KEEP_SECURITY_HEADERS,
+                       Boolean.toString(preserveSecHeaders)));
+        if(authenticationChain != null) {
+           set.add(getKeyValue(AUTHENTICATION_CHAIN, authenticationChain));
+        }
+        
         if(keyAlias != null) {
            set.add(getKeyValue(KEY_ALIAS, keyAlias));
         }

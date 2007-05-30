@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,18 +139,18 @@ public class SecureSOAPMessage {
              SOAPHeader header = 
                    soapMessage.getSOAPPart().getEnvelope().getHeader();   
              if(header == null) {
-                debug.error("SecureSOAPMessage.parseSOAPMessage: " +
+                if(debug.messageEnabled()) {
+                   debug.message("SecureSOAPMessage.parseSOAPMessage: " +
                      "No SOAP header found.");
-                throw new SecurityException(
-                    bundle.getString("securityHeaderNotFound"));
+                }
              }
              NodeList headerChildNodes = header.getChildNodes();
              if((headerChildNodes == null) || 
                         (headerChildNodes.getLength() == 0)) {
-                debug.error("SecureSOAPMessage.parseSOAPMessage: " +
+                if(debug.messageEnabled()) { 
+                   debug.message("SecureSOAPMessage.parseSOAPMessage: " +
                      "No security header found.");
-                throw new SecurityException(
-                    bundle.getString("securityHeaderNotFound"));
+                }
              }
              for(int i=0; i < headerChildNodes.getLength(); i++) {
 
@@ -166,10 +166,11 @@ public class SecureSOAPMessage {
                  }
              }
              if(securityToken == null) {
-                debug.error("SecureSOAPMessage.parseSOAPMessage: " +
+                if(debug.messageEnabled()) {
+                   debug.error("SecureSOAPMessage.parseSOAPMessage: " +
                      "security token is null");
-                throw new SecurityException(
-                    bundle.getString("securityHeaderNotFound"));
+                }
+                securityMechanism = SecurityMechanism.WSS_NULL_ANONYMOUS;
              }
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.parseSOAPMessage: SOAP" +

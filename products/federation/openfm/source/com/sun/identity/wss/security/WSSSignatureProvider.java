@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -455,10 +455,15 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                   XMLUtils.createDSctx (doc,"ds",Constants.SignatureSpecNS);
             NodeList sigElements = XPathAPI.selectNodeList (doc,
                 "//ds:Signature", nscontext);
+            int sigElementsLength = sigElements.getLength();
             if (WSSUtils.debug.messageEnabled()) {
                 WSSUtils.debug.message("WSSSignatureProvider.verifyWSSSignature"
                       + ": sigElements " + "size = " + sigElements.getLength());
             }
+            if(sigElementsLength == 0) {
+               return false;
+            }
+
             X509Certificate newcert= keystore.getX509Certificate (certAlias);
             PublicKey key = keystore.getPublicKey (certAlias);
             Element sigElement = null;

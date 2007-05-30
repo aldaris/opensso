@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 package com.sun.identity.wss.security.handler;
 
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.security.auth.Subject;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -195,9 +196,30 @@ public class SOAPRequestHandler {
         List list = config.getSecurityMechanisms();
         String uri = securityMechanism.getURI();
         if(!list.contains(uri)) {
-           throw new SecurityException(
-                 bundle.getString("unsupportedSecurityMechanism"));
+           if( (!list.contains(
+                SecurityMechanism.WSS_NULL_ANONYMOUS_URI)) &&
+               (!list.contains(
+                SecurityMechanism.WSS_TLS_ANONYMOUS_URI))&&
+               (!list.contains(
+                SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI))) {
+               throw new SecurityException(
+                     bundle.getString("unsupportedSecurityMechanism"));
+           } else {
+              if(debug.messageEnabled()) {
+                 debug.message("SOAPRequestHandler.validateRequest:: " +
+                  "provider is not configured for the message " +
+                  " security but allows anonymous");
+              }
+              return subject;
+           }
+ 
         }
+
+        if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
+           (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
+            return subject;
+        }        
 
         if(!SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri) &&
            !SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri) &&
@@ -210,11 +232,12 @@ public class SOAPRequestHandler {
                  bundle.getString("signatureValidationFailed"));
         }
 
-        return getAuthenticator().authenticate(subject, 
+        subject = (Subject)getAuthenticator().authenticate(subject, 
                secureMsg.getSecurityMechanism(),
                secureMsg.getSecurityToken(),
                config, secureMsg, false);
-       
+        removeValidatedHeaders(config, soapRequest);
+        return subject;       
     }
 
     /**
@@ -323,6 +346,12 @@ public class SOAPRequestHandler {
         String sechMech = (String)secMechs.iterator().next();
         SecurityMechanism securityMechanism = 
                SecurityMechanism.getSecurityMechanism(sechMech);
+        String uri = securityMechanism.getURI();
+        if(SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri) ||
+           (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
+           (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
+           return soapMessage;
+        }
 
         if(securityMechanism.isTALookupRequired()) {
            SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
@@ -342,7 +371,6 @@ public class SOAPRequestHandler {
         secureMessage.setSecurityToken(securityToken);
 
         secureMessage.setSecurityMechanism(securityMechanism);
-        String uri = securityMechanism.getURI();
         if(!SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri) &&
            !SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri) &&
            !SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri)) {
@@ -403,6 +431,8 @@ public class SOAPRequestHandler {
                     bundle.getString("signatureValidationFailed"));
            }
         }
+        
+        removeValidatedHeaders(config, soapMessage);
     }
 
     /**
@@ -583,7 +613,13 @@ public class SOAPRequestHandler {
            }
            NameIdentifier ni = null;
            try {
-               ni = new NameIdentifier(config.getProviderName());
+               SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+               SSOToken userToken = subjectSecurity.ssoToken;
+               if(userToken != null) {
+                  ni = new NameIdentifier(userToken.getPrincipal().getName());
+               } else {
+                  ni = new NameIdentifier(config.getProviderName());
+               }
            } catch (Exception ex) {
                throw new SecurityException(ex.getMessage());
            }
@@ -634,7 +670,14 @@ public class SOAPRequestHandler {
                AssertionFactory assertionFactory = 
                        AssertionFactory.getInstance();
                ni = assertionFactory.createNameID();
-               ni.setValue(config.getProviderName());               
+               SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+               SSOToken userToken = subjectSecurity.ssoToken;
+               if(userToken != null) {
+                  ni.setValue(userToken.getPrincipal().getName());
+               } else {
+                  ni.setValue(config.getProviderName());               
+               }               
+               
            } catch (Exception ex) {
                throw new SecurityException(ex.getMessage());
            }
@@ -941,4 +984,33 @@ public class SOAPRequestHandler {
         
     }
 
+    // Removes the validated headers.
+    private void removeValidatedHeaders(ProviderConfig config,
+              SOAPMessage soapMessage) {
+
+        SOAPHeader header = null;
+        try {
+            header = soapMessage.getSOAPPart().getEnvelope().getHeader();
+        } catch (SOAPException se) {
+            WSSUtils.debug.error("SOAPRequestHandler.removeValidateHeaders: " +
+               "Failed to read the SOAP Header.");
+        }
+        if(header != null) {
+           Iterator iter = header.examineAllHeaderElements();
+           while(iter.hasNext()) {
+              SOAPHeaderElement headerElement = (SOAPHeaderElement)iter.next();
+              if(!config.preserveSecurityHeader()) {
+                 if("Security".equalsIgnoreCase(
+                    headerElement.getElementName().getLocalName())) {
+                    headerElement.detachNode();
+                 }
+              }
+              if("Correlation".equalsIgnoreCase(
+                 headerElement.getElementName().getLocalName())) {
+                 headerElement.detachNode();
+              }
+           }
+        }
+    }
+    
 }

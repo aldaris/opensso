@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.2 2007-05-17 18:49:19 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,6 +138,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             String subjectDN = cert.getSubjectDN().getName();
             Principal principal = new SecurityPrincipal(subjectDN);
             subject.getPrincipals().add(principal);
+            WSSUtils.setRoles(subject, subjectDN);
         } else if(
             (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
             (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
@@ -240,6 +241,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         
         Principal principal = new SecurityPrincipal(user); 
         this.subject.getPrincipals().add(principal);
+        WSSUtils.setRoles(subject, user);
         return true;
     }
 
@@ -290,6 +292,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
 
         Principal principal = new SecurityPrincipal(ni.getName()); 
         this.subject.getPrincipals().add(principal);
+        WSSUtils.setRoles(subject, ni.getName());
         return true;
     }
 
@@ -322,5 +325,5 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         Principal principal = new SecurityPrincipal(subjectDN);
         subject.getPrincipals().add(principal);
         return subject;   
-    }
+    }        
 }

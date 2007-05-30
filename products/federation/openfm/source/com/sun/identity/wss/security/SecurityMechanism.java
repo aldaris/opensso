@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
+ * $Id: SecurityMechanism.java,v 1.3 2007-05-30 20:12:14 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,8 +227,32 @@ public class SecurityMechanism {
      */
     public static final String WSS_CLIENT_TLS_SAML2_SV_URI = 
                "urn:sun:wss:security:ClientTLS:SAML2Token-SV";
+    
+    /**
+     * <code>URI</code> for the anonymous security profile.
+     */
+    public static final String WSS_NULL_ANONYMOUS_URI =
+               "urn:sun:wss:security:null:Anonymous";
+
+    /**
+     * <code>URI</code> for the anonymous security profile with
+     *        <code>TLS</code> or <code>SSL</code> enabled.
+     */
+    public static final String WSS_TLS_ANONYMOUS_URI =
+               "urn:sun:wss:security:TLS:Anonymous";
+
+    /**
+     * <code>URI</code> for the anonymous security profile with
+     *        <code>TLS</code> or <code>SSL</code> and client auth enabled.
+     */
+    public static final String WSS_CLIENT_TLS_ANONYMOUS_URI =
+               "urn:sun:wss:security:ClientTLS:Anonymous";
+
 
     static {
+        map.put("Anonymous", WSS_NULL_ANONYMOUS_URI);
+        map.put("TLS-Anonymous", WSS_TLS_ANONYMOUS_URI);
+        map.put("ClientTLS-Anonymous", WSS_CLIENT_TLS_ANONYMOUS_URI);        
         map.put("ClientTLS-SAML-HolderOfKey", WSS_CLIENT_TLS_SAML_HK_URI);
         map.put("TLS-SAML-HolderOfKey", WSS_TLS_SAML_HK_URI); 
         map.put("SAML-HolderOfKey", WSS_NULL_SAML_HK_URI); 
@@ -447,6 +471,27 @@ public class SecurityMechanism {
     public static final SecurityMechanism WSS_NULL_SAML2_SV = 
                       new SecurityMechanism("SAML2-SenderVouches");
 
+    /**
+     * Defines the security mechanism for the anonymous token
+     * with SSL and client auth enabled.
+     */
+    public static final SecurityMechanism WSS_CLIENT_TLS_ANONYMOUS =
+                      new SecurityMechanism("ClientTLS-Anonymous");
+
+    /**
+     * Defines the security mechanism for the anonymous token
+     * with SSL.
+     */
+    public static final SecurityMechanism WSS_TLS_ANONYMOUS =
+                      new SecurityMechanism("TLS-Anonymous");
+
+    /**
+     * Defines the security mechanism for the anonymous token.
+     */
+    public static final SecurityMechanism WSS_NULL_ANONYMOUS =
+                      new SecurityMechanism("Anonymous");
+        
+
     private String sechMech = null;
     private String uri = null;
     private boolean lookupEnabled = false;
@@ -564,6 +609,46 @@ public class SecurityMechanism {
         list.add(LIB_NULL_SAML_TOKEN_URI);
         list.add(LIB_TLS_SAML_TOKEN_URI);
         list.add(LIB_CLIENT_TLS_SAML_TOKEN_URI);
+        return list;
+    }
+    
+    /**
+     * Returns all the list of <code>SecurityMechanism</code>s supported
+     * by the web services client.
+     * @return the list of <code>SecurityMechanism<code>s supported
+     * by the web services provider.
+     */
+    public static List getAllWSCSecurityMechanisms() {
+        List list = new ArrayList();
+        list.add(WSS_NULL_ANONYMOUS);
+        list.add(WSS_NULL_SAML_SV);
+        list.add(WSS_NULL_SAML_HK);
+        list.add(WSS_NULL_X509_TOKEN);
+        list.add(WSS_NULL_USERNAME_TOKEN);
+        list.add(WSS_NULL_SAML2_SV);
+        list.add(WSS_NULL_SAML2_HK);
+        list.add(LIBERTY_DS_SECURITY);
+        return list;
+    }
+
+    /**
+     * Returns all the list of <code>SecurityMechanism<code>s supported
+     *     by the web services provider.
+     * @return the list of <code>SecurityMechanism</code>s supported
+     *     by the web services provier.
+     */
+    public static List getAllWSPSecurityMechanisms() {
+        List list = new ArrayList();
+        list.add(WSS_NULL_ANONYMOUS);
+        list.add(WSS_NULL_SAML_SV);
+        list.add(WSS_NULL_SAML_HK);
+        list.add(WSS_NULL_X509_TOKEN);
+        list.add(WSS_NULL_USERNAME_TOKEN);
+        list.add(WSS_NULL_SAML2_SV);
+        list.add(WSS_NULL_SAML2_HK);        
+        list.add(LIB_NULL_X509_TOKEN);
+        list.add(LIB_NULL_SAML_BEARER_TOKEN);
+        list.add(LIB_NULL_SAML_TOKEN);
         return list;
     }
 

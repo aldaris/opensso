@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.3 2007-05-17 18:49:17 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.4 2007-05-30 20:12:14 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,9 @@ public abstract class ProviderConfig {
      protected List usercredentials = null;
      protected String serviceType = null;
      protected boolean isDefaultKeyStore = false;
+     protected boolean forceAuthn = false;
+     protected boolean preserveSecHeaders = false;
+     protected String authenticationChain = null;
 
      private static Class adapterClass;
 
@@ -373,7 +376,58 @@ public abstract class ProviderConfig {
     public void setResponseSignEnabled(boolean enable) {
          isResponseSigned = enable;
     }
+    
+    /**
+     * Returns true if the user force authentication is enabled.
+     * @return true if the user force authentication is enabled.
+     */
+    public boolean forceUserAuthentication() {
+        return forceAuthn;
+    }
+    
+    /**
+     * Sets the user force authentication attribute.
+     * @param forceAuthenticate the user force authentication attribute.
+     */
+    public void setForceUserAuthentication(boolean forceAuthn) {
+        this.forceAuthn = forceAuthn;
+    }
 
+    /**
+     * Returns true if security header needs to be preserved.
+     * @return true if the security header needs to be preserved.
+     */
+    public boolean preserveSecurityHeader() {
+        return preserveSecHeaders;
+    }
+
+    /**
+     * Sets if security header needs to be preserved.
+     * @return true if the security header needs to be preserved.
+     */
+    public void setPreserveSecurityHeader(boolean preserve) {
+        this.preserveSecHeaders = preserve;
+    }
+
+    /**
+     * Returns the authentication chain mechanism to be used. This method
+     * is used only by the WSP configuration.
+     *
+     * @return the name of the authentication chain mechanism.
+     */
+    public String getAuthenticationChain() {
+        return authenticationChain;
+    }
+    /**
+     * Sets the authentication chain mechanism. This method is used only by
+     * the WSP configuration.
+     * @param authChainMechanism the name of the authentication chain
+     *        mechanism.
+     */
+    public void setAuthenticationChain(String authenticationChain) {
+        this.authenticationChain = authenticationChain;
+    }
+        
     /**
      * Stores the provider configuration
      *
@@ -501,7 +555,10 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV);
         list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
         list.add(SecurityMechanism.WSS_TLS_SAML2_HK);
-        list.add(SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK);        
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK);
+        list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
+        list.add(SecurityMechanism.WSS_TLS_ANONYMOUS);
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS);
         return list;
     }
 
@@ -517,7 +574,8 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_X509_TOKEN);
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN);
         list.add(SecurityMechanism.WSS_NULL_SAML2_SV);
-        list.add(SecurityMechanism.WSS_NULL_SAML2_HK);        
+        list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
+        list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
         return list;
     }
 
