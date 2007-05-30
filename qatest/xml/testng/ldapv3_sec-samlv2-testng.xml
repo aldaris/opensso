@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3_sec-samlv2-testng.xml,v 1.2 2007-05-29 18:35:50 mrudulahg Exp $
+ $Id: ldapv3_sec-samlv2-testng.xml,v 1.3 2007-05-30 19:06:42 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,6 +39,7 @@
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
             <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFederationTests"/>
+            <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/>
         </classes>
     </test>
 </suite>
