@@ -1,0 +1,282 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ds-local-cli-testng.xml,v 1.1 2007-05-31 19:37:13 cmwesley Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<suite name="ds-local-cli" verbose="1">
+    <test name="CreateRealm01">
+        <parameter name="testName" value="createrealm-test1"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm02">
+        <parameter name="testName" value="createrealm-test2"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm03">
+        <parameter name="testName" value="createrealm-test3"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm04">
+        <parameter name="testName" value="createrealm-test4"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm05">
+        <parameter name="testName" value="createrealm-test5"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm09">
+        <parameter name="testName" value="createrealm-test9"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm10">
+        <parameter name="testName" value="createrealm-test10"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm11">
+        <parameter name="testName" value="createrealm-test11"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm12">
+        <parameter name="testName" value="createrealm-test12"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm13">
+        <parameter name="testName" value="createrealm-test13"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm14">
+        <parameter name="testName" value="createrealm-test14"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm15">
+        <parameter name="testName" value="createrealm-test15"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="CreateRealm16">
+        <parameter name="testName" value="createrealm-test16"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm1">
+        <parameter name="testName" value="deleterealm-test1"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm2">
+        <parameter name="testName" value="deleterealm-test2"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm3">
+        <parameter name="testName" value="deleterealm-test3"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm4">
+        <parameter name="testName" value="deleterealm-test4"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm5">
+        <parameter name="testName" value="deleterealm-test5"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm6">
+        <parameter name="testName" value="deleterealm-test6"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm7">
+        <parameter name="testName" value="deleterealm-test7"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm8">
+        <parameter name="testName" value="deleterealm-test8"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm9">
+        <parameter name="testName" value="deleterealm-test9"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>
+    <test name="DeleteRealm10">
+        <parameter name="testName" value="deleterealm-test10"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
+        </classes>
+    </test>            
+</suite>
