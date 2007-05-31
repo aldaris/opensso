@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.6 2007-05-10 00:16:43 goodearth Exp $
+ * $Id: CreateServiceConfig.java,v 1.7 2007-05-31 02:13:12 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -465,8 +465,8 @@ public class CreateServiceConfig {
         try {
             // Normalize DN, so it can be parsed and compared
             Object args1[] = {orgDN};
-            orgDN = DNUtils.normalizeDN(orgDN);
-            if (orgDN == null) {
+            orgDN = (new DN(orgDN)).toRFCString();
+            if (orgDN.length() == 0) {
                 SMSEntry.debug.error("CreateServiceConfig."+
                     "createOrganization() : Detected invalid characters. "+
                     "Invalid realm name: "+ args1[0]);
