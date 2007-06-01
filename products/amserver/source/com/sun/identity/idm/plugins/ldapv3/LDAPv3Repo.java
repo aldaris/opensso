@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.21 2007-04-19 02:53:13 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.22 2007-06-01 17:34:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3058,6 +3058,36 @@ public class LDAPv3Repo extends IdRepo {
         }
     }
 
+    private void setMixAttributes(SSOToken token, IdType type, String name,
+        Map attrMap, boolean isAdd) throws IdRepoException, SSOException{
+
+        // check for binary attributes.
+        HashMap binAttrMap = null;
+        HashMap strAttrMap = null;
+        boolean foundBin = false;
+        Iterator itr = attrMap.keySet().iterator();
+        while (itr.hasNext()) {
+            String tmpAttrName = (String) itr.next();
+            if (attrMap.get(tmpAttrName) instanceof byte[][]) {
+                if (!foundBin) {
+                     // need to seperate into binary and string
+                     // attribute map
+                     strAttrMap = new HashMap(attrMap);
+                     binAttrMap = new HashMap();
+                }
+                foundBin = true;
+                binAttrMap.put(tmpAttrName, attrMap.get(tmpAttrName));
+                strAttrMap.remove(tmpAttrName);
+            }
+        }
+        if (foundBin) {
+            setAttributes(token, type, name, strAttrMap, false);
+            setBinaryAttributes(token, type, name, binAttrMap, false);
+        } else {
+            setAttributes(token, type, name, attrMap, false);
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -3089,7 +3119,7 @@ public class LDAPv3Repo extends IdRepo {
             OCs = AMCommonUtils.combineOCs(OCs, oldOCs);
             attrMap.put("objectclass", OCs);
             if (sType.equals(SchemaType.USER)) {
-                setAttributes(token, type, name, attrMap, false);
+                setMixAttributes(token, type, name, attrMap, false);
             } else if (sType.equals(SchemaType.DYNAMIC)) {
                 // setAttributes(token, type, name, attrMap, false);
                 return;
@@ -3289,21 +3319,38 @@ public class LDAPv3Repo extends IdRepo {
         return resultsSet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(
-     *      com.iplanet.sso.SSOToken,
-     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
-     *      java.util.Set)
+    /* (non-Javadoc)
+     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(com.iplanet.sso.SSOToken,
+     * com.sun.identity.idm.IdType, java.lang.String, java.lang.String, java.util.Set)
      */
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
-            String serviceName, Set attrNames) throws IdRepoException,
-            SSOException {
+            String serviceName,  Set attrNames)
+        throws IdRepoException,   SSOException {
+        return(getServiceAttributes(token, type, name, serviceName, attrNames,
+           true));
+    }
+
+
+    /* (non-Javadoc)
+     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(com.iplanet.sso.SSOToken,
+     * com.sun.identity.idm.IdType, java.lang.String, java.lang.String, java.util.Set)
+     */
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type, String name,
+            String serviceName,  Set attrNames)
+        throws IdRepoException,   SSOException {
+        return(getServiceAttributes(token, type, name, serviceName, attrNames,
+            false));
+    }
+
+
+    private Map getServiceAttributes(SSOToken token, IdType type, String name,
+            String serviceName,  Set attrNames, boolean isString)
+        throws IdRepoException,   SSOException {
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: getServiceAttributes. IdType=" + type
-                    + "; Name=" + name + "; serviceName=" + serviceName
-                    + "; attrNames=" + attrNames);
+                + "; Name=" + name + "; serviceName=" + serviceName
+                + "; attrNames=" + attrNames + "; isString=" + isString);
+
         }
 
         if (type.equals(IdType.AGENT) || type.equals(IdType.GROUP)
@@ -3314,7 +3361,9 @@ public class LDAPv3Repo extends IdRepo {
                     "213", args);
         } else if (type.equals(IdType.USER)) {
             // get the user attributes from ldap.
-            Map userAttrs = getAttributes(token, type, name, attrNames);
+            Map userAttrs = (isString ?
+                getAttributes(token, type, name, attrNames)
+                : getBinaryAttributes(token, type, name, attrNames));
 
             // find the attributes in service map.
             if ((serviceName == null) || (serviceName.length() == 0)) {
@@ -3334,6 +3383,7 @@ public class LDAPv3Repo extends IdRepo {
                 return (userAttrs);
             } else {
                 Set attrNamesCase = new CaseInsensitiveHashSet(attrNames);
+                // find the attrs requested from the realm service map.
                 Iterator itr = srvCfgAttrMap.keySet().iterator();
                 while (itr.hasNext()) {
                     String attrName = (String) itr.next();
@@ -3355,7 +3405,24 @@ public class LDAPv3Repo extends IdRepo {
                 String attrName = (String) itr.next();
                 // use values from user first then the default template.
                 if (!userAttrsNameSet.contains(attrName)) {
-                    userAttrs.put(attrName, mySrvAttrMap.get(attrName));
+                    // convert to binary if necessary
+                    Object tmpAttrSet = mySrvAttrMap.get(attrName);
+                    if (tmpAttrSet != null) {
+                        if ((!isString) && (tmpAttrSet instanceof Set)) {
+                            // convert to binary
+                            Iterator keyset = ((Set) tmpAttrSet).iterator();
+                            int i =0;
+                            byte [][] resultArr = new byte[((Set) tmpAttrSet).size()][];
+                            while (keyset.hasNext()) {
+                                String thisAttr = (String) keyset.next();
+                                resultArr[i] = thisAttr.getBytes();
+                                i++;
+                            }
+                            userAttrs.put(attrName, resultArr);
+                        } else {
+                            userAttrs.put(attrName, mySrvAttrMap.get(attrName));
+                        }
+                    }
                 }
             }
             if (debug.messageEnabled()) {
@@ -3469,7 +3536,7 @@ public class LDAPv3Repo extends IdRepo {
                 throw new IdRepoException(
                         IdRepoBundle.BUNDLE_NAME, "214", args);
             } else {
-                setAttributes(token, type, name, attrMap, false);
+                setMixAttributes(token, type, name, attrMap, false);
             }
         } else {
             Object args[] = { this.getClass().getName() };

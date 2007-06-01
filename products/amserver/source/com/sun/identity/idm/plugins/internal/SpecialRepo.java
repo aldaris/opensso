@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.9 2006-12-20 23:06:17 rarcot Exp $
+ * $Id: SpecialRepo.java,v 1.10 2007-06-01 17:34:01 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -504,6 +504,21 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         }
         // Throw exception otherwise
         Object args[] = { NAME, IdOperation.SERVICE.getName() };
+        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
+                args);
+    }
+
+    /* 
+     * (non-Javadoc)
+     *
+     * @see com.sun.identity.idm.IdRepo#getBinaryServiceAttributes(
+     * com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
+     * java.lang.String, java.util.Set)
+     */
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames)
+            throws IdRepoException, SSOException {
+        Object args[] = {NAME, IdOperation.READ.getName()};
         throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
                 args);
     }

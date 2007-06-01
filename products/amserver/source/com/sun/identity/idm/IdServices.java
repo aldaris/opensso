@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServices.java,v 1.3 2006-10-26 20:52:44 kenwho Exp $
+ * $Id: IdServices.java,v 1.4 2007-06-01 17:34:01 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,6 +105,10 @@ public interface IdServices {
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
             String serviceName, Set attrNames, String amOrgName, String amsdkDN)
             throws IdRepoException, SSOException;
+
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException;
 
     /**
      * Non-javadoc, non-public methods

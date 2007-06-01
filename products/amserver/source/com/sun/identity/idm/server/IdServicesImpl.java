@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.17 2007-05-17 23:44:13 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.18 2007-06-01 17:34:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1928,9 +1928,23 @@ public class IdServicesImpl implements IdServices {
         return finalResult;
     }
 
+    public Map getServiceAttributes(SSOToken token, IdType type, String name,
+        String serviceName, Set attrNames, String amOrgName, String amsdkDN)
+        throws IdRepoException, SSOException {
+        return (getServiceAttributes(token, type, name, serviceName,
+            attrNames, amOrgName, amsdkDN, true));
+    }
+
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+        String name, String serviceName, Set attrNames, String amOrgName,
+        String amsdkDN) throws IdRepoException, SSOException {
+        return (getServiceAttributes(token, type, name, serviceName,
+            attrNames, amOrgName, amsdkDN, false));
+    }
 
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
-            String serviceName, Set attrNames, String amOrgName, String amsdkDN)
+            String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN, boolean isString)
             throws IdRepoException, SSOException {
 
         // Check permission first. If allowed then proceed, else the
@@ -1960,11 +1974,17 @@ public class IdServicesImpl implements IdServices {
                 Map attrs = null;
                 if (repo.getClass().getName().equals(IdConstants.AMSDK_PLUGIN)
                         && amsdkDN != null) {
-                    attrs = repo.getServiceAttributes(token, type, amsdkDN,
-                            serviceName, attrNames);
+                    attrs = (isString ?
+                        repo.getServiceAttributes(token, type, amsdkDN,
+                            serviceName, attrNames) :
+                        repo.getBinaryServiceAttributes(token, type, amsdkDN,
+                            serviceName, attrNames));
                 } else {
-                    attrs = repo.getServiceAttributes(token, type, name,
-                            serviceName, attrNames);
+                    attrs = (isString ?
+                        repo.getServiceAttributes(token, type, name,
+                            serviceName, attrNames) :
+                        repo.getBinaryServiceAttributes(token, type, name,
+                            serviceName, attrNames));
                 }
                 attrs = reverseMapAttributeNames(attrs, cMap);
                 resultsSet.add(attrs);
@@ -2007,7 +2027,7 @@ public class IdServicesImpl implements IdServices {
             }
             throw origEx;
         } else {
-            Map resultsMap = combineAttrMaps(resultsSet, true);
+            Map resultsMap = combineAttrMaps(resultsSet, isString);
             return resultsMap;
         }
 

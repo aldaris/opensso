@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.4 2006-10-26 20:51:04 kenwho Exp $
+ * $Id: DirectoryManagerIF.java,v 1.5 2007-06-01 17:34:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -286,6 +286,11 @@ public interface DirectoryManagerIF extends Remote {
             String name, String serviceName, Set attrNames, String amOrgName,
             String amsdkDN) throws RemoteException, IdRepoException,
             SSOException;
+
+    public Map getBinaryServiceAttributes_idrepo(String token, String type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+                        String amsdkDN )
+    throws RemoteException, IdRepoException, SSOException;
 
     /**
      * Non-javadoc, non-public methods

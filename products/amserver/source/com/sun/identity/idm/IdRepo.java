@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.5 2006-12-13 02:01:44 kenwho Exp $
+ * $Id: IdRepo.java,v 1.6 2007-06-01 17:34:00 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -495,6 +495,29 @@ public abstract class IdRepo {
     public abstract Map getServiceAttributes(SSOToken token, IdType type,
             String name, String serviceName, Set attrNames)
             throws IdRepoException, SSOException;
+
+    /**
+     * Returns the requested binary attribute values of the service attributes
+     * as an array of bytes.
+     *
+     * @param token
+     *     Single sign on token of identity performing the task.
+     * @param type
+     *     Identity type of this object.
+     * @param name
+     *     Name of the object of interest.
+     * @param serviceName
+     *     Name of service.
+     * @param attrNames
+     *     Set of attribute names.
+     * @return
+     *     Map of attribute-values.
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
+     */
+    public abstract Map getBinaryServiceAttributes(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames)
+            throws   IdRepoException, SSOException;
 
     /**
      * Modifies the attribute values of the service attributes.

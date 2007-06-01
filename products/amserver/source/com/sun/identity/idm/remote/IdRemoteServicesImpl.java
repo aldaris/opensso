@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.11 2007-04-02 06:02:10 veiming Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.12 2007-06-01 17:34:02 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,6 +395,38 @@ public class IdRemoteServicesImpl implements IdServices {
         return resultMap;
     }
 
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+            String name, String serviceName, Set attrNames, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException {
+
+        Map resultMap = null;
+        try {
+            if (debug.messageEnabled()) {
+                debug.message("IdRemoteServicesImpl.getBinaryServiceAttributes  "
+                    + "type="+ type + ";  name="  + name + ";  serviceName="
+                    + serviceName + ";  attrNames=" + attrNames
+                    + ";  amOrgName=" + amOrgName
+                    + ";  amsdkDN=" + amsdkDN);
+            }
+
+            Object[] objs = { token.getTokenID().toString(), type.getName(),
+                   name, serviceName, attrNames, amOrgName, amsdkDN};
+            resultMap = ((Map)client.send(client.encodeMessage(
+                    "getBinaryServiceAttributes_idrepo", objs), 
+                    Session.getLBCookie(token.getTokenID().toString()), null));
+
+        } catch (RemoteException rex) {
+            getDebug().error(
+                "IdRemoteServicesImpl.getBinaryServiceAttributes_idrepo: caught " +
+                "exception=",
+                rex);
+            throw new IdRepoException(AMSDKBundle.getString("1000"), "1000");
+        } catch (Exception ex) {
+            processException(ex);
+        }
+
+        return resultMap;
+    }
 
     /**
      * Non-javadoc, non-public methods

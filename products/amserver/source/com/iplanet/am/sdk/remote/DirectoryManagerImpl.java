@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.10 2006-12-13 00:27:13 rarcot Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.11 2007-06-01 17:34:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1184,6 +1184,20 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         IdType idtype = IdUtils.getType(type);
         return idServices.getServiceAttributes(ssoToken, idtype, name,
             serviceName, attrNames, amOrgName, amsdkDN);
+    }
+
+    public Map getBinaryServiceAttributes_idrepo(
+        String token, String type,
+        String name, 
+        String serviceName, 
+        Set attrNames, 
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken stoken = tm.createSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        return idServices.getBinaryServiceAttributes(stoken, idtype, name,
+                serviceName, attrNames, amOrgName, amsdkDN);
     }
 
     public Map getServiceAttributesAscending_idrepo(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.16 2007-05-05 01:09:26 goodearth Exp $
+ * $Id: FilesRepo.java,v 1.17 2007-06-01 17:34:01 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -685,7 +685,37 @@ public class FilesRepo extends IdRepo {
                 "305", args);
         }
         return (results);
+    }
 
+
+    /* 
+     * (non-Javadoc)
+     *
+     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
+     *      java.util.Set)
+     */
+    public Map getServiceAttributes(SSOToken token, IdType type, String name,
+        String serviceName, Set attrNames) throws IdRepoException,
+        SSOException {
+        return(getServiceAttributes(token, type, name, serviceName,
+            attrNames, true));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
+     *      java.util.Set)
+     */
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+        String name, String serviceName, Set attrNames)
+        throws IdRepoException, SSOException {
+        return(getServiceAttributes(token, type, name, serviceName,
+            attrNames, false));
     }
 
     /*
@@ -695,9 +725,9 @@ public class FilesRepo extends IdRepo {
      *      com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
      *      java.lang.String, java.lang.String, java.util.Set)
      */
-    public Map getServiceAttributes(SSOToken token, IdType type, String name,
-            String serviceName, Set attrNames) throws IdRepoException,
-            SSOException {
+    private Map getServiceAttributes(SSOToken token, IdType type, String name,
+        String serviceName, Set attrNames, boolean isString)
+        throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("FilesRepo.getServiceAttributes called. " + name +
                 "\n\t" + serviceName + "=" + attrNames);
@@ -718,7 +748,9 @@ public class FilesRepo extends IdRepo {
         }
 
         // Get attributes from Identity Object
-        Map results = getAttributes(token, type, name, attrNames);
+        Map results = (isString ?
+            getAttributes(token, type, name, attrNames)
+            : getBinaryAttributes(token, type, name, attrNames));
         if (results == null) {
             results = new HashMap();
         }
@@ -732,34 +764,74 @@ public class FilesRepo extends IdRepo {
         Set roles = getMemberships(token, type, name, IdType.ROLE);
         for (Iterator items = roles.iterator(); items.hasNext();) {
             String role = (String) items.next();
-            Map roleAttrs = getAttributes(token, IdType.ROLE, role, attrNames);
+            Map roleAttrs = (isString ?
+                getAttributes(token, IdType.ROLE, role, attrNames)
+                : getBinaryAttributes(token, IdType.ROLE,
+                    role, attrNames));
             // Add the attributes to results
             for (Iterator ris = roleAttrs.keySet().iterator(); ris.hasNext();) {
                 Object roleAttrName = ris.next();
-                Set roleAttrValues = (Set) roleAttrs.get(roleAttrName);
-                Set idAttrValues = (Set) results.get(roleAttrName);
+                Object roleAttrValues = (Object) roleAttrs.get(roleAttrName);
+                Object idAttrValues = (Object) results.get(roleAttrName);
                 if (idAttrValues == null) {
                     results.put(roleAttrName, roleAttrValues);
                 } else {
-                    // Need to combine the values
-                    idAttrValues.addAll(roleAttrValues);
+                    if (isString) {
+                        ((Set) idAttrValues).addAll((Set) roleAttrValues);
+                    } else {
+                        byte[][] resultsArr = (byte[][]) results.get(roleAttrName);
+                        byte[][] roleArr = (byte[][]) roleAttrs.get(roleAttrName);
+                        resultsArr = combineByteArray(resultsArr, roleArr);
+                        results.put(roleAttrName, resultsArr);
+                    }
                 }
             }
         }
 
         // Get the service attributes for the realm and add it
-        Map realmAttrs = getAttributes(token, IdType.REALM,
-                "ContainerDefaultTemplateRole", attrNames);
+        Map realmAttrs = (isString ?
+            getAttributes(token, IdType.REALM,
+                "ContainerDefaultTemplateRole", attrNames)
+            : getBinaryAttributes(token, IdType.REALM,
+                "ContainerDefaultTemplateRole", attrNames));
         // Add the attributes to results
         for (Iterator ris = realmAttrs.keySet().iterator(); ris.hasNext();) {
             Object realmAttrName = ris.next();
-            Set realmAttrValues = (Set) realmAttrs.get(realmAttrName);
-            Set idAttrValues = (Set) results.get(realmAttrName);
+            Object realmAttrValues = (Object) realmAttrs.get(realmAttrName);
+            Object idAttrValues = (Object) results.get(realmAttrName);
             if (idAttrValues == null) {
                 results.put(realmAttrName, realmAttrValues);
+            } else {
+                // combine the values
+                if (isString) {
+                    ((Set) idAttrValues).addAll((Set) realmAttrValues);
+                } else {
+                    byte[][] resultsArr = (byte[][]) results.get(realmAttrName);
+                    byte[][] realmArr = (byte[][]) realmAttrs.get(realmAttrName);
+                    resultsArr = combineByteArray(resultsArr, realmArr);
+                    results.put(realmAttrName, resultsArr);
+                }
             }
         }
         return (results);
+    }
+
+    private byte[][] combineByteArray(byte[][] resultsArr, byte[][] realmArr) {
+        int combinedSize = realmArr.length;
+        if (resultsArr != null) {
+            combinedSize = resultsArr.length + realmArr.length;
+            byte[][] tmpSet = new byte[combinedSize][];
+            for (int i = 0; i < resultsArr.length; i++) {
+                tmpSet[i] = (byte[]) resultsArr[i];
+            }
+            for (int i = 0; i < realmArr.length; i++) {
+                tmpSet[i] = (byte[]) realmArr[i];
+            }
+            resultsArr = tmpSet;
+        } else {
+            resultsArr = (byte[][]) realmArr.clone();
+        }
+        return(resultsArr);
     }
 
     /*

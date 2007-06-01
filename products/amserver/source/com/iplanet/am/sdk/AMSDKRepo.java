@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.15 2007-01-10 00:38:58 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.16 2007-06-01 17:34:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -934,7 +934,15 @@ public class AMSDKRepo extends IdRepo {
                     }
                 }
                 AMOrganizationalUnit ou = amsc.getOrganizationalUnit(searchDN);
-                results = ou.searchEntities(pattern, avPairs, null, ctrl);
+                // fix 6515502
+                if (avPairs == null || avPairs.isEmpty()) {
+                    results = ou.searchEntities(pattern, avPairs, null, ctrl);
+                } else {
+                    // avPairs is being passed. Create an OR condition
+                    // filter.
+                    String avFilter = constructFilter(filterOp, avPairs);
+                    results = ou.searchEntities(pattern, ctrl, avFilter, null);
+                }
                 break;
             case AMObject.GROUP:
             case AMObject.STATIC_GROUP:
@@ -1063,6 +1071,70 @@ public class AMSDKRepo extends IdRepo {
 
     }
 
+    private void setMixAttributes(SSOToken token, IdType type, String name,
+        Map attrMap, boolean isAdd) throws IdRepoException, SSOException{
+
+        // check for binary attributes.
+        HashMap binAttrMap = null;
+        HashMap strAttrMap = null;
+        boolean foundBin = false;
+        Iterator itr = attrMap.keySet().iterator();
+        while (itr.hasNext()) {
+            String tmpAttrName = (String) itr.next();
+            if (attrMap.get(tmpAttrName) instanceof byte[][]) {
+                if (!foundBin) {
+                     // need to seperate into binary and string
+                     // attribute map
+                     strAttrMap = new HashMap(attrMap);
+                     binAttrMap = new HashMap();
+                }
+                foundBin = true;
+                binAttrMap.put(tmpAttrName, attrMap.get(tmpAttrName));
+                strAttrMap.remove(tmpAttrName);
+            }
+        }
+        if (foundBin) {
+            setAttributes(token, type, name, strAttrMap, false);
+            setBinaryAttributes(token, type, name, binAttrMap, false);
+        } else {
+            setAttributes(token, type, name, attrMap, false);
+        }
+    }
+
+    private void setTempMixAttributes(AMTemplate templ, Map attrMap)
+        throws IdRepoException, SSOException{
+
+        // check for binary attributes.
+        HashMap binAttrMap = null;
+        HashMap strAttrMap = null;
+        boolean foundBin = false;
+        Iterator itr = attrMap.keySet().iterator();
+        while (itr.hasNext()) {
+            String tmpAttrName = (String) itr.next();
+            if (attrMap.get(tmpAttrName) instanceof byte[][]) {
+                if (!foundBin) {
+                     // need to seperate into binary and string
+                     // attribute map
+                     strAttrMap = new HashMap(attrMap);
+                     binAttrMap = new HashMap();
+                }
+                foundBin = true;
+                binAttrMap.put(tmpAttrName, attrMap.get(tmpAttrName));
+                strAttrMap.remove(tmpAttrName);
+            }
+        }
+        try {
+            if (foundBin) {
+                templ.setAttributes(strAttrMap);
+                templ.setAttributesByteArray(binAttrMap);
+            } else {
+                templ.setAttributes(strAttrMap);
+            }
+        } catch (AMException ame) {
+            throw IdUtils.convertAMException(ame);
+        }
+    }
+
     public void assignService(SSOToken token, IdType type, String name,
             String serviceName, SchemaType sType, Map attrMap)
             throws IdRepoException, SSOException {
@@ -1085,12 +1157,11 @@ public class AMSDKRepo extends IdRepo {
             OCs = AMCommonUtils.combineOCs(OCs, oldOCs);
             attrMap.put("objectclass", OCs);
             if (sType.equals(SchemaType.USER)) {
-
-                setAttributes(token, type, name, attrMap, false);
+                setMixAttributes(token, type, name, attrMap, false);
             } else if (sType.equals(SchemaType.DYNAMIC)) {
                 // Map tmpMap = new HashMap();
                 // tmpMap.put("objectclass", (Set) attrMap.get("objectclass"));
-                setAttributes(token, type, name, attrMap, false);
+                setMixAttributes(token, type, name, attrMap, false);
             }
         } else if (type.equals(IdType.ROLE) || type.equals(IdType.FILTEREDROLE)
                 || type.equals(IdType.REALM)) {
@@ -1325,20 +1396,60 @@ public class AMSDKRepo extends IdRepo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sun.identity.idm.IdRepo#getServiceAttributes(
-     *      com.iplanet.sso.SSOToken, com.sun.identity.idm.IdType,
-     *      java.lang.String, java.lang.String, java.util.Set)
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
+     *      java.util.Set)
      */
     public Map getServiceAttributes(SSOToken token, IdType type, String name,
-            String serviceName, Set attrNames) throws IdRepoException,
-            SSOException {
+        String serviceName, Set attrNames) throws IdRepoException,
+        SSOException {
         if (type.equals(IdType.AGENT) || type.equals(IdType.GROUP)) {
             Object args[] = { this.getClass().getName() };
-            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "213", args);
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "213", args);
+        } else  {
+            return getServiceAttributes(token, type, name, serviceName,
+                attrNames, true);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.sun.identity.idm.IdRepo#getBinaryServiceAttributes(
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
+     *      java.util.Set)
+     */
+    public Map getBinaryServiceAttributes(SSOToken token, IdType type,
+        String name, String serviceName,  Set attrNames)
+        throws IdRepoException,   SSOException {
+        return(getServiceAttributes(token, type, name, serviceName,
+            attrNames, false));
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.sun.identity.idm.IdRepo#getServiceAttributes(
+     *      com.iplanet.sso.SSOToken,
+     *      com.sun.identity.idm.IdType, java.lang.String, java.lang.String,
+     *      java.util.Set)
+     */
+    private Map getServiceAttributes(SSOToken token, IdType type, String name,
+        String serviceName, Set attrNames, boolean isString)
+        throws IdRepoException, SSOException {
+        if (type.equals(IdType.AGENT) || type.equals(IdType.GROUP)) {
+            Object args[] = { this.getClass().getName() };
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "213", args);
         } else if (type.equals(IdType.USER)) {
-            return getAttributes(token, type, name, attrNames);
+            return (isString ?
+                getAttributes(token, type, name, attrNames)
+                : getBinaryAttributes(token, type, name, attrNames));
         } else if (type.equals(IdType.ROLE)) {
             try {
                 AMStoreConnection amsc = (sc == null) ? new AMStoreConnection(
@@ -1348,7 +1459,9 @@ public class AMSDKRepo extends IdRepo {
                 AMTemplate templ = role.getTemplate(serviceName,
                         AMTemplate.DYNAMIC_TEMPLATE);
                 if (templ != null && templ.isExists()) {
-                    return templ.getAttributes(attrNames);
+                    return (isString ?
+                        templ.getAttributes(attrNames)
+                        : templ.getAttributesByteArray(attrNames));
                 } else {
                     if (debug.messageEnabled()) {
                         debug.message("AMSDKRepo::getServiceAttributes "
@@ -1370,7 +1483,9 @@ public class AMSDKRepo extends IdRepo {
                 AMTemplate templ = role.getTemplate(serviceName,
                         AMTemplate.DYNAMIC_TEMPLATE);
                 if (templ != null && templ.isExists()) {
-                    return templ.getAttributes(attrNames);
+                    return (isString ?
+                        templ.getAttributes(attrNames)
+                        : templ.getAttributesByteArray(attrNames));
                 } else {
                     Object args[] = { serviceName };
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "101",
@@ -1408,7 +1523,7 @@ public class AMSDKRepo extends IdRepo {
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "214", 
                         args);
             } else {
-                setAttributes(token, type, name, attrMap, false);
+                setMixAttributes(token, type, name, attrMap, false);
             }
         } else if (type.equals(IdType.ROLE)) {
             // Need to modify COS definition and COS template.
@@ -1426,7 +1541,7 @@ public class AMSDKRepo extends IdRepo {
                 AMTemplate templ = role.getTemplate(serviceName,
                         AMTemplate.DYNAMIC_TEMPLATE);
                 if (templ != null && templ.isExists()) {
-                    templ.setAttributes(attrMap);
+                    setTempMixAttributes(templ, attrMap);
                     templ.store();
                 } else {
                     Object args[] = { serviceName };
@@ -1453,7 +1568,7 @@ public class AMSDKRepo extends IdRepo {
                 AMTemplate templ = role.getTemplate(serviceName,
                         AMTemplate.DYNAMIC_TEMPLATE);
                 if (templ != null && templ.isExists()) {
-                    templ.setAttributes(attrMap);
+                    setTempMixAttributes(templ, attrMap);
                     templ.store();
                 } else {
                     Object args[] = { serviceName };

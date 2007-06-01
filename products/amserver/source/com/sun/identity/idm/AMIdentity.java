@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.20 2007-04-12 20:12:02 goodearth Exp $
+ * $Id: AMIdentity.java,v 1.21 2007-06-01 17:34:00 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -758,6 +758,33 @@ public final class AMIdentity {
        }
         return idServices.getServiceAttributes(token, type, name, serviceName,
             attrNames, orgName, univDN);
+    }
+
+
+    /**
+     * Returns attributes related to a service, if the service is assigned
+     * to the identity.
+     *
+     * This method is only valid for AMIdentity object of type User.
+     *
+     * @param serviceName Name of the service.
+     * @return Map of attribute-values in array of byte.
+     * @throws IdRepoException if there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * iPlanet-PUBLIC-METHOD
+     */
+    public Map getBinaryServiceAttributes(String serviceName)
+        throws IdRepoException, SSOException {
+        Set attrNames = getServiceAttributesName(serviceName);
+
+        IdServices idServices =
+            IdServicesFactory.getDataStoreServices();
+        if (debug.messageEnabled()) {
+            debug.message("AMIdentity.getBinaryServiceAttributes: attrNames="
+                + attrNames + ";  orgName=" + orgName + ";  univDN=" + univDN);
+        }
+        return idServices.getBinaryServiceAttributes(token, type, name,
+            serviceName, attrNames, orgName, univDN);
     }
 
 
