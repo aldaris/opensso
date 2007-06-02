@@ -1,19 +1,20 @@
 = Ruby SAML2 Library Installation
 
+== Prerequisites
+    * Ruby
+    * RubyGems
+    * Rails (for the example)
+
 == Dependencies
 
-This library depends on the Ruby WSS4R library available at:
+This library depends on the Ruby XMLC14N-r library available at http://rubyforge.org/projects/c14n-r
 
-http://rubyforge.org/projects/wss4r
+download the .gem file and run 
+gem install XMLCanonicalizer*
+ 
+== SAML2 library Installation
 
-This library currently needs to by patched
-Copy the patches/xmlcanonicalizer.rb file over the one installed by WSS4R
-This is probably at: ruby\lib\ruby\site_ruby\1.8\wss4r\security\util
-
-
-== Manual Installation
-
-Unpack the archive and run setup.rb to install:
+run setup.rb to install:
 
  ruby setup.rb
 
@@ -27,5 +28,9 @@ or in the case of a rails application copy the library files to your rails appli
 
 == Testing the Installation
 
-At the moment you have to use the example rails application to test
+At the moment you have to use the example rails application to test:
+ * Edit the saml2ruby/source/examples/rails/SimpleSAMLRP/app/controllers/account_controller.rb and change the SP and IdP settings to match your environment
+ * run the rails server
+ * Now browse to http://myserver.mydomain.com:myport/account
+
 
