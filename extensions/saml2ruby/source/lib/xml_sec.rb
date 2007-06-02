@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: xml_sec.rb,v 1.2 2007-03-20 18:33:41 superpat7 Exp $
+# $Id: xml_sec.rb,v 1.3 2007-06-02 07:56:25 todddd Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 # Portions Copyrighted 2007 Todd W Saxton.
@@ -25,7 +25,7 @@
 require "rexml/document"
 require "rexml/xpath"
 require "openssl"
-require "wss4r/security/util/xmlcanonicalizer"
+require "xmlcanonicalizer"
 require "digest/sha1"
  
 #
@@ -64,7 +64,7 @@ module XMLSecurity
         logger.info("URI = " + uri[1,uri.size]) if !logger.nil?
         self.root.each_element_with_attribute("ID", uri[1,uri.size]) do | signed_element |
           logger.info("signed element = " + signed_element.to_s) if !logger.nil?
-          canoner = WSS4R::Security::Util::XmlCanonicalizer.new(false, true)
+          canoner = XML::Util::XmlCanonicalizer.new(false, true)
           canon_signed_element = canoner.canonicalize(signed_element)
           logger.info("canon signed element = " + canon_signed_element) if !logger.nil?
           signed_element_hash = Base64.encode64(Digest::SHA1.digest(canon_signed_element)).chomp
@@ -79,7 +79,7 @@ module XMLSecurity
  
       #verify dig sig          
       signed_info_element.add_namespace("http://www.w3.org/2000/09/xmldsig#")
-      canoner = WSS4R::Security::Util::XmlCanonicalizer.new(false, true)
+      canoner = XML::Util::XmlCanonicalizer.new(false, true)
       canon_signed_info = canoner.canonicalize(signed_info_element)
       logger.info("canon INFO = " + canon_signed_info) if !logger.nil?
 
