@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.1 2007-05-29 18:32:54 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.2 2007-06-04 22:23:16 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,20 +42,22 @@ public class IDFFCommon extends TestCommon {
         super("IDFFCommon");
     }
     
-    /**
+    /** Creates a new instance of IDFFCommon */
+    public IDFFCommon(String componentName) {
+        super(componentName);
+    }
+    
+   /**
      * This method creates xml sp init federation
-     * It handles two redirects. The flow is as follows
-     * 1. Go to Federate.jsp on sp side.
+     * It assumes that sp session is present. 
+     * The flow is as follows
+     * 1. Go to Federate.jsp on sp side. Click on select provider button. 
      * 2. It redirects to idp login. Enter idp user id & password.
-     * 3. After successful idp login, it is redirected to sp login page.
-     * Enter sp user id & password.
-     * 4. After successful sp login, success federation msg is displayed.
+     * 3. After successful idp login, success federation msg is displayed.
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
-     * @param idpLoginOnly can be used where only idplogin is req
      */
-    public static void getxmlSPIDFFFederate(String xmlFileName, Map m,
-            boolean idpLoginOnly)
+    public static void getxmlSPIDFFFederate(String xmlFileName, Map m)
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -78,6 +80,8 @@ public class IDFFCommon extends TestCommon {
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
+        out.write("<form name=\"form1\" buttonName=\"button\" />");
+        out.write(System.getProperty("line.separator"));
         out.write("<form name=\"Login\" buttonName=\"\" >");
         out.write(System.getProperty("line.separator"));
         out.write("<input name=\"IDToken1\" value=\"" + idpUser + "\" />");
@@ -85,17 +89,47 @@ public class IDFFCommon extends TestCommon {
         out.write("<input name=\"IDToken2\" value=\""
                 + idpUserpw + "\" />");
         out.write(System.getProperty("line.separator"));
-        if (!idpLoginOnly) {
-            out.write("</form>");
-            out.write(System.getProperty("line.separator"));
-            out.write("<form name=\"Login\" buttonName=\"\" >");
-            out.write(System.getProperty("line.separator"));
-            out.write("<input name=\"IDToken1\" value=\"" + spUser + "\" />");
-            out.write(System.getProperty("line.separator"));
-            out.write("<input name=\"IDToken2\" value=\""
-                    + spUserpw + "\" />");
-            out.write(System.getProperty("line.separator"));
-        }
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(System.getProperty("line.separator"));
+        out.write("</form>");
+        out.write(System.getProperty("line.separator"));
+        out.write("</url>");
+        out.write(System.getProperty("line.separator"));
+        out.close();
+    }
+    
+    /**
+     * This method creates xml sp init sso
+     * First login to idp & then run this xml file. 
+     * Since user is already federated, SSO will be successful. 
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public static void getxmlSPIDFFSSO(String xmlFileName, Map m)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String spProto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
+        String spPort = (String)m.get(TestConstants.KEY_SP_PORT);
+        String spHost = (String)m.get(TestConstants.KEY_SP_HOST);
+        String spDeploymentURI = (String)m.get(
+                TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
+        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
+        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
+        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
+        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
+        String strResult = (String)m.get(TestConstants.KEY_SSO_RESULT);
+        
+        out.write("<url href=\"" + spProto +"://" + spHost + ":"
+                + spPort + spDeploymentURI
+                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
+        out.write("\">");
+        out.write(System.getProperty("line.separator"));
+        out.write("<form>");
+        out.write(System.getProperty("line.separator"));
         out.write("<result text=\"" + strResult + "\" />");
         out.write(System.getProperty("line.separator"));
         out.write("</form>");
@@ -125,12 +159,11 @@ public class IDFFCommon extends TestCommon {
         String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
         String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String strResult = (String)m.get(TestConstants.KEY_SP_SLO_RESULT);
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/LogoutDone.jsp?metaAlias=/"
-                + spMetaalias + "logoutStatus=logoutSuccess" );
+                + "/liberty-logout?metaAlias=/" + spMetaalias);
         out.write("\">");
         out.write(System.getProperty("line.separator"));
         out.write("<form>");
@@ -163,7 +196,7 @@ public class IDFFCommon extends TestCommon {
         String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
         String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String strResult = (String)m.get(TestConstants.KEY_TERMINATE_RESULT);
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
@@ -190,23 +223,17 @@ public class IDFFCommon extends TestCommon {
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
-        String spProto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
-        String spPort = (String)m.get(TestConstants.KEY_SP_PORT);
-        String spHost = (String)m.get(TestConstants.KEY_SP_HOST);
-        String spDeploymentURI = (String)m.get(
-                TestConstants.KEY_SP_DEPLOYMENT_URI);
-        String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
-        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
-        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
-        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
-        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
-        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String idpProto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
+        String idpPort = (String)m.get(TestConstants.KEY_IDP_PORT);
+        String idpHost = (String)m.get(TestConstants.KEY_IDP_HOST);
+        String idpDeploymentURI = (String)m.get(
+                TestConstants.KEY_IDP_DEPLOYMENT_URI);
+        String idpMetaalias = (String)m.get(TestConstants.KEY_IDP_METAALIAS);
+        String strResult = (String)m.get(TestConstants.KEY_IDP_SLO_RESULT);
         
-        out.write("<url href=\"" + spProto +"://" + spHost + ":"
-                + spPort + spDeploymentURI
-                + "/config/federation/default/LogoutDone.jsp?metaAlias=/"
-                + spMetaalias + "logoutStatus=logoutSuccess" );
+        out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
+                + idpPort + idpDeploymentURI
+                + "/liberty-logout?metaAlias=/" + idpMetaalias);
         out.write("\">");
         out.write(System.getProperty("line.separator"));
         out.write("<form>");
@@ -228,23 +255,18 @@ public class IDFFCommon extends TestCommon {
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
-        String spProto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
-        String spPort = (String)m.get(TestConstants.KEY_SP_PORT);
-        String spHost = (String)m.get(TestConstants.KEY_SP_HOST);
-        String spDeploymentURI = (String)m.get(
-                TestConstants.KEY_SP_DEPLOYMENT_URI);
-        String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
-        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
-        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
-        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
-        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
-        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String idpProto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
+        String idpPort = (String)m.get(TestConstants.KEY_IDP_PORT);
+        String idpHost = (String)m.get(TestConstants.KEY_IDP_HOST);
+        String idpDeploymentURI = (String)m.get(
+                TestConstants.KEY_IDP_DEPLOYMENT_URI);
+        String idpMetaalias = (String)m.get(TestConstants.KEY_IDP_METAALIAS);
+        String strResult = (String)m.get(TestConstants.KEY_TERMINATE_RESULT);
         
-        out.write("<url href=\"" + spProto +"://" + spHost + ":"
-                + spPort + spDeploymentURI
+        out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
+                + idpPort + idpDeploymentURI
                 + "/config/federation/default/Termination.jsp?metaAlias=/"
-                + spMetaalias );
+                + idpMetaalias );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
         out.write("<form name=\"selectprovider\" buttonName=\"doIt\">");
@@ -272,12 +294,7 @@ public class IDFFCommon extends TestCommon {
         String spDeploymentURI = (String)m.get(
                 TestConstants.KEY_SP_DEPLOYMENT_URI);
         String spMetaalias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
-        String idpEntityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
-        String spUser = (String)m.get(TestConstants.KEY_SP_USER);
-        String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
-        String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
-        String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String strResult = (String)m.get(TestConstants.KEY_NAME_REG_RESULT);
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
@@ -295,4 +312,36 @@ public class IDFFCommon extends TestCommon {
         out.close();
     }
 
+    /**
+     * This method creates xml sp init Name Registration
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public static void getxmlIDPIDFFNameReg(String xmlFileName, Map m)
+    throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        String idpProto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
+        String idpPort = (String)m.get(TestConstants.KEY_IDP_PORT);
+        String idpHost = (String)m.get(TestConstants.KEY_IDP_HOST);
+        String idpDeploymentURI = (String)m.get(
+                TestConstants.KEY_IDP_DEPLOYMENT_URI);
+        String idpMetaalias = (String)m.get(TestConstants.KEY_IDP_METAALIAS);
+        String strResult = (String)m.get(TestConstants.KEY_NAME_REG_RESULT);
+        
+        out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
+                + idpPort + idpDeploymentURI
+                + "/config/federation/default/NameRegistration.jsp?metaAlias=/"
+                + idpMetaalias );
+        out.write("\">");
+        out.write(System.getProperty("line.separator"));
+        out.write("<form name=\"selectprovider\" buttonName=\"doIt\">");
+        out.write("<result text=\"" + strResult + "\" />");
+        out.write(System.getProperty("line.separator"));
+        out.write("</form>");
+        out.write(System.getProperty("line.separator"));
+        out.write("</url>");
+        out.write(System.getProperty("line.separator"));
+        out.close();
+    }
 }
