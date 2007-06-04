@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_sec-idff-testng.xml,v 1.2 2007-05-30 19:06:51 mrudulahg Exp $
+ $Id: ff_sec-idff-testng.xml,v 1.3 2007-06-04 22:00:58 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,6 +35,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFF"/>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
             <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>
         </classes>
     </test>
