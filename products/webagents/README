@@ -92,3 +92,9 @@ opensso/products/webagents/docs/WINNT/sjsws/README.txt
 
 Sun Java System Web Server Agent Install instructions:
 opensso/products/webagents/docs/WINNT/sjsws/INSTALL.txt
+
+Microsoft Internet Information Services 6 Agent Build instructions: 
+opensso/products/webagents/docs/WINNT/iis/README.txt
+
+SunMicrosoft Internet Information Services 6 Agent tall instructions:
+opensso/products/webagents/docs/WINNT/iis/INSTALL.txt

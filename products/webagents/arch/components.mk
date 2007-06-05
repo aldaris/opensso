@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.7 2007-04-30 17:29:25 subbae Exp $
+# $Id: components.mk,v 1.8 2007-06-05 19:36:43 subbae Exp $
 # 
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -68,6 +68,13 @@ SJSWS_LIB_DIR = $(SJSWS_DIR)/lib
 APACHE22_DIR = $(EXTERNAL_DIR)/apache22
 APACHE22_INC_DIR = $(APACHE22_DIR)/include
 APACHE22_LIB_DIR = $(APACHE22_DIR)/lib
+
+######################################################
+# IIS 6.0 Header files
+######################################################
+IIS6_DIR := $(EXTERNAL_DIR)/iis6
+IIS6_INC_DIR := $(IIS6_DIR)/include
+
 
 ##########################################
 # LIBXML defines

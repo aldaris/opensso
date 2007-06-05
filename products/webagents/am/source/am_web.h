@@ -194,6 +194,9 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_AUTHTYPE_IN_IIS6_AGENT AM_WEB_PROPERTY_PREFIX  "iis.auth_type"
 #define AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY AM_COMMON_PROPERTY_PREFIX "replaypasswd.key"
 #define AM_WEB_FILTER_PRIORITY AM_WEB_PROPERTY_PREFIX  "iis.filter_priority"
+#define AM_WEB_OWA_ENABLED AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled"
+#define AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_change_protocol"
+#define AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL AM_WEB_PROPERTY_PREFIX  "iis.owa_enabled_session_timeout_url"
 
 
 /*
@@ -1095,6 +1098,9 @@ AM_WEB_EXPORT const char * am_web_get_user_id_param();
 
 AM_WEB_EXPORT void am_web_clear_attributes_map(am_policy_result_t *result);
 
+AM_WEB_EXPORT boolean_t am_web_is_owa_enabled();
+AM_WEB_EXPORT boolean_t am_web_is_owa_enabled_change_protocol();
+AM_WEB_EXPORT const char * am_web_is_owa_enabled_session_timeout_url();
 
 AM_END_EXTERN_C 
 

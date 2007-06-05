@@ -335,6 +335,9 @@ typedef struct agent_info_t {
     char *am_revision_number;	// AM revision number
     const char *iis6_replaypasswd_key; // IIS6 replay passwd key
     const char *filter_priority; //IIS 5 filter priority
+    PRBool owa_enabled;     // OWA enabled in IIS6
+    PRBool owa_enabled_change_protocol;     // OWA enabled change protocol in IIS6
+    const char *owa_enabled_session_timeout_url; // OWA enabled session timeout url
 } agent_info_t;
 
 static agent_info_t agent_info = {
@@ -402,7 +405,10 @@ static agent_info_t agent_info = {
     AM_FALSE,		    // used by Proxy agent
     NULL,		    // AM revision number
     NULL,                   // IIS6 Replay passwd key
-    IIS_FILTER_PRIORITY     // IIS5 default priority
+    IIS_FILTER_PRIORITY,     // IIS5 default priority
+    AM_FALSE,               // owa enabled
+    AM_FALSE,               // owa enabled change protocol
+    NULL                    // owa enabled session timeout url
 };
 
 /**
@@ -760,6 +766,7 @@ static void cleanup_properties(agent_info_t *info_ptr)
         info_ptr->am_revision_number = NULL;
     }
     info_ptr->iis6_replaypasswd_key = NULL;
+    info_ptr->owa_enabled_session_timeout_url = NULL;
 }
 
 static am_bool_t is_server_alive(const url_info_t *info_ptr)
@@ -2100,6 +2107,29 @@ load_agent_properties(agent_info_t *info_ptr, const char *file_name)
 
     }
 
+    // get owa_enabled flag
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_OWA_ENABLED;
+        status = am_properties_get_boolean_with_default(
+                        info_ptr->properties, parameter, 0,
+                        &(info_ptr->owa_enabled));
+    }
+
+    // get owa_enabled_change_protocol flag
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL;
+        status = am_properties_get_boolean_with_default(
+                        info_ptr->properties, parameter, 0,
+                        &(info_ptr->owa_enabled_change_protocol));
+    }
+
+    // get owa_enabled_session_timeout_url
+    if (AM_SUCCESS == status) {
+        function_name = "am_properties_get";
+        parameter = AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL;
+        status = am_properties_get_with_default(info_ptr->properties, parameter,
+                              NULL, &info_ptr->owa_enabled_session_timeout_url);
+    }
 
     // get proxy's override_host_port
     if (AM_SUCCESS == status) {
@@ -7260,6 +7290,40 @@ am_web_get_iis_filter_priority() {
 extern "C" AM_WEB_EXPORT const char *
 am_web_get_iis6_replaypasswd_key() {
     return agent_info.iis6_replaypasswd_key;
+}
+
+/*
+ * Method to check whether OWA is deployed on IIS6
+ */
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_owa_enabled() {
+        boolean_t status = B_FALSE;
+        if(agent_info.owa_enabled == AM_TRUE) {
+            status = B_TRUE;
+        }
+        return status;
+}
+
+
+/*
+ * Method to convert http to https if OWA is deployed on IIS6
+ */
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_owa_enabled_change_protocol() {
+        boolean_t status = B_FALSE;
+        if(agent_info.owa_enabled_change_protocol == AM_TRUE) {
+            status = B_TRUE;
+        }
+        return status;
+}
+
+
+/*
+ * Method to convert http to https if OWA is deployed on IIS6
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_is_owa_enabled_session_timeout_url() {
+    return agent_info.owa_enabled_session_timeout_url;
 }
 
 #if defined(WINNT)
