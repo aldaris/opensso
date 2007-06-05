@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: client-policy-testng.xml,v 1.1 2007-05-16 16:56:51 arunav Exp $: 
+ $Id: client-policy-testng.xml,v 1.2 2007-06-05 19:29:16 arunav Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.policy.PolicyEvaluationTestFactory"/>
+        </classes>
+    </test>
+    <test name="PolicyTimeTest">
+        <groups>
+            <run>
+                <include name="client"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyEvaluationTimeTest"/>
         </classes>
     </test>
 </suite>
