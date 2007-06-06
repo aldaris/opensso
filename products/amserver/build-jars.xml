@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.2 2007-03-29 19:39:19 veiming Exp $
+   $Id: build-jars.xml,v 1.3 2007-06-06 05:55:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,6 +54,9 @@
             <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console" />
             <zipfileset dir="${amserver.www.dir}" prefix="www" />
         </jar>
+
+        <antcall target="jar-legacy" />
+
         <jar destfile="${amserver.dist.dir}/console.jar">
             <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/console/**" />
             <zipfileset dir="${amserver.console.res.dir}" />
@@ -67,6 +70,12 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
+    <target name="jar-legacy" if="legacy">
+        <ant antfile="${legacy.base.dir}/build.xml" inheritRefs="true" target="build" />
+        <jar destfile="${amserver.dist.dir}/opensso.jar" update="true">
+            <zipfileset dir="${legacy.built.dir}/classes" />
+        </jar>
+    </target>
 
     <target name="openssotestjar" depends="preparebuild">
         <jar destfile="${amserver.dist.dir}/opensso-test.jar">

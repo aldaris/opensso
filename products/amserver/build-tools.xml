@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.5 2007-05-04 21:51:22 bigfatrat Exp $
+   $Id: build-tools.xml,v 1.6 2007-06-06 05:55:40 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -122,7 +122,23 @@
                 includes="${amadm.unix.amverifyarchive.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
+        <antcall target="legacy-files" />
     </target>
+
+    <target name="legacy-files" if ="legacy">
+        <copy todir="${amadm.locale.dir}">
+            <fileset dir="${legacy.base.dir}/resources/locale" includes="*.properties" />
+        </copy>
+        <copy todir="${amadm.windows.bin.dir}">
+            <fileset dir="${legacy.base.dir}/scripts/bin" includes="amadmin.bat" />
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+        <copy todir="${amadm.unix.bin.dir}">
+            <fileset dir="${legacy.base.dir}/scripts/bin" includes="amadmin" />
+            <mapper type="glob" from="*" to="*.template"/>
+        </copy>
+    </target>
+
     <target name="createZipFile" depends="copyNeededFiles">
         <zip destfile="${amserver.dist.dir}/amAdminTools.zip"
             whenempty="create">

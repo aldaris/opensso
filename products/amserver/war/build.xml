@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2007-04-17 19:39:43 ww203982 Exp $
+   $Id: build.xml,v 1.24 2007-06-06 05:55:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -207,7 +207,17 @@
                 <include name="*.js" />
             </zipfileset>
         </war>
+
+        <antcall target="war-legacy" />
         <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="war-legacy" if="legacy">
+        <war destfile="${amserver.dist.dir}/opensso.war" update="true">
+            <zipfileset dir="${legacy.base.dir}/resources/locale" prefix="WEB-INF/classes">
+                <include name="*.properties" />
+            </zipfileset>
+        </war>
     </target>
 
     <target name="preparebuild">
