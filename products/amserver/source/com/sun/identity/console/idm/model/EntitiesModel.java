@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModel.java,v 1.1 2007-02-07 20:21:57 jonnelson Exp $
+ * $Id: EntitiesModel.java,v 1.2 2007-06-07 18:48:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,11 @@ public interface EntitiesModel
 {
     String TF_NAME = "tfName";
     String TF_TYPE = "tfType";
+
+    /**
+     * Agent profile, device key value attribute name.
+     */
+    String ATTR_NAME_DEVICE_KEY_VALUE = "sunIdentityServerDeviceKeyValue";
 
     /**
      * Returns entity names.
@@ -410,5 +415,15 @@ public interface EntitiesModel
      *
      * @return type of <code>entity</code> object being used.
      */
-    public String getEntityType();
+    String getEntityType();
+
+    /**
+     * Returns all the authentication chains in a realm.
+     *
+     * @param realm Name of realm.
+     * @return all the authentication chains in a realm.
+     * @throws AMConsoleException if authentication chains cannot be returned.
+     */
+    Set getAuthenticationChains(String realm)
+        throws AMConsoleException;
 }

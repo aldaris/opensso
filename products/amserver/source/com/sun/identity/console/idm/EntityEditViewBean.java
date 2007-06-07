@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.2 2007-05-03 06:13:57 jonnelson Exp $
+ * $Id: EntityEditViewBean.java,v 1.3 2007-06-07 18:48:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */ 
@@ -64,7 +64,7 @@ public class EntityEditViewBean
     public static final String PG_SESSION_ENTITY_TAB = "entityTab";
     public static final String PG_SESSION_MEMBER_TYPE = "memberType";
     public static final String TAB_PROFILE_COMP = "tabProfile";
-    private static final String PROPERTY_UUID = "tfUUID";
+    static final String PROPERTY_UUID = "tfUUID";
 
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     public static final int TAB_PROFILE = 0;

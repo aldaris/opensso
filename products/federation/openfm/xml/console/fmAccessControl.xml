@@ -13,3 +13,7 @@
 <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingViewBean" />
 <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListEditViewBean" />
 <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListDupViewBean" />
+<neednodealwith classname="com.sun.identity.console.idm.WebServiceClientEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.idm.WebServiceProviderEditViewBean" />
+<neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredAddViewBean" />
+<neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredEditViewBean" />

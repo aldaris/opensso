@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.11 2007-04-30 18:51:22 jonnelson Exp $
+   $Id: build-war.xml,v 1.12 2007-06-07 18:48:44 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,7 +61,8 @@
                 excludes="FederationConfig.properties" />
             <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
             <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
-            <fileset dir="${openfm.res.dir}" includes="*.properties" />
+            <fileset dir="${openfm.res.dir}" includes="*.properties"
+                excludes="fmConfiguratorPlugins.properties, fmConfiguratorTagSwap.properties" />
             <fileset dir="${library.xml.dir}" includes="*.xsl" />
         </copy>
         <copy file="${fedlibrary.dist.dir}/openfedlib.jar"
@@ -233,9 +234,9 @@
             <arg value="fmConsole" />
             <arg value="${war.webinf.classes.dir}/amConsole.properties" />
         </java>
-        
-    
 
+        <delete file="${war.webinf.classes.dir}/fmConsole.properties" />
+        
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>

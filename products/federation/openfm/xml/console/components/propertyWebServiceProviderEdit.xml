@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: propertyWebServiceProviderEdit.xml,v 1.1 2007-06-07 18:48:48 veiming Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+<propertysheet>
+
+<section name="lblblank_header" defaultValue="blank.header">
+
+    <property required="true">
+        <label name="lbluserpassword"
+            defaultValue="web.services.profile.password"
+            labelFor="userpassword" />
+        <cc name="userpassword"
+            tagclass="com.sun.web.ui.taglib.html.CCPasswordTag">
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+
+    <property required="true">
+        <label name="lbluserpassword"
+            defaultValue="web.services.profile.password-confirm"
+            labelFor="userpassword" />
+        <cc name="userpassword_confirm"
+            tagclass="com.sun.web.ui.taglib.html.CCPasswordTag">
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+
+    <property>
+        <label name="lbldescription" defaultValue="web.services.profile.desc"
+            labelFor="description" />
+        <cc name="description"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="40" />
+            <attribute name="localizeDisplayFieldValue" value="false" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+    
+    <property required="true">
+        <label name="lblsunIdentityServerDeviceStatus"
+            defaultValue="web.services.profile.device-status"
+            labelFor="sunIdentityServerDeviceStatus" />
+        <cc name="sunIdentityServerDeviceStatus"
+            tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+            <attribute name="defaultValue" value="Active" />
+            <option label="web.services.profile.device-status-active"
+                value="Active" />
+            <option label="web.services.profile.device-status-inactive"
+                value="Inactive" />
+        </cc>
+    </property>
+
+    <property >
+        <label name="securitymechanism"
+            defaultValue="web.services.profile.security-mech-header"
+            labelFor="securitymechanism" />
+        <ccgroup>
+        @securitymechanism@
+        </ccgroup>
+    </property>
+    
+    <!-- property>
+        <label name="lblauthenticationchain"
+            defaultValue="web.services.profile.authenticationchain"
+            labelFor="authenticationchain" />
+        <cc name="authenticationchain"
+            tagclass="com.sun.web.ui.taglib.html.CCSelectableListTag">
+        </cc>
+    </property -->
+
+    <property>
+        <label name="lblisresponsesigned"
+            defaultValue="web.services.profile.isresponsesigned"
+            labelFor="isresponsesigned" />
+        <cc name="isresponsesigned"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+
+    <property>
+        <label name="lblusedefaultkeystore"
+            defaultValue="web.services.profile.keystoreusage" 
+            labelFor="keystoreusage" />
+        <cc name="keystoreusage"
+            tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+            <attribute name="defaultValue" value="default" />
+            <attribute name="extraHtml" value="onClick='toggleKeyStoreComponent(this);'" />
+            <option label="web.services.profile.keystoreusage-default"
+                value="default" />
+            <option label="web.services.profile.keystoreusage-custom"
+                value="custom" />
+        </cc>
+        <ccgroup>
+        <property >
+            <label name="keystore"
+                defaultValue="web.services.profile.keystore-header"
+                labelFor="keystore" />
+        </property>
+        <property>
+            <label name="lblkeystorelocation"
+                defaultValue="web.services.profile.keystorelocation"
+                labelFor="keystorelocation" />
+            <cc name="keystorelocation"
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="70" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+                <attribute name="autoSubmit" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblkeystorepassword"
+                defaultValue="web.services.profile.keystorepassword"
+                labelFor="keystorepassword" />
+            <cc name="keystorepassword"
+                tagclass="com.sun.web.ui.taglib.html.CCPasswordTag">
+                <attribute name="size" value="20" />
+                <attribute name="autoSubmit" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblkeypassword"
+                defaultValue="web.services.profile.keypassword"
+                labelFor="keypassword" />
+            <cc name="keypassword"
+                tagclass="com.sun.web.ui.taglib.html.CCPasswordTag">
+                <attribute name="size" value="20" />
+                <attribute name="autoSubmit" value="false" />
+            </cc>
+        </property>
+        </ccgroup>
+    </property>
+
+    <property>
+        <label name="lblpreservesecurityheader"
+            defaultValue="web.services.profile.preserve-security-header"
+            labelFor="preservesecurityheader" />
+        <cc name="preservesecurityheader"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+    
+    <property>
+        <label name="lbllibertyservicetype" defaultValue="web.services.profile.libertyservicetype"
+            labelFor="libertyservicetype" />
+        <cc name="libertyservicetype"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="40" />
+            <attribute name="localizeDisplayFieldValue" value="false" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+
+    <property>
+        <label name="lblUUID" defaultValue="entity.attribute.label.uuid"
+            labelFor="tfUUID" />
+        <cc name="tfUUID"
+            tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag"/>
+    </property>
+</section>
+
+</propertysheet>
+

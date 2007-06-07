@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.3 2007-05-11 18:49:43 babysunil Exp $
+ * $Id: EntitiesModelImpl.java,v 1.4 2007-06-07 18:48:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.console.idm.model;
 import com.sun.identity.shared.locale.Locale;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -543,6 +544,43 @@ public class EntitiesModelImpl
                     getUserSSOToken(), universalId);
                 String entityName = amid.getName();
                 String idType = amid.getType().getName();
+
+                // In the case of Agents, the attribute sun device key
+                // values must be merged
+                if (amid.getType().equals(IdType.AGENT) &&
+                    values.containsKey("sunIdentityServerDeviceKeyValue") &&
+                    (amid.getAttribute("sunIdentityServerDeviceKeyValue")
+                    != null)) {
+                    Set newDeviceKeyValue = (Set) values.get(
+                        "sunIdentityServerDeviceKeyValue");
+                    Set origDeviceKeyValue = amid.getAttribute(
+                        "sunIdentityServerDeviceKeyValue");
+                    for (Iterator items = origDeviceKeyValue.iterator();
+                        items.hasNext();) {
+                        String olValue = (String) items.next();
+                        String[] olValues = olValue.split("=");
+                        // Check if this attribute exists in new values
+                        boolean found = false;
+                        for (Iterator nt = newDeviceKeyValue.iterator();
+                            nt.hasNext();) {
+                            String ntValue = (String) nt.next();
+                            String[] ntValues = ntValue.split("=");
+                            if (ntValues[0].equalsIgnoreCase(olValues[0])) {
+                                if ((ntValues.length > 1) &&
+                                    (ntValues[1].trim().length() == 0)
+                                ) {
+                                    // Remove the entry
+                                    nt.remove();
+                                }
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            newDeviceKeyValue.add(olValue);
+                        }
+                    }
+                }
                 beforeModify(idType, entityName, values);
                 amid.setAttributes(values);
                 amid.store();
@@ -1587,5 +1625,26 @@ public class EntitiesModelImpl
             debug.warning("EntitiesModelImpl.hasAttributeSchema", e);
         }
         return hasAttributes;
+    }
+
+    /**
+     * Returns all the authentication chains in a realm.
+     *
+     * @param realm Name of realm.
+     * @return all the authentication chains in a realm.
+     * @throws AMConsoleException if authentication chains cannot be returned.+      */
+    public Set getAuthenticationChains(String realm)
+        throws AMConsoleException {
+        if ((realm == null) || (realm.trim().length() == 0)) {
+            realm = "/";
+        }
+        try {
+            return AMAuthConfigUtils.getAllNamedConfig(realm,
+                getUserSSOToken());
+        } catch (SSOException e) {
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SMSException e) {
+            throw new AMConsoleException(getErrorString(e));
+        }
     }
 }

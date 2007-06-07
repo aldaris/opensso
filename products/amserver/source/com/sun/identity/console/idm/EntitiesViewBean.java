@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.1 2007-02-07 20:21:52 jonnelson Exp $
+ * $Id: EntitiesViewBean.java,v 1.2 2007-06-07 18:48:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
@@ -88,10 +89,26 @@ public class EntitiesViewBean
 
     private static final String PAGETITLE = "pgtitle";
     private static final String DEFAULT_ID_TYPE = "user";
+    static final String ATTR_NAME_AGENT_TYPE = "Type=";
 
     private CCActionTableModel tblModel = null;
     private CCPageTitleModel ptModel;
     private boolean tblModelPopulated = false;
+    private static Class wspProfileViewBeanClass;
+    private static Class wscProfileViewBeanClass;
+    private static boolean supportWSSecurityUI;
+
+    static {
+        try {
+            wspProfileViewBeanClass = Class.forName(
+                "com.sun.identity.console.idm.WebServiceProviderEditViewBean");
+            wscProfileViewBeanClass = Class.forName(
+                "com.sun.identity.console.idm.WebServiceClientEditViewBean");
+            supportWSSecurityUI = true;
+        } catch (ClassNotFoundException e) {
+            //ignored. This means that this is not a openfm console.
+        }
+    }
 
     /**
      * Creates a policy view bean.
@@ -366,8 +383,9 @@ public class EntitiesViewBean
             AMIdentity amid = IdUtils.getIdentity(
                 model.getUserSSOToken(), universalId);
             String idType = amid.getType().getName();
-            AMViewBeanBase vb = (AMViewBeanBase)getViewBean(
-                EntityEditViewBean.class);
+            AMViewBeanBase vb = (supportWSSecurityUI) ?
+                getEntityEditViewBean(amid) :
+                (AMViewBeanBase)getViewBean(EntityEditViewBean.class);
 
             setPageSessionAttribute(EntityOpViewBeanBase.ENTITY_NAME,
                 amid.getName());
@@ -379,11 +397,44 @@ public class EntitiesViewBean
             unlockPageTrail();
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
+        } catch (SSOException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            forwardTo();
         } catch (IdRepoException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 model.getErrorString(e));
             forwardTo();
         }
+    }
+
+    private AMViewBeanBase getEntityEditViewBean(AMIdentity amid) 
+        throws SSOException, IdRepoException
+    {
+        Map attrValues = amid.getAttributes();
+        Set deviceKeyValue = (Set)attrValues.get(
+            "sunIdentityServerDeviceKeyValue");
+        String agentType = null;
+        if ((deviceKeyValue != null) && !deviceKeyValue.isEmpty()) {
+            for (Iterator i = deviceKeyValue.iterator();
+                i.hasNext() && (agentType == null);
+            ) {
+                String val = (String)i.next();
+                if (val.startsWith(ATTR_NAME_AGENT_TYPE)) {
+                    agentType = val.substring(ATTR_NAME_AGENT_TYPE.length());
+                }
+            }
+        }
+
+        AMViewBeanBase vb;
+        if ((agentType != null) && agentType.equalsIgnoreCase("WSC")) {
+            vb = (AMViewBeanBase)getViewBean(wscProfileViewBeanClass);
+        } else if ((agentType != null) && agentType.equalsIgnoreCase("WSP")) {
+            vb = (AMViewBeanBase)getViewBean(wspProfileViewBeanClass);
+        } else {
+            vb = (AMViewBeanBase)getViewBean(EntityEditViewBean.class);
+        }
+        return vb;
     }
 
     /**

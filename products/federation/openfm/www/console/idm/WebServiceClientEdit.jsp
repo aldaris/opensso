@@ -18,17 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: EntityResourceOfferingAdd.jsp,v 1.2 2007-06-07 18:48:46 veiming Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.1 2007-06-07 18:48:46 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-
-<%@ page info="EntityResourceOfferingAdd" language="java" %>
+<%@ page info="WebServiceClientEdit" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 <jato:useViewBean
-    className="com.sun.identity.console.idm.EntityResourceOfferingAddViewBean"
+    className="com.sun.identity.console.idm.WebServiceClientEditViewBean"
     fireChildDisplayEvents="true" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
@@ -37,26 +36,30 @@
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2004" fireDisplayEvents="true">
 
 <script language="javascript" src="../console/js/am.js"></script>
-
 <script language="javascript">
-    function toggleTblButtonStateEx(obj) {
-	toggleTblButtonState('EntityResourceOfferingAdd',
-	    'EntityResourceOfferingAdd.SecurityMechID',
-	    'securityMechIDCount',
-	    'EntityResourceOfferingAdd.tblSecurityMechIDButtonDelete',
-	    obj);
+    function toggleKeyStoreComponent(radioComp) {
+        frm = radioComp.form;
+        disableCustomKeyStoreFields(frm, (radioComp.value == 'default'));
+    }
+
+    function disableCustomKeyStoreFields(frm, disable) {
+        frm.elements['WebServiceClientEdit.keystorelocation'].disabled =
+            disable;
+        frm.elements['WebServiceClientEdit.keystorepassword'].disabled =
+            disable;
+        frm.elements['WebServiceClientEdit.keypassword'].disabled = disable;
     }
 </script>
 
-<cc:form name="EntityResourceOfferingAdd" method="post" defaultCommandChild="/button1" >
-
+<cc:form name="WebServiceClientEdit" method="post">
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
 </script>
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
-    locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
+<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
+<cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />
+<cc:tabs name="tabCommon" bundleID="amConsole" submitFormData="true" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
@@ -67,10 +70,16 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="discovery.service.bootstrapResOff.create.page.title" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitleTwoBtns" bundleID="amConsole" pageTitleText="page.title.entities.create" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
-<cc:propertysheet name="bootstrapRefPropertyAttributes" bundleID="amConsole" showJumpLinks="false" />
+<cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
 </cc:form>
+
+<script language="javascript">
+    var frm = document.forms['WebServiceClientEdit'];
+    disableCustomKeyStoreFields(frm,
+        frm.elements['WebServiceClientEdit.keystoreusage'][0].checked);
+</script>
 </cc:header>
 </jato:useViewBean>
