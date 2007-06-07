@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.17 2007-04-25 22:22:21 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.18 2007-06-07 21:11:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -483,19 +483,6 @@ public class AMSetupServlet extends HttpServlet {
             path = getAppResource(servletCtx);
             
             if (path != null) {
-                int idx1 = path.lastIndexOf("/");
-                if (idx1 != -1 ) {
-                    int idx2 = path.lastIndexOf("/", idx1-1);
-                    if (idx2 != -1 ) {
-                        Map map = ServicesDefaultValues.getDefaultValues();
-                        String deployuri= path.substring(idx2, idx1);
-                        int idx3 = deployuri.indexOf(".");
-                        if (idx3 != -1) {
-                            deployuri = deployuri.substring(0, idx3);
-                        }
-                        ServicesDefaultValues.setDeployURI(deployuri, map);
-                    }
-                }
                 String realPath = servletCtx.getRealPath("/");
                 if ((realPath != null) && (realPath.length() > 0)) {
                     realPath = realPath.replace('\\', '/');

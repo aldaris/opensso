@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.11 2007-04-26 17:40:31 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.12 2007-06-07 21:11:24 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,6 +107,8 @@ public class ServicesDefaultValues {
             throw new ConfiguratorException("configurator.invalidcookiedomain", 
                 null, locale); 
         }
+
+        setDeployURI(request.getContextPath(), map);
 
         String hostname = (String)map.get(
             SetupConstants.CONFIG_VAR_SERVER_HOST);
