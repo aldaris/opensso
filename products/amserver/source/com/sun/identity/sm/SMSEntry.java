@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.24 2007-05-05 07:18:06 veiming Exp $
+ * $Id: SMSEntry.java,v 1.25 2007-06-07 20:23:29 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -372,15 +372,27 @@ public class SMSEntry implements Cloneable {
                     AdminTokenAction.getInstance());
                 Map versionMap = smsObject.read(appToken,
                     ORG_PLACEHOLDER_RDN + SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
-                String verStr = 
-                    (String) versionMap.get(SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
-                if (verStr != null && verStr.length() > 0) {
-                    int version = Integer.valueOf(verStr).intValue();
-                    /*
-                     * Since getAMSdkBaseDN() got introduced in AM 7.1 &
-                     * opensso, check the version for > 10.
-                     */
-                    checkForJAXRPCVersion = (version > 10);
+                /*
+                 * This clientsdk change is only for AM server 7.1 RTM which 
+                 * has no  JAXRPC version implementation in sm/jaxrpc, and 
+                 * for latest  agents to  work with it. 
+                 * The checkForJAXRPCVersion is set to 
+                 * true to use the newly introduced api on the server side.
+                 */
+                if (versionMap == null) {
+                    checkForJAXRPCVersion = true;
+                } else {
+                    String verStr = (String) versionMap.get(
+                        SMSJAXRPCObject.AMJAXRPCVERSIONSTR);
+                    
+                    if (verStr != null && verStr.length() > 0) {
+                        int version = Integer.valueOf(verStr).intValue();
+                        /*
+                         * Since getAMSdkBaseDN() got introduced in AM 7.1 &
+                         * opensso, check the version for > 10.
+                         */
+                        checkForJAXRPCVersion = (version > 10);
+                    }
                 }
             } catch (NumberFormatException nfe) {
                 debug.warning("SMSEntry:<init>.", nfe);
