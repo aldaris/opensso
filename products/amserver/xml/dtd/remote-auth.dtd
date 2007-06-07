@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remote-auth.dtd,v 1.2 2007-01-09 18:48:23 manish_rustagi Exp $
+    $Id: remote-auth.dtd,v 1.3 2007-06-07 18:56:12 beomsuk Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -248,7 +248,8 @@ required data. -->
                                 ChoiceCallback | ConfirmationCallback |
                                 TextInputCallback | TextOutputCallback |
                                 LanguageCallback | PagePropertiesCallback |
-                                SAMLCallback | CustomCallback)+ >
+                                SAMLCallback | X509CertificateCallback |
+                                CustomCallback)+ >
 <!ATTLIST        Callbacks
         length                NMTOKEN                #REQUIRED
 >
@@ -362,6 +363,7 @@ value provided by the user (or service) back to the server. -->
 <!-- ResponseValue element will be used by the client to return a saml post 
 response value provided by the user (or service) back to the server. -->
 <!ELEMENT        ResponseValue                ( #PCDATA ) >
+
 
 <!-- AttributeValue element contains the Attribute and Value(s) for
      a Callback parameter. 

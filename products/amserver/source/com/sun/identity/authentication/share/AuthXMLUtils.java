@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.3 2007-01-09 18:58:33 manish_rustagi Exp $
+ * $Id: AuthXMLUtils.java,v 1.4 2007-06-07 18:59:19 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.authentication.spi.DSAMECallbackInterface;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.AccessController;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -235,6 +240,21 @@ public class AuthXMLUtils {
                                 childNode,null));
                     }
                 }
+            } else if (childNodeName.equals(
+                       AuthXMLTags.X509CERTIFICATE_CALLBACK)) {
+                if (callbacks != null) {
+                    lcIndex =
+                        getX509CertificateCallbackIndex(callbacks,lcIndex);
+                    if (lcIndex >= 0) {
+                        callbackList.add(
+                                createX509CertificateCallback(childNode,
+                                callbacks[lcIndex]));
+                    }
+                    lcIndex = lcIndex + 1;
+                } else {
+                    callbackList.add(
+                            createX509CertificateCallback(childNode,null));
+                }
             } else if (childNodeName.equals(AuthXMLTags.CUSTOM_CALLBACK)) {
                 if (callbacks != null) {
                     diIndex = getCustomCallbackIndex(callbacks,ppIndex);
@@ -301,6 +321,10 @@ public class AuthXMLUtils {
             } else if (callbacks[i] instanceof LanguageCallback) {
                 LanguageCallback lc = (LanguageCallback) callbacks[i];
                 xmlString.append(getLanguageCallbackXML(lc));
+            } else if (callbacks[i] instanceof X509CertificateCallback) {
+                X509CertificateCallback xc =
+                    (X509CertificateCallback) callbacks[i];
+                xmlString.append(getX509CertificateCallbackXML(xc));
             } else if (callbacks[i] instanceof DSAMECallbackInterface) {
                 DSAMECallbackInterface dsameCallback =
                 (DSAMECallbackInterface) callbacks[i];
@@ -627,6 +651,55 @@ public class AuthXMLUtils {
         return pagePropertiesCallback;
     }
     
+    static X509CertificateCallback createX509CertificateCallback(
+        Node childNode, Callback callback) {
+        X509CertificateCallback certCallback = null;
+        if (callback != null) {
+            if (callback instanceof X509CertificateCallback) {
+                certCallback = (X509CertificateCallback)callback;
+            }
+        }
+
+        if (certCallback == null) {
+            certCallback = new X509CertificateCallback(getPrompt(childNode));
+        }
+
+        boolean signReq = true;
+        String strSignReq = XMLUtils.getNodeAttributeValue(childNode,
+        AuthXMLTags.SIGN_REQUIRED);
+        if (strSignReq.equals("false")) {
+            signReq = false;
+        }
+        certCallback.setReqSignature(signReq);
+
+        Node pNode =
+            XMLUtils.getChildNode(childNode, AuthXMLTags.X509CERTIFICATE);
+        if (pNode != null) {
+            String certificate = XMLUtils.getValueOfValueNode(pNode);
+            if (certificate != null) {
+                /*
+                 * use the base64 decoder from MimeUtility instead of
+                 * writing our own
+                 */
+                byte certbytes [] = Base64.decode(certificate);
+                ByteArrayInputStream carray = 
+                    new ByteArrayInputStream(certbytes);
+
+                try {
+                    CertificateFactory cf =
+                        CertificateFactory.getInstance("X.509");
+                    X509Certificate userCert =
+                        (X509Certificate) cf.generateCertificate(carray);
+                    certCallback.setCertificate(userCert);
+                } catch (CertificateException e) {
+                    debug.error("createX509CertificateCallback : ", e);
+                }
+            }
+        }
+
+        return certCallback;
+    }
+
     static String getNameCallbackXML(NameCallback nameCallback) {
         StringBuffer xmlString = new StringBuffer();
         xmlString.append(AuthXMLTags.NAME_CALLBACK_BEGIN)
@@ -921,6 +994,39 @@ public class AuthXMLUtils {
         xmlString.append(AuthXMLTags.PAGEP_CALLBACK_END);
         return xmlString.toString();
     }    
+
+    static String getX509CertificateCallbackXML(
+        X509CertificateCallback certCallback) {
+        StringBuffer xmlString = new StringBuffer();
+
+        xmlString.append(AuthXMLTags.CERT_CALLBACK_BEGIN)
+        .append(AuthXMLTags.SPACE)
+        .append(AuthXMLTags.SIGN_REQUIRED)
+        .append(AuthXMLTags.EQUAL)
+        .append(AuthXMLTags.QUOTE)
+        .append(certCallback.getReqSignature())
+        .append(AuthXMLTags.QUOTE)
+        .append(AuthXMLTags.ELEMENT_END);
+
+        xmlString.append(AuthXMLTags.PROMPT_BEGIN)
+        .append(certCallback.getPrompt())
+        .append(AuthXMLTags.PROMPT_END);
+
+        X509Certificate cert = certCallback.getCertificate();
+        if (cert != null) {
+            try {
+                xmlString.append(AuthXMLTags.X509CERTIFICATE_BEGIN)
+                .append(Base64.encode(cert.getEncoded()))
+                .append(AuthXMLTags.X509CERTIFICATE_END);
+            } catch (CertificateEncodingException e) {
+                debug.error("getX509CertificateCallbackXML : ", e);
+            }
+        }
+
+        xmlString.append(AuthXMLTags.CERT_CALLBACK_END);
+
+        return xmlString.toString();
+    }
     
     protected static String getPrompt(Node node) {
         Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.PROMPT);
@@ -1258,6 +1364,17 @@ public class AuthXMLUtils {
         }
         return -1;
     }    
+
+    static int getX509CertificateCallbackIndex(
+        Callback[] callbacks, int startIndex) {
+        int i=0;
+        for (i = startIndex;i < callbacks.length;i++) {
+            if (callbacks[i] instanceof X509CertificateCallback) {
+                return i;
+            }
+        }
+        return -1;
+    }
     
     static LanguageCallback createLanguageCallback(
         Node childNode,

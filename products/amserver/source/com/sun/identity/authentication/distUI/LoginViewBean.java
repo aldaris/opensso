@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.7 2007-01-21 10:34:17 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.8 2007-06-07 18:58:52 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.ImageField;
 import com.iplanet.jato.view.html.StaticTextField;
+import com.iplanet.services.util.Base64;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
@@ -42,6 +43,7 @@ import com.sun.identity.authentication.UI.CallBackTiledView;
 import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.ISLocaleContext;
@@ -63,6 +65,8 @@ import javax.security.auth.callback.ChoiceCallback;
 import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -1020,6 +1024,28 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 } else if (callbacks[i] instanceof PagePropertiesCallback) {
                     PagePropertiesCallback ppc
                     = (PagePropertiesCallback) callbacks[i];
+                } else if (callbacks[i] instanceof X509CertificateCallback) {
+                    X509CertificateCallback xcc =
+                        (X509CertificateCallback) callbacks[i];
+                    X509Certificate[] allCerts = (X509Certificate[])
+                        request.getAttribute
+                            ("javax.servlet.request.X509Certificate");
+                    if ((allCerts != null) && (allCerts.length > 0)) {
+                        X509Certificate cert = (X509Certificate) allCerts[0];
+                        xcc.setCertificate(cert);
+                        if (loginDebug.messageEnabled()) {
+                            try {
+                                loginDebug.message(
+                                    "X509CertificateCallback - " +
+                                    "User Certificate : "
+                                    + Base64.encode(cert.getEncoded()));
+                            } catch (CertificateEncodingException e) {
+                                loginDebug.message(
+                                    "X509CertificateCallback - " +
+                                    e.toString());
+                            }
+                        }
+                    }
                 }
             }
             
@@ -1136,7 +1162,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     }
     
     // Method to generate HTML page from Callback objects
-    protected void addLoginCallbackMessage(Callback[] callbacks) {
+    protected void addLoginCallbackMessage(Callback[] callbacks)
+        throws Exception {
         loginDebug.message("In addLoginCallbackMessage()");
         buttonOptions = null;
         pageState = null;
@@ -1175,8 +1202,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         + requiredList + " List size : " + lsize
                         + " Page State : " + pageState);
                 }
+            } else if (callbacks[i] instanceof X509CertificateCallback) {
+                onePageLogin = true;
+                processLoginDisplay();
+                break;
             }
         }
+        
+        return;
     }
     
     

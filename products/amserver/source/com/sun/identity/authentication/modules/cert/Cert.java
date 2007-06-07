@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.4 2006-12-15 00:25:15 beomsuk Exp $
+ * $Id: Cert.java,v 1.5 2007-06-07 18:58:18 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ import com.sun.identity.security.cert.X509CRLValidatorFactory;
 import com.sun.identity.security.cert.X509OCSPValidatorFactory;
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.authentication.service.X509CertificateCallback;
+import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -243,11 +243,7 @@ public class Cert extends AMLoginModule {
             certParamName = CollectionHelper.getMapAttr(
                 options,"sunAMHttpParamName");
 
-            HttpServletRequest req = getHttpServletRequest();
-            String client = null;
-            if (req != null) {
-                client = req.getRemoteAddr();
-            }
+            String client = getLoginState("process").getClient();
             portal_gw_cert_auth_enabled = false;
             if (gwCertAuth == null || gwCertAuth.equals("") 
                                 || gwCertAuth.equalsIgnoreCase("none")) {
@@ -734,16 +730,31 @@ public class Cert extends AMLoginModule {
                         
     private X509Certificate sendCallback() throws AuthLoginException {
         if (callbackHandler == null) {
-            throw new AuthLoginException(amAuthCert, "NoCallbackHandler", null);
-        }
+            throw new AuthLoginException(amAuthCert, "NoCallbackHandler", null);        }
         X509Certificate cert = null;
         try {
             Callback[] callbacks = new Callback[1];
             callbacks[0] = 
                 new X509CertificateCallback (bundle.getString("certificate"));
             callbackHandler.handle(callbacks);
-            cert = ((X509CertificateCallback)callbacks[0]).getCertificate();
-            return cert; 
+            X509CertificateCallback xcb = (X509CertificateCallback)callbacks[0];
+            /*
+             * Allow Cert auth module accepts personal certificate only for
+             * following 3 cases :
+             * 1. portal_gw_cert_auth_enabled == true :
+             *    Case of getting cert from trusted host like sra,
+             *    distAuth, trusted LB
+             * 2. xcb.getReqSignature() == false :
+             *    Case of getting cert through ssl client auth enabled port
+             * 3. (xcb.getReqSignature() == true) && (signature != null) :
+             *    Case of getting cert together with signature from sdk client              */
+            byte[] signature = xcb.getSignature();
+            if (portal_gw_cert_auth_enabled ||
+                !xcb.getReqSignature() ||
+                (xcb.getReqSignature() && (signature != null))) {
+                cert = xcb.getCertificate();
+            }
+            return cert;
         } catch (IllegalArgumentException ill) {
             debug.message("message type missing");
             throw new AuthLoginException(amAuthCert, "IllegalArgs", null);
@@ -751,7 +762,7 @@ public class Cert extends AMLoginModule {
             throw new AuthLoginException(ioe);
         } catch (UnsupportedCallbackException uce) {
             throw new AuthLoginException(amAuthCert, "NoCallbackHandler", null);
-        }
+        }    
     }
 
     private X509Certificate getPortalStyleCert (HttpServletRequest request) 

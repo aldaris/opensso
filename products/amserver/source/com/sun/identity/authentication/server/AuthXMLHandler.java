@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.5 2007-01-09 19:04:24 manish_rustagi Exp $
+ * $Id: AuthXMLHandler.java,v 1.6 2007-06-07 18:59:41 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.service.LoginState;
-import com.sun.identity.authentication.service.X509CertificateCallback;
+import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -615,31 +615,17 @@ public class AuthXMLHandler implements RequestHandler {
             Callback[] reqdCallbacks = authContext.getRequirements();
             for (int i = 0 ; i < reqdCallbacks.length ; i++) {
                 if (reqdCallbacks[i] instanceof X509CertificateCallback) {
-                    LoginState loginState = null;
-                    if (servletRequest != null) {
-                        loginState =AuthUtils.getLoginState
-                            (authContext);
-                        if ((loginState != null) &&
-                            (loginState.getX509Certificate() == null)) { 
-                                Object obj = servletRequest.getAttribute(
-                                "javax.servlet.request.X509Certificate");
-                                X509Certificate[] allCerts = 
-                                    (X509Certificate[]) obj;
-                                if ( (allCerts != null) && 
-                                    (allCerts.length != 0) ) {
-                                    if (messageEnabled) {
-                                       debug.message("length of cert array : " 
-                                           + allCerts.length);
-                                    }
-                                    loginState.setX509Certificate(allCerts[0]);
-                                }
-                        }
-                    }
                     X509CertificateCallback certCallback =
                     (X509CertificateCallback) reqdCallbacks[i];
+                    LoginState loginState = AuthUtils.getLoginState(authContext);
                     if (loginState != null) {
                         X509Certificate cert = loginState.getX509Certificate();
-                        certCallback.setCertificate(cert);
+                        if (cert != null) {
+                            certCallback.setCertificate(cert);
+                            certCallback.setReqSignature(false);
+                        } else {
+                            allCallbacksAreSet = false;
+                        }
                     }
                 } else { 
                     param = null;

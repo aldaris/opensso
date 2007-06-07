@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.3 2007-01-21 10:34:25 mrudul_uchil Exp $
+ * $Id: AuthXMLTags.java,v 1.4 2007-06-07 18:59:19 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,7 @@ public interface AuthXMLTags {
         "PagePropertiesCallback";
     public static final String LANGUAGE_CALLBACK = "LanguageCallback";
     public static final String SAML_CALLBACK = "SAMLCallback";
+    public static final String X509CERTIFICATE_CALLBACK = "X509CertificateCallback";
     public static final String CUSTOM_CALLBACK = "CustomCallback";
     public static final String PROMPT = "Prompt";
     public static final String ECHO_PASSWORD = "echoPassword";
@@ -112,6 +113,8 @@ public interface AuthXMLTags {
     public static final String HTTP_HEADER = "HttpHeader";
     public static final String HTTP_NEGO = "Negotiation";
     public static final String HTTP_CODE = "HttpErrorCode";
+    public static final String SIGN_REQUIRED = "SignatureRequired";
+    public static final String X509CERTIFICATE = "X509Certificate";
 
     public static final String REDIRECT_CALLBACK = "RedirectCallback";
     public static final String REDIRECT_URL = "RedirectUrl";
@@ -177,6 +180,8 @@ public interface AuthXMLTags {
     public static final String VALUE_END = "</Value>";
     public static final String PASSWORD_CALLBACK_BEGIN="<PasswordCallback";
     public static final String PASSWORD_CALLBACK_END="</PasswordCallback>";
+    public static final String CERT_CALLBACK_BEGIN="<X509CertificateCallback";
+    public static final String CERT_CALLBACK_END="</X509CertificateCallback>";
     public static final String CHOICE_CALLBACK_BEGIN="<ChoiceCallback";
     public static final String CHOICE_CALLBACK_END="</ChoiceCallback>";
     public static final String CHOICE_VALUES_BEGIN="<ChoiceValues>";
@@ -227,6 +232,8 @@ public interface AuthXMLTags {
     public static final String PAGE_STATE_END ="</PageState>";
     public static final String QUERY_RESULT_BEGIN = "<QueryResult";
     public static final String QUERY_RESULT_END = "</QueryResult>";
+    public static final String X509CERTIFICATE_BEGIN = "<X509Certificate>";
+    public static final String X509CERTIFICATE_END = "</X509Certificate>";
 
     public static final String ATTRIBUTE_VALUE_PAIR = "AttributeValuePair";
     public static final String ATTRIBUTE_VALUE_PAIR_BEGIN =
