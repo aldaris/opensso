@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.9 2007-04-26 17:40:31 veiming Exp $
+ * $Id: SetupConstants.java,v 1.10 2007-06-08 06:10:11 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -339,7 +339,7 @@ public interface SetupConstants {
     /**
      * Schema Template Directory.
      */
-    String SCHEMA_TEMPLATE_DIRECTORY = "WEB-INF/template/sms";
+    String SCHEMA_TEMPLATE_DIRECTORY = "/WEB-INF/template/sms";
 
     /**
      * Configuration Variable for service management root suffix with carat 

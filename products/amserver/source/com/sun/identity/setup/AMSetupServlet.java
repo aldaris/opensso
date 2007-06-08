@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.18 2007-06-07 21:11:24 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.19 2007-06-08 06:10:09 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -220,7 +220,7 @@ public class AMSetupServlet extends HttpServlet {
             if (!isDITLoaded) {
                 RegisterServices regService = new RegisterServices();
                 regService.registers(adminSSOToken);
-                processDataRequests("WEB-INF/template/sms");
+                processDataRequests("/WEB-INF/template/sms");
             } else {
                 if (isDSServer || isADServer) {
                     //Update the platform server list
