@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.21 2007-05-08 19:06:23 veiming Exp $
+ * $Id: AccessManager.java,v 1.22 2007-06-08 18:53:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1022,6 +1022,7 @@ public class AccessManager {
             "recursive|r|u|Do recursive search."},
         resourceStrings={
             "search-identities-succeed=Search of Identities of type {1} in realm, {0} succeeded.",
+            "search-identities-no-entries=There are no entries.",
             "format-search-identities-results={0} ({1})"})
     private String list_identities;
 

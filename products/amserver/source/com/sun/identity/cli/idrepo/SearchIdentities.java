@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.4 2007-04-10 20:47:39 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.5 2007-06-08 18:53:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,6 +94,9 @@ public class SearchIdentities extends IdentityCommand {
                         getResourceString("format-search-identities-results"),
                         (Object[])args));
                 }
+            } else {
+                outputWriter.printlnMessage(getResourceString(
+                    "search-identities-no-entries"));
             }
 
             outputWriter.printlnMessage(MessageFormat.format(
