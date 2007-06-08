@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2007-06-08 06:39:00 mrudul_uchil Exp $
+$Id: README,v 1.2 2007-06-08 06:53:46 mrudul_uchil Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -46,8 +46,20 @@ is setup correctly pointing to its location.
 
 %% 2.1 Follow section 2 of the README under the "opensso/products" directory to
        resolve external library dependencies, and copy corresponding jars to 
-       the "opensso/products/extlib" directory of your workspace. 
-
+       the "opensso/products/extlib" directory of your workspace.
+        
+%% 2.2 To resolve external library dependencies per container, copy corresponding 
+       container specific jars to individual extlib directories of your workspace 
+       as -
+       opensso/products/wssagents/source/com/sun/identity/wssagents/glassfish/extlib
+       opensso/products/wssagents/source/com/sun/identity/wssagents/weblogic/extlib
+       opensso/products/wssagents/source/com/sun/identity/wssagents/websphere/extlib
+       
+       For example, for "glassfish", you need at add
+       1) javaee.jar
+       2) appserv-rt.jar 
+       under opensso/products/wssagents/source/com/sun/identity/wssagents/glassfish/extlib
+       
 %% 3. Building the workspace
 
 The workspace build system offers many build targets. You can view the
