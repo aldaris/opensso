@@ -1,0 +1,143 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2007-06-08 06:39:00 mrudul_uchil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="Open WSS Agents" default="usage">
+                
+    <description>Open Web Services Security Agents</description>
+    <import file="../products.xml" />
+    <import file="../amserver/amserver.xml" />
+    <import file="wssagents.xml" />
+
+    <!-- user specific properties -->
+    <property file="${user.home}/.opensso"/>
+
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+    
+    <tstamp>
+        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
+            unit="day"/>
+    </tstamp>
+    <!-- build class path -->
+    <path id="build.class.path">
+        <pathelement location="${wssagents.classes.dir}"/>
+        <fileset dir="${wssagents.glassfish.extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        
+        <fileset dir="${extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        
+        <fileset dir="${fm.dist.dir}">
+            <include name="fmclientsdk.jar"/>
+        </fileset>
+    </path>
+
+    <target name="checkjar">
+        <ant antfile="${products.basedir}/build-checkjars.xml" inheritRefs="true" />
+        <fail message="*** missing library ***">
+            <condition>
+	        <isset property="extlib.jar.exists"/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="build" depends="checkjar, preparebuild">
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${wssagents.classes.dir}" source="1.4" target="1.4"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${wssagents.src.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
+        <copy todir="${wssagents.built.res.dir}">
+            <fileset dir="${wssagents.res.i18n.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="${wssagents.xml.dir}">
+                <include name="*.xml"/>
+            </fileset>
+        </copy>
+    </target>  
+
+    <target name="preparebuild">
+        <mkdir dir="${wssagents.built.dir}"/>
+        <mkdir dir="${wssagents.dist.dir}"/>
+        <mkdir dir="${wssagents.classes.dir}"/>
+        <mkdir dir="${wssagents.built.res.dir}"/>
+        <mkdir dir="${wssagents.built.docs.dir}"/>
+    </target>
+    
+    
+    <target name="jars" depends="build">
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${wssagents.dist.dir}/FAMWSSProviders.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
+            <zipfileset dir="${wssagents.classes.dir}" />
+            <zipfileset src="${fm.dist.dir}/fmclientsdk.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class"/>
+        </jar>
+
+        <checksum file="${wssagents.dist.dir}/FAMWSSProviders.jar" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="clean" >
+        <delete dir="${wssagents.built.docs.dir}"/>
+        <delete dir="${wssagents.built.res.dir}"/>
+        <delete dir="${wssagents.classes.dir}"/>
+        <delete dir="${wssagents.built.dir}"/>
+    </target>
+
+    <target name="usage">
+        <echo message=" "/>
+        <echo message=" Following targets are available:"/>
+        <echo message=" "/>
+        <echo message=" build      : compiles the sources"/>
+        <echo message=" jars       : creates JAR for deployment"/>
+        <echo message=" clean      : deletes the generated files"/>
+        <echo message=" samples    : builds the client samples"/>
+        <echo message=" samples-clean : deletes generated client samples"/>
+        <echo message=" unittest   : does unit test build"/>
+        <echo message=" unittest-clean : delete unit test generated files"/>
+        <echo message=" usage      : displays this usage message"/>
+        <echo message=" "/>
+        <echo message=" To run a target, issue the following command:"/>
+        <echo message=" "/>
+        <echo message=" ant &lt;target-name&gt;"/>
+        <echo message=" "/>
+    </target>
+</project>
