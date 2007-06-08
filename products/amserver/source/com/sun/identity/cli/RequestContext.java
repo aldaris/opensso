@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.4 2006-12-08 21:02:20 veiming Exp $
+ * $Id: RequestContext.java,v 1.5 2007-06-08 06:07:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,7 @@ import java.util.ResourceBundle;
  * This object is passed to sub command handler which services the request.
  */
 public class RequestContext {
-    private Map mapOptions = 
-        new HashMap();
+    private Map mapOptions = new HashMap();
     private CommandManager commandMgr;
     private CLIRequest request;
     private ResourceBundle rb;
@@ -268,14 +267,7 @@ public class RequestContext {
         String commandName,
         String[] argv
     ) {
-        StringBuffer buff = new StringBuffer();
-        buff.append(argv[0]);
-        for (int i = 1; i < argv.length; i++) {
-            buff.append(" ").append(argv[i]);
-        }
-        String sumOfArgs = buff.toString();
-        Object[] param = {commandName + " " + sumOfArgs};
- 
+        Object[] param = {commandName + " " + CLIRequest.addAllArgs(argv)};
         return new CLIException(MessageFormat.format(
             rb.getString("error-message-incorrect-options"),
             param), ExitCodes.INCORRECT_OPTION, subCommand.getName());
