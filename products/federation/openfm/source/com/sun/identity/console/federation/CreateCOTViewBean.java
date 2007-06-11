@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCOTViewBean.java,v 1.1 2007-04-30 18:48:30 jonnelson Exp $
+ * $Id: CreateCOTViewBean.java,v 1.2 2007-06-11 22:01:17 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,31 +28,59 @@ import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.html.OptionList;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
-
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-
+import com.sun.identity.console.base.model.AMAdminConstants;
+import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.base.model.AMFormatUtils;
+import com.sun.identity.console.base.model.AMAdminUtils;
+import com.sun.identity.console.components.view.html.SerializedField;
+import com.sun.identity.console.federation.model.FSAuthDomainsModel;
+import com.sun.identity.console.federation.model.FSAuthDomainsModelImpl;
+import com.sun.identity.sm.SMSSchema;
+import com.sun.web.ui.model.CCAddRemoveModel;
 import com.sun.web.ui.model.CCPageTitleModel;
+import com.sun.web.ui.view.addremove.CCAddRemove;
+import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCDropDownMenu;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public class CreateCOTViewBean
-    extends AMPrimaryMastHeadViewBean
+        extends AMPrimaryMastHeadViewBean 
 {
-    public static final String DEFAULT_DISPLAY_URL =
-        "/console/federation/CreateCOT.jsp";
-    
+    public static final String DEFAULT_DISPLAY_URL = 
+        "/console/federation/CreateCOT.jsp";    
+    protected static final String PROPERTIES =
+        "propertyAttributes";    
+    private static final String PGTITLE_THREE_BTNS =
+        "pgtitleThreeBtns";    
+    protected static final String SINGLECHOICE_REALM_MENU = 
+        "singleChoiceShowMenu"; 
+    private static final String ADD_REMOVE_PROVIDERS = 
+        "addRemoveProviders";    
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel psModel;
-    protected static final String PROPERTIES = "propertyAttributes";
+    private OptionList optList;
     private boolean submitCycle;
     private boolean initialized;
-
+    CCAddRemoveModel addRemoveModel;
+    
     /**
      * Creates a authentication domains view bean.
      */
@@ -60,28 +88,30 @@ public class CreateCOTViewBean
         super("CreateCOT");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
-
+    
     protected void initialize() {
         if (!initialized) {
             initialized = true;
             createPropertyModel();
             createPageTitleModel();
             registerChildren();
-            super.initialize();         
+            super.initialize();
         }
         super.registerChildren();
     }
-
+    
     protected void registerChildren() {
+        super.registerChildren();
         registerChild(PROPERTIES, AMPropertySheet.class);
+        registerChild(PGTITLE_THREE_BTNS, CCPageTitle.class);
+        registerChild(SINGLECHOICE_REALM_MENU, CCDropDownMenu.class);
         psModel.registerChildren(this);
         ptModel.registerChildren(this);
     }
-
+    
     protected View createChild(String name) {
         View view = null;
-
-        if (name.equals("pgtitle")) {
+        if (name.equals(PGTITLE_THREE_BTNS)) {
             view = new CCPageTitle(this, ptModel, name);
         } else if (name.equals(PROPERTIES)) {
             view = new AMPropertySheet(this, psModel, name);
@@ -92,16 +122,38 @@ public class CreateCOTViewBean
         } else {
             view = super.createChild(name);
         }
-
         return view;
     }
-
+    
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException
     {
         super.beginDisplay(event);
+        AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
+        ps.init();
+        
+        populateRealmData();
+        
+        FSAuthDomainsModel model = (FSAuthDomainsModel) getModel();
+        String realm = "/";
+        try {
+            if(addRemoveModel == null){
+                addRemoveModel =  new CCAddRemoveModel();
+            }
+            Set providers = model.getAllProviderNames(realm);            
+            Map displayNames =
+                FSAuthDomainsOpViewBeanBase.getProviderDisplayNames(
+                    model, providers);            
+            addRemoveModel.setAvailableOptionList(
+                createOptionList(
+                    replacePipeWithComma(displayNames)));            
+            psModel.setModel(ADD_REMOVE_PROVIDERS, addRemoveModel);
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+        }
     }
-
+    
     private void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
             getClass().getClassLoader().getResourceAsStream(
@@ -110,58 +162,138 @@ public class CreateCOTViewBean
         ptModel.setValue("button2", "button.reset");
         ptModel.setValue("button3", "button.cancel");
     }
-
+    
     protected AMModel getModelInternal() {
-        RequestContext rc = RequestManager.getRequestContext();
-        HttpServletRequest req = rc.getRequest();
-        return new AMModelBase(req, getPageSessionAttributes());
+        HttpServletRequest req = getRequestContext().getRequest();
+        return new FSAuthDomainsModelImpl(req, getPageSessionAttributes());
     }
-
+    
     private void createPropertyModel() {
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/createCOTPropertySheet.xml"));
+        if(addRemoveModel == null){
+            addRemoveModel =  new CCAddRemoveModel();
+        }
+        psModel.setModel(ADD_REMOVE_PROVIDERS, addRemoveModel);
         psModel.clear();
     }
-
+    
+    
+    private void populateRealmData() {
+       
+        Set realmNames = Collections.EMPTY_SET;
+        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
+        try{
+            realmNames = model.getRealmNames("/", "*");
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        } 
+        CCDropDownMenu menu =
+            (CCDropDownMenu)getChild(SINGLECHOICE_REALM_MENU);
+        OptionList sortedList = createOptionList(realmNames);
+        optList =  new OptionList();
+        int size = sortedList.size();
+        String name;
+        for (int i = 0; i < size; i++ ) {
+            name = sortedList.getValue(i);
+            optList.add(getPath(name), name);
+        }
+        menu.setOptions(optList);
+    }
+    
     /**
      * Handles save button request.
-     *
+     * save
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException
+        throws ModelControlException 
     {
-        // TBD set the message to be displayed
-        forwardToFederationView(null);
+        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
+        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTIES);        
+        try {
+            Map values =
+                ps.getAttributeValues(model.getDataMap(), false,model);           
+            FederationViewBean vb = (FederationViewBean)
+            getViewBean(FederationViewBean.class);
+            
+            CCAddRemove addRemoveList =
+                (CCAddRemove)getChild(ADD_REMOVE_PROVIDERS);
+            addRemoveList.restoreStateData();
+            CCAddRemoveModel addRemoveModel =
+                (CCAddRemoveModel)addRemoveList.getModel();
+            Set providers = new HashSet(getSelectedValues(addRemoveModel));            
+            model.createAuthenticationDomain(values, providers);            
+            backTrail();
+            passPgSessionMap(vb);
+            
+            vb.forwardTo(getRequestContext());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            forwardTo();
+        }
     }
-
+    
+    private Set getSelectedValues(CCAddRemoveModel addRemoveModel) {
+        Set results = null;
+        Set selected = getValues(addRemoveModel.getSelectedOptionList());
+        if ((selected != null) && !selected.isEmpty()) {
+            results = new HashSet(selected.size() *2);
+            for (Iterator iter = selected.iterator(); iter.hasNext(); ) {
+                String n = (String)iter.next();
+                results.add(n.replace(',', '|'));
+            }
+        }
+        return (results == null) ? Collections.EMPTY_SET : results;
+    }
     /**
      * Handles reset request.
-     *
+     * reset
      * @param event Request invocation event
      */
     public void handleButton2Request(RequestInvocationEvent event) {
         // TBD set the message to be displayed
-        forwardToFederationView(null);
+        forwardTo();
     }
     
     /**
-     * Handles cancel request. No processing is done here, just return to 
+     * Handles cancel request. No processing is done here, just return to
      * the invoking view.
-     *
+     * cancel
      * @param event Request invocation event
      */
-    public void handleButton3Request(RequestInvocationEvent event) {        
-        forwardToFederationView(null);
+    public void handleButton3Request(RequestInvocationEvent event) {      
+        forwardToFederationView(event);
     }
-    
-    private void forwardToFederationView(String message) {
-        FederationViewBean vb = 
-            (FederationViewBean)getViewBean(FederationViewBean.class);
-        
-        // TBD set the message in page session map to be displayed in the 
-        // calling view.
+
+    private void forwardToFederationView(RequestInvocationEvent event) {
+        FederationViewBean vb = (FederationViewBean)
+        getViewBean(FederationViewBean.class);
+        backTrail();
+        passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
+    
+     /* TBD: need to move this function to a common location.
+      * HACK. Introduce this hack because Lockhart use | as delimiter for
+      * selected value in a add remove list. http://xxx.com|IDP liked entry
+      * will be broken down into two entries insteads on one.
+      * This hack here is to replace | with comma.
+      */
+    private Map replacePipeWithComma(Map map) {
+        if ((map != null) && !map.isEmpty()) {
+            Map altered = new HashMap(map.size() *2);
+            for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+                String key = (String)i.next();
+                altered.put(key.replace('|', ','), map.get(key));
+            }
+            return altered;
+        } else {
+            return map;
+        }
+    }
+    
 }

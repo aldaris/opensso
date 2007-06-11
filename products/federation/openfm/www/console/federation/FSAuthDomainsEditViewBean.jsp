@@ -18,38 +18,47 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateCOT.jsp,v 1.2 2007-06-11 21:57:22 asyhuang Exp $
+   $Id: FSAuthDomainsEditViewBean.jsp,v 1.1 2007-06-11 21:59:35 asyhuang Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-<%@ page info="CreateCOT" language="java" %>
+<%@ page info="FSAuthDomainsEdit" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 <jato:useViewBean
-    className="com.sun.identity.console.federation.CreateCOTViewBean"
+    className="com.sun.identity.console.federation.FSAuthDomainsEditViewBean"
     fireChildDisplayEvents="true" >
-
+        
 <cc:i18nbundle baseName="amConsole" id="amConsole"
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
+    
+<cc:header name="hdrCommon" 
+        pageTitle="webconsole.title" 
+        bundleID="amConsole" 
+        copyrightYear="2004" 
+        fireDisplayEvents="true">
 
+<script language="javascript" src="../console/js/am.js"></script>
 
-<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
+<cc:form name="FSAuthDomainsEdit" 
+        method="post" 
+        defaultCommandChild="/button1" >
 
-<script language="javascript" src="../console/js/am.js">
-</script>
-
-<cc:form name="CreateCOT" method="post" defaultCommandChild="/btnSearch">
 <jato:hidden name="szCache" />
 
-<%-- HEADER --%>
+<cc:hidden name="tfName" />
+
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
 </script>
+
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
+
+<cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
@@ -59,25 +68,20 @@
     </tr>
 </table>
 
-<%-- PAGE CONTENT --%>
-<cc:pagetitle name="pgtitleThreeBtns" 
-    bundleID="amConsole" 
-    pageTitleText="authDomain.create.title" 
-    showPageTitleSeparator="true" 
-    viewMenuLabel="" 
-    pageTitleHelpMessage="" 
-    showPageButtonsTop="true" 
-    showPageButtonsBottom="true" >
-
-    <cc:propertysheet 
-        name="propertyAttributes" 
+<%-- PAGE CONTENT --------------------------------------------------------- --%>
+<cc:pagetitle 
+        name="pgtitleThreeBtns" 
         bundleID="amConsole" 
-        showJumpLinks="true" />
-</cc:pagetitle>
+        pageTitleText="authDomain.edit.title" 
+        showPageTitleSeparator="true" 
+        viewMenuLabel="" 
+        pageTitleHelpMessage="" 
+        showPageButtonsTop="true" 
+        showPageButtonsBottom="false" />
 
+<cc:propertysheet name="propertyAttributes" bundleID="amConsole" />
 
 </cc:form>
-<%-- END CONTENT --%>
 
 </cc:header>
 </jato:useViewBean>
