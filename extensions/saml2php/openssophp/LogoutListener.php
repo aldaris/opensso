@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutListener.php,v 1.1 2007-05-22 05:38:39 andreas1980 Exp $
+ * $Id: LogoutListener.php,v 1.2 2007-06-11 17:33:13 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,19 +54,12 @@ if (empty($_GET['SAMLRequest'])) {
 } else {
 	error_log("Entering LogoutListener");
 
-	$rawResponse = $_GET["SAMLRequest"];
-	error_log("Raw LogoutRequest: " . $rawResponse );
-
-	// $rawResponse is ready URL decoded...
-	$samlRequest = gzinflate(base64_decode($rawResponse));
-	error_log("SAML LogoutRequest = " . $samlRequest );
-
 	$RelayStateURL = $_GET["RelayState"];
 	error_log("RelayState = " . $RelayStateURL);
 	
 	//echo $samlRequest;
 	
-	$domrequest = processResponse($samlRequest, false);
+	$domrequest = processResponse($_GET, false, false, "SAMLRequest");
 	
 #	echo "domrequest: " . $domrequest;
 	

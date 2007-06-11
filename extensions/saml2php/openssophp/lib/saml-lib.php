@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: saml-lib.php,v 1.1 2007-05-22 05:38:41 andreas1980 Exp $
+ * $Id: saml-lib.php,v 1.2 2007-06-11 17:33:15 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,15 +27,13 @@
 require_once($LIGHTBULB_CONFIG['basedir'] . 'lib/xmlseclibs.php');
 require_once($LIGHTBULB_CONFIG['basedir'] . 'config/saml-metadata-IdP.php');
 		
-
-		
 		define('SAML2_ASSERT_NS', 'urn:oasis:names:tc:SAML:2.0:assertion');
 		define('SAML2_PROTOCOL_NS', 'urn:oasis:names:tc:SAML:2.0:protocol');
-		
+
 		define('SAML2_BINDINGS_POST', 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST');
-		
+		define('SAML2_BINDINGS_POST_SIMPLESIGN', 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign');
+
 		define('SAML2_STATUS_SUCCESS', 'urn:oasis:names:tc:SAML:2.0:status:Success');
-		
 
 	function processLogoutRequest($samlRequest,$validate=TRUE) {
 		try {
@@ -55,57 +53,57 @@ require_once($LIGHTBULB_CONFIG['basedir'] . 'config/saml-metadata-IdP.php');
 	}
 
 	
-	function processResponse($samlResponse,$validate=TRUE) {    
+	function processResponse($params, $validate=TRUE, $postBinding=TRUE, $samlParam="SAMLResponse") {
+		global $idpMetadata;
+
+        $rawData = $params[$samlParam];
+        error_log("Raw SAML data: " . $rawData );
+
+        // $rawData is ready URL decoded...
+		if ( $postBinding )
+		{
+	        error_log("Decoding POST binding" );
+	        $samlData = base64_decode( $rawData );
+		}
+		else
+		{
+	        error_log("Decoding Redirect binding" );
+	        $samlData = gzinflate(base64_decode($rawData));
+		}
+        error_log("Decoded SAML data = " . $samlData );
+
 		try {
 			$token = new DOMDocument();
-			$token->loadXML(str_replace ("\r", "", $samlResponse));
+			$token->loadXML(str_replace ("\r", "", $samlData));
 			if (empty($token)) {
 				throw new Exception("Unable to load token");
 			}
 	
-			if ( $validate )
-			{
-				/* Validate the SAML token */
-				$objXMLSecDSig = new XMLSecurityDSig();
-				$objXMLSecDSig->idKeys[] = 'ID';
-				$objDSig = $objXMLSecDSig->locateSignature($token);
-	
-				/* Must check certificate fingerprint now - validateReference removes it */        
-				if ( ! validateCertFingerprint($token) )
-				{
-					
-					throw new Exception("Fingerprint Validation Failed");
-				}
-	
-				/* Canonicalize the signed info */
-				$objXMLSecDSig->canonicalizeSignedInfo();
-	
-				$retVal = NULL;
-				if ($objDSig) {
-					$retVal = $objXMLSecDSig->validateReference();
-				}
-				if (! $retVal) {
-					throw new Exception("SAML Validation Failed");
-				}
-	
-				$key = NULL;
-				$objKey = $objXMLSecDSig->locateKey();
-			
-				if ($objKey) {
-					if ($objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig)) {
-						/* Handle any additional key processing such as encrypted keys here */
+			if ( $validate ) {
+				if ($issuerNodes = $token->getElementsByTagName('Issuer')) {
+					if ($issuerNodes->length > 0) {
+						$issuer = $issuerNodes->item(0)->textContent;
 					}
 				}
-			
-				if (empty($objKey)) {
-					throw new Exception("Error loading key to handle Signature");
+		        error_log("Issuer = " . $issuer );
+				$binding = $idpMetadata[$issuer]['SingleSignOnBinding'];
+		        error_log("Binding = " . $binding );
+				if (isset($binding) && (strcmp($binding, SAML2_BINDINGS_POST_SIMPLESIGN) == 0 ))
+				{
+			        error_log("Checking simple signature");
+					$valid = checkSimpleSignature($params,$idpMetadata[$issuer]['certificate']);
 				}
-	
-				if (! $objXMLSecDSig->verify($objKey)) {
+				else
+				{
+			        error_log("Checking XML signature");
+					$valid = checkXMLSignature($token);
+				}
+
+				if ( ! $valid ) {
 					throw new Exception("Unable to validate Signature");
 				}
 			}
-	
+
 			return $token;
 		} catch (DOMException $domE) {
 			print "DOM Error: ".$domE->getMessage();
@@ -114,7 +112,73 @@ require_once($LIGHTBULB_CONFIG['basedir'] . 'config/saml-metadata-IdP.php');
 		}
 		return NULL;
 	}
+
+	function checkXMLSignature($token) {
+		$objXMLSecDSig = new XMLSecurityDSig();
+		$objXMLSecDSig->idKeys[] = 'ID';
+		$objDSig = $objXMLSecDSig->locateSignature($token);
+
+		/* Must check certificate fingerprint now - validateReference removes it */        
+		if ( ! validateCertFingerprint($token) )
+		{
+			throw new Exception("Fingerprint Validation Failed");
+		}
+
+		/* Canonicalize the signed info */
+		$objXMLSecDSig->canonicalizeSignedInfo();
+
+		$retVal = NULL;
+		if ($objDSig) {
+			$retVal = $objXMLSecDSig->validateReference();
+		}
+		if (! $retVal) {
+			throw new Exception("SAML Validation Failed");
+		}
+
+		$key = NULL;
+		$objKey = $objXMLSecDSig->locateKey();
 	
+		if ($objKey) {
+			if ($objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig)) {
+				/* Handle any additional key processing such as encrypted keys here */
+			}
+		}
+	
+		if (empty($objKey)) {
+			throw new Exception("Error loading key to handle Signature");
+		}
+
+		return ($objXMLSecDSig->verify($objKey)==1);
+	}
+
+	function checkSimpleSignature($params,$cert) {
+        $samlResponse = base64_decode( $params['SAMLResponse'] );
+
+		$rawSignature = $params['Signature'];
+        error_log("Raw Signature: " . $rawSignature );
+
+		$signature = base64_decode($rawSignature);
+
+		$relayState = $params['RelayState'];
+		error_log("RelayState: " . $relayState );
+
+		$sigAlg = $params['SigAlg'];
+		error_log("SigAlg: " . $sigAlg );
+
+		if (strcmp($sigAlg,XMLSecurityKey::RSA_SHA1) != 0) {
+			throw new Exception("Signature algorithm ".$sigAlg." is not supported");
+		}
+
+		if ( isset($params['RelayState'] ) ) {
+			$signedData = "SAMLResponse=".$samlResponse."&RelayState=".$relayState."&SigAlg=".$sigAlg;
+		} else {
+			$signedData = "SAMLResponse=".$samlResponse."&SigAlg=".$sigAlg;
+		}
+		error_log("Signed data: " . $signedData );
+
+		return (openssl_verify($signedData, $signature, $cert) == 1);
+	}
+
 	function checkDateConditions($start=NULL, $end=NULL) {
 		$currentTime = time();
 	

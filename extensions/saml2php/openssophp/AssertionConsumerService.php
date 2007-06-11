@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionConsumerService.php,v 1.1 2007-05-22 05:38:39 andreas1980 Exp $
+ * $Id: AssertionConsumerService.php,v 1.2 2007-06-11 17:33:13 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,21 +40,7 @@
     } else {
         error_log("Entering sp.php");
 
-        $rawResponse = $_POST["SAMLResponse"];
-
-
-        error_log("Raw Response: " . $rawResponse );
-
-        // $rawResponse is ready URL decoded...
-        $samlResponse = base64_decode( $rawResponse );
-
-        error_log("Authn response = " . $samlResponse );
-
-        $RelayStateURL = $_POST["RelayState"];
-
-        error_log("RelayState = " . $RelayStateURL);
-        
-        if ($token = processResponse($samlResponse)) {
+        if ($token = processResponse($_POST)) {
             $nameId = getNameID($token);
 
             if ( isset( $nameId ) )
@@ -86,10 +72,24 @@
                     spi_sessionhandling_setNameID($nameId["NameID"]);
                     spi_sessionhandling_setResponse($token);
                 }
-                
+
+		        $RelayStateURL = $_POST["RelayState"];
+		        error_log("RelayState = " . $RelayStateURL);
+
+				if ( isset( $RelayStateURL ) )
+				{
+					$redirectUrl = urldecode($RelayStateURL);
+                }
+				else
+				{
+					// Right now there is one system-wide default landing page
+					// should really make it per SP and figure out which SP we
+					// are.
+					$redirectUrl = $LIGHTBULB_CONFIG['defaultLandingPage'];
+				}
+
                 // Either the user is mapped to a local account or not, the user is redirected back.
-                header("Location: " . urldecode($RelayStateURL) );
-                
+                header("Location: " . $redirectUrl );
             } else {
             	echo '<p>Error extracting the NameID</p>';
             }

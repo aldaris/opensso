@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutService.php,v 1.1 2007-05-22 05:38:39 andreas1980 Exp $
+ * $Id: SingleLogoutService.php,v 1.2 2007-06-11 17:33:13 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,60 +36,40 @@
     // Loading libraries
     require 'lib/saml-lib.php';
 
-
-    error_log("Entering sp_logout.php");
-    
-    
-    
-    
+    error_log("Entering SingleLogoutService.php");
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
-        error_log("sp_logout.php: Redirect binding");
+        error_log("SingleLogoutService.php: Redirect binding");
 
         if (empty($_GET['SAMLResponse'])) {
             echo ("<p>Unable to process the submission.<br />No SAMLResponse in HTTP parameters</p>");
             exit();
         } else {
-            $rawResponse = $_GET["SAMLResponse"];
-
-
-            error_log("Raw Response: " . $rawResponse );
-
-            // $rawResponse is ready URL decoded...
-            $samlResponse = gzinflate( base64_decode( $rawResponse ) );
-
-            $RelayStateURL = $_GET["RelayState"];
-
+            $postBinding = false;
+			$params = $_GET;
         }
     }
     else if ($_SERVER['REQUEST_METHOD'] == 'POST')
     {
         // NOTE - Logout POST binding untested at current time!!!
-        error_log("sp_logout.php: POST binding");
+        error_log("SingleLogoutService.php: POST binding");
 
         if (empty($_POST['SAMLResponse'])) {
             echo ("<p>Unable to process the submission.<br />No SAMLResponse in posted data</p>");
             exit();
         } else {
-            $rawResponse = $_POST["SAMLResponse"];
-
-
-            error_log("Raw Response: " . $rawResponse );
-
-            // $rawResponse is ready URL decoded...
-            $samlResponse = base64_decode( $rawResponse );
-
-            $RelayStateURL = $_POST["RelayState"];
-
+            $postBinding = true;
+            $params = $_POST;
         }
     }
 
-    error_log("Logout response = " . $samlResponse );
+    $RelayStateURL = $params["RelayState"];
     error_log("RelayState = " . $RelayStateURL);
 
-    if ($token = processResponse($samlResponse,FALSE)) {
+    if ($token = processResponse($params,FALSE,$postBinding,"SAMLResponse")) {
         $status = getLogoutResponseStatus($token);
+	    error_log("Status = " . $status);
         if ( $status == SAML2_STATUS_SUCCESS ) {
             spi_sessionhandling_clearUserId();
             header("Location: " . $RelayStateURL);

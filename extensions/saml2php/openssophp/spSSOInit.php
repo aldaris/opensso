@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: spSSOInit.php,v 1.1 2007-05-22 05:38:40 andreas1980 Exp $
+ * $Id: spSSOInit.php,v 1.2 2007-06-11 17:33:14 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,14 +65,14 @@
         }
     }
 
-    // Selection of binding is not yet implemented!
     $binding = $_GET["binding"];
     if (!isset($binding)) {
         // Default to POST binding for now
         $binding = SAML2_BINDINGS_POST;
-    }
-    else if ($binding != SAML2_BINDINGS_POST ) {
-        $error = "400 The only currently supported binding is " . SAML2_BINDINGS_POST;
+    } else if (($binding != SAML2_BINDINGS_POST) 
+	  && ($binding != SAML2_BINDINGS_POST_SIMPLESIGN)) {
+        $error = "400 The only currently supported bindings are " 
+        . SAML2_BINDINGS_POST . " and " . SAML2_BINDINGS_POST_SIMPLESIGN;
         header($_SERVER["SERVER_PROTOCOL"] . " " . $error );
         echo ($error);
         exit;

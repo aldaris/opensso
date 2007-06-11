@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: saml-metadata-IdP.php.template,v 1.1 2007-05-22 05:38:40 andreas1980 Exp $
+ * $Id: saml-metadata-IdP.php.template,v 1.2 2007-06-11 17:33:15 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,14 @@
              "SingleLogOutUrl"=>"https://mars.feide.no/amserver/IDPSloRedirect/metaAlias/idp",
              "certFingerprint"=>"d8:ee:63:c8:c3:0a:9d:f2:4b:7f:c2:7b:43:4c:85:8c:62:c7:8c:69" )
 
-   
-  
+   		"idp.simplesign.com" =>
+			array( 
+			 "SingleSignOnBinding" => "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign",
+			 "certificate" => "-----BEGIN CERTIFICATE-----\n"
+								."MIIhjkHDEJKjbjkebjkEBKJEBKJebjkebkjEBJEBKJbejkebJKEBJKbejkbjkeBJ\n"
+								."FLEHOhohoehOEOBNFojenbjNBJOFEBNJOFEBOJbnjbJEJFBEFBJbjBJIFEBJIFBI\n"
+								."...\n"
+								."FHJKEFJEbjkebjkebRBBJKbjekbJKEBJKEBJKbfBJKEBJKEBJKbBEJKBJE==\n"
+								."-----END CERTIFICATE-----" )
     );
 ?>

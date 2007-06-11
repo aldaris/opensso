@@ -83,7 +83,9 @@
  		'password'			=&gt; 'abc123',
  		'host'				=&gt; 'localhost',
  		'database'			=&gt; 'openssodemo'
- 	)
+ 	),
+	
+	'defaultLandingPage'	=&gt; 'https://feide.erlang.no/example-andreas/test.php'
 );</programlisting>
 
     <para>Here follows a description of each configuration entry:</para>
@@ -140,6 +142,16 @@
           are not using this plugin you can leave the default unchanged, or
           you can safely remote that section from the configuration
           file.</para>
+        </glossdef>
+      </glossentry>
+
+      <glossentry>
+        <glossterm>defaultLandingPage</glossterm>
+
+        <glossdef>
+          <para>If a SAML authentication response is received with no
+          RelayState parameter, then the browser is redirected to this
+          page.</para>
         </glossdef>
       </glossentry>
     </glosslist>
@@ -223,7 +235,7 @@
       <para>Next, we want to configure the SP to talk to a SAML 2.0 IdP. The
       meta data is located in
       <filename>openssophp/config/saml-metadata-IdP.php</filename>. Below is a
-      sample of two IdPs.</para>
+      sample of three IdPs.</para>
 
       <programlisting>    $idpMetadata = array( 
     	"sam.feide.no" =&gt; 
@@ -235,10 +247,19 @@
 			array( "SingleSignOnUrl"=&gt;"https://mars.feide.no/amserver/SSORedirect/metaAlias/idp",
              "SingleLogOutUrl"=&gt;"https://mars.feide.no/amserver/IDPSloRedirect/metaAlias/idp",
              "certFingerprint"=&gt;"d8:ee:63:c8:c3:0a:9d:f2:4b:7f:c2:7b:43:4c:85:8c:62:c7:8c:69" )
+   		"idp.simplesign.com" =&gt;
+			array( 
+			 "SingleSignOnBinding" =&gt; "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign",
+			 "certificate" =&gt; "-----BEGIN CERTIFICATE-----\n"
+								."MIIhjkHDEJKjbjkebjkEBKJEBKJebjkebkjEBJEBKJbejkebJKEBJKbejkbjkeBJ\n"
+								."FLEHOhohoehOEOBNFojenbjNBJOFEBNJOFEBOJbnjbJEJFBEFBJbjBJIFEBJIFBI\n"
+								."...\n"
+								."FHJKEFJEbjkebjkebRBBJKbjekbJKEBJKEBJKbfBJKEBJKEBJKbBEJKBJE==\n"
+								."-----END CERTIFICATE-----" )
     );</programlisting>
 
-      <para>Each IdP is identified by the SAML 2.0 Entity ID, and has the
-      following properties associated with it:</para>
+      <para>Each IdP is identified by the SAML 2.0 Entity ID, and has a subset
+      of the following properties associated with it:</para>
 
       <glosslist>
         <glossentry>
@@ -265,7 +286,34 @@
           <glossdef>
             <para>The value of the fingerprint of the certificate the IdP is
             using to sign the assertion. The fingerprint should be in
-            lowercase hex format, as seen in the example above.</para>
+            lowercase hex format, as seen in the example above. This property
+            is currently only used with the
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" binding.</para>
+          </glossdef>
+        </glossentry>
+
+        <glossentry>
+          <glossterm>SingleSignOnBinding</glossterm>
+
+          <glossdef>
+            <para>The SAML 2.0 binding in use for single sign-on. If omitted,
+            defaults to "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST". Only
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" and
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" are
+            currently supported.</para>
+          </glossdef>
+        </glossentry>
+
+        <glossentry>
+          <glossterm>certificate</glossterm>
+
+          <glossdef>
+            <para>The value of the certificate the IdP is using to sign the
+            assertion. The fingerprint should be in Privacy-Enhanced Mail
+            (PEM) format, as seen in the example above. This property is
+            currently only used with the
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+            binding.</para>
           </glossdef>
         </glossentry>
       </glosslist>

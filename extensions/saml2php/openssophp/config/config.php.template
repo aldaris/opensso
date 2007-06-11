@@ -35,7 +35,9 @@ $LIGHTBULB_CONFIG = array (
  		'password'			=> '8s732j',
  		'host'				=> 'localhost',
  		'database'			=> 'openssodemo'
- 	)
+ 	),
+
+	'defaultLandingPage'	=> 'https://feide.erlang.no/example-andreas/test.php'
 );
  
  
