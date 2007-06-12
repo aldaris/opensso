@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.3 2007-03-16 18:44:04 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.4 2007-06-12 17:46:04 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -269,6 +269,7 @@ public class LogManager extends java.util.logging.LogManager {
                     if (HANDLER == null) {
                         HANDLER = LogConstants.DEFAULT_REMOTE_HANDER;
                     }
+        	    FORMATTER = getProperty(LogConstants.REMOTE_FORMATTER);
                     if (FORMATTER == null) {
                         FORMATTER = LogConstants.DEFAULT_REMOTE_FORMATTER;
                     }
