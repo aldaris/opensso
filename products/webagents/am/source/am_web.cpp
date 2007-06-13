@@ -3375,9 +3375,11 @@ am_web_is_access_allowed(const char *sso_token,
     }
         
     // No further processing if ignore_policy_evaluation_if_notenforced
-    // is set to true and URL is not enforced.
+    // is set to true and URL is not enforced and also not logout url.
+    // If the accessed URL is logout url, then it requires processing.
     if (isNotEnforced == AM_TRUE && 
-	agent_info.ignore_policy_evaluation_if_notenforced) {
+	agent_info.ignore_policy_evaluation_if_notenforced &&
+        isLogoutURL == AM_FALSE) {
            am_web_log_debug("URL = %s is in notenforced list and  "
                            "ignore_policy_evaluation_if_notenforced is set to "
 			   "TRUE", url);
