@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.7 2007-05-25 22:02:37 sridharev Exp $
+ * $Id: TestCommon.java,v 1.8 2007-06-13 22:52:33 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -702,4 +702,26 @@ public class TestCommon implements TestConstants {
         }
         return list;
     }
+    
+    /*
+     * Gets the baseDirectory to create the XML files
+     */
+    protected String getTestBase(){
+        String testbaseDir = null;
+        try {
+        ResourceBundle rbamconfig = ResourceBundle.getBundle(
+                    TestConstants.TEST_PROPERTY_AMCONFIG);
+        testbaseDir = getBaseDir() + fileseparator
+        + rbamconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
+        + fileseparator + "built"
+        + fileseparator + "classes"
+        + fileseparator ;
+        } catch (Exception e){
+            log(logLevel.SEVERE, "getTestBase", 
+                    e.getMessage(), null);
+            e.printStackTrace();
+        }
+        return testbaseDir;   
+    }
+    
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestsValidator.java,v 1.1 2007-05-25 22:03:46 sridharev Exp $
+ * $Id: AuthTestsValidator.java,v 1.2 2007-06-13 22:53:08 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,9 +28,12 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.authentication.CreateTestXML;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import org.testng.annotations.Test;
 
 /**
@@ -44,7 +47,7 @@ public class AuthTestsValidator extends TestCommon {
     
     private Map mapValidate;
     private WebClient webClient;
-    private String  baseDir;
+    private String baseDir;
     private String testURL;
     private String testLogoutURL;
     
@@ -57,7 +60,7 @@ public class AuthTestsValidator extends TestCommon {
         mapValidate = testMap;
         testURL = protocol + ":" + "//" + host + ":" + port + uri;
         testLogoutURL = testURL + "/UI/Logout";
-        baseDir = getBaseDir();
+        baseDir = getTestBase();
         log(logLevel,"AuthTestsValidator", "BaseDir:" + baseDir);
         mapValidate.put("url", testURL);
         mapValidate.put("baseDir", baseDir);

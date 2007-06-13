@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTestValidation.java,v 1.3 2007-05-25 22:06:20 sridharev Exp $
+ * $Id: ChainTestValidation.java,v 1.4 2007-06-13 22:54:29 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,9 +28,12 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.authentication.CreateTestXML;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import org.testng.annotations.Test;
 
 /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.1 2007-05-25 22:04:31 sridharev Exp $
+ * $Id: CreateTestXML.java,v 1.2 2007-06-13 22:53:35 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,11 +64,9 @@ public class CreateTestXML {
         String baseDirectory = (String)testMap.get("baseDir");
         String loginService = (String)testMap.get("servicename");
         if (!testNegative) {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + loginService + "-positive.xml";
+            fileName = baseDirectory + loginService + "-positive.xml";
         } else {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + loginService + "-negative.xml";
+            fileName = baseDirectory + loginService + "-negative.xml";
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
@@ -136,13 +134,9 @@ public class CreateTestXML {
         String baseDirectory = (String)testMap.get("baseDir");
         String strIdentifier = (String)testMap.get("uniqueIdentifier");
         if (!testNegative) {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + strIdentifier
-                    + "-module-positive.xml";
+            fileName = baseDirectory  + strIdentifier + "-module-positive.xml";
         } else {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + strIdentifier
-                    + "-module-negative.xml";
+            fileName = baseDirectory + strIdentifier + "-module-negative.xml";
             password = password + "tofail";
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
@@ -189,11 +183,9 @@ public class CreateTestXML {
         String strIdentifier = (String)testMap.get("uniqueIdentifier");
         String gotoURL = (String)testMap.get("gotoURL");
         if (!testNegative) {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + strIdentifier + "-goto.xml";
+            fileName = baseDirectory + strIdentifier + "-goto.xml";
         } else {
-            fileName = baseDirectory + fileseparator + "built" + fileseparator +
-                    "classes" + fileseparator + strIdentifier + "-gotofail.xml";
+            fileName = baseDirectory  + strIdentifier + "-gotofail.xml";
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
