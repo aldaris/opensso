@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.3 2007-01-23 06:45:02 veiming Exp $
+ * $Id: CLIConstants.java,v 1.4 2007-06-13 07:47:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -255,4 +255,9 @@ public interface CLIConstants {
      * Tag for web input.
      */
     String WEB_INPUT = "web-input";
+
+    /**
+     * Comment Tag for exit code in JSP
+     */
+    String JSP_EXIT_CODE_TAG = "<!-- CLI Exit Code: {0} -->";
 }
