@@ -18,13 +18,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amadm.jsp,v 1.8 2007-02-20 08:51:57 veiming Exp $
+   $Id: amadm.jsp,v 1.9 2007-06-13 07:48:09 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page import="com.sun.identity.cli.*" %>
 <%@ page import="com.iplanet.sso.*" %>
+<%@ page import="java.text.MessageFormat" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -62,9 +63,15 @@
         WebCLIHelper helper = new WebCLIHelper(request,
             "com.sun.identity.cli.AccessManager", "amadm", "amadm.jsp");
         out.println(helper.getHTML(request, ssoToken));
+        Object[] param = {"0"};
+        out.println(MessageFormat.format(
+            CLIConstants.JSP_EXIT_CODE_TAG, param));
     } catch (SSOException e) {
         response.sendRedirect("UI/Login?goto=../amadm.jsp");
     } catch (CLIException e) {
+        Object[] param = {Integer.toString(e.getExitCode())};
+        out.println(MessageFormat.format(
+            CLIConstants.JSP_EXIT_CODE_TAG, param));
         out.println(e);
     }
 %>

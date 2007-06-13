@@ -18,13 +18,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: fmadm.jsp,v 1.6 2007-04-24 06:07:34 veiming Exp $
+   $Id: fmadm.jsp,v 1.7 2007-06-13 07:48:56 veiming Exp $
   
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page import="com.sun.identity.cli.*" %>
 <%@ page import="com.iplanet.sso.*" %>
+<%@ page import="java.text.MessageFormat" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -64,9 +65,15 @@
             "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
             "fmadm", "fmadm.jsp");
         out.println(helper.getHTML(request, ssoToken));
+        Object[] param = {"0"};
+        out.println(MessageFormat.format(
+            CLIConstants.JSP_EXIT_CODE_TAG, param));
     } catch (SSOException e) {
         response.sendRedirect("UI/Login?goto=../fmadm.jsp");
     } catch (CLIException e) {
+        Object[] param = {Integer.toString(e.getExitCode())};
+        out.println(MessageFormat.format(
+            CLIConstants.JSP_EXIT_CODE_TAG, param));
         out.println(e);
     }
 %>
