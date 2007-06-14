@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.1 2007-05-31 19:39:32 cmwesley Exp $
+ * $Id: DeleteRealmTest.java,v 1.2 2007-06-14 21:39:47 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,6 @@ package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -107,14 +105,14 @@ public class DeleteRealmTest extends TestCommon {
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
+
+            cli = new FederationManagerCLI(usePasswordFile, useDebugOption,
+                    useVerboseOption, useLongOptions);
             
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
                     StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
                             ";");
-                    cli = new FederationManagerCLI(usePasswordFile, 
-                            useDebugOption, useVerboseOption, useLongOptions);
-
                     while (tokenizer.hasMoreTokens()) {
                         cli.createRealm(tokenizer.nextToken());
                         cli.logCommand("setup");
@@ -191,48 +189,51 @@ public class DeleteRealmTest extends TestCommon {
             Reporter.log("RealmsRemaining: " + realmsExisting);
             Reporter.log("RealmsDeleted: " + realmsDeleted);
             
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
             int commandStatus = cli.deleteRealm(realmToDelete, 
                     useRecursiveOption);
             cli.logCommand("testRealmDeletion");
+            cli.resetArgList();
 
             String delimiter = "*" + System.getProperty("line.separator");
             if (realmToDelete.indexOf("*") != -1) {
                 delimiter = System.getProperty("line.separator");
             }
             
-            FederationManagerCLI listCLI = 
-                    new FederationManagerCLI(usePasswordFile, useDebugOption,
-                    useVerboseOption, useLongOptions);
-            if ((realmsDeleted != null) && (realmsDeleted.length() > 0)) {
-                removedRealmsFound = listCLI.findRealms(realmsDeleted);
-                listCLI.logCommand("testRealmDeletion"); 
-                listCLI.resetArgList();
-            }
-            if ((realmsExisting != null) && (realmsExisting.length() > 0)) {
-                existingRealmsFound = listCLI.findRealms(realmsExisting);
-                listCLI.logCommand("testRealmDeletion");  
-            }
-             
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, 
                         delimiter);
                 log(logLevel, "testRealmDeletion", "Output Messages Found: " + 
                         stringsFound);
-                assert (commandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound &&
-                        !removedRealmsFound && existingRealmsFound;
             } else {
                 stringsFound = cli.findStringsInError(expectedMessage, 
                         delimiter); 
                 log(logLevel, "testRealmDeletion", "Error Messages Found: " + 
                         stringsFound);
+            }            
+ 
+            
+            if ((realmsDeleted != null) && (realmsDeleted.length() > 0)) {
+                removedRealmsFound = cli.findRealms(realmsDeleted);
+                cli.resetArgList();
+            }
+            
+            if ((realmsExisting != null) && (realmsExisting.length() > 0)) {
+                FederationManagerCLI listCLI = 
+                    new FederationManagerCLI(usePasswordFile, useDebugOption,
+                    useVerboseOption, useLongOptions);
+                existingRealmsFound = listCLI.findRealms(realmsExisting);
+            }            
+                         
+            if (expectedExitCode.equals("0")) {
+                assert (commandStatus == 
+                    new Integer(expectedExitCode).intValue()) && stringsFound &&
+                        !removedRealmsFound && existingRealmsFound;
+            } else {
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         existingRealmsFound;
             }
-            cli.resetArgList();            
+            
             exiting("testRealmDeletion");
         } catch (Exception e) {
             log(Level.SEVERE, "testRealmDeletion", e.getMessage(), null);
@@ -260,9 +261,6 @@ public class DeleteRealmTest extends TestCommon {
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
- 
             if (!setupRealms.equals("")) {
                 StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
                         ";");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.1 2007-05-31 19:39:32 cmwesley Exp $
+ * $Id: CreateRealmTest.java,v 1.2 2007-06-14 21:39:47 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,6 @@ package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -104,14 +102,14 @@ public class CreateRealmTest extends TestCommon {
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
+
+            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
+                    useVerboseOption, useLongOptions);
             
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
                     StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
                             ";");
-                    cli = new FederationManagerCLI(usePasswordFile, 
-                            useDebugOption, useVerboseOption, useLongOptions);
-
                     while (tokenizer.hasMoreTokens()) {
                         cli.createRealm(tokenizer.nextToken());
                         cli.logCommand("setup");
@@ -173,26 +171,23 @@ public class CreateRealmTest extends TestCommon {
             Reporter.log("ExpectedExitCode: " + expectedExitCode);
             Reporter.log("RealmToCreate: " + realmToCreate);
             
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
             int commandStatus = cli.createRealm(realmToCreate);
             cli.logCommand("testRealmCreation");
-
-            String delimiter = "*" + System.getProperty("line.separator");
-            if (realmToCreate.indexOf("*") != -1) {
-                delimiter = System.getProperty("line.separator");
-            }
+            cli.resetArgList();
 
             if (realmToCreate.length() > 0) {
                 FederationManagerCLI listCLI = 
                         new FederationManagerCLI(usePasswordFile, useDebugOption, 
                         useVerboseOption, useLongOptions);
                 realmFound = listCLI.findRealms(realmToCreate);
-                listCLI.logCommand("testRealmCreation");
                 log(logLevel, "testRealmCreation", "Realm " + realmToCreate + 
                         " Found: " + realmFound);
             }
-             
+
+            String delimiter = "*" + newline;
+            if (realmToCreate.indexOf("*") != -1) {
+                delimiter = newline;
+            }
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, 
                         delimiter);
@@ -208,8 +203,7 @@ public class CreateRealmTest extends TestCommon {
                         stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
-            }
-            cli.resetArgList();            
+            }     
             exiting("testRealmCreation");
         } catch (Exception e) {
             log(Level.SEVERE, "testRealmCreation", e.getMessage(), null);
@@ -237,8 +231,6 @@ public class CreateRealmTest extends TestCommon {
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
             if (!realmToCreate.equals("")) {
                 log(logLevel, "cleanup", "realmToDelete: "  + realmToCreate);
                 Reporter.log("RealmToDelete: " + realmToCreate);
