@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.1 2007-06-07 18:48:45 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.idm;
 
-import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
@@ -38,11 +37,13 @@ import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +53,6 @@ public abstract class WebServiceEditViewBean
     static final String TRACKER_ATTR = "pgWebServiceTracker";
     static final String SECURITY_MECH_PREFIX = "securitymech-";
     static final String ATTR_NAME_SECURITY_MECH = "SecurityMech";
-    static final String ATTR_NAME_IS_RESPONSE_SIGN = "isResponseSign";
-    static final String CHILD_NAME_IS_RESPONSE_SIGN = "isresponsesigned";
     static final String ATTR_NAME_USE_DEFAULT_KEYSTORE = "useDefaultStore";
     static final String CHILD_NAME_KEYSTORE_USAGE = "keystoreusage";
     static final String ATTR_NAME_KEY_STORE_LOCATION = "KeyStoreFile";
@@ -62,16 +61,17 @@ public abstract class WebServiceEditViewBean
     static final String CHILD_NAME_KEY_STORE_PASSWORD = "keystorepassword";
     static final String ATTR_NAME_KEY_PASSWORD = "KeyPassword";
     static final String CHILD_NAME_KEY_PASSWORD = "keypassword";
+    static final String ATTR_NAME_CERT_ALIAS = "CertAlias";
+    static final String CHILD_NAME_CERT_ALIAS = "certalias";
+
     static final String ATTR_NAME_USERCREDENTIAL = "UserCredential";
     static final String ATTR_NAME_USERCREDENTIAL_NAME = "UserName:";
     static final String ATTR_NAME_USERCREDENTIAL_PWD = "UserPassword:";
     static final String CHILD_NAME_USERTOKEN_NAME = "usernametokenname";
     static final String CHILD_NAME_USERTOKEN_PASSWORD = "usernametokenpassword";
-    static final String CHILD_NAME_PRESERVE_SEC_HDR = "preservesecurityheader";
-    static final String ATTR_NAME_PRESERVE_SEC_HDR = "keepSecurityHeaders";
-    static final String CHILD_NAME_LIBERTY_SERVICE_TYPE = "libertyservicetype";
-    static final String ATTR_NAME_LIBERTY_SERVICE_TYPE = "ServiceType";
-
+    
+    private Set externalizeUIProperties = parseExternalizeUIProperties(
+        "webServiceUI");
     private String xmlFileName;
     private String pageName;
     private boolean isWebClient;
@@ -143,15 +143,7 @@ public abstract class WebServiceEditViewBean
                         EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
                     setSecurityMech(getAttributeFromSet(
                         values, ATTR_NAME_SECURITY_MECH));
-                    setBooleanValue(getAttributeFromSet(
-                        values, ATTR_NAME_IS_RESPONSE_SIGN),
-                        CHILD_NAME_IS_RESPONSE_SIGN);
-                    setBooleanValue(getAttributeFromSet(
-                        values, ATTR_NAME_PRESERVE_SEC_HDR),
-                        CHILD_NAME_PRESERVE_SEC_HDR);
-                    setBooleanValue(getAttributeFromSet(
-                        values, ATTR_NAME_LIBERTY_SERVICE_TYPE),
-                        CHILD_NAME_LIBERTY_SERVICE_TYPE);
+                    setExternalizeUIValues(externalizeUIProperties, values);
                     setKeyStoreInfo(values);
                     setExtendedDefaultValues(attrValues);
                 } catch (AMConsoleException e) {
@@ -163,6 +155,46 @@ public abstract class WebServiceEditViewBean
             String[] uuid = {universalId};
             propertySheetModel.setValues(PROPERTY_UUID, uuid, model);
         }
+    }
+    
+    void setExternalizeUIValues(Set extUIs, Set values) {
+        for (Iterator i = extUIs.iterator(); i.hasNext(); 
+        ) {
+            WebServiceUIElement elm = (WebServiceUIElement)i.next();
+
+            if (elm.attrType.equals(WebServiceUIElement.TYPE_BOOL)){
+                setBooleanValue(getAttributeFromSet(values,
+                    elm.attrName), elm.childName);
+            } else if (elm.attrType.equals(
+                WebServiceUIElement.TYPE_TEXT)
+            ) {
+                setBooleanValue(getAttributeFromSet(values,
+                    elm.attrName), elm.childName);
+            }
+        }
+    }
+    
+    void getExternalizeUIValues(Set extUIs, Set deviceKeyValue) {
+        for (Iterator i = extUIs.iterator(); i.hasNext(); ) {
+            WebServiceUIElement elm = (WebServiceUIElement)i.next();
+
+            if (elm.attrType.equals(WebServiceUIElement.TYPE_BOOL)) {
+                String val = (String)propertySheetModel.getValue(elm.childName);
+                
+                if (val.equals("true")) {
+                    deviceKeyValue.add(elm.attrName + "=true");
+                } else {
+                    deviceKeyValue.add(elm.attrName + "=false");
+                }
+            } else if (elm.attrType.equals(WebServiceUIElement.TYPE_TEXT)) {
+                String val = (String)propertySheetModel.getValue(elm.childName);
+                if ((val != null) && val.length() > 0) {
+                    deviceKeyValue.add(elm.attrName + "=" + val);
+                } else {
+                    deviceKeyValue.add(elm.attrName + "=");
+                }
+            }
+        }   
     }
     
     private void setKeyStoreInfo(Set values) {
@@ -180,6 +212,8 @@ public abstract class WebServiceEditViewBean
                 getAttributeFromSet(values, ATTR_NAME_KEY_STORE_PASSWORD));
             propertySheetModel.setValue(CHILD_NAME_KEY_PASSWORD, 
                 getAttributeFromSet(values, ATTR_NAME_KEY_PASSWORD));
+            propertySheetModel.setValue(CHILD_NAME_CERT_ALIAS, 
+                getAttributeFromSet(values, ATTR_NAME_CERT_ALIAS));
         }
     }
 
@@ -274,37 +308,8 @@ public abstract class WebServiceEditViewBean
                 deviceKeyValue.add(ATTR_NAME_SECURITY_MECH + "=" + secMech);
             }
         }
-
-        String isResponseSign = (String)propertySheetModel.getValue(
-            CHILD_NAME_IS_RESPONSE_SIGN);
-        if (isResponseSign.equals("true")) {
-            deviceKeyValue.add(ATTR_NAME_IS_RESPONSE_SIGN + "=true");
-        } else {
-            deviceKeyValue.add(ATTR_NAME_IS_RESPONSE_SIGN + "=false");
-        }
-
-        String preserveSecHdr = (String)propertySheetModel.getValue(
-            CHILD_NAME_PRESERVE_SEC_HDR);
-        if (preserveSecHdr.equals("true")) {
-            deviceKeyValue.add(ATTR_NAME_PRESERVE_SEC_HDR + "=true");
-        } else {
-            deviceKeyValue.add(ATTR_NAME_PRESERVE_SEC_HDR + "=false");
-        }
         
-
-        String libertyServiceType = (String)propertySheetModel.getValue(
-            CHILD_NAME_LIBERTY_SERVICE_TYPE);
-
-        // debug.error("ARA: Lib ST SET values: " + propertySheetModel.getValue(
-        //                CHILD_NAME_LIBERTY_SERVICE_TYPE));
-
-
-        if ((libertyServiceType != null) && libertyServiceType.length() > 0) {
-            deviceKeyValue.add(ATTR_NAME_LIBERTY_SERVICE_TYPE +
-                "=" + libertyServiceType);
-        } else {
-            deviceKeyValue.add(ATTR_NAME_LIBERTY_SERVICE_TYPE + "= ");
-        }
+        getExternalizeUIValues(externalizeUIProperties, deviceKeyValue);
         
         String useDefaultKeyStore = (String)propertySheetModel.getValue(
             CHILD_NAME_KEYSTORE_USAGE);
@@ -409,7 +414,8 @@ public abstract class WebServiceEditViewBean
         String userCredentials = getAttributeFromSet(values,
             ATTR_NAME_USERCREDENTIAL);
 
-        if ((userCredentials != null) && (userCredentials.trim().length() > 0)){            StringTokenizer st = new StringTokenizer(userCredentials, ",");
+        if ((userCredentials != null) && (userCredentials.trim().length() > 0)){
+            StringTokenizer st = new StringTokenizer(userCredentials, ",");
             while (st.hasMoreTokens()) {
                 String uc = st.nextToken();
                 String[] userpwd = splitUserCredToken(uc);
@@ -446,10 +452,13 @@ public abstract class WebServiceEditViewBean
             CHILD_NAME_KEY_STORE_PASSWORD);
         String keyPwd = (String)propertySheetModel.getValue(
             CHILD_NAME_KEY_PASSWORD);
+        String certAlias = (String)propertySheetModel.getValue(
+            CHILD_NAME_CERT_ALIAS);
 
         if ((keyStoreLoc == null) || (keyStoreLoc.trim().length() == 0) ||
             (keyStorePwd == null) || (keyStorePwd.trim().length() == 0) ||
-            (keyPwd == null) || (keyPwd.trim().length() == 0)
+            (keyPwd == null) || (keyPwd.trim().length() == 0) ||
+            (certAlias == null) || (certAlias.trim().length() == 0)
         ){
             throw new AMConsoleException(getModel().getLocalizedString(
                 "web.services.profile.missing-keystore-info"));
@@ -458,6 +467,7 @@ public abstract class WebServiceEditViewBean
         deviceKeyValue.add(ATTR_NAME_KEY_STORE_LOCATION + "=" + keyStoreLoc);
         deviceKeyValue.add(ATTR_NAME_KEY_STORE_PASSWORD + "=" + keyStorePwd);
         deviceKeyValue.add(ATTR_NAME_KEY_PASSWORD + "=" + keyPwd);
+        deviceKeyValue.add(ATTR_NAME_CERT_ALIAS + "=" + certAlias);
     }
     
     private void getSecurityMech(Set deviceKeyValue) {
@@ -482,6 +492,22 @@ public abstract class WebServiceEditViewBean
         if (hasValue) {
             deviceKeyValue.add(ATTR_NAME_SECURITY_MECH + "=" + buff.toString());
         }
+    }
+    
+    static Set parseExternalizeUIProperties(String propName) {
+        Set set = new HashSet();
+        ResourceBundle bundle = ResourceBundle.getBundle(propName);
+        for (Enumeration e = bundle.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            if (key.endsWith(".attributeName")) {
+                String childName = key.substring(0, key.length() - 14);
+                String attrName = bundle.getString(key);
+                String attrType = bundle.getString(
+                    childName + ".attributeType");
+                set.add(new WebServiceUIElement(childName, attrName, attrType));
+            }
+        }
+        return set;
     }
     
     protected abstract void getExtendedFormsValues(Set deviceKeyValue)

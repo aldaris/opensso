@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.1 2007-06-07 18:48:45 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,12 +66,14 @@ public class WebServiceProviderEditViewBean
     private static final String TBL_DATA_NAME = "tblDataName";
     private static final String TBL_DATA_PWD = "tblDataPassword";
 
-    //private static final String ATTR_NAME_AUTH_CHAIN = "authenticationChain";
-    //private static final String CHILD_NAME_AUTH_CHAIN = "authenticationchain";
+    private static final String ATTR_NAME_AUTH_CHAIN = "authenticationChain";
+    private static final String CHILD_NAME_AUTH_CHAIN = "authenticationchain";
     
     public static final String DEFAULT_DISPLAY_URL =
         "/console/idm/WebServiceProviderEdit.jsp";
 
+    private Set providerUIProperties = parseExternalizeUIProperties(
+        "webServiceProviderUI");
     private CCActionTableModel tblUserCredential;
     
     public WebServiceProviderEditViewBean() {
@@ -106,7 +108,6 @@ public class WebServiceProviderEditViewBean
             EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
         populateTableModel(getUserCredentials(values));
 
-        /*
         String authChains = getAttributeFromSet(values, ATTR_NAME_AUTH_CHAIN);
         if (authChains == null) {
             authChains = "";
@@ -114,14 +115,14 @@ public class WebServiceProviderEditViewBean
         CCSelectableList cb = (CCSelectableList)getChild(CHILD_NAME_AUTH_CHAIN);
         cb.setOptions(getAuthChainOptionList());
         propertySheetModel.setValue(CHILD_NAME_AUTH_CHAIN, authChains);
-        */
+
+        setExternalizeUIValues(providerUIProperties, values);
 
         values.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSP");
 
         setPageSessionAttribute(EDIT_LINK_TRACKER, (Serializable)attrValues);
     }
 
-    /*
     private OptionList getAuthChainOptionList()
         throws AMConsoleException {
         String curRealm = (String)getPageSessionAttribute(
@@ -137,7 +138,7 @@ public class WebServiceProviderEditViewBean
             }
         }
         return optList;
-    }*/
+    }
     
     private void populateTableModel(List list) {
         Map map = new HashMap();
@@ -191,13 +192,14 @@ public class WebServiceProviderEditViewBean
 
     protected void getExtendedFormsValues(Set deviceKeyValue)
         throws AMConsoleException {
-/*
+
         String authChain = (String)propertySheetModel.getValue(
             CHILD_NAME_AUTH_CHAIN);
         if ((authChain != null) && (authChain.length() > 0)) {
             deviceKeyValue.add(ATTR_NAME_AUTH_CHAIN + "=" + authChain);
-        }*/
+        }
 
+        getExternalizeUIValues(providerUIProperties, deviceKeyValue);
         deviceKeyValue.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSP");
 
         try {

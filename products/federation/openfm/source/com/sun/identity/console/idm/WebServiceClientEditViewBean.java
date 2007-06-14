@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceClientEditViewBean.java,v 1.1 2007-06-07 18:48:45 veiming Exp $
+ * $Id: WebServiceClientEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,12 +50,12 @@ public class WebServiceClientEditViewBean
     private static final String PAGE_NAME = "WebServiceClientEdit";
     static final String CHILD_NAME_USERTOKEN_NAME = "usernametokenname";
     static final String CHILD_NAME_USERTOKEN_PASSWORD = "usernametokenpassword";
-    static final String ATTR_NAME_FORCE_USER_AUTHN = "forceUserAuthn";
-    static final String CHILD_NAME_FORCE_USER_AUTHN = "foruserauthn";
         
     public static final String DEFAULT_DISPLAY_URL =
         "/console/idm/WebServiceClientEdit.jsp";
-
+    
+    private Set clientUIProperties = parseExternalizeUIProperties(
+        "webServiceClientUI");
     public WebServiceClientEditViewBean() {
         super(PAGE_NAME, DEFAULT_DISPLAY_URL, true,
             "com/sun/identity/console/propertyWebServiceClientEdit.xml");
@@ -65,8 +65,7 @@ public class WebServiceClientEditViewBean
         throws AMConsoleException {
         Set values = (Set)attrValues.get(
             EntitiesModel.ATTR_NAME_DEVICE_KEY_VALUE);
-        setBooleanValue(getAttributeFromSet(values, ATTR_NAME_FORCE_USER_AUTHN),
-            CHILD_NAME_FORCE_USER_AUTHN);
+        setExternalizeUIValues(clientUIProperties, values);
         setUserCredential(values);
     }
     
@@ -98,13 +97,7 @@ public class WebServiceClientEditViewBean
                 ATTR_NAME_USERCREDENTIAL_PWD + userCredPwd);
         }
         
-        String forceUserAuthn = (String)propertySheetModel.getValue(
-            CHILD_NAME_FORCE_USER_AUTHN);
-        if (forceUserAuthn.equals("true")) {
-            deviceKeyValue.add(ATTR_NAME_FORCE_USER_AUTHN + "=true");
-        } else {
-            deviceKeyValue.add(ATTR_NAME_FORCE_USER_AUTHN + "=false");
-        }
+        getExternalizeUIValues(clientUIProperties, deviceKeyValue);
         deviceKeyValue.add(EntitiesViewBean.ATTR_NAME_AGENT_TYPE + "WSC");
     }
 

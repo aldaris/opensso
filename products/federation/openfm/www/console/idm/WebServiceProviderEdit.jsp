@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.1 2007-06-07 18:48:46 veiming Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.2 2007-06-14 21:02:51 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -48,6 +48,7 @@
         frm.elements['WebServiceProviderEdit.keystorepassword'].disabled =
             disable;
         frm.elements['WebServiceProviderEdit.keypassword'].disabled = disable;
+        frm.elements['WebServiceProviderEdit.certalias'].disabled = disable;
     }
 </script>
 
