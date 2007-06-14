@@ -26,12 +26,14 @@ for example, LDAP-based data stores and Novell and Oracle databases).</p><a name
 
 <p>The Identity Repository Service provides a pluggable framework for managing external data stores
 and databases. The main goals of the Identity Repository Service are:</p>
-<ul><li>
-<p>To specify a single identity repository per realm that will store OpenSSO service configurations for users and roles.</p></li>
+<ul>
 <li>
 <p>To provide a list of identity repositories that can provide user attributes for purposes of authentication and authorization.</p></li>
 <li>
-<p>To combine the attributes and values obtained from different repositories.</p></li></ul>
+<p>To combine the attributes and values obtained from different repositories.</p></li>
+<li>
+<p>To specify one or more identity repository per realm to store OpenSSO service configurations for users and roles.</p></li>
+</ul>
 
 <p>The Java package <tt>com.sun.identity.idm</tt> contains the Identity Repository Service client interfaces provided
 by the <tt>AMIdentityRepository</tt> and <tt>AMIdentity</tt> classes. <tt>AMIdentityRepository</tt> allows access to one or
@@ -49,7 +51,7 @@ Service plug-in. By default, the OpenSSO server includes the following plug-in i
 <ul><li>
 <p><tt>com.iplanet.am.sdk.AMSDKRepo</tt> is the implementation for Sun Java System Directory Server.</p></li>
 <li>
-<p><tt>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</tt> is the implementation for Sun Java System Directory Server with Access Manager Schema, Generic Lightweight Directory Access Protocol version 3 (LDAPv3), and Active Directory.</p></li>
+<p><tt>com.sun.identity.idm.plugins.ldapv3.LDAPv3Repo</tt> is the implementation for Active Directory, Generic Lightweight Directory Access Protocol version 3 (LDAPv3), and Sun Java System Directory Server with Access Manager Schema.</p></li>
 <li>
 <p><tt>com.sun.identity.idm.plugins.files.FilesRepo</tt> is the implementation for the flat file repository.</p></li></ul>
 
@@ -70,25 +72,9 @@ Service plug-in. By default, the OpenSSO server includes the following plug-in i
 the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserver/source/com/sun/identity/idm/plugins/files/">OpenSSO source code</a>.</p>
 <hr>
 
-<ul><li>
-<p><tt>addListener(...)</tt> and <tt>removeListener(...)</tt>: The Identity Repository Service maintains a cache for user attributes and these methods are used to manage that cache. The service calls <tt>addListener(...)</tt> so the plug-in code should hold a pointer. When there is a change to an identity object, the listener object should be called to clear the cache.</p><pre>...
-/*
-     * (non-Javadoc)
-     * 
-     * @see com.sun.identity.idm.IdRepo#addListener(com.iplanet.sso.SSOToken,
-     *      com.iplanet.am.sdk.IdRepoListener)
-     */
-    public int addListener(SSOToken token, IdRepoListener listener)
-            throws IdRepoException, SSOException {
-        if (debug.messageEnabled()) {
-            debug.message("FilesRepo addListener called");
-        }
-        repoListener = listener;
-        return 0;
-    }
-...</pre></li>
+<ul>
 <li>
-<p><tt>initialize(java.util.Map configParams)</tt>: The initialization refers to the configuration parameters for the plug-in defined using the OpenSSO console. See the following step for more information on these parameters.</p><pre>...
+<p><tt>initialize(java.util.Map configParams)</tt>: The initialization refers to the configuration parameters for the plug-in defined using the OpenSSO console. See step 3 of this procedure for more information on these parameters.</p><pre>...
     /*
      * (non-Javadoc)
      * 
@@ -109,7 +95,7 @@ the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserve
         }
 ...</pre></li>
 <li>
-<p><tt>getSupportedTypes()</tt> and <tt>getSupportedOperations(IdType type)</tt>: <tt>getSupportedTypes()</tt> returns an <tt>IdType</tt> set (<tt>IdType.<i>USER</i></tt>, <tt>IdType.<i>ROLE</i></tt>, and so forth). <tt>getSupportedOperations(IdType type)</tt> returns an <tt>IdOperation</tt> set (<tt>IdOperation.<i>READ</i></tt>, <tt>IdOperation.<i>WRITE</i></tt>, and so forth).</p><pre>...
+<p><tt>getSupportedTypes()</tt> and <tt>getSupportedOperations(IdType type)</tt>: <tt>getSupportedTypes()</tt> returns an <tt>IdType</tt> set (<tt>IdType.<i>USER</i></tt>, <tt>IdType.<i>ROLE</i></tt>, and so forth); basically the identities managed by the repository. <tt>getSupportedOperations(IdType type)</tt> returns an <tt>IdOperation</tt> set (<tt>IdOperation.<i>READ</i></tt>, <tt>IdOperation.<i>WRITE</i></tt>, and so forth); basically the operations which the repository supports.</p><pre>...
     /*
      * (non-Javadoc)
      * 
@@ -157,10 +143,27 @@ the <a href="https://opensso.dev.java.net/source/browse/opensso/products/amserve
             return (active.equalsIgnoreCase(statusActive) ? true : false);
         }
     }
-...</pre></li></ul>
+...</pre></li>
+<li>
+<p><tt>addListener(...)</tt> and <tt>removeListener(...)</tt>: The Identity Repository Service maintains a cache for user attributes and these methods are used to manage that cache. The service calls <tt>addListener(...)</tt> so the plug-in code should hold a pointer. When there is a change to an identity object, the listener object should be called to clear the cache.</p><pre>...
+/*
+     * (non-Javadoc)
+     * 
+     * @see com.sun.identity.idm.IdRepo#addListener(com.iplanet.sso.SSOToken,
+     *      com.iplanet.am.sdk.IdRepoListener)
+     */
+    public int addListener(SSOToken token, IdRepoListener listener)
+            throws IdRepoException, SSOException {
+        if (debug.messageEnabled()) {
+            debug.message("FilesRepo addListener called");
+        }
+        repoListener = listener;
+        return 0;
+    }
+...</pre></li>
+</ul>
 </li>
-<li><b>Put the implementation Java file in the <tt>openfm/WEB-INF/lib</tt> directory of the staging directory
-created by the web container.</b><p>Look in your web container's documentation for the exact path.</p></li>
+<li><b>Compile the classes, build a JAR, and put the JAR in the <tt><i>base-dir</i>/WEB-INF/lib</tt> directory of the staging directory created by the web container.</b><p>Look in your web container's documentation for the exact path.</p></li>
 <li><b>Modify <tt>idRepoService.xml</tt> to create a schema for the plug-in's configuration parameters.</b><p>OpenSSO uses XML to define the configuration parameters for each plug-in. The schema for
 each plug-in is defined in <tt>idRepoService.xml</tt> using the <tt>&lt;SubSchema></tt> tag. For example, <tt>&lt;SubSchema name="LDAPv3"></tt>
 defines the configuration parameters for the generic LDAPv3 plug-in.</p>
