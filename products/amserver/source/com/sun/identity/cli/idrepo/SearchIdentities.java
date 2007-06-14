@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.5 2007-06-08 18:53:42 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.6 2007-06-14 20:09:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,6 @@ import java.util.logging.Level;
  * This command searches for Identities.
  */
 public class SearchIdentities extends IdentityCommand {
-    static final String ARGUMENT_RECURSIVE = "recursive";
-
     /**
      * Services a Commandline Request.
      *
@@ -65,7 +63,6 @@ public class SearchIdentities extends IdentityCommand {
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
         String filter = getStringOptionValue(IArgument.FILTER);
-        boolean recursive = isOptionSet(ARGUMENT_RECURSIVE);
 
         String[] params = {realm, type, filter};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
@@ -74,10 +71,9 @@ public class SearchIdentities extends IdentityCommand {
         try {
             AMIdentityRepository amir = new AMIdentityRepository(
                 adminSSOToken, realm);
-            IdSearchControl isCtl = new IdSearchControl();
-            isCtl.setRecursive(recursive);
             IdType idType = convert2IdType(type);
-            IdSearchResults isr = amir.searchIdentities(idType, filter, isCtl);
+            IdSearchResults isr = amir.searchIdentities(idType, filter,
+                new IdSearchControl());
             Set results = isr.getSearchResults();
 
             if ((results != null) && !results.isEmpty()) {
