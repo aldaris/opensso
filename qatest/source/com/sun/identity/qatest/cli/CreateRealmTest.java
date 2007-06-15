@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.2 2007-06-14 21:39:47 cmwesley Exp $
+ * $Id: CreateRealmTest.java,v 1.3 2007-06-15 20:49:34 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,21 +184,15 @@ public class CreateRealmTest extends TestCommon {
                         " Found: " + realmFound);
             }
 
-            String delimiter = "*" + newline;
-            if (realmToCreate.indexOf("*") != -1) {
-                delimiter = newline;
-            }
             if (expectedExitCode.equals("0")) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, 
-                        delimiter);
+                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(logLevel, "testRealmCreation", "Output Messages Found: " + 
                         stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         realmFound;
             } else {
-                stringsFound = cli.findStringsInError(expectedMessage, 
-                        delimiter); 
+                stringsFound = cli.findStringsInError(expectedMessage, ";");
                 log(logLevel, "testRealmCreation", "Error Messages Found: " + 
                         stringsFound);
                 assert (commandStatus == 

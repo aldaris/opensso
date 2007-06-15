@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.1 2007-05-31 19:40:24 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.2 2007-06-15 20:53:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,10 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -282,6 +286,34 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
+     * Adds the "--idname" and identity name arguments to the argument list.
+     */
+    private void addIdnameArguments(String name) {
+        String idnameArg;
+        if (useLongOptions) {
+            idnameArg = PREFIX_ARGUMENT_LONG + ID_NAME_ARGUMENT;
+        } else {
+            idnameArg = PREFIX_ARGUMENT_SHORT + SHORT_ID_NAME_ARGUMENT;
+        }
+        addArgument(idnameArg);
+        addArgument(name);
+    }
+    
+    /**
+     * Adds the "--idtype" and identity type arguments to the argument list.
+     */
+    private void addIdtypeArguments(String type) {
+        String idtypeArg;
+        if (useLongOptions) {
+            idtypeArg = PREFIX_ARGUMENT_LONG + ID_TYPE_ARGUMENT;
+        } else {
+            idtypeArg = PREFIX_ARGUMENT_SHORT + SHORT_ID_TYPE_ARGUMENT;
+        }
+        addArgument(idtypeArg);
+        addArgument(type);
+    }
+    
+    /**
      * Create a new realm.
      * 
      * @param realmToCreate - the name of the realm to be created
@@ -338,15 +370,27 @@ public class FederationManagerCLI extends CLIUtility
             boolean recursiveSearch) 
     throws Exception {
         setSubcommand(LIST_REALMS_SUBCOMMAND);
-        if (filter.length() > 0) {
+        addRealmArguments(startRealm);        
+        if (filter != null) {
             addFilterArguments(filter);
         }
-        addRealmArguments(startRealm);
         if (recursiveSearch) {
             addRecursiveArgument();
         }
         addGlobalOptions();
         return (executeCommand(commandTimeout)); 
+    }
+    
+    /**
+     * Perform a listing of realms with no filter
+     * @param startRealm - the realm from which to start the search
+     * @param recursiveSearch - a boolean which should be set to "false" to 
+     * perform a single level search or "true" to perform a recursive search
+     * @return the exit status of the "list-realms" command
+     */
+    public int listRealms (String startRealm, boolean recursiveSearch) 
+    throws Exception {
+        return listRealms(startRealm, null, recursiveSearch);
     }
     
     /**
@@ -356,9 +400,269 @@ public class FederationManagerCLI extends CLIUtility
      */
     public int listRealms (String startRealm) 
     throws Exception {
-        return listRealms(startRealm, "", false);
+        return listRealms(startRealm, null, false);
     }
     
+/**
+     * Create an identity in a realm
+     * @param realm - the realm in which to create the identity
+     * @param name - the name of the identity to be created
+     * @param type - the type of identity to be created (e.g. "User", "Role", 
+     * and "Group")
+     * @param attributeValues - a string containing the attribute values for the 
+     * identity to be created
+     * @param useAttributeValues - a boolean flag indicating whether the 
+     * "--attributevalues" option should be used 
+     * @param useDatafile - a boolean flag indicating whether the attribute 
+     * values should be written to a file and passed to the CLI using the 
+     * "--datafile <file-path>" arguments
+     * @return the exit status of the "create-identity" command
+     */
+    public int createIdentity(String realm, String name, String type, 
+            List attributeValues, boolean useAttributeValues, 
+            boolean useDatafile) 
+    throws Exception {
+        setSubcommand(CREATE_IDENTITY_SUBCOMMAND);
+        addRealmArguments(realm);
+        addIdnameArguments(name);
+        addIdtypeArguments(type);
+        
+        if (attributeValues != null) {
+            if (useAttributeValues) {
+                addAttributevaluesArguments(attributeValues);
+            }
+            if (useDatafile) {
+                addDatafileArguments(attributeValues, "attrValues", ".txt");
+            }
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }       
+    
+    /**
+     * Create an identity in a realm
+     * @param realm - the realm in which to create the identity
+     * @param name - the name of the identity to be created
+     * @param type - the type of identity to be created (e.g. "User", "Role", 
+     * and "Group")
+     * @param attributeValues - a string containing the attribute values for the 
+     * identity to be created
+     * @param useAttributeValues - a boolean flag indicating whether the 
+     * "--attributevalues" option should be used 
+     * @param useDatafile - a boolean flag indicating whether the attribute 
+     * values should be written to a file and passed to the CLI using the 
+     * "--datafile <file-path>" arguments
+     * @return the exit status of the "create-identity" command
+     */
+    public int createIdentity(String realm, String name, String type, 
+            String attributeValues, boolean useAttributeValues, 
+            boolean useDatafile) 
+    throws Exception {
+        setSubcommand(CREATE_IDENTITY_SUBCOMMAND);
+        addRealmArguments(realm);
+        addIdnameArguments(name);
+        addIdtypeArguments(type);
+        
+        if (attributeValues != null) {
+            ArrayList attributeList = new ArrayList();
+            
+            if (useAttributeValues) {
+                addAttributevaluesArguments(attributeValues);
+            } 
+            if (useDatafile) {
+                addDatafileArguments(attributeValues, "attrValues", ".txt");
+            }
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Create an identity in a realm using the "--attribute-values" argument
+     * @param realm - the realm in which to create the identity
+     * @param name - the name of the identity to be created
+     * @param type - the type of identity to be created (e.g. "User", "Role", 
+     * and "Group")
+     * @param attributeValues - a semi-colon delimited string containing the 
+     * attribute values for the identity to be created
+     * @return the exit status of the "create-identity" command
+     */
+    public int createIdentity(String realm, String name, String type, 
+            String attributeValues)
+    throws Exception {
+        return (createIdentity(realm, name, type, attributeValues, true, 
+                false));
+    }
+    
+    /**
+     * Create an identity in a realm using the "--attribute-values" argument
+     * @param realm - the realm in which to create the identity
+     * @param name - the name of the identity to be created
+     * @param type - the type of identity to be created (e.g. "User", "Role", 
+     * and "Group")
+     * @param attributeValues - a semi-colon delimited string containing the 
+     * attribute values for the identity to be created
+     * @return the exit status of the "create-identity" command
+     */
+    public int createIdentity(String realm, String name, String type)
+    throws Exception {
+        String emptyString = null;
+        return (createIdentity(realm, name, type, emptyString, false, false));
+    }    
+    
+    /**
+     * Delete one or more identities in a realm
+     * @param realm - the realm from which the identies should be deleted
+     * @param name - one or more identity names to be deleted
+     * @param type - the type of the identity (identities) to be deleted
+     * @return the exit status of the "delete-identities" command
+     */
+    public int deleteIdentities(String realm, String names, String type)
+    throws Exception {
+        setSubcommand(DELETE_IDENTITIES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addIdnamesArguments(names);
+        addIdtypeArguments(type);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * List the identities in a particular realm
+     * @param realm - the realm in which to start the search for identities
+     * @param filter - the filter to apply in the search for identities
+     * @param idtype - the type of identities (e.g. "User", "Group", "Role") for
+     * which the search sould be performed
+     * @param useRecursiveOption - a boolean flag indicating whether a recursive
+     * search should be performed (i.e. should child realms of the realm from 
+     * which the search started should be searched as well)
+     */
+    public int listIdentities(String realm, String filter, String type, 
+            boolean useRecursiveOption)
+    throws Exception {
+        setSubcommand(LIST_IDENTITIES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addFilterArguments(filter);
+        addIdtypeArguments(type);
+        if (useRecursiveOption) {
+            addRecursiveArgument();
+        }
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Iterate through a list containing attribute values and add the 
+     * "--attributevalues" argument and a list of one attribute name/value pairs
+     * to the argument list
+     * @param 
+     */
+    private void addAttributevaluesArguments(List valueList) 
+    throws Exception {
+       String attributesArg;
+       if (useLongOptions) {
+           attributesArg = PREFIX_ARGUMENT_LONG + ATTRIBUTE_VALUES_ARGUMENT;
+       } else {
+           attributesArg = PREFIX_ARGUMENT_SHORT + 
+                   SHORT_ATTRIBUTE_VALUES_ARGUMENT;
+       }
+       addArgument(attributesArg);
+       
+       Iterator i = valueList.iterator();
+       while (i.hasNext()) {
+           addArgument((String)i.next());
+       }
+    }    
+    
+    
+    /**
+     * Parse a string containing attribute values and add the 
+     * "--attributevalues" and a list of one attribute name/value pairs to the
+     * argument list
+     * 
+     */
+    private void addAttributevaluesArguments(String values) 
+    throws Exception {
+       StringTokenizer tokenizer = new StringTokenizer(values, ";");        
+       ArrayList attList = new ArrayList(tokenizer.countTokens());
+       
+       while (tokenizer.hasMoreTokens()) {
+           attList.add(tokenizer.nextToken());
+       }
+       addAttributevaluesArguments(attList);
+    }
+
+    /**
+     * Create a datafile and add the "--datafile" and file path arguments to the
+     * argument list.
+     * @param valueList - a list containing attribute name value pairs separated 
+     * by semi-colons (';')
+     * @param filePrefix - a string containing a prefix for the datafile that 
+     * will be created
+     * @param fileSuffix - a string containing a suffix for the datafile that 
+     * will be created
+     */
+    private void addDatafileArguments(List valueList, String filePrefix,
+            String fileSuffix)
+    throws Exception {
+        StringBuffer valueBuffer = new StringBuffer();
+        Iterator i = valueList.iterator();
+        while (i.hasNext()) {
+            valueBuffer.append((String)i.next());
+            if (i.hasNext()) {
+                valueBuffer.append(";");
+            }
+        }
+        String values = valueBuffer.toString();
+        addDatafileArguments(values, filePrefix, fileSuffix);
+    }    
+    
+    /**
+     * Create a datafile and add the "--datafile" and file path arguments to the
+     * argument list.
+     * @param values - a string containing attribute name value pairs separated 
+     * by semi-colons (';')
+     * @param filePrefix - a string containing a prefix for the datafile that 
+     * will be created
+     * @param fileSuffix - a string containing a suffix for the datafile that 
+     * will be created
+     */
+    private void addDatafileArguments(String values, String filePrefix,
+            String fileSuffix)
+    throws Exception {
+        Map attributeMap = parseStringToMap(values.replaceAll("\"",""));
+        ResourceBundle rb_amconfig = 
+                ResourceBundle.getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
+        String attFileDir = getBaseDir() + fileseparator + 
+                rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) + 
+                fileseparator + "built" + fileseparator + "classes" + 
+                fileseparator;
+        String attFile = attFileDir + filePrefix + 
+                (new Integer(new Random().nextInt())).toString() + fileSuffix;
+        createFileFromMap(attributeMap, attFile);
+        String dataFileArg;
+        if (useLongOptions) {
+            dataFileArg = PREFIX_ARGUMENT_LONG + DATA_FILE_ARGUMENT;
+        } else {
+            dataFileArg = PREFIX_ARGUMENT_SHORT + SHORT_DATA_FILE_ARGUMENT;
+        }
+        addArgument(dataFileArg);
+        addArgument(attFile);
+    }
+    
+    /**
+     * Add the "--idnames" argument and value to the argument list
+     */
+    private void addIdnamesArguments(String names) {
+        String idnamesArg;
+        if (useLongOptions) {
+            idnamesArg = PREFIX_ARGUMENT_LONG + ID_NAMES_ARGUMENT;
+        } else {
+            idnamesArg = PREFIX_ARGUMENT_SHORT + SHORT_ID_NAME_ARGUMENT;
+        }
+        addArgument(idnamesArg);
+        addArgument(names);
+    }
+       
     /**
      * Retrieve the supported identity types for a particular realm
      * @param realm - the realm for which the supported identity types should be
@@ -421,12 +725,13 @@ public class FederationManagerCLI extends CLIUtility
      * @return a boolean value of true if the realm(s) is(are) found and false 
      * if one or more realms is not found.
      */
-    public boolean findRealms(String realmsToFind)
+    public boolean findRealms(String startRealm, String filter, 
+            boolean recursiveSearch, String realmsToFind)
     throws Exception {
         boolean realmsFound = true;
         
         if ((realmsToFind != null) && (realmsToFind.length() > 0)) {
-            if (listRealms("/", "*", true) == 0) {                    
+            if (listRealms(startRealm, filter, recursiveSearch) == 0) {                    
                 StringTokenizer tokenizer = new StringTokenizer(realmsToFind, 
                         ";");
                 while (tokenizer.hasMoreTokens()) {
@@ -435,12 +740,12 @@ public class FederationManagerCLI extends CLIUtility
                         if (token.length() > 1) {
                             String searchRealm = token.substring(1);
                             if (!findStringInOutput(searchRealm)) {
-                                log(logLevel, "findRealms", "Realm " + token + 
-                                        " was not found.");
+                                log(logLevel, "findRealms", "Realm " + 
+                                        searchRealm + " was not found.");
                                 realmsFound = false;
                             } else {
-                                log(logLevel, "findRealms", "Realm " + token + 
-                                        " was found.");
+                                log(logLevel, "findRealms", "Realm " + 
+                                  searchRealm + " was found.");
                             }
                         } else {
                             log(Level.SEVERE, "findRealms", "Realm " + token + 
@@ -458,10 +763,87 @@ public class FederationManagerCLI extends CLIUtility
                         "fmadm list-realms command failed");
                 realmsFound = false;
             }
+            logCommand("findRealms");
         } else {
             log(Level.SEVERE, "findRealms", "realmsToFind is null or empty");
             realmsFound = false;
         }
         return realmsFound;
     }
+    
+    /**
+     * Check to see if a realm exists using the "fmadm list-realms" command
+     * @param realmsToFind - the realm or realms to find in the output of 
+     * "fmadm list-realms".  Multiple realms should be separated by semi-colons
+     * (';').
+     * @return a boolean value of true if the realm(s) is(are) found and false 
+     * if one or more realms is not found.
+     */
+    public boolean findRealms(String realmsToFind)
+    throws Exception {
+        return(findRealms(TestCommon.realm, "*", true, realmsToFind));
+    }  
+    
+    /**
+     * Check to see if a realm exists using the "fmadm list-realms" command
+     * @param realmsToFind - the realm or realms to find in the output of 
+     * "fmadm list-realms".  Multiple realms should be separated by semi-colons
+     * (';').
+     * @return a boolean value of true if the realm(s) is(are) found and false 
+     * if one or more realms is not found.
+     */
+    public boolean findIdentities(String startRealm, String filter, String type,
+            boolean recursiveSearch, String idsToFind)
+    throws Exception {
+        boolean idsFound = true;
+        
+        if ((idsToFind != null) && (idsToFind.length() > 0)) {
+            if (listIdentities(startRealm, filter, type, recursiveSearch) == 0) {                    
+                StringTokenizer tokenizer = new StringTokenizer(idsToFind, 
+                        ";");
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    String rootDN = "";
+                    if (token != null) {
+                        if (startRealm.equals(TestCommon.realm)) {
+                           rootDN = TestCommon.basedn; 
+                        } else {
+                           rootDN = "o=" + startRealm.substring(1) + 
+                                   ",ou=services," + 
+                                   TestCommon.basedn;
+                        }
+                        if (token.length() > 0) {
+                            String idString = token + " (id=" + token + ",ou=" + 
+                                    type.toLowerCase() + "," + rootDN + ")";
+                            if (!findStringInOutput(idString)) {
+                                log(logLevel, "findIdentities", "String " + 
+                                        idString + " was not found.");
+                                idsFound = false;
+                            } else {
+                                log(logLevel, "findIdentities", type + 
+                                        " identity " + token + " was found.");
+                            }
+                        } else {
+                            log(Level.SEVERE, "findIdentities", 
+                                    "The identity to find is empty.");
+                            idsFound = false;
+                        }
+                    } else {
+                        log(Level.SEVERE, "findIdentities", 
+                                "Identity in idsToFind is null.");
+                        idsFound = false;
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "findIdentities", 
+                        "fmadm list-identities command failed");
+                idsFound = false;
+            }
+            logCommand("findIdentities");
+        } else {
+            log(Level.SEVERE, "findIdentities", "idsToFind is null or empty");
+            idsFound = false;
+        }
+        return idsFound;
+    }    
 }

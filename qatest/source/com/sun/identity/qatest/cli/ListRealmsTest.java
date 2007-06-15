@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.3 2007-06-15 20:51:29 cmwesley Exp $
+ * $Id: ListRealmsTest.java,v 1.1 2007-06-15 20:51:30 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,8 +26,10 @@ package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -36,43 +38,45 @@ import org.testng.annotations.Test;
 import org.testng.Reporter;
 
 /**
- * <code>CreateRealmTest</code> is used to execute tests involving the 
- * create-realm sub-command of fmadm.  This class allows the user to execute
- * "fmadm create-realm" with a variety or arguments (e.g with short or long 
+ * <code>ListRealmsTest</code> is used to execute tests involving the 
+ * list-realms sub-command of fmadm.  This class allows the user to execute
+ * "fmadm list-realm" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
- * etc.) and a variety of input values.  The properties file 
- * <code>CreateRealmTest.properties</code> contains the input values which are 
- * read by this class.
+ * with the recursive option, with the filter option, etc.) and a variety of 
+ * input values.  The properties file <code>ListRealmsTest.properties</code> 
+ * contains the input values which are read by this class.
  */
-public class DeleteRealmTest extends TestCommon {
+public class ListRealmsTest extends TestCommon {
     
     private String locTestName;
     private ResourceBundle rb;
     private String setupRealms;
-    private String realmToDelete;
-    private String realmsDeleted;
-    private String realmsExisting;
+    private String searchRealm;
     private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
     private boolean useRecursiveOption;
+    private boolean useFilterOption;
+    private String filter;
     private String expectedMessage;
     private String expectedExitCode;
     private String description;
+    private String realmsToFind;
     private FederationManagerCLI cli;
+    private Vector realmsNotShown;
     
     /** 
-     * Creates a new instance of CreateRealmTest 
+     * Creates a new instance of ListRealmsTest 
      */
-    public DeleteRealmTest() {
-        super("DeleteRealmTest");
+    public ListRealmsTest() {
+        super("ListRealmsTest");
     }
     
     /**
      * This method is intended to provide initial setup.
      * Creates any realms specified in the setup-realms property in the 
-     * createRealmTest.properties.
+     * ListRealmsTest.properties.
      */
     @Parameters({"testName"})
     @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -82,7 +86,7 @@ public class DeleteRealmTest extends TestCommon {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("DeleteRealmTest");
+            rb = ResourceBundle.getBundle("ListRealmsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             usePasswordFile = ((String)rb.getString(locTestName + 
@@ -106,17 +110,20 @@ public class DeleteRealmTest extends TestCommon {
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption,
+            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
                     useVerboseOption, useLongOptions);
             
+            realmsNotShown = new Vector();
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
                     StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
                             ";");
                     while (tokenizer.hasMoreTokens()) {
-                        cli.createRealm(tokenizer.nextToken());
+                        String realmToCreate = tokenizer.nextToken();
+                        cli.createRealm(realmToCreate);
                         cli.logCommand("setup");
                         cli.resetArgList();
+                        realmsNotShown.add(realmToCreate);
                     }
                 }
             }
@@ -129,111 +136,151 @@ public class DeleteRealmTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm create-realm"
-     * using input data from the CreateRealmTest.properties file.
+     * This method is used to execute tests involving "fmadm list-realms"
+     * using input data from the ListRealmsTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
-    public void testRealmDeletion() 
+    public void testRealmSearch() 
     throws Exception {
-        entering("testRealmDeletion", null);
+        entering("testRealmSearch", null);
         boolean stringsFound = false;
-        boolean removedRealmsFound = false;
-        boolean existingRealmsFound = true;
+        boolean realmsFound = true;
+        boolean otherRealmsListed = false;
         
         try {
             description = (String) rb.getString(locTestName + "-description");
-            useRecursiveOption = ((String)rb.getString(locTestName + 
-                    "-use-recursive-option")).equals("true");
             expectedMessage = (String) rb.getString(locTestName + 
                     "-message-to-find");
             expectedExitCode = (String) rb.getString(locTestName + 
                     "-expected-exit-code");
-            realmToDelete = (String) rb.getString(locTestName + 
-                    "-delete-realm");
-            realmsDeleted = (String) rb.getString(locTestName + 
-                    "-realms-deleted");
-            realmsExisting = (String) rb.getString(locTestName + 
-                    "-realms-existing");
-            
-            log(logLevel, "testRealmCreation", "description: " + description);
-            log(logLevel, "testRealmDeletion", "use-password-file: " + 
+            searchRealm = (String) rb.getString(locTestName + 
+                    "-search-realm");
+            useRecursiveOption = ((String) rb.getString(locTestName + 
+                    "-use-recursive-option")).equals("true");
+            useFilterOption = ((String) rb.getString(locTestName + 
+                    "-use-filter-option")).equals("true");
+            filter = (String) rb.getString(locTestName + "-filter");
+            realmsToFind = (String) rb.getString(locTestName + 
+                    "-realms-to-find");
+
+            log(logLevel, "testRealmSearch", "description: " + description);
+            log(logLevel, "testRealmSearch", "use-password-file: " + 
                     usePasswordFile);
-            log(logLevel, "testRealmDeletion", "use-debug-option: " + 
+            log(logLevel, "testRealmSearch", "use-debug-option: " + 
                     useDebugOption);
-            log(logLevel, "testRealmDeletion", "use-verbose-option: " + 
+            log(logLevel, "testRealmSearch", "use-verbose-option: " + 
                     useVerboseOption);
-            log(logLevel, "testRealmDeletion", "use-long-options: " + 
+            log(logLevel, "testRealmSearch", "use-long-options: " + 
                     useLongOptions);
-            log(logLevel, "testRealmDeletion", "use-recursive-option: " + 
-                    useRecursiveOption);
-            log(logLevel, "testRealmDeletion", "message-to-find: " + 
+            log(logLevel, "testRealmSearch", "message-to-find: " + 
                     expectedMessage);
-            log(logLevel, "testRealmDeletion", "expected-exit-code: " + 
+            log(logLevel, "testRealmSearch", "expected-exit-code: " + 
                     expectedExitCode);
-            log(logLevel, "testRealmDeletion", "delete-realm: " + 
-                    realmToDelete);
-            log(logLevel, "testRealmDeletion", "existing-realms: " + 
-                    realmsExisting);
-            log(logLevel, "testRealmDeletion", "realms-deleted: " + 
-                    realmsDeleted);
+            log(logLevel, "testRealmSearch", "search-realm: " + 
+                    searchRealm);
+            log(logLevel, "testRealmSearch", "use-recursive-option: " + 
+                    useRecursiveOption);
+            log(logLevel, "testRealmSearch", "use-filter-option: " + 
+                    useFilterOption);
+            log(logLevel, "testRealmSearch", "filter: \"" + filter + "\"");
+            log(logLevel, "testRealmSearch", "realms-to-find: " + realmsToFind);
 
             Reporter.log("TestName: " + locTestName);
-            Reporter.log("Description: " + description);            
+            Reporter.log("Description: " + description);
             Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("ExpectedMessage: " + expectedMessage);
             Reporter.log("ExpectedExitCode: " + expectedExitCode);
-            Reporter.log("RealmToDelete: " + realmToDelete);
-            Reporter.log("RealmsRemaining: " + realmsExisting);
-            Reporter.log("RealmsDeleted: " + realmsDeleted);
+            Reporter.log("SearchRealm: " + searchRealm);
+            Reporter.log("UseRecursiveOption: " + useRecursiveOption);
+            Reporter.log("UseFilterOption: " + useFilterOption);
+            Reporter.log("Filter: " + filter);
             
-            int commandStatus = cli.deleteRealm(realmToDelete, 
+            int commandStatus;
+            if (useFilterOption) {
+                commandStatus = cli.listRealms(searchRealm, filter, 
                     useRecursiveOption);
-            cli.logCommand("testRealmDeletion");
+            } else {
+                commandStatus = cli.listRealms(searchRealm, useRecursiveOption);
+            }
+            cli.logCommand("testRealmSearch");
             cli.resetArgList();
 
-            String delimiter = "*" + System.getProperty("line.separator");
-            if (realmToDelete.indexOf("*") != -1) {
-                delimiter = System.getProperty("line.separator");
+            int searchLength;
+            if (searchRealm.equals("/")) {
+                searchLength = 1;
+            } else {
+                searchLength = searchRealm.length() + 1;
+            }
+            if (realmsToFind.length() > 0) {
+                StringTokenizer tokenizer = new StringTokenizer(realmsToFind, 
+                        ";");
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    boolean prefixFound = token.startsWith(searchRealm);
+                    realmsNotShown.removeElement(token);
+                    if (prefixFound && (token != null)) {
+                        if (token.length() > searchLength) {
+                            String tokenRealm = 
+                                    token.substring(searchLength);
+                            if (!cli.findStringInOutput(tokenRealm)) {
+                                log(logLevel, "testRealmSearch", "Realm " + 
+                                        tokenRealm + " was not found.");
+                                realmsFound = false;
+                            } else {
+                                log(logLevel, "testRealmSearch", "Realm " + 
+                                        tokenRealm + " was found.");
+                            }
+                        } 
+                    } else {
+                        log(Level.SEVERE, "testRealmSearch", "Realm " + token + 
+                                " in realmsToFind is null.");
+                        realmsFound = false;
+                    }
+                }
+                log(logLevel, "testRealmSearch", "Expected Realms Found: " + 
+                        realmsFound);
             }
             
+            for (Iterator i = realmsNotShown.iterator(); i.hasNext(); ) {
+                String realmNotShown = (String)i.next();
+                if (realmNotShown.length() > searchLength) {
+                    log(logLevel, "testRealmSearch", "Searching for " + 
+                            realmNotShown + " in list-realms output.");
+                    String searchString = 
+                            realmNotShown.substring(searchLength);
+                    if (cli.findStringInOutput(searchString)) {
+                        log(logLevel, "testRealmSearch", "Realm " + 
+                                searchString + 
+                                " was found in the list-realms output.");
+                        otherRealmsListed=true;
+                    }
+                }
+            }
+            
+            log(logLevel, "testRealmSearch", "Unexpected realms Found: " + 
+                    otherRealmsListed);
+
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(logLevel, "testRealmDeletion", "Output Messages Found: " + 
+                log(logLevel, "testRealmSearch", "Output Messages Found: " + 
                         stringsFound);
+                assert (commandStatus == 
+                    new Integer(expectedExitCode).intValue()) && stringsFound &&
+                        realmsFound && !otherRealmsListed;
             } else {
                 stringsFound = cli.findStringsInError(expectedMessage, ";");
-                log(logLevel, "testRealmDeletion", "Error Messages Found: " + 
+                log(logLevel, "testRealmSearch", "Error Messages Found: " + 
                         stringsFound);
-            }            
-         
-            if ((realmsDeleted != null) && (realmsDeleted.length() > 0)) {
-                removedRealmsFound = cli.findRealms(realmsDeleted);
-                cli.resetArgList();
-            }
-            
-            if ((realmsExisting != null) && (realmsExisting.length() > 0)) {
-                FederationManagerCLI listCLI = 
-                    new FederationManagerCLI(usePasswordFile, useDebugOption,
-                    useVerboseOption, useLongOptions);
-                existingRealmsFound = listCLI.findRealms(realmsExisting);
-            }            
-                         
-            if (expectedExitCode.equals("0")) {
                 assert (commandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound &&
-                        !removedRealmsFound && existingRealmsFound;
-            } else {
-                assert (commandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound &&
-                        existingRealmsFound;
+                    new Integer(expectedExitCode).intValue()) && stringsFound;
             }
-            
-            exiting("testRealmDeletion");
+            cli.resetArgList();            
+            exiting("testRealmSearch");
         } catch (Exception e) {
-            log(Level.SEVERE, "testRealmDeletion", e.getMessage(), null);
+            log(Level.SEVERE, "testRealmSearch", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         } 

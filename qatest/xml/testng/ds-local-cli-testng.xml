@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds-local-cli-testng.xml,v 1.1 2007-05-31 19:37:13 cmwesley Exp $
+ $Id: ds-local-cli-testng.xml,v 1.2 2007-06-15 20:58:51 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -278,5 +278,148 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
-    </test>            
+    </test>
+    <test name="ListRealms1">
+        <parameter name="testName" value="listrealms-test1"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms2">
+        <parameter name="testName" value="listrealms-test2"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms3">
+        <parameter name="testName" value="listrealms-test3"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms4">
+        <parameter name="testName" value="listrealms-test4"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>    
+    <test name="ListRealms5">
+        <parameter name="testName" value="listrealms-test5"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms6">
+        <parameter name="testName" value="listrealms-test6"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms7">
+        <parameter name="testName" value="listrealms-test7"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms8">
+        <parameter name="testName" value="listrealms-test8"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms9">
+        <parameter name="testName" value="listrealms-test9"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms10">
+        <parameter name="testName" value="listrealms-test10"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>    
+    <test name="ListRealms11">
+        <parameter name="testName" value="listrealms-test11"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>
+    <test name="ListRealms12">
+        <parameter name="testName" value="listrealms-test12"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test> 
+    <test name="ListRealms13">
+        <parameter name="testName" value="listrealms-test13"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
+        </classes>
+    </test>          
 </suite>
