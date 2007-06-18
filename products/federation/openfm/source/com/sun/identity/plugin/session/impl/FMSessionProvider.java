@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.2 2007-01-10 06:32:56 exu Exp $
+ * $Id: FMSessionProvider.java,v 1.3 2007-06-18 21:39:44 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -302,6 +302,17 @@ public class FMSessionProvider implements SessionProvider {
                 targetApplication.append(rewrittenURL);
             }
         }   
+        // set all properties in the info map to sso token
+        try {
+            Iterator it = info.keySet().iterator();
+            while (it.hasNext()) {
+                String keyName = (String) it.next();
+                String keyVal = (String) info.get(keyName);
+                ssoToken.setProperty(keyName, keyVal);
+            }
+        } catch (SSOException se) {
+            throw new SessionException(se);
+        }
         return ssoToken;
     }
 

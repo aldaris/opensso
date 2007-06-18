@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProvider.java,v 1.1 2006-10-30 23:15:30 qcheng Exp $
+ * $Id: SessionProvider.java,v 1.2 2007-06-18 21:39:34 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,9 +80,11 @@ public interface SessionProvider {
      * at least one of the last two parameters should not be null
      * 
      * @param info a Map with keys and values being of type String; The
-     *        keys will include <code>"principalNamea</code>"
+     *        keys will include <code>SessionProvider.PRINCIPAL_NAME</code>
      *        (returned from <code>SPAccountMapper</code>),
-     *        <code>"realm"</code>, "authLevel", and may include
+     *        <code>SessionProvider.REALM</code>, 
+     *        <code>SessionProvider.AUTH_LEVEL</code>, 
+     *        <code>SessionProvider.AUTH_INSTANT</code>, and may include
      *        <code>"resourceOffering"</code> and/or <code>"idpEntityID"</code>;
      *        The implementation of this method could choose to set some of
      *        the information contained in the map into the newly created

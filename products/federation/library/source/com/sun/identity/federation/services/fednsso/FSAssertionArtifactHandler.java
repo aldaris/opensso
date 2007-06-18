@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.3 2007-04-06 20:50:16 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.4 2007-06-18 21:39:34 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1435,9 +1435,8 @@ public class FSAssertionArtifactHandler {
                "com.sun.identity.cookieRewritingInPath", "false");
         if (Boolean.valueOf(cookieRewriteEnabled).booleanValue()
             && ssoToken == null) 
-        */
-        if (ssoToken == null)
-        {
+        if (Boolean.valueOf(cookieRewriteEnabled).booleanValue() 
+           && (ssoToken == null)) {
             try {
                 sessionManager = FSSessionManager.getInstance(hostEntityId);
                 ssoToken = sessionManager.getLocalSessionToken(
@@ -1455,12 +1454,10 @@ public class FSAssertionArtifactHandler {
                 }
                 this.relayState = sessionProvider.rewriteURL(
                     ssoToken, this.relayState);
-                /*
                 request.setAttribute(
                     SystemConfigurationUtil.getProperty(
                         "com.iplanet.am.cookie.name"),
                     sessionProvider.getSessionID(ssoToken));
-                */
             } catch (Exception ex) {
                 FSUtils.debug.error("FSAssertionArtifactHandler."
                     + "doAccountFederation: " 
@@ -1473,6 +1470,7 @@ public class FSAssertionArtifactHandler {
                     FEDERATION_FAILED_SSO_TOKEN_GENERATION;
             }
         }
+        */
 
         if (ssoToken == null && nameIDPolicy != null && 
                 nameIDPolicy.equals(IFSConstants.NAME_ID_POLICY_ONETIME)) 
@@ -1712,10 +1710,14 @@ public class FSAssertionArtifactHandler {
         try {
             Map valueMap = new HashMap();
             valueMap.put(SessionProvider.PRINCIPAL_NAME, ANONYMOUS_PRINCIPAL);
-            valueMap.put(
-                SessionProvider.REALM,
-                IDFFMetaUtils.getFirstAttributeValueFromConfig(
-                    hostConfig, IFSConstants.REALM_NAME));
+            String realm = IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                    hostConfig, IFSConstants.REALM_NAME);
+            if ((realm == null) || (realm.length() == 0)) {
+                realm = "/";
+            }
+            valueMap.put(SessionProvider.REALM, realm);
+            // default auth level to "0" for anonymous 
+            valueMap.put(SessionProvider.AUTH_LEVEL, "0");
             valueMap.put(SessionProvider.AUTH_INSTANT, getAuthInstant());
             valueMap.put("idpEntityID", idpEntityId);
 
@@ -1734,11 +1736,13 @@ public class FSAssertionArtifactHandler {
 
             return ssoSession;
         } catch (SessionException se) {
+            FSUtils.debug.error(
+                "FSAssertionArtifactHandler.genAnonymousToken failed.", se);
             throw se;
         } catch (Exception ae) {
-           FSUtils.debug.error(
+            FSUtils.debug.error(
                "FSAssertionArtifactHandler.generateAnonymousToken failed.", ae);
-           return null;
+            return null;
         }
 
     }
