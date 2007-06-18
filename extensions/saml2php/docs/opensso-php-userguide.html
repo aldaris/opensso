@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>User's Guide for OpenSSO PHP Extension</title><link rel="stylesheet" href="html.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.68.1" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id696275"></a>User's Guide for OpenSSO PHP Extension</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Andreas Åkre</span> <span class="surname">Solberg</span></h3></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id830906">Overview</a></span></dt><dt><span class="section"><a href="#sect.installation">Installation</a></span></dt><dt><span class="section"><a href="#sect.configuration">Configuration</a></span></dt><dt><span class="section"><a href="#sect.metadata">Meta Data</a></span></dt><dd><dl><dt><span class="section"><a href="#id831195">Setup SP meta data for Service Provider</a></span></dt><dt><span class="section"><a href="#id831292">Setp IdP meta data for Service Provider</a></span></dt><dt><span class="section"><a href="#id831366">Load SP meta data in your SAML 2.0 IdP</a></span></dt></dl></dd><dt><span class="section"><a href="#sect.plugins">Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#sect.namemapping">Name Mapping Plugins</a></span></dt><dt><span class="section"><a href="#sect.sessionmanagement">Session Management Plugins</a></span></dt></dl></dd><dt><span class="section"><a href="#id831632">Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#id831656">Andreas' Example</a></span></dt><dt><span class="section"><a href="#sect.pat">Pat's Example</a></span></dt></dl></dd></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id830906"></a>Overview</h2></div></div></div><p>To OpenSSO PHP Extension up running, you need to perform the
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>User's Guide for OpenSSO PHP Extension</title><link rel="stylesheet" href="html.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.68.1" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id696275"></a>User's Guide for OpenSSO PHP Extension</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Andreas Åkre</span> <span class="surname">Solberg</span></h3></div></div><div><div class="author"><h3 class="author"><span class="surname">Pat Patterson</span></h3></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id830912">Overview</a></span></dt><dt><span class="section"><a href="#sect.installation">Installation</a></span></dt><dt><span class="section"><a href="#sect.configuration">Configuration</a></span></dt><dt><span class="section"><a href="#sect.metadata">Meta Data</a></span></dt><dd><dl><dt><span class="section"><a href="#id831217">Setup SP meta data for Service Provider</a></span></dt><dt><span class="section"><a href="#id831314">Setp IdP meta data for Service Provider</a></span></dt><dt><span class="section"><a href="#id831429">Load SP meta data in your SAML 2.0 IdP</a></span></dt></dl></dd><dt><span class="section"><a href="#sect.plugins">Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#sect.namemapping">Name Mapping Plugins</a></span></dt><dt><span class="section"><a href="#sect.sessionmanagement">Session Management Plugins</a></span></dt></dl></dd><dt><span class="section"><a href="#id831692">Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#id831717">Andreas' Example</a></span></dt><dt><span class="section"><a href="#sect.pat">Pat's Example</a></span></dt></dl></dd></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id830912"></a>Overview</h2></div></div></div><p>To OpenSSO PHP Extension up running, you need to perform the
     following steps:</p><div class="orderedlist"><ol type="1"><li><p>Install the software, see <a href="#sect.installation" title="Installation">the section called “Installation”</a></p></li><li><p>Configure the software, see <a href="#sect.configuration" title="Configuration">the section called “Configuration”</a></p></li><li><p>Setup SP and IdP meta data for OpenSSO PHP Extension, see <a href="#sect.metadata" title="Meta Data">the section called “Meta Data”</a></p></li><li><p>Write and load SP meta data for the SAML 2.0 SP into your IdP,
         see <a href="#sect.metadata" title="Meta Data">the section called “Meta Data”</a></p></li></ol></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="sect.installation"></a>Installation</h2></div></div></div><p>To install OpenSSO PHP Extension is as simple as just dropping the
     <code class="filename">openssophp</code> folder on a webaccessible area on your
@@ -27,7 +27,9 @@
  		'password'			=&gt; 'abc123',
  		'host'				=&gt; 'localhost',
  		'database'			=&gt; 'openssodemo'
- 	)
+ 	),
+	
+	'defaultLandingPage'	=&gt; 'https://feide.erlang.no/example-andreas/test.php'
 );</pre><p>Here follows a description of each configuration entry:</p><div class="glosslist"><dl><dt>basedir</dt><dd><p>This is the path on the server where the OpenSSO PHP Extension
           is installed. You may safely rename the openssophp folder to
           something different if you also update the path here in the
@@ -41,9 +43,11 @@
           <code class="literal">namemapping/database</code> plugin, see <a href="#sect.namemapping-database" title="namemapping/database">the section called “namemapping/database”</a> for more information. If you
           are not using this plugin you can leave the default unchanged, or
           you can safely remote that section from the configuration
-          file.</p></dd></dl></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="sect.metadata"></a>Meta Data</h2></div></div></div><p>To setup trust and relation between a OpenSSO PHP Extension SAML 2.0
+          file.</p></dd><dt>defaultLandingPage</dt><dd><p>If a SAML authentication response is received with no
+          RelayState parameter, then the browser is redirected to this
+          page.</p></dd></dl></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="sect.metadata"></a>Meta Data</h2></div></div></div><p>To setup trust and relation between a OpenSSO PHP Extension SAML 2.0
     SP and a SAML 2.0 IdP, the following steps needs to be performed:</p><div class="orderedlist"><ol type="1"><li><p>Setup SP meta data for OpenSSO PHP Extension SAML 2.0 SP</p></li><li><p>Setup IdP meta data for OpenSSO PHP Extension SAML 2.0 SP</p></li><li><p>Create and load SP meta data for a SAML 2.0 IdP</p></li></ol></div><p>To configure OpenSSO PHP Extension to work with mulitple IdPs, step
-    2 and 3 should be repeated.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831195"></a>Setup SP meta data for Service Provider</h3></div></div></div><p>The meta data for SPs is located in
+    2 and 3 should be repeated.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831217"></a>Setup SP meta data for Service Provider</h3></div></div></div><p>The meta data for SPs is located in
       <code class="filename">openssophp/config/saml-metadata-SP.php</code>. This file
       contains a list of SP meta data, each identified by a meta alias. For
       most use cases configuring one SP should be sufficient. The meta alias
@@ -56,10 +60,10 @@
             field identical to the issuer.</p></dd></dl></div><p>Below is a sample meta data for one SP.</p><pre class="programlisting">    $spMetadata = array( "/sp" =&gt; 
       array( "assertionConsumerServiceURL"=&gt;"https://feide.erlang.no/openssophp/AssertionConsumerService.php",
              "issuer"=&gt;"feide.erlang.no",
-             "spNameQualifier" =&gt; "feide.erlang.no")); </pre></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831292"></a>Setp IdP meta data for Service Provider</h3></div></div></div><p>Next, we want to configure the SP to talk to a SAML 2.0 IdP. The
+             "spNameQualifier" =&gt; "feide.erlang.no")); </pre></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831314"></a>Setp IdP meta data for Service Provider</h3></div></div></div><p>Next, we want to configure the SP to talk to a SAML 2.0 IdP. The
       meta data is located in
       <code class="filename">openssophp/config/saml-metadata-IdP.php</code>. Below is a
-      sample of two IdPs.</p><pre class="programlisting">    $idpMetadata = array( 
+      sample of three IdPs.</p><pre class="programlisting">    $idpMetadata = array( 
     	"sam.feide.no" =&gt; 
 			array( "SingleSignOnUrl"=&gt;"https://sam.feide.no/amserver/SSORedirect/metaAlias/idp",
              "SingleLogOutUrl"=&gt;"https://sam.feide.no/amserver/IDPSloRedirect/metaAlias/idp",
@@ -69,12 +73,32 @@
 			array( "SingleSignOnUrl"=&gt;"https://mars.feide.no/amserver/SSORedirect/metaAlias/idp",
              "SingleLogOutUrl"=&gt;"https://mars.feide.no/amserver/IDPSloRedirect/metaAlias/idp",
              "certFingerprint"=&gt;"d8:ee:63:c8:c3:0a:9d:f2:4b:7f:c2:7b:43:4c:85:8c:62:c7:8c:69" )
-    );</pre><p>Each IdP is identified by the SAML 2.0 Entity ID, and has the
-      following properties associated with it:</p><div class="glosslist"><dl><dt>SingleSignOnUrl</dt><dd><p>The URL to where the authentication request HTTP-REDIRECT is
+   		"idp.simplesign.com" =&gt;
+			array( 
+			 "SingleSignOnBinding" =&gt; "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign",
+			 "certificate" =&gt; "-----BEGIN CERTIFICATE-----\n"
+								."MIIhjkHDEJKjbjkebjkEBKJEBKJebjkebkjEBJEBKJbejkebJKEBJKbejkbjkeBJ\n"
+								."FLEHOhohoehOEOBNFojenbjNBJOFEBNJOFEBOJbnjbJEJFBEFBJbjBJIFEBJIFBI\n"
+								."...\n"
+								."FHJKEFJEbjkebjkebRBBJKbjekbJKEBJKEBJKbfBJKEBJKEBJKbBEJKBJE==\n"
+								."-----END CERTIFICATE-----" )
+    );</pre><p>Each IdP is identified by the SAML 2.0 Entity ID, and has a subset
+      of the following properties associated with it:</p><div class="glosslist"><dl><dt>SingleSignOnUrl</dt><dd><p>The URL to where the authentication request HTTP-REDIRECT is
             sent.</p></dd><dt>SingleLogOutUrl</dt><dd><p>The URL to where the logout request HTTP-REDIRECT is
             sent.</p></dd><dt>certFingerprint</dt><dd><p>The value of the fingerprint of the certificate the IdP is
             using to sign the assertion. The fingerprint should be in
-            lowercase hex format, as seen in the example above.</p></dd></dl></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831366"></a>Load SP meta data in your SAML 2.0 IdP</h3></div></div></div><p>First create a SAML 2.0 meta data document matching your OpenSSO
+            lowercase hex format, as seen in the example above. This property
+            is currently only used with the
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" binding.</p></dd><dt>SingleSignOnBinding</dt><dd><p>The SAML 2.0 binding in use for single sign-on. If omitted,
+            defaults to "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST". Only
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" and
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" are
+            currently supported.</p></dd><dt>certificate</dt><dd><p>The value of the certificate the IdP is using to sign the
+            assertion. The fingerprint should be in Privacy-Enhanced Mail
+            (PEM) format, as seen in the example above. This property is
+            currently only used with the
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+            binding.</p></dd></dl></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831429"></a>Load SP meta data in your SAML 2.0 IdP</h3></div></div></div><p>First create a SAML 2.0 meta data document matching your OpenSSO
       PHP Extension SAML 2.0 SP. You may use the document below as a
       template:</p><pre class="programlisting">&lt;EntityDescriptor
     xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
@@ -95,7 +119,7 @@
 &lt;/EntityDescriptor&gt;
 </pre><p>Remember to replace the hostnames of the SAML endpoints to match
       the host where you run the SP. You also must set the entityID.</p><p>Consult the documentation of your SAML 2.0 IdP software for how to
-      load meta data for new service providers.</p><div class="example"><a id="id831397"></a><p class="title"><b>Example 1. Loading meta data in an OpenSSO IdP</b></p><p>To load meta data for a SP into an OpenSSO IdP, you can run a
+      load meta data for new service providers.</p><div class="example"><a id="id831458"></a><p class="title"><b>Example 1. Loading meta data in an OpenSSO IdP</b></p><p>To load meta data for a SP into an OpenSSO IdP, you can run a
         command similar to:</p><pre class="screen">saml2meta import -u uid=amAdmin,ou=People,dc=feide,dc=no -w PASSWORD -m /opt/SUNWam/saml2/meta/feide.erlang.no-spMeta.xml -t feidecot</pre><p>If you already have import that meta data and want to upload
         with changes, you first have to delete the entity, and then reload
         again with the command above. Here is a command to delete the
@@ -104,7 +128,7 @@
     you will choose exactly one name mapping plugin and one session management
     plugin to be active, see more in <a href="#sect.configuration" title="Configuration">the section called “Configuration”</a>.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="sect.namemapping"></a>Name Mapping Plugins</h3></div></div></div><p>The name mapping plugin is responsible for transforming a NameID
       to a local user ID. It has one function for setting the mapping, and one
-      for looking up a mapping.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id831461"></a>namemapping/transient</h4></div></div></div><p>The <code class="literal">namemapping/transient</code> plugin is extremely
+      for looking up a mapping.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id831522"></a>namemapping/transient</h4></div></div></div><p>The <code class="literal">namemapping/transient</code> plugin is extremely
         simple. It requires no database, and does not really transform the
         NameID to a local ID, but just returns a transient NameID as the local
         ID. This plugin shuold be used together with transient NameIDMapping,
@@ -149,13 +173,13 @@ Query OK, 1 row affected (0.01 sec)  </pre><p>To list all current namemappings:<
         works in real life.</p><pre class="screen">mysql&gt; delete from nameidmapping;
 Query OK, 2 rows affected (0.02 sec)  </pre></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="sect.sessionmanagement"></a>Session Management Plugins</h3></div></div></div><p>A session management plugin will create user sessions, usually by
       adding cookies to the user's browser, and allow the software to store
-      and retrieve session attributes.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id831614"></a>sessionmanagement/phpsession</h4></div></div></div><p>The <code class="literal">sessionmanagement/phpsession</code> plugin
-        reuses the built-in session management in PHP.</p></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id831632"></a>Examples</h2></div></div></div><p>Currently two examples are provided with the OpenSSO PHP Extentsion
+      and retrieve session attributes.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id831674"></a>sessionmanagement/phpsession</h4></div></div></div><p>The <code class="literal">sessionmanagement/phpsession</code> plugin
+        reuses the built-in session management in PHP.</p></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id831692"></a>Examples</h2></div></div></div><p>Currently two examples are provided with the OpenSSO PHP Extentsion
     package. You will find two folders, <code class="literal">example-andreas</code> and
     <code class="literal">example-pat</code>. These examples will help you verify your
     configuration, perform demonstrations, test your IdP, better understand
     OpenSSO PHP Extension and use as inspiration for how to integrate your
-    service with OpenSSO PHP Extension.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831656"></a>Andreas' Example</h3></div></div></div><p>This example is extremely simple to setup, and requires no
+    service with OpenSSO PHP Extension.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id831717"></a>Andreas' Example</h3></div></div></div><p>This example is extremely simple to setup, and requires no
       databases.</p><p>Start with editing the config file (see <a href="#sect.configuration" title="Configuration">the section called “Configuration”</a>) to use these two plugins:
       namemapping/transient and <code class="literal">sessionhandling/</code>phpsession.
       Next, configiure one SP and one IdP, as described in <a href="#sect.metadata" title="Meta Data">the section called “Meta Data”</a>.</p><p>The example consist of one file only:
