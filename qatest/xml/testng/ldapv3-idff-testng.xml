@@ -20,14 +20,14 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3-idff-testng.xml,v 1.3 2007-06-04 22:00:58 mrudulahg Exp $
+ $Id: ldapv3-idff-testng.xml,v 1.4 2007-06-19 22:53:23 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ldapv3-idff" verbose="1">
-    <test name="IDFFSmokeTest">
-    <parameter name="groupName" value="ldapv3"/>
+      <parameter name="groupName" value="ldapv3"/>
+     <test name="ConfigurationUnconfigurationIDFF">
         <groups>
             <run>
                 <include name="ldapv3"/>
@@ -35,8 +35,29 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idff.ConfigureIDFF"/>
-            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
             <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>
+        </classes>
+    </test>
+    <test name="IDFFTestWithArtifactProfile">
+        <parameter name="profile" value="Artifact"/>
+        <groups>
+            <run>
+                <include name="ldapv3"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test>
+    <test name="IDFFTestWithPostProfile">
+        <parameter name="profile" value="post"/>
+        <groups>
+            <run>
+                <include name="ldapv3"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
         </classes>
     </test>
 </suite>
