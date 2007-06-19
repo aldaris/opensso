@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.8 2007-06-13 22:52:33 sridharev Exp $
+ * $Id: TestCommon.java,v 1.9 2007-06-19 21:59:10 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -283,7 +283,7 @@ public class TestCommon implements TestConstants {
     /**
      * Login to admin console using htmlunit
      */
-    protected void consoleLogin(
+    protected HtmlPage consoleLogin(
             WebClient webclient,
             String amUrl,
             String amadmUser,
@@ -304,8 +304,9 @@ public class TestCommon implements TestConstants {
         HtmlHiddenInput txt2 =
                 (HtmlHiddenInput)form.getInputByName("IDToken2");
         txt2.setValueAttribute(amadmPassword);
-        form.submit();
+        page = (HtmlPage)form.submit();
         exiting("consoleLogin");
+        return (page);
     }
     
     /**
@@ -374,7 +375,7 @@ public class TestCommon implements TestConstants {
         
         WebClient webclient = new WebClient();
         String strURL = (String)map.get("serverurl") +
-                (String)map.get("serveruri");
+                (String)map.get("serveruri") + "/UI/Login";
         log(logLevel, "configureProduct", "strURL:" + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
@@ -723,5 +724,17 @@ public class TestCommon implements TestConstants {
         }
         return testbaseDir;   
     }
-    
+
+    /**
+     * Takes a token separated string and returns each individual
+     * token as part of a list.
+     */
+    public List getAttributeList(String strList, String token) {
+        StringTokenizer stk = new StringTokenizer(strList, token);
+        List<String> attList = new ArrayList<String>();
+        while (stk.hasMoreTokens()) {
+            attList.add(stk.nextToken());
+        }
+        return (attList);
+    }
 }
