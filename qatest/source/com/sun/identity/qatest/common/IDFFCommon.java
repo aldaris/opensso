@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.2 2007-06-04 22:23:16 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.3 2007-06-19 23:11:23 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,10 +27,12 @@ package com.sun.identity.qatest.common;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * This class contains helper methods for IDFF tests
@@ -344,4 +346,74 @@ public class IDFFCommon extends TestCommon {
         out.write(System.getProperty("line.separator"));
         out.close();
     }
+
+    /**
+     * This method creates xml sp init Name Registration
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     */
+    public void setSPSSOProfile(WebClient webClient, FederationManager fmSP, 
+            Map configMap, String strProfile)
+    throws Exception {
+        try {
+            HtmlPage spmetaPage = fmSP.exportEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    false, true, true, "idff");
+            String spmetadataext = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
+            if (strProfile.equals("post")) {
+                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
+                        "TEMP_STRING");
+                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_POST_VALUE,
+                        TestConstants.SSO_BROWSER_ARTIFACT_VALUE);
+                spmetadataext = spmetadataext.replaceAll("TEMP_STRING",
+                        TestConstants.SSO_BROWSER_POST_VALUE);
+            } else {
+                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_POST_VALUE,
+                        "TEMP_STRING");
+                spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
+                        TestConstants.SSO_BROWSER_POST_VALUE);
+                spmetadataext = spmetadataext.replaceAll("TEMP_STRING",
+                        TestConstants.SSO_BROWSER_ARTIFACT_VALUE);
+            }
+            log(logLevel, "setup", "Since SP init SSO Profile is taken " +
+                    "from SP ext metadata, delete SP Ext & export " +
+                    "modified metadata at SP side."); 
+            HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), true, 
+                    "idff");
+            if (spDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("deleted for entity, " +
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(logLevel, "setup", "Deleted SP entity on SP side" + 
+                        spDeleteEntityPage.getWebResponse().getContentAsString());
+            } else {
+                log(logLevel, "setup", "Couldnt delete SP entity on SP " +
+                        "side" + 
+                        spDeleteEntityPage.getWebResponse().getContentAsString());
+                assert false;
+            }  
+
+            Thread.sleep(9000);
+            HtmlPage importSPMeta = fmSP.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), null,
+                    spmetadataext, null, "idff");
+            if (!importSPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.SEVERE, "setup", "Couldn't import SP " +
+                        "metadata on SP side" + importSPMeta.getWebResponse().
+                        getContentAsString(), null);
+            } else {
+                 log(logLevel, "setup", "Successfully imported modified " +
+                         "SP entity on SP side", null);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setProfile", e.getMessage(), null);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+ 
 }

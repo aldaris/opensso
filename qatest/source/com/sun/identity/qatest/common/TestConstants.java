@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.4 2007-06-04 22:23:25 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.5 2007-06-19 23:11:12 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -474,4 +474,16 @@ public interface TestConstants {
      */
     String KEY_NAME_REG_RESULT = "nameregresult";  
     
+    /** 
+     * IDFF Property key for <code>Artifact Profile</code>
+     */
+    String SSO_BROWSER_ARTIFACT_VALUE =
+        "<Value>http://projectliberty.org/profiles/brws-art</Value>";
+    
+    /** 
+     * IDFF Property key for <code>Post Profile</code>
+     */
+    String SSO_BROWSER_POST_VALUE =
+        "<Value>http://projectliberty.org/profiles/brws-post</Value>";
+
 } 
