@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.1 2007-06-04 22:22:55 mrudulahg Exp $
+ * $Id: IDFFSmokeTest.java,v 1.2 2007-06-19 22:54:19 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDFFCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
@@ -41,6 +42,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -68,7 +70,11 @@ public class IDFFSmokeTest extends IDFFCommon {
     private String xmlfile;
     private String spurl;
     private String idpurl;
-    
+    private String spmetadata;
+    private String spmetadataext;
+    private String idpmetadata;
+    private String idpmetadataext;
+
     /** Creates a new instance of IDFFSmokeTest */
     public IDFFSmokeTest() {
         super("IDFFSmokeTest");
@@ -91,9 +97,12 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * This is setup method. It creates required users for test
      */
+    @Parameters({"profile"})
     @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void setup()
+    public void setup(String strProfile)
     throws Exception {
+        Object[] params = {strProfile};
+        entering("setup", params);
         List<String> list;
         try {
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
@@ -156,6 +165,12 @@ public class IDFFSmokeTest extends IDFFCommon {
                     configMap.get(TestConstants.KEY_IDP_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list);
             log(logLevel, "setup", "IDP user created is " + list);
+            
+            //if profile is set to post, change the metadata & run the tests. 
+            log(logLevel, "setup", "Profile is set to " + strProfile);
+            if (strProfile.equals("post")) {
+                setSPSSOProfile(webClient, fmSP, configMap, "post");
+           }
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage(), null);
             e.printStackTrace();
@@ -184,7 +199,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitfederation.xml";
-            IDFFCommon.getxmlSPIDFFFederate(xmlfile, configMap);
+            getxmlSPIDFFFederate(xmlfile, configMap);
             log(logLevel, "testSPInitFederation", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -207,7 +222,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             log(logLevel, "testSPInitSLO", "Running: testSPInitSLO");
             xmlfile = baseDir + "testspinitslo.xml";
-            IDFFCommon.getxmlSPIDFFLogout(xmlfile, configMap);
+            getxmlSPIDFFLogout(xmlfile, configMap);
             log(logLevel, "testSPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -235,7 +250,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitsso.xml";
-            IDFFCommon.getxmlSPIDFFSSO(xmlfile, configMap);
+            getxmlSPIDFFSSO(xmlfile, configMap);
             log(logLevel, "testSPInitSSO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -258,7 +273,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         try {
             log(logLevel, "testSPInitNameReg", "Running: testSPInitNameReg");
             xmlfile = baseDir + "testspinitnamereg.xml";
-            IDFFCommon.getxmlSPIDFFNameReg(xmlfile, configMap);
+            getxmlSPIDFFNameReg(xmlfile, configMap);
             log(logLevel, "testSPInitNameReg", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -282,7 +297,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(logLevel, "testSPInitTerminate", 
                     "Running: testSPInitTerminate");
             xmlfile = baseDir + "testspinitterminate.xml";
-            IDFFCommon.getxmlSPIDFFTerminate(xmlfile, configMap);
+            getxmlSPIDFFTerminate(xmlfile, configMap);
             log(logLevel, "testSPInitTerminate", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -309,12 +324,12 @@ public class IDFFSmokeTest extends IDFFCommon {
             consoleLogin(webClient, spurl, 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
-            IDFFCommon.getxmlSPIDFFFederate(xmlfile, configMap);
+            getxmlSPIDFFFederate(xmlfile, configMap);
             log(logLevel, "testIDPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
             xmlfile = baseDir + "testidpinitslo.xml";
-            IDFFCommon.getxmlIDPIDFFLogout(xmlfile, configMap);
+            getxmlIDPIDFFLogout(xmlfile, configMap);
             log(logLevel, "testIDPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -340,7 +355,7 @@ public class IDFFSmokeTest extends IDFFCommon {
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testidpinitnamereg.xml";
-            IDFFCommon.getxmlIDPIDFFNameReg(xmlfile, configMap);
+            getxmlIDPIDFFNameReg(xmlfile, configMap);
             log(logLevel, "testIDPInitNameReg", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -364,7 +379,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             log(logLevel, "testIDPInitTerminate", "Running: " +
                     "testIDPInitTerminate");
             xmlfile = baseDir + "testspinitterminate.xml";
-            IDFFCommon.getxmlIDPIDFFTerminate(xmlfile, configMap);
+            getxmlIDPIDFFTerminate(xmlfile, configMap);
             log(logLevel, "testIDPInitTerminate", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -379,10 +394,12 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
+    @Parameters({"profile"})
     @AfterClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void cleanup()
+    public void cleanup(String strProfile)
     throws Exception {
-        entering("cleanup", null);
+        Object[] params = {strProfile};
+        entering("cleanup", params);
         String spurl;
         String idpurl;
         ArrayList idList;
@@ -429,6 +446,12 @@ public class IDFFSmokeTest extends IDFFCommon {
             fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
                     "User");
+            
+            //Change the profile in ext metadata to artifact & run the tests. 
+            log(logLevel, "setup", "Profile is set to " + strProfile);
+            if (strProfile.equals("post")) {
+                setSPSSOProfile(webClient, fmSP, configMap, "artifact");
+           }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage(), null);
             e.printStackTrace();

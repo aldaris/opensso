@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.1 2007-05-30 19:07:04 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.2 2007-06-19 22:54:19 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterSuite;
 
 /**
  * This class removes the configuration on SP & IDP 
@@ -68,7 +68,7 @@ public class UnconfigureIDFF extends TestCommon {
      * Configure sp & idp
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterTest (groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterSuite (groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void UnconfigureIDFF()
     throws Exception {
         entering("UnconfigureIDFF", null);

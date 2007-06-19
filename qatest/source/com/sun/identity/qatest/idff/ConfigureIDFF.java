@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.1 2007-05-29 18:32:37 mrudulahg Exp $
+ * $Id: ConfigureIDFF.java,v 1.2 2007-06-19 22:54:18 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 
 /**
@@ -51,7 +51,6 @@ public class ConfigureIDFF extends TestCommon {
     private Map<String, String> configMap;
     private Map<String, String> spConfigMap;
     private Map<String, String> idpConfigMap;
-    public String groupName="";
     
     /** Creates a new instance of ConfigureIDFF */
     public ConfigureIDFF() {
@@ -78,7 +77,7 @@ public class ConfigureIDFF extends TestCommon {
      * @DocTest: IDFF|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeTest(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeSuite(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void ConfigureIDFF(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
