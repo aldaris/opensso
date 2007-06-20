@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.9 2007-06-19 21:59:10 rmisra Exp $
+ * $Id: TestCommon.java,v 1.10 2007-06-20 18:54:00 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -582,9 +582,10 @@ public class TestCommon implements TestConstants {
         StringBuffer buff = new StringBuffer();
         for (Iterator i = properties.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry entry = (Map.Entry)i.next();
+            String valueString = entry.getValue().toString();
             buff.append(entry.getKey())
             .append("=")
-            .append(entry.getValue())
+            .append(valueString.substring(1, valueString.length() - 1))
             .append("\n");
         }
         

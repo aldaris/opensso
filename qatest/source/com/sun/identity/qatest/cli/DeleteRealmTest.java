@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.3 2007-06-15 20:51:29 cmwesley Exp $
+ * $Id: DeleteRealmTest.java,v 1.4 2007-06-20 18:56:58 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,11 +194,6 @@ public class DeleteRealmTest extends TestCommon {
             cli.logCommand("testRealmDeletion");
             cli.resetArgList();
 
-            String delimiter = "*" + System.getProperty("line.separator");
-            if (realmToDelete.indexOf("*") != -1) {
-                delimiter = System.getProperty("line.separator");
-            }
-            
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(logLevel, "testRealmDeletion", "Output Messages Found: " + 

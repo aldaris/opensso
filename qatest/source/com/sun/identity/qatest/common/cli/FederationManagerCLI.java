@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.2 2007-06-15 20:53:09 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.3 2007-06-20 18:54:58 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -403,7 +403,7 @@ public class FederationManagerCLI extends CLIUtility
         return listRealms(startRealm, null, false);
     }
     
-/**
+    /**
      * Create an identity in a realm
      * @param realm - the realm in which to create the identity
      * @param name - the name of the identity to be created
@@ -533,20 +533,13 @@ public class FederationManagerCLI extends CLIUtility
      * @param filter - the filter to apply in the search for identities
      * @param idtype - the type of identities (e.g. "User", "Group", "Role") for
      * which the search sould be performed
-     * @param useRecursiveOption - a boolean flag indicating whether a recursive
-     * search should be performed (i.e. should child realms of the realm from 
-     * which the search started should be searched as well)
      */
-    public int listIdentities(String realm, String filter, String type, 
-            boolean useRecursiveOption)
+    public int listIdentities(String realm, String filter, String type)
     throws Exception {
         setSubcommand(LIST_IDENTITIES_SUBCOMMAND);
         addRealmArguments(realm);
         addFilterArguments(filter);
         addIdtypeArguments(type);
-        if (useRecursiveOption) {
-            addRecursiveArgument();
-        }
         return (executeCommand(commandTimeout));
     }
     
@@ -785,22 +778,25 @@ public class FederationManagerCLI extends CLIUtility
     }  
     
     /**
-     * Check to see if a realm exists using the "fmadm list-realms" command
-     * @param realmsToFind - the realm or realms to find in the output of 
-     * "fmadm list-realms".  Multiple realms should be separated by semi-colons
-     * (';').
-     * @return a boolean value of true if the realm(s) is(are) found and false 
-     * if one or more realms is not found.
+     * Check to see if a realm exists using the "fmadm list-identities" command
+     * @param startRealm - the realm in which to find identities
+     * @param filter - the filter that will be applied in the search
+     * @param type - the type of identities (User, Group, Role) for which the 
+     * search will be performed
+     * @param idsToFind - the identity or identities to find in the output of 
+     * "fmadm list-identities".  Multiple identities should be separated by 
+     * a space (' ').
+     * @return a boolean value of true if the identity(ies) is(are) found and 
+     * false if one or more identities is not found.
      */
     public boolean findIdentities(String startRealm, String filter, String type,
-            boolean recursiveSearch, String idsToFind)
+            String idsToFind)
     throws Exception {
         boolean idsFound = true;
         
         if ((idsToFind != null) && (idsToFind.length() > 0)) {
-            if (listIdentities(startRealm, filter, type, recursiveSearch) == 0) {                    
-                StringTokenizer tokenizer = new StringTokenizer(idsToFind, 
-                        ";");
+            if (listIdentities(startRealm, filter, type) == 0) {                    
+                StringTokenizer tokenizer = new StringTokenizer(idsToFind, " ");
                 while (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
                     String rootDN = "";

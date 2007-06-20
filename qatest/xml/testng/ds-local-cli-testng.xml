@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds-local-cli-testng.xml,v 1.2 2007-06-15 20:58:51 cmwesley Exp $
+ $Id: ds-local-cli-testng.xml,v 1.3 2007-06-20 18:50:51 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -421,5 +421,346 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
-    </test>          
+    </test>
+    <test name="CreateIdentity01">
+        <parameter name="testName" value="createidentity-test1"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity02">
+        <parameter name="testName" value="createidentity-test2"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity03">
+        <parameter name="testName" value="createidentity-test3"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity04">
+        <parameter name="testName" value="createidentity-test4"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity05">
+        <parameter name="testName" value="createidentity-test5"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity32">
+        <parameter name="testName" value="createidentity-test32"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity07">
+        <parameter name="testName" value="createidentity-test7"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity08">
+        <parameter name="testName" value="createidentity-test8"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity09">
+        <parameter name="testName" value="createidentity-test9"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity10">
+        <parameter name="testName" value="createidentity-test10"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity11">
+        <parameter name="testName" value="createidentity-test11"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity33">
+        <parameter name="testName" value="createidentity-test33"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity13">
+        <parameter name="testName" value="createidentity-test13"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity14">
+        <parameter name="testName" value="createidentity-test14"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity15">
+        <parameter name="testName" value="createidentity-test15"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity16">
+        <parameter name="testName" value="createidentity-test16"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity17">
+        <parameter name="testName" value="createidentity-test17"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity34">
+        <parameter name="testName" value="createidentity-test34"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity19">
+        <parameter name="testName" value="createidentity-test19"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity20">
+        <parameter name="testName" value="createidentity-test20"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity21">
+        <parameter name="testName" value="createidentity-test21"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity22">
+        <parameter name="testName" value="createidentity-test22"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity23">
+        <parameter name="testName" value="createidentity-test23"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity24">
+        <parameter name="testName" value="createidentity-test24"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity25">
+        <parameter name="testName" value="createidentity-test25"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity26">
+        <parameter name="testName" value="createidentity-test26"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity27">
+        <parameter name="testName" value="createidentity-test27"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity28">
+        <parameter name="testName" value="createidentity-test28"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity29">
+        <parameter name="testName" value="createidentity-test29"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity30">
+        <parameter name="testName" value="createidentity-test30"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CreateIdentity31">
+        <parameter name="testName" value="createidentity-test31"/>
+        <groups>
+            <run>
+                <include name="ds-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>        
 </suite>
