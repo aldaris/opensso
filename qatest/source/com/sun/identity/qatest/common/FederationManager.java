@@ -2358,14 +2358,13 @@ public class FederationManager {
      * @param realm Name of realm.
      * @param filter Filter (Pattern).
      * @param idtype Type of Identity such as User, Role and Group.
-     * @param recursive Do recursive search.
      */
     public HtmlPage listIdentities(
         WebClient webClient,
         String realm,
         String filter,
-        String idtype,
-        boolean recursive
+        String idtype
+       
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "list-identities");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -2385,10 +2384,6 @@ public class FederationManager {
             HtmlTextInput txtidtype = (HtmlTextInput)form.getInputByName("idtype");
             txtidtype.setValueAttribute(idtype);
         }
-
-        HtmlCheckBoxInput cbrecursive = (HtmlCheckBoxInput)form.getInputByName("recursive");
-        cbrecursive.setChecked(recursive);
-
 
         return (HtmlPage)form.submit();
     }

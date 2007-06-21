@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.2 2007-05-22 23:54:22 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.3 2007-06-21 22:53:41 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,9 +111,8 @@ public class PolicyCommon extends TestCommon {
                 }
                 
                 //now verify the user and add the user if not present
-                boolean recursive = false;
                 userCheckPage = am.listIdentities(webClient, rlmName, uName,
-                        type, recursive);
+                        type);
                 String xmlString = userCheckPage.asXml();
                 if (xmlString.contains(uName)) {
                     log(logLevel, "createIds", "User already exists:"
@@ -125,7 +124,7 @@ public class PolicyCommon extends TestCommon {
                             uName, type, attrList);
                     userCheckPage.cleanUp();
                     userCheckPage = am.listIdentities(webClient, rlmName, uName,
-                            type, recursive);
+                            type);
                     xmlString = userCheckPage.asXml();
                     if (xmlString.contains(uName)) {
                         log(logLevel, "createIds", "User " +
@@ -146,7 +145,7 @@ public class PolicyCommon extends TestCommon {
                     String grpName = (String)identityMap.get("test" + i +
                             ".Identity" + "." + "memberOfGroup");
                     HtmlPage groupCheckPage = am.listIdentities(webClient,
-                            rlmName, grpName, "Group", recursive);
+                            rlmName, grpName, "Group");
                     if (groupCheckPage.asXml().contains(grpName)) {
                         log(logLevel, "createIds", "group exists:"
                                 + "add the member" + grpName);
@@ -159,7 +158,7 @@ public class PolicyCommon extends TestCommon {
                         groupCheckPage = am.createIdentity(webClient, rlmName,
                                 grpName, "Group", grpAttrList);
                         groupCheckPage = am.listIdentities(webClient,
-                                rlmName, grpName, "Group", recursive);
+                                rlmName, grpName, "Group");
                         if (groupCheckPage.asXml().contains(grpName)) {
                             log(logLevel, "createIds", "group is " +
                                     "created successfully." +
@@ -181,7 +180,7 @@ public class PolicyCommon extends TestCommon {
                     String roleName = (String)identityMap.get("test" + i +
                             ".Identity." + "memberOfRole");
                     HtmlPage roleCheckPage = am.listIdentities(webClient,
-                            rlmName, roleName, "Role", recursive);
+                            rlmName, roleName, "Role");
                     if (roleCheckPage.asXml().contains(roleName)) {
                         log(logLevel, "createIds", "Role already exists"
                                 + roleName);
@@ -196,7 +195,7 @@ public class PolicyCommon extends TestCommon {
                         roleCheckPage = am.createIdentity(webClient, rlmName,
                                 roleName, "Role", roleAttrList);
                         roleCheckPage = am.listIdentities(webClient,
-                                rlmName, roleName, "Role", recursive);
+                                rlmName, roleName, "Role");
                         if (roleCheckPage.asXml().contains(roleName)) {
                             log(logLevel, "createIds",
                                     "Role Created successfully." +
@@ -237,7 +236,6 @@ public class PolicyCommon extends TestCommon {
             consoleLogin(webClient, url, adminUser, adminPassword);
             HtmlPage htmlpage;
             List idList = new ArrayList();
-            boolean recursive = false;
             
            /*
             * Loop thru the map and delete the users and their associated
@@ -258,7 +256,7 @@ public class PolicyCommon extends TestCommon {
                 // now verify the user and delete the user if already present
                 am.deleteIdentities(webClient, rlmName, idList, type);
                 htmlpage = am.listIdentities(webClient,
-                        rlmName, uName, "USER", recursive);
+                        rlmName, uName, "USER");
                 String xmlString = htmlpage.asXml();
                 if (xmlString.contains(uName)) {
                     log(logLevel, "deleteIds", "User is not deleted:" +
@@ -276,7 +274,7 @@ public class PolicyCommon extends TestCommon {
                     String grpName = (String)identityMap.get("test" + i +
                             ".Identity" + "." + "memberOfGroup");
                     HtmlPage groupCheckPage = am.listIdentities(webClient,
-                            rlmName, grpName, "Group", recursive);
+                            rlmName, grpName, "Group");
                     log(logLevel,"deleteIds" , groupCheckPage.asXml());
                     if (groupCheckPage.asXml().contains(grpName)) {
                         log(logLevel, "deleteIds", "Group Needs to " +
@@ -284,7 +282,7 @@ public class PolicyCommon extends TestCommon {
                         idList.add(grpName);
                         am.deleteIdentities(webClient,rlmName,idList,"Group");
                         groupCheckPage = am.listIdentities(webClient,
-                                rlmName, grpName,"Group", recursive);
+                                rlmName, grpName,"Group");
                         if (groupCheckPage.asXml().contains(grpName)) {
                             log(logLevel, "deleteIds", "Group delete:"
                                     + "is not success" + grpName);
@@ -301,14 +299,14 @@ public class PolicyCommon extends TestCommon {
                     String roleName = (String)identityMap.get("test" + i +
                             ".Identity" + "." + "memberOfRole");
                     HtmlPage roleCheckPage = am.listIdentities(webClient,
-                            rlmName, roleName, "Role", recursive);
+                            rlmName, roleName, "Role");
                     if (roleCheckPage.asXml().contains(roleName)) {
                         log(logLevel, "deleteIds", "Role need to be" +
                                 " deleted:" + roleName);
                         idList.add(roleName);
                         am.deleteIdentities(webClient, rlmName, idList, "Role");
                         roleCheckPage = am.listIdentities(webClient,
-                                rlmName, roleName, "Role", recursive);
+                                rlmName, roleName, "Role");
                         if (roleCheckPage.asXml().contains(roleName)) {
                             log(logLevel, "deleteIds", "Role is "+
                                     "not deleted:" + roleName);
