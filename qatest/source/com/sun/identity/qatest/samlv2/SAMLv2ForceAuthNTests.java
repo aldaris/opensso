@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.1 2007-06-21 17:31:47 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.2 2007-06-21 20:05:56 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             baseDir = getTestBase();
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap = getMapFromResourceBundle("samlv2TestData");
+            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
             log(logLevel, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users
