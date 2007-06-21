@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COTUtils.java,v 1.2 2007-05-17 19:31:56 qcheng Exp $
+ * $Id: COTUtils.java,v 1.3 2007-06-21 23:01:38 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,8 @@ public class COTUtils {
         boolean isValid = ((protocolType != null) 
             && (protocolType.trim().length() > 0)
             && (protocolType.equalsIgnoreCase(COTConstants.IDFF)
-            || (protocolType.equalsIgnoreCase(COTConstants.SAML2))));
+            || protocolType.equalsIgnoreCase(COTConstants.SAML2)
+            || protocolType.equalsIgnoreCase(COTConstants.WS_FED)));
         if (!isValid) {
             String[] data = { protocolType };
             LogUtil.error(Level.INFO,LogUtil.INVALID_COT_TYPE,data);
@@ -228,7 +229,7 @@ public class COTUtils {
     /**
      * Returns set of protocol the entity supports.
      * @param entityId The ID of the entity to be checked.
-     * @param the realm the entity resides.
+     * @param realm the realm in which the entity resides.
      * @return Set of protocol the entity supports, values could be 
      *     <code>COTConstants.SAML2</code>, 
      *     <code>COTConstants.IDFF</code> or 

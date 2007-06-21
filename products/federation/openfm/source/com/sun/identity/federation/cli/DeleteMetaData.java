@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.3 2007-05-04 19:18:32 veiming Exp $
+ * $Id: DeleteMetaData.java,v 1.4 2007-06-21 23:01:37 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,9 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.text.MessageFormat;
 
 /**
@@ -68,6 +71,8 @@ public class DeleteMetaData extends AuthenticatedCommand {
             handleSAML2Request(rc);
         } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
+        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+            handleWSFedRequest(rc);
         } else {
             throw new CLIException(
                 getResourceString("unsupported-specification"),
@@ -139,4 +144,36 @@ public class DeleteMetaData extends AuthenticatedCommand {
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
+    
+    private void handleWSFedRequest(RequestContext rc)
+        throws CLIException {
+        try {
+            if (WSFederationMetaManager.getEntityDescriptor(realm, entityID) == 
+                null) {
+                Object[] param = {entityID};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString("delete-entity-entity-not-exist"), param),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+           
+            if (extendedOnly) {
+                WSFederationMetaManager.deleteEntityConfig(realm, entityID);
+                Object[] objs = {entityID};
+                
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("delete-entity-config-deleted"),
+                    objs));
+            } else {
+                WSFederationMetaManager.deleteFederation(realm, entityID);
+                Object[] objs = {entityID};
+                
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("delete-entity-descriptor-deleted"),
+                    objs));
+            }
+        } catch (WSFederationMetaException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }    
 }

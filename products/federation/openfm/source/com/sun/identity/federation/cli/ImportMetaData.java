@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.4 2007-04-07 00:33:15 veiming Exp $
+ * $Id: ImportMetaData.java,v 1.5 2007-06-21 23:01:38 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,9 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -99,6 +102,8 @@ public class ImportMetaData extends AuthenticatedCommand {
             handleSAML2Request(rc);
         } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
+        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+            handleWSFedRequest(rc);
         } else {
             throw new CLIException(
                 getResourceString("unsupported-specification"),
@@ -216,6 +221,61 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
 
+    private void handleWSFedRequest(RequestContext rc)
+        throws CLIException {
+        try {
+            String federationID = null;
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
+                configElt = null;
+            
+            if (extendedData != null) {
+                configElt = getWSFedEntityConfigElement();
+                /*
+                 * see note at the end of this class for how we decide
+                 * the realm value
+                 */
+                if (configElt != null && configElt.isHosted()) {
+                    List config = configElt.
+                       getIDPSSOConfigOrSPSSOConfig();
+                    if (!config.isEmpty()) {
+                        com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType 
+                            bConfig = 
+                            (com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType)
+                            config.iterator().next();
+                        realm = WSFederationMetaUtils.getRealmByMetaAlias(
+                            bConfig.getMetaAlias());
+                    }
+                }
+            }
+            
+            if (metadata != null) {
+                federationID = importWSFedMetaData();
+            }
+            
+            if (configElt != null) {
+                WSFederationMetaManager.createEntityConfig(realm, configElt);
+                
+                String out = (webAccess) ? "web" : extendedData;
+                Object[] objs = { out };
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("import-entity-succeeded"), objs));
+            }
+
+            if ((cot != null) && (cot.length() > 0) &&
+                (federationID != null)) {
+                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                cotManager.addCircleOfTrustMember(realm, cot, spec, 
+                    federationID);
+            }
+        } catch (COTException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (WSFederationMetaException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+    
     private String importMetaData(SAML2MetaManager metaManager)
         throws SAML2MetaException, CLIException
     {
@@ -334,6 +394,74 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
    
+    private String importWSFedMetaData()
+        throws WSFederationMetaException, CLIException
+    {
+        InputStream is = null;
+        String out = (webAccess) ? "web" : metadata;
+        Object[] objs = { out };
+        String federationID = null;
+        
+        try {
+            Object obj;
+            Document doc;
+            if (webAccess) {
+                obj = WSFederationMetaUtils.convertStringToJAXB(metadata);
+                doc = XMLUtils.toDOMDocument(metadata, debug);
+            } else {
+                is = new FileInputStream(metadata);
+                doc = XMLUtils.toDOMDocument(is, debug);
+                obj = WSFederationMetaUtils.convertNodeToJAXB(doc);
+            }
+
+            if (obj instanceof com.sun.identity.wsfederation.jaxb.wsfederation.FederationMetadataElement) {
+                // Just get the first element for now...
+                // TODO - loop through Federation elements?
+                obj = ((com.sun.identity.wsfederation.jaxb.wsfederation.FederationMetadataElement)obj).getAny().get(0);
+            }
+
+            if (obj instanceof com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement) {
+                com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement 
+                federation =
+                (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)obj;
+                federationID = federation.getFederationID();
+                if ( federationID == null )
+                {
+                    federationID = WSFederationMetaManager.DEFAULT_FEDERATION_ID;
+                }
+                // WSFederationMetaSecurityUtils.verifySignature(doc);
+                WSFederationMetaManager.createFederation(realm, federation);
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("import-entity-succeeded"), objs));
+            }
+            return federationID;
+        } catch (FileNotFoundException e) {
+            throw new CLIException(MessageFormat.format(
+                getResourceString("file-not-found"), objs),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            debug.message("ImportMetaData.importMetaData", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                    "import-entity-exception-invalid-descriptor-file"),
+                objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IllegalArgumentException e) {
+            debug.message("ImportMetaData.importMetaData", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                    "import-entity-exception-invalid-descriptor-file"),
+                objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (is !=null ) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    //do not if the file cannot be closed.
+                }
+            }
+        }
+    }
+    
     private EntityConfigElement geEntityConfigElement()
         throws SAML2MetaException, CLIException {
         String out = (webAccess) ? "web" : extendedData;
@@ -413,6 +541,53 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+    
+    private com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
+        getWSFedEntityConfigElement()
+        throws WSFederationMetaException, CLIException {
+        String out = (webAccess) ? "web" : extendedData;
+        Object[] objs = { out };
+        InputStream is = null;
+
+        try {
+            Object obj = null;
+            if (webAccess) {
+                obj = WSFederationMetaUtils.convertStringToJAXB(extendedData);
+            } else {
+                is = new FileInputStream(extendedData);
+                obj = WSFederationMetaUtils.convertInputStreamToJAXB(is);
+            }
+
+            return (obj instanceof 
+                com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement) ?
+                (com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement)obj : 
+                null;
+        } catch (FileNotFoundException e) {
+            throw new CLIException(MessageFormat.format(
+                getResourceString("file-not-found"), objs),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            debug.message("ImportMetaData.importExtendedData", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                    "import-entity-exception-invalid-config-file"), objs),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IllegalArgumentException e) {
+            debug.message("ImportMetaData.importExtendedData", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                    "import-entity-exception-invalid-config-file"), objs),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (is !=null ) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    //do not if the file cannot be closed.
+                }
+            }
         }
     }
 

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.13 2007-06-07 22:49:49 veiming Exp $
+   $Id: build-war.xml,v 1.14 2007-06-21 23:01:34 superpat7 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -102,6 +102,11 @@
 
         <copy todir="${war.package.dir}/saml2/jsp">
             <fileset dir="${library.dir}/www/config/saml2"
+                includes="*.jsp" />
+        </copy>
+
+        <copy todir="${war.package.dir}/wsfederation/jsp">
+            <fileset dir="${library.dir}/www/config/wsfederation"
                 includes="*.jsp" />
         </copy>
 

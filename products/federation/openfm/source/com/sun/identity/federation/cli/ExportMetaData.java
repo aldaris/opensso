@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.3 2007-02-16 02:02:51 veiming Exp $
+ * $Id: ExportMetaData.java,v 1.4 2007-06-21 23:01:37 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,11 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaSecurityUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -97,6 +102,8 @@ public class ExportMetaData extends AuthenticatedCommand {
             handleSAML2Request(rc);
         } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
+        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+            handleWSFedRequest(rc);
         } else {
             throw new CLIException(
                 getResourceString("unsupported-specification"),
@@ -134,6 +141,21 @@ public class ExportMetaData extends AuthenticatedCommand {
         }
     }
 
+    private void handleWSFedRequest(RequestContext rc)
+        throws CLIException {        
+        if (metadata != null) {
+            if (sign) {
+                runWSFedExportMetaSign();
+            } else {
+                runWSFedExportMeta();
+            }
+        }
+        
+        if (extendedData != null) {
+            runWSFedExportExtended();
+        }
+    }
+    
     private void runExportMetaSign()
         throws CLIException
     {
@@ -262,6 +284,70 @@ public class ExportMetaData extends AuthenticatedCommand {
         }
     }
 
+    private void runWSFedExportMetaSign()
+        throws CLIException
+    {
+        PrintWriter pw = null;
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
+
+        try {
+            FederationElement descriptor =
+                WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+            
+            if (descriptor == null) {
+                Object[] objs2 = {entityID, realm};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString(
+                        "export-entity-exception-entity-descriptor-not-exist"),
+                    objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            
+            com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement 
+                spConfig = WSFederationMetaManager.getSPSSOConfig(realm, 
+                entityID);
+            com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement 
+                idpConfig = WSFederationMetaManager.getIDPSSOConfig(realm, 
+                entityID);
+            Document doc = WSFederationMetaSecurityUtils.sign(
+                descriptor, spConfig, idpConfig);
+            if (doc == null) {
+                runWSFedExportMeta();
+                return;
+            } else {
+                String xmlstr = XMLUtils.print(doc);
+
+                if (isWebBase) {
+                    getOutputWriter().printlnMessage(xmlstr);
+                } else {
+                    pw = new PrintWriter(new FileWriter(metadata));
+                    pw.print(xmlstr);
+                }
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString(
+                        "export-entity-export-descriptor-succeeded"), objs));
+            }
+        } catch (WSFederationMetaException e) {
+            debug.error("ExportMetaData.runExportMetaSign", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException jaxbe) {
+            Object[] objs3 = {entityID, realm};
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                    "export-entity-exception-invalid_descriptor"), objs3),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IOException e) {
+            debug.error("ExportMetaData.runExportMetaSign", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (pw !=null ) {
+                pw.close();
+            }
+        }
+    }
+    
     private void runExportMeta() 
         throws CLIException
     {
@@ -378,6 +464,65 @@ public class ExportMetaData extends AuthenticatedCommand {
         }
     }
 
+    private void runWSFedExportMeta() 
+        throws CLIException
+    {
+        PrintWriter pw = null;
+        String out = (isWebBase) ? "web" : metadata;
+        Object[] objs = {out};
+        Object[] objs2 = {entityID, realm};
+        
+        try {
+            FederationElement federation =
+                WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+            if (federation == null) {
+                throw new CLIException(MessageFormat.format(getResourceString(
+                    "export-entity-exception-entity-descriptor-not-exist"),
+                    objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            
+            String xmlstr = 
+                WSFederationMetaUtils.convertJAXBToString(federation);
+            xmlstr = 
+                WSFederationMetaSecurityUtils.formatBase64BinaryElement(xmlstr);
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(xmlstr);
+            } else {
+                pw = new PrintWriter(new FileWriter(metadata));
+                pw.print(xmlstr);
+            }
+
+            getOutputWriter().printlnMessage(MessageFormat.format(
+                getResourceString(
+                "export-entity-export-descriptor-succeeded"), objs));
+        } catch (WSFederationMetaException e) {
+            debug.error("ExportMetaData.runExportMeta", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IOException e) {
+            debug.error("ExportMetaData.runExportMeta", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            debug.warning("ExportMetaData.runExportMeta", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                "export-entity-exception-invalid_descriptor"), objs2),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IllegalArgumentException e) {
+            debug.warning("ExportMetaData.runExportMeta", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                "export-entity-exception-invalid_descriptor"), objs2),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (pw !=null ) {
+                pw.close();
+            }
+        }
+    }
+    
     private void runExportExtended()
         throws CLIException
     {
@@ -484,6 +629,67 @@ public class ExportMetaData extends AuthenticatedCommand {
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
             debug.warning("ExportMetaData.runIDFFExportExtended", e);
+            throw new CLIException(MessageFormat.format(
+                getResourceString(
+                "export-entity-exception-invalid-config"), objs2),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if (os !=null ) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+    
+    private void runWSFedExportExtended()
+        throws CLIException
+    {
+        OutputStream os = null;
+        String out = (isWebBase) ? "web" : extendedData;
+        Object[] objs = {out};
+        Object[] objs2 = {entityID, realm};
+        
+        try {
+            com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
+                config = WSFederationMetaManager.getEntityConfig(realm, 
+                entityID);
+            if (config == null) {
+                throw new CLIException(MessageFormat.format(getResourceString(
+                    "export-entity-exception-entity-config-not-exist"),
+                    objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            if (isWebBase) {
+                os =  new ByteArrayOutputStream();
+            } else {
+                os = new FileOutputStream(extendedData);
+            }
+
+            WSFederationMetaUtils.convertJAXBToOutputStream(config, os);
+
+            if (isWebBase) {
+                getOutputWriter().printlnMessage(os.toString());
+            }
+
+            getOutputWriter().printlnMessage(MessageFormat.format(
+                getResourceString(
+                "export-entity-export-config-succeeded"), objs));
+        } catch (WSFederationMetaException e) {
+            debug.error("ExportMetaData.runExportExtended", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (FileNotFoundException e) {
+            debug.warning("ExportMetaData.runExportExtended", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            debug.warning("ExportMetaData.runExportExtended", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IllegalArgumentException e) {
+            debug.warning("ExportMetaData.runExportExtended", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid-config"), objs2),

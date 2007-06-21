@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListEntities.java,v 1.2 2007-02-16 02:02:52 veiming Exp $
+ * $Id: ListEntities.java,v 1.3 2007-06-21 23:01:37 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,9 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -65,6 +68,8 @@ public class ListEntities extends AuthenticatedCommand {
             handleSAML2Request(rc);
         } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
+        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+            handleWSFedRequest(rc);
         } else {
             throw new CLIException(
                 getResourceString("unsupported-specification"),
@@ -120,6 +125,31 @@ public class ListEntities extends AuthenticatedCommand {
             }
         } catch (IDFFMetaException e) {
             debug.warning("ListEntities.handleIDFFRequest", e);
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+    
+    private void handleWSFedRequest(RequestContext rc)
+        throws CLIException {  
+        IOutput outputWriter = getOutputWriter();
+        Object[] objs = {realm};
+        try {
+            Set entities = WSFederationMetaManager.getAllEntities(realm);
+            
+            if ((entities == null) || entities.isEmpty()) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("list-entities-no-entities"), objs));
+            } else {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("list-entities-entity-listing"), objs));
+                for (Iterator i = entities.iterator(); i.hasNext();) {
+                    String name = (String)i.next();
+                    outputWriter.printlnMessage("  " + name);
+                }
+            }
+        } catch (WSFederationMetaException e) {
+            debug.warning("ListEntities.handleRequest", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

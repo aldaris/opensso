@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.2 2007-04-19 18:28:55 veiming Exp $
+ * $Id: FedCLIConstants.java,v 1.3 2007-06-21 23:01:38 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,4 +147,9 @@ public interface FedCLIConstants {
      * IDFF specification.
      */
     String IDFF_SPECIFICATION = "idff";
+    
+    /**
+     * WS-Federation specification.
+     */
+    String WSFED_SPECIFICATION = "wsfed";
 }

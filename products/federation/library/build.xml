@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2007-05-04 22:55:17 qcheng Exp $
+   $Id: build.xml,v 1.8 2007-06-21 23:01:34 superpat7 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -75,6 +75,18 @@
         <concat destfile="${libtracker}" append="true">library.xsd.saml2.done=true&#10;</concat>
     </target>
 
+    <target name="xsd.wsfederation" depends="preparebuild" unless="library.xsd.wsfederation.done">
+        <property name="xsd.wsfederation.dir" value="${library.xsd.dir}/wsfederation"/>
+        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd"/>
+        <java classname="com.sun.tools.xjc.Driver" 
+            maxmemory="128m" failonerror="true" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg line="-b ${xsd.wsfederation.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.wsfederation.files}"/> 
+        </java>
+        <property name="library.xsd.wsfederation.done" value="true" />
+        <concat destfile="${libtracker}" append="true">library.xsd.wsfederation.done=true&#10;</concat>
+    </target>
+
     <target name="jaxb.properties" unless="library.jaxb.done">
         <copy todir="${library.classes.dir}">
             <fileset dir="${library.src.dir}">
@@ -88,7 +100,7 @@
 
     <target name="compile" depends="preparebuild">
 	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${library.classes.dir}" source="1.4" target="1.4"
+                destdir="${library.classes.dir}" source="1.5" target="1.5"
 	        debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${library.src.dir}"/>
             <classpath refid="build.class.path"/>
@@ -101,9 +113,9 @@
         <copy file="${library.docs.dir}/nightly.html" tofile="${fedlibrary.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="build" depends="preparebuild, xsd.liberty, xsd.saml2">
+    <target name="build" depends="preparebuild, xsd.liberty, xsd.saml2, xsd.wsfederation">
 	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${library.classes.dir}" source="1.4" target="1.4"
+                destdir="${library.classes.dir}" source="1.5" target="1.5"
 	        debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${library.src.dir}"/>
             <classpath refid="build.class.path"/>
@@ -212,6 +224,7 @@
                 <include name="com/sun/identity/plugin/**"/>
                 <include name="com/sun/identity/saml/**"/>
                 <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/identity/wsfederation/**"/>
                 <include name="com/sun/identity/multiprotocol/**"/>
                 <include name="com/sun/liberty/**"/>
             </packageset>
@@ -230,6 +243,7 @@
                 <include name="com/sun/identity/plugin/**"/>
                 <include name="com/sun/identity/saml/**"/>
                 <include name="com/sun/identity/saml2/**"/>
+                <include name="com/sun/identity/wsfederation/**"/>
                 <include name="com/sun/liberty/**"/>
             </packageset>
             <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
@@ -275,6 +289,7 @@
         <delete dir="${jaxb11.liberty.soapbinding}"/>
         <delete dir="${jaxb.w3c}"/>
         <delete dir="${jaxb.saml2}"/>
+        <delete dir="${jaxb.wsfederation}"/>
         <delete dir="${library.built.publicapidocs.dir}"/>
         <delete dir="${library.built.apidocs.dir}"/>
         <delete dir="${library.built.docs.dir}"/>

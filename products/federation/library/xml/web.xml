@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.2 2007-04-03 21:46:20 veiming Exp $
+   $Id: web.xml,v 1.3 2007-06-21 23:01:35 superpat7 Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -237,6 +237,14 @@
             <servlet-name>idpArtifactResolution</servlet-name>
             <jsp-file>/saml2/jsp/idpArtifactResolution.jsp</jsp-file>
         </servlet>
+        <servlet>
+            <servlet-name>WSFederationServlet</servlet-name>
+            <servlet-class>com.sun.identity.wsfederation.servlet.WSFederationServlet</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>RealmSelection</servlet-name>
+            <jsp-file>/wsfederation/jsp/realmSelection.jsp</jsp-file>
+        </servlet>
 
         <servlet-mapping>
             <servlet-name>SPMniSoap</servlet-name>
@@ -437,6 +445,14 @@
         <servlet-mapping>
             <servlet-name>saml2reader</servlet-name>
             <url-pattern>/saml2reader</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>WSFederationServlet</servlet-name>
+            <url-pattern>/WSFederationServlet/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>RealmSelection</servlet-name>
+            <url-pattern>/RealmSelection</url-pattern>
         </servlet-mapping>
 </web-app>
 

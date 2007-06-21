@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.3 2007-04-06 21:06:39 veiming Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.4 2007-06-21 23:01:41 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,14 +27,10 @@ package com.sun.identity.plugin.configuration.impl;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import com.sun.identity.shared.debug.Debug;
-import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 
@@ -68,6 +64,7 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
         serviceNameMap = new HashMap();
         serviceNameMap.put("SAML1", "iPlanetAMSAMLService");
         serviceNameMap.put("SAML2", "sunFMSAML2MetadataService");
+        serviceNameMap.put("WS-FEDERATION", "sunFMWSFederationMetadataService");
         serviceNameMap.put("ID-FF_META", "sunFMIDFFMetadataService");
         serviceNameMap.put("LIBCOT","sunFMCOTConfigService");
         serviceNameMap.put("ID-FF", "iPlanetAMProviderConfigService");

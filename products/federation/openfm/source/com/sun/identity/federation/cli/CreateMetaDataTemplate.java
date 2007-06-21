@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.9 2007-04-23 03:43:22 hengming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.10 2007-06-21 23:01:37 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.federation.cli;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
-import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.COTConstants;
@@ -36,15 +35,37 @@ import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaSecurityUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
+import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.ClaimType;
+import com.sun.identity.wsfederation.jaxb.wsfederation.DisplayNameType;
+import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.SingleSignOutNotificationEndpointElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerEndpointElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerNameElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenType;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenTypesOfferedElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.UriNamedClaimTypesOfferedElement;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.security.cert.CertificateEncodingException;
 import java.text.MessageFormat;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.SecurityTokenReference;
+import org.w3._2000._09.xmldsig_.X509Data;
+import org.w3._2000._09.xmldsig_.X509DataType.X509Certificate;
+import org.w3._2005._08.addressing.AttributedURIType;
 
 /**
  * Create Meta Data Template.
@@ -92,6 +113,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             handleSAML2Request(rc);
         } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
             handleIDFFRequest(rc);
+        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+            handleWSFedRequest(rc);
         } else {
             throw new CLIException(
                     getResourceString("unsupported-specification"),
@@ -118,6 +141,17 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
         if (!isWebBased || (metadata != null)) {
             buildIDFFDescriptorTemplate();
+        }
+    }
+    
+    private void handleWSFedRequest(RequestContext rc)
+    throws CLIException {
+        if (!isWebBased || (extendedData != null)) {
+            buildWSFedConfigTemplate();
+        }
+
+        if (!isWebBased || (metadata != null)) {
+            buildWSFedDescriptorTemplate();
         }
     }
     
@@ -502,7 +536,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
     private static String buildMetaAliasInURI(String alias) {
         return "/" + SAML2MetaManager.NAME_META_ALIAS_IN_URI + alias;
-    }
+    }    
     
     private void buildConfigTemplate()
         throws CLIException {
@@ -1256,5 +1290,296 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "        <AuthnRequestsSigned>false</AuthnRequestsSigned>\n" +
                 "    </SPDescriptor>\n"
                 );
+    }
+    
+    private void buildWSFedDescriptorTemplate()
+    throws CLIException {
+        String url =  protocol + "://" + host + ":" + port + deploymentURI;
+        
+        Writer pw = null;
+        try {
+            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
+                pw = new PrintWriter(new FileWriter(metadata));
+            } else {
+                pw = new StringWriter();
+            }
+            
+            JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
+            com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
+                objFactory = new 
+                com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory();
+            
+            FederationElement fed = objFactory.createFederationElement();
+            fed.setFederationID(entityID);
+
+            if (idpAlias != null) {
+                addWSFedIdentityProviderTemplate(objFactory, fed, url);
+            }
+            if (spAlias != null) {
+                addWSFedServiceProviderTemplate(objFactory, fed, url);
+            }
+
+            Marshaller m = jc.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.marshal(fed, pw);
+            
+            if (!isWebBased) {
+                Object[] objs = { metadata, realm };
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString(
+                    "create-meta-template-created-descriptor-template"), objs));
+            }
+        } catch (IOException e) {
+            Object[] objs = { metadata };
+            throw new CLIException(MessageFormat.format(
+                    getResourceString("cannot-write-to-file"), objs),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (CertificateEncodingException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if ((pw != null) && (pw instanceof PrintWriter)) {
+                ((PrintWriter)pw).close();
+            } else {
+                this.getOutputWriter().printlnMessage(
+                        ((StringWriter)pw).toString());
+            }
+        }
+    }
+
+    private void addWSFedIdentityProviderTemplate(
+        com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
+        objFactory, FederationElement fed, String url)
+        throws JAXBException, CertificateEncodingException {
+        String maStr = buildMetaAliasInURI(idpAlias);
+        
+        if (idpSCertAlias.length() > 0) {
+            org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory 
+                secextObjFactory = new 
+                org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory();
+            org.w3._2000._09.xmldsig_.ObjectFactory dsObjectFactory = new 
+                org.w3._2000._09.xmldsig_.ObjectFactory();
+
+            TokenSigningKeyInfoElement tski = 
+                objFactory.createTokenSigningKeyInfoElement();
+            SecurityTokenReference str = 
+                secextObjFactory.createSecurityTokenReference();
+            X509Data x509Data = dsObjectFactory.createX509Data();
+            X509Certificate x509Cert = 
+                dsObjectFactory.createX509DataTypeX509Certificate();
+            x509Cert.setValue(
+                KeyUtil.getKeyProviderInstance().getX509Certificate(idpSCertAlias).getEncoded());
+            x509Data.getX509IssuerSerialOrX509SKIOrX509SubjectName().add(x509Cert);
+            str.getAny().add(x509Data);
+            tski.setSecurityTokenReference(str);
+            fed.getAny().add(tski);
+        }
+        
+        TokenIssuerNameElement tin = objFactory.createTokenIssuerNameElement();
+        tin.setValue(entityID);
+        fed.getAny().add(tin);
+        
+        TokenIssuerEndpointElement tie = 
+            objFactory.createTokenIssuerEndpointElement();
+        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
+            new org.w3._2005._08.addressing.ObjectFactory();
+        AttributedURIType auri = addrObjFactory.createAttributedURIType();
+        auri.setValue(url + "/WSFederationServlet" + maStr);
+        tie.setAddress(auri);        
+        fed.getAny().add(tie);
+        
+        TokenTypesOfferedElement tto = 
+            objFactory.createTokenTypesOfferedElement();
+        TokenType tt = objFactory.createTokenType();
+        tt.setUri(WSFederationConstants.URN_OASIS_NAMES_TC_SAML_11);
+        tto.getTokenType().add(tt);
+        fed.getAny().add(tto);
+        
+        UriNamedClaimTypesOfferedElement uncto = 
+            objFactory.createUriNamedClaimTypesOfferedElement();
+        ClaimType ct = objFactory.createClaimType();
+        ct.setUri(WSFederationConstants.CLAIMS_UPN_URI);
+        DisplayNameType dnt = objFactory.createDisplayNameType();
+        dnt.setValue(WSFederationConstants.CLAIMS_UPN_DISPLAY_NAME);
+        ct.setDisplayName(dnt);
+        uncto.getClaimType().add(ct);
+        fed.getAny().add(uncto);
+    }
+
+    private void addWSFedServiceProviderTemplate(
+        com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
+        objFactory, FederationElement fed, String url)
+        throws JAXBException {
+        String maStr = buildMetaAliasInURI(spAlias);
+        
+        TokenIssuerNameElement tin = objFactory.createTokenIssuerNameElement();
+        tin.setValue(entityID);
+        fed.getAny().add(tin);
+        
+        TokenIssuerEndpointElement tie = 
+            objFactory.createTokenIssuerEndpointElement();
+        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
+            new org.w3._2005._08.addressing.ObjectFactory();
+        AttributedURIType auri = addrObjFactory.createAttributedURIType();
+        auri.setValue(url + "/WSFederationServlet" + maStr);
+        tie.setAddress(auri);        
+        fed.getAny().add(tie);
+
+        SingleSignOutNotificationEndpointElement ssne = 
+            objFactory.createSingleSignOutNotificationEndpointElement();
+        AttributedURIType ssneUri = addrObjFactory.createAttributedURIType();
+        ssneUri.setValue(url + "/WSFederationServlet" + maStr);
+        ssne.setAddress(auri);        
+        fed.getAny().add(ssne);
+    }
+
+    private void buildWSFedConfigTemplate()
+    throws CLIException {
+        JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
+        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
+            objFactory = 
+            new com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory();
+
+        Writer pw = null;
+        try {
+            if (!isWebBased && (extendedData != null) &&
+                (extendedData.length() > 0)
+            ) {
+                pw = new PrintWriter(new FileWriter(extendedData));
+            } else {
+                pw = new StringWriter();
+            }
+
+            FederationConfigElement fedConfig = 
+                objFactory.createFederationConfigElement();
+
+            fedConfig.setFederationID(entityID);
+            fedConfig.setHosted(true);
+
+            if (idpAlias != null) {
+                buildWSFedIDPConfigTemplate(objFactory, fedConfig);
+            }
+            if (spAlias != null) {
+                buildWSFedSPConfigTemplate(objFactory, fedConfig);
+            }
+
+            Marshaller m = jc.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.marshal(fedConfig, pw);
+
+            if (!isWebBased) {
+                Object[] objs = {extendedData, realm};
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString(
+                    "create-meta-template-created-configuration-template"),
+                    objs));
+            }
+        } catch (IOException ex) {
+            Object[] objs = { extendedData };
+            throw new CLIException(MessageFormat.format(
+                    getResourceString("cannot-write-to-file"), objs),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JAXBException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } finally {
+            if ((pw != null) && (pw instanceof PrintWriter)) {
+                ((PrintWriter)pw).close();
+            } else {
+                this.getOutputWriter().printlnMessage(
+                        ((StringWriter)pw).toString());
+            }
+        }
+    }
+
+    private void buildWSFedIDPConfigTemplate(
+        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
+        objFactory, FederationConfigElement fedConfig)
+        throws JAXBException
+    {
+        String[][] configDefaults = { 
+            { WSFederationConstants.DISPLAY_NAME, idpAlias },
+            { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
+            { SAML2Constants.AUTO_FED_ENABLED, "false" },
+            { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
+            { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
+            { SAML2Constants.IDP_AUTHNCONTEXT_MAPPER_CLASS, 
+                  "com.sun.identity.wsfederation.plugins.DefaultIDPAuthenticationMethodMapper" 
+            },
+            { SAML2Constants.IDP_ACCOUNT_MAPPER, 
+                  "com.sun.identity.wsfederation.plugins.DefaultIDPAccountMapper" },
+            { SAML2Constants.IDP_ATTRIBUTE_MAPPER, 
+                  "com.sun.identity.wsfederation.plugins.DefaultIDPAttributeMapper" },
+            { SAML2Constants.ATTRIBUTE_MAP, "" },
+            { COTConstants.COT_LIST, "" },
+        };
+
+        com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement 
+            idpSSOConfig = objFactory.createIDPSSOConfigElement();
+
+        idpSSOConfig.setMetaAlias(idpAlias);
+
+        for ( int i = 0; i < configDefaults.length; i++ )
+        {
+            com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
+                attribute = objFactory.createAttributeElement();
+            attribute.setName(configDefaults[i][0]);
+            attribute.getValue().add(configDefaults[i][1]);
+
+            idpSSOConfig.getAttribute().add(attribute);
+        }
+        
+        fedConfig.getIDPSSOConfigOrSPSSOConfig().add(idpSSOConfig);
+    }
+
+    private void buildWSFedSPConfigTemplate(
+        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
+        objFactory, FederationConfigElement fedConfig)
+    throws JAXBException
+    {
+        String[][] configDefaults = { 
+            { WSFederationConstants.DISPLAY_NAME, spAlias },
+            { SAML2Constants.SIGNING_CERT_ALIAS, 
+                  ( idpSCertAlias.length() > 0 ) ? idpSCertAlias : "" },
+            { SAML2Constants.AUTO_FED_ENABLED, "false" },
+            { SAML2Constants.AUTO_FED_ATTRIBUTE, "" },
+            { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
+            { SAML2Constants.SP_ACCOUNT_MAPPER, 
+                  "com.sun.identity.wsfederation.plugins.DefaultSPAccountMapper" },
+            { SAML2Constants.SP_ATTRIBUTE_MAPPER, 
+                  "com.sun.identity.wsfederation.plugins.DefaultSPAttributeMapper" },
+            { SAML2Constants.SP_AUTHCONTEXT_MAPPER, 
+                  SAML2Constants.DEFAULT_SP_AUTHCONTEXT_MAPPER },
+            { SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR, 
+                  SAML2Constants.SP_AUTHCONTEXT_CLASSREF_VALUE },
+            { SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE, 
+                  SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE_VALUE },
+            { SAML2Constants.ATTRIBUTE_MAP, "" },
+            { SAML2Constants.AUTH_MODULE_NAME, "" },
+            { SAML2Constants.DEFAULT_RELAY_STATE, "" },
+            { SAML2Constants.ASSERTION_TIME_SKEW, "300" },
+            { SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED, "true" },
+            { COTConstants.COT_LIST, "" },
+        };
+
+        com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement 
+            spSSOConfig = objFactory.createSPSSOConfigElement();
+
+        spSSOConfig.setMetaAlias(idpAlias);
+
+        for ( int i = 0; i < configDefaults.length; i++ )
+        {
+            com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
+                attribute = objFactory.createAttributeElement();
+            attribute.setName(configDefaults[i][0]);
+            attribute.getValue().add(configDefaults[i][1]);
+
+            spSSOConfig.getAttribute().add(attribute);
+        }
+        
+        fedConfig.getIDPSSOConfigOrSPSSOConfig().add(spSSOConfig);
     }
 }

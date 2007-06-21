@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.4 2007-05-17 19:31:57 qcheng Exp $
+ * $Id: CircleOfTrustManager.java,v 1.5 2007-06-21 23:01:38 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.meta.SAML2COTUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationCOTUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -382,6 +384,12 @@ public class CircleOfTrustManager {
             } catch (SAML2MetaException idffe) {
                 throw new COTException(idffe);
             }
+        } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
+            try {
+                WSFederationCOTUtils.updateEntityConfig(realm,cotName,entityID);
+            } catch (WSFederationMetaException idffe) {
+                throw new COTException(idffe);
+            }
         } else {
             String[] args = { protocolType };
             throw new COTException("invalidProtocolType",args);
@@ -413,6 +421,13 @@ public class CircleOfTrustManager {
                         entityID);
             } catch (SAML2MetaException sme) {
                 throw new COTException(sme);
+            }
+        } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
+            try {
+                WSFederationCOTUtils.removeFromEntityConfig(realm,cotName,
+                        entityID);
+            } catch (WSFederationMetaException wsfme) {
+                throw new COTException(wsfme);
             }
         } else {
             String[] data = { protocolType };
@@ -730,7 +745,7 @@ public class CircleOfTrustManager {
      * @param name Name of the circle of trust.
      * @return <code>SAML2CircleOfTrustDescriptor</code> containing the
      * attributes of the given CircleOfTrust.
-     * @throws SAML2MetaException if unable to retrieve the circle of trust.
+     * @throws COTException if unable to retrieve the circle of trust.
      */
     public CircleOfTrustDescriptor getCircleOfTrust(String realm, String name)
         throws COTException {
@@ -817,8 +832,7 @@ public class CircleOfTrustManager {
      * @param name Name of the Circle of Trust.
      * @param protocolType the federation protocol type of the entity.
      * @param entityId the entity identifier.
-     * @throws COTException if unable to determine this entity in the
-     *     circle of trust.
+     * @return true if the entity is in the specified circle of trust
      */
     public boolean isInCircleOfTrust(String realm, String name, 
             String protocolType, String entityId) {

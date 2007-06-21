@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.5 2007-04-23 03:36:08 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.6 2007-06-21 23:01:41 superpat7 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.security.cert.X509Certificate;
@@ -52,7 +51,6 @@ import org.w3c.dom.Element;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
-import com.sun.identity.shared.encode.CookieUtils;
 
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
@@ -92,7 +90,6 @@ import com.sun.identity.saml2.plugins.SPAttributeMapper;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
-import com.sun.identity.plugin.session.SessionListener;
 
 import java.security.PrivateKey;
 
@@ -729,10 +726,12 @@ public class SPACSUtils {
      * is retrieved from <code>SPSSOConfig</code>. If not found, "SAML2" will
      * be used.
      *
-     * @param response http serlvet response.
-     * @param token input session object. It could be null.
+     * @param request HTTP Servlet request
+     * @param response HTTP Servlet response.
+     * @param metaAlias metaAlias for the service provider
+     * @param session input session object. It could be null.
      * @param respInfo <code>ResponseInfo</code> to be verified.
-     * @param orgName realm or organization name of the service provider.
+     * @param realm realm or organization name of the service provider.
      * @param hostEntityId hosted service provider Entity ID.
      * @param metaManager <code>SAML2MetaManager</code> instance for meta
      *                operation.
@@ -1112,10 +1111,12 @@ public class SPACSUtils {
     
     /** Sets the attribute map in the session
      *
-     *  @param attrMap, the Attribute Map
-     *  @param session, the valid session object
+     *  @param sessionProvider Session provider
+     *  @param attrMap the Attribute Map
+     *  @param session the valid session object
+     *  @throws com.sun.identity.plugin.session.SessionException 
      */
-    private static void setAttrMapInSession(
+    public static void setAttrMapInSession(
         SessionProvider sessionProvider,
         Map attrMap, Object session)
         throws SessionException {
