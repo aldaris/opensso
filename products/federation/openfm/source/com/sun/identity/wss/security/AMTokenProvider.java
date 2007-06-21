@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.2 2007-05-17 18:49:17 mallas Exp $
+ * $Id: AMTokenProvider.java,v 1.3 2007-06-21 23:12:49 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,14 +150,14 @@ public class AMTokenProvider implements TokenProvider {
      * Returns the instance of key provider to issue the tokens. 
      */
     static KeyProvider getKeyProvider() {
-        return keyProvider;
+        return getSignatureManager().getKeyProvider();        
     }
 
     /**
      * Returns the instance of XMLSignatureManager to sign/verify the tokens.
      */
     static XMLSignatureManager getSignatureManager() {
-        return sigManager;
+        return WSSUtils.getXMLSignatureManager();
     }
 
     /**

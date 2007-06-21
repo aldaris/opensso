@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameToken.java,v 1.1 2007-03-23 00:02:05 mallas Exp $
+ * $Id: UserNameToken.java,v 1.2 2007-06-21 23:12:50 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,6 +85,16 @@ public class UserNameToken implements SecurityToken {
         }
         debug.message("UserNameToken.constructor:");
         username = tokenSpec.getUserName();
+        if(username == null) {
+           debug.error("UserNameToken:: username is null");
+           throw new SecurityException(bundle.getString("invalidTokenSpec"));
+        }
+        username = username.trim();
+        if(username.length() == 0) {
+           debug.error("UserNameToken:: username is null");
+           throw new SecurityException(bundle.getString("invalidTokenSpec"));
+        }
+
         passwordType = tokenSpec.getPasswordType();
         
         setNonce = tokenSpec.isCreateNonce();
@@ -150,7 +160,7 @@ public class UserNameToken implements SecurityToken {
             }
             
         }
-        if(username == null) {
+        if(username == null || username.length() ==0) {
            debug.error("UserNameToken.constructor:: username is null");
            throw new SecurityException(
                  bundle.getString("invalidElement"));
@@ -198,6 +208,12 @@ public class UserNameToken implements SecurityToken {
      *            the digest password type is set.
      */
     public void setPassword(String passwd) throws SecurityException {
+        if(passwd == null) {
+           debug.error("UserNameToken.setPassword:: password is empty");
+           throw new SecurityException(
+                 bundle.getString("invalidTokenSpec"));
+        }
+
         if(passwordType != null && 
                WSSConstants.PASSWORD_DIGEST_TYPE.equals(passwordType)) {
            password = getPasswordDigest(passwd, nonce, created);
