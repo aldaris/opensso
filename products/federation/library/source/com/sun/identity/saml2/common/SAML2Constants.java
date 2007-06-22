@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.9 2007-05-17 18:51:31 mallas Exp $
+ * $Id: SAML2Constants.java,v 1.10 2007-06-22 23:55:39 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -747,7 +747,7 @@ public interface SAML2Constants {
     public static final String WANT_LOGOUT_REQUEST_SIGNED  
                                    = "wantLogoutRequestSigned";
     public static final String WANT_LOGOUT_RESPONSE_SIGNED   
-                                   = "wantLogoutResponseSigned ";
+                                   = "wantLogoutResponseSigned";
     public static final String WANT_MNI_REQUEST_SIGNED = "wantMNIRequestSigned";
     public static final String WANT_MNI_RESPONSE_SIGNED 
                                    = "wantMNIResponseSigned";
@@ -824,9 +824,16 @@ public interface SAML2Constants {
     // Default assertion effective time in seconds
     public static final int ASSERTION_EFFECTIVE_TIME = 600;
 
+    // Default assertion NotBefore skew in seconds
+    public static final int NOTBEFORE_ASSERTION_SKEW_DEFAULT = 600;
+
     // Assertion effective time attribute name
     public static final String ASSERTION_EFFECTIVE_TIME_ATTRIBUTE = 
                             "assertionEffectiveTime";
+
+    // NotBefore Assertion skew attribute name
+    public static final String ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE =
+                             "assertionNotBeforeTimeSkew";
 
     // IDP authn context mapper class attribute name
     public static final String IDP_AUTHNCONTEXT_MAPPER_CLASS =
