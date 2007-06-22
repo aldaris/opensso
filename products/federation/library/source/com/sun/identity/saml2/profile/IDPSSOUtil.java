@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.6 2007-05-17 19:31:59 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.7 2007-06-22 23:55:04 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.ArrayList;
@@ -463,8 +464,17 @@ public class IDPSSOUtil {
                 SAML2Utils.debug.message(classMethod +
                     "SAML Response content :\n" + resMsg);
             }
-            String encodedResMsg = Base64.encode(resMsg.getBytes(),
-                                    SAMLConstants.BASE64CHARPERLINE);
+            String encodedResMsg = null;
+            try {
+               encodedResMsg = Base64.encode(resMsg.getBytes("UTF-8"),
+                                               SAMLConstants.BASE64CHARPERLINE);
+            } catch (UnsupportedEncodingException uee) {
+                SAML2Utils.debug.error("IDPSSOUtil:sendResponse : "
+                                          + "Unsupported encoding " , uee);
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                                                        "unSupportedEncoding"));
+            }
+
             String[] logdata1 = { spEntityID, idpMetaAlias, resMsg };
             LogUtil.access(Level.INFO, 
                 LogUtil.POST_RESPONSE, logdata1, null);
@@ -723,6 +733,9 @@ public class IDPSSOUtil {
             }
         }
                 
+        // get the NotBefore skew (in seconds)
+        int notBeforeSkewTime = getNotBeforeSkewTime(realm,idpEntityID);
+
         // get the subject element
         NewBoolean isNewFederation = new NewBoolean();
         Subject subject = getSubject(session, authnReq, acsURL, 
@@ -768,7 +781,8 @@ public class IDPSSOUtil {
        
         assertion.setAuthnStatements(statementList); 
         assertion.setSubject(subject);
-        Conditions conditions = getConditions(recipientEntityID, effectiveTime);
+        Conditions conditions = getConditions(recipientEntityID, 
+                                              notBeforeSkewTime, effectiveTime);
         assertion.setConditions(conditions);
 
         String discoBootstrapEnabled = getAttributeValueFromIDPSSOConfig(
@@ -1223,6 +1237,7 @@ public class IDPSSOUtil {
      * @exception SAML2Exception if the operation is not successful
      */
     private static Conditions getConditions(String audienceEntityID,
+                                            int notBeforeSkewTime,
                                             int effectiveTime) 
         throws SAML2Exception {
 
@@ -1231,6 +1246,10 @@ public class IDPSSOUtil {
         Conditions conditions = AssertionFactory.getInstance().
                                                  createConditions();
         Date date = new Date();
+        date.setTime(date.getTime() - notBeforeSkewTime * 1000);
+        conditions.setNotBefore(date);
+
+        date = new Date();
         date.setTime(date.getTime() + effectiveTime * 1000);
         conditions.setNotOnOrAfter(date);
     
@@ -2231,4 +2250,43 @@ public class IDPSSOUtil {
 
         return nameID;
     }
+
+
+     /**
+      * Returns the NotBefore skew time from the IDP
+      * extended metadata . If the attreibute is not
+      * defined in the metadata then defaults to
+      * a value of 600 seconds (5 minutes).
+      *
+      * @return the NotBefore skew value in seconds.
+      */
+     private static int getNotBeforeSkewTime(String realm,String idpEntityID) {
+         String classMethod = "IDPSSOUtil.getNotBeforeSkewTime:";
+         int notBeforeSkewTime = 
+             SAML2Constants.NOTBEFORE_ASSERTION_SKEW_DEFAULT;
+         // get the assertion effective time (in seconds)
+         String skewTimeStr = getAttributeValueFromIDPSSOConfig(
+             realm, idpEntityID,
+             SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE);
+         if (skewTimeStr != null) {
+             try {
+                 notBeforeSkewTime = Integer.parseInt(skewTimeStr);
+                 if (SAML2Utils.debug.messageEnabled()) {
+                     SAML2Utils.debug.message(classMethod +
+                      "got NotBefore skew time from config:"
+                      + notBeforeSkewTime);
+                 }
+             } catch (NumberFormatException nfe) {
+                 SAML2Utils.debug.error(classMethod +
+                     "IDP SSO config: ", nfe);
+                 notBeforeSkewTime = 
+                     SAML2Constants.NOTBEFORE_ASSERTION_SKEW_DEFAULT;
+             }
+         }
+         if (SAML2Utils.debug.messageEnabled()) {
+             SAML2Utils.debug.message(classMethod+"NotBefore Skew time :"
+                                           + notBeforeSkewTime);
+         }
+         return notBeforeSkewTime;
+     }
 }
