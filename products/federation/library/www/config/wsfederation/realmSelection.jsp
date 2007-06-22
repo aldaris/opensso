@@ -6,7 +6,7 @@
     import="com.sun.identity.wsfederation.common.WSFederationUtils"
     import="com.sun.identity.wsfederation.meta.WSFederationMetaManager"
     import="com.sun.identity.wsfederation.meta.WSFederationMetaUtils"
-    import="com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement"
+    import="com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement"
 %>
 <% 
     Debug debug = WSFederationUtils.debug;
@@ -206,19 +206,21 @@
         debug.message(jspFile + "Account Realm Cookie: " + 
             accountRealmCookieValue);
     }
-    
-    List<String> accountRealmList = 
-        WSFederationMetaManager.getAllRemoteIdentityProviderEntities("/");
-    SPSSOConfigElement spconfig = 
-        WSFederationMetaManager.getSPSSOConfig(null, spEntityId);
-    for (String key : accountRealmList)
+
+    for (String key : 
+        WSFederationMetaManager.getAllRemoteIdentityProviderEntities("/"))
     { 
-        if (debug.messageEnabled()) {
-            debug.message(jspFile + "account realm key: "+key);
-        }
+        IDPSSOConfigElement idpconfig = 
+            WSFederationMetaManager.getIDPSSOConfig(null, key);
+
         String displayName = 
-            WSFederationMetaUtils.getAttribute(spconfig,
+            WSFederationMetaUtils.getAttribute(idpconfig,
             WSFederationConstants.DISPLAY_NAME);
+
+        if (debug.messageEnabled()) {
+            debug.message(jspFile + "account realm key: " + key + 
+                " display name: " + displayName);
+        }
 %>
         <option value="<%=key%>" <%=((accountRealmCookieValue != null) && 
             (accountRealmCookieValue.equals(key))?"selected":"")%>>

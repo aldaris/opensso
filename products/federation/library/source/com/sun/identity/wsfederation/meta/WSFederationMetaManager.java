@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaManager.java,v 1.1 2007-06-21 23:01:31 superpat7 Exp $
+ * $Id: WSFederationMetaManager.java,v 1.2 2007-06-22 20:57:26 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -738,10 +738,10 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static List getAllHostedEntities(String realm)
+    public static List<String> getAllHostedEntities(String realm)
         throws WSFederationMetaException {
 
-        List hostedEntityIds = new ArrayList();
+        List<String> hostedEntityIds = new ArrayList<String>();
         try {
             Set entityIds = configInst.getAllConfigurationNames(realm);
             if (entityIds != null && !entityIds.isEmpty()) {
@@ -782,16 +782,13 @@ public class WSFederationMetaManager {
     public static List getAllHostedServiceProviderEntities(String realm)
         throws WSFederationMetaException {
 
-        List hostedSPEntityIds = new ArrayList();
-        List hostedEntityIds = getAllHostedEntities(realm);
+        List<String> hostedSPEntityIds = new ArrayList<String>();
+        List<String> hostedEntityIds = getAllHostedEntities(realm);
 
-        for(Iterator iter = hostedEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
-            /* TODO
-            if (getSPSSODescriptor(realm, federationId) != null) {
+        for(String federationId : hostedEntityIds) {
+            if (getSPSSOConfig(realm, federationId) != null) {
                 hostedSPEntityIds.add(federationId);
             }
-             */
         }
         return hostedSPEntityIds;
     }
@@ -804,19 +801,16 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static List getAllHostedIdentityProviderEntities(String realm)
+    public static List<String> getAllHostedIdentityProviderEntities(String realm)
         throws WSFederationMetaException {
 
-        List hostedIDPEntityIds = new ArrayList();
-        List hostedEntityIds = getAllHostedEntities(realm);
+        List<String> hostedIDPEntityIds = new ArrayList<String>();
+        List<String> hostedEntityIds = getAllHostedEntities(realm);
 
-        for(Iterator iter = hostedEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
-            /*
-            if (getIDPSSODescriptor(realm, federationId) != null) {
+        for(String federationId : hostedEntityIds) {
+            if (getIDPSSOConfig(realm, federationId) != null) {
                 hostedIDPEntityIds.add(federationId);
             }
-             **/
         }
         return hostedIDPEntityIds;
     }
@@ -828,10 +822,10 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static List getAllRemoteEntities(String realm)
+    public static List<String> getAllRemoteEntities(String realm)
         throws WSFederationMetaException {
 
-        List remoteEntityIds = new ArrayList();
+        List<String> remoteEntityIds = new ArrayList();
         String[] objs = { realm };
         try {
             Set entityIds = configInst.getAllConfigurationNames(realm);
@@ -869,14 +863,13 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static List getAllRemoteServiceProviderEntities(String realm)
+    public static List<String> getAllRemoteServiceProviderEntities(String realm)
         throws WSFederationMetaException {
 
-        List remoteSPEntityIds = new ArrayList();
-        List remoteEntityIds = getAllRemoteEntities(realm);
+        List<String> remoteSPEntityIds = new ArrayList();
+        List<String> remoteEntityIds = getAllRemoteEntities(realm);
 
-        for(Iterator iter = remoteEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
+        for(String federationId : remoteEntityIds) {
             if (getSPSSOConfig(realm, federationId) != null) {
                 remoteSPEntityIds.add(federationId);
             }
@@ -892,14 +885,13 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static List getAllRemoteIdentityProviderEntities(String realm)
+    public static List<String> getAllRemoteIdentityProviderEntities(String realm)
         throws WSFederationMetaException {
 
-        List remoteIDPEntityIds = new ArrayList();
-        List remoteEntityIds = getAllRemoteEntities(realm);
+        List<String> remoteIDPEntityIds = new ArrayList();
+        List<String> remoteEntityIds = getAllRemoteEntities(realm);
 
-        for(Iterator iter = remoteEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
+        for(String federationId : remoteEntityIds) {
             if (getIDPSSOConfig(realm, federationId) != null) {
                 remoteIDPEntityIds.add(federationId);
             }
@@ -1006,17 +998,15 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of metaAliases <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve meta aliases.
      */
-    public static List getAllHostedIdentityProviderMetaAliases(String realm)
+    public static List<String> getAllHostedIdentityProviderMetaAliases(String realm)
         throws WSFederationMetaException {
 
-        List metaAliases = new ArrayList();
+        List<String> metaAliases = new ArrayList<String>();
         IDPSSOConfigElement idpConfig = null;
-        List hostedEntityIds = getAllHostedIdentityProviderEntities(realm);
-        for(Iterator iter = hostedEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
+        List<String> hostedEntityIds = getAllHostedIdentityProviderEntities(realm);
+        for(String federationId : hostedEntityIds) {
             if ((idpConfig = getIDPSSOConfig(realm, federationId)) != null) {
                 metaAliases.add(idpConfig.getMetaAlias());
-            
             }
         }
         return metaAliases;
@@ -1030,17 +1020,15 @@ public class WSFederationMetaManager {
      * @return a <code>List</code> of metaAliases <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve meta aliases.
      */
-    public static List getAllHostedServiceProviderMetaAliases(String realm)
+    public static List<String> getAllHostedServiceProviderMetaAliases(String realm)
         throws WSFederationMetaException {
 
-        List metaAliases = new ArrayList();
+        List<String> metaAliases = new ArrayList<String>();
         SPSSOConfigElement spConfig = null;
-        List hostedEntityIds = getAllHostedServiceProviderEntities(realm);
-        for(Iterator iter = hostedEntityIds.iterator(); iter.hasNext();) {
-            String federationId = (String)iter.next();
+        List<String> hostedEntityIds = getAllHostedServiceProviderEntities(realm);
+        for(String federationId : hostedEntityIds) {
             if ((spConfig = getSPSSOConfig(realm, federationId)) != null) {
                 metaAliases.add(spConfig.getMetaAlias());
-            
             }
         }
         return metaAliases;
@@ -1083,14 +1071,12 @@ public class WSFederationMetaManager {
         String realm, String trustedEntityId) {
         try {
             if (config != null) {
-                Map attr = WSFederationMetaUtils.getAttributes(config);
-                List cotList = (List) attr.get(SAML2Constants.COT_LIST);
+                Map<String,List<String>> attr = WSFederationMetaUtils.getAttributes(config);
+                List<String> cotList = attr.get(SAML2Constants.COT_LIST);
                 if ((cotList != null) && !cotList.isEmpty()) {
-                    for (Iterator iter = cotList.iterator(); 
-                        iter.hasNext();) {
-                        String a = (String) iter.next(); 
-                        if (cotm.isInCircleOfTrust(realm, a, 
-                            COTConstants.WS_FED,trustedEntityId)) {
+                    for (String cot : cotList) {
+                       if (cotm.isInCircleOfTrust(realm, cot, 
+                            COTConstants.WS_FED, trustedEntityId)) {
                             return true;
                         } 
                      }               
@@ -1111,10 +1097,10 @@ public class WSFederationMetaManager {
      * @return a <code>Set</code> of entity ID <code>String</code>.
      * @throws WSFederationMetaException if unable to retrieve the entity ids.
      */
-    public static Set getAllEntities(String realm)
+    public static Set<String> getAllEntities(String realm)
         throws WSFederationMetaException {
 
-        Set ret = new HashSet();
+        Set<String> ret = new HashSet<String>();
         String[] objs = { realm };
         try {
             Set entityIds = configInst.getAllConfigurationNames(realm);
