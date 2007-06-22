@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.10 2007-06-21 23:01:37 superpat7 Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.11 2007-06-22 23:56:43 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -672,6 +672,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 "\">\n" +
                 "            <Value>false</Value>\n" +
                 "        </Attribute>\n" +
+                "        <Attribute name=\""+SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE
+             + "\">\n" +
+                "           <Value>600</Value>\n" +
+                "       </Attribute>\n" +
                 "    </IDPSSOConfig>\n"
                 );
     }
