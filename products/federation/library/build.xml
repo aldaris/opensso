@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-06-21 23:01:34 superpat7 Exp $
+   $Id: build.xml,v 1.9 2007-06-22 07:06:50 superpat7 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -77,11 +77,12 @@
 
     <target name="xsd.wsfederation" depends="preparebuild" unless="library.xsd.wsfederation.done">
         <property name="xsd.wsfederation.dir" value="${library.xsd.dir}/wsfederation"/>
-        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd"/>
+        <property name="xsd.wsfederation.catalog" value="${xsd.wsfederation.dir}/catalog.xml"/>
+        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd" />
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
-            <arg line="-b ${xsd.wsfederation.dir}/binding.xjb -extension -d ${library.src.dir} ${xsd.wsfederation.files}"/> 
+            <arg line="-b ${xsd.wsfederation.dir}/binding.xjb -extension -verbose -d ${library.src.dir} -catalog ${xsd.wsfederation.catalog} ${xsd.wsfederation.files}"/> 
         </java>
         <property name="library.xsd.wsfederation.done" value="true" />
         <concat destfile="${libtracker}" append="true">library.xsd.wsfederation.done=true&#10;</concat>
