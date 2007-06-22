@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestsValidator.java,v 1.2 2007-06-13 22:53:08 sridharev Exp $
+ * $Id: AuthTestsValidator.java,v 1.3 2007-06-22 21:48:09 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -195,6 +195,78 @@ public class AuthTestsValidator extends TestCommon {
             log(logLevel.SEVERE, "testModuleGotoOnFail",
                     e.getMessage(), null);
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Performs Account lockout tests
+     */
+    public void testAccountLockout()
+    throws Exception {
+        webClient = new WebClient();
+        try {
+            boolean isWarn = true;
+            CreateTestXML testXML = new CreateTestXML();
+            String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
+            log(logLevel, "testAccountLockout", xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);
+            WebResponse wresponse = page.getWebResponse();
+            String resString = wresponse.getContentAsString();
+            log(logLevel, "testAccountLockout", resString);
+        } catch (Exception e) {
+            log(logLevel.SEVERE, "testAccountLockout",
+                    e.getMessage(), null);
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
+        }
+    }
+    
+    /**
+     * Performs Accountlockout warning tests
+     */
+    public void testAccountLockWarning()
+    throws Exception {
+        webClient = new WebClient();
+        try {
+            boolean isWarn = false;
+            CreateTestXML testXML = new CreateTestXML();
+            String xmlFile = testXML.createLockoutXML(mapValidate, isWarn);
+            log(logLevel, "testAccountLockWarning", xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);
+            WebResponse wresponse = page.getWebResponse();
+            String resString = wresponse.getContentAsString();
+        } catch (Exception e) {
+            log(logLevel.SEVERE, "testAccountLockWarning",
+                    e.getMessage(), null);
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
+        }
+    }
+    
+    /**
+     * Performs Profile tests warning tests
+     */
+    public void testProfile()
+    throws Exception {
+        webClient = new WebClient();
+        try {
+            CreateTestXML testXML = new CreateTestXML();
+            String xmlFile = testXML.createProfileXML(mapValidate);
+            log(logLevel, "testAccountLockWarning", xmlFile);
+            DefaultTaskHandler task = new DefaultTaskHandler(xmlFile);
+            Page page = task.execute(webClient);
+            WebResponse wresponse = page.getWebResponse();
+            String resString = wresponse.getContentAsString();
+        } catch (Exception e) {
+            log(logLevel.SEVERE, "testProfile",
+                    e.getMessage(), null);
+            e.printStackTrace();
+        } finally {
+            consoleLogout(webClient, testLogoutURL);
         }
     }
 }

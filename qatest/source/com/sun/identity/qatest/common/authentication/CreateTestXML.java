@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.2 2007-06-13 22:53:35 sridharev Exp $
+ * $Id: CreateTestXML.java,v 1.3 2007-06-22 21:48:37 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class CreateTestXML {
             int uIndex = testUserName.indexOf(":");
             tuser= testUserName.substring(0,uIndex);
             tpass = testUserName.substring(uIndex+1,uLength);
-            out.write("<form name=\"Login\" buttonName=\"\" >");
+            out.write("<form name=\"Login\" IDButton=\"\" >");
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + tuser + "\" />");
             out.write(newline);
@@ -144,7 +144,7 @@ public class CreateTestXML {
         out.write("<url href=\"" + redirectURL);
         out.write("\">");
         out.write(newline);
-        out.write("<form name=\"Login\" buttonName=\"\" >");
+        out.write("<form name=\"Login\" IDButton=\"\" >");
         out.write(newline);
         out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
         out.write(newline);
@@ -192,7 +192,7 @@ public class CreateTestXML {
         out.write("<url href=\"" + gotoURL);
         out.write("\">");
         out.write(newline);
-        out.write("<form name=\"Login\" buttonName=\"\" >");
+        out.write("<form name=\"Login\" IDButton=\"\" >");
         out.write(newline);
         out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
         out.write(newline);
@@ -203,6 +203,91 @@ public class CreateTestXML {
         } else {
             out.write("<result text=\"" + failmessage + "\" />");
         }
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.flush();
+        out.close();
+        
+        return fileName;
+    }
+    
+    /*
+     * Create the required XML files for the Account Lockout/warning tests
+     */
+    public String createLockoutXML(Map testMap, boolean isWarning)
+    throws Exception {
+        String userName = (String)testMap.get("Loginuser");
+        String password = (String)testMap.get("Loginpassword");
+        password = password + "tofail";
+        String attempts = (String)testMap.get("Loginattempts");
+        String Passmsg = (String)testMap.get("Passmsg");
+        String baseDirectory = (String)testMap.get("baseDir");
+        String loginurl = (String)testMap.get("loginurl");
+        int ilockattempts = Integer.parseInt(attempts);
+        if (!isWarning) {
+            fileName = baseDirectory  + "accountlock.xml";
+        } else {
+            fileName = baseDirectory +  "accountwarning.xml";
+        }
+        PrintWriter out = new PrintWriter(new BufferedWriter
+                (new FileWriter(fileName)));
+        out.write("<url href=\"" + loginurl);
+        out.write("\">");
+        out.write(newline);
+        int formcount = 0;
+            for (int i=0; i < ilockattempts ; i ++) {
+                formcount = formcount + 1;
+                out.write("<form name=\"Login\" IDButton=\"\" >");
+                out.write(newline);
+                out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
+                out.write(newline);
+                out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
+                out.write(newline);
+                if(formcount == ilockattempts){
+                    out.write("<result text=\"" + Passmsg + "\" />");
+                    out.write(newline);
+                }
+                out.write("</form>");
+                out.write(newline);
+                out.write(" <form anchorpattern=\"/UI/Login?\" />");
+                out.write(newline);
+            }
+        out.write("</url>");
+        out.write(newline);
+        out.flush();
+        out.close();
+        
+        return fileName;
+    }
+    
+    /**
+     * Creates the XML file for the profile attribute tests
+     */
+    public String createProfileXML(Map testMap)
+    throws Exception {
+        String userName = (String)testMap.get("Loginuser");
+        String password = (String)testMap.get("Loginpassword");
+        String attempts = (String)testMap.get("Loginattempts");
+        String Passmsg = (String)testMap.get("Passmsg");
+        String baseDirectory = (String)testMap.get("baseDir");
+        String loginurl = (String)testMap.get("loginurl");
+        String profileattribute = (String)testMap.get("profileattr");
+        fileName = baseDirectory  + profileattribute + "-test.xml";
+        PrintWriter out = new PrintWriter(new BufferedWriter
+                (new FileWriter(fileName)));
+        out.write("<url href=\"" + loginurl);
+        out.write("\">");
+        out.write(newline);
+        out.write("<form name=\"Login\" IDButton=\"\" >");
+        out.write(newline);
+        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
+        out.write(newline);
+        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
+        out.write(newline);
+        out.write("<result text=\"" + Passmsg + "\" />");
         out.write(newline);
         out.write("</form>");
         out.write(newline);

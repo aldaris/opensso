@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.3 2007-05-25 22:03:19 sridharev Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.4 2007-06-22 21:52:28 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,10 @@ package com.sun.identity.qatest.common.authentication;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -203,5 +205,35 @@ public class AuthTestConfigUtil extends TestCommon {
         am.createRealm(webClient, realmName);
         log(logLevel, "createRealms", "Realm:" + realmName);
         consoleLogout(webClient, logoutURL);
+    }
+    
+    /**
+     * Get the list of users from Map, to create the
+     * users.This is need for the <code>FederationManager</code> to
+     * create users on the System
+     * @param Map of users to be creared
+     * @param moduleName
+     */
+    public List getListFromMap(Map lMap, String moduleName){
+        Object escapeModServiceName = moduleName + ".module-service-name";
+        Object escapeModSubConfigName = moduleName + ".module-subconfig-name";
+        lMap.remove(escapeModServiceName);
+        lMap.remove(escapeModSubConfigName);
+        List<String> list = new ArrayList<String>();
+        for (Iterator iter = lMap.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = ( Map.Entry)iter.next();
+            String userkey = (String)entry.getKey();
+            int sindex = userkey.indexOf(".");
+            CharSequence cseq = userkey.subSequence(0, sindex+1);
+            userkey = userkey.replace(cseq , "");
+            userkey.trim();
+            String removeModname = moduleName + ".";
+            String userval = (String)entry.getValue();
+            String uadd = userkey + "=" + userval;
+            uadd.trim();
+            list.add(uadd);
+            log(logLevel, "getListFromMap", "UserList" + list);
+        }
+        return list;
     }
 }
