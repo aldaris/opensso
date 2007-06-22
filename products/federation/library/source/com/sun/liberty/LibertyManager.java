@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManager.java,v 1.3 2007-05-17 19:31:59 qcheng Exp $
+ * $Id: LibertyManager.java,v 1.4 2007-06-22 20:11:41 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.COTConstants;
 
+import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.accountmgmt.FSAccountManager;
 import com.sun.identity.federation.accountmgmt.FSAccountMgmtException;
 import com.sun.identity.federation.common.IFSConstants;
@@ -56,7 +57,7 @@ import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.message.FSNameIdentifierMappingRequest;
 import com.sun.identity.federation.message.FSNameIdentifierMappingResponse;
-import com.sun.identity.federation.message.common.FSMsgException;
+import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
@@ -968,6 +969,38 @@ public class LibertyManager {
     }
     
     /**
+     * Sets the authentication request to be sent to identity provider.
+     * 
+     * @param request <code>FSAuthnRequest</code> associated with a user
+     *  session.
+     * @param entityID Hosted Provider's entity ID
+     * @return <code>true</code> if the operation is successful; 
+     *  <code>false</code> otherwise.
+     */
+    public static boolean setAuthnRequest(
+        FSAuthnRequest request, String entityID) 
+    {
+  
+        if (request == null || entityID == null) {
+            debug.message("LibertyManager.setAuthnRequest: null Input params");
+            return false; 
+        }
+        try {
+            FSSessionManager sessionManager = 
+                FSSessionManager.getInstance(entityID);
+            String requestID = request.getRequestID();
+            if (requestID != null) {
+                sessionManager.setAuthnRequest(requestID, request);
+                return true;
+            }
+        } catch(Exception ex) {
+            FSUtils.debug.error("LibertyManager.setAuthnRequest"+
+                " Exception while setting authn request.", ex);
+        }
+        return false;
+    }
+
+    /**
      * Returns the HeaderMap.
      */
     private static Map getHeaderMap(HttpServletRequest request) {
@@ -1368,6 +1401,89 @@ public class LibertyManager {
            return null;
        }
        
+    }
+
+
+    /**
+     * Gets the authentication context used in liberty single sign-on.
+     * After single sign-on with an Identity Provider, a service
+     * provider may obtain the authentication context used by the identity
+     * provider that authenticates the user. It will need to have a valid
+     * single sign on token (generated through the liberty SSO).
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *  session.
+     * @param entityID Hosted Provider's entity ID
+     * @return authentication context string;
+     *         <code>null</code> if there is any failure, or no liberty
+     *         session is found.
+     */
+    public static String getAuthnContext(
+       HttpServletRequest request, String entityID) 
+    {
+  
+       if (request == null || entityID == null) {
+           debug.message("LibertyManager.getAuthnContext: null Input params");
+           return null;
+       }
+       try {
+           Object token  = SessionManager.getProvider().getSession(request);
+           FSSessionManager sessionManager = 
+               FSSessionManager.getInstance(entityID);
+           FSSession session = sessionManager.getSession(token);
+           if (session == null) {
+               if (debug.messageEnabled()) {
+                   debug.message("LibertyManager.getAuthnContext" 
+                       + ": There is no liberty session for this token"); 
+               }
+               return null;
+           }
+           return session.getAuthnContext();
+       } catch(Exception ex) {
+           FSUtils.debug.error("LibertyManager.getAuthnContext"+
+               " Exception while retrieving authncontext.", ex);
+           return null;
+       }
+    }
+
+    /**
+     * Gets the federation information associated with current liberty session.
+     * It will need to have a valid single sign on token (generated through 
+     * the liberty SSO).
+     *
+     * @param request <code>HttpServletRequest</code> associated with a user
+     *  session.
+     * @param entityID Hosted Provider's entity ID
+     * @return <code>FSAccountFedInfo</code> associated with this session.
+     *         <code>null</code> if there is any failure, or no liberty session
+     *         is found.
+     */
+    public static FSAccountFedInfo getAccountFedInfo(
+       HttpServletRequest request, String entityID) 
+    {
+  
+       if (request == null || entityID == null) {
+           debug.message("LibertyManager.getAccountFedInfo: null Input params");
+           return null;
+       }
+       try {
+           Object token  = SessionManager.getProvider().getSession(request);
+           FSSessionManager sessionManager = 
+               FSSessionManager.getInstance(entityID);
+           FSSession session = sessionManager.getSession(token);
+           if (session == null) {
+               if (debug.messageEnabled()) {
+                   debug.message("LibertyManager.getAccountFedInfo" 
+                       + ": Theres no liberty session for this token"); 
+               }
+               return null;
+           }
+           return session.getAccountFedInfo();
+       } catch(Exception ex) {
+           FSUtils.debug.error("LibertyManager.getAccountFedInfo"+
+               " Exception while retrieving federation info.", ex);
+           return null;
+       }
     }
 
     /**

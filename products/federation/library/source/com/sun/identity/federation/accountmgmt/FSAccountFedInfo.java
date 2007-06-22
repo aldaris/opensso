@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAccountFedInfo.java,v 1.2 2006-11-01 19:57:01 qcheng Exp $
+ * $Id: FSAccountFedInfo.java,v 1.3 2007-06-22 20:11:40 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.saml.assertion.NameIdentifier;
 
 /**
  * This class handles the information of federated user account.
+ * @supported.api
  */
 public class FSAccountFedInfo {
 
@@ -191,6 +192,7 @@ public class FSAccountFedInfo {
     /**
      * Returns provider's (SP/IDP) ID.
      * @return remote provider's id
+     * @supported.api
      */
     public String getProviderID() {
         return this.providerID;
@@ -218,6 +220,7 @@ public class FSAccountFedInfo {
     /**
      * Returns local NameIdentifier sent to other side(SP/IDP).
      * @return local NameIdentifier sent to other side
+     * @supported.api
      */
     public NameIdentifier getLocalNameIdentifier() {
         return this.localNameIdentifier;
@@ -237,6 +240,7 @@ public class FSAccountFedInfo {
     /**
      * Returns remote NameIdentifier received from other side(SP/IDP).
      * @return remote NameIdentifier received from other side
+     * @supported.api
      */
     public NameIdentifier getRemoteNameIdentifier() {
         return this.remoteNameIdentifier;
@@ -270,6 +274,7 @@ public class FSAccountFedInfo {
      * @return true if in a specific federation remote
      * deployement participated as IDP.
      * And returns false if as SP.
+     * @supported.api
      */    
     public boolean isRoleIDP() {
         return this.isRoleIDP;
@@ -296,6 +301,7 @@ public class FSAccountFedInfo {
     /**
      * Gets the affiliation federation type.
      * @return true if the federation is of affiliation type.
+     * @supported.api
      */ 
     public boolean getAffiliation() {
         return isAffiliationFed;

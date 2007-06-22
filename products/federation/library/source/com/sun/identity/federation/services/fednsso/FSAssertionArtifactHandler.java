@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.4 2007-06-18 21:39:34 qcheng Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.5 2007-06-22 20:11:40 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1022,6 +1022,7 @@ public class FSAssertionArtifactHandler {
             FSAccountManager accountManager = FSAccountManager.getInstance(
                 hostMetaAlias);
             String userID = accountManager.getUserID(fedKey, orgDN, env);
+            FSAccountFedInfo fedInfo = null;
             if (userID == null) {
                 if (niIdp != null && nameSpace.equals(affiliationID)) {
                     fedKey = new FSAccountFedInfoKey(affiliationID, 
@@ -1035,12 +1036,12 @@ public class FSAssertionArtifactHandler {
                             accountManager.removeAccountFedInfo(
                                 userID, oldInfo);
                         }
-                        FSAccountFedInfo accountInfo = new FSAccountFedInfo(
+                        fedInfo = new FSAccountFedInfo(
                             idpEntityId, ni, niIdp, true);
-                        accountInfo.setAffiliation(true);
+                        fedInfo.setAffiliation(true);
                         fedKey = new FSAccountFedInfoKey(nameSpace, name); 
                         accountManager.writeAccountFedInfo(
-                            userID, fedKey, accountInfo);
+                            userID, fedKey, fedInfo);
                     } else {
                         FSUtils.debug.error(
                             "FSAssertionArtifactHandler.generateToken: " +
@@ -1057,8 +1058,7 @@ public class FSAssertionArtifactHandler {
                     if (oldKey != null) {
                         userID = accountManager.getUserID(oldKey, orgDN, env);
                         if (userID != null) {
-                            FSAccountFedInfo fedInfo = 
-                                accountManager.readAccountFedInfo(
+                            fedInfo = accountManager.readAccountFedInfo(
                                     userID, idpEntityId); 
                             if (fedInfo != null && fedInfo.isFedStatusActive()){
                                 // rewrite it.
@@ -1074,7 +1074,7 @@ public class FSAssertionArtifactHandler {
                                 if (remoteNI != null) {
                                     remoteNI.setNameQualifier(hostEntityId);
                                 }
-                                FSAccountFedInfo newInfo = new FSAccountFedInfo(
+                                fedInfo = new FSAccountFedInfo(
                                     idpEntityId,
                                     localNI,
                                     remoteNI,
@@ -1084,7 +1084,7 @@ public class FSAssertionArtifactHandler {
                                 FSAccountFedInfoKey newKey = 
                                     new FSAccountFedInfoKey(hostEntityId, name);
                                 accountManager.writeAccountFedInfo(
-                                    userID, newKey, newInfo);
+                                    userID, newKey, fedInfo);
                             } else {
                                 FSUtils.debug.error(
                                     "FSAssertionArtifactHandler." +
@@ -1107,14 +1107,14 @@ public class FSAssertionArtifactHandler {
                                     FSAccountFedInfoKey newKey = 
                                         new FSAccountFedInfoKey(
                                             hostEntityId, name);
-                                    FSAccountFedInfo newInfo = 
+                                    fedInfo = 
                                         new FSAccountFedInfo(
                                             idpEntityId,
                                             null,
                                             ni,
                                             true);
                                     accountManager.writeAccountFedInfo(
-                                        userID, newKey, newInfo);
+                                        userID, newKey, fedInfo);
                                 } else {
                                     FSUtils.debug.error(
                                         "FSAssertionArtifactHandler. " +
@@ -1139,7 +1139,6 @@ public class FSAssertionArtifactHandler {
                     }
                 }
             } else {
-                FSAccountFedInfo fedInfo = null;
                 if (affiliationID != null) {
                     fedInfo = accountManager.readAccountFedInfo(
                         userID, affiliationID);
@@ -1317,6 +1316,15 @@ public class FSAssertionArtifactHandler {
                         session.setSessionIndex(idpSessionIndex);
                     }
                     sessionManager.addSession(userID, session);
+            }
+
+            // keep authncontext in FSSession.
+            if (authnContextClassRef != null) {
+                session.setAuthnContext(authnContextClassRef);
+            }
+
+            if (fedInfo != null) {
+                session.setAccountFedInfo(fedInfo);
             }
 
             // keep the attr statement in FSSession.
@@ -1567,10 +1575,25 @@ public class FSAssertionArtifactHandler {
                 nameIDPolicy.equals(IFSConstants.NAME_ID_POLICY_ONETIME)) 
             {
                 session.setOneTime(true);
-                session.setAccountFedInfo(accountInfo);
                 session.setUserID(userID);
             }
 
+            String authnContextClassRef = null;
+            if (authnContextStmt != null) {
+                authnContextClassRef = 
+                    authnContextStmt.getAuthnContextClassRef();
+            }
+            if ((authnContextClassRef == null) ||
+                (authnContextClassRef.length() == 0))
+            {
+                authnContextClassRef = 
+                    IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                        hostConfig, IFSConstants.DEFAULT_AUTHNCONTEXT);
+            }
+            if (authnContextClassRef != null) {
+                session.setAuthnContext(authnContextClassRef);
+            }
+            session.setAccountFedInfo(accountInfo);
             if (bootStrapStatement != null) {
                 session.setBootStrapAttributeStatement(bootStrapStatement);
             }
