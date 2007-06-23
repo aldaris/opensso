@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSPRedirectHandlerServlet.java,v 1.1 2006-10-30 23:15:11 qcheng Exp $
+ * $Id: WSPRedirectHandlerServlet.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,15 +29,23 @@ import com.sun.identity.liberty.ws.common.LogUtil;
 import com.sun.identity.liberty.ws.interaction.jaxb.InquiryElement;
 import com.sun.identity.liberty.ws.interaction.jaxb.InteractionResponseElement;
 import com.sun.identity.liberty.ws.interaction.jaxb.ParameterType;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +92,9 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
     private static String DEFAULT_LINK_LABEL = "link";
     private static String DEFAULT_MORE_LINK_LABEL = "moreLink";
 
+    private static int CONNECT_TIMEOUT = 5000; // 5 seconds
+    private static int READ_TIMEOUT = 5000; // 5 seconds 
+
     private DOMSource htmlStyleSource = null;
     private DOMSource wmlStyleSource = null;
 
@@ -99,6 +110,7 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
         String wmlStyleSheetLocation 
                 = InteractionConfig.getInstance()
                 .getWMLStyleSheetLocation();
+
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
@@ -139,6 +151,79 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
     private void handleRequest(HttpServletRequest httpRequest, 
             HttpServletResponse httpResponse) 
             throws IOException { 
+
+        String wspRedirectHandler =
+            InteractionConfig.getInstance().getWSPRedirectHandler();
+        String lbWspRedirectHandler =
+            InteractionConfig.getInstance().getLbWSPRedirectHandler();
+
+        String queryString = httpRequest.getQueryString();
+
+
+        String handlerHostId = null;
+        if (queryString != null) {
+            int i = queryString.indexOf(InteractionConfig.HANDLER_HOST_ID);
+            if (i != -1) {
+                handlerHostId = queryString.substring(i +
+                InteractionConfig.HANDLER_HOST_ID.length() + 1);
+                int j = handlerHostId.indexOf("&");
+                if (j != -1) {
+                    handlerHostId = handlerHostId.substring(0, j);
+                }
+            }
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message(
+                    "WSPRedirectHandlerServlet.handleRequest():"
+                    + "queryString: " + queryString
+                    + " : wspRedirectHandler:" + wspRedirectHandler
+                    + " : handlerHostId:" + handlerHostId
+                    + " : lbWspRedirectHandler:" + lbWspRedirectHandler);
+        }
+
+        if  (handlerHostId != null) {
+
+            //check for trusted handlers
+            Map trustedRedirectHandlers =
+                InteractionConfig.getInstance().getTrustedWSPRedirectHandlers();
+            if(!trustedRedirectHandlers.containsKey(handlerHostId)) {
+                sendErrorPageUntrustedHost(httpRequest, httpResponse, 
+                        handlerHostId);
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                            "WSPRedirectHandlerServlet.handleRequest():"
+                            + "denied attempt to forward to untrusted host id:" 
+                            + handlerHostId);
+                }
+                return;
+            }
+
+            String localServerId =
+                    InteractionConfig.getInstance().getLocalServerId();
+            if(!handlerHostId.equals(localServerId)) {
+                String handlerHostUrl 
+                        = (String)trustedRedirectHandlers.get(handlerHostId);
+                String forwardToUrl = handlerHostUrl + "?" + queryString;
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "WSPRedirectHandlerServlet.handleRequest()"
+                            + ":localServerId=" + localServerId
+                            + ":handlerHostId=" + handlerHostId
+                            + ":forwarding request to " + forwardToUrl);
+                }
+                forwardRequest(forwardToUrl, httpRequest, httpResponse);
+                return;
+            }
+
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message(
+                    "WSPRedirectHandlerServlet.handleRequest():"
+                    + "no need to forward, "
+                    + "processing request in the local server");
+        }
         String requestURL = getRequestURL(httpRequest);
         String messageID = httpRequest.getParameter(
                 InteractionManager.TRANS_ID);
@@ -152,7 +237,7 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
                     + ":returnToURL=" + returnToURL);
         }
         if (messageID != null) {
-            if (returnToURL != null) {
+            if (returnToURL != null) { //initial request, render query
                 if (debug.messageEnabled()) {
                     debug.message(
                             "WSPRedirecthandlerServlet.handleRequest():"
@@ -220,7 +305,7 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
                         returnToURL);
                 sendInteractionRequestPage(messageID, 
                         httpRequest, httpResponse);
-            } else {
+            } else { //no returnToURL, response submission
 
                 if (debug.messageEnabled()) {
                     debug.message(
@@ -235,7 +320,9 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
                 if (returnToURL == null) {
                     debug.error(
                             "WSPRedirecthandlerServlet.handleRequest():"
-                            + " returnToURL not found to redirect");
+                            + " returnToURL, cacheEntry "
+                            + " not found to redirect, for TransactionID : "
+                            + messageID);
                     showErrorPage(httpRequest, httpResponse, 
                              " returnToURL not found in cache");
                 } else {
@@ -275,13 +362,29 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
 
         // generate html page, with action url pointing back to this servlet
         // set query parameters transID and responseID
-        String action = httpRequest.getRequestURL().toString();
-        action = action +"?" + InteractionManager.TRANS_ID + "=" + messageID; 
+        String wspRedirectHandler =
+            InteractionConfig.getInstance().getWSPRedirectHandler();
+        String lbWspRedirectHandler =
+            InteractionConfig.getInstance().getLbWSPRedirectHandler();
+        String action = null;
+        if (lbWspRedirectHandler == null) {
+            action = httpRequest.getRequestURL().toString() +"?" 
+                    + InteractionManager.TRANS_ID + "=" + messageID; 
+        } else {
+            String localServerId =
+                    InteractionConfig.getInstance().getLocalServerId();
+            action = lbWspRedirectHandler +"?" 
+                    + InteractionManager.TRANS_ID + "=" + messageID 
+                    + "&" + InteractionConfig.HANDLER_HOST_ID 
+                    + "=" + localServerId; 
+        }
+
         if (debug.messageEnabled()) {
             debug.message(
                     "WSPRedirectHandlerServlet.sendInteractionRequestPage():"
                     + "action=" + action);
         }
+
         DOMSource styleSource = null;
         boolean wmlClient = isWMLClient(httpRequest);
         PrintWriter out = null;
@@ -425,7 +528,7 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
                     debug.message("WSPRedirectHandlerServlet"
                             + ".sendInteractionResponsePage():"
                             + "parameterName=" + parameterName
-                            + "parameterValue=" + parameterValue);
+                            + ", parameterValue=" + parameterValue);
 
                 }
                 int index = parameterName.indexOf(PARAMETER_PREFIX);
@@ -571,6 +674,124 @@ public class WSPRedirectHandlerServlet extends HttpServlet {
     private boolean isWMLClient(HttpServletRequest httpRequest) {
         // TODO: need to find a way to detect client
         return false;
+    }
+
+
+    private void forwardRequest(String forwardToUrl, 
+            HttpServletRequest request, 
+            HttpServletResponse response) 
+            throws IOException { 
+        if (debug.messageEnabled()) {
+            debug.message(
+                    "WSPRedirectHandlerServlet.forwardRequest():"
+                    + "forwardToUrl:" + forwardToUrl);
+        }
+
+        InputStream clientIn = null;
+        OutputStream serverOut = null;
+        InputStream serverIn = null;
+        OutputStream clientOut = null;
+
+        try {
+            URL url = new URL(forwardToUrl);
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setUseCaches(false);
+            urlConnection.setConnectTimeout(CONNECT_TIMEOUT); //hard coding for 5seconds
+            urlConnection.setReadTimeout(READ_TIMEOUT); //hard coding for 5seconds
+
+            Enumeration enumer = request.getHeaderNames();
+            while (enumer.hasMoreElements()) {
+                String name = (String)enumer.nextElement();
+                String value = request.getHeader(name);
+                urlConnection.addRequestProperty(name, value); 
+            }
+
+            urlConnection.connect();
+
+            clientIn = new BufferedInputStream(request.getInputStream());
+            serverOut = new BufferedOutputStream(urlConnection.getOutputStream());
+
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ( (len = clientIn.read(buffer)) != -1) {
+                serverOut.write(buffer, 0, len);
+            }
+            serverOut.flush();
+
+            String statusLine = urlConnection.getHeaderField(null);
+            if (statusLine != null) {
+                if (debug.messageEnabled()) {
+                    debug.message("WSPRedirectHandlerServlet.forwardRequest():"
+                            + " status line:" + statusLine);
+                }
+                int i = statusLine.indexOf(" ");
+                int j = -1;
+                if (i != -1) {
+                    j = statusLine.indexOf(" ", i + 1);
+                }
+                if ( (i != -1) && (j !=-1) ) {
+                    String status = statusLine.substring(i+1, j);
+                    response.setStatus(Integer.valueOf(status).intValue());
+                }
+                
+            }
+
+            Map headersMap = urlConnection.getHeaderFields();
+            Set keySet = headersMap.keySet();
+            Iterator iter = keySet.iterator();
+            while (iter.hasNext()) {
+                String name = (String)iter.next();
+                String value = urlConnection.getHeaderField(name);
+                if ((name != null) && (value != null) ) {
+                    response.addHeader(name, value);
+                }
+            }
+
+            serverIn = new BufferedInputStream(urlConnection.getInputStream());
+            clientOut = new BufferedOutputStream(response.getOutputStream());
+            while ( (len = serverIn.read(buffer)) != -1) {
+                clientOut.write(buffer, 0, len);
+            }
+        } finally {
+            if (clientIn != null) {
+                clientIn.close();
+            }
+            if (clientIn != null) {
+                serverIn.close();
+            }
+            if (clientIn != null) {
+                clientOut.close();
+            }
+            if (clientIn != null) {
+                serverOut.close();
+            }
+        }
+
+    }
+
+    private void sendErrorPageUntrustedHost(HttpServletRequest request,
+            HttpServletResponse response, String handlerHostUrl) 
+            throws IOException {
+        if (debug.messageEnabled()) {
+            debug.message(
+                    "WSPRedirectHandlerServlet.sendErrorPageUntrustedHost()");
+        }
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>Denied attempt to forward to untrusted server"
+                + "</title>");
+        out.println("<body>");
+        out.println("<h1>" 
+                 + i18n.getString("denied_attemtpt_to_forward_to_untrusted_server")
+                 + "</h1>");
+        out.println("</body>\n");
+        out.println("</html>\n");
     }
 
 }

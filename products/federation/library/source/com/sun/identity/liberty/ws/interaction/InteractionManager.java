@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionManager.java,v 1.1 2006-10-30 23:15:10 qcheng Exp $
+ * $Id: InteractionManager.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -848,10 +848,10 @@ public class InteractionManager {
                         = cacheEntry.getInteractionResponseElement();
             }
             if (debug.messageEnabled()) {
-                debug.message("InteractionManager.getResponseElement():"
+                debug.message("InteractionManager.getInteractionResponseElement():"
                         + "for messageID=" + messageID + ":"
                         + "responseElement="
-                        + (interactionResponseElement == null));
+                        + (interactionResponseElement != null));
             }
         }
         if (LogUtil.isLogEnabled()) {
@@ -1080,10 +1080,33 @@ public class InteractionManager {
         CorrelationHeader ch = new CorrelationHeader();
         String responseID = ch.getMessageID();
         ch.setRefToMessageID(messageID);
-        String redirectURL 
-                = interactionConfig.getWSPRedirectHandler() + "?" + TRANS_ID 
-                + "=" + responseID;
-        re.setRedirectURL(redirectURL);
+
+        String redirectUrl = null;
+        String lbRedirectUrl = interactionConfig.getLbWSPRedirectHandler();
+        String wspRedirectUrl = interactionConfig.getWSPRedirectHandler();
+        if(debug.messageEnabled()) {
+            debug.message("InteractionManager.newRedirectURLFault():"
+                    + "wspRedirectURL:" + wspRedirectUrl
+                    + ", lbRedirectUrl:" + lbRedirectUrl);
+        }
+        if (lbRedirectUrl == null) {
+            redirectUrl = wspRedirectUrl + "?" + TRANS_ID + "=" + responseID;
+            if(debug.messageEnabled()) {
+                debug.message("InteractionManager.newRedirectURLFault():"
+                        + "lbRedirectURL is null, rediectUrl:"
+                        + redirectUrl);
+            }
+        } else { //lbRedirectUrl defined
+            redirectUrl = lbRedirectUrl + "?" + TRANS_ID + "=" + responseID
+                    + "&" + InteractionConfig.HANDLER_HOST_ID 
+                    + "=" + InteractionConfig.getInstance().getLocalServerId();
+            if(debug.messageEnabled()) {
+                debug.message("InteractionManager.newRedirectURLFault():"
+                        + "lbRedirectURL is not null, rediectUrl:"
+                        + redirectUrl);
+            }
+        }
+        re.setRedirectURL(redirectUrl);
         List details = new ArrayList();
         try {
             details.add(Utils.convertJAXBToElement(re));

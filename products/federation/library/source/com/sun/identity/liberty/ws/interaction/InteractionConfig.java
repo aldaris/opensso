@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionConfig.java,v 1.1 2006-10-30 23:15:09 qcheng Exp $
+ * $Id: InteractionConfig.java,v 1.2 2007-06-23 05:08:58 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,12 @@ package com.sun.identity.liberty.ws.interaction;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 import javax.xml.namespace.QName;
 
 /**
@@ -79,6 +85,17 @@ class InteractionConfig {
     static final String WSP_REDIRECT_HANDLER  
             = "com.sun.identity.liberty.interaction.wspRedirectHandler";
 
+    static final String WSP_REDIRECT_HANDLER_SERVLET  = "WSPRedirectHandler";
+
+    static final String INTERACTION_CONFIG_CLASS
+            = "com.sun.identity.liberty.interaction.interactionConfigClass";
+
+    static final String LB_WSP_REDIRECT_HANDLER  
+            = "com.sun.identity.liberty.interaction.lbWspRedirectHandler";
+
+    static final String TRUSTED_WSP_REDIRECT_HANDLERS  
+            = "com.sun.identity.liberty.interaction.trustedWspRedirectHandlers";
+
     static final String WSP_WILL_ENFORCE_HTTPS_CHECK 
         = "com.sun.identity.liberty.interaction.wspWillEnforceHttpsCheck";
 
@@ -92,6 +109,8 @@ class InteractionConfig {
 
     static final String WML_STYLE_SHEET_LOCATION 
         = "com.sun.identity.liberty.interaction.wmlStyleSheetLocation";
+
+    public static final String HANDLER_HOST_ID = "HandlerHostId";
 
     static final String YES = "yes";
 
@@ -112,22 +131,81 @@ class InteractionConfig {
     private boolean wspWillRedirectForData = true;
     private int wspRedirectTime 
             = DEFAULT_WSP_REDIRECT_TIME;
-    private String wspRedirectHandler = null;
+
+    protected String wspRedirectHandler = null;
+    protected String lbWspRedirectHandler = null;
+    protected Map trustedWspRedirectHandlers = new HashMap();
+    protected String localServerId = null;
 
     private boolean wspWillEnforceHttpsCheck = false;
     private boolean wspWillEnforceReturnToHostEqualsRequestHost = false;
     private String htmlStyleSheetLocation = null;
     private String wmlStyleSheetLocation = null;
 
+    private static String interactionConfigClassName = null;
+
 
     synchronized static InteractionConfig getInstance() {
+
         if (interactionConfig == null) {
-            interactionConfig = new InteractionConfig();
+
+            interactionConfigClassName = SystemPropertiesManager.get(
+                    INTERACTION_CONFIG_CLASS);
+            if (debug.messageEnabled()) {
+                debug.message("InteractionConfig.getInstance():"
+                        + "interactionConfigClassName:" 
+                        + interactionConfigClassName);
+            }
+
+            if (interactionConfigClassName == null) {
+                if (debug.messageEnabled()) {
+                    debug.message("InteractionConfig.getInstance():"
+                            + " interactionConfigClassName not specified," 
+                            + " defaulting to "
+                            + " federation library InteractionConfig");
+                }
+                interactionConfig = new InteractionConfig();
+            } else {
+                try {
+                    interactionConfig = (InteractionConfig)Class.forName(
+                        interactionConfigClassName)
+                        .newInstance();
+                } catch (InstantiationException ie) {
+                    debug.error("InteractionConfig.getInstance()"
+                            + " Can not instantiate class:"
+                            + interactionConfigClassName);
+                } catch (IllegalAccessException iae) {
+                    debug.error("InteractionConfig.getInstance()"
+                            + " Illegal access to class:"
+                            + interactionConfigClassName);
+                } catch (ClassNotFoundException cnfe) {
+                    debug.error("InteractionConfig.getInstance()"
+                            + " class not found :"
+                            + interactionConfigClassName);
+                } finally {
+                    if (interactionConfig == null ) {
+                        if (debug.warningEnabled()) {
+                            debug.warning("InteractionConfig.getInstance():"
+                                    + "did not find configured class, "
+                                    + " would use config class:" 
+                                    +  "com.sun.identity.liberty.ws."
+                                    +  "interaction.InteractionConfig");
+                        }
+                        interactionConfig = new InteractionConfig();
+                    }
+                }
+            }
+            if (debug.messageEnabled()) {
+                debug.message("InteractionConfig.getInstance():"
+                        + "created instance:" + interactionConfig.toString());
+            }
         }
+
+
         return interactionConfig;
     }
 
-    private InteractionConfig() {
+    protected InteractionConfig() {
         initialize();
         if (debug.messageEnabled()) {
             debug.message("InteractionConfig():constructed singleton instance:"
@@ -167,6 +245,18 @@ class InteractionConfig {
         return wspRedirectHandler;
     }
 
+    String getLbWSPRedirectHandler() {
+        return lbWspRedirectHandler;
+    }
+
+    Map getTrustedWSPRedirectHandlers() {
+        return trustedWspRedirectHandlers;
+    }
+
+    String getLocalServerId() {
+        return localServerId;
+    }
+
     boolean wspSupportsRedirect() {
         return wspWillRedirect;
     }
@@ -193,7 +283,6 @@ class InteractionConfig {
     
     /**
      * Returns a String  
-     * @param 
      * @return  
      */
     public String toString() {
@@ -219,6 +308,16 @@ class InteractionConfig {
                 + wspRedirectTime);
         sb.append(":wspRedirectHandler="
                 + wspRedirectHandler);
+        sb.append(":lbWspRedirectHandler="
+                + lbWspRedirectHandler);
+        sb.append(":trustedWspRedirectHandlers="
+                + trustedWspRedirectHandlers);
+        sb.append(":localServerId="
+                + localServerId);
+        sb.append(":interactionConfigClassName="
+                + interactionConfigClassName);
+        sb.append(":interactionConfig.getClass().getName()="
+                + getClass().getName());
         sb.append(":wspWillEnforceHttpsCheck="
                 + wspWillEnforceHttpsCheck);
         sb.append(":wspWillEnforceReturnToHostEqualsRequestHost="
@@ -230,7 +329,7 @@ class InteractionConfig {
         return sb.toString();
     }
 
-    private void initialize() {
+    protected void initialize() {
 
         String s = null;
 
@@ -449,11 +548,58 @@ class InteractionConfig {
             wspWillEnforceReturnToHostEqualsRequestHost = true; 
         }
 
-        wspRedirectHandler = SystemPropertiesManager.get(WSP_REDIRECT_HANDLER);
+        wspRedirectHandler 
+                = SystemPropertiesManager.get(WSP_REDIRECT_HANDLER);
         if (wspRedirectHandler == null) {
             debug.error("InteractionConfig.initialize():"
                     + "wspRedirectHandler is null");
         }
+
+        lbWspRedirectHandler 
+                = SystemPropertiesManager.get(LB_WSP_REDIRECT_HANDLER);
+        if (lbWspRedirectHandler == null) {
+            if(debug.messageEnabled()) {
+                debug.message("InteractionConfig.initialize():"
+                        + "lbWspRedirectHandler is null");
+            }
+        }
+
+        String trustedRedirectHandlersString  
+                = SystemPropertiesManager.get(TRUSTED_WSP_REDIRECT_HANDLERS);
+        if (trustedRedirectHandlersString == null) {
+            if(debug.messageEnabled()) {
+                debug.message("InteractionConfig.initialize():"
+                        + "trustedRedirectHandlersString is null");
+            }
+        } else {
+            StringTokenizer st 
+                    = new StringTokenizer(trustedRedirectHandlersString, " ");
+            int handlerId = 1;
+            while (st.hasMoreTokens()) {
+                trustedWspRedirectHandlers.put(Integer.toString(handlerId), 
+                        st.nextToken());
+                handlerId++;
+            }
+        }
+
+
+        localServerId = null;
+        for (Iterator iter = trustedWspRedirectHandlers.keySet().iterator();
+                iter.hasNext(); ) {
+            String key = (String)iter.next();
+            if (wspRedirectHandler.equals(trustedWspRedirectHandlers.get(key))) {
+                localServerId = key;
+                break;
+            }
+        }
+
+        if (localServerId == null) {
+            debug.error("WSPRedirectHandlerServlet.handleRequest():"
+                    + "local serverId is null for wspRedirectHandler:"
+                    + wspRedirectHandler);
+        }
+
+
 
         htmlStyleSheetLocation 
                 = SystemPropertiesManager.get(HTML_STYLE_SHEET_LOCATION);
