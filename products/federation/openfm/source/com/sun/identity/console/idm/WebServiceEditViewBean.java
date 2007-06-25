@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.2 2007-06-14 21:02:50 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.3 2007-06-25 19:37:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ public abstract class WebServiceEditViewBean
     static final String CHILD_NAME_KEY_STORE_PASSWORD = "keystorepassword";
     static final String ATTR_NAME_KEY_PASSWORD = "KeyPassword";
     static final String CHILD_NAME_KEY_PASSWORD = "keypassword";
-    static final String ATTR_NAME_CERT_ALIAS = "CertAlias";
+    static final String ATTR_NAME_CERT_ALIAS = "keyAlias";
     static final String CHILD_NAME_CERT_ALIAS = "certalias";
 
     static final String ATTR_NAME_USERCREDENTIAL = "UserCredential";
