@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultTaskHandler.java,v 1.1 2007-03-29 21:41:36 mrudulahg Exp $
+ * $Id: DefaultTaskHandler.java,v 1.2 2007-06-25 18:28:57 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ public class DefaultTaskHandler implements ITask {
     private String base;
     
     public DefaultTaskHandler(String base) {
-        this.base = base.toLowerCase();
+        this.base = base;
     }
     
     /**

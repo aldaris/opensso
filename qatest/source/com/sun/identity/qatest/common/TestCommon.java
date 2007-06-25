@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.10 2007-06-20 18:54:00 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.11 2007-06-25 18:29:11 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,7 +38,6 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.StringBuffer;
@@ -252,8 +251,7 @@ public class TestCommon implements TestConstants {
     protected String getBaseDir()
     throws Exception {
         log(logLevel, "getBaseDir", "Inside getBaseDir");
-        File file = new File(".");
-        String strCD = file.getCanonicalPath();
+        String strCD =  System.getProperty("user.dir");
         log(logLevel, "getBaseDir", "Current Directory:" + strCD);
         return (strCD);
     }
