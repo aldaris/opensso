@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.11 2007-06-25 18:29:11 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.12 2007-06-25 22:59:03 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -418,23 +418,29 @@ public class TestCommon implements TestConstants {
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
             txtConfigDir.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DIR));
-            
+
+            String strConfigStore = (String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE);
+            log(logLevel, "configureProduct", "Config store is:" + strConfigStore);
+
             HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
-            if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE)).
-                    equals("flatfile")) {
+            if (strConfigStore.equals("flatfile")) {
                 log(logLevel, "configureProduct",
-                        "Doing flat file configuration.");
+                        "Doing File System configuration.");
                 rbDataStore.setDefaultValue("flatfile");
             } else {
                 log(logLevel, "configureProduct",
                         "Doing directory configuration.");
-                if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DIR)).
-                        equals("dirServer"))
+                if (strConfigStore.equals("dirServer")) {
+                    log(logLevel, "configureProduct",
+                        "Doing Directory Server configuration.");
                     rbDataStore.setDefaultValue("dirServer");
-                else if (((String)map.get(TestConstants.KEY_ATT_CONFIG_DIR)).
-                        equals("activeDir"))
+                }
+                if (strConfigStore.equals("activeDir")) {
+                    log(logLevel, "configureProduct",
+                        "Doing Active Directory configuration.");
                     rbDataStore.setDefaultValue("activeDir");
+                }
                 
                 HtmlTextInput txtDirServerName =
                         (HtmlTextInput)form.getInputByName("DIRECTORY_SERVER");
