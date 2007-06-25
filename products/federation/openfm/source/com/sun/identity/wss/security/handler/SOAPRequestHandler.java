@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.4 2007-06-25 23:10:24 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,7 @@ import com.sun.identity.saml2.assertion.NameID;
  * Identity Web services security framework.
  *
  */  
-public class SOAPRequestHandler {
+public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
     private String providerName = null;
     private String PROVIDER_NAME = "providername";
@@ -982,6 +982,17 @@ public class SOAPRequestHandler {
             return null;
         }
         
+    }
+
+    /**
+     * Prints a Node tree recursively.
+     *
+     * @param node A DOM tree Node
+     *
+     * @return An xml String representation of the DOM tree.
+     */
+    public String print(Node node) {
+        return WSSUtils.print(node);
     }
 
     // Removes the validated headers.
