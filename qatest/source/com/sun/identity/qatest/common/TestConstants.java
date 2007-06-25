@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.5 2007-06-19 23:11:12 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.6 2007-06-25 23:11:17 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -475,15 +475,58 @@ public interface TestConstants {
     String KEY_NAME_REG_RESULT = "nameregresult";  
     
     /** 
-     * IDFF Property key for <code>Artifact Profile</code>
+     * IDFF Property key for <code>SSO Artifact Profile</code>
      */
     String SSO_BROWSER_ARTIFACT_VALUE =
         "<Value>http://projectliberty.org/profiles/brws-art</Value>";
     
     /** 
-     * IDFF Property key for <code>Post Profile</code>
+     * IDFF Property key for <code>SSO Post Profile</code>
      */
     String SSO_BROWSER_POST_VALUE =
         "<Value>http://projectliberty.org/profiles/brws-post</Value>";
 
+    /** 
+     * IDFF Property key for <code>SLO HTTP Profile</code>
+     */
+    String SLO_HTTP_PROFILE_VALUE =
+        "<SingleLogoutProtocolProfile>http://projectliberty.org/profiles/" +
+            "slo-idp-http</SingleLogoutProtocolProfile>";
+    
+    /** 
+     * IDFF Property key for <code>SLO SOAP Profile</code>
+     */
+    String SLO_SOAP_PROFILE_VALUE =
+        "<SingleLogoutProtocolProfile>http://projectliberty.org/profiles/" +
+            "slo-idp-soap</SingleLogoutProtocolProfile>";
+
+    /** 
+     * IDFF Property key for <code>Registration HTTP Profile</code>
+     */
+    String REG_HTTP_PROFILE_VALUE =
+        "<RegisterNameIdentifierProtocolProfile>http://projectliberty.org/" +
+            "profiles/rni-idp-http</RegisterNameIdentifierProtocolProfile>";
+    
+    /** 
+     * IDFF Property key for <code>Registration SOAP Profile</code>
+     */
+    String REG_SOAP_PROFILE_VALUE =
+        "<RegisterNameIdentifierProtocolProfile>http://projectliberty.org/" +
+            "profiles/rni-idp-soap</RegisterNameIdentifierProtocolProfile>";
+
+    /** 
+     * IDFF Property key for <code>Termination HTTP Profile</code>
+     */
+    String TERMIATION_HTTP_PROFILE_VALUE =
+        "<FederationTerminationNotificationProtocolProfile>" +
+            "http://projectliberty.org/profiles/fedterm-idp-http" +
+            "</FederationTerminationNotificationProtocolProfile>";
+    
+    /** 
+     * IDFF Property key for <code>Termination SOAP Profile</code>
+     */
+    String TERMIATION_SOAP_PROFILE_VALUE =
+        "<FederationTerminationNotificationProtocolProfile>" +
+            "http://projectliberty.org/profiles/fedterm-idp-soap" +
+            "</FederationTerminationNotificationProtocolProfile>";
 } 

@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_sec-idff-testng.xml,v 1.4 2007-06-19 22:53:23 mrudulahg Exp $
+ $Id: ff_sec-idff-testng.xml,v 1.5 2007-06-25 23:08:52 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,8 +39,25 @@
             <class name="com.sun.identity.qatest.idff.UnconfigureIDFF"/>
         </classes>
     </test>
-    <test name="IDFFTestWithArtifactProfile">
-        <parameter name="profile" value="Artifact"/>
+    <test name="IDFFTestWithDefaultProfiles">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="http"/>
+        <parameter name="terminationprofile" value="http"/>
+        <parameter name="registrationprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test> 
+    <test name="IDFFTestSSOWithPostProfile">
+        <parameter name="ssoprofile" value="post"/>
+        <parameter name="sloprofile" value="http"/>
+        <parameter name="terminationprofile" value="http"/>
+        <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
                 <include name="ff_sec"/>
@@ -50,8 +67,11 @@
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
         </classes>
     </test>
-    <test name="IDFFTestWithPostProfile">
-        <parameter name="profile" value="post"/>
+    <test name="IDFFTestSLOWithSOAPProfile">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="soap"/>
+        <parameter name="terminationprofile" value="http"/>
+        <parameter name="registrationprofile" value="http"/>
         <groups>
             <run>
                 <include name="ff_sec"/>
@@ -61,5 +81,74 @@
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
         </classes>
     </test>
-</suite>
+    <test name="IDFFTestTerminationWithSOAPProfile">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="http"/>
+        <parameter name="terminationprofile" value="soap"/>
+        <parameter name="registrationprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test>
+    <test name="IDFFTestRegistrationWithSOAPProfile">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="http"/>
+        <parameter name="terminationprofile" value="http"/>
+        <parameter name="registrationprofile" value="soap"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test>
+    <test name="IDFFTestSSOWithPostSLOWithSOAPProfile">
+        <parameter name="ssoprofile" value="post"/>
+        <parameter name="sloprofile" value="soap"/>
+        <parameter name="terminationprofile" value="http"/>
+        <parameter name="registrationprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test>
+    <test name="IDFFTestSSOWithPostSLOTermWithSOAPProfile">
+        <parameter name="ssoprofile" value="post"/>
+        <parameter name="sloprofile" value="soap"/>
+        <parameter name="terminationprofile" value="soap"/>
+        <parameter name="registrationprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test>
+    <test name="IDFFTestWithNonDefaultProfiles">
+        <parameter name="ssoprofile" value="post"/>
+        <parameter name="sloprofile" value="soap"/>
+        <parameter name="terminationprofile" value="soap"/>
+        <parameter name="registrationprofile" value="soap"/>
+        <groups>
+            <run>
+                <include name="ff_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+        </classes>
+    </test> </suite>
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.3 2007-06-19 23:11:23 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.4 2007-06-25 23:11:17 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -348,19 +348,13 @@ public class IDFFCommon extends TestCommon {
     }
 
     /**
-     * This method creates xml sp init Name Registration
-     * @param xmlFileName is the file to be created.
-     * @param Map m contains all the data for xml generation
+     * This method changes the order of the SSO profile in ext metadata
+     * @param spmetadataext SP metadata
+     * @param strProfile Either http or soap
      */
-    public void setSPSSOProfile(WebClient webClient, FederationManager fmSP, 
-            Map configMap, String strProfile)
+    public String setSPSSOProfile(String spmetadataext, String strProfile)
     throws Exception {
         try {
-            HtmlPage spmetaPage = fmSP.exportEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
-                    false, true, true, "idff");
-            String spmetadataext = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             if (strProfile.equals("post")) {
                 spmetadataext = spmetadataext.replaceAll(TestConstants.SSO_BROWSER_ARTIFACT_VALUE,
                         "TEMP_STRING");
@@ -376,44 +370,106 @@ public class IDFFCommon extends TestCommon {
                 spmetadataext = spmetadataext.replaceAll("TEMP_STRING",
                         TestConstants.SSO_BROWSER_ARTIFACT_VALUE);
             }
-            log(logLevel, "setup", "Since SP init SSO Profile is taken " +
-                    "from SP ext metadata, delete SP Ext & export " +
-                    "modified metadata at SP side."); 
-            HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
-                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), true, 
-                    "idff");
-            if (spDeleteEntityPage.getWebResponse().getContentAsString().
-                    contains("deleted for entity, " +
-                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                log(logLevel, "setup", "Deleted SP entity on SP side" + 
-                        spDeleteEntityPage.getWebResponse().getContentAsString());
-            } else {
-                log(logLevel, "setup", "Couldnt delete SP entity on SP " +
-                        "side" + 
-                        spDeleteEntityPage.getWebResponse().getContentAsString());
-                assert false;
-            }  
-
-            Thread.sleep(9000);
-            HtmlPage importSPMeta = fmSP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), null,
-                    spmetadataext, null, "idff");
-            if (!importSPMeta.getWebResponse().getContentAsString().
-                    contains("Import file, web.")) {
-                log(Level.SEVERE, "setup", "Couldn't import SP " +
-                        "metadata on SP side" + importSPMeta.getWebResponse().
-                        getContentAsString(), null);
-            } else {
-                 log(logLevel, "setup", "Successfully imported modified " +
-                         "SP entity on SP side", null);
-            }
         } catch (Exception e) {
-            log(Level.SEVERE, "setProfile", e.getMessage(), null);
+            log(Level.SEVERE, "setSPSSOProfile", e.getMessage());
             e.printStackTrace();
             throw e;
         }
+        return spmetadataext;
     }
 
- 
+    /**
+     * This method changes the order of the SLO profile in SP metadata
+     * @param spmetadata SP metadata
+     * @param strProfile Either http or soap
+     */
+    public String setSPSLOProfile(String spmetadata, String strProfile)
+    throws Exception {
+        try {
+            if (strProfile.equals("soap")) {
+                spmetadata = spmetadata.replaceAll(TestConstants.SLO_HTTP_PROFILE_VALUE,
+                        "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(TestConstants.SLO_SOAP_PROFILE_VALUE,
+                        TestConstants.SLO_HTTP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.SLO_SOAP_PROFILE_VALUE);
+            } else {
+                spmetadata = spmetadata.replaceAll(TestConstants.SLO_SOAP_PROFILE_VALUE,
+                        "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(TestConstants.SLO_HTTP_PROFILE_VALUE,
+                        TestConstants.SLO_SOAP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.SLO_HTTP_PROFILE_VALUE);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setSPSLOProfile", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return spmetadata;
+    } 
+
+    /**
+     * This method changes the order of the Termination profile in SP metadata
+     * @param spmetadata SP metadata
+     * @param strProfile Either http or soap
+     */
+    public String setSPTermProfile(String spmetadata, String strProfile)
+    throws Exception {
+        try {
+            if (strProfile.equals("soap")) {
+                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
+                        "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
+                        TestConstants.TERMIATION_HTTP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.TERMIATION_SOAP_PROFILE_VALUE);
+            } else {
+                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_SOAP_PROFILE_VALUE,
+                        "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(TestConstants.TERMIATION_HTTP_PROFILE_VALUE,
+                        TestConstants.TERMIATION_SOAP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.TERMIATION_HTTP_PROFILE_VALUE);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setSPTermProfile", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return spmetadata;
+    } 
+
+    /**
+     * This method changes the order of the Registration profile in SP metadata
+     * @param spmetadata SP metadata
+     * @param strProfile Either http or soap
+     */
+    public String setSPRegProfile(String spmetadata, String strProfile)
+    throws Exception {
+        try {
+            if (strProfile.equals("soap")) {
+                 spmetadata = spmetadata.replaceAll(
+                         TestConstants.REG_HTTP_PROFILE_VALUE, "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.REG_SOAP_PROFILE_VALUE,
+                        TestConstants.REG_HTTP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.REG_SOAP_PROFILE_VALUE);
+            } else {
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.REG_SOAP_PROFILE_VALUE, "TEMP_STRING");
+                spmetadata = spmetadata.replaceAll(
+                        TestConstants.REG_HTTP_PROFILE_VALUE,
+                        TestConstants.REG_SOAP_PROFILE_VALUE);
+                spmetadata = spmetadata.replaceAll("TEMP_STRING",
+                        TestConstants.REG_HTTP_PROFILE_VALUE);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setSPRegProfile", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return spmetadata;
+    } 
 }
