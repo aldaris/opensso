@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.6 2007-03-21 22:33:40 veiming Exp $
+ * $Id: SubCommand.java,v 1.7 2007-06-25 19:40:06 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ public class SubCommand {
     private Map optionNameToShortName = new HashMap();
     private Set unaryOptionNames = new HashSet();
     private Set singleOptionNames = new HashSet();
+    private Set multipleOptionNames = new HashSet();
     private Set textAreaUI = new HashSet();
     private Set checkboxUI = new HashSet();
 
@@ -347,7 +348,16 @@ public class SubCommand {
             List list = (List)options.get(name);
             valid = (list == null) || (list.size() == 1);
         }
+        
+        for (Iterator i = multipleOptionNames.iterator();
+            i.hasNext() && valid;
+        ) {
+            String name = (String)i.next();
+            List list = (List)options.get(name);
+            valid = (list == null) || (list.size() > 0);
+        }
 
+        
         return valid;
     }
 
@@ -523,6 +533,8 @@ public class SubCommand {
                 unaryOptionNames.add(name);
             } else if (single) {
                 singleOptionNames.add(name);
+            } else {
+                multipleOptionNames.add(name);
             }
         }
     }
