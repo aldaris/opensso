@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.2 2006-12-08 21:02:23 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.3 2007-06-26 07:08:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,9 +81,14 @@ public class DeleteIdentities extends IdentityCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_DELETE_IDENTITY", params);
             amir.deleteIdentities(setDelete);
-            getOutputWriter().printlnMessage(MessageFormat.format(
-                getResourceString("delete-identities-succeed"), 
-                    (Object[])params));
+
+            Object[] objects = {realm, type, ""};
+            for (Iterator i = idNames.iterator(); i.hasNext(); ) {
+                objects[2] = (String)i.next();
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("delete-identity-succeed"), objects));
+            }
+
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_DELETE_IDENTITY", params);
         } catch (IdRepoException e) {

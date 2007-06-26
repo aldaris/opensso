@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.23 2007-06-14 20:09:02 veiming Exp $
+ * $Id: AccessManager.java,v 1.24 2007-06-26 07:08:59 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1005,7 +1005,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "delete-identities-succeed=Identities of type {1} is deleted in realm, {0}."})
+            "delete-identity-succeed=Identity {2} of {1} type is deleted in realm, {0}."})
     private String delete_identities;
 
     @SubCommandInfo(
