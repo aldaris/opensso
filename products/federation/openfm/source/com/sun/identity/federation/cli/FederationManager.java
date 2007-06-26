@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.4 2007-02-27 01:47:52 veiming Exp $
+ * $Id: FederationManager.java,v 1.5 2007-06-26 21:56:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class FederationManager extends CLIDefinitionBase {
      */
     public boolean isAuthOption(String opt) {
         return opt.equals(FederationManagerConstants.ARGUMENT_ADMIN_ID) ||
-            opt.equals(FederationManagerConstants.ARGUMENT_PASSWORD);
+            opt.equals(FederationManagerConstants.ARGUMENT_PASSWORD_FILE);
     }
     
     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManagerConstants.java,v 1.2 2007-06-08 06:07:35 veiming Exp $
+ * $Id: AccessManagerConstants.java,v 1.3 2007-06-26 21:56:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,16 +33,6 @@ public interface AccessManagerConstants {
      * Administrator ID argument/option.
      */
     String ARGUMENT_ADMIN_ID = "adminid";
-
-    /**
-     * Password argument/option.
-     */
-    String ARGUMENT_PASSWORD = "password";
-
-    /**
-     * Short name for password argument/option.
-     */
-    String SHORT_ARGUMENT_PASSWORD = "w";
 
     /**
      * Password file argument/option.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.15 2007-05-17 19:32:01 qcheng Exp $
+ * $Id: FederationManager.java,v 1.16 2007-06-26 21:56:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,11 +44,9 @@ public class FederationManager {
     @Macro(
         mandatoryOptions={
             "adminid|u|s|Administrator ID of running the command.",
-            "password|w|s|Password of administrator.",
             "password-file|f|s|File name that contains password of administrator."},
         optionalOptions={},
-        optionAliases={
-            "password|password-file"})
+        optionAliases={})
     private String authentication;
 
 

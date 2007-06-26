@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.6 2007-06-13 07:47:28 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.7 2007-06-26 21:56:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,7 +274,7 @@ public class WebCLIHelper {
     }
 
     private boolean isAuthField(String opt) {
-        return opt.equals("adminid") || opt.equals("password");
+        return opt.equals("adminid") || opt.equals("password-file");
     }
 
     private boolean isIgnored(SubCommand cmd, String opt) {

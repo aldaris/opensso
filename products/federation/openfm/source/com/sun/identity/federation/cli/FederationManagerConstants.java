@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerConstants.java,v 1.1 2006-10-30 23:18:00 qcheng Exp $
+ * $Id: FederationManagerConstants.java,v 1.2 2007-06-26 21:56:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,11 +32,6 @@ public interface FederationManagerConstants {
      * Administrator ID argument/option.
      */
     String ARGUMENT_ADMIN_ID = "adminid";
-
-    /**
-     * Password argument/option.
-     */
-    String ARGUMENT_PASSWORD = "password";
 
     /**
      * Password file argument/option.

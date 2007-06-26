@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.2 2006-07-17 18:10:57 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.3 2007-06-26 21:56:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,14 +80,8 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     private String getPassword()
         throws CLIException
     {
-        String password = getStringOptionValue(
-            AccessManagerConstants.ARGUMENT_PASSWORD);
-        if (password == null) {
-            password = CLIUtil.getFileContent(
-                getStringOptionValue(
-                    AccessManagerConstants.ARGUMENT_PASSWORD_FILE), true);
-        }
-        return password;
+        return CLIUtil.getFileContent(getStringOptionValue(
+            AccessManagerConstants.ARGUMENT_PASSWORD_FILE), true);
     }
 
     protected String getAdminUserID() {

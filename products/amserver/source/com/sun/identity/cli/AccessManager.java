@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.4 2006-12-08 21:02:15 veiming Exp $
+ * $Id: AccessManager.java,v 1.5 2007-06-26 21:56:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,6 @@ public class AccessManager extends CLIDefinitionBase {
      */
     public boolean isAuthOption(String opt) {
         return opt.equals(AccessManagerConstants.ARGUMENT_ADMIN_ID) ||
-            opt.equals(AccessManagerConstants.ARGUMENT_PASSWORD);
+            opt.equals(AccessManagerConstants.ARGUMENT_PASSWORD_FILE);
     }
 }

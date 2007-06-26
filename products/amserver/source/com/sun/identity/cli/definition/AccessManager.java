@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.24 2007-06-26 07:08:59 veiming Exp $
+ * $Id: AccessManager.java,v 1.25 2007-06-26 21:56:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,11 +47,9 @@ public class AccessManager {
     @Macro(
         mandatoryOptions={
             "adminid|u|s|Administrator ID of running the command.",
-            "password|w|s|Password of administrator.",
             "password-file|f|s|File name that contains password of administrator."},
         optionalOptions={},
-        optionAliases={
-            "password|password-file"})
+        optionAliases={})
     private String authentication;
 
     @SubCommandInfo(

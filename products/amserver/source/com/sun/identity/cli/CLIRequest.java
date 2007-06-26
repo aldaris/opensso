@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.6 2007-06-08 06:07:36 veiming Exp $
+ * $Id: CLIRequest.java,v 1.7 2007-06-26 21:56:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -209,15 +209,6 @@ public class CLIRequest {
             if (passwordfield) {
                 buff.append(" ").append("*********");
                 passwordfield = false;
-            } else {
-                buff.append(" ").append(argv[i]);
-
-                // this is to masked password in debug.
-                passwordfield = argv[i].equals(
-                    CLIConstants.PREFIX_ARGUMENT_LONG +
-                    AccessManagerConstants.ARGUMENT_PASSWORD) ||
-                    argv[i].equals(CLIConstants.PREFIX_ARGUMENT_SHORT +
-                        AccessManagerConstants.SHORT_ARGUMENT_PASSWORD);
             }
         }
         return buff.toString();

@@ -495,8 +495,8 @@ The following procedures are optional setups:
 <ol type="a">
 <li>Run the following commands to turn on policy evaluation for all queries to, and modifications of, the Personal Profile service:<p></p>
 <ul>
-<li><code>fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w <i>amadmin_password</i> -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"</code></li>
-<li><code>fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -w <i>amadmin_password</i> -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"</code></li>
+<li><code>fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"</code></li>
+<li><code>fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"</code></li>
 </ul>
 <p></p>
 <li>Create a policy for the Personal Profile service with the following procedure:<p></p>
@@ -549,15 +549,15 @@ This needs to be done on both <i>machine-A</i> and <i>machine-B</i>. If <i>machi
 <li>Use the following procedure to set up <i>machine-A</i> as the identity provider:<p></p>
 <ol type="i">
 <li>Run the following command to set the default attribute values for the discovery service:<p></p>
-<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -a "sunIdentityServerDiscoProviderID=<i><i>machine-A</i>_protocol</i>://<i><i>machine-A</i>_host</i>:<i><i>machine-A</i>_port</i>/<i>machine-A_deploy_uri</i>"</code>
+<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerDiscoProviderID=<i><i>machine-A</i>_protocol</i>://<i><i>machine-A</i>_host</i>:<i><i>machine-A</i>_port</i>/<i>machine-A_deploy_uri</i>"</code>
 </li>
 <p></p>
 <li>Run the following command to set the default attribute values for name ID encryption:<p></p>
-<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"</code>
+<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"</code>
 </li>
 <p></p>
 <li>Run the following command to display the default attribute values for bootstrapping:<p></p>
-<code>fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
+<code>fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
 </li>
 <p></p>
 <li>From the previous step's output, save the entire line beginning with <code>sunIdentityServerBootstrappingDiscoEntry=</code> to a file.<p></p>
@@ -594,7 +594,7 @@ with
 <p></p>
 <li>Run the following command to set the default attribute values for the discovery service in <code>datafile</code>:
 <p></p>
-<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -D datafile</code>
+<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 <p></p>
 <li>Edit the values of the following properties in the <code>FederationConfig.properties</code> file located in the configuration directory on <i>machine-A</i> as follows:<p></p>
@@ -610,7 +610,7 @@ with
 <p></p>
 <li>Run the following command to delete the identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>machine-A_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>machine-A_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -630,7 +630,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to delete the service provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>machine-B_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>machine-B_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -651,7 +651,7 @@ For example, <code>http://sad.red.sun.com:80/openfm</code></td>
 
 <li>Run the following command to create a metadata file for the identity provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-A_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -g <i>idpeCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -692,7 +692,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <li>Change the value of the <code>enableNameIDEncryption</code> attribute in the extended metadata file just created to <code>true</code>.</li>                    
 <p></p>
 <li>Run the following command to import the standard and extended metadata files into the circle of trust previously created:<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -720,7 +720,7 @@ where
 <p></p>
 <li>Run the following command to import the standard metadata file just copied from <i>machine-B</i>:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -744,15 +744,15 @@ where
 <li>Use the following procedure to set up <i>machine-B</i> as the service provider:<p></p>
 <ol type="i">
 <li>Run the following command to delete the sample identity provider entity:<p></p>
-<code>fmadm delete-entity -y <i>sample_idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>sample_idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to delete the sample service provider entity:<p></p>
-<code>fmadm delete-entity -y <i>sample_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>sample_sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code></li>
 
 <p></p>
 <li>Run the following command to create a metadata file for the service provider:<p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>machine-B_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -r <i>speCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -791,7 +791,7 @@ For example, <code>http://sad.red.sun.com:80/openfm</code></td>
 </li>
 <p></p>
 <li>Run the following command to import the metadata file just created:<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -822,7 +822,7 @@ where
        
 <li>Run the following command to import the sample identity provider entity into the circle of trust:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -856,15 +856,15 @@ where
 <ol>
 <li>Run the following command to turn on signing for all SAML responses:
 <p></p>
-<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> --attributevalues  iplanet-am-saml-signresponse=true  -d</code></li>
+<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signresponse=true  -d</code></li>
 <p></p>
 <li>Run the following command to turn on signing for all SAML requests:
 <p></p>
-<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> --attributevalues  iplanet-am-saml-signrequest=true  -d</code></li>
+<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signrequest=true  -d</code></li>
 <P></P></li>
 <li>Run the following command to turn on signing for all SAML assertions:
 <p></p>
-<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> --attributevalues  iplanet-am-saml-signassertion=true  -d</code></li>
+<code>fmadm set-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --attributevalues  iplanet-am-saml-signassertion=true  -d</code></li>
 <P></P></li>
 </ol>         
 </td></tr>
@@ -881,7 +881,7 @@ where
 <ol>
 <li>Run the following command on the hosted provider to export the metadata XML files.
 <P></P>
-<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -c <i>metadata_spec</i></code>
+<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -915,12 +915,12 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <ul>
 <li>For a hosted identity provider, run the following command:
 <p></p>
- <code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>For a hosted service provider, run the following command:
 <p></p>
- <code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+ <code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li> 
 <P></P>You may modify the extended metadata attributes (for example, <code>providerHomePageURL</code>) as needed.</li>
 </ul> 
@@ -928,12 +928,12 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <P></P>
 <li>Run the following command on the hosted provider to delete the metadata XML files.
 <P></P>
-<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>Run the following command on the hosted provider to load the modified metadata XML files.
 <P></P>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 </li>
 </ol>
 </li>
@@ -944,7 +944,7 @@ If a value is set for <code>signingCertAlias</code> in <i>extended_metadata</i> 
 <p></p>
 <ol>
 <li>Run the following command on the hosted provider to export the remote provider's standard metadata XML file.<p></p>
-<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Search the XML file(s) for the <code>KeyDescriptor</code> attribute and make sure it contains a value.<p></p>
 If none exists, get the updated standard metadata XML file from the remote provider using the following procedure:
@@ -952,11 +952,11 @@ If none exists, get the updated standard metadata XML file from the remote provi
 <ol type="a">
 <li>Run the following command to delete the remote provider metadata from the hosted provider machine.
 <p></p>
-<code>fmadm delete-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>remote_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Run the following command to import the updated remote provider metadata (retrieved from the remote provider machine) to the hosted provider machine.
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>new_remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>new_remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 where
 <p></P>
@@ -975,7 +975,7 @@ where
 <HR>
 <p><H3><FONT FACE="Times New Roman, serif">NOTE</FONT></H3></P>
 <FONT FACE="Times New Roman, serif">If the remote provider is running on an instance of Sun Java System Federation Manager, the standard metadata (including the <code>KeyDescriptor</code> attribute) can be obtained by running the following command on the machine in which the remote provider is hosted.<p></p>
-<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code>
+<code>fmadm export-entity -y <i>remote_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>remote_standard_metadata</i> -x <i>remote_extended_metadata</i> -c <i>metadata_spec</i></code>
 </li>
 </FONT>
 <HR>
@@ -988,7 +988,7 @@ where
 <ol>
 <li>Run the following command to export the standard and extended metadata from the hosted service provider:
 <p></p>
-<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm export-entity -y <i>hosted_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Make sure the value of the <code>AuthnRequestsSigned</code> attribute in the <i>hosted_standard_metadata</i> is set to <code>true</code>.
 <p></p>
@@ -997,11 +997,11 @@ If not set the value correctly and proceed.
 <p></p>
 <li>Run the following command to delete the hosted provider's metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm delete-entity -y <i>hosted_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Run the following command to import the hosted provider's updated metadata:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 </ol>
 </li>
@@ -1058,7 +1058,7 @@ If not set the value correctly and proceed.
 <ol>
 <li>Run the following command on the remote site to get the site ID:
 <p></p>
-<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> -a iplanet-am-saml-siteid-issuername-list</code>
+<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-siteid-issuername-list</code>
 <p></p>
 The output of this command is<p></p> 
 <code>iplanet-am-saml-siteid-issuername-list=instanceID=http://host.exampleA.com:58080|siteid=VhqieajnHbbNX1usZkmnQLTxNeQ=|issuerName=host.exampleA.com:58080</code>
@@ -1069,7 +1069,7 @@ The site ID is the value of the <code>siteid</code> property, <code>VhqieajnHbbN
 <ol type="a">
 <li>Display any existing trusted partners by running the following command:
 <p></p>
-<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> -a iplanet-am-saml-partner-urls</code>
+<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
 <p></p>
 The output will be
 <p></p>
@@ -1123,11 +1123,11 @@ Other keys that can also be used for <code>iplanet-am-saml-partner-urls</code> i
 <li>Import the file you just created using the following command:
 <p></p>
 
-<code>fmadm add-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> --datafile ./partner.txt</code></li>
+<code>fmadm add-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> --datafile ./partner.txt</code></li>
 <p></p>
 <li>To verify that the file was imported correctly, run the following command on the hosted site to display the information:
 <p></p>
-<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -w <i>amadmin_password</i> -a iplanet-am-saml-partner-urls</code>
+<code>fmadm show-attribute-defaults -s iPlanetAMSAMLService -t global -u amadmin -f <i>admin_password_file_name</i> -a iplanet-am-saml-partner-urls</code>
 <p></p>
 In this case, the output will be:
 <p></p>
@@ -1170,7 +1170,7 @@ You will be redirected to the target site without authentication.
 <ol>
 <li>Run the following command to create a circle of trust.
 <p></p>
-<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -w <i>amadmin_password</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i> -e <i>realm</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1198,7 +1198,7 @@ where
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1234,7 +1234,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>idpMetaAlias</i> -c <i>metadata_spec</i></code></li>
 </ol></li></ul>
 <p></p>
 <ul>
@@ -1243,7 +1243,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <ol type="a">
 <li>Run the following command if a keystore has already been set up:
 <p></p>
-<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -b <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 <P></P>
 where
 <p></p>
@@ -1279,7 +1279,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command if a keystore has NOT been set up:
 <p></p>
-<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -i <i>spMetaAlias</i> -c <i>metadata_spec</i></code>
 </li>
 </ol></li></ul>
 <p></p>
@@ -1295,14 +1295,14 @@ If the hosted provider is an identity provider, the remote provider will be a se
 <p></p>
 <li>Run the following command to load hosted metadata.
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>hosted_standard_metadata</i> -x <i>hosted_extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <P></P>
 The value of <i>cot_name</i> is the name of the circle of trust created in the first step.
 </li>
 <p></p>
 <li>Run the following command to load remote metadata.
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>remote_standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>remote_standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <P></P>
 The value of <i>cot_name</i> is the name of the circle of trust created in the first step.</li>
 <p></p>
@@ -1324,7 +1324,7 @@ The value of <i>cot_name</i> is the name of the circle of trust created in the f
 <li>Create the service provider metadata files.<p></p>
 <ol type="a"> 
 <li>Run the following command on the service provider instance to create the service provider metadata files.<p></p>
-<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>sp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>sp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1335,7 +1335,7 @@ For example, attribute mappers might need to be changed.</li>
 <p></p>
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create the Identity Provider metadata file.<p></p>
-<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entity_id</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_meta_alias</i></code></li>
 <p></p>
 <li>Edit the default values of any attributes in the <i>idp_extended_metadata</i> to reflect your deployment, if required.
 <p></p>
@@ -1348,23 +1348,23 @@ For example, attribute mappers might need to be changed.</li>
 <ol type="a"> 
 <li>Run the following command on the service provider instance to create a circle of trust.
 <p></p>
-<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -w <i>amadmin_password</i></code></li>
+<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
 <p></p>
 <li>Run the following command to import the service provider metadata files into the circle just created.<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code></li>
 <p></p>
 <li>Copy the standard identity provider metadata file from the identity provider instance to the service provider instance.</li>
 <p></p>
 <li>Run the following command to import the identity provider metadata files to the service provider instance.<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -t <i>cot_name</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -t <i>cot_name</i></code></li>
 <p></p>
 <li>Run the following command to verify that the files have been imported successfully.
 <p></p>
-<code>fmadm list-circle-of-trust-members -u amadmin -w <i>amadmin_password</i> -t <i>cot_name</i></code>
+<code>fmadm list-circle-of-trust-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
 <p></p>
 This will display all members of the named circle of trust. In this case, the hosted service provider and remote identity provider are listed. You can also export the metadata files for verification using the following command:
 <p></p>
-<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
+<code>fmadm export-entity -u amadmin -f <i>admin_password_file_name</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
 </li>
 <p></p>
 <li>Restart the Web Container.</li>
@@ -1376,23 +1376,23 @@ This will display all members of the named circle of trust. In this case, the ho
 <ol type="a"> 
 <li>Run the following command on the identity provider instance to create a circle of trust.
 <p></p>
-<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -w <i>amadmin_password</i></code></li>
+<code>fmadm create-circle-of-trust -t <i>cot_name</i> -u amadmin -f <i>admin_password_file_name</i></code></li>
 <p></p>
 <li>Run the following command to import the identity provider metadata files.<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code></li>
 <p></p>
 <li>Copy the standard service provider metadata file from the service provider instance to the identity provider instance.</li>
 <p></p>
 <li>Run the following command to import the service provider metadata files to the identity provider instance.<p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -t <i>cot_name</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -t <i>cot_name</i></code></li>
 <p></p>
 <li>Run the following command to verify that the files have been imported successfully.
 <p></p>
-<code>fmadm list-circle-of-trust-members -u amadmin -w <i>amadmin_password</i> -t <i>cot_name</i></code>
+<code>fmadm list-circle-of-trust-members -u amadmin -f <i>admin_password_file_name</i> -t <i>cot_name</i></code>
 <p></p>
 This will display all members of the named circle of trust. In this case, the remote service provider and hosted identity provider are listed. You can also export the metadata files, using the following command, for verification:
 <p></p>
-<code>fmadm export-entity -u amadmin -w <i>amadmin_password</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
+<code>fmadm export-entity -u amadmin -f <i>admin_password_file_name</i> -y <i>provider_entityid</i> -m <i>provider_standard_metadata</i> -x <i>provider_extended_metadata</i></code>
 </li>
 <p></p>
 <li>Restart the web container.</li>
@@ -1432,10 +1432,10 @@ After setting up the keystore, import the applicable signing and encryption cert
 
 <ol>
 <li>Run the following command on the service provider machine to regenerate the service provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>fmadm create-metadata-template -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -s <i>sp_metaAlias</i> -a <i>sp_certalias</i> -r <i>sp_enc_alias</i></code></li>
 <P></P>
 <li>Run the following command on the identity provider machine to regenerate the identity provider metadata (including the newly added signing and encryption key information).<p></p>
-<code>fmadm create-metadata-template -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
+<code>fmadm create-metadata-template -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -i <i>idp_metaAlias</i> -b <i>idp_certalias</i> -g <i>idp_enc_alias</i></code></li>
 <P></P>
 <li>Modify the values of the following attributes in the appropriate file to enable signing and encryption.
 <p></p>
@@ -1506,17 +1506,17 @@ After setting up the keystore, import the applicable signing and encryption cert
 <ol type="a">
 <li>Run the following command to remove the old hosted service provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i></code>
 </li>
 <P></P>
 <li>Run the following command to remove the old remote identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new hosted service provider metadata:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code>
 </li>
 <P></P>
 <li>Copy the new standard and extended metadata files from the remote identity provider machine to the hosted service provider machine.
@@ -1527,7 +1527,7 @@ After setting up the keystore, import the applicable signing and encryption cert
 <P></P>
 <li>Run the following command to import the newly modified remote identity provider metadata:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code>
 </li>
 </ol>
 </li>
@@ -1537,17 +1537,17 @@ After setting up the keystore, import the applicable signing and encryption cert
 <ol type="a">
 <li>Run the following command to remove the old hosted identity provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i></code>
 </li>
 <P></P>
 <li>Run the following command to remove the old remote service provider metadata:
 <p></p>
-<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new hosted identity provider metadata:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>idp_standard_metadata</i> -x <i>idp_extended_metadata</i> -t <i>cot_name</i></code>
 </li>
 <P></P>
 <li>Copy the new standard and extended metadata files from the remote service provider machine to the hosted identity provider machine.
@@ -1558,7 +1558,7 @@ After setting up the keystore, import the applicable signing and encryption cert
 <P></P>
 <li>Run the following command to import the newly modified remote service provider metadata:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>sp_standard_metadata</i> -x <i>sp_extended_metadata</i> -t <i>cot_name</i></code>
 </li>
 </ol>
 </li>
@@ -1590,7 +1590,7 @@ Initially, you will need to authenticate to both the service provider and the id
 <ol>
 <li>Run the following command to get the current value for the defined Authentication Web Service attribute:
 <p></p>
-<code>fmadm show-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -w <i>amadmin_password</i> -t Global -a MechanismHandlerList</code>
+<code>fmadm show-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -a MechanismHandlerList</code>
 </li>
 <p></p>
 <li>From the previous command's output, save the entire line beginning with <code>MechanismHandlerList=</code> to a file. <p></p>
@@ -1601,7 +1601,7 @@ The syntax of the value of the <code>MechanismHandlerList</code> attribute is <c
 <p></p>
 <li>Run the following command to change the value of <code>MechanismHandlerList</code>:
 <p></p>
-<code>fmadm set-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -w <i>amadmin_password</i> -t Global -D datafile</code>
+<code>fmadm set-attribute-defaults -s sunIdentityServerAuthnService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 </ol></p></td></tr>
 
@@ -1620,7 +1620,7 @@ The syntax of the value of the <code>MechanismHandlerList</code> attribute is <c
 <ol type="a">
 <li>Run the following command to get the current value for the defined Discovery Service attribute:
 <p></p>
-<code>fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
+<code>fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -a sunIdentityServerBootstrappingDiscoEntry</code>
 </li>
 <p></p>
 <li>From the previous step's output, save the entire line beginning with <code>sunIdentityServerBootstrappingDiscoEntry=</code> to a file. <p></p>
@@ -1676,7 +1676,7 @@ In this case, we will call the file <code>datafile</code>.</li>
 <p></p>
 <li>Run the following command (using as <code>datafile</code> input) to change the values of the attributes:
 <p></p>
-<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -w <i>amadmin_password</i> -t Global -D datafile</code>
+<code>fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f <i>admin_password_file_name</i> -t Global -D datafile</code>
 </li>
 <p></p>
 <li>Edit the following properties in <code>FederationConfig.properties</code> to reflect the correct aliases:
@@ -1692,7 +1692,7 @@ In this case, we will call the file <code>datafile</code>.</li>
 <p></p>
 <li>Run the following command to delete the identity provider:
 <p></p>
-<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1713,7 +1713,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to delete the remote service provider:
 <p></p>
-<code>fmadm delete-entity -y <i>remote_sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>remote_sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1733,7 +1733,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the identity provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>idp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -i <i>idpMetaAlias</i> -b <i>idpSCertAlias</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1773,7 +1773,7 @@ For example, <code>http://happy.red.sun.com:80/openfm</code></td>
 <p></p>
 <li>Run the following command to import the new metadata files into the defined circle:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 <p></p>
 where
 <p></p>
@@ -1803,7 +1803,7 @@ See <a href="#spm">On the service provider machine</a> below.</li>
 <p></p>
 <li>Run the following command to import the standard metadata file for the service provider into the defined circle:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 where
 <p></p>
@@ -1831,22 +1831,22 @@ where
 <ol type="a">
 <li>Run the following command to delete the service provider:
 <p></p>
-<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>sp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to delete the remote identity provider:
 <p></p>
-<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -w <i>amadmin_password</i> -c <i>metadata_spec</i></code>
+<code>fmadm delete-entity -y <i>idp_entityid</i> -u amadmin -f <i>admin_password_file_name</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Run the following command to create new standard and extended metadata files for the service provider:
 <p></p>
-<code>fmadm create-metadata-template -u amadmin -w <i>amadmin_password</i> -y <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
+<code>fmadm create-metadata-template -u amadmin -f <i>admin_password_file_name</i> -y <i>sp_entityid</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -s <i>spMetaAlias</i> -a <i>spSCertAlias</i> -c <i>metadata_spec</i></code>
 </li>
 <P></P>
 <li>Run the following command to import the new metadata files into the defined circle:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -x <i>extended_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code>
 </li>
 <p></p>
 <li>Copy the standard metadata file from the identity provider (created during the identity provider procedure documented in the previous step) to the <code>/tmp</code> directory on this machine.
@@ -1855,7 +1855,7 @@ See <a href="#idpm">On the identity provider machine</a> below.</li>
 <p></p>
 <li>Run the following command to import the new standard metadata file for the identity provider into the defined entity:
 <p></p>
-<code>fmadm import-entity -u amadmin -w <i>amadmin_password</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code></li>
+<code>fmadm import-entity -u amadmin -f <i>admin_password_file_name</i> -m <i>standard_metadata</i> -t <i>cot_name</i> -c <i>metadata_spec</i></code></li>
 <p></p>
 <li>Edit the <code>com.sun.identity.liberty.ws.wsc.certalias</code> property in <code>FederationConfig.properties</code> to reflect the correct certificate alias.
 <P></P>
