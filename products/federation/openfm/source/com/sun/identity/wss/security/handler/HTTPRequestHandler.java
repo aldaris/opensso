@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.1 2007-06-25 23:10:24 mrudul_uchil Exp $
+ * $Id: HTTPRequestHandler.java,v 1.2 2007-06-26 17:15:35 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,8 +45,8 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.am.util.Debug;
-import com.sun.identity.common.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.wss.security.SecurityException;
