@@ -140,6 +140,14 @@ public class PolicyEvaluationTest extends TestCommon {
             usertoken = getToken((String)mapExecute.get("username"),
                     (String)mapExecute.get("password"),
                     (String)mapExecute.get("realmname"));
+            if (mapIdentity.containsKey("test" + initSetup + 
+                        ".Identity." + "spcount")){
+                Integer spCount = new Integer((String)mapIdentity.get
+                    ("test" + initSetup + ".Identity.spcount"));
+                if (spCount > 0 ) {
+                   pc.setProperty(usertoken, mapIdentity, initSetup);
+                } 
+            }
             PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgent" +
                     "Service");
             Set actions = new HashSet();
