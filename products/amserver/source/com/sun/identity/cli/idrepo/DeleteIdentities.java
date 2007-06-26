@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.3 2007-06-26 07:08:59 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.4 2007-06-26 21:59:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
+import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.idm.AMIdentity;
@@ -81,12 +82,19 @@ public class DeleteIdentities extends IdentityCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_DELETE_IDENTITY", params);
             amir.deleteIdentities(setDelete);
+            IOutput outputWriter = getOutputWriter();
 
-            Object[] objects = {realm, type, ""};
-            for (Iterator i = idNames.iterator(); i.hasNext(); ) {
-                objects[2] = (String)i.next();
-                getOutputWriter().printlnMessage(MessageFormat.format(
+            Object[] objects = {realm, type};
+            if (idNames.size() > 1) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("delete-identities-succeed"), objects));
+            } else {
+                outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("delete-identity-succeed"), objects));
+            }
+
+            for (Iterator i = idNames.iterator(); i.hasNext(); ) {
+                outputWriter.printlnMessage("    " + (String)i.next());
             }
 
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
