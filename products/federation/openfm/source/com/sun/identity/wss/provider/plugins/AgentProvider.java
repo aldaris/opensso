@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.3 2007-06-21 23:12:49 mallas Exp $
+ * $Id: AgentProvider.java,v 1.4 2007-06-26 23:20:59 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -216,15 +216,13 @@ public class AgentProvider extends ProviderConfig {
            if(USER_NAME.equals(st.nextToken())) {
               if(st.hasMoreTokens()) {
                  user = st.nextToken();
-              }
-              user = st.nextToken(); 
+              }               
            }
            StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
            if(USER_PASSWORD.equals(st1.nextToken())) {
               if(st1.hasMoreTokens()) {
                  password = st1.nextToken();
-              }
-              password = st1.nextToken(); 
+              }              
            }
 
            if((user != null) && (password != null)) {
