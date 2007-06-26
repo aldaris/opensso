@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.3 2007-06-21 22:53:41 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.4 2007-06-26 19:00:59 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -425,5 +427,38 @@ public class PolicyCommon extends TestCommon {
             throw e;
         }
     }
+
+    /**
+     * sets the requested properties in the sso token   
+     * @param SSOToken, Map, int 
+     */
+    public void setProperty(SSOToken userToken, Map testIdentityMap, int i)
+    throws Exception {
+        int j ;
+        try {
+            Integer spCount = new Integer((String)testIdentityMap.get
+                    ("test" + i + ".Identity.spcount"));
+            for (j = 0; j < spCount; j++){
+                String spName = (String)testIdentityMap.get("test" + i +
+                        ".Identity" + "." + "sp" + j +".name");
+                String spValue = (String)testIdentityMap.get("test" + i +
+                        ".Identity" + "." + "sp" + j + ".value");
+                String userName =  (String)testIdentityMap.get("test" + i +
+                        ".Identity"  + ".username");                
+                userToken.setProperty(spName, spValue);
+                String spGetValue = userToken.getProperty(spName);
+                if (spGetValue == spValue) {
+                    log(logLevel, "setProperty", "Session Property is set"
+                            + "Correctly:" + spGetValue);
+                } else {
+                    log(logLevel, "setProperty", "Session Property is not"
+                            + " set Correctly:" + spGetValue);
+                }
+            }
+        } catch (SSOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 }
 
