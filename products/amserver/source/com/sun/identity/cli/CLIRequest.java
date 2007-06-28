@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.7 2007-06-26 21:56:14 veiming Exp $
+ * $Id: CLIRequest.java,v 1.8 2007-06-28 06:40:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -202,14 +202,8 @@ public class CLIRequest {
 
     static String addAllArgs(String[] argv) {
         StringBuffer buff = new StringBuffer();
-        buff.append(argv[0]);
-        boolean passwordfield = false;
-
-        for (int i = 1; i < argv.length; i++) {
-            if (passwordfield) {
-                buff.append(" ").append("*********");
-                passwordfield = false;
-            }
+        for (int i = 0; i < argv.length; i++) {
+            buff.append(" ").append(argv[i]);
         }
         return buff.toString();
     }
