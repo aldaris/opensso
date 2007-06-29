@@ -20,13 +20,13 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3-local-cli-testng.xml,v 1.3 2007-06-20 18:50:52 cmwesley Exp $
+ $Id: ldapv3-local-cli-testng.xml,v 1.4 2007-06-29 13:51:15 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ldapv3-local-cli" verbose="1">
-    <test name="CreateRealm01">
+    <test name="CLI_create-realm01">
         <parameter name="testName" value="createrealm-test1"/>
         <groups>
             <run>
@@ -37,7 +37,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm02">
+    <test name="CLI_create-realm02">
         <parameter name="testName" value="createrealm-test2"/>
         <groups>
             <run>
@@ -48,7 +48,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm03">
+    <test name="CLI_create-realm03">
         <parameter name="testName" value="createrealm-test3"/>
         <groups>
             <run>
@@ -59,7 +59,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm04">
+    <test name="CLI_create-realm04">
         <parameter name="testName" value="createrealm-test4"/>
         <groups>
             <run>
@@ -70,7 +70,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm05">
+    <test name="CLI_create-realm05">
         <parameter name="testName" value="createrealm-test5"/>
         <groups>
             <run>
@@ -81,7 +81,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm09">
+    <test name="CLI_create-realm09">
         <parameter name="testName" value="createrealm-test9"/>
         <groups>
             <run>
@@ -92,7 +92,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm10">
+    <test name="CLI_create-realm10">
         <parameter name="testName" value="createrealm-test10"/>
         <groups>
             <run>
@@ -103,7 +103,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm11">
+    <test name="CLI_create-realm11">
         <parameter name="testName" value="createrealm-test11"/>
         <groups>
             <run>
@@ -114,7 +114,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm12">
+    <test name="CLI_create-realm12">
         <parameter name="testName" value="createrealm-test12"/>
         <groups>
             <run>
@@ -125,7 +125,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm13">
+    <test name="CLI_create-realm13">
         <parameter name="testName" value="createrealm-test13"/>
         <groups>
             <run>
@@ -136,7 +136,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm14">
+    <test name="CLI_create-realm14">
         <parameter name="testName" value="createrealm-test14"/>
         <groups>
             <run>
@@ -147,7 +147,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm15">
+    <test name="CLI_create-realm15">
         <parameter name="testName" value="createrealm-test15"/>
         <groups>
             <run>
@@ -158,7 +158,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="CreateRealm16">
+    <test name="CLI_create-realm16">
         <parameter name="testName" value="createrealm-test16"/>
         <groups>
             <run>
@@ -169,7 +169,7 @@
             <class name="com.sun.identity.qatest.cli.CreateRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm1">
+    <test name="CLI_delete-realm01">
         <parameter name="testName" value="deleterealm-test1"/>
         <groups>
             <run>
@@ -180,7 +180,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm2">
+    <test name="CLI_delete-realm02">
         <parameter name="testName" value="deleterealm-test2"/>
         <groups>
             <run>
@@ -191,7 +191,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm3">
+    <test name="CLI_delete-realm03">
         <parameter name="testName" value="deleterealm-test3"/>
         <groups>
             <run>
@@ -202,7 +202,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm4">
+    <test name="CLI_delete-realm04">
         <parameter name="testName" value="deleterealm-test4"/>
         <groups>
             <run>
@@ -213,7 +213,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm5">
+    <test name="CLI_delete-realm05">
         <parameter name="testName" value="deleterealm-test5"/>
         <groups>
             <run>
@@ -224,7 +224,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm6">
+    <test name="CLI_delete-realm06">
         <parameter name="testName" value="deleterealm-test6"/>
         <groups>
             <run>
@@ -235,7 +235,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm7">
+    <test name="CLI_delete-realm07">
         <parameter name="testName" value="deleterealm-test7"/>
         <groups>
             <run>
@@ -246,7 +246,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm8">
+    <test name="CLI_delete-realm08">
         <parameter name="testName" value="deleterealm-test8"/>
         <groups>
             <run>
@@ -257,7 +257,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm9">
+    <test name="CLI_delete-realm09">
         <parameter name="testName" value="deleterealm-test9"/>
         <groups>
             <run>
@@ -268,7 +268,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="DeleteRealm10">
+    <test name="CLI_delete-realm10">
         <parameter name="testName" value="deleterealm-test10"/>
         <groups>
             <run>
@@ -279,7 +279,7 @@
             <class name="com.sun.identity.qatest.cli.DeleteRealmTest"/>
         </classes>
     </test>
-    <test name="ListRealms1">
+    <test name="CLI_list-realms01">
         <parameter name="testName" value="listrealms-test1"/>
         <groups>
             <run>
@@ -290,7 +290,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms2">
+    <test name="CLI_list-realms02">
         <parameter name="testName" value="listrealms-test2"/>
         <groups>
             <run>
@@ -301,7 +301,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms3">
+    <test name="CLI_list-realms03">
         <parameter name="testName" value="listrealms-test3"/>
         <groups>
             <run>
@@ -312,7 +312,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms4">
+    <test name="CLI_list-realms04">
         <parameter name="testName" value="listrealms-test4"/>
         <groups>
             <run>
@@ -323,7 +323,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>    
-    <test name="ListRealms5">
+    <test name="CLI_list-realms05">
         <parameter name="testName" value="listrealms-test5"/>
         <groups>
             <run>
@@ -334,7 +334,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms6">
+    <test name="CLI_list-realms06">
         <parameter name="testName" value="listrealms-test6"/>
         <groups>
             <run>
@@ -345,7 +345,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms7">
+    <test name="CLI_list-realms07">
         <parameter name="testName" value="listrealms-test7"/>
         <groups>
             <run>
@@ -356,7 +356,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms8">
+    <test name="CLI_list-realms08">
         <parameter name="testName" value="listrealms-test8"/>
         <groups>
             <run>
@@ -367,7 +367,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms9">
+    <test name="CLI_list-realms09">
         <parameter name="testName" value="listrealms-test9"/>
         <groups>
             <run>
@@ -378,7 +378,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms10">
+    <test name="CLI_list-realms10">
         <parameter name="testName" value="listrealms-test10"/>
         <groups>
             <run>
@@ -389,7 +389,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>    
-    <test name="ListRealms11">
+    <test name="CLI_list-realms11">
         <parameter name="testName" value="listrealms-test11"/>
         <groups>
             <run>
@@ -400,7 +400,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test>
-    <test name="ListRealms12">
+    <test name="CLI_list-realms12">
         <parameter name="testName" value="listrealms-test12"/>
         <groups>
             <run>
@@ -411,7 +411,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test> 
-    <test name="ListRealms13">
+    <test name="CLI_list-realms13">
         <parameter name="testName" value="listrealms-test13"/>
         <groups>
             <run>
@@ -422,7 +422,7 @@
             <class name="com.sun.identity.qatest.cli.ListRealmsTest"/>
         </classes>
     </test> 
-    <test name="CreateIdentity01">
+    <test name="CLI_create-identity01">
         <parameter name="testName" value="createidentity-test1"/>
         <groups>
             <run>
@@ -433,7 +433,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity02">
+    <test name="CLI_create-identity02">
         <parameter name="testName" value="createidentity-test2"/>
         <groups>
             <run>
@@ -444,7 +444,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity03">
+    <test name="CLI_create-identity03">
         <parameter name="testName" value="createidentity-test3"/>
         <groups>
             <run>
@@ -455,7 +455,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity04">
+    <test name="CLI_create-identity04">
         <parameter name="testName" value="createidentity-test4"/>
         <groups>
             <run>
@@ -466,7 +466,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity05">
+    <test name="CLI_create-identity05">
         <parameter name="testName" value="createidentity-test5"/>
         <groups>
             <run>
@@ -477,7 +477,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity32">
+    <test name="CLI_create-identity32">
         <parameter name="testName" value="createidentity-test32"/>
         <groups>
             <run>
@@ -488,7 +488,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity07">
+    <test name="CLI_create-identity07">
         <parameter name="testName" value="createidentity-test7"/>
         <groups>
             <run>
@@ -499,7 +499,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity08">
+    <test name="CLI_create-identity08">
         <parameter name="testName" value="createidentity-test8"/>
         <groups>
             <run>
@@ -510,7 +510,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity09">
+    <test name="CLI_create-identity09">
         <parameter name="testName" value="createidentity-test9"/>
         <groups>
             <run>
@@ -521,7 +521,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity10">
+    <test name="CLI_create-identity10">
         <parameter name="testName" value="createidentity-test10"/>
         <groups>
             <run>
@@ -532,7 +532,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity11">
+    <test name="CLI_create-identity11">
         <parameter name="testName" value="createidentity-test11"/>
         <groups>
             <run>
@@ -543,7 +543,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity33">
+    <test name="CLI_create-identity33">
         <parameter name="testName" value="createidentity-test33"/>
         <groups>
             <run>
@@ -554,7 +554,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity13">
+    <test name="CLI_create-identity13">
         <parameter name="testName" value="createidentity-test13"/>
         <groups>
             <run>
@@ -565,7 +565,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity14">
+    <test name="CLI_create-identity14">
         <parameter name="testName" value="createidentity-test14"/>
         <groups>
             <run>
@@ -576,7 +576,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity15">
+    <test name="CLI_create-identity15">
         <parameter name="testName" value="createidentity-test15"/>
         <groups>
             <run>
@@ -587,7 +587,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity16">
+    <test name="CLI_create-identity16">
         <parameter name="testName" value="createidentity-test16"/>
         <groups>
             <run>
@@ -598,7 +598,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity17">
+    <test name="CLI_create-identity17">
         <parameter name="testName" value="createidentity-test17"/>
         <groups>
             <run>
@@ -609,7 +609,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity34">
+    <test name="CLI_create-identity34">
         <parameter name="testName" value="createidentity-test34"/>
         <groups>
             <run>
@@ -620,7 +620,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity19">
+    <test name="CLI_create-identity19">
         <parameter name="testName" value="createidentity-test19"/>
         <groups>
             <run>
@@ -631,7 +631,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity20">
+    <test name="CLI_create-identity20">
         <parameter name="testName" value="createidentity-test20"/>
         <groups>
             <run>
@@ -642,7 +642,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity21">
+    <test name="CLI_create-identity21">
         <parameter name="testName" value="createidentity-test21"/>
         <groups>
             <run>
@@ -653,7 +653,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity22">
+    <test name="CLI_create-identity22">
         <parameter name="testName" value="createidentity-test22"/>
         <groups>
             <run>
@@ -664,7 +664,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity23">
+    <test name="CLI_create-identity23">
         <parameter name="testName" value="createidentity-test23"/>
         <groups>
             <run>
@@ -675,7 +675,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity24">
+    <test name="CLI_create-identity24">
         <parameter name="testName" value="createidentity-test24"/>
         <groups>
             <run>
@@ -686,7 +686,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity25">
+    <test name="CLI_create-identity25">
         <parameter name="testName" value="createidentity-test25"/>
         <groups>
             <run>
@@ -697,18 +697,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity26">
-        <parameter name="testName" value="createidentity-test26"/>
-        <groups>
-            <run>
-                <include name="ldapv3-local"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>
-    <test name="CreateIdentity27">
+    <test name="CLI_create-identity27">
         <parameter name="testName" value="createidentity-test27"/>
         <groups>
             <run>
@@ -719,7 +708,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity28">
+    <test name="CLI_create-identity28">
         <parameter name="testName" value="createidentity-test28"/>
         <groups>
             <run>
@@ -730,7 +719,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity29">
+    <test name="CLI_create-identity29">
         <parameter name="testName" value="createidentity-test29"/>
         <groups>
             <run>
@@ -741,7 +730,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity30">
+    <test name="CLI_create-identity30">
         <parameter name="testName" value="createidentity-test30"/>
         <groups>
             <run>
@@ -752,7 +741,7 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>
-    <test name="CreateIdentity31">
+    <test name="CLI_create-identity31">
         <parameter name="testName" value="createidentity-test31"/>
         <groups>
             <run>
@@ -761,6 +750,347 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities01">
+        <parameter name="testName" value="deleteidentities-test1"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities02">
+        <parameter name="testName" value="deleteidentities-test2"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities03">
+        <parameter name="testName" value="deleteidentities-test3"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities04">
+        <parameter name="testName" value="deleteidentities-test4"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities05">
+        <parameter name="testName" value="deleteidentities-test5"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities10">
+        <parameter name="testName" value="deleteidentities-test10"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_delete-identities11">
+        <parameter name="testName" value="deleteidentities-test11"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities12">
+        <parameter name="testName" value="deleteidentities-test12"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities13">
+        <parameter name="testName" value="deleteidentities-test13"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities14">
+        <parameter name="testName" value="deleteidentities-test14"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities15">
+        <parameter name="testName" value="deleteidentities-test15"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities16">
+        <parameter name="testName" value="deleteidentities-test16"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities17">
+        <parameter name="testName" value="deleteidentities-test17"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities22">
+        <parameter name="testName" value="deleteidentities-test22"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_delete-identities23">
+        <parameter name="testName" value="deleteidentities-test23"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities24">
+        <parameter name="testName" value="deleteidentities-test24"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities25">
+        <parameter name="testName" value="deleteidentities-test25"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities26">
+        <parameter name="testName" value="deleteidentities-test26"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities27">
+        <parameter name="testName" value="deleteidentities-test27"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities28">
+        <parameter name="testName" value="deleteidentities-test28"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities29">
+        <parameter name="testName" value="deleteidentities-test29"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities30">
+        <parameter name="testName" value="deleteidentities-test30"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities31">
+        <parameter name="testName" value="deleteidentities-test31"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities32">
+        <parameter name="testName" value="deleteidentities-test32"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities33">
+        <parameter name="testName" value="deleteidentities-test33"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities34">
+        <parameter name="testName" value="deleteidentities-test34"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities35">
+        <parameter name="testName" value="deleteidentities-test35"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities36">
+        <parameter name="testName" value="deleteidentities-test36"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities37">
+        <parameter name="testName" value="deleteidentities-test37"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities38">
+        <parameter name="testName" value="deleteidentities-test38"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-identities39">
+        <parameter name="testName" value="deleteidentities-test39"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
         </classes>
     </test>        
 </suite>

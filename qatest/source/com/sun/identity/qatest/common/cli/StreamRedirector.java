@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StreamRedirector.java,v 1.1 2007-05-31 19:40:25 cmwesley Exp $
+ * $Id: StreamRedirector.java,v 1.2 2007-06-29 13:49:04 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,6 @@ public class StreamRedirector extends Thread {
      * Creates a new instance of </code>StreamRedirector</code>.
      *
      * @param is Input Stream.
-     * @param type Message Type.
      */ 
     public StreamRedirector(InputStream is) {
         super();

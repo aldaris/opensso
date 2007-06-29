@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.1 2007-05-31 19:40:24 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.2 2007-06-29 13:49:04 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,20 +117,18 @@ public class CLIUtility extends TestCommon {
      */
     protected Vector tokenizeOutputBuffer() {
         if (outputVector == null) {
-            outputVector = tokenizeBuffer(command.getOutput(), 
-                    System.getProperty("line.separator"));
+            outputVector = tokenizeBuffer(command.getOutput(), newline);
         }
         return (outputVector);
     }
     
     /**
      * Tokenize the <code>CLICommand</code> error buffer
-     * @returns a Vector where each element corresponds to a line in the error
+     * @return a Vector where each element corresponds to a line in the error
      */
     protected Vector tokenizeErrorBuffer() {
         if (errorVector == null) {
-            errorVector = tokenizeBuffer(command.getError(), 
-                    System.getProperty("line.separator"));
+            errorVector = tokenizeBuffer(command.getError(), newline);
         }
         return (errorVector);
     }
@@ -138,8 +136,8 @@ public class CLIUtility extends TestCommon {
     /**
      * Search for a string in the output of the executed <code>CLICommand</code>
      * @param searchString - the string to search for in the output
-     * @returns true - if the string is found in the output
-     * @returns false - if the string is not found in the output
+     * @return true if the string is found in the output and false if the string
+     * is not found in the output
      */
     public boolean findStringInOutput(String searchString) {
         return (tokenizeOutputBuffer().contains(searchString));
@@ -148,8 +146,8 @@ public class CLIUtility extends TestCommon {
     /**
      * Search for a string in the error of the executed <code>CLICommand</code>
      * @param searchString - the string to search for in the error
-     * @returns true - if the string is found in the error
-     * @returns false - if the string is not found in the error
+     * @return true if the string is found in the error and false if the string
+     * is not found in the error
      */
     public boolean findStringInError (String searchString) {
         return (tokenizeErrorBuffer().contains(searchString));
@@ -189,7 +187,7 @@ public class CLIUtility extends TestCommon {
      * Execute the command specified by the list of arguments
      * @param timeout - the number of milliseconds to wait for the command
      * to complete its execution
-     * @returns the exit status of the executed command or the value of 
+     * @return the exit status of the executed command or the value of 
      * <code>CLICommand.UNFINISHED_PROCESS_STATUS</code> if the process does
      * not complete before the timeout elapses
      */
@@ -244,16 +242,11 @@ public class CLIUtility extends TestCommon {
      */
     public void logCommand(String methodName) { 
         if (argList != null) {
-            StringBuffer commandBuffer = new StringBuffer();
-
-            for (Iterator argIterator = argList.iterator(); 
-                argIterator.hasNext(); ) {
-                commandBuffer.append((String)argIterator.next() + ' ');
-            }
             log(logLevel, "logCommand", methodName + " Command executed: " + 
-                    commandBuffer.toString());
+                    getAllArgs());
         } else {
-            log(Level.SEVERE, "logCommand", methodName + " Argument list is null");
+            log(Level.SEVERE, "logCommand", methodName + 
+                    " Argument list is null");
         }
         if (command != null) {
             StringBuffer outputBuffer = command.getOutput();
@@ -330,5 +323,23 @@ public class CLIUtility extends TestCommon {
             } 
         }
         return stringsFound;
-    }    
+    }
+    
+    /**
+     * Get a string containing all the command arguments
+     * @return a String containing all the argument values
+     */
+    public String getAllArgs() {
+        StringBuffer buffer = new StringBuffer(argList.get(0));
+        for (int i=1; i < argList.size(); i++) {
+            buffer.append(" ").append(argList.get(i));
+        }
+        return buffer.toString();
+    }
+    
+    /**
+     * Get the path of the CLI
+     * @return a String with the CLI path
+     */
+    public String getCliPath() { return cliPath; }
 }

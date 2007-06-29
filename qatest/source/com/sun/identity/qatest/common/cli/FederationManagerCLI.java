@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.3 2007-06-20 18:54:58 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.4 2007-06-29 13:49:04 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,8 @@ public class FederationManagerCLI extends CLIUtility
      * arguments.
      * Retrieves the administration user and password from AMClient.properties.
      * Turns off debug and verbose modes.  Does not set a locale value.
-     * @param path - The absolute path to the amadm utility.
+     * @param createPasswdFile - a boolean indicating whether a password file
+     * should be created.
      */
     public FederationManagerCLI(boolean createPasswdFile) 
     throws Exception {
@@ -331,7 +332,7 @@ public class FederationManagerCLI extends CLIUtility
      * Delete a realm.
      *
      * @param realmToDelete - the name of the realm to be deleted
-     * @recursiveDelete - a flag indicating whether the realms beneath 
+     * @param recursiveDelete - a flag indicating whether the realms beneath 
      * realmToDelete should be recursively deleted as well
      * @return the exit status of the "delete-realm" command
      */
@@ -500,8 +501,6 @@ public class FederationManagerCLI extends CLIUtility
      * @param name - the name of the identity to be created
      * @param type - the type of identity to be created (e.g. "User", "Role", 
      * and "Group")
-     * @param attributeValues - a semi-colon delimited string containing the 
-     * attribute values for the identity to be created
      * @return the exit status of the "create-identity" command
      */
     public int createIdentity(String realm, String name, String type)
@@ -513,7 +512,7 @@ public class FederationManagerCLI extends CLIUtility
     /**
      * Delete one or more identities in a realm
      * @param realm - the realm from which the identies should be deleted
-     * @param name - one or more identity names to be deleted
+     * @param names - one or more identity names to be deleted
      * @param type - the type of the identity (identities) to be deleted
      * @return the exit status of the "delete-identities" command
      */
@@ -534,12 +533,12 @@ public class FederationManagerCLI extends CLIUtility
      * @param idtype - the type of identities (e.g. "User", "Group", "Role") for
      * which the search sould be performed
      */
-    public int listIdentities(String realm, String filter, String type)
+    public int listIdentities(String realm, String filter, String idtype)
     throws Exception {
         setSubcommand(LIST_IDENTITIES_SUBCOMMAND);
         addRealmArguments(realm);
         addFilterArguments(filter);
-        addIdtypeArguments(type);
+        addIdtypeArguments(idtype);
         return (executeCommand(commandTimeout));
     }
     
@@ -652,8 +651,13 @@ public class FederationManagerCLI extends CLIUtility
         } else {
             idnamesArg = PREFIX_ARGUMENT_SHORT + SHORT_ID_NAME_ARGUMENT;
         }
+
         addArgument(idnamesArg);
-        addArgument(names);
+        
+        StringTokenizer tokenizer = new StringTokenizer(names);
+        while (tokenizer.hasMoreTokens()) {
+            addArgument(tokenizer.nextToken());
+        }
     }
        
     /**
@@ -812,8 +816,8 @@ public class FederationManagerCLI extends CLIUtility
                             String idString = token + " (id=" + token + ",ou=" + 
                                     type.toLowerCase() + "," + rootDN + ")";
                             if (!findStringInOutput(idString)) {
-                                log(logLevel, "findIdentities", "String " + 
-                                        idString + " was not found.");
+                                log(logLevel, "findIdentities", "String \'" + 
+                                        idString + "\' was not found.");
                                 idsFound = false;
                             } else {
                                 log(logLevel, "findIdentities", type + 

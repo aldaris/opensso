@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLICommand.java,v 1.1 2007-05-31 19:40:24 cmwesley Exp $
+ * $Id: CLICommand.java,v 1.2 2007-06-29 13:49:03 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,7 @@ public class CLICommand extends Thread {
     
     /** 
      * Get the exit status of the executed command
-     * @returns - the current exit status of the command or the value 
+     * @return the current exit status of the command or the value 
      * <code>UNFINISHED_PROCESS_STATUS</code> if the process has not 
      * completed its execution or is deemed to have timed out by the caller
      */
