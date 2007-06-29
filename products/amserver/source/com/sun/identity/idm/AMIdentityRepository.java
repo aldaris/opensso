@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.13 2007-02-02 18:05:35 veiming Exp $
+ * $Id: AMIdentityRepository.java,v 1.14 2007-06-29 22:30:55 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ import com.sun.identity.sm.ServiceManager;
  * 
  * <PRE>
  * 
- * AMIdentityRepository = new AMIdentityRepository(ssoToken, realmName);
+ * AMIdentityRepository idRepo = new AMIdentityRepository(ssoToken, realmName);
  * 
  * </PRE>
  * 

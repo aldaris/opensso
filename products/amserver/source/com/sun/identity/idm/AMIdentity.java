@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.21 2007-06-01 17:34:00 kenwho Exp $
+ * $Id: AMIdentity.java,v 1.22 2007-06-29 22:30:55 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ import netscape.ldap.util.DN;
  * <PRE>
  * 
  * AMIdentityRepository idrepo = new AMIdentityRepository(token, org);
- * AMIdentity id = idrepo.getIdentity();
+ * AMIdentity id = idrepo.getRealmIdentity();
  * 
  * </PRE>
  * 
@@ -411,9 +411,13 @@ public final class AMIdentity {
      * 
      * This method is only valid for AMIdentity objects of type User and Agent.
      * 
-     * @param attrMap
-     *            Map of attribute-values to be set in the repository or
-     *            repositories (if multiple plugins are configured for "edit").
+     * @param <code>attrMap</code> is a map of attribute name 
+     *        <code>(String)</code>
+     *        to a <code>Set</code> of attribute values <code>(String)</code>.
+     *        It is arranged as: 
+     *        Map::attrMap --> 
+     *        Key: String::AttributeName
+     *        Value: Set::AttributeValues (Set of String)
      * @throws IdRepoException
      *             If there are repository related error conditions.
      * @throws SSOException
