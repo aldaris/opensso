@@ -1,0 +1,113 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: importEntityPropertySheet.xml,v 1.1 2007-06-29 19:51:13 jonnelson Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>
+    <section name="dummy" defaultValue="">
+        <property>
+            <label name="lblInformation" 
+                defaultValue="import.entity.information.message" />
+        </property>
+        
+        <property name="realmProperty" required="true">
+            <label name="lblName" 
+                defaultValue="import.entity.realm.name.label" 
+                labelFor="realmName" />
+            <cc name="realmName" 
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />                         
+        </property>
+        
+       <subsection name="standardMeta" defaultValue="" >
+            <property required="true">
+                <label name="importExtended" 
+                    defaultValue="import.standard.metadata.label" />
+                <ccgroup>
+                    <property name="standardFileNameProperty">
+                        <label name="standardFileNameLabel" 
+                            defaultValue="import.standard.filename.label" 
+                            labelFor="standardFileName"/>
+                        <cc name="standardFileName" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                            <attribute name="size" value="75"/>
+                            <attribute name="autoSubmit" value="false"/>
+                        </cc>
+                        <cc name="standardButton"
+                            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+                            <attribute name="OnClick" value="openWindow('standardFileName'); return false;" />
+                            <attribute name="defaultValue" value="button.browse" />
+                        </cc>
+                    </property>
+                    <property name="standardURLProperty">
+                        <label name="standardURLLabel" 
+                            defaultValue="import.standard.url.label" 
+                            labelFor="standardURLName"/>
+                        <cc name="standardURLName" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                            <attribute name="size" value="75"/>
+                            <attribute name="autoSubmit" value="false"/>
+                        </cc>
+        
+                    </property>
+                </ccgroup>
+            </property>
+        </subsection>
+        
+        <subsection name="extendedMeta" defaultValue="" >
+            <property>
+                <label name="importExtended" 
+                    defaultValue="import.extended.metadata.label" />
+                <ccgroup>
+                    <property name="extendedFileNameProperty">
+                        <label name="lblDescription" 
+                            defaultValue="import.extended.filename.label" 
+                            labelFor="extendedFileName"/>
+                        <cc name="extendedFileName" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                            <attribute name="size" value="75"/>
+                            <attribute name="autoSubmit" value="false"/>
+                        </cc>
+                        <cc name="extendedButton"
+                            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+                            <attribute name="OnClick" value="openWindow('extendedFileName'); return false;" />
+                            <attribute name="defaultValue" value="button.browse" />
+                        </cc>
+                    </property>
+                    <property name="extendedURLProperty">
+                        <label name="extendedURLLabel" 
+                            defaultValue="import.extended.url.label" 
+                            labelFor="extendedURLName"/>
+                        <cc name="extendedURLName" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                            <attribute name="size" value="75"/>
+                            <attribute name="autoSubmit" value="false"/>
+                        </cc>
+                    </property>
+                </ccgroup>
+            </property>
+        </subsection>       
+        
+    </section>
+</propertysheet>

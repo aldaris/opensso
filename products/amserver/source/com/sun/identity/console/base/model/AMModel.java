@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModel.java,v 1.2 2007-02-07 20:19:42 jonnelson Exp $
+ * $Id: AMModel.java,v 1.3 2007-06-29 19:47:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -234,4 +234,16 @@ public interface AMModel
      * @return a list of special user identities that cannot be displayed.
      */
     public Set getSpecialUsers(String realmName);
+    
+    /*
+     * Returns the realm names that match the specified filter value.
+     *
+     * @param base Base realm name for this search. null indicates root
+     *        suffix.
+     * @param filter Filter string.
+     * @return realms names that match the filter.
+     * @throws AMConsoleException if search fails.
+     */
+    public Set getRealmNames(String base, String filter)
+        throws AMConsoleException;
 }

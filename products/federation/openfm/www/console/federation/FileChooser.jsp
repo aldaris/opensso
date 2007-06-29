@@ -18,16 +18,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Federation.jsp,v 1.2 2007-06-29 19:50:52 jonnelson Exp $
-
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   $Id: FileChooser.jsp,v 1.1 2007-06-29 19:50:53 jonnelson Exp $
+   
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-<%@ page info="Federation" language="java" %>
+<%@ page info="FileChooser" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 <jato:useViewBean
-    className="com.sun.identity.console.federation.FederationViewBean"
+    className="com.sun.identity.console.federation.FileChooserViewBean"
     fireChildDisplayEvents="true" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
@@ -35,33 +35,24 @@
 
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
 
-<script language="javascript">
-    <%--
-        swichView() is called when the entity provider dropdown menu is 
-        selected. This is called to submit the page with the selected value
-        in the dropdown submitted as the value in the form.
-    --%>
-    function switchView(selectElmName) {
-        var frm = document.forms[0];
-        frm.action += "?Federation.btnSearch=1";
-        frm.submit();
-    }   
+<script language="javascript" src="../console/js/am.js">
 </script>
+<cc:form name="FileChooser" method="post" defaultCommandChild="/button1">
 
-<script language="javascript" src="../console/js/am.js"></script>
-
-<cc:form name="Federation" method="post" defaultCommandChild="/btnSearch">
-<jato:hidden name="szCache" />
-
-<%-- HEADER --%>
-<script language="javascript">
-    function confirmLogout() {
-        return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
+<script language="javascript">    
+    function selectFile() {
+	var frm = document.forms[0];
+	var file = frm.elements["FileChooser.chooseFile.fileName"].value;
+        var directory = frm.elements["FileChooser.chooseFile.lookIn"].value;
+        
+	var parent = opener.document.forms[0];
+	var field = parent.elements[parent.name + '.' + window.name];
+	field.value = directory + directory.charAt(0) + file;
+        self.close();
     }
-</script>
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
-    locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
-<cc:tabs name="tabCommon" bundleID="amConsole" />
+</script>    
+
+<cc:secondarymasthead name="secondaryMasthead" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
@@ -72,12 +63,23 @@
 </table>
 
 <%-- PAGE CONTENT --%>
+<cc:pagetitle name="pgtitle" 
+    bundleID="amConsole" 
+    pageTitleText="file.chooser.title" 
+    showPageTitleSeparator="true" 
+    viewMenuLabel="" 
+    pageTitleHelpMessage="" 
+    showPageButtonsTop="false" 
+    showPageButtonsBottom="true" >
+    
+    <ul>    
+    <cc:filechooser name="chooseFile" />
+    </ul>
+    
+</cc:pagetitle>
 
-<cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true" />
-
-
-<%-- END CONTENT --%>
 </cc:form>
+<%-- END CONTENT --%>
 
 </cc:header>
 </jato:useViewBean>

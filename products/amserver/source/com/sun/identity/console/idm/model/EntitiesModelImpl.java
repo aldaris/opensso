@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.4 2007-06-07 18:48:43 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.5 2007-06-29 19:47:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,7 +147,7 @@ public class EntitiesModelImpl
                 searchMap.put(getUserSearchAttribute(), patternSet);
                 
                 idsc.setSearchModifiers(IdSearchOpModifier.OR, searchMap);
-
+                
                 /*
                 * change the pattern to * since we are passing a searchMap.
                 * pattern will be used in the default filter and given to

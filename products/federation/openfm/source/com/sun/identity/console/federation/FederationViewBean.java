@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.2 2007-06-11 22:00:59 asyhuang Exp $
+ * $Id: FederationViewBean.java,v 1.3 2007-06-29 19:50:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,9 +31,7 @@ import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.OptionList;
-import com.sun.web.ui.model.CCActionTableModel;
-import com.sun.web.ui.view.table.CCActionTable;
-import com.sun.web.ui.view.alert.CCAlert;
+
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -41,17 +39,27 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.components.view.html.SerializedField;
+import com.sun.identity.console.federation.model.EntityModel;
+import com.sun.identity.console.federation.model.EntityModelImpl;
 import com.sun.identity.console.federation.model.FSAuthDomainsModel;
 import com.sun.identity.console.federation.model.FSAuthDomainsModelImpl;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.shared.datastruct.OrderedSet;
+
+import com.sun.web.ui.model.CCActionTableModel;
+import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.table.CCActionTable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 public  class FederationViewBean
@@ -60,8 +68,10 @@ public  class FederationViewBean
     public static final String DEFAULT_DISPLAY_URL =
         "/console/federation/Federation.jsp";
     public static final String MESSAGE_TEXT = "displayMessage";    
-    protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";    
-    private boolean initialized = false;    
+    protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";   
+    private boolean tablePopulated = false;
+    private boolean initialized = false; 
+    
     private AMPropertySheetModel propertySheetModel;
     
     // cot table properties
@@ -110,6 +120,11 @@ public  class FederationViewBean
     }
     
     protected View createChild(String name) {        
+        if (!tablePopulated) {
+            populateCOTTable();
+            populateEntityTable();                     
+            populateSAMLTable();
+        }
         View view = null;
         
         if (name.equals(PROPERTY_ATTRIBUTE)) {
@@ -136,12 +151,14 @@ public  class FederationViewBean
         populateCOTTable();
         populateEntityTable();
         populateSAMLTable();
-        
-        String msg = (String)removePageSessionAttribute(MESSAGE_TEXT);
-        if (msg != null) {
-            setInlineAlertMessage(
-                CCAlert.TYPE_INFO, "message.information", msg);
-        }
+
+// TBD Enable this to display 'success' messages in the page
+// after and on object was created (entity provider, COT, SAML)
+//        String msg = (String)removePageSessionAttribute(MESSAGE_TEXT);
+//        if (msg != null) {
+//            setInlineAlertMessage(
+//                CCAlert.TYPE_INFO, "message.information", msg);
+//        }
     }
     
     protected AMModel getModelInternal() {
@@ -149,21 +166,69 @@ public  class FederationViewBean
         return new FSAuthDomainsModelImpl(req, getPageSessionAttributes());
     }
     
-    private void populateSAMLTable() {
+    private EntityModel getEntityModel() {
+        RequestContext rc = RequestManager.getRequestContext();
+        HttpServletRequest req = rc.getRequest();
+        return new EntityModelImpl(req, getPageSessionAttributes()  );
+    }
+    
+    private void populateSAMLTable() { 
+        tablePopulated=true;
         //TBD;
     }
     
     private void populateEntityTable() {
-        // TDB
+        tablePopulated=true;
+        CCActionTableModel tableModel = (CCActionTableModel)
+            propertySheetModel.getModel(ENTITY_TABLE);
+        tableModel.clearAll();
+
+        EntityModel eModel = getEntityModel();
+        Map entities = Collections.EMPTY_MAP;
+        try {
+            entities = eModel.getEntities();
+        } catch (AMConsoleException e) {
+            debug.error("FederationViewBean.populateEntityTable", e);
+            return;
+        }
+        
+        List entityList = new ArrayList(entities.size()*2);
+        boolean firstRow = true;
+        for (Iterator i = entities.keySet().iterator(); i.hasNext();) {
+            if (!firstRow) {
+                tableModel.appendRow();
+            } else {
+                firstRow = false;
+            }
+            String name = (String)i.next();
+            
+            tableModel.setValue(ENTITY_NAME_HREF, name);
+            tableModel.setValue(ENTITY_NAME_VALUE, name);
+            
+            Map data = (Map)entities.get(name);
+            String protocol = (String)data.get(EntityModel.PROTOCOL);
+            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);
+            tableModel.setValue(
+                ENTITY_ROLE_VALUE, (String)data.get(eModel.ROLE));
+            tableModel.setValue(
+                ENTITY_LOCATION_VALUE, (String)data.get(eModel.LOCATION));       
+
+            entityList.add(name+"|"+protocol);
+        }
+                
+        // set the instances in the page session so when a request comes in
+        // we can prepopulate the table model.
+        setPageSessionAttribute(ENTITY_TABLE,(Serializable)entityList);
     }
     
     private void populateCOTTable() {
+        tablePopulated=true;
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();    
         Set CircleOfTrustDescriptors = model.getCircleOfTrustDescriptors();                
                 
-        CCActionTableModel tblModel = (CCActionTableModel)
+        CCActionTableModel tableModel = (CCActionTableModel)
             propertySheetModel.getModel(COT_TABLE);        
-        tblModel.clearAll();
+        tableModel.clearAll();
         
         SerializedField szCache = (SerializedField)getChild(SZ_CACHE);        
         
@@ -177,38 +242,36 @@ public  class FederationViewBean
                 if (first) {
                     first = false;
                 } else {
-                    tblModel.appendRow();
+                    tableModel.appendRow();
                 }                
                 CircleOfTrustDescriptor desc =
                         (CircleOfTrustDescriptor)iter.next();
                 String name = desc.getCircleOfTrustName();
-                tblModel.setValue(COT_NAME_VALUE, name);
-                tblModel.setValue(COT_NAME_HREF, name);
+                tableModel.setValue(COT_NAME_VALUE, name);
+                tableModel.setValue(COT_NAME_HREF, name);
                 
                 // get entity/provider name                
                 Set entitySet = desc.getTrustedProviders();
                 if ((entitySet != null) && (!entitySet.isEmpty())) {
                     Iterator it = entitySet.iterator();
                     StringBuffer sb = new StringBuffer();                    
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         String entity = (String) it.next();
                         sb.append(entity).append("<br>");
                     }                    
-                    tblModel.setValue(COT_ENTITY_VALUE, sb.toString());
-                }else{
-                    tblModel.setValue(COT_ENTITY_VALUE, "");
+                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());
+                } else {
+                    tableModel.setValue(COT_ENTITY_VALUE, "");
                 }
                 
                 // get realm name
                 String realm = desc.getCircleOfTrustRealm();
-                tblModel.setValue(COT_REALM_VALUE, realm);
+                tableModel.setValue(COT_REALM_VALUE, getPath(realm));
                                
                 // get cot status
                 String status = desc.getCircleOfTrustStatus();
-                tblModel.setValue(COT_STATUS_VALUE, status);                
-                StringBuffer sb = new StringBuffer();
-                sb.append(name).append("|").append(realm);
-                cache.add(sb);                
+                tableModel.setValue(COT_STATUS_VALUE, status);                               
+                cache.add(name + "|" + realm);                
             }            
             szCache.setValue((ArrayList)cache);
         } else {
@@ -227,18 +290,18 @@ public  class FederationViewBean
      * Responsible for creating the circle of trust table.
      */
     private void createCOTTable() {
-        CCActionTableModel tblModel = new CCActionTableModel(
+        CCActionTableModel tableModel = new CCActionTableModel(
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/cotTable.xml"));        
-        tblModel.setMaxRows(getModel().getPageSize());
-        tblModel.setTitleLabel("label.items");
-        tblModel.setActionValue("addCOTButton", "cot.new.button");
-        tblModel.setActionValue("deleteCOTButton", "cot.delete.button");
-        tblModel.setActionValue("cotNameColumn", "cot.name.column.label");
-        tblModel.setActionValue("cotEntityColumn", "cot.entity.column.label");
-        tblModel.setActionValue("realmColumn", "cot.realm.column.label");
-        tblModel.setActionValue("statusColumn", "cot.status.column.label");        
-        propertySheetModel.setModel(COT_TABLE, tblModel);
+        tableModel.setMaxRows(getModel().getPageSize());
+        tableModel.setTitleLabel("label.items");
+        tableModel.setActionValue("addCOTButton", "cot.new.button");
+        tableModel.setActionValue("deleteCOTButton", "cot.delete.button");
+        tableModel.setActionValue("cotNameColumn", "cot.name.column.label");
+        tableModel.setActionValue("cotEntityColumn", "cot.entity.column.label");
+        tableModel.setActionValue("realmColumn", "cot.realm.column.label");
+        tableModel.setActionValue("statusColumn", "cot.status.column.label");        
+        propertySheetModel.setModel(COT_TABLE, tableModel);
     }
     
     /*
@@ -247,23 +310,24 @@ public  class FederationViewBean
     private void createEntityTable() {
         CCActionTableModel tableModel = new CCActionTableModel(
             getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/entityTable.xml"));        
+            "com/sun/identity/console/entityTable.xml"));
+        
         tableModel.setMaxRows(getModel().getPageSize());
         tableModel.setTitleLabel("label.items");
         tableModel.setActionValue(
-            "addEntityButton", "entity.new.button");
+            "addEntityButton", "entity.new.button");        
         tableModel.setActionValue(
             "deleteEntityButton", "entity.delete.button");
         tableModel.setActionValue(
             "importEntityButton", "entity.import.button");
         tableModel.setActionValue(
-            "entityNameColumn", "entity.name.column.label");
+            "entityNameColumn", "entity.name.column.label"); 
         tableModel.setActionValue(
             "roleColumn", "entity.role.column.label");
         tableModel.setActionValue(
             "protocolColumn", "entity.protocol.column.label");
         tableModel.setActionValue(
-            "locationColumn", "entity.location.column.label");       
+            "locationColumn", "entity.location.column.label");
         propertySheetModel.setModel(ENTITY_TABLE, tableModel);
     }
     
@@ -278,7 +342,8 @@ public  class FederationViewBean
         tableModel.setTitleLabel("label.items");
         tableModel.setActionValue("addTPButton", "saml.new.button");
         tableModel.setActionValue("deleteTPButton", "saml.delete.button");
-        tableModel.setActionValue("trustedPartnerColumn", "saml.name.column.label");        
+        tableModel.setActionValue("trustedPartnerColumn", 
+            "saml.name.column.label");        
         propertySheetModel.setModel(SAML_TABLE, tableModel);
     }
     
@@ -329,50 +394,54 @@ public  class FederationViewBean
             (CreateCOTViewBean)getViewBean(CreateCOTViewBean.class);        
         unlockPageTrail();
         passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());        
+        vb.forwardTo(getRequestContext());
     }
 
     public void handleDeleteCOTButtonRequest(RequestInvocationEvent event)
         throws ModelControlException 
-    {
-        // TBD delete the COT's that are selected.        
+    {        
         CCActionTable tbl = (CCActionTable)getChild(COT_TABLE);
-        tbl.restoreStateData();   
-        
-        CCActionTableModel tblModel = (CCActionTableModel)
+        tbl.restoreStateData();           
+        CCActionTableModel tableModel = (CCActionTableModel)
             propertySheetModel.getModel(COT_TABLE);        
         
-        // get selected rows here
-        Integer[] selected = tblModel.getSelectedRows();
-        
+        // get selected rows
+        Integer[] selected = tableModel.getSelectedRows();        
         SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
-        List list = (List)szCache.getSerializedObj();        
-        List selectedList = new ArrayList(selected.length *2);
+        List list = (List)szCache.getSerializedObj(); 
         
-        for (int i = 0; i < selected.length; i++) {
-            selectedList.add(list.get(selected[i].intValue()));
+        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
+        StringBuffer successMessage = new StringBuffer();
+        StringBuffer errorMessage  = new StringBuffer();
+
+        // each COT is deleted separately as they can be in separate realms
+        for ( int i = 0; i < selected.length; i++) {
+            String str = (String)list.get(selected[i].intValue());               
+            int pipeIndex = str.indexOf("|"); 
+            String name = str.substring(0, pipeIndex);
+            String realm = str.substring(pipeIndex+1);                 
+            try {
+                model.deleteAuthenticationDomain(realm, name);  
+                if (successMessage.length() < 1) {
+                    successMessage.append(
+                        model.getLocalizedString("authDomain.message.deleted"))
+                        .append("<ul>");                       
+                }
+                successMessage.append("<li>").append(name);
+            } catch (AMConsoleException e) {        
+                if (errorMessage.length() < 1) {                                    
+                    errorMessage.append(
+                        model.getLocalizedString("general.error.message"))
+                        .append("<ul>");
+                }                
+                errorMessage.append("<li>").append(e.getMessage());                   
+            }    
         }
-                
-        try {
-            FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();                        
-            for ( int i = 0; i < selectedList.size(); i++) {
-                String str = (String) selectedList.get(i);
-                int pipeIndex = str.indexOf("|");                               
-                model.deleteAuthenticationDomain( 
-                    str.substring(pipeIndex+1, str.length()),
-                    str.substring(0, pipeIndex-1));  
-            }
-            if (selected.length == 1) {
-                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    "authDomain.message.deleted");
-            } else {
-                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    "authDomain.message.deleted.pural");
-            }
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
-        }        
+ 
+        successMessage.append("</ul>").append(errorMessage);        
+        setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+            successMessage.toString());
+
         forwardTo();        
     }
     
@@ -381,7 +450,7 @@ public  class FederationViewBean
     {
         String name = (String)getDisplayFieldValue(COT_NAME_HREF);
         FSAuthDomainsEditViewBean vb = (FSAuthDomainsEditViewBean)
-        getViewBean(FSAuthDomainsEditViewBean.class);
+            getViewBean(FSAuthDomainsEditViewBean.class);
         unlockPageTrail();
         passPgSessionMap(vb);
         vb.setPageSessionAttribute(FSAuthDomainsModel.TF_NAME, name);
@@ -394,29 +463,89 @@ public  class FederationViewBean
      *
      ******************************************************************/    
     public void handleAddEntityButtonRequest(RequestInvocationEvent event) {
-        // TBD open the create entity view page
+// TBD enable when CreateEntityViewBean is done.
+//            CreateEntityViewBean vb = (CreateEntityViewBean)
+//                getViewBean(CreateEntityViewBean.class);
+//
+//            vb.forwardTo(getRequestContext());      
+    }
+       
+    public void handleImportEntityButtonRequest(RequestInvocationEvent event) {
+        ImportEntityViewBean vb = (ImportEntityViewBean)
+            getViewBean(ImportEntityViewBean.class);
+        unlockPageTrail();
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext()); 
+    }
+    
+    public void handleDeleteEntityButtonRequest(RequestInvocationEvent event) 
+        throws ModelControlException
+    {
+        CCActionTable table = (CCActionTable)getChild(ENTITY_TABLE);
+        table.restoreStateData();
+        
+        CCActionTableModel m = (CCActionTableModel)
+            propertySheetModel.getModel(ENTITY_TABLE);
+        Integer[] selected = m.getSelectedRows();
+        
+        Map entries = new HashMap(selected.length*2);
+        
+        List l = (ArrayList)getPageSessionAttribute(ENTITY_TABLE);
+        StringBuffer tmp = new StringBuffer(100);
+      
+        for (int i = 0; i < selected.length; i++) {
+            String s = (String)l.get(selected[i].intValue());
+           
+            int pos = s.indexOf("|");
+            String name = s.substring(0, pos);
+            String protocol = s.substring(pos+1);            
+            tmp.append(" ").append(name).append("; ");   
+            Map x = new HashMap(6);
+            
+            entries.put(name, protocol);
+        }   
+        
+        EntityModel model = getEntityModel();
+        try {
+            model.deleteEntities(entries);
+            StringBuffer sb = new StringBuffer();
+            sb.append(model.getLocalizedString("entity.deleted.message"));
+            sb.append("<ul>");
+            for (Iterator i = entries.keySet().iterator(); i.hasNext();) {
+                String key = (String)i.next();
+                sb.append("<li>").append(key);
+            }
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                sb.toString());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(
+                CCAlert.TYPE_ERROR, "message.error", e.getMessage());
+        }
         forwardTo();
     }
     
-    public void handleDeleteEntityButtonRequest(RequestInvocationEvent event) {
-        //TBD remove the selected entities
-        forwardTo();
-    }
+    public void handleEntityNameHrefRequest(RequestInvocationEvent event) {     
+        EntityPropertiesViewBean vb = (EntityPropertiesViewBean)
+            getViewBean(EntityPropertiesViewBean.class);
+        
+        String entity = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
+        setPageSessionAttribute("entityName", entity);        
+        unlockPageTrail();
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
+    }    
     
-    public void handleEntityNameHrefRequest(RequestInvocationEvent event) {
-        // TBD forward request onto the appropriate view bean based on the
-        // entity selected.
-        forwardTo();
-    }
-    
+    /*
+     * This handler is called when the dropdown menu is invoked in the 
+     * entity provider table. The value in the <code>actionMenu</code>
+     * field is the value selected and dictates what action should be 
+     * taken.
+     */
     public void handleBtnSearchRequest(RequestInvocationEvent event) {
         // use the action value to determine which view we will forward to
         String actionValue = (String)getDisplayFieldValue("actionMenu");
-        forwardTo();        
-    }
-    
-    public void handleImportEntityButtonRequest(RequestInvocationEvent event) {
-        // TBD open the view to import entities
-        forwardTo();
+        if (actionValue.equals("")) {
+            forwardTo();        
+        }
     }
 }

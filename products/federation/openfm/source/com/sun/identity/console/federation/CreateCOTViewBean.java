@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCOTViewBean.java,v 1.2 2007-06-11 22:01:17 asyhuang Exp $
+ * $Id: CreateCOTViewBean.java,v 1.3 2007-06-29 19:50:18 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 public class CreateCOTViewBean
@@ -157,10 +158,9 @@ public class CreateCOTViewBean
     private void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
             getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/threeBtnsPageTitle.xml"));
-        ptModel.setValue("button1", "button.save");
-        ptModel.setValue("button2", "button.reset");
-        ptModel.setValue("button3", "button.cancel");
+                "com/sun/identity/console/twoBtnsPageTitle.xml"));
+        ptModel.setValue("button1", "button.ok");
+        ptModel.setValue("button2", "button.cancel");
     }
     
     protected AMModel getModelInternal() {
@@ -181,61 +181,22 @@ public class CreateCOTViewBean
     
     
     private void populateRealmData() {
-       
-        Set realmNames = Collections.EMPTY_SET;
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
         try{
-            realmNames = model.getRealmNames("/", "*");
+            Set realmNames = new TreeSet(model.getRealmNames("/", "*"));
+            CCDropDownMenu menu =
+                (CCDropDownMenu)getChild(SINGLECHOICE_REALM_MENU);        
+            OptionList list = new OptionList();
+            for (Iterator i = realmNames.iterator(); i.hasNext();) {
+                String name = (String)i.next();
+                list.add(getPath(name), name);
+            }
+            menu.setOptions(list);         
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
         } 
-        CCDropDownMenu menu =
-            (CCDropDownMenu)getChild(SINGLECHOICE_REALM_MENU);
-        OptionList sortedList = createOptionList(realmNames);
-        optList =  new OptionList();
-        int size = sortedList.size();
-        String name;
-        for (int i = 0; i < size; i++ ) {
-            name = sortedList.getValue(i);
-            optList.add(getPath(name), name);
-        }
-        menu.setOptions(optList);
-    }
-    
-    /**
-     * Handles save button request.
-     * save
-     * @param event Request invocation event
-     */
-    public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException 
-    {
-        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
-        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTIES);        
-        try {
-            Map values =
-                ps.getAttributeValues(model.getDataMap(), false,model);           
-            FederationViewBean vb = (FederationViewBean)
-            getViewBean(FederationViewBean.class);
-            
-            CCAddRemove addRemoveList =
-                (CCAddRemove)getChild(ADD_REMOVE_PROVIDERS);
-            addRemoveList.restoreStateData();
-            CCAddRemoveModel addRemoveModel =
-                (CCAddRemoveModel)addRemoveList.getModel();
-            Set providers = new HashSet(getSelectedValues(addRemoveModel));            
-            model.createAuthenticationDomain(values, providers);            
-            backTrail();
-            passPgSessionMap(vb);
-            
-            vb.forwardTo(getRequestContext());
-        } catch (AMConsoleException e) {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
-            forwardTo();
-        }
-    }
+    }    
     
     private Set getSelectedValues(CCAddRemoveModel addRemoveModel) {
         Set results = null;
@@ -249,39 +210,73 @@ public class CreateCOTViewBean
         }
         return (results == null) ? Collections.EMPTY_SET : results;
     }
+    
     /**
-     * Handles reset request.
-     * reset
+     * Handles save button request.
+     * save
+     * @param event Request invocation event
+     */
+    public void handleButton1Request(RequestInvocationEvent event)
+        throws ModelControlException     
+    {    
+        FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
+        AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTIES);        
+        try {
+            Map values =
+                ps.getAttributeValues(model.getDataMap(), false,model);           
+            
+            String name = (String)getDisplayFieldValue(model.TF_NAME);
+            if ((name == null) || (name.length() < 1)) {
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    model.getLocalizedString(
+                        "authdomain.authentication.domain.name.missing.message"));
+                psModel.setErrorProperty("nameProperty", true);
+                forwardTo();
+            } else {
+                CCAddRemove addRemoveList =
+                    (CCAddRemove)getChild(ADD_REMOVE_PROVIDERS);
+                addRemoveList.restoreStateData();
+                CCAddRemoveModel addRemoveModel =
+                    (CCAddRemoveModel)addRemoveList.getModel();
+                Set providers = new HashSet(getSelectedValues(addRemoveModel));            
+                model.createAuthenticationDomain(values, providers);            
+                String message = model.getLocalizedString(
+                    "authentication.domain.create.message") +
+                    "<ul><li>" + name;
+                setPageSessionAttribute(
+                    FederationViewBean.MESSAGE_TEXT, message);
+                backTrail();                    
+                FederationViewBean vb = (FederationViewBean)
+                    getViewBean(FederationViewBean.class);
+                passPgSessionMap(vb);
+                vb.forwardTo(getRequestContext());
+            }
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            forwardTo();
+        }
+    }
+
+    /**
+     * Handles page cancel request.
+     * 
      * @param event Request invocation event
      */
     public void handleButton2Request(RequestInvocationEvent event) {
-        // TBD set the message to be displayed
-        forwardTo();
-    }
-    
-    /**
-     * Handles cancel request. No processing is done here, just return to
-     * the invoking view.
-     * cancel
-     * @param event Request invocation event
-     */
-    public void handleButton3Request(RequestInvocationEvent event) {      
-        forwardToFederationView(event);
-    }
-
-    private void forwardToFederationView(RequestInvocationEvent event) {
         FederationViewBean vb = (FederationViewBean)
-        getViewBean(FederationViewBean.class);
+            getViewBean(FederationViewBean.class);
         backTrail();
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
     
-     /* TBD: need to move this function to a common location.
-      * HACK. Introduce this hack because Lockhart use | as delimiter for
+     /* 
+      * TBD: need to move this function to a common location.
+      * Introduce this workaround because Lockhart use | as delimiter for
       * selected value in a add remove list. http://xxx.com|IDP liked entry
       * will be broken down into two entries insteads on one.
-      * This hack here is to replace | with comma.
+      * This is to replace | with comma.
       */
     private Map replacePipeWithComma(Map map) {
         if ((map != null) && !map.isEmpty()) {
@@ -295,5 +290,4 @@ public class CreateCOTViewBean
             return map;
         }
     }
-    
 }

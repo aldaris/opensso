@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsEditViewBean.java,v 1.1 2007-06-11 22:01:59 asyhuang Exp $
+ * $Id: FSAuthDomainsEditViewBean.java,v 1.2 2007-06-29 19:50:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,11 +124,10 @@ public class FSAuthDomainsEditViewBean
     {
 	super.beginDisplay(event);
 	String name = (String)getDisplayFieldValue(FSAuthDomainsModel.TF_NAME);
-        String realm =null;
 	setPageSessionAttribute(FSAuthDomainsModel.TF_NAME, name);
 	FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();             
 	try {
-            realm = model.getRealm(name);            
+            String realm = model.getRealm(name);            
 	    Map values = model.getAttributeValues(realm, name);      
 	    AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
 	    ps.setAttributeValues(values, model);	    	 
@@ -167,7 +166,7 @@ public class FSAuthDomainsEditViewBean
 		"com/sun/identity/console/threeBtnsPageTitle.xml"));
 	ptModel.setValue("button1", "button.save");
 	ptModel.setValue("button2", "button.reset");
-	ptModel.setValue("button3", getBackButtonLabel());
+	ptModel.setValue("button3", "button.back");
     }
 
     private void createPropertyModel() {
@@ -255,19 +254,6 @@ public class FSAuthDomainsEditViewBean
      */
     public void handleButton3Request(RequestInvocationEvent event) {
         forwardToAuthDomainView(event);
-    }
-
-    /**
-     * Creates the label used to take the user back to the previous page
-     * they were viewing. The label is defined in the property file as
-     * "Back to {0}" which lets us control the format of the label in
-     * different locales.  The name of the current object is substituted.
-     */
-    protected String getBackButtonLabel() {
-        String[] arg = { getModel().getLocalizedString(
-             "breadcrumbs.federation.authdomains")};
-        return MessageFormat.format(
-            getModel().getLocalizedString("back.button"), arg);
     }
 
     protected boolean startPageTrail() {

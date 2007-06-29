@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RMRealmModel.java,v 1.1 2007-02-07 20:25:56 jonnelson Exp $
+ * $Id: RMRealmModel.java,v 1.2 2007-06-29 19:47:20 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,18 +59,6 @@ public interface RMRealmModel
         String realmName,
         String viewbeanClassName
     ) throws AMConsoleException;
-
-    /**
-     * Returns realms that have names matching with a filter.
-     *
-     * @param base Base realm name for this search. null indicates root
-     *        suffix.
-     * @param filter Filter string.
-     * @return realms that have names matching with a filter.
-     * @throws AMConsoleException if search fails.
-     */
-    Set getRealmNames(String base, String filter)
-        throws AMConsoleException;
 
     /**
      * Creates sub realm.

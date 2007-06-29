@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.1 2007-02-07 20:19:36 jonnelson Exp $
+ * $Id: AMViewConfig.java,v 1.2 2007-06-29 19:47:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,13 +96,17 @@ public class AMViewConfig {
     }
 
     public CCTabsModel getTabsModel(
-        String type,
+        String type,   
         String realmName,
         HttpServletRequest req
     ) {
         CCTabsModel tabModel = new CCTabsModel();
         AccessControlModel model = new AccessControlModelImpl(req);
         List tabs = getTabList(type);
+        if ((tabs == null) || tabs.isEmpty()) {
+            return null;
+        }
+        
         for (Iterator iter = tabs.iterator(); iter.hasNext(); ) {
             AMTabEntry entry = (AMTabEntry)iter.next();
             CCNavNode navNode = entry.getNavNode(model, realmName);
@@ -603,7 +607,7 @@ public class AMViewConfig {
                 }
             }
         } else {
-            AMModelBase.debug.error(
+            AMModelBase.debug.warning(
                 "AMViewConfig.configProfileTabs, config xml is incorrect.");
         }
     }
