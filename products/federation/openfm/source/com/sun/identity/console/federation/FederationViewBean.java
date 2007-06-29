@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.3 2007-06-29 19:50:19 jonnelson Exp $
+ * $Id: FederationViewBean.java,v 1.4 2007-06-29 20:36:54 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -525,14 +525,15 @@ public  class FederationViewBean
     }
     
     public void handleEntityNameHrefRequest(RequestInvocationEvent event) {     
-        EntityPropertiesViewBean vb = (EntityPropertiesViewBean)
-            getViewBean(EntityPropertiesViewBean.class);
-        
-        String entity = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
-        setPageSessionAttribute("entityName", entity);        
-        unlockPageTrail();
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+//        EntityPropertiesViewBean vb = (EntityPropertiesViewBean)
+//            getViewBean(EntityPropertiesViewBean.class);
+//        
+//        String entity = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
+//        setPageSessionAttribute("entityName", entity);        
+//        unlockPageTrail();
+//        passPgSessionMap(vb);
+//        vb.forwardTo(getRequestContext());
+          forwardTo();
     }    
     
     /*
