@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2007-04-24 06:07:33 veiming Exp $
+   $Id: build.xml,v 1.12 2007-06-29 19:19:08 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -62,13 +62,21 @@
 
     <target name="build" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${openfm.classes.dir}" source="1.4" target="1.4"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            srcdir="${openfm.src.dir}"
+            excludes="${one_dot_five_targets}">
+            <classpath refid="build.class.path"/>
+            <compilerarg value="-Xlint:deprecation" />
+        </javac>
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
-            srcdir="${openfm.src.dir}/com/sun/identity/federation/cli/definition"
-            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            srcdir="${openfm.src.dir}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            includes="${one_dot_five_targets}">
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
             <compilerarg value="-Xlint:unchecked" />
-            <include name="*.java"/>
         </javac>
         <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
             <classpath refid="build.class.path"/>
@@ -81,16 +89,6 @@
             <arg value="${openfm.src.dir}/com/sun/identity/federation/cli/stubs/FederationManagerCLI.java"/>
             <arg value="com.sun.identity.federation.cli.stubs"/>
         </java>
-
-	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${openfm.classes.dir}" source="1.4" target="1.4"
-	        debug="${build.debug}" debuglevel="${build.debuglevel}"
-                srcdir="${openfm.src.dir}">
-            <classpath refid="build.class.path"/>
-            <compilerarg value="-Xlint:deprecation" />
-            <exclude name="**/com/sun/identity/federation/cli/definition/**" />
-	</javac>
-
     </target>
 
     <target name="nightly">
