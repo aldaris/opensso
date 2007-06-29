@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.13 2007-03-21 22:33:46 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.14 2007-06-29 22:30:22 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -495,8 +495,22 @@ public class OrganizationConfigManager {
      */
     public void deleteSubOrganization(String subOrgName, boolean recursive)
             throws SMSException {
-        // Delete the sub-organization
+        // Should not delete the root realm, should throw exception if
+        // attempted.
         String subOrgDN = normalizeDN(subOrgName, orgDN);
+        if (subOrgDN.equals(SMSEntry.SLASH_STR) ||
+            subOrgDN.equalsIgnoreCase(SMSEntry.getRootSuffix()) ||
+            subOrgDN.equalsIgnoreCase(SERVICES_NODE)) {
+            
+            Object parms[] = { orgName };
+            SMSEntry.debug.error(
+                    "OrganizationConfigManager: deleteSubOrganization(" +
+                    "Root realm "+orgName + " cannot be deleted. ");
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                "sms-cannot_delete_rootsuffix",parms));
+                    
+        }
+        // Delete the sub-organization
         OrganizationConfigManager subRlmConfigMgr =
             getSubOrgConfigManager(subOrgName);
         //set the filter "*" to be passed for the search.
