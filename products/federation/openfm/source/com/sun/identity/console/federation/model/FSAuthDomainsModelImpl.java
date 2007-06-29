@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.1 2007-06-11 22:05:58 asyhuang Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.2 2007-06-29 20:23:23 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -331,13 +331,16 @@ public class FSAuthDomainsModelImpl
     }
 
     /**
-     * Returns a set of provider names.
+     * Returns a &lt;code>Set&lt;/code> of provider names that exist in the
+     * specified realm.
      *
+     * @param name of the realm to search.
      * @return a set of provider names.
      * @throws AMConsoleException if provider names cannot be obtained.
      */
     public Set getAllProviderNames(String realm)
-	throws AMConsoleException {        
+	throws AMConsoleException 
+    {        
         Set availableEntities = new HashSet();                  
         try {                                
             SAML2MetaManager saml2Mgr = new SAML2MetaManager();
@@ -447,38 +450,7 @@ public class FSAuthDomainsModelImpl
 	    throw new AMConsoleException(strError);
 	}
     }
-    
-     /*
-     * Returns the realm names that match the specified filter value.
-     *
-     * @param base Base realm name for this search. null indicates root
-     *        suffix.
-     * @param filter Filter string.
-     * @return realms names that match the filter.
-     * @throws AMConsoleException if search fails.
-     */
-    public Set getRealmNames(String base, String filter)
-        throws AMConsoleException
-    {
-        if ((base == null) || (base.length() == 0)) {
-            base = getStartDN();
-        }
-        String[] param = {base};
-        logEvent("ATTEMPT_GET_REALM_NAMES", param);
-        try {
-            OrganizationConfigManager orgMgr = 
-                    new OrganizationConfigManager(getUserSSOToken(), base);
-            logEvent("SUCCEED_GET_REALM_NAMES", param);
-            return appendBaseDN(base,
-                orgMgr.getSubOrganizationNames(filter, true), filter);
-        } catch (SMSException e) {
-            String strError = getErrorString(e);
-            String[] paramsEx = {base, strError};
-            logEvent("SMS_EXCEPTION_GET_REALM_NAMES", paramsEx);
-            throw new AMConsoleException(strError);
-        }
-    }
-         
+            
     /**
      * Returns realm that have name matching 
      *
@@ -490,57 +462,15 @@ public class FSAuthDomainsModelImpl
     public String getRealm(String name)
         throws AMConsoleException
     {
-         String realm = null;                          
-         Set cotDescSet = getCircleOfTrustDescriptors();
-         CircleOfTrustDescriptor desc;
-         for (Iterator iter = cotDescSet.iterator(); 
-                iter.hasNext(); ) {
-            desc = (CircleOfTrustDescriptor)iter.next();
+        String realm = null;                          
+        Set s = getCircleOfTrustDescriptors();
+        for (Iterator iter = s.iterator(); iter.hasNext() && realm == null; ) {
+            CircleOfTrustDescriptor desc = (CircleOfTrustDescriptor)iter.next();
             String cotName = desc.getCircleOfTrustName();
-            if(cotName.equals(name)){
-                realm = desc.getCircleOfTrustRealm();  
-                break;
+            if (cotName.equals(name)) {
+                realm = desc.getCircleOfTrustRealm();                  
             }                          
-         }                
-         return realm;
+        }                
+        return realm;
     }
-
-    /*
-     * Search results are relative to the base (where the search was 
-     * performed. Use this to add the base back to the search result, 
-     * ending up with a fully qualified name.
-     */
-    private Set appendBaseDN(String base, Set results, String filter) {
-        Set altered = new HashSet();
-        String displayName = null;
-        if (base.equals("/")) {
-            displayName = AMFormatUtils.DNToName(this, getStartDSDN());
-        } else {
-            int idx = base.lastIndexOf("/");
-            displayName = (idx != -1) ? base.substring(idx+1) : base;
-        }
-        if (DisplayUtils.wildcardMatch(displayName, filter)) {
-            altered.add(base);
-        }
-        if ((results != null) && (!results.isEmpty())) {
-            for (Iterator i = results.iterator(); i.hasNext(); ) {
-                String name = (String)i.next();
-                if (name.charAt(0) != '/') {
-                    if (base.charAt(base.length() -1) == '/') {
-                        altered.add(base + name);
-                    } else {
-                        altered.add(base + "/" + name);
-                    }
-                } else {
-                    if (base.charAt(base.length() -1) == '/') {
-                        altered.add(base.substring(0, base.length()-1) + name);
-                    } else {
-                        altered.add(base + name);
-                    }
-                }
-            }
-        }
-        return altered;
-    }
-
 }
