@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.22 2007-06-29 22:30:55 goodearth Exp $
+ * $Id: AMIdentity.java,v 1.23 2007-07-01 07:48:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -406,12 +406,12 @@ public final class AMIdentity {
     }
 
     /**
-     * Set the values of attributes. This method should be followed by the
-     * method "store" to commit the changes to the Repository
+     * Sets the values of attributes. This method should be followed by the
+     * method "store" to commit the changes to the Repository.
+     * This method is only valid for <code>AMIdentity</code> objects of
+     * type User and Agent.
      * 
-     * This method is only valid for AMIdentity objects of type User and Agent.
-     * 
-     * @param <code>attrMap</code> is a map of attribute name 
+     * @param attrMap is a map of attribute name 
      *        <code>(String)</code>
      *        to a <code>Set</code> of attribute values <code>(String)</code>.
      *        It is arranged as: 
