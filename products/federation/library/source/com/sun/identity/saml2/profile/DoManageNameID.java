@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.3 2006-12-13 19:03:20 weisun2 Exp $
+ * $Id: DoManageNameID.java,v 1.4 2007-07-02 17:48:57 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,7 @@ public class DoManageNameID {
         Object session = 
            SAML2Utils.checkSession(request, response, metaAlias, paramsMap);
         String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntity = null;
+        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);;
         String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
         if (session == null) {
             if (debug.messageEnabled()) {
@@ -166,8 +166,7 @@ public class DoManageNameID {
             }
             // the user has not logged in yet, 
             // redirect to the authentication service
-            try {
-                hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+            try {       
                 SAML2Utils.redirectAuthentication(request, response, 
                                 realm, hostEntity, hostEntityRole);
             } catch (IOException ioe) {
@@ -181,15 +180,16 @@ public class DoManageNameID {
         if (debug.messageEnabled()) {
             debug.message(method + "Meta Alias is : "+ metaAlias);
             debug.message(method + "Remote EntityID is : " + remoteEntityID);
+            debug.message(method + "Host EntityID is : " + hostEntity); 
         }
         
         try {
-                String binding = 
-                    SAML2Utils.getParameter(paramsMap, SAML2Constants.BINDING); 
+            String binding = 
+                SAML2Utils.getParameter(paramsMap, SAML2Constants.BINDING); 
         
             ManageNameIDServiceElement mniService =
-                        getMNIServiceElement(realm, remoteEntityID, 
-                                             hostEntityRole, binding);
+                getMNIServiceElement(realm, remoteEntityID, 
+                hostEntityRole, binding);
             if (binding == null) {
                 binding = mniService.getBinding();
             }
@@ -217,6 +217,11 @@ public class DoManageNameID {
 
             String relayState = SAML2Utils.getParameter(paramsMap,
                              SAML2Constants.RELAY_STATE);
+            if ((relayState == null) || (relayState.equals(""))) {
+                relayState = SAML2Utils.getAttributeValueFromSSOConfig(
+                    realm, hostEntity, hostEntityRole,
+                    SAML2Constants.DEFAULT_RELAY_STATE);
+            }      
             mniRequest.setDestination(mniURL); 
             saveMNIRequestInfo(request, response, paramsMap, 
                         mniRequest, relayState, hostEntityRole);
@@ -1118,12 +1123,11 @@ public class DoManageNameID {
                 new StringBuffer().append(SAML2Constants.SAML_REQUEST)
                                   .append(SAML2Constants.EQUAL)
                                   .append(encodedXML);
-        
         if (relayState != null && relayState.length() > 0 
                          && relayState.getBytes("UTF-8").length <= 80) {
             queryString.append("&").append(SAML2Constants.RELAY_STATE)
                            .append("=").append(URLEncDec.encode(relayState));
-        }
+         }
         
         boolean needToSign = false; 
         if (hostEntityRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {

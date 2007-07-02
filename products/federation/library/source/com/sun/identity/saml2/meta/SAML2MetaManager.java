@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.6 2007-05-17 19:31:58 qcheng Exp $
+ * $Id: SAML2MetaManager.java,v 1.7 2007-07-02 17:48:57 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -394,14 +394,14 @@ public class SAML2MetaManager {
 
         String[] objs = { entityId, realm };
         try {
-            // Remove the entity from cot              
+            // Remove the entity from cot
             IDPSSOConfigElement idpconfig = getIDPSSOConfig(realm, entityId);
             if (idpconfig !=null) {
                 removeFromCircleOfTrust(idpconfig, realm, entityId); 
             }   
             
             SPSSOConfigElement spconfig = getSPSSOConfig(realm, entityId);
-            if (spconfig != null) { 
+            if (spconfig != null) {
                 removeFromCircleOfTrust(spconfig, realm, entityId); 
             }   
             // end of remove entity from cot
@@ -752,8 +752,11 @@ public class SAML2MetaManager {
                 if ((cotList != null) && !cotList.isEmpty()) {
                     for (Iterator iter = cotList.iterator(); 
                         iter.hasNext();) {
-                        cotm.addCircleOfTrustMember(realm,
-                            (String) iter.next(), COTConstants.SAML2, entityId);
+                        String cotName = ((String) iter.next()).trim();
+                        if ((cotName != null) && (!cotName.equals(""))) { 
+                            cotm.addCircleOfTrustMember(realm,
+                            cotName, COTConstants.SAML2, entityId);
+                        }
                      }               
                  }
              }
@@ -830,13 +833,15 @@ public class SAML2MetaManager {
             if (config != null) {
                 Map attr = SAML2MetaUtils.getAttributes(config);
                 List cotAttr = (List) attr.get(SAML2Constants.COT_LIST);
-                List cotList = new ArrayList(cotAttr) ; 
+                List cotList = new ArrayList(cotAttr);
                 if ((cotList != null) && !cotList.isEmpty()) {
                     for (Iterator iter = cotList.iterator(); 
                         iter.hasNext();) {
-                        String a = (String) iter.next(); 
-                        cotm.removeCircleOfTrustMember(realm, 
-                            a, COTConstants.SAML2, entityId);
+                        String cotName = ((String) iter.next()).trim();
+                        if ((cotName != null) && (!cotName.equals(""))) { 
+                            cotm.removeCircleOfTrustMember(realm, 
+                            cotName, COTConstants.SAML2, entityId);
+                        } 
                      }               
                  }
              }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.5 2007-03-23 22:26:17 bina Exp $
+ * $Id: SPSingleLogout.java,v 1.6 2007-07-02 17:48:57 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,6 +201,12 @@ public class SPSingleLogout {
 
             String relayState = SAML2Utils.getParameter(paramsMap,
                 SAML2Constants.RELAY_STATE);
+            
+            if (relayState == null || relayState.equals("")) {
+                relayState = SAML2Utils.getAttributeValueFromSSOConfig(realm,
+                    spEntityID, SAML2Constants.SP_ROLE,
+                    SAML2Constants.DEFAULT_RELAY_STATE);
+            }    
 
             StringTokenizer st =
                 new StringTokenizer(infoKeyString,SAML2Constants.SECOND_DELIM);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.6 2007-06-21 23:01:41 superpat7 Exp $
+ * $Id: SPACSUtils.java,v 1.7 2007-07-02 17:48:57 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,6 @@ import org.w3c.dom.Element;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
-
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.Advice;
@@ -887,9 +886,8 @@ public class SPACSUtils {
                 SAML2Utils.bundle.getString("noUserMapping"));
         }
         
-        boolean isFedInfoExists =
-            SAML2Utils.isFedInfoExists(
-                userName,hostEntityId,remoteHostId, nameId);
+        boolean isFedInfoExists = SAML2Utils.isFedInfoExists(
+            userName,hostEntityId,remoteHostId, nameId);
         // TODO: check if this few lines are needed
         /*
             DN dnObject = new DN(userName);
@@ -941,6 +939,12 @@ public class SPACSUtils {
             SAML2Constants.SP_ROLE, true);
         // write fed info into data store
         if (writeFedInfo) {
+            try {
+                userName = sessionProvider.
+                    getPrincipalName(session);
+            } catch (SessionException se) {
+                throw new SAML2Exception(se);
+            }
             AccountUtils.setAccountFederation(info, userName);
             String[] data = {userName, ""};
             if (LogUtil.isAccessLoggable(Level.FINE)) {
