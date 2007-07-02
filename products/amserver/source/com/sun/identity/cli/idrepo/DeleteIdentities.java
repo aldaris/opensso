@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.4 2007-06-26 21:59:56 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.5 2007-07-02 21:04:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,8 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,6 +67,22 @@ public class DeleteIdentities extends IdentityCommand {
 
         String displayableIdNames = tokenize(idNames);
         String[] params = {realm, type, displayableIdNames};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_DELETE_IDENTITY", params);
+
+        // test if realm exists
+        try {
+            new OrganizationConfigManager(adminSSOToken, realm);
+        } catch (SMSException e) {
+            String[] args = {realm, type, displayableIdNames, e.getMessage()};
+            debugError("DeleteIdentities.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO, "FAILED_DELETE_IDENTITY",
+                args);
+            Object[] msgArg = {realm};
+            throw new CLIException(MessageFormat.format(getResourceString(
+                "delete-identity-realm-does-not-exist"), msgArg),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
 
         try {
             AMIdentityRepository amir = new AMIdentityRepository(
@@ -79,8 +97,6 @@ public class DeleteIdentities extends IdentityCommand {
                 setDelete.add(amid);
             }
 
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "ATTEMPT_DELETE_IDENTITY", params);
             amir.deleteIdentities(setDelete);
             IOutput outputWriter = getOutputWriter();
 
