@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amverifyarchive,v 1.1 2007-05-04 21:43:33 bigfatrat Exp $
+# $Id: amverifyarchive,v 1.2 2007-07-02 18:08:15 veiming Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -39,8 +39,8 @@ if [ -z "${JAVA_HOME}" ] ; then
     fi
 fi
 
-TOOLS_HOME=@TOOLS_HOME@
-OPENSSO_HOME=@CONFIG_DIR@
+TOOLS_HOME="@TOOLS_HOME@"
+OPENSSO_HOME="@CONFIG_DIR@"
 
 TOOLS_CLASSPATH=${OPENSSO_HOME}:\
 ${TOOLS_HOME}/lib/activation.jar:\

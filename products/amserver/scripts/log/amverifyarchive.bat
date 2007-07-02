@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amverifyarchive.bat,v 1.3 2007-05-04 21:44:14 bigfatrat Exp $
+: $Id: amverifyarchive.bat,v 1.4 2007-07-02 18:08:15 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -35,8 +35,8 @@ shift
 goto WHILE
 :WEND
 
-set TOOLS_HOME=@TOOLS_HOME@
-set OPENSSO_HOME=@CONFIG_DIR@
+set TOOLS_HOME="@TOOLS_HOME@"
+set OPENSSO_HOME="@CONFIG_DIR@"
 
 set TOOLS_CLASSPATH=%OPENSSO_HOME%;%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/locale;%TOOLS_HOME%/config
 

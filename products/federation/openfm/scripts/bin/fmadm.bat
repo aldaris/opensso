@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fmadm.bat,v 1.5 2007-05-10 19:43:39 veiming Exp $
+: $Id: fmadm.bat,v 1.6 2007-07-02 18:07:46 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -34,8 +34,8 @@ shift
 goto WHILE
 :WEND
 
-set TOOLS_HOME=@TOOLS_HOME@
+set TOOLS_HOME="@TOOLS_HOME@"
 
-java  -Xms64m -Xmx256m -cp @CONFIG_DIR@;%TOOLS_HOME%/locale;%TOOLS_HOME%/classes;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxb-impl.jar;%TOOLS_HOME%/lib/jaxb-libs.jar;%TOOLS_HOME%/lib/xsdlib.jar;%TOOLS_HOME%/lib/xmlsec.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/openfm.jar;%TOOLS_HOME%/lib/openfedlib.jar -D"definitionFiles=com.sun.identity.cli.AccessManager,com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
+java  -Xms64m -Xmx256m -cp "@CONFIG_DIR@";%TOOLS_HOME%/locale;%TOOLS_HOME%/classes;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/jaxb-api.jar;%TOOLS_HOME%/lib/jaxb-impl.jar;%TOOLS_HOME%/lib/jaxb-libs.jar;%TOOLS_HOME%/lib/xsdlib.jar;%TOOLS_HOME%/lib/xmlsec.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/openfm.jar;%TOOLS_HOME%/lib/openfedlib.jar -D"definitionFiles=com.sun.identity.cli.AccessManager,com.sun.identity.federation.cli.FederationManager" -D"commandName=fmadm" -D"amconfig=AMConfig" -D"java.util.logging.manager=com.sun.identity.log.LogManager" -D"java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" com.sun.identity.cli.CommandManager %PARAMS%
 endlocal
 :END
