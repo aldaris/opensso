@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.5 2007-06-21 23:01:38 superpat7 Exp $
+ * $Id: CircleOfTrustManager.java,v 1.6 2007-07-02 18:05:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import com.sun.identity.federation.meta.IDFFCOTUtils;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +40,6 @@ import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.meta.SAML2COTUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.wsfederation.meta.WSFederationCOTUtils;
-import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -386,9 +385,22 @@ public class CircleOfTrustManager {
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
             try {
-                WSFederationCOTUtils.updateEntityConfig(realm,cotName,entityID);
-            } catch (WSFederationMetaException idffe) {
-                throw new COTException(idffe);
+                Class clazz = Class.forName(
+                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
+                Class[] formalParams = {String.class, String.class,
+                    String.class};
+                Method updateEntity = clazz.getDeclaredMethod(
+                    "updateEntityConfig", formalParams);
+                Object[] params = {realm, cotName, entityID};
+                updateEntity.invoke(null, params);
+            } catch (NoSuchMethodException e) {
+                String[] args = { protocolType };
+                throw new COTException("invalidProtocolType", args);
+            } catch (ClassNotFoundException e) {
+                String[] args = { protocolType };
+                throw new COTException("invalidProtocolType", args);
+            } catch (Exception e) {
+                throw new COTException(e);
             }
         } else {
             String[] args = { protocolType };
@@ -406,9 +418,12 @@ public class CircleOfTrustManager {
      * @throws COTException if there is  error updating entity configuration.
      * @throws JAXBException if there is error retrieving entity configuration.
      */
-    void removeFromEntityConfig(String realm,String cotName,String protocolType,
-            String entityID)
-            throws COTException, JAXBException {
+    void removeFromEntityConfig(
+        String realm,
+        String cotName,
+        String protocolType,
+        String entityID
+    ) throws COTException, JAXBException {
         if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
                 new IDFFCOTUtils().removeFromEntityConfig(cotName,entityID);
@@ -424,16 +439,27 @@ public class CircleOfTrustManager {
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
             try {
-                WSFederationCOTUtils.removeFromEntityConfig(realm,cotName,
-                        entityID);
-            } catch (WSFederationMetaException wsfme) {
-                throw new COTException(wsfme);
+                Class clazz = Class.forName(
+                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
+                Class[] formalParams = {String.class, String.class,
+                    String.class};
+                Method removeFromEntityConfig = clazz.getDeclaredMethod(
+                    "removeFromEntityConfig", formalParams);
+                Object[] params = {realm, cotName, entityID};
+                removeFromEntityConfig.invoke(null, params);
+            } catch (NoSuchMethodException e) {
+                String[] data = { protocolType };
+                throw new COTException("invalidProtocolType", data);
+            } catch (ClassNotFoundException e) {
+                String[] data = { protocolType };
+                throw new COTException("invalidProtocolType", data);
+            } catch (Exception e) {
+                throw new COTException(e);
             }
         } else {
             String[] data = { protocolType };
             throw new COTException("invalidProtocolType",data);
         }
-        
     }
     
     /**
