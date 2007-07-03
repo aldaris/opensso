@@ -1,5 +1,4 @@
-/**
- * The contents of this file are subject to the terms
+/* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -18,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutHandler.java,v 1.2 2007-07-03 22:06:25 qcheng Exp $
+ * $Id: SAML2SingleLogoutHandler.java,v 1.1 2007-07-03 22:06:25 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,15 +29,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The interface <code>SingleLogoutHandler</code> is used to handle
- * Single Logout for a specific protocol. This interface need to be
- * implemented by ID-FF, SAMLv2 and WS-Federation protocol to enable
- * single logout cross multiple federation protocols.
- *
+ * The <code>IDFFSingleLogoutHander</code> class is an implementation of
+ * the <code>SingleLogoutHandler</code> for the Liberty ID-FF protocol.
  */
-
-public interface SingleLogoutHandler {
-
+public class SAML2SingleLogoutHandler implements SingleLogoutHandler {
+    
+    /** Creates a new instance of SAML2SingleLogoutHandler */
+    public SAML2SingleLogoutHandler() {
+    }
+    
     /**
      * Performs single logout for a specific protocol. This method need to be
      * implemented by each federation protocol, and will be invoked by other 
@@ -73,7 +72,7 @@ public interface SingleLogoutHandler {
      *              - single logout initiated using SAMLv2 protocol
      *          <code>SingleLogoutManager.IDFF</code>   
      *              - single logout initiated using ID-FF protocol
-     *          <code>SingleLogoutManager.WS_FED</code> 
+     *          <code>SingleLogoutManager.WS-FED</code> 
      *              - single logout initiated using WS-Federation protocol
      * @param realm Realm of the hosted entity.
      * @param idpEntityID <code>EntityID</code> of the hosted identity provider
@@ -83,8 +82,9 @@ public interface SingleLogoutHandler {
      * @param relayState A state information to be relayed back in response. 
      * @param singleLogoutRequestXML Original single logout request in XML 
      *      string.
-     * @param singleLogoutRequestXML Original single logout request in XML
-     *      string.
+     * @param singleLoogutResponseXML Logout response to be sent back to SP. 
+     *      This only apply to the case of SP initiated Single Logout, it will
+     *      be null in case of IDP initiated single logout.
      * @param currentStatus Current logout status, this is the accumulative
      *      single logout status for all protocols processed so far.
      *      Possible values:
@@ -113,5 +113,7 @@ public interface SingleLogoutHandler {
         String singleLogoutRequestXML,
         String singleLogoutResponseXML,
         int currentStatus
-    ) throws Exception;
+    ) throws Exception {
+        return SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+    }
 }

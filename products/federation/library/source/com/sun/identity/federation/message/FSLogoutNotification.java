@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutNotification.java,v 1.2 2006-10-31 03:58:23 qcheng Exp $
+ * $Id: FSLogoutNotification.java,v 1.3 2007-07-03 22:06:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -232,7 +232,7 @@ public class FSLogoutNotification extends AbstractRequest {
      *         this object.
      */
     public FSLogoutNotification(String requestId,String providerID,
-            NameIdentifier nameId,String relayState)
+            NameIdentifier nameId, String relayState)
             throws FSMsgException {
         setIssueInstant(new Date());
         if ((requestId != null) && (requestId.length() != 0)) {
@@ -267,6 +267,15 @@ public class FSLogoutNotification extends AbstractRequest {
      */
     public void setID(String id){
         this.id = id;
+    }
+    
+    /**
+     * Sets the value of <code>RelayState</code> attribute.
+     *
+     * @param relayState the value of <code>RelayState</code> attribute.
+     */
+    public void setRelayState(String relayState) {
+        this.relayState = relayState;
     }
     
     /**

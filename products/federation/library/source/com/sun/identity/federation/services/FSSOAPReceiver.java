@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSOAPReceiver.java,v 1.3 2007-01-16 20:14:21 exu Exp $
+ * $Id: FSSOAPReceiver.java,v 1.4 2007-07-03 22:06:23 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1207,6 +1207,7 @@ public class FSSOAPReceiver extends HttpServlet {
                         }
                     }
 
+                    // TODO : change to use FSLogoutUtil.liveConnectionsExist
                     if (!isUserExists(userID, hostedEntityId)) {
                         // Need to get the list of servers from the 
                         // platform list and make a call to each of them 

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.4 2007-01-16 20:14:23 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.5 2007-07-03 22:06:24 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.federation.services.logout;
 
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.cert.X509Certificate;
@@ -89,12 +90,14 @@ public class FSSingleLogoutHandler {
     private String hostedEntityId = "";
     private String hostedRole = null;
     private String metaAlias = null;
+    private String relayState = null;
 
     private boolean logoutStatus = true;
     private boolean isHttpRedirect = false;
     private Object ssoToken = null;
     private FSLogoutResponse respObj = null;    
     private FSLogoutNotification requestLogout = null;
+    private String singleLogoutProtocol = null;
 
 
    /*
@@ -119,7 +122,22 @@ public class FSSingleLogoutHandler {
         }
     }
 
+    /**
+     * Sets the value of <code>RelayState</code> attribute.
+     *
+     * @param relayState the value of <code>RelayState</code> attribute.
+     */
+    public void setRelayState(String relayState) {
+        this.relayState = relayState;
+    }
 
+   /**
+    * Sets the single logout protocol to be used.
+    * @param protocol Single Logout Protocol to be set
+    */
+    public void setSingleLogoutProtocol(String protocol) {
+        this.singleLogoutProtocol = protocol;
+    }
    /*
     * Initiates the logout operation.
     * @param response HTTP response
@@ -377,6 +395,9 @@ public class FSSingleLogoutHandler {
 
             FSLogoutNotification reqLogout =
                 createSingleLogoutRequest(acctObj, sessionIndex);
+            if (this.relayState != null) {
+                reqLogout.setRelayState(this.relayState);
+            } 
             if (reqLogout == null) {
                 FSUtils.debug.message("Logout Request is null");
                 return new FSLogoutStatus(IFSConstants.SAML_REQUESTER);
@@ -442,9 +463,12 @@ public class FSSingleLogoutHandler {
      * to show the local logout status page to the user.
      */
     protected void returnAfterCompletion() {
-        FSUtils.debug.message(
-            "Entered FSSingleLogoutHandler::returnAfterCompletion");
-        try {
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("Entered FSSingleLogoutHandler::returnAC: "
+                + "PROTOCOL=" + this.singleLogoutProtocol 
+                + ", relayState=" + this.relayState);
+        }
+        try {            
             String returnProviderId = "";
             String relayState = "";
             String logoutStatus = "";
@@ -540,6 +564,23 @@ public class FSSingleLogoutHandler {
             } else {
                 FSUtils.debug.message(
                     "no source provider. return to local status page");
+                
+                // handle muliple federation protocol for IDP initiated SOAP
+                // binding case, no need to redirect to default URL,
+                // just return so the LogoutResponse is send back to
+                // Multiple protocol single logout handler
+                if ((this.singleLogoutProtocol != null) &&
+                    this.singleLogoutProtocol.equals(
+                    IFSConstants.LOGOUT_IDP_SOAP_PROFILE) && 
+                    (this.relayState != null) && 
+                    MultiProtocolUtils.isMultiProtocolRelayState(
+                    this.relayState)) {
+                    if (FSUtils.debug.messageEnabled()) {
+                        FSUtils.debug.message("FSSingleLogoutHandler::returnAC:"
+                            + " this is multiProto for IDP initiated SOAP");
+                    }
+                    return;
+                } 
                 FSServiceUtils.returnLocallyAfterOperation(
                     response, LOGOUT_DONE_URL, true,
                     IFSConstants.LOGOUT_SUCCESS, IFSConstants.LOGOUT_FAILURE);
@@ -1118,6 +1159,9 @@ public class FSSingleLogoutHandler {
     protected String getProfileToCommunicateLogout() {
         FSUtils.debug.message(
             "FSSingleLogoutHandler :: getProfileToCommunicateLogout...");
+        if (singleLogoutProtocol != null) {
+            return singleLogoutProtocol;
+        }
         String retProfileType = "";
         if (metaManager != null) {
             ProviderDescriptorType descriptor = remoteDescriptor;

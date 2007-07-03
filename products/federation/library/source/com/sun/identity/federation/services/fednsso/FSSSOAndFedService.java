@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.1 2006-10-30 23:14:29 qcheng Exp $
+ * $Id: FSSSOAndFedService.java,v 1.2 2007-07-03 22:06:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,9 +29,7 @@ import com.sun.identity.federation.services.FSSessionManager;
 import com.sun.identity.federation.services.FSServiceManager;
 import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSServiceUtils;
-import com.sun.identity.federation.services.registration.FSNameRegistrationHandler;
 import com.sun.identity.federation.meta.IDFFMetaManager;
-import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.common.FSUtils;
@@ -40,9 +38,9 @@ import com.sun.identity.federation.common.FSException;
 import com.sun.identity.federation.common.LogUtil;
 import com.sun.identity.federation.accountmgmt.FSAccountManager;
 import com.sun.identity.federation.accountmgmt.FSAccountMgmtException;
-import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
-import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -64,8 +62,6 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
@@ -550,6 +546,17 @@ public class FSSSOAndFedService  extends HttpServlet {
         BaseConfigType hostedConfig)
     {
         FSUtils.debug.message("FSSSOAndFedService.handleAuthnRequest: Called");
+        try {
+            SessionProvider provider = SessionManager.getProvider();
+            Object session = provider.getSession(request);
+            if ((session != null) && (provider.isValid(session))) {
+                MultiProtocolUtils.addFederationProtocol(session, 
+                    SingleLogoutManager.IDFF);
+            }
+        } catch (SessionException e) {
+            FSUtils.debug.warning("FSSSOFedService.handleAuthnRequest: hub", e);
+        }
+        
         try {
             if (!bPostAuthn && !authnRequest.getIsPassive()){
                 FSSessionManager sessionService = FSSessionManager.getInstance(

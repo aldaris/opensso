@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.7 2007-06-22 23:55:04 bina Exp $
+ * $Id: IDPSSOUtil.java,v 1.8 2007-07-03 22:06:26 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.sun.identity.shared.DateUtils;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.Assertion;
@@ -88,7 +90,6 @@ import com.sun.identity.plugin.session.SessionException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.Date;
@@ -289,6 +290,9 @@ public class IDPSSOUtil {
         }
 
         if (res != null) {
+            // call multi-federation protocol to set the protocol
+            MultiProtocolUtils.addFederationProtocol(session,
+                 SingleLogoutManager.SAML2);
             // check if the COT cookie needs to be set
             if (setCOTCookie(request, response, acsBinding, spEntityID, 
                  idpEntityID, idpMetaAlias, realm, relayState, acsURL, res)) {

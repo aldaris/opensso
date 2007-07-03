@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.3 2007-01-16 20:14:22 exu Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,16 @@ public  class FSPreLogoutHandler {
                 "\nCOMMON_ERROR_URL : " + COMMON_ERROR_URL);
         }
     }
-    
+   
+    /**
+     * Sets the value of <code>RelayState</code> attribute.
+     *
+     * @param relayState the value of <code>RelayState</code> attribute.
+     */
+    public void setRelayState(String relayState) {
+        this.relayState = relayState;
+    } 
+
     /**
      * Sets the hosted provider details.
      * @param hostedProviderDesc the descriptor of the hosted provider
@@ -250,6 +259,7 @@ public  class FSPreLogoutHandler {
                         handlerObj.setHostedEntityId(hostedEntityId);
                         handlerObj.setHostedProviderRole(hostedRole);
                         handlerObj.setMetaAlias(metaAlias);
+                        handlerObj.setRelayState(relayState);
                         
                         return handlerObj.handleSingleLogout(
                             response, request, currentSessionProvider, userID,
@@ -570,9 +580,17 @@ public  class FSPreLogoutHandler {
                         "Return URL based on local postlogout URL" +
                         "\nNo Source in ReturnMAP");
                 }
-                FSServiceUtils.returnLocallyAfterOperation(
-                    response, LOGOUT_DONE_URL,true,
-                    IFSConstants.LOGOUT_SUCCESS, IFSConstants.LOGOUT_FAILURE);
+                if (this.relayState == null) {
+                    FSServiceUtils.returnLocallyAfterOperation(
+                        response, LOGOUT_DONE_URL,true,
+                        IFSConstants.LOGOUT_SUCCESS, 
+                        IFSConstants.LOGOUT_FAILURE);
+                } else {
+                    FSServiceUtils.returnLocallyAfterOperation(
+                        response, this.relayState, true,
+                        IFSConstants.LOGOUT_SUCCESS, 
+                        IFSConstants.LOGOUT_FAILURE);
+                }
                 return;
             }
             returnProviderId = (String) providerMap.get(IFSConstants.PROVIDER);

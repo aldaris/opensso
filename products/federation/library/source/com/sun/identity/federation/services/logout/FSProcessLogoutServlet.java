@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSProcessLogoutServlet.java,v 1.3 2007-01-16 20:14:22 exu Exp $
+ * $Id: FSProcessLogoutServlet.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -548,6 +548,10 @@ public class FSProcessLogoutServlet extends HttpServlet {
      * @param metaAlias hosted provider's meta alias
      * @param ssoToken session token of the user
      * @param logoutDoneURL where to go when logout is done
+     * @param sourceCheck source check string. Possible value:
+     * <code>local</code> : single logout initiated from local host
+     * <code>remote</code> : single logout initiated from remmote host
+     * <code>logoutGet</code> : Http Get action.
      */
     private void doLogoutInitiation(
         HttpServletRequest request,
@@ -563,6 +567,12 @@ public class FSProcessLogoutServlet extends HttpServlet {
     {
         FSUtils.debug.message("FSProcessLogoutServlet::doLogoutInitiation");
         FSServiceManager instSManager = FSServiceManager.getInstance();
+        String relayState = 
+            request.getParameter(IFSConstants.LOGOUT_RELAY_STATE);
+        if (FSUtils.debug.messageEnabled()) {
+            FSUtils.debug.message("FSProcessLogoutServlet.doLogoutInit: relay="
+                + relayState);
+        }
         if (instSManager != null) {
             FSUtils.debug.message("FSServiceManager Instance not null");
             FSPreLogoutHandler handlerObj =
@@ -573,6 +583,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 handlerObj.setHostedEntityId(hostedEntityId);
                 handlerObj.setHostedProviderRole(hostedRole);
                 handlerObj.setMetaAlias(metaAlias);
+                handlerObj.setRelayState(relayState);
                 handlerObj.handleSingleLogout(
                     request, response, ssoToken, sourceCheck);
                 return;

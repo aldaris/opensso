@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.4 2007-04-04 06:30:04 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.5 2007-07-03 22:06:26 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -393,6 +395,9 @@ public class IDPSSOFederate {
                 // redirecting to authentication url.
                 // generate assertion response
                 if (!sessionUpgrade) {
+                     // call multi-federation protocol to set the protocol
+                     MultiProtocolUtils.addFederationProtocol(session, 
+                         SingleLogoutManager.SAML2);
                      sendResponseToACS(request,response,authnReq,
                                        idpMetaAlias,relayState);
                 }
@@ -426,17 +431,21 @@ public class IDPSSOFederate {
                     isSessionUpgrade =  true;
                 }
             }
+            SessionProvider sessionProvider = SessionManager.getProvider();
+            session = sessionProvider.getSession(request);
             if (isSessionUpgrade) {
                  IDPSession oldSess = 
-                     (IDPSession)IDPCache.oldIDPSessionCache.remove(reqID);
-                 SessionProvider sessionProvider =
-                     SessionManager.getProvider();
-                 session = sessionProvider.getSession(request);
+                     (IDPSession)IDPCache.oldIDPSessionCache.remove(reqID);                 
                  String sessionIndex = IDPSSOUtil.getSessionIndex(session);
                  if (sessionIndex != null && (sessionIndex.length() != 0 )) { 
                      IDPCache.idpSessionsByIndices.put(sessionIndex,oldSess);
                  }
-            } 
+            }
+            if (session != null) {
+                // call multi-federation protocol to set the protocol
+                MultiProtocolUtils.addFederationProtocol(session, 
+                    SingleLogoutManager.SAML2);
+            }
             // generate assertion response
             sendResponseToACS(
                 request, response, authnReq, idpMetaAlias, relayState);

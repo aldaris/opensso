@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.4 2007-04-04 06:31:40 hengming Exp $
+ * $Id: IDPSingleLogout.java,v 1.5 2007-07-03 22:06:26 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,10 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
+import com.sun.net.ssl.internal.ssl.Provider;
+import com.sun.org.apache.bcel.internal.generic.SIPUSH;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +39,7 @@ import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -54,6 +59,9 @@ import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.LogoutResponse;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Status;
+import com.sun.identity.saml2.protocol.StatusCode;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class reads the required data from HttpServletRequest and
@@ -124,6 +132,7 @@ public class IDPSingleLogout {
         String metaAlias = (String)paramsMap.get(SAML2Constants.IDP_META_ALIAS);
         try {
             Object session = sessionProvider.getSession(request);
+            String sessUser = sessionProvider.getPrincipalName(session);
             if (session == null) {
                 throw new SAML2Exception(
                     SAML2Utils.bundle.getString("nullSSOToken"));
@@ -180,7 +189,8 @@ public class IDPSingleLogout {
                 if (debug.messageEnabled()) {
                     debug.message("No SP session participant(s)");
                 }
-                sessionProvider.invalidateSession(session, request, response);
+                MultiProtocolUtils.invalidateSession(session, request, 
+                    response, SingleLogoutManager.SAML2);
                 return;
             }
             
@@ -201,11 +211,13 @@ public class IDPSingleLogout {
                 }
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 IDPCache.authnContextCache.remove(idpSessionIndex);
-                sessionProvider.invalidateSession(
-                    session, request, response);
+                MultiProtocolUtils.invalidateSession(session, request,
+                    response, SingleLogoutManager.SAML2);
                 return;
             }
 
+            String relayState = 
+                (String)paramsMap.get(SAML2Constants.RELAY_STATE);
             int soapFailCount = 0;
             for (int i = 0; i < n; i++) {
                 NameIDandSPpair pair = null;
@@ -248,9 +260,6 @@ public class IDPSingleLogout {
                         SAML2Utils.bundle.getString("sloServiceListNotfound"));
                 }
 
-                String relayState = 
-                        (String)paramsMap.get(SAML2Constants.RELAY_STATE);
-
                  // get IDP entity config in case of SOAP, for basic auth info
                 SPSSOConfigElement spConfig = null;
                 if (binding.equals(SAML2Constants.SOAP)) {
@@ -266,9 +275,9 @@ public class IDPSingleLogout {
                              destroyAllTokenForUser(
                                  userID,request,response);
                          } else {
-                             sessionProvider.invalidateSession(
-                                 idpSession.getSession(),
-                                 request, response);
+                             MultiProtocolUtils.invalidateSession(
+                                 idpSession.getSession(), request, response,
+                                 SingleLogoutManager.SAML2);
                              IDPCache.idpSessionsByIndices.
                                  remove(idpSessionIndex);
                              IDPCache.authnContextCache.remove(idpSessionIndex);
@@ -322,12 +331,59 @@ public class IDPSingleLogout {
             }
 
             if (binding.equals(SAML2Constants.SOAP)) {
+                int logoutStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+                boolean isMultiProtocol = 
+                    MultiProtocolUtils.isMultipleProtocolSession(request,
+                    SingleLogoutManager.SAML2);
                 if (soapFailCount == n) {
-                    throw new SAML2Exception(
-                        SAML2Utils.bundle.getString("sloFailed"));
+                    if (isMultiProtocol) {
+                        logoutStatus = SingleLogoutManager.LOGOUT_FAILED_STATUS;
+                    } else {
+                        throw new SAML2Exception(
+                            SAML2Utils.bundle.getString("sloFailed"));
+                    }
                 } else if (soapFailCount > 0) {
-                    throw new SAML2Exception(
-                        SAML2Utils.bundle.getString("partialLogout"));
+                    if (isMultiProtocol) {
+                        logoutStatus = 
+                            SingleLogoutManager.LOGOUT_PARTIAL_STATUS;
+                    } else {
+                        throw new SAML2Exception(
+                            SAML2Utils.bundle.getString("partialLogout"));
+                    }
+                }
+                // processing multi-federation protocol session
+                if (isMultiProtocol) {
+                    Set set = new HashSet();
+                    set.add(session);
+                    boolean isSOAPInitiated = 
+                        binding.equals(SAML2Constants.SOAP) ? true : false;
+                    int retStat = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+                    try {
+                        debug.message("IDPSingleLogout.initLogReq: MP");
+                        retStat = SingleLogoutManager.getInstance().
+                            doIDPSingleLogout(set, sessUser, request, response,
+                            isSOAPInitiated, true, SingleLogoutManager.SAML2,
+                            realm, idpEntityID, null, relayState, null, null,
+                            logoutStatus);
+                    } catch (Exception ex) {
+                        debug.warning("IDPSingleLogout.initiateLoogutReq: MP", 
+                            ex);
+                        throw new SAML2Exception(ex.getMessage());
+                    }
+                    if (debug.messageEnabled()) {
+                        debug.message("IDPSingleLogout.initLogoutRequest: "
+                            + "SLOManager return status = " + retStat);
+                    }
+                    switch (retStat) {
+                        case SingleLogoutManager.LOGOUT_FAILED_STATUS:
+                            throw new SAML2Exception(
+                                    SAML2Utils.bundle.getString("sloFailed"));
+                        case SingleLogoutManager.LOGOUT_PARTIAL_STATUS:
+                            throw new SAML2Exception(
+                                    SAML2Utils.bundle.getString("partialLogout"));
+                        default:
+                            break;
+                    }
                 }
             }
         } catch (SAML2MetaException sme) {
@@ -442,7 +498,55 @@ public class IDPSingleLogout {
         }
         // this is the case where there is no more SP session
         // participant
+       
+        String location = getSingleLogoutLocation(spEntityID, realm); 
+        logoutRes.setDestination(location); 
+        
+        // call multi-federation protocol processing
+        // this is SP initiated HTTP based single logout
+        boolean isMultiProtocolSession = false;
+        int retStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+        try {
+            SessionProvider provider = SessionManager.getProvider();
+            Object session = provider.getSession(request);
+            if ((session != null) && (provider.isValid(session))
+                && MultiProtocolUtils.isMultipleProtocolSession(session,
+                    SingleLogoutManager.SAML2)) {
+                isMultiProtocolSession = true;
+                // call Multi-Federation protocol SingleLogoutManager
+                SingleLogoutManager sloManager = 
+                    SingleLogoutManager.getInstance();
+                Set set = new HashSet();
+                set.add(session);
+                String uid =  provider.getPrincipalName(session);
+                debug.message("IDPSingleLogout.processLogReq: MP/SPinit/Http");
+                retStatus = sloManager.doIDPSingleLogout(set, uid, request, 
+                    response, false, false, SingleLogoutManager.SAML2, realm, 
+                    idpEntityID, spEntityID, relayState, logoutReq.toString(),
+                    logoutRes.toXMLString(), getLogoutStatus(logoutRes));
+            }
+        } catch (SessionException e) {
+            // ignore as session might not be valid
+            debug.message("IDPSingleLogout.processLogoutRequest: session",e);
+        } catch (Exception e) {
+            debug.message("IDPSingleLogout.processLogoutRequest: MP2",e);
+            retStatus = SingleLogoutManager.LOGOUT_FAILED_STATUS;
+        }
 
+        if (!isMultiProtocolSession || 
+            (retStatus != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS)) {
+            logoutRes = updateLogoutResponse(logoutRes, retStatus);
+            LogoutUtil.sendSLOResponse(response, logoutRes, location, 
+                relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE, 
+                spEntityID);
+        }
+    }
+
+    /**
+     * Returns single logout location for the service provider.
+     */
+    private static String getSingleLogoutLocation(String spEntityID,
+        String realm) throws SAML2Exception {
         SPSSODescriptorElement spsso = sm.getSPSSODescriptor(realm,spEntityID);
 
         if (spsso == null) {
@@ -483,9 +587,20 @@ public class IDPSingleLogout {
                     location);
             }
         }
-        logoutRes.setDestination(location); 
-        LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState, 
-                realm, idpEntityID, SAML2Constants.IDP_ROLE, spEntityID);
+        if (debug.messageEnabled()) {
+            debug.message("IDPSingleLogout.getSLOLocation: loc=" + location);
+        }
+        return location;
+    }
+
+    private static int getLogoutStatus(LogoutResponse logoutRes) {
+        StatusCode statusCode = logoutRes.getStatus().getStatusCode();
+        String code = statusCode.getValue();
+        if (code.equals(SAML2Constants.STATUS_SUCCESS)) {
+            return SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+        } else {
+            return SingleLogoutManager.LOGOUT_FAILED_STATUS;
+        }
     }
 
     /**
@@ -610,7 +725,8 @@ public class IDPSingleLogout {
             if (debug.messageEnabled()) {
                 debug.message("No SP session participant(s)");
             }
-            sessionProvider.invalidateSession(session, request, response);
+            MultiProtocolUtils.invalidateSession(session, request,
+                response, SingleLogoutManager.SAML2);
             return false;
         }
         
@@ -644,10 +760,44 @@ public class IDPSingleLogout {
                     destroyAllTokenForUser(
                         userID, request, response);
                 } else {
-                    sessionProvider.invalidateSession(
-                        idpSession.getSession(), request, response);
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                     IDPCache.authnContextCache.remove(idpSessionIndex);
+                    if (!MultiProtocolUtils.isMultipleProtocolSession(
+                        idpSession.getSession(), SingleLogoutManager.SAML2)) {
+                        sessionProvider.invalidateSession(
+                            idpSession.getSession(), request, response);
+                    } else {
+                        MultiProtocolUtils.removeFederationProtocol(
+                            idpSession.getSession(), SingleLogoutManager.SAML2);
+                        // call Multi-Federation protocol SingleLogoutManager
+                        SingleLogoutManager sloManager =
+                            SingleLogoutManager.getInstance();
+                        Set set = new HashSet();
+                        set.add(session);
+                        SessionProvider provider = 
+                            SessionManager.getProvider();
+                        String uid = provider.getPrincipalName(session);
+                        debug.message("IDPSingleLogout.processLogRes: MP/Http");
+                        int retStatus = 
+                            SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+                        try {
+                            retStatus = sloManager.doIDPSingleLogout(set, uid, 
+                                request, response, false, true, 
+                                SingleLogoutManager.SAML2, realm, idpEntityID, 
+                                spEntityID, relayState, null, null, 
+                                getLogoutStatus(logoutRes));
+                        } catch (SAML2Exception ex) {
+                            throw ex;
+                        } catch (Exception ex) {
+                            debug.error("IDPSIngleLogout.processLogoutResponse:"
+                                 + " MP/IDP initiated HTTP", ex);
+                            throw new SAML2Exception(ex.getMessage());
+                        }
+                        if (retStatus == 
+                            SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
+                            return true;
+                        }
+                    }
                 }
                 debug.message("IDP initiated SLO Success");
                 return false;
@@ -704,19 +854,58 @@ public class IDPSingleLogout {
                 request, response);
             
             logoutRes = LogoutUtil.generateResponse(status, 
-                                      originatingRequestID, 
-                      SAML2Utils.createIssuer(idpEntityID),
-                            realm, SAML2Constants.IDP_ROLE, 
-                          logoutRes.getIssuer().getValue());
+                originatingRequestID, SAML2Utils.createIssuer(idpEntityID),
+                realm, SAML2Constants.IDP_ROLE, 
+                logoutRes.getIssuer().getValue());
             
             if (location != null && logoutRes != null) {
                 logoutRes.setDestination(location); 
-                LogoutUtil.sendSLOResponse(response, logoutRes, location, 
-                    relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE, 
-                    spEntityID);
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 IDPCache.authnContextCache.remove(idpSessionIndex);
-                return true;   
+                
+                // call multi-federation protocol processing
+                // this is the SP initiated HTTP binding case
+                boolean isMultiProtocolSession = false;
+                int retStatus = SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS;
+                try {
+                    SessionProvider provider = SessionManager.getProvider();
+                    session = idpSession.getSession();
+                    if ((session != null) && (provider.isValid(session)) &&
+                        MultiProtocolUtils.isMultipleProtocolSession(session,
+                           SingleLogoutManager.SAML2)) {
+                        isMultiProtocolSession = true;
+                        // call Multi-Federation protocol SingleLogoutManager
+                        SingleLogoutManager sloManager =
+                            SingleLogoutManager.getInstance();
+                        Set set = new HashSet();
+                        set.add(session);
+                        String uid = provider.getPrincipalName(session);
+                        debug.message("IDPSingleLogout.processLogRes: MP/Http");
+                        retStatus = sloManager.doIDPSingleLogout(set, uid, 
+                            request, response, false, true, 
+                            SingleLogoutManager.SAML2, realm, idpEntityID, 
+                            spEntityID, relayState, null, 
+                            logoutRes.toXMLString(), 
+                            getLogoutStatus(logoutRes));
+                    }
+                } catch (SessionException e) {
+                    // ignore as session might not be valid
+                    debug.message("IDPSingleLogout.processLogoutRequest: session",e);
+                } catch (Exception e) {
+                    debug.message("IDPSingleLogout.processLogoutRequest: MP2",e);
+                    retStatus = SingleLogoutManager.LOGOUT_FAILED_STATUS;
+                }
+
+                if (!isMultiProtocolSession || (retStatus != 
+                    SingleLogoutManager.LOGOUT_REDIRECTED_STATUS)) {
+                    logoutRes = updateLogoutResponse(logoutRes, retStatus);
+                    LogoutUtil.sendSLOResponse(response, logoutRes, location,
+                        relayState, realm, idpEntityID, 
+                        SAML2Constants.IDP_ROLE, spEntityID);
+                    return true;
+                } else {
+                    return false;
+                }
             }
             
             IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
@@ -801,6 +990,7 @@ public class IDPSingleLogout {
 
         Status status = null;
         String spEntity = logoutReq.getIssuer().getValue();
+        Object session = null;
         try {
             do {
                 String requestId = logoutReq.getID();
@@ -838,7 +1028,7 @@ public class IDPSingleLogout {
                 }
 
                 IDPSession idpSession = (IDPSession)
-                IDPCache.idpSessionsByIndices.get(sessionIndex);
+                    IDPCache.idpSessionsByIndices.get(sessionIndex);
                 if (idpSession == null) {
                     debug.error("IDPLogoutUtil.processLogoutRequest: " +
                         "IDP no longer has this session index "+ sessionIndex);
@@ -847,6 +1037,7 @@ public class IDPSingleLogout {
                             SAML2Utils.bundle.getString("invalidSessionIndex"));
                     break;
                 }
+                session = idpSession.getSession();
                 List list = (List)idpSession.getNameIDandSPpairs();
                 int n = list.size();
                 if (debug.messageEnabled()) {
@@ -961,9 +1152,73 @@ public class IDPSingleLogout {
             debug.error("IDPLogoutUtil : unable to get meta for ", ssoe);
             status = SAML2Utils.generateStatus(idpEntityID, ssoe.toString()); 
         }
-        return LogoutUtil.generateResponse(status, logoutReq.getID(),
-                        SAML2Utils.createIssuer(idpEntityID), realm, 
-                                            SAML2Constants.IDP_ROLE, spEntity);
+        // process multi-federation protocol
+        boolean isMultiProtocol = false;
+        try {
+            SessionProvider provider = SessionManager.getProvider(); 
+            if ((session != null) && (provider.isValid(session)) &&
+                MultiProtocolUtils.isMultipleProtocolSession(session,
+                SingleLogoutManager.SAML2)) {
+                isMultiProtocol = true;
+            }
+        } catch (SessionException ex) {
+            //ignore
+        }
+        LogoutResponse logRes = LogoutUtil.generateResponse(status, 
+            logoutReq.getID(), SAML2Utils.createIssuer(idpEntityID), realm, 
+            SAML2Constants.IDP_ROLE, spEntity);
+        if (!isMultiProtocol) {
+            return logRes;
+        } else {
+            try {
+                Set set = new HashSet();
+                set.add(session);
+                String sessUser = 
+                    SessionManager.getProvider().getPrincipalName(session);
+                boolean isSOAPInitiated = binding.equals(SAML2Constants.SOAP) 
+                    ? true : false;
+                logRes.setDestination(getSingleLogoutLocation(spEntity, realm));
+                debug.message("IDPSingleLogout.processLogReq : call MP");
+                int retStat = SingleLogoutManager.getInstance().
+                    doIDPSingleLogout(set, sessUser, request, response, 
+                    isSOAPInitiated, false, SingleLogoutManager.SAML2, 
+                    realm, idpEntityID, spEntity, relayState, 
+                    logoutReq.toXMLString(true, true),
+                    logRes.toXMLString(true, true),
+                    SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS);
+                if (retStat != SingleLogoutManager.LOGOUT_REDIRECTED_STATUS) {
+                    logRes = updateLogoutResponse(logRes, retStat);
+                    return logRes;
+                } else {
+                    return null;
+                }
+            } catch (SessionException ex) {
+                debug.error("IDPSingleLogout.ProcessLogoutRequest: SP " +
+                    "initiated SOAP logout", ex);
+                throw new SAML2Exception(ex.getMessage());
+            } catch (Exception ex) {
+                debug.error("IDPSingleLogout.ProcessLogoutRequest: SP " +
+                    "initiated SOAP logout (MP)", ex);
+                throw new SAML2Exception(ex.getMessage());
+            }
+        }
+    }
+    
+    private static LogoutResponse updateLogoutResponse(LogoutResponse logRes,
+        int retStat) throws SAML2Exception {
+        if (debug.messageEnabled()) {
+            debug.message("IDPSingleLogout.updateLogoutResponse: response=" +
+                logRes.toXMLString() + "\nstatus = " + retStat);
+        }
+        if (retStat == SingleLogoutManager.LOGOUT_SUCCEEDED_STATUS) {
+            return logRes;
+        } else {
+            StatusCode code = logRes.getStatus().getStatusCode();
+            if (code.getValue().equals(SAML2Constants.SUCCESS)) {
+                code.setValue(SAML2Constants.RESPONDER);
+            }
+            return logRes;
+        }
     }
 
     /**
@@ -986,7 +1241,8 @@ public class IDPSingleLogout {
         Status status = null;
         if (session != null) {
             try {
-                sessionProvider.invalidateSession(session, request, response);
+                MultiProtocolUtils.invalidateSession(session, request,
+                        response, SingleLogoutManager.SAML2);
                 if (debug.messageEnabled()) {
                     debug.message("IDPLogoutUtil.destroyTAGR: "
                         + "Local session destroyed.");
@@ -1030,8 +1286,8 @@ public class IDPSingleLogout {
                     try {
                         String userID = sessionProvider.getPrincipalName(idpToken);
                         if (userToLogout.equalsIgnoreCase(userID)) {
-                            sessionProvider.invalidateSession(
-                                idpToken, request, response);
+                            MultiProtocolUtils.invalidateSession(idpToken, 
+                                request, response, SingleLogoutManager.SAML2);
                             IDPCache.
                                 idpSessionsByIndices.remove(idpSessionIndex);
                             IDPCache.authnContextCache.remove(idpSessionIndex);

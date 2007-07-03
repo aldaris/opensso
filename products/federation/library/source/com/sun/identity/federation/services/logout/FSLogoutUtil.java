@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.3 2007-01-16 20:14:22 exu Exp $
+ * $Id: FSLogoutUtil.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,8 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
+import com.sun.identity.multiprotocol.MultiProtocolUtils;
+import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -127,7 +129,8 @@ public class FSLogoutUtil {
             FSUtils.debug.message("FSLogoutUtil.destroyLocalSession, enter");
             SessionProvider sessionProvider = SessionManager.getProvider();
             if (sessionProvider.isValid(ssoToken)) {
-                sessionProvider.invalidateSession(ssoToken, request, response);
+                MultiProtocolUtils.invalidateSession(ssoToken,
+                        request, response, SingleLogoutManager.IDFF);
             }
             FSUtils.debug.message("FSLogoutUtil.destroyLocalSession, deleted");
             return true;                
@@ -179,8 +182,8 @@ public class FSLogoutUtil {
                             FSUtils.debug.message("Destroying token : " +
                                 sessionProvider.getPrincipalName(ssoToken));
                         }
-                        sessionProvider.invalidateSession(
-                            ssoToken, request, response);
+                        MultiProtocolUtils.invalidateSession(ssoToken,
+                            request, response, SingleLogoutManager.IDFF);
                         if (FSUtils.debug.messageEnabled()) {
                             FSUtils.debug.message(
                                 "Completed Destroying token for sessionID :" + 
@@ -446,7 +449,7 @@ public class FSLogoutUtil {
         return getCurrentProvider(userID, hostedEntityId, null);
     }
 
-    protected static HashMap getCurrentProvider(
+    public static HashMap getCurrentProvider(
         String userID,
         String hostedEntityId,
         Object ssoToken) 

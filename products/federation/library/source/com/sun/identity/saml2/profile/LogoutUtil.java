@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.3 2007-01-02 21:57:59 weisun2 Exp $
+ * $Id: LogoutUtil.java,v 1.4 2007-07-03 22:06:26 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1006,7 +1006,7 @@ public class LogoutUtil {
         return encryptedID.decrypt(privateKey);
     }    
 
-    static void sendSLOResponse(HttpServletResponse response,
+    public static void sendSLOResponse(HttpServletResponse response,
                     LogoutResponse sloResponse, 
                     String sloURL,
                     String relayState,
