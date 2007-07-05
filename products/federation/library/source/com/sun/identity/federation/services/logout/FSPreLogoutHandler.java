@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.4 2007-07-03 22:06:24 qcheng Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.5 2007-07-05 22:42:27 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -578,9 +578,10 @@ public  class FSPreLogoutHandler {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message(
                         "Return URL based on local postlogout URL" +
-                        "\nNo Source in ReturnMAP");
+                        "\nNo Source in ReturnMAP : rs=" + this.relayState);
                 }
-                if (this.relayState == null) {
+                if ((this.relayState == null) || 
+                    (this.relayState.length() == 0)) {
                     FSServiceUtils.returnLocallyAfterOperation(
                         response, LOGOUT_DONE_URL,true,
                         IFSConstants.LOGOUT_SUCCESS, 

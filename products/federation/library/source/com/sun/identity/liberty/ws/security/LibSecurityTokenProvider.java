@@ -18,30 +18,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSecurityTokenProvider.java,v 1.2 2007-04-23 16:49:05 hengming Exp $
+ * $Id: LibSecurityTokenProvider.java,v 1.1 2007-07-05 22:42:27 qcheng Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.liberty.ws.security;
 
+import com.sun.identity.shared.DateUtils;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.xml.XMLUtils;
 
-import com.sun.identity.shared.encode.Base64;
-
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
-
-import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.DateUtils;
-
+import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.disco.common.DiscoServiceManager;
 import com.sun.identity.liberty.ws.disco.EncryptedResourceID;
-import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
+import com.sun.identity.plugin.session.SessionException;
+
+import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.plugin.session.SessionManager;
 
 import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.assertion.AudienceRestrictionCondition;
@@ -57,20 +54,16 @@ import com.sun.identity.saml.common.SAMLServiceManager;
 
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.xmlsig.KeyProvider;
-import com.sun.identity.saml.xmlsig.SignatureProvider;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import java.math.BigInteger;
-
-import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.cert.X509Certificate;
-import java.security.Principal;
 import java.security.PublicKey;
 
 import java.util.ArrayList;
@@ -81,32 +74,32 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
- * The class <code>AMSecurityTokenProvider</code> is an default
- * implementation for <code>SecurityTokenProvider</code>. <code>SSOToken</code>
- * is used as credential in the implementation.
+ * The class <code>LibSecurityTokenProvider</code> is an default
+ * implementation for <code>SecurityTokenProvider</code>. 
  */
 
-public class AMSecurityTokenProvider implements SecurityTokenProvider {
+public class LibSecurityTokenProvider implements SecurityTokenProvider {
     
     protected XMLSignatureManager sigManager = null;
     protected KeyProvider keystore = null;
-    private SSOToken ssoToken = null;
+    private Object ssoToken = null;
     private String certAlias = null;
     private X509Certificate wssCert = null;
     // default certificate for the WSC
     private static String DEFAULT_CERT_ALIAS_KEY =
-            "com.sun.identity.liberty.ws.wsc.certalias";
+        "com.sun.identity.liberty.ws.wsc.certalias";
     private static String DEFAULT_CERT_ALIAS_VALUE =
-            SystemPropertiesManager.get(DEFAULT_CERT_ALIAS_KEY);
+        SystemPropertiesManager.get(DEFAULT_CERT_ALIAS_KEY);
     // cert alias for trusted authority, this is used for SAML token signing
     private static String DEFAULT_TA_CERT_ALIAS_KEY =
-            "com.sun.identity.liberty.ws.ta.certalias";
+        "com.sun.identity.liberty.ws.ta.certalias";
     private static String DEFAULT_TA_CERT_ALIAS_VALUE =
-            SystemPropertiesManager.get(DEFAULT_TA_CERT_ALIAS_KEY);
+        SystemPropertiesManager.get(DEFAULT_TA_CERT_ALIAS_KEY);
     private static String KEYINFO_TYPE =
-            "com.sun.identity.liberty.ws.security.keyinfotype";
+        "com.sun.identity.liberty.ws.security.keyinfotype";
     private static final String AUTH_INSTANT = "authInstant";
-    private static String keyInfoType = SystemPropertiesManager.get(KEYINFO_TYPE);
+    private static String keyInfoType = 
+        SystemPropertiesManager.get(KEYINFO_TYPE);
     private static Debug debug = Debug.getInstance("fmLibertySecurity");
     private static ResourceBundle bundle = Locale.getInstallResourceBundle(
         "fmLibertySecurity");
@@ -120,7 +113,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
         "com.sun.identity.liberty.ws.attributeplugin";
     
     /**
-     * Initializes the <code>AMSecurityTokenProvider</code>.
+     * Initializes the <code>LibSecurityTokenProvider</code>.
      *
      * @param credential  The credential of the caller used to see if
      *                    access to this security token provider is allowed
@@ -133,6 +126,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
     public void initialize(Object credential,XMLSignatureManager sigManager)
     throws SecurityTokenException {
         // check null for signature manager
+        debug.message("LibSecurityTokenProvider.initialize");
         if (sigManager == null) {
             debug.error("AMP: nulll signature manager");
             throw new SecurityTokenException(
@@ -141,13 +135,25 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
         
         keystore = sigManager.getKeyProvider();
         
-        // check valid SSOToken
+        // check valid Session 
         try {
-            ssoToken = (SSOToken) credential;
-            SSOTokenManager.getInstance().validateToken(ssoToken);
-            authType = ssoToken.getAuthType();
-            authTime =  ssoToken.getProperty(AUTH_INSTANT);
-        } catch (SSOException e) {
+            ssoToken = credential;
+            SessionProvider provider = SessionManager.getProvider();
+            if (!provider.isValid(ssoToken)) {
+                throw new SecurityTokenException(
+                    bundle.getString("invalidSSOToken"));
+            }
+            String[] tmp = provider.getProperty(ssoToken, 
+                SessionProvider.AUTH_METHOD);
+            if ((tmp != null) && (tmp.length != 0)) {
+                authType = tmp[0];
+            }
+            tmp = provider.getProperty(ssoToken, 
+                SessionProvider.AUTH_INSTANT);
+            if ((tmp != null) && (tmp.length != 0)) {
+                authTime = tmp[0];
+            }
+        } catch (SessionException e) {
             debug.error("AMP: invalid SSO Token", e);
             throw new SecurityTokenException(
                 bundle.getString("invalidSSOToken"));
@@ -458,7 +464,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
         
         if (senderIdentity== null) {
             debug.error(
-                "AMSecurityTokenProvider.getSAMLToken:senderIdentity is null");
+                "LibSecurityTokenProvider.getSAMLToken:senderIdentity is null");
             throw new SecurityTokenException(
                 bundle.getString("nullSenderIdentity"));
         }
@@ -588,7 +594,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             Object resourceID,
             boolean isBear) throws SecurityTokenException {
         if (debug.messageEnabled()) {
-            debug.message("AMSecurityTokenProvider." +
+            debug.message("LibSecurityTokenProvider." +
                 "createResourceAccessStatement: resourceID class = " +
                 resourceID.getClass() + ", value = " + resourceID);
         }
@@ -621,7 +627,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
             }
             
             if (debug.messageEnabled()) {
-                debug.message("AMSecurityTokenProvider." +
+                debug.message("LibSecurityTokenProvider." +
                     "createResourceAccessStatement: ras = " + ras);
             }
         } catch (Exception e) {
@@ -884,7 +890,7 @@ public class AMSecurityTokenProvider implements SecurityTokenProvider {
         } catch (Exception ex) {
             
             if(debug.warningEnabled()) {
-                debug.warning("AMSecurityTokenProvider." +
+                debug.warning("LibSecurityTokenProvider." +
                     "getAttributePlugin: Exception", ex);
             }
         }    

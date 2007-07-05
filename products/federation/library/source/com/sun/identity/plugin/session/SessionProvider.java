@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProvider.java,v 1.2 2007-06-18 21:39:34 qcheng Exp $
+ * $Id: SessionProvider.java,v 1.3 2007-07-05 22:42:27 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public interface SessionProvider {
      * This constant string is used in the implementation and calling
      * of the first method for passing an authentication level in a map.
      */
-    String AUTH_LEVEL = "authLevel";
+    String AUTH_LEVEL = "AuthLevel";
 
     /**
      * This constant string is used as a property name to indicate
