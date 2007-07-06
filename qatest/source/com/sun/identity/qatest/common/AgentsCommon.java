@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.1 2007-06-19 21:59:10 rmisra Exp $
+ * $Id: AgentsCommon.java,v 1.2 2007-07-06 21:52:28 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,12 +46,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
-/** 
- * This class has common methods related to policy management and is 
+/**
+ * This class has common methods related to policy management and is
  * consumed both, by policy api tests and agents tests.
  */
 public class AgentsCommon extends TestCommon {
-
+    
     private String loginURL;
     private String logoutURL;
     private String fmadmURL;
@@ -61,11 +61,11 @@ public class AgentsCommon extends TestCommon {
     private FederationManager fmadm;
     private WebClient webClient;
     private SSOToken userToken;
-
+    
     /**
      * Class constructor. Sets class variables.
      */
-    public AgentsCommon() 
+    public AgentsCommon()
     throws Exception{
         super("AgentsCommon");
         loginURL = protocol + ":" + "//" + host + ":" + port + uri +
@@ -84,13 +84,13 @@ public class AgentsCommon extends TestCommon {
             throw e;
         }
     }
-
+    
     /**
      * Create policy xml file.
      */
     public void createPolicyXML(String strGblRB, String strLocRB,
             int policyIdx, String policyFile)
-    throws Exception {
+            throws Exception {
         String strResource;
         strGlobalRB = strGblRB;
         strLocalRB = strLocRB;
@@ -98,26 +98,26 @@ public class AgentsCommon extends TestCommon {
         ResourceBundle rbp = ResourceBundle.getBundle(strLocalRB);
         String glbPolIdx = strLocalRB + policyIdx + ".";
         String locPolIdx = glbPolIdx + "policy";
-
+        
         int noOfPolicies = new Integer(rbp.getString(glbPolIdx +
                 "noOfPolicies")).intValue();
-
+        
         FileWriter fstream = new FileWriter(baseDir + policyFile);
         BufferedWriter out = new BufferedWriter(fstream);
-
+        
         writeHeader(out);
         out.write("<Policies>");
         out.write(newline);
-
+        
         for (int i = 0; i < noOfPolicies; i++) {
-
+            
             out.write("<Policy name=\"" + rbp.getString(locPolIdx + i +
                     ".name") + "\" referralPolicy=\"" +
                     rbp.getString(locPolIdx + i + ".referral") +
                     "\" active=\"" + rbp.getString(locPolIdx + i +
                     ".active") + "\">");
             out.write(newline);
-
+            
             int noOfRules = new Integer(rbp.getString(locPolIdx + i +
                     ".noOfRules")).intValue();
             if (noOfRules != 0) {
@@ -138,8 +138,8 @@ public class AgentsCommon extends TestCommon {
                     if (noOfActions != 0) {
                         List list = new ArrayList();
                         for (int k = 0; k < noOfActions; k++) {
-                           list.add(rbp.getString(locPolIdx + i + ".rule" + j +
-                                   ".action" + k)); 
+                            list.add(rbp.getString(locPolIdx + i + ".rule" + j +
+                                    ".action" + k));
                         }
                         createSubXML(rbg, rbp, out, null, null, null, list);
                     }
@@ -147,7 +147,7 @@ public class AgentsCommon extends TestCommon {
                 out.write("</Rule>");
                 out.write(newline);
             }
-
+            
             int noOfSubjects = new Integer(rbp.getString(locPolIdx + i +
                     ".noOfSubjects")).intValue();
             if (noOfSubjects != 0) {
@@ -169,8 +169,8 @@ public class AgentsCommon extends TestCommon {
                     if (noOfAttributes != 0) {
                         List list = new ArrayList();
                         for (int k = 0; k < noOfAttributes; k++) {
-                           list.add(rbp.getString(locPolIdx + i + ".subject" +
-                                   j + ".att" + k)); 
+                            list.add(rbp.getString(locPolIdx + i + ".subject" +
+                                    j + ".att" + k));
                         }
                         createSubXML(rbg, rbp, out, "Subject", name, type,
                                 incType, list);
@@ -181,7 +181,7 @@ public class AgentsCommon extends TestCommon {
                 out.write("</Subjects>");
                 out.write(newline);
             }
-
+            
             int noOfConditions = new Integer(rbp.getString(locPolIdx + i +
                     ".noOfConditions")).intValue();
             if (noOfConditions != 0) {
@@ -201,8 +201,8 @@ public class AgentsCommon extends TestCommon {
                     if (noOfAttributes != 0) {
                         List list = new ArrayList();
                         for (int k = 0; k < noOfAttributes; k++) {
-                           list.add(rbp.getString(locPolIdx + i +
-                                   ".condition" + j + ".att" + k));
+                            list.add(rbp.getString(locPolIdx + i +
+                                    ".condition" + j + ".att" + k));
                         }
                         createSubXML(rbg, rbp, out, "Condition", name, type,
                                 list);
@@ -211,7 +211,7 @@ public class AgentsCommon extends TestCommon {
                 out.write("</Conditions>");
                 out.write(newline);
             }
-
+            
             int noOfResponseProviders = new Integer(rbp.getString(locPolIdx +
                     i + ".noOfResponseProviders")).intValue();
             if (noOfResponseProviders != 0) {
@@ -235,8 +235,8 @@ public class AgentsCommon extends TestCommon {
                                 i + ".responseprovider" + j +
                                 ".staticAttributeName");
                         for (int k = 0; k < noOfStatic; k++) {
-                           list.add(rbp.getString(locPolIdx + i +
-                                   ".responseprovider" + j + ".static" + k));
+                            list.add(rbp.getString(locPolIdx + i +
+                                    ".responseprovider" + j + ".static" + k));
                         }
                         map.put(strStaticAttribute, list);
                     }
@@ -249,8 +249,8 @@ public class AgentsCommon extends TestCommon {
                                 i + ".responseprovider" + j +
                                 ".dynamicAttributeName");
                         for (int k = 0; k < noOfDynamic; k++) {
-                           list.add(rbp.getString(locPolIdx + i +
-                                   ".responseprovider" + j + ".dynamic" + k));
+                            list.add(rbp.getString(locPolIdx + i +
+                                    ".responseprovider" + j + ".dynamic" + k));
                         }
                         map.put(strDynamicAttribute, list);
                         createRPXML(out, "ResponseProvider", name, type, map);
@@ -258,15 +258,15 @@ public class AgentsCommon extends TestCommon {
                 }
                 out.write("</ResponseProviders>");
                 out.write(newline);
-           }
-           out.write("</Policy>");
-           out.write(newline);
+            }
+            out.write("</Policy>");
+            out.write(newline);
         }
         out.write("</Policies>");
         out.write(newline);
         out.close();
     }
-
+    
     /**
      * Creates part of policy xml related to atttributes. Does not take
      * Subject includeType as part of input parameters.
@@ -274,17 +274,18 @@ public class AgentsCommon extends TestCommon {
     public void createSubXML(ResourceBundle rbg, ResourceBundle rbp,
             BufferedWriter out, String nameType, String name, String type,
             List list)
-    throws Exception {
+            throws Exception {
         createSubXML(rbg, rbp, out, nameType, name, type, null, list);
     }
-
+    
     /**
      * Creates part of policy xml related to atttributes.
      */
     public void createSubXML(ResourceBundle rbg, ResourceBundle rbp,
             BufferedWriter out, String nameType, String name, String type,
             String includeType, List list)
-    throws Exception {
+            throws Exception {
+        
         if (nameType != null) {
             if (includeType != null)
                 out.write("<" + nameType + " name=\"" + name + "\"" +
@@ -302,24 +303,30 @@ public class AgentsCommon extends TestCommon {
                 String value;
                 String subType;
                 String subName;
-                String idPrefix;
-                String idSuffix;
+                String idPrefix = null;
+                String idSuffix = null;
                 String uuid;
                 for (int i = 0; i < list.size(); i++) {
                     out.write("<AttributeValuePair>");
                     out.write(newline);
-                    iIdx = ((String)list.get(i)).indexOf("="); 
+                    iIdx = ((String)list.get(i)).indexOf("=");
                     key = ((String)list.get(i)).substring(0, iIdx);
                     value = ((String)list.get(i)).substring(iIdx + 1,
                             ((String)list.get(i)).length());
+                    
                     if (includeType != null) {
                         subType = rbp.getString(value + ".type");
                         subName = rbp.getString(value + ".name");
-                        idPrefix = rbg.getString(strGlobalRB + ".uuid.prefix");
-                        idSuffix = rbg.getString(strGlobalRB + ".uuid.suffix." +
-                                subType);
-                        uuid = idPrefix + "=" + subName + "," + idSuffix +
-                                "," + basedn;
+                        idPrefix = rbg.getString(strGlobalRB + ".uuid.prefix."
+                                + type + "." + subType);
+                        idSuffix = rbg.getString(strGlobalRB + ".uuid.suffix."
+                                + type + "." + subType);
+                        if (idSuffix.equals(null) || idSuffix.equals("")) {
+                            uuid = idPrefix + "=" + subName + "," + basedn;
+                        } else {
+                            uuid = idPrefix + "=" + subName + "," + idSuffix +
+                                    "," + basedn;
+                        }
                         out.write("<Attribute name=\"" + key + "\"/><Value>" +
                                 uuid + "</Value>");
                     } else
@@ -336,7 +343,7 @@ public class AgentsCommon extends TestCommon {
             out.write(newline);
         }
     }
-
+    
     /**
      * Creates part of policy xml related to atttributes for ResponseProviders.
      */
@@ -374,7 +381,7 @@ public class AgentsCommon extends TestCommon {
             out.write(newline);
         }
     }
-
+    
     /**
      * Creates identities (users, roles and groups) required by the policy
      * definition and policy evaluation.
@@ -402,7 +409,7 @@ public class AgentsCommon extends TestCommon {
                     fmadm.createIdentity(webClient, realm, name, type, list);
                 else
                     fmadm.createIdentity(webClient, realm, name, type, null);
-	        String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
+                String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
                 if (isMemberOf.equals("yes")) {
                     String memberList = rb.getString(strPolIdx + ".identity" +
@@ -428,7 +435,7 @@ public class AgentsCommon extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
     }
-
+    
     /**
      * Create actual policy in the system.
      */
@@ -451,7 +458,11 @@ public class AgentsCommon extends TestCommon {
                     input.close();
                 policyXML = contents.toString();
                 log(logLevel, "createPolicy", newline + policyXML);
-                fmadm.createPolicies(webClient, realm, policyXML);
+                HtmlPage policyCheckPage ;
+                policyCheckPage = fmadm.createPolicies(webClient, realm,
+                        policyXML);
+                log(Level.FINER, "createPolicy", newline +
+                        policyCheckPage.asXml(), null);
             }
         } catch(Exception e) {
             log(Level.SEVERE, "createPolicy", e.getMessage(), null);
@@ -461,7 +472,7 @@ public class AgentsCommon extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
     }
-
+    
     /**
      * Deletes all the identities.
      */
@@ -481,8 +492,8 @@ public class AgentsCommon extends TestCommon {
                 type = rb.getString(glbPolIdx + ".identity" + i + ".type");
                 name = rb.getString(glbPolIdx + ".identity" + i + ".name");
                 list.clear();
-	        list.add(name);
-	        fmadm.deleteIdentities(webClient, realm, list, type);
+                list.add(name);
+                fmadm.deleteIdentities(webClient, realm, list, type);
             }
         } catch(Exception e) {
             log(Level.SEVERE, "deleteIdentities", e.getMessage(), null);
@@ -492,7 +503,7 @@ public class AgentsCommon extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
     }
-
+    
     /**
      * Deletes the policies.
      */
@@ -521,7 +532,7 @@ public class AgentsCommon extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
     }
-
+    
     /**
      * Creates policy header xml
      */
@@ -539,13 +550,13 @@ public class AgentsCommon extends TestCommon {
         out.write(">");
         out.write(newline);
     }
-
+    
     /**
      * Evaluates policy using agents
      */
     public void evaluatePolicyThroughAgents(String resource, String username,
             String password, String expResult)
-    throws Exception {
+            throws Exception {
         try {
             webClient = new WebClient();
             HtmlPage page = consoleLogin(webClient, resource, username,
@@ -561,43 +572,41 @@ public class AgentsCommon extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
     }
-
+    
     /**
      * Evaluates policy using api
      */
     public void evaluatePolicyThroughAPI(String resource, SSOToken userToken,
             String action, Map envMap, String expResult, int idIdx)
-    throws Exception {
+            throws Exception {
         try {
             PolicyEvaluator pe =
                     new PolicyEvaluator("iPlanetAMWebAgentService");
-
+            
             Set actions = new HashSet();
             actions.add(action);
-
+            
             boolean pResult = pe.isAllowed(userToken, resource, action, envMap);
             log(logLevel, "evaluatePolicyThroughAPI", "Policy Decision: " +
                     pResult);
-
+            
             PolicyDecision pd = pe.getPolicyDecision(userToken, resource,
                     actions, envMap);
-            log(logLevel, "evaluatePolicyThroughAPI", "Polciy Decision XML: " +
-                    pd.toXML());
-
+            log(Level.FINER, "evaluatePolicyThroughAPI",
+                    "Polciy Decision XML: " +  pd.toXML(), null);
             boolean expectedResult = new Boolean(expResult).booleanValue();
-
+            
             assert (pResult == expectedResult);
-
+            
         } catch (Exception e) {
             log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         } finally {
-            consoleLogout(webClient, logoutURL);
             destroyToken(userToken);
         }
     }
-
+    
     /**
      * Returns the enviornment map used for policy evaluation when evaluation
      * is through api.
@@ -640,14 +649,14 @@ public class AgentsCommon extends TestCommon {
         }
         return (map);
     }
-
+    
     /**
      * sets the requested properties in the sso token
      * @param SSOToken, Map, int
      */
     public void setProperty(String strLocRB, SSOToken userToken, int polIdx,
             int idIdx)
-    throws Exception {
+            throws Exception {
         ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
         String glbPolIdx = strLocRB + polIdx;
         String locEvalIdx = glbPolIdx + ".identity" + idIdx;
@@ -662,19 +671,19 @@ public class AgentsCommon extends TestCommon {
             int j;
             for (int i = 0; i < noOfSessionAttr; i++) {
                 strVal = rbp.getString(locEvalIdx + ".sessionAttribute" + i);
-                j = strVal.indexOf("="); 
+                j = strVal.indexOf("=");
                 propName = strVal.substring(0, j);
                 propValue = strVal.substring(j + 1, strVal.length());
                 userToken.setProperty(propName, propValue);
             }
         }
     }
-
+    
     /**
      * Gets the index for identity from the identity resource bundle string
      * identifier
      */
-    public int getIdentityIndex(String strIdx) 
+    public int getIdentityIndex(String strIdx)
     throws Exception {
         List list = getAttributeList(strIdx, ".");
         int iLen = ((String)list.get(1)).length();
