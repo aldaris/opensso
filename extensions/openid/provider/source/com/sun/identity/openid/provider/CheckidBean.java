@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CheckidBean.java,v 1.1 2007-04-30 01:28:29 pbryan Exp $
+ * $Id: CheckidBean.java,v 1.2 2007-07-06 18:45:28 pbryan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan
@@ -67,7 +67,7 @@ public class CheckidBean extends BackingBean
 
         // no handle or not valid for use in checkid_* query
         if (handle == null || !handle.isValid() ||
-        handle.getType() == AssocHandle.Type.ASSOCIATED)
+        handle.getType() != AssocHandle.Type.ASSOCIATED)
         {
             // whatever handle we have so far should be invalidated at client
             result.setInvalidateHandle(handle);
