@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2007-06-08 06:53:46 mrudul_uchil Exp $
+$Id: README,v 1.3 2007-07-06 19:22:31 huacui Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -59,7 +59,10 @@ is setup correctly pointing to its location.
        1) javaee.jar
        2) appserv-rt.jar 
        under opensso/products/wssagents/source/com/sun/identity/wssagents/glassfish/extlib
-       
+       For WebLogic Server, you need to add weblogic.jar under
+       opensso/products/wssagents/source/com/sun/identity/wssagents/weblogic/extlib
+       You can get the weblogic.jar from a weblogic server installation.
+
 %% 3. Building the workspace
 
 The workspace build system offers many build targets. You can view the
