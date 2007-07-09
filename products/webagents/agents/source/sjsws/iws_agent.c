@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.3 2007-03-29 20:38:11 subbae Exp $
+ * $Id: iws_agent.c,v 1.4 2007-07-09 21:03:35 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -859,73 +859,47 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
      */
 
     if(am_web_is_cdsso_enabled() == B_TRUE ) {
-		if(strcmp(method, FORM_METHOD_POST) == 0){
-			response = get_post_assertion_data(sn, rq, request_url);
-		if (orig_req == NULL) {
-			// Check if the original method has been added as a
-			// parameter (for instance &sunwMethod=GET) at
-			// the end of response rather than in the query
-			char * pch;
-			int reqSize=0;
-			pch = strstr(response,REQUEST_METHOD_TYPE);
-			if (pch != NULL) {
-				int endRespPos = strlen(response) - strlen(pch) - 1;
-				pch = pch + 1 + strlen(REQUEST_METHOD_TYPE);
-				reqSize = strlen(pch);
-				orig_req = malloc(reqSize);
-				if (orig_req == NULL) {
-					am_web_log_error("validate_session_policy() "
-					        "Unable to allocate %i bytes for orig_req");
-					status = AM_NO_MEMORY;
-				} else {
-					strncpy(orig_req, pch, reqSize);
-					am_web_log_debug("validate_session_policy() "
-					                 "orig_req from post data is %s",
-					                 orig_req);
-					response[endRespPos]='\0';
-				}
+	if((strcmp(method, FORM_METHOD_POST) == 0)
+	    && (orig_req != NULL) 
+            && (strlen(orig_req) > 0)) {
+		response = get_post_assertion_data(sn, rq, request_url);
+		status = am_web_check_cookie_in_post(
+		    args, &dpro_cookie,
+		    &request_url,
+		    &orig_req, method, response,
+		    B_FALSE, set_cookie, set_method);
+		if( status == AM_SUCCESS) {
+			// Set back the original clf-request attribute
+			int clf_reqSize = 0;
+			if ((query != NULL) && (strlen(query) > 0)) {
+				clf_reqSize = strlen(orig_req) + strlen(uri) +
+				              strlen (query) + strlen(protocol) + 4;
+			} else {			
+				clf_reqSize = strlen(orig_req) + strlen(uri) +
+				              strlen(protocol) + 3;
 			}
-		}
-		if ((orig_req != NULL) && (strlen(orig_req) > 0)) {
-			status = am_web_check_cookie_in_post(
-			    args, &dpro_cookie,
-			    &request_url,
-			    &orig_req, method, response,
-			    B_FALSE, set_cookie, set_method);
-			if( status == AM_SUCCESS) {
-				// Set back the original clf-request attribute
-				int clf_reqSize = 0;
+			clf_req = malloc(clf_reqSize);
+			if (clf_req == NULL) {
+				am_web_log_error("validate_session_policy() "
+				        "Unable to allocate %i bytes for clf_req",
+				         clf_reqSize);
+				status = AM_NO_MEMORY;
+			} else {
+				memset (clf_req,'\0',clf_reqSize);
+				strcpy(clf_req, orig_req);
+				strcat(clf_req, " ");
+				strcat(clf_req, uri);
 				if ((query != NULL) && (strlen(query) > 0)) {
-					clf_reqSize = strlen(orig_req) + strlen(uri) +
-					              strlen (query) + strlen(protocol) + 4;
-				} else {			
-					clf_reqSize = strlen(orig_req) + strlen(uri) +
-					              strlen(protocol) + 3;
+					strcat(clf_req, "?");
+					strcat(clf_req, query);
 				}
-				clf_req = malloc(clf_reqSize);
-				if (clf_req == NULL) {
-					am_web_log_error("validate_session_policy() "
-					        "Unable to allocate %i bytes for clf_req",
-					         clf_reqSize);
-					status = AM_NO_MEMORY;
-				} else {
-					memset (clf_req,'\0',clf_reqSize);
-					strcpy(clf_req, orig_req);
-					strcat(clf_req, " ");
-					strcat(clf_req, uri);
-					if ((query != NULL) && (strlen(query) > 0)) {
-						strcat(clf_req, "?");
-						strcat(clf_req, query);
-					}
-					strcat(clf_req, " ");
-					strcat(clf_req, protocol);
-					am_web_log_debug("validate_session_policy(): "
-					                 "clf-request set to %s", clf_req);
-				}
-				pblock_nvinsert(REQUEST_CLF, clf_req, rq->reqpb);
+				strcat(clf_req, " ");
+				strcat(clf_req, protocol);
+				am_web_log_debug("validate_session_policy(): "
+				                 "clf-request set to %s", clf_req);
 			}
+			pblock_nvinsert(REQUEST_CLF, clf_req, rq->reqpb);
 		}
-			
 	} else if((strcmp(method, FORM_METHOD_GET) == 0)
 			&& (orig_req != NULL)
 			&& (strlen(orig_req) > 0)) {
