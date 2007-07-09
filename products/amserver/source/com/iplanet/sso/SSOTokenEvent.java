@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenEvent.java,v 1.1 2005-11-01 00:30:29 arvindp Exp $
+ * $Id: SSOTokenEvent.java,v 1.2 2007-07-09 23:57:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ package com.iplanet.sso;
  * <li><code>SSO_TOKEN_IDLE_TIMEOUT</code>,
  * <li><code>SSO_TOKEN_MAX_TIMEOUT</code> and
  * <li><code>SSO_TOKEN_DESTROY</code>
+ * <li><code>SSO_TOKEN_PROPERTY_CHANGED</code>
  * </ul>
  */
 
@@ -70,12 +71,12 @@ public interface SSOTokenEvent {
      * @return The type of this event. Possible types are :
      *         <ul>
      *         <li><code>SSO_TOKEN_IDLE_TIMEOUT</code>,
-     *         <li><code>SSO_TOKEN_MAX_TIMEOUT</code> and
-     *         <li><code>SSO_TOKEN_DESTROY</code>
+     *         <li><code>SSO_TOKEN_MAX_TIMEOUT</code>,
+     *         <li><code>SSO_TOKEN_DESTROY</code> and
+     *         <li><code>SSO_TOKEN_PROPERTY_CHANGED</code>
      *         </ul>
-     * @exception SSOException
-     *                if the <code>SSOTokenEvent</code> type is not one of the
-     *                above
+     * @throws SSOException if the <code>SSOTokenEvent</code> type is
+     *         not one of the above.
      */
     public int getType() throws SSOException;
 }
