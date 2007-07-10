@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.19 2007-06-08 06:10:09 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.20 2007-07-10 22:43:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,10 +198,12 @@ public class AMSetupServlet extends HttpServlet {
                 SetupConstants.CONFIG_VAR_DATA_STORE);
             boolean isDSServer = dataStore.equals(
                 SetupConstants.SMS_DS_DATASTORE);
-            boolean isADServer = (isDSServer) ? false : dataStore.equals(
+            boolean isADServer = dataStore.equals(
                 SetupConstants.SMS_AD_DATASTORE);
+            boolean isOpenDS = dataStore.equals(
+                SetupConstants.SMS_OPENDS_DATASTORE);
 
-            if ((isDSServer || isADServer) && !isDITLoaded) {
+            if ((isDSServer || isADServer || isOpenDS) && !isDITLoaded) {
                 boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
                     SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
                         "sdkSchema") : false;
@@ -222,7 +224,7 @@ public class AMSetupServlet extends HttpServlet {
                 regService.registers(adminSSOToken);
                 processDataRequests("/WEB-INF/template/sms");
             } else {
-                if (isDSServer || isADServer) {
+                if (isDSServer || isADServer || isOpenDS) {
                     //Update the platform server list
                     updatePlatformServerList(serverURL, hostname);
                 }
@@ -700,17 +702,21 @@ public class AMSetupServlet extends HttpServlet {
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
         String strFiles;
-        boolean isDSServer = dataStore.equals(
-            SetupConstants.SMS_DS_DATASTORE);
+        boolean isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
+        boolean isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
 
         if (isDSServer) {
             if (sdkSchema) {
                 strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
             } else {
-                strFiles = rb.getString(SetupConstants.DS_SMS_PROPERTY_FILENAME);
+                strFiles = rb.getString(
+                    SetupConstants.DS_SMS_PROPERTY_FILENAME);
             }
-        } else {
+        } else if (isADServer) {
             strFiles = rb.getString(SetupConstants.AD_SMS_PROPERTY_FILENAME);
+        } else {
+            strFiles = rb.getString(
+                SetupConstants.OPENDS_SMS_PROPERTY_FILENAME); 
         }
         
         StringTokenizer st = new StringTokenizer(strFiles);
@@ -783,7 +789,7 @@ public class AMSetupServlet extends HttpServlet {
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
             } catch (IOException ioex) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupDSConfig.writeSchemaFiles: " +
+                    "AMSetupServlet.writeSchemaFiles: " +
                     "Exception in writing schema files:" , ioex);
                 throw ioex;
             } finally {

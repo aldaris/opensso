@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.10 2007-06-08 06:10:11 veiming Exp $
+ * $Id: SetupConstants.java,v 1.11 2007-07-10 22:43:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,6 +130,12 @@ public interface SetupConstants {
     
     /**
      * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Microsoft Active Directory Schema File for configuration data.
+     */
+    String OPENDS_SMS_PROPERTY_FILENAME = "opendsSmsSchema";
+    
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
      * Sun Directory Server Schema File for user management data.
      */
     String SDK_PROPERTY_FILENAME = "sdkSchema";
@@ -145,7 +151,12 @@ public interface SetupConstants {
      * Active Directory.
      */
     String SMS_AD_DATASTORE = "activeDir";
-
+    
+    /**
+     * Type of Data store used for storing the configuration files.
+     * <code>OpenDS</code>.
+     */
+    String SMS_OPENDS_DATASTORE = "opends";
     
     /**
      * Type of Data store used for storing the configuration files.
