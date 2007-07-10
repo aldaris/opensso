@@ -18,37 +18,32 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlTable.xml,v 1.2 2007-07-10 09:57:33 asyhuang Exp $
+   $Id: tblFSSAMLSiteID.xml,v 1.1 2007-07-10 09:50:11 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<!DOCTYPE table SYSTEM "table.dtd" >
+<!DOCTYPE table SYSTEM "table.dtd">
 
 <table>
     <actions>
-        <cc name="addTPButton" 
+        <cc name="tblSiteIDButtonAdd" 
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag" />
-        <cc name="deleteTPButton" 
+        <cc name="tblSiteIDButtonDelete" 
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag">
             <attribute name="dynamic" value="true" />
             <attribute name="disabled" value="true" />
         </cc>
     </actions>
-    <column name="trustedPartnerColumn" sortname="trustedPartnerValue" rowheader="true">
-        <cc name="trustedPartnerHref"
+    <column name="tblSiteIDColName" sortname="instanceid" 
+            rowheader="true" extrahtml="width='70%'">
+        <cc name="iplanetamsamlsiteidissuernamelisteditLink" 
             tagclass="com.sun.web.ui.taglib.html.CCHrefTag">
-        <cc name="trustedPartnerValue" 
-            tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />                                                                            
+            <cc name="siteIDName" 
+                tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
+                <attribute name="bundleID" value="" />
+            </cc>
         </cc>
-    </column>
-    <column name="trustedPartnerSourceColumn" sortname="trustedPartnerSourceType"  rowheader="true">             
-        <cc name="trustedPartnerSourceType" 
-            tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />                                                                                                                
-    </column>
-    <column name="trustedPartnerDestinationColumn" sortname="trustedPartnerDestinationType"  rowheader="true">     
-        <cc name="trustedPartnerDestinationType" 
-            tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />                                                                                                          
     </column>
 </table>
 

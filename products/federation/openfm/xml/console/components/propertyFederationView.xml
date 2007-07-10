@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFederationView.xml,v 1.1 2007-04-30 18:49:15 jonnelson Exp $
+   $Id: propertyFederationView.xml,v 1.2 2007-07-10 09:57:33 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,15 +26,13 @@
 
 <propertysheet>
     <section name="coreProperties" 
-        defaultValue="cot.configuration.section" >
-
+             defaultValue="cot.configuration.section" >            
         <subsection name="dummy" defaultValue="" >
             <property span="true">
                 <label name="cotDescription" 
-                    defaultValue="cot.table.help.message" />
+                       defaultValue="cot.table.help.message" />
             </property>
-        </subsection>
-            
+        </subsection>                          
         <subsection name="circleOfTrust" defaultValue="">
             <property span="true">
                 <cc name="cotTable" 
@@ -72,20 +70,19 @@
                     <attribute name="showSortingRow" value="false" />
                 </cc>
             </property>
-        </subsection>
-  
+        </subsection>  
     </section>
     <section name="samlProperties" defaultValue="SAML1.x Configuration" >
         <property span="true">
             <label name="samlHelpMessage" 
-                defaultValue="saml.table.help.message" 
-                labelFor="samlTable" />
+                   defaultValue="saml.table.help.message" 
+                   labelFor="samlTable" />
         </property>
         <property span="true">
             <cc name="localSiteProperties" 
                 tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
                 <attribute name="defaultValue"
-                    value="saml.locale.site.button"/>
+                           value="saml.locale.site.button"/>
             </cc>
         </property>
         <property span="true">
@@ -95,7 +92,7 @@
                 <attribute name="empty" value="saml.empty.table.message" />
                 <attribute name="showPaginationControls" value="false" />
                 <attribute name="selectionType" value="multiple" />
-                <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.tblSearch', 'tblButton', 'Federation.tblButtonDelete', this)"/>
+                <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.tblSearch', 'tblButton', 'Federation.deleteTPButton', this)"/>
                 <attribute name="showAdvancedSortingIcon" value="false" />
                 <attribute name="showLowerActions" value="false" />
                 <attribute name="showPaginationControls" value="false" />
@@ -105,8 +102,5 @@
                 <attribute name="showSortingRow" value="false" />
             </cc>
         </property>
-    </section>
-
-
-        
+    </section>                
 </propertysheet>
