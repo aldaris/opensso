@@ -18,73 +18,67 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FSAuthDomainsEditViewBean.jsp,v 1.2 2007-07-10 09:42:59 asyhuang Exp $ 
+   $Id: FSSAMLSiteIDEdit.jsp,v 1.1 2007-07-10 09:43:39 asyhuang Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
-<%@ page info="FSAuthDomainsEdit" language="java" %>
+<%@ page info="FSSAMLSiteIDEdit" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
 
 <jato:useViewBean
-    className="com.sun.identity.console.federation.FSAuthDomainsEditViewBean"
+    className="com.sun.identity.console.federation.FSSAMLSiteIDEditViewBean"
     fireChildDisplayEvents="true" >
-                    
-<cc:i18nbundle baseName="amConsole" id="amConsole"
-    locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
     
+<cc:i18nbundle baseName="amConsole" 
+    id="amConsole"
+    locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
+
 <cc:header name="hdrCommon" 
     pageTitle="webconsole.title" 
     bundleID="amConsole" 
-    copyrightYear="2004" 
+    copyrightYear="2007" 
     fireDisplayEvents="true">
 
-<script language="javascript" src="../console/js/am.js"></script>
-
-<cc:form name="FSAuthDomainsEdit" 
+<cc:form name="FSSAMLSiteIDEdit" 
     method="post" 
     defaultCommandChild="/button1" >
-
-<jato:hidden name="szCache" />
-
-<cc:hidden name="tfName" />
 
 <script language="javascript">
 function confirmLogout() {
     return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
 }
 </script>
-
 <cc:primarymasthead name="mhCommon" 
     bundleID="amConsole"  
     logoutOnClick="return confirmLogout();" 
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
-
+                    
 <cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
-	<td>
-	<cc:alertinline name="ialertCommon" bundleID="amConsole" />
-	</td>
+        <td>
+            <cc:alertinline name="ialertCommon" bundleID="amConsole" />
+        </td>
     </tr>
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle 
-    name="pgtitleThreeBtns" 
+<cc:pagetitle name="pgtitle" 
     bundleID="amConsole" 
-    pageTitleText="authDomain.edit.title" 
+    pageTitleText="page.title.SAML.addSiteID" 
     showPageTitleSeparator="true" 
     viewMenuLabel="" 
     pageTitleHelpMessage="" 
     showPageButtonsTop="true" 
     showPageButtonsBottom="false" />
 
-<cc:propertysheet name="propertyAttributes" bundleID="amConsole" />
+<cc:propertysheet name="propertyAttributes" 
+    bundleID="amConsole" 
+    showJumpLinks="true" />
 
 </cc:form>
-
 </cc:header>
 </jato:useViewBean>
