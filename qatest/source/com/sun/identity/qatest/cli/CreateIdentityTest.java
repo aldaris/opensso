@@ -17,15 +17,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.1 2007-06-20 18:56:57 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+/**
+ * CreateIdentityTest automates the following test cases:
+ * CLI_create-identity01, CLI_create-identity02, CLI_create-identity03, 
+ * CLI_create-identity04, CLI_create-identity05, CLI_create-identity06, 
+ * CLI_create-identity07, CLI_create-identity08, CLI_create-identity09, 
+ * CLI_create-identity10, CLI_create-identity11, CLI_create-identity12, 
+ * CLI_create-identity13, CLI_create-identity14, CLI_create-identity15,
+ * CLI_create-identity16, CLI_create-identity17, CLI_create-identity18, 
+ * CLI_create-identity19, CLI_create-identity20, CLI_create-identity21, 
+ * CLI_create-identity22, CLI_create-identity23, CLI_create-identity24, 
+ * CLI_create-identity25, CLI_create-identity26, CLI_create-identity27,
+ * CLI_create-identity28, CLI_create-identity29, CLI_create-identity30, 
+ * CLI_create-identity31, CLI_create-identity32, CLI_create-identity33, 
+ * CLI_create-identity34, and CLI_create-identity35.
  */
 
 package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -56,7 +73,6 @@ public class CreateIdentityTest extends TestCommon {
     private String idNameToCreate;
     private String idTypeToCreate;
     private String idAttributeValues;
-    private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
@@ -76,7 +92,8 @@ public class CreateIdentityTest extends TestCommon {
     
     /**
      * This method is intended to provide initial setup.
-     * Creates any realms specified in the setup-realms property in the 
+     * Creates any realms specified in the setup-realms property and creates
+     * any identities specified in the setup-identities property in the 
      * CreateIdentityTest.properties.
      */
     @Parameters({"testName"})
@@ -92,8 +109,6 @@ public class CreateIdentityTest extends TestCommon {
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
                     "-create-setup-identities");
-            usePasswordFile = ((String)rb.getString(locTestName + 
-                    "-use-password-file")).equals("true");
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -101,7 +116,6 @@ public class CreateIdentityTest extends TestCommon {
             useLongOptions = ((String)rb.getString(locTestName + 
                     "-use-long-options")).equals("true");
                 
-            log(logLevel, "setup", "use-password-file: " + usePasswordFile);
             log(logLevel, "setup", "use-verbose-option: " + useVerboseOption);
             log(logLevel, "setup", "use-debug-option: " + useDebugOption);
             log(logLevel, "setup", "use-long-options: " + useLongOptions);
@@ -109,15 +123,14 @@ public class CreateIdentityTest extends TestCommon {
             log(logLevel, "setup", "create-setup-identities: " + 
                     setupIdentities);
              
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
             Reporter.log("SetupIdentities: " + setupIdentities);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
             
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
@@ -202,8 +215,6 @@ public class CreateIdentityTest extends TestCommon {
 
             log(logLevel, "testIdentityCreation", "description: " + 
                     description);
-            log(logLevel, "testIdentityCreation", "use-password-file: " + 
-                    usePasswordFile);
             log(logLevel, "testIdentityCreation", "use-debug-option: " + 
                     useDebugOption);
             log(logLevel, "testIdentityCreation", "use-verbose-option: " + 
@@ -229,7 +240,6 @@ public class CreateIdentityTest extends TestCommon {
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
@@ -247,12 +257,30 @@ public class CreateIdentityTest extends TestCommon {
                     idTypeToCreate, idAttributeValues, useAttributeValuesOption,
                     useDatafileOption);
             cli.logCommand("testIdentityCreation");
+
+            if (expectedExitCode.equals("0")) {
+                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
+            } else {
+                if (!expectedExitCode.equals("11")) {
+                    stringsFound = 
+			cli.findStringsInError(expectedMessage, ";");
+                } else {
+                    String argString = cli.getAllArgs().replaceFirst(
+                            cli.getCliPath() + fileseparator + "fmadm",
+                            "fmadm ");
+                    Object[] params = {argString};
+                    String usageError = MessageFormat.format(expectedMessage,
+                            params);
+                    stringsFound = cli.findStringsInError(usageError,
+                            ";" + newline);
+                }
+            }     
             cli.resetArgList();
 
             if (idNameToCreate.length() > 0) {
                 FederationManagerCLI listCLI = 
-                        new FederationManagerCLI(usePasswordFile, 
-                        useDebugOption, useVerboseOption, useLongOptions);
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
                 idFound = listCLI.findIdentities(realmForId, idNameToCreate, 
                         idTypeToCreate, idNameToCreate);
                 log(logLevel, "testIdentityCreation", idTypeToCreate + 
@@ -260,16 +288,16 @@ public class CreateIdentityTest extends TestCommon {
             }
 
             if (expectedExitCode.equals("0")) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(logLevel, "testIdentityCreation", "Output Messages Found: " + 
-                        stringsFound);
+                log(logLevel, "testIdentityCreation", "Output Messages Found: "
+                        + stringsFound);
+                log(logLevel, "testIdentityCreation", "ID Found: " + 
+                        idFound); 
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         idFound;
             } else {
-                stringsFound = cli.findStringsInError(expectedMessage, ";");
-                log(logLevel, "testIdentityCreation", "Error Messages Found: " + 
-                        stringsFound);
+                log(logLevel, "testIdentityCreation", 
+			"Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     
@@ -282,20 +310,21 @@ public class CreateIdentityTest extends TestCommon {
     }
     
     /**
-     * This method remove any realms that were created during the setup and
-     * testIdentityCreation methods using "fmadm delete-identities".
+     * This method remove any realms and identities that were created during 
+     * the setup and testIdentityCreation methods using "fmadm delete-realm" 
+     * and "fmadm delete-identities".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 
     throws Exception {
+        int exitStatus = -1;
+
         entering("cleanup", null);
         try {            
-            log(logLevel, "cleanup", "usePasswordFile: " + usePasswordFile);
             log(logLevel, "cleanup", "useDebugOption: " + useDebugOption);
             log(logLevel, "cleanup", "useVerboseOption: " + useVerboseOption);
             log(logLevel, "cleanup", "useLongOptions: " + useLongOptions);
             
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
@@ -309,45 +338,56 @@ public class CreateIdentityTest extends TestCommon {
                 cli.logCommand("cleanup");
                 cli.resetArgList();
             }
-            
+
             if (setupIdentities != null) {
                 if (setupIdentities.length() > 0) {
-                    StringTokenizer idTokenizer = 
-                            new StringTokenizer(setupIdentities, "|");
-                    while (idTokenizer.hasMoreTokens()) {
-                        StringTokenizer tokenizer = 
-                                new StringTokenizer(idTokenizer.nextToken(), 
-                                ",");
-                        if (tokenizer.countTokens() >= 3) {
-                            String idRealm = tokenizer.nextToken();
-                            String idName = tokenizer.nextToken();
-                            String idType = tokenizer.nextToken();
-                            cli.deleteIdentities(idRealm, idName, idType);
+                    String [] cleanupIds = setupIdentities.split("\\|");
+                    for (int i = 0; i < cleanupIds.length; i++) {
+                        String [] idArgs = cleanupIds[i].split("\\,");
+                        if (idArgs.length >= 3) {
+                            String idRealm = idArgs[0];
+                            String idName = idArgs[1];
+                            String idType = idArgs[2];
+                            
+                            log(Level.FINEST, "cleanup", "idRealm: " + 
+				idRealm);
+                            log(Level.FINEST, "cleanup", "idName: " + idName);
+                            log(Level.FINEST, "cleanup", "idType: " + idType);
+                            
+                            Reporter.log("IdRealm: " + idRealm);
+                            Reporter.log("IdNameToRemove: " + idName);
+                            Reporter.log("IdentityTypeToRemove: " + idType);
+                            
+                            exitStatus = 
+                                    cli.deleteIdentities(idRealm, idName, 
+                                    idType);
                             cli.resetArgList();
+                            if (exitStatus != 0) {
+                                assert false;
+                            }
                         } else {
                             log(Level.SEVERE, "cleanup", "The setup identity " + 
                                     setupIdentities + " must have a realm, " +
                                     "an identity name, and an identity type");
-                            assert false;
                         }
                     }
                 }
             }
 
-            if (setupRealms != null) {
-                if (setupRealms.length() > 0) {
-                    StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                            ";");
-                    List realmList = getListFromTokens(tokenizer);
-                    int numOfRealms = realmList.size();
-                    for (int i=numOfRealms-1; i>=0; i--) {
-                        cli.deleteRealm((String)realmList.get(i));
-                        cli.logCommand("cleanup");
-                        cli.resetArgList();
+            if (!setupRealms.equals("")) {
+                String[] realms = setupRealms.split(";");
+                for (int i=realms.length-1; i >= 0; i--) {
+                    log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
+                        realms[i]);
+                    Reporter.log("SetupRealmToDelete: " + realms[i]);
+                    exitStatus = cli.deleteRealm(realms[i], true); 
+                    cli.logCommand("cleanup");
+                    cli.resetArgList();
+                    if (exitStatus != 0) {
+                        assert false;
                     }
-                }
+                } 
             }            
-            
             exiting("cleanup");
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage(), null);

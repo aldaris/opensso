@@ -17,9 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.1 2007-06-29 13:48:19 cmwesley Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+/**
+ * DeleteIdentitiesTest automates the following test cases:
+ * CLI_delete-identities01, CLI_delete-identities02, CLI_delete-identities03,
+ * CLI_delete-identities04, CLI_delete-identities05, CLI_delete-identities06, 
+ * CLI_delete-identities07, CLI_delete-identities08, CLI_delete-identities09,
+ * CLI_delete-identities10, CLI_delete-identities11, CLI_delete-identities12, 
+ * CLI_delete-identities13, CLI_delete-identities14, CLI_delete-identities15,
+ * CLI_delete-identities16, CLI_delete-identities17, CLI_delete-identities18, 
+ * CLI_delete-identities19, CLI_delete-identities20, CLI_delete-identities21, 
+ * CLI_delete-identities22, CLI_delete-identities23, CLI_delete-identities24, 
+ * CLI_delete-identities25, CLI_delete-identities26, CLI_delete-identities27,
+ * CLI_delete-identities28, CLI_delete-identities29, CLI_delete-identities30, 
+ * CLI_delete-identities31, CLI_delete-identities32, CLI_delete-identities33, 
+ * CLI_delete-identities34, CLI_delete-identities35, CLI_delete-identities36, 
+ * CLI_delete-identities37, CLI_delete-identities38, 
+ * and CLI_delete-identities39.
  */
 
 package com.sun.identity.qatest.cli;
@@ -42,13 +60,12 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteIdentitiesTest</code> is used to execute tests involving the 
- * delete-identities sub-command of fmadm.  This class allows the user to execute
- * "fmadm delete-identities" with a variety or arguments (e.g with short or long 
- * options, with a password file or password argument, with a locale argument,
- * with a list of attributes or a datafile containing attributes, etc.) 
- * and a variety of input values.  The properties file 
- * <code>DeleteIdentitiesTest.properties</code> contains the input values which 
- * are read by this class.
+ * delete-identities sub-command of fmadm.  This class allows the user to 
+ * execute "fmadm delete-identities" with a variety or arguments (e.g with 
+ * short or long options, with a locale argument, with a list of attributes 
+ * or a datafile containing attributes, etc.) and a variety of input values.  
+ * The properties file <code>DeleteIdentitiesTest.properties</code> contains 
+ * the input values which are read by this class.
  */
 public class DeleteIdentitiesTest extends TestCommon {
     
@@ -59,7 +76,6 @@ public class DeleteIdentitiesTest extends TestCommon {
     private String realmForId;
     private String idNamesToDelete;
     private String idTypeToDelete;
-    private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
@@ -78,7 +94,8 @@ public class DeleteIdentitiesTest extends TestCommon {
     
     /**
      * This method is intended to provide initial setup.
-     * Creates any realms specified in the setup-realms property in the 
+     * Creates any realms specified in the setup-realms property and creates
+     * any identities specified in the setup-identities property in the 
      * DeleteIdentitiesTest.properties.
      */
     @Parameters({"testName"})
@@ -94,8 +111,6 @@ public class DeleteIdentitiesTest extends TestCommon {
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
                     "-create-setup-identities");
-            usePasswordFile = ((String)rb.getString(locTestName + 
-                    "-use-password-file")).equals("true");
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -103,7 +118,6 @@ public class DeleteIdentitiesTest extends TestCommon {
             useLongOptions = ((String)rb.getString(locTestName + 
                     "-use-long-options")).equals("true");
                 
-            log(logLevel, "setup", "use-password-file: " + usePasswordFile);
             log(logLevel, "setup", "use-verbose-option: " + useVerboseOption);
             log(logLevel, "setup", "use-debug-option: " + useDebugOption);
             log(logLevel, "setup", "use-long-options: " + useLongOptions);
@@ -111,15 +125,14 @@ public class DeleteIdentitiesTest extends TestCommon {
             log(logLevel, "setup", "create-setup-identities: " + 
                     setupIdentities);
              
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
             Reporter.log("SetupIdentities: " + setupIdentities);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
 
             int exitStatus = -1;
             if (setupRealms != null) {
@@ -177,7 +190,8 @@ public class DeleteIdentitiesTest extends TestCommon {
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
+                                    setupIdentities + 
+				    " must have a realm, an " +
                                     "identity name, and an identity type");
                         }
                     }
@@ -192,7 +206,7 @@ public class DeleteIdentitiesTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm create-realm"
+     * This method is used to execute tests involving "fmadm delete-identities"
      * using input data from the DeleteIdentitiesTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -218,8 +232,6 @@ public class DeleteIdentitiesTest extends TestCommon {
 
             log(Level.FINEST, "testIdentityDeletion", "description: " + 
                     description);
-            log(Level.FINEST, "testIdentityDeletion", "use-password-file: " + 
-                    usePasswordFile);
             log(Level.FINEST, "testIdentityDeletion", "use-debug-option: " + 
                     useDebugOption);
             log(Level.FINEST, "testIdentityDeletion", "use-verbose-option: " + 
@@ -239,7 +251,6 @@ public class DeleteIdentitiesTest extends TestCommon {
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
@@ -291,8 +302,8 @@ public class DeleteIdentitiesTest extends TestCommon {
             if (expectedExitCode.equals("0")) {
                 for (Iterator i = idsNotDeleted.iterator(); i.hasNext(); ) {
                     FederationManagerCLI listCLI = 
-                            new FederationManagerCLI(usePasswordFile, 
-                            useDebugOption, useVerboseOption, useLongOptions);
+                            new FederationManagerCLI(useDebugOption, 
+                            useVerboseOption, useLongOptions);
                     String idNotDeleted = (String)i.next();
                     StringTokenizer idTokenizer = 
                             new StringTokenizer(idNotDeleted, ",");
@@ -305,7 +316,8 @@ public class DeleteIdentitiesTest extends TestCommon {
                     if (!listCLI.findIdentities(idNotDeletedRealm, "*", 
                             idNotDeletedType, idNotDeletedName)) {
                         remainingIdsRemoved = true;
-                        log(Level.INFO, "testIdentityDeletion", idNotDeletedType + 
+                        log(Level.INFO, "testIdentityDeletion", 
+				idNotDeletedType + 
                                 " identity " + idNotDeletedName + 
                                 " was removed.");
                     } else {
@@ -318,8 +330,8 @@ public class DeleteIdentitiesTest extends TestCommon {
 
                 if (idNamesToDelete.length() > 0) {
                     FederationManagerCLI listCLI2 = 
-                            new FederationManagerCLI(usePasswordFile, 
-                            useDebugOption, useVerboseOption, useLongOptions);
+                            new FederationManagerCLI(useDebugOption, 
+                            useVerboseOption, useLongOptions);
                     log(Level.FINEST, "testIdentityDeletion", 
                             "Verifying removal of the following " + 
                             idTypeToDelete.toLowerCase()+ " identities: " +
@@ -352,20 +364,20 @@ public class DeleteIdentitiesTest extends TestCommon {
     }
     
     /**
-     * This method remove any realms that were created during the setup and
-     * testIdentityDeletion methods using "fmadm delete-identities".
+     * This method remove any realms and identities that were created during 
+     * the setup and testIdentityDeletion methods using 
+     * "fmadm delete-realm" and "fmadm delete-identities".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);
         try {            
-            log(Level.FINEST, "cleanup", "usePasswordFile: " + usePasswordFile);
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+			useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);

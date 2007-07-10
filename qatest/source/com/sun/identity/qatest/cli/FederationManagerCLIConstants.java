@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.3 2007-06-20 18:56:58 cmwesley Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.4 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,16 +39,6 @@ public interface FederationManagerCLIConstants {
      * Administrator ID short argument/option
      */
     String SHORT_ARGUMENT_ADMIN_ID = "u";
-    
-    /**
-     * Password argument/option
-     */
-    String ARGUMENT_PASSWORD = "password";
-    
-    /**
-     * Password short argument/option
-     */
-    String SHORT_ARGUMENT_PASSWORD = "w";
     
     /**
      * Password file argument/option

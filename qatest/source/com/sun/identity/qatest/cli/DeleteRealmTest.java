@@ -17,17 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.4 2007-06-20 18:56:58 cmwesley Exp $
+ * $Id: DeleteRealmTest.java,v 1.5 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+/**
+ * DeleteRealmTest automates the following test cases:
+ * CLI_delete-realm01, CLI_delete-realm02, CLI_delete-realm03, 
+ * CLI_delete-realm04, CLI_delete-realm05, CLI_delete-realm06, 
+ * CLI_delete-realm07, CLI_delete-realm08, CLI_delete-realm09, 
+ * and CLI_delete-realm10
  */
 
 package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -36,13 +44,12 @@ import org.testng.annotations.Test;
 import org.testng.Reporter;
 
 /**
- * <code>CreateRealmTest</code> is used to execute tests involving the 
- * create-realm sub-command of fmadm.  This class allows the user to execute
- * "fmadm create-realm" with a variety or arguments (e.g with short or long 
- * options, with a password file or password argument, with a locale argument,
- * etc.) and a variety of input values.  The properties file 
- * <code>CreateRealmTest.properties</code> contains the input values which are 
- * read by this class.
+ * <code>DeleteRealmTest</code> is used to execute tests involving the 
+ * delete-realm sub-command of fmadm.  This class allows the user to execute
+ * "fmadm delete-realm" with a variety or arguments (e.g with short or long 
+ * options, with a locale argument, etc.) and a variety of input values.  The 
+ * properties file <code>DeleteRealmTest.properties</code> contains the input 
+ * values which are read by this class.
  */
 public class DeleteRealmTest extends TestCommon {
     
@@ -52,7 +59,6 @@ public class DeleteRealmTest extends TestCommon {
     private String realmToDelete;
     private String realmsDeleted;
     private String realmsExisting;
-    private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
@@ -63,7 +69,7 @@ public class DeleteRealmTest extends TestCommon {
     private FederationManagerCLI cli;
     
     /** 
-     * Creates a new instance of CreateRealmTest 
+     * Creates a new instance of DeleteRealmTest 
      */
     public DeleteRealmTest() {
         super("DeleteRealmTest");
@@ -72,7 +78,7 @@ public class DeleteRealmTest extends TestCommon {
     /**
      * This method is intended to provide initial setup.
      * Creates any realms specified in the setup-realms property in the 
-     * createRealmTest.properties.
+     * deleteRealmTest.properties.
      */
     @Parameters({"testName"})
     @BeforeClass(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -85,8 +91,6 @@ public class DeleteRealmTest extends TestCommon {
             rb = ResourceBundle.getBundle("DeleteRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
-            usePasswordFile = ((String)rb.getString(locTestName + 
-                    "-use-password-file")).equals("true");
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -94,29 +98,30 @@ public class DeleteRealmTest extends TestCommon {
             useLongOptions = ((String)rb.getString(locTestName + 
                     "-use-long-options")).equals("true");
                 
-            log(logLevel, "setup", "use-password-file: " + usePasswordFile);
-            log(logLevel, "setup", "use-verbose-option: " + useVerboseOption);
-            log(logLevel, "setup", "use-debug-option: " + useDebugOption);
-            log(logLevel, "setup", "use-long-options: " + useLongOptions);
-            log(logLevel, "setup", "create-setup-realms: " + setupRealms);
+            log(Level.FINEST, "setup", "use-verbose-option: " + 
+                    useVerboseOption);
+            log(Level.FINEST, "setup", "use-debug-option: " + useDebugOption);
+            log(Level.FINEST, "setup", "use-long-options: " + useLongOptions);
+            log(Level.FINEST, "setup", "create-setup-realms: " + setupRealms);
              
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption,
-                    useVerboseOption, useLongOptions);
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption,
+                    useLongOptions);
             
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
-                    StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                            ";");
-                    while (tokenizer.hasMoreTokens()) {
-                        cli.createRealm(tokenizer.nextToken());
+                    String [] realms = setupRealms.split(";");
+                    for (int i=0; i < realms.length; i++) {
+                        int exitStatus = cli.createRealm(realms[i]);
                         cli.logCommand("setup");
                         cli.resetArgList();
+                        if (exitStatus != 0) {
+                            assert false;
+                        }
                     }
                 }
             }
@@ -129,8 +134,8 @@ public class DeleteRealmTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm create-realm"
-     * using input data from the CreateRealmTest.properties file.
+     * This method is used to execute tests involving "fmadm delete-realm"
+     * using input data from the DeleteRealmTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void testRealmDeletion() 
@@ -155,35 +160,30 @@ public class DeleteRealmTest extends TestCommon {
             realmsExisting = (String) rb.getString(locTestName + 
                     "-realms-existing");
             
-            log(logLevel, "testRealmCreation", "description: " + description);
-            log(logLevel, "testRealmDeletion", "use-password-file: " + 
-                    usePasswordFile);
-            log(logLevel, "testRealmDeletion", "use-debug-option: " + 
+            log(Level.FINEST, "testRealmDeletion", "description: " + 
+                    description);
+            log(Level.FINEST, "testRealmDeletion", "use-debug-option: " + 
                     useDebugOption);
-            log(logLevel, "testRealmDeletion", "use-verbose-option: " + 
+            log(Level.FINEST, "testRealmDeletion", "use-verbose-option: " + 
                     useVerboseOption);
-            log(logLevel, "testRealmDeletion", "use-long-options: " + 
+            log(Level.FINEST, "testRealmDeletion", "use-long-options: " + 
                     useLongOptions);
-            log(logLevel, "testRealmDeletion", "use-recursive-option: " + 
+            log(Level.FINEST, "testRealmDeletion", "use-recursive-option: " + 
                     useRecursiveOption);
-            log(logLevel, "testRealmDeletion", "message-to-find: " + 
-                    expectedMessage);
-            log(logLevel, "testRealmDeletion", "expected-exit-code: " + 
+            log(Level.FINEST, "testRealmDeletion", "expected-exit-code: " + 
                     expectedExitCode);
-            log(logLevel, "testRealmDeletion", "delete-realm: " + 
+            log(Level.FINEST, "testRealmDeletion", "delete-realm: " + 
                     realmToDelete);
-            log(logLevel, "testRealmDeletion", "existing-realms: " + 
+            log(Level.FINEST, "testRealmDeletion", "existing-realms: " + 
                     realmsExisting);
-            log(logLevel, "testRealmDeletion", "realms-deleted: " + 
+            log(Level.FINEST, "testRealmDeletion", "realms-deleted: " + 
                     realmsDeleted);
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);            
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
-            Reporter.log("ExpectedMessage: " + expectedMessage);
             Reporter.log("ExpectedExitCode: " + expectedExitCode);
             Reporter.log("RealmToDelete: " + realmToDelete);
             Reporter.log("RealmsRemaining: " + realmsExisting);
@@ -192,17 +192,30 @@ public class DeleteRealmTest extends TestCommon {
             int commandStatus = cli.deleteRealm(realmToDelete, 
                     useRecursiveOption);
             cli.logCommand("testRealmDeletion");
-            cli.resetArgList();
 
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(logLevel, "testRealmDeletion", "Output Messages Found: " + 
-                        stringsFound);
+                log(Level.FINEST, "testRealmDeletion", 
+                        "Output Messages Found: " + stringsFound);
             } else {
+                if (expectedExitCode.equals("11")) {
+                    String argString = cli.getAllArgs().replaceFirst(
+                        cli.getCliPath() + fileseparator + "fmadm", 
+                        "fmadm ");
+                    Object[] params = {argString};
+                    String usageError = 
+                            MessageFormat.format(expectedMessage, params);
+                    expectedMessage = usageError;
+                }
                 stringsFound = cli.findStringsInError(expectedMessage, ";");
-                log(logLevel, "testRealmDeletion", "Error Messages Found: " + 
-                        stringsFound);
-            }            
+                log(Level.FINEST, "testRealmDeletion", 
+                        "Error Messages Found: " + stringsFound);
+            }
+            cli.resetArgList();
+            
+            log(Level.FINEST, "testRealmDeletion", "message-to-find: " + 
+                    expectedMessage);
+            Reporter.log("ExpectedMessage: " + expectedMessage);
          
             if ((realmsDeleted != null) && (realmsDeleted.length() > 0)) {
                 removedRealmsFound = cli.findRealms(realmsDeleted);
@@ -211,8 +224,8 @@ public class DeleteRealmTest extends TestCommon {
             
             if ((realmsExisting != null) && (realmsExisting.length() > 0)) {
                 FederationManagerCLI listCLI = 
-                    new FederationManagerCLI(usePasswordFile, useDebugOption,
-                    useVerboseOption, useLongOptions);
+                    new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                        useLongOptions);
                 existingRealmsFound = listCLI.findRealms(realmsExisting);
             }            
                          
@@ -236,33 +249,41 @@ public class DeleteRealmTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmCreation methods using "fmadm delete-realm".
+     * testRealmDeletion methods using "fmadm delete-realm".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);
         try {            
-            log(logLevel, "cleanup", "usePasswordFile: " + usePasswordFile);
-            log(logLevel, "cleanup", "useDebugOption: " + useDebugOption);
-            log(logLevel, "cleanup", "useVerboseOption: " + useVerboseOption);
-            log(logLevel, "cleanup", "useLongOptions: " + useLongOptions);
+            log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
+            log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
+            log(Level.FINEST, "cleanup", "realmsDeleted: " + realmsDeleted);
             
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
+            Reporter.log("RealmDeleted: " + realmsDeleted);
             
-            if (!setupRealms.equals("")) {
-                StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                        ";");
-                String setupRealmToDelete = tokenizer.nextToken();
-                log(logLevel, "cleanup", "setupRealmToDelete: " + 
-                        setupRealmToDelete);
-                Reporter.log("SetupRealmToDelete: " + setupRealmToDelete);
-                cli.deleteRealm(setupRealmToDelete, true);
-                cli.logCommand("cleanup");
-                cli.resetArgList();
+            if (!realmsExisting.equals("")) {
+                String[] realms = realmsExisting.split(";");
+                for (int i=realms.length-1; i >= 0; i--) {             
+                    log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
+                            realms[i]);
+                    Reporter.log("SetupRealmToDelete: " + realms[i]);
+                    if (!realms[i].equals(realmToDelete)) {
+                        int exitStatus = cli.deleteRealm(realms[i], true); 
+                        cli.logCommand("cleanup");
+                        cli.resetArgList();
+                        if (exitStatus != 0) {
+                            log(Level.INFO, "cleanup", "Realm " + realms[i] + 
+                                    " could not be removed.");
+                            assert false;
+                        }  
+                    } 
+                } 
             }
             exiting("cleanup");
         } catch (Exception e) {

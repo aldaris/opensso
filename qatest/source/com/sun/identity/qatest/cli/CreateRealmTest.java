@@ -17,17 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.3 2007-06-15 20:49:34 cmwesley Exp $
+ * $Id: CreateRealmTest.java,v 1.4 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
+
+/**
+ * CreateRealmTest automates the following test cases:
+ * CLI_create-realm01, CLI_create-realm02, CLI_create-realm03, 
+ * CLI_create-realm04, CLI_create-realm05, CLI_create-realm06, 
+ * CLI_create-realm07, CLI_create-realm08, CLI_create-realm09, 
+ * CLI_create-realm10, CLI_create-realm11, CLI_create-realm12, 
+ * CLI_create-realm13, CLI_create-realm14, CLI_create-realm15,
+ * and CLI_create-realm16.
+ */ 
 
 package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -50,7 +60,6 @@ public class CreateRealmTest extends TestCommon {
     private ResourceBundle rb;
     private String setupRealms;
     private String realmToCreate;
-    private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
@@ -82,8 +91,6 @@ public class CreateRealmTest extends TestCommon {
             rb = ResourceBundle.getBundle("CreateRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
-            usePasswordFile = ((String)rb.getString(locTestName + 
-                    "-use-password-file")).equals("true");
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -91,29 +98,30 @@ public class CreateRealmTest extends TestCommon {
             useLongOptions = ((String)rb.getString(locTestName + 
                     "-use-long-options")).equals("true");
                 
-            log(logLevel, "setup", "use-password-file: " + usePasswordFile);
-            log(logLevel, "setup", "use-verbose-option: " + useVerboseOption);
-            log(logLevel, "setup", "use-debug-option: " + useDebugOption);
-            log(logLevel, "setup", "use-long-options: " + useLongOptions);
-            log(logLevel, "setup", "create-setup-realms: " + setupRealms);
+            log(Level.FINEST, "setup", "use-verbose-option: " + 
+                    useVerboseOption);
+            log(Level.FINEST, "setup", "use-debug-option: " + useDebugOption);
+            log(Level.FINEST, "setup", "use-long-options: " + useLongOptions);
+            log(Level.FINEST, "setup", "create-setup-realms: " + setupRealms);
              
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
             
             if (setupRealms != null) {
                 if (setupRealms.length() > 0) {
-                    StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                            ";");
-                    while (tokenizer.hasMoreTokens()) {
-                        cli.createRealm(tokenizer.nextToken());
+                    String [] realms = setupRealms.split(";");
+                    for (int i=0; i < realms.length; i++) {
+                        int exitStatus = cli.createRealm(realms[i]);
                         cli.logCommand("setup");
                         cli.resetArgList();
+                        if (exitStatus != 0) {
+                            assert false;
+                        }
                     }
                 }
             }
@@ -145,25 +153,23 @@ public class CreateRealmTest extends TestCommon {
                     "-create-realm");
             description = (String) rb.getString(locTestName + "-description");
 
-            log(logLevel, "testRealmCreation", "description: " + description);
-            log(logLevel, "testRealmCreation", "use-password-file: " + 
-                    usePasswordFile);
-            log(logLevel, "testRealmCreation", "use-debug-option: " + 
+            log(Level.FINEST, "testRealmCreation", "description: " + 
+                    description);
+            log(Level.FINEST, "testRealmCreation", "use-debug-option: " + 
                     useDebugOption);
-            log(logLevel, "testRealmCreation", "use-verbose-option: " + 
+            log(Level.FINEST, "testRealmCreation", "use-verbose-option: " + 
                     useVerboseOption);
-            log(logLevel, "testRealmCreation", "use-long-options: " + 
+            log(Level.FINEST, "testRealmCreation", "use-long-options: " + 
                     useLongOptions);
-            log(logLevel, "testRealmCreation", "message-to-find: " + 
+            log(Level.FINEST, "testRealmCreation", "message-to-find: " + 
                     expectedMessage);
-            log(logLevel, "testRealmCreation", "expected-exit-code: " + 
+            log(Level.FINEST, "testRealmCreation", "expected-exit-code: " + 
                     expectedExitCode);
-            log(logLevel, "testRealmCreation", "create-realm: " + 
+            log(Level.FINEST, "testRealmCreation", "create-realm: " + 
                     realmToCreate);
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
@@ -173,31 +179,43 @@ public class CreateRealmTest extends TestCommon {
             
             int commandStatus = cli.createRealm(realmToCreate);
             cli.logCommand("testRealmCreation");
-            cli.resetArgList();
 
             if (realmToCreate.length() > 0) {
                 FederationManagerCLI listCLI = 
-                        new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                        useVerboseOption, useLongOptions);
+                        new FederationManagerCLI(useDebugOption, 
+			useVerboseOption, useLongOptions);
                 realmFound = listCLI.findRealms(realmToCreate);
-                log(logLevel, "testRealmCreation", "Realm " + realmToCreate + 
-                        " Found: " + realmFound);
+                log(Level.FINEST, "testRealmCreation", "Realm " + 
+                        realmToCreate + " Found: " + realmFound);
             }
 
             if (expectedExitCode.equals("0")) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(logLevel, "testRealmCreation", "Output Messages Found: " + 
-                        stringsFound);
+                log(Level.FINEST, "testRealmCreation", 
+                        "Output Messages Found: " + stringsFound);
                 assert (commandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound &&
-                        realmFound;
+                    new Integer(expectedExitCode).intValue()) && 
+			stringsFound && realmFound;
             } else {
-                stringsFound = cli.findStringsInError(expectedMessage, ";");
+                if (!expectedExitCode.equals("11")) {
+                    stringsFound = 
+			cli.findStringsInError(expectedMessage, ";");
+                } else {
+                    String argString = cli.getAllArgs().replaceFirst(
+                            cli.getCliPath() + fileseparator + "fmadm", 
+                            "fmadm ");
+                    Object[] params = {argString};
+                    String usageError = MessageFormat.format(expectedMessage, 
+                            params);
+                    stringsFound = cli.findStringsInError(usageError, 
+                            ";" + newline);                      
+                }
                 log(logLevel, "testRealmCreation", "Error Messages Found: " + 
                         stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
-            }     
+            }
+            cli.resetArgList();
             exiting("testRealmCreation");
         } catch (Exception e) {
             log(Level.SEVERE, "testRealmCreation", e.getMessage(), null);
@@ -215,18 +233,18 @@ public class CreateRealmTest extends TestCommon {
     throws Exception {
         entering("cleanup", null);
         try {            
-            log(logLevel, "cleanup", "usePasswordFile: " + usePasswordFile);
-            log(logLevel, "cleanup", "useDebugOption: " + useDebugOption);
-            log(logLevel, "cleanup", "useVerboseOption: " + useVerboseOption);
-            log(logLevel, "cleanup", "useLongOptions: " + useLongOptions);
+            log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
+            log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             
             if (!realmToCreate.equals("")) {
-                log(logLevel, "cleanup", "realmToDelete: "  + realmToCreate);
+                log(Level.FINEST, "cleanup", "realmToDelete: "  + 
+                        realmToCreate);
                 Reporter.log("RealmToDelete: " + realmToCreate);
                 cli.deleteRealm(realmToCreate, true);
                 cli.logCommand("cleanup");
@@ -234,15 +252,20 @@ public class CreateRealmTest extends TestCommon {
             }
             
             if (!setupRealms.equals("")) {
-                StringTokenizer tokenizer = new StringTokenizer(setupRealms, 
-                        ";");
-                String setupRealmToDelete = tokenizer.nextToken();
-                log(logLevel, "cleanup", "setupRealmToDelete: " + 
-                        setupRealmToDelete);
-                Reporter.log("SetupRealmToDelete: " + setupRealmToDelete);
-                cli.deleteRealm(setupRealmToDelete, true);
-                cli.logCommand("cleanup");
-                cli.resetArgList();
+                String[] realms = setupRealms.split(";");
+                for (int i=realms.length-1; i >= 0; i--) {
+                    if (!realms[i].equals(realmToCreate)) {
+                        log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
+                            realms[i]);
+                        Reporter.log("SetupRealmToDelete: " + realms[i]);
+                        int exitStatus = cli.deleteRealm(realms[i], true); 
+                        cli.logCommand("cleanup");
+                        cli.resetArgList();
+                        if (exitStatus != 0) {
+                            assert false;
+                        }
+                    }
+                } 
             }
             exiting("cleanup");
         } catch (Exception e) {

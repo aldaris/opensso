@@ -17,15 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.1 2007-06-15 20:51:30 cmwesley Exp $
+ * $Id: ListRealmsTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+/**
+ * ListRealmTest automates the following test cases:
+ * CLI_list-realm01, CLI_list-realm02, CLI_list-realm03, CLI_list-realm04,
+ * CLI_list-realm05, CLI_list-realm06, CLI_list-realm07, CLI_list-realm08,
+ * CLI_list-realm09, CLI_list-realm10, CLI_list-realm11, CLI_list-realm12, 
+ * and CLI_list-realm13.
  */
 
 package com.sun.identity.qatest.cli;
 
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -38,13 +47,13 @@ import org.testng.annotations.Test;
 import org.testng.Reporter;
 
 /**
- * <code>ListRealmsTest</code> is used to execute tests involving the 
+ * <code>ListRealmsTest</code> is used to execute tests involving the
  * list-realms sub-command of fmadm.  This class allows the user to execute
- * "fmadm list-realm" with a variety or arguments (e.g with short or long 
- * options, with a password file or password argument, with a locale argument,
- * with the recursive option, with the filter option, etc.) and a variety of 
- * input values.  The properties file <code>ListRealmsTest.properties</code> 
- * contains the input values which are read by this class.
+ * "fmadm list-realms" with a variety or arguments (e.g with short or long
+ * options, with a locale argument, with the recursive option, with the
+ * filter option, etc.) and a variety of input values.  The properties file
+ * <code>ListRealmsTest.properties</code> contains the input values which are
+ * read by this class.
  */
 public class ListRealmsTest extends TestCommon {
     
@@ -52,7 +61,6 @@ public class ListRealmsTest extends TestCommon {
     private ResourceBundle rb;
     private String setupRealms;
     private String searchRealm;
-    private boolean usePasswordFile;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
@@ -89,8 +97,6 @@ public class ListRealmsTest extends TestCommon {
             rb = ResourceBundle.getBundle("ListRealmsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
-            usePasswordFile = ((String)rb.getString(locTestName + 
-                    "-use-password-file")).equals("true");
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -98,20 +104,18 @@ public class ListRealmsTest extends TestCommon {
             useLongOptions = ((String)rb.getString(locTestName + 
                     "-use-long-options")).equals("true");
                 
-            log(logLevel, "setup", "use-password-file: " + usePasswordFile);
             log(logLevel, "setup", "use-verbose-option: " + useVerboseOption);
             log(logLevel, "setup", "use-debug-option: " + useDebugOption);
             log(logLevel, "setup", "use-long-options: " + useLongOptions);
             log(logLevel, "setup", "create-setup-realms: " + setupRealms);
              
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("SetupRealms: " + setupRealms);
 
-            cli = new FederationManagerCLI(usePasswordFile, useDebugOption, 
-                    useVerboseOption, useLongOptions);
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
             
             realmsNotShown = new Vector();
             if (setupRealms != null) {
@@ -164,8 +168,6 @@ public class ListRealmsTest extends TestCommon {
                     "-realms-to-find");
 
             log(logLevel, "testRealmSearch", "description: " + description);
-            log(logLevel, "testRealmSearch", "use-password-file: " + 
-                    usePasswordFile);
             log(logLevel, "testRealmSearch", "use-debug-option: " + 
                     useDebugOption);
             log(logLevel, "testRealmSearch", "use-verbose-option: " + 
@@ -187,7 +189,6 @@ public class ListRealmsTest extends TestCommon {
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
@@ -206,7 +207,6 @@ public class ListRealmsTest extends TestCommon {
                 commandStatus = cli.listRealms(searchRealm, useRecursiveOption);
             }
             cli.logCommand("testRealmSearch");
-            cli.resetArgList();
 
             int searchLength;
             if (searchRealm.equals("/")) {
@@ -271,7 +271,19 @@ public class ListRealmsTest extends TestCommon {
                     new Integer(expectedExitCode).intValue()) && stringsFound &&
                         realmsFound && !otherRealmsListed;
             } else {
-                stringsFound = cli.findStringsInError(expectedMessage, ";");
+                if (!expectedExitCode.equals("11")) {
+                    stringsFound = 
+			cli.findStringsInError(expectedMessage, ";");
+                } else {
+                    String argString = cli.getAllArgs().replaceFirst(
+                            cli.getCliPath() + fileseparator + "fmadm",
+                            "fmadm ");
+                    Object[] params = {argString};
+                    String usageError = MessageFormat.format(expectedMessage,
+                            params);
+                    stringsFound = cli.findStringsInError(usageError,
+                            ";" + newline);
+                }
                 log(logLevel, "testRealmSearch", "Error Messages Found: " + 
                         stringsFound);
                 assert (commandStatus == 
@@ -288,19 +300,17 @@ public class ListRealmsTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmCreation methods using "fmadm delete-realm".
+     * testRealmSearch methods using "fmadm delete-realm".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);
         try {            
-            log(logLevel, "cleanup", "usePasswordFile: " + usePasswordFile);
             log(logLevel, "cleanup", "useDebugOption: " + useDebugOption);
             log(logLevel, "cleanup", "useVerboseOption: " + useVerboseOption);
             log(logLevel, "cleanup", "useLongOptions: " + useLongOptions);
             
-            Reporter.log("UsePasswordFile: " + usePasswordFile);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);

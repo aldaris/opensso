@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.4 2007-06-29 13:49:04 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.5 2007-07-10 21:55:50 bt199000 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,6 @@ public class FederationManagerCLI extends CLIUtility
         GlobalConstants {
 
     private String passwdFile;
-    private boolean usePasswdFile;
     private boolean useDebugOption;
     private boolean useVerboseOption;
     private boolean useLongOptions;
@@ -65,26 +64,21 @@ public class FederationManagerCLI extends CLIUtility
     private static int PASSWORD_VALUE_INDEX = 5;
     private static int DEFAULT_COMMAND_TIMEOUT = 20;
     
-    /** 
-     * Creates a new instance of <code>FederationManagerCLI</code>
-     * @param createPasswdFile - a flag indicating whether to create a password
-     *  file
+    /**
+     * Create a new instance of <code>FederationManagerCLI</code>
      * @param useDebug - a flag indicating whether to add the debug option
      * @param useVerbose - a flag indicating whether to add the verbose option
      * @param useLongOpts - a flag indicating whether long options 
      * (e.g. --realm) should be used
      */
-    public FederationManagerCLI(boolean createPasswdFile, boolean useDebug, 
-            boolean useVerbose, boolean useLongOpts) 
+    public FederationManagerCLI(boolean useDebug, boolean useVerbose, 
+            boolean useLongOpts)
     throws Exception {
         super(cliPath + System.getProperty("file.separator") + "fmadm");    
         useLongOptions = useLongOpts;
         try {
             addAdminUserArgs();
-            usePasswdFile = createPasswdFile;
-            if (usePasswdFile) {
-               createPasswordFile();  
-            }
+            createPasswordFile();  
             addPasswordArgs();
             useDebugOption = useDebug;
             useVerboseOption = useVerbose;
@@ -92,33 +86,9 @@ public class FederationManagerCLI extends CLIUtility
         } catch (Exception e) {
             e.printStackTrace();
             throw e;         
-        }
+        }        
     }
-    
-    /**
-     * Creates a new instance of <code>FederationManagerCLI</code> using less 
-     * arguments.
-     * Retrieves the administration user and password from AMClient.properties.
-     * Turns off debug and verbose modes.  Does not set a locale value.
-     * @param createPasswdFile - a boolean indicating whether a password file
-     * should be created.
-     */
-    public FederationManagerCLI(boolean createPasswdFile) 
-    throws Exception {
-        this(createPasswdFile, false, false, true);
-    }
-    
-    /**
-     * Creates a new instance of <code>FederationManagerCLI</code> using less 
-     * arguments.  Retrieves the administration user and password from 
-     * AMClient.properties.  Does not create a password file.  Turns off debug 
-     * and verbose modes.  Does not set a locale value.
-     */
-    public FederationManagerCLI() 
-    throws Exception {
-        this(false, false, false, true);
-    }
-    
+     
     /**
      * Sets the "--adminid" and admin user ID arguments in the argument list.
      */
@@ -134,33 +104,19 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Sets "--password" and admin user's password or "--passwordfile" and the 
-     * password file path in the argument list.
+     * Sets "--passwordfile" and the password file path in the argument list.
      */
     private void addPasswordArgs() {
         String passwordArg;
-        String passwordValue;
         
-        if (!usePasswdFile) {
-            if (useLongOptions) {
-                passwordArg = PREFIX_ARGUMENT_LONG + ARGUMENT_PASSWORD;
-            } else {
-                passwordArg = PREFIX_ARGUMENT_SHORT + SHORT_ARGUMENT_PASSWORD;
-            }
-            passwordValue = adminPassword;
-            
+        if (useLongOptions) {
+            passwordArg = PREFIX_ARGUMENT_LONG + ARGUMENT_PASSWORD_FILE;
         } else {
-            if (useLongOptions) {
-                passwordArg = PREFIX_ARGUMENT_LONG + ARGUMENT_PASSWORD_FILE;
-            } else {
-                passwordArg = PREFIX_ARGUMENT_SHORT + 
-                        SHORT_ARGUMENT_PASSWORD_FILE;
-            }
-            passwordValue = passwdFile;
+            passwordArg = PREFIX_ARGUMENT_SHORT + SHORT_ARGUMENT_PASSWORD_FILE;
         }
         
         setArgument(PASSWORD_ARG_INDEX, passwordArg);
-        setArgument(PASSWORD_VALUE_INDEX, passwordValue);
+        setArgument(PASSWORD_VALUE_INDEX, passwdFile);
     }
     
     /**
@@ -539,6 +495,7 @@ public class FederationManagerCLI extends CLIUtility
         addRealmArguments(realm);
         addFilterArguments(filter);
         addIdtypeArguments(idtype);
+        addGlobalOptions();
         return (executeCommand(commandTimeout));
     }
     
@@ -799,18 +756,25 @@ public class FederationManagerCLI extends CLIUtility
         boolean idsFound = true;
         
         if ((idsToFind != null) && (idsToFind.length() > 0)) {
-            if (listIdentities(startRealm, filter, type) == 0) {                    
-                StringTokenizer tokenizer = new StringTokenizer(idsToFind, " ");
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
+            if (listIdentities(startRealm, filter, type) == 0) {
+                String [] ids = idsToFind.split(";");
+                for (int i=0; i < ids.length; i++) {
+                    String token = ids[i];
                     String rootDN = "";
                     if (token != null) {
                         if (startRealm.equals(TestCommon.realm)) {
-                           rootDN = TestCommon.basedn; 
+                            rootDN = TestCommon.basedn; 
                         } else {
-                           rootDN = "o=" + startRealm.substring(1) + 
-                                   ",ou=services," + 
-                                   TestCommon.basedn;
+                            String [] realms = startRealm.split("/");
+                            StringBuffer buffer = new StringBuffer();
+                            for (int j = realms.length-1; j >= 0; j--) {
+                                if (realms[j].length() > 0) {
+                                    buffer.append("o=" + realms[j] + ",");
+                                }
+                            }
+                            buffer.append("ou=services,").
+                                    append(TestCommon.basedn);
+                            rootDN = buffer.toString();
                         }
                         if (token.length() > 0) {
                             String idString = token + " (id=" + token + ",ou=" + 
