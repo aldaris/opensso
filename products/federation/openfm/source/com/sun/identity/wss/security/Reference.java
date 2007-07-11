@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Reference.java,v 1.1 2007-03-23 00:02:01 mallas Exp $
+ * $Id: Reference.java,v 1.2 2007-07-11 06:12:43 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,8 @@ public class Reference {
             }
             reference.setAttributeNS(null,  WSSConstants.TAG_URI, uri);
             if(valueType != null) {
-               reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, uri);
+               reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                                        valueType);
             }
             parent.appendChild(reference);
         } catch (Exception ex) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.3 2007-03-23 00:01:44 mallas Exp $
+ * $Id: XMLSignatureManager.java,v 1.4 2007-07-11 06:17:00 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -396,7 +396,7 @@ public class XMLSignatureManager {
     
     /**
      * Sign part of the XML document referred by the supplied a list
-     * of id attributes of nodes with SAML Token
+     * of id attributes of nodes
      * @param doc XML dom object
      * @param cert signer's Certificate
      * @param assertionID assertion ID for the SAML Security Token
@@ -406,14 +406,53 @@ public class XMLSignatureManager {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithSAMLToken(
-                                   org.w3c.dom.Document doc,
-                                   java.security.cert.Certificate cert,
-                                   java.lang.String assertionID,
+				   org.w3c.dom.Document doc,
+				   java.security.cert.Certificate cert,
+				   java.lang.String assertionID,
                                    java.lang.String algorithm,
                                    java.util.List ids)
         throws XMLSignatureException {
 
         return sp.signWithSAMLToken(doc, cert, assertionID, algorithm, ids);
+
+    }
+
+    /**
+     * Sign part of the XML document wth binary security token using 
+     * referred by the supplied a list of id attributes of nodes.
+     * @param doc the XML <code>DOM</code> document.
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithBinarySecurityToken(
+                 org.w3c.dom.Document doc,
+                 java.security.cert.Certificate cert,
+                 java.lang.String algorithm,
+                 java.util.List ids)
+        throws XMLSignatureException {
+           return sp.signWithBinarySecurityToken(doc, cert, algorithm, ids);
+    }
+
+    /**
+     * Sign part of the XML document wth UserName security token using 
+     * referred by the supplied a list of id attributes of nodes.
+     * @param doc the XML <code>DOM</code> document.
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithUserNameToken(
+                 org.w3c.dom.Document doc,
+                 java.security.cert.Certificate cert,
+                 java.lang.String algorithm,
+                 java.util.List ids)
+        throws XMLSignatureException {
+           return sp.signWithUserNameToken(doc, cert, algorithm, ids);
     }
     
     /**
@@ -456,24 +495,6 @@ public class XMLSignatureManager {
              wsfVersion);
     }
     
-    /**
-     * Sign part of the XML document wth binary security token using
-     * referred by the supplied a list of id attributes of nodes.
-     * @param doc the XML <code>DOM</code> document.
-     * @param cert Signer's certificate
-     * @param algorithm XML signature algorithm
-     * @param ids list of id attribute values of nodes to be signed
-     * @return X509 Security Token  signature
-     * @exception XMLSignatureException if the document could not be signed
-     */
-    public org.w3c.dom.Element signWithBinarySecurityToken(
-                 org.w3c.dom.Document doc,
-                 java.security.cert.Certificate cert,
-                 java.lang.String algorithm,
-                 java.util.List ids)
-        throws XMLSignatureException {
-           return sp.signWithBinarySecurityToken(doc, cert, algorithm, ids);
-    }
     /**                                                                        
      * Verify all the signatures of the XML document                           
      * @param document XML dom document whose signature to be verified              

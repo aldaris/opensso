@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.3 2007-05-30 20:12:14 mallas Exp $
+ * $Id: SecurityMechanism.java,v 1.4 2007-07-11 06:12:44 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,6 +121,26 @@ public class SecurityMechanism {
      */
     public static final String WSS_CLIENT_TLS_USERNAME_TOKEN_URI = 
                "urn:sun:wss:security:ClientTLS:UserNameToken";
+
+    /**
+     * <code>URI</code> for the Username token security profile. 
+     */
+    public static final String WSS_NULL_USERNAME_TOKEN_PLAIN_URI = 
+               "urn:sun:wss:security:null:UserNameToken-Plain";
+
+    /**
+     * <code>URI</code> for the username token security profile with
+     *   <code>TLS</code> or <code>SSL</code> enabled.
+     */
+    public static final String WSS_TLS_USERNAME_TOKEN_PLAIN_URI = 
+               "urn:sun:wss:security:TLS:UserNameToken-Plain";
+
+    /**
+     * <code>URI</code> for the username token security profile with
+     *   <code>TLS</code> or <code>SSL</code>  and client auth enabled.
+     */
+    public static final String WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI = 
+               "urn:sun:wss:security:ClientTLS:UserNameToken-Plain";
     
     /**
      * <code>URI</code> for all the liberty security profiles.
@@ -265,6 +285,9 @@ public class SecurityMechanism {
         map.put("UserNameToken", WSS_NULL_USERNAME_TOKEN_URI);
         map.put("TLS-UserNameToken", WSS_TLS_USERNAME_TOKEN_URI); 
         map.put("ClientTLS-UserNameToken", WSS_CLIENT_TLS_USERNAME_TOKEN_URI);
+        map.put("UserNameToken-Plain", WSS_NULL_USERNAME_TOKEN_PLAIN_URI);
+        map.put("TLS-UserNameToken-Plain", WSS_TLS_USERNAME_TOKEN_PLAIN_URI); 
+        map.put("ClientTLS-UserNameToken-Plain", WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI);
         map.put("LibertyDiscoverySecurity", LIBERTY_DS_SECURITY_URI);
         map.put("LibertyX509Token", LIB_NULL_X509_TOKEN_URI);
         map.put("LibertyBearerToken", LIB_NULL_SAML_BEARER_TOKEN_URI);
@@ -365,6 +388,26 @@ public class SecurityMechanism {
      */
     public static final SecurityMechanism WSS_CLIENT_TLS_USERNAME_TOKEN = 
                       new SecurityMechanism("ClientTLS-UserNameToken");
+
+    /**
+     * Defines the security mechanism for the Username token profile.
+     */
+    public static final SecurityMechanism WSS_NULL_USERNAME_TOKEN_PLAIN = 
+                      new SecurityMechanism("UserNameToken-Plain");
+
+    /**
+     * Defines the security mechanism for the Username token profile
+     * with SSL enabled.
+     */
+    public static final SecurityMechanism WSS_TLS_USERNAME_TOKEN_PLAIN = 
+                      new SecurityMechanism("TLS-UserNameToken-Plain");
+
+    /**
+     * Defines the security mechanism for the Username token profile
+     * with SSL and client auth enabled.
+     */
+    public static final SecurityMechanism WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN = 
+                      new SecurityMechanism("ClientTLS-UserNameToken-Plain");
 
     /**
      * Defines the security mechanism for the Liberty token profiles.
@@ -625,6 +668,7 @@ public class SecurityMechanism {
         list.add(WSS_NULL_SAML_HK);
         list.add(WSS_NULL_X509_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN);
+        list.add(WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(WSS_NULL_SAML2_SV);
         list.add(WSS_NULL_SAML2_HK);
         list.add(LIBERTY_DS_SECURITY);
@@ -644,6 +688,7 @@ public class SecurityMechanism {
         list.add(WSS_NULL_SAML_HK);
         list.add(WSS_NULL_X509_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN);
+        list.add(WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(WSS_NULL_SAML2_SV);
         list.add(WSS_NULL_SAML2_HK);        
         list.add(LIB_NULL_X509_TOKEN);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.4 2007-05-30 20:12:14 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.5 2007-07-11 06:12:42 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,9 @@ public abstract class ProviderConfig {
      protected KeyStore keyStore = null;
      protected String keyAlias = null;
      protected boolean isResponseSigned = false;
+     protected boolean isResponseEncrypted = false;
+     protected boolean isRequestSigned = true;
+     protected boolean isRequestEncrypted = false;
      protected List trustAuthorities = null;
      protected String ksPasswd = null;
      protected String keyPasswd = null;
@@ -362,7 +365,7 @@ public abstract class ProviderConfig {
     /**
      * Checks if the response needs to be signed or not.
      *
-     * @return true if the response need to be signed.
+     * @return true if the response needs to be signed.
      */
     public boolean isResponseSignEnabled() {
         return isResponseSigned;
@@ -371,10 +374,64 @@ public abstract class ProviderConfig {
     /**
      * Sets the response sign enable flag.
      *
-     * @param enable enable the response signing.
+     * @param enable enables the response signing.
      */
     public void setResponseSignEnabled(boolean enable) {
          isResponseSigned = enable;
+    }
+    
+    /**
+     * Checks if the response needs to be encrypted or not.
+     *
+     * @return true if the response needs to be encrypted.
+     */
+    public boolean isResponseEncryptEnabled() {
+        return isResponseEncrypted;
+    }
+
+    /**
+     * Sets the response encrypt enable flag.
+     *
+     * @param enable enables the response encryption.
+     */
+    public void setResponseEncryptEnabled(boolean enable) {
+         isResponseEncrypted = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be signed or not.
+     *
+     * @return true if the request needs to be signed.
+     */
+    public boolean isRequestSignEnabled() {
+        return isRequestSigned;
+    }
+
+    /**
+     * Sets the request sign enable flag.
+     *
+     * @param enable enables the request signing.
+     */
+    public void setRequestSignEnabled(boolean enable) {
+         isRequestSigned = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be encrypted or not.
+     *
+     * @return true if the request needs to be encrypted.
+     */
+    public boolean isRequestEncryptEnabled() {
+        return isRequestEncrypted;
+    }
+
+    /**
+     * Sets the request encrypt enable flag.
+     *
+     * @param enable enables the request encryption.
+     */
+    public void setRequestEncryptEnabled(boolean enable) {
+         isRequestEncrypted = enable;
     }
     
     /**
@@ -559,6 +616,9 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
         list.add(SecurityMechanism.WSS_TLS_ANONYMOUS);
         list.add(SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS);
+        list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN);
         return list;
     }
 
@@ -576,6 +636,7 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_SAML2_SV);
         list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
         list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
+        list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
         return list;
     }
 

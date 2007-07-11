@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.3 2007-03-23 00:01:42 mallas Exp $
+ * $Id: AMSignatureProvider.java,v 1.4 2007-07-11 06:16:59 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1619,7 +1619,7 @@ public class AMSignatureProvider implements SignatureProvider {
         return pubKey;
     }
 
-    private PublicKey getPublicKeybyDSARSAkeyValue(Document doc,
+    protected PublicKey getPublicKeybyDSARSAkeyValue(Document doc,
 						   Element reference)
     throws XMLSignatureException {
 
@@ -1715,7 +1715,7 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param format encoded format
      * @return a X509Certificate
      */
-    private X509Certificate getCertificate(String certString,
+    protected X509Certificate getCertificate(String certString,
                                            String format)
     {
         X509Certificate cert = null;
@@ -1853,26 +1853,46 @@ public class AMSignatureProvider implements SignatureProvider {
         throws XMLSignatureException {
         return null;
     }
-       /**
-     * Sign part of the XML document wth binary security token using
-     * referred by the supplied a list of id attributes of nodes.
-     * @param doc the XML <code>DOM</code> document.
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
      * @return X509 Security Token  signature
-     * @exception XMLSignatureException if the document could not be signed
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithUserNameToken(
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
+        throws XMLSignatureException {
+        return null;
+    }
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithBinarySecurityToken(
-                 org.w3c.dom.Document doc,
-                 java.security.cert.Certificate cert,
-                 java.lang.String algorithm,
-                 java.util.List ids)
-        throws XMLSignatureException {        
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
+        throws XMLSignatureException {
         return null;
     }
     
-        /**
+    /**
      * Verify all the signatures of the XML document for the
      * web services security.
      * @param document XML dom document whose signature to be verified

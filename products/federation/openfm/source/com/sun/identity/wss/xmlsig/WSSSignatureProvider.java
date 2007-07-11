@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.1 2007-07-11 06:12:45 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.wss.security;
+package com.sun.identity.wss.xmlsig;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,12 +48,15 @@ import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.common.SAML2Constants;
-
+import com.sun.identity.wss.security.WSSConstants;
+import com.sun.identity.wss.security.WSSUtils;
+import com.sun.identity.wss.security.STRTransform;
 
 /**
- *
- * @author Administrator
- */
+ * <code>WSSSignatureProvider</code> is a class for signing and 
+ * signature verification of WSS XML Documents which implements 
+ * <code>AMSignatureProvider</code>.
+ */ 
 public class WSSSignatureProvider extends AMSignatureProvider {
     
     /** Creates a new instance of WSSSignatureProvider */
@@ -91,7 +94,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
         
         if (doc == null) {
             WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken: " +
-                     "doc is null.");
+                     "document is null.");
             throw new XMLSignatureException(
                       WSSUtils.bundle.getString("nullInput"));
         }
@@ -263,32 +266,76 @@ public class WSSSignatureProvider extends AMSignatureProvider {
         return signature.getElement();                                
     }
     
+    
     /**
-     * Sign part of the XML document wth binary security token using
-     * referred by the supplied a list of id attributes of nodes.
-     * @param doc the XML <code>DOM</code> document.
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
      * @return X509 Security Token  signature
-     * @exception XMLSignatureException if the document could not be signed
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithUserNameToken(
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
+        throws XMLSignatureException {
+        return signWithBinarySecurityToken(doc, cert, algorithm, ids,
+                                           WSSConstants.TAG_USERNAME_TOKEN);
+    }
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return X509 Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithBinarySecurityToken(
-                 org.w3c.dom.Document doc,
-                 java.security.cert.Certificate cert,
-                 java.lang.String algorithm,
-                 java.util.List ids)
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String algorithm,
+                                   java.util.List ids)
         throws XMLSignatureException {
+        return signWithBinarySecurityToken(doc, cert, algorithm, ids,
+                                           SAMLConstants.BINARYSECURITYTOKEN);
+    }
+
+    /**
+     * Sign part of the xml document referered by the supplied a list
+     * of id attributes  of nodes
+     * @param doc XML dom object
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @param tokenType Token type
+     * @return X509 Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    private org.w3c.dom.Element signWithBinarySecurityToken(
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String algorithm,
+                                   java.util.List ids,
+                                   String tokenType)
+        throws XMLSignatureException {
+
         if (doc == null) {
-            WSSUtils.debug.error("WSSSignatureProvider.signWithBinarySecurity" +
+            SAMLUtils.debug.error("WSSSignatureProvider.signWithBinarySecurity" +
             "Token:: XML doc is null.");
             throw new XMLSignatureException(
-                      WSSUtils.bundle.getString("nullInput"));
+                      SAMLUtils.bundle.getString("nullInput"));
         }
 
-        if (WSSUtils.debug.messageEnabled()) {
-            WSSUtils.debug.message("WSSSignatureProvider.signWithBinary" +
-                "SecurityToken: Document to be signed : " +
+        if (SAMLUtils.debug.messageEnabled()) {
+            SAMLUtils.debug.message("WSSSignatureProvider.signWithWSSToken: " +
+               "Document to be signed : " +
                 XMLUtils.print(doc.getDocumentElement()));
         }
 
@@ -298,28 +345,30 @@ public class WSSSignatureProvider extends AMSignatureProvider {
 
         XMLSignature signature = null;
         try {
+
             Constants.setSignatureSpecNSprefix(SAMLConstants.PREFIX_DS);
             String certAlias = keystore.getCertificateAlias(cert);
             PrivateKey privateKey =
                                 (PrivateKey) keystore.getPrivateKey(certAlias);
             if (privateKey == null) {
-                WSSUtils.debug.error("WSSSignatureProvider.signWithWSSToken:" +
+                SAMLUtils.debug.error("WSSSignatureProvider.signWithWSSToken:" +
                    " private key is null");
                 throw new XMLSignatureException(
-                          WSSUtils.bundle.getString("nullprivatekey"));
+                          SAMLUtils.bundle.getString("nullprivatekey"));
             }
 
             if (algorithm == null || algorithm.length() == 0) {
                 algorithm = getPublicKey((X509Certificate)cert).getAlgorithm();
                 algorithm = getAlgorithmURI(algorithm);
             }
-                        if (!isValidAlgorithm(algorithm)) {
+
+            if (!isValidAlgorithm(algorithm)) {
                 throw new XMLSignatureException(
-                           WSSUtils.bundle.getString("invalidalgorithm"));
+                           SAMLUtils.bundle.getString("invalidalgorithm"));
             }
 
-            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
-                    XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.                    
+                XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);
 
             NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
                     "//*[@wsu:Id]", wsucontext);
@@ -327,7 +376,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             if (wsuNodes != null && wsuNodes.getLength() != 0) {
                 for (int i = 0; i < wsuNodes.getLength(); i++) {
                      Element elem = (Element) wsuNodes.item(i);
-                     String id = elem.getAttributeNS(WSSConstants.WSU_NS, "Id");
+                     String id = elem.getAttributeNS(WSSConstants.WSU_NS, "Id");                     
                      if (id != null && id.length() != 0) {
                          IdResolver.registerElementById(elem, id);
                      }
@@ -341,36 +390,43 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             root.appendChild(sigEl);
 
             Element transformParams = doc.createElementNS(WSSConstants.WSSE_NS,
-                    WSSConstants.WSSE_TAG + ":" +
+                    WSSConstants.WSSE_TAG + ":" + 
                     WSSConstants.TRANSFORMATION_PARAMETERS);
             transformParams.setAttributeNS(SAMLConstants.NS_XMLNS,
                     WSSConstants.TAG_XML_WSSE, WSSConstants.WSSE_NS);
             Element canonElem =  doc.createElementNS(
-                    SAMLConstants.XMLSIG_NAMESPACE_URI,
+                    SAMLConstants.XMLSIG_NAMESPACE_URI, 
                     "ds:CanonicalizationMethod");
-            canonElem.setAttributeNS(null, "Algorithm",
+            canonElem.setAttributeNS(null, "Algorithm",  
                     Canonicalizer.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
             transformParams.appendChild(canonElem);
 
-            Element securityTokenRef = doc.createElementNS(WSSConstants.WSSE_NS,
-                    "wsse:" + SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+            Element securityTokenRef = null;
+            String secRefId = null;
+            
+            securityTokenRef = doc.createElementNS(WSSConstants.WSSE_NS,
+                "wsse:" + SAMLConstants.TAG_SECURITYTOKENREFERENCE);
             securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
-                    WSSConstants.TAG_XML_WSSE, WSSConstants.WSSE_NS);
+                WSSConstants.TAG_XML_WSSE, WSSConstants.WSSE_NS);
             securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
-                    WSSConstants.TAG_XML_WSU, WSSConstants.WSU_NS);
-            String secRefId = SAMLUtils.generateID();
-
-            securityTokenRef.setAttributeNS(WSSConstants.WSU_NS,
-                  WSSConstants.WSU_ID, secRefId);
-                        KeyInfo keyInfo = signature.getKeyInfo();
+                WSSConstants.TAG_XML_WSU, WSSConstants.WSU_NS);
+            secRefId = SAMLUtils.generateID();
+            securityTokenRef.setAttributeNS(WSSConstants.WSU_NS, 
+                WSSConstants.WSU_ID, secRefId);
+            KeyInfo keyInfo = signature.getKeyInfo();
             keyInfo.addUnknownElement(securityTokenRef);
             IdResolver.registerElementById(securityTokenRef, secRefId);
+            
+
             int size = ids.size();
             for (int i = 0; i < size; ++i) {
                 Transforms transforms = new Transforms(doc);
                 transforms.addTransform(
                                 Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-                String id = (String) ids.get(i);                
+                String id = (String) ids.get(i);
+                if (SAMLUtils.debug.messageEnabled()) {
+                    SAMLUtils.debug.message("id = " +id);
+                }
                 signature.addDocument("#"+id, transforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
@@ -380,30 +436,40 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             signature.addDocument("#"+secRefId, strtransforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
 
-            Element bsf = (Element)root.getElementsByTagNameNS(
-                        WSSConstants.WSSE_NS,
-                        SAMLConstants.BINARYSECURITYTOKEN).item(0);
-
-            String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
-                            SAMLConstants.TAG_ID);
-
             Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
                         SAMLConstants.TAG_REFERENCE);
-            securityTokenRef.appendChild(reference);
-            reference.setAttributeNS(null, SAMLConstants.TAG_URI, "#"+certId);
+            securityTokenRef.appendChild(reference);                
+            
+            Element bsf = (Element)root.getElementsByTagNameNS(
+                WSSConstants.WSSE_NS,tokenType).item(0);
+            if (bsf != null) {        
+                String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
+                    SAMLConstants.TAG_ID);                
+                reference.setAttributeNS(null, SAMLConstants.TAG_URI,"#"
+                                         +certId);                                     
+            }
+            if (SAMLConstants.BINARYSECURITYTOKEN.equals(tokenType)) {
+                reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                    WSSConstants.WSSE_X509_NS + "#X509v3");
+            } else if (WSSConstants.TAG_USERNAME_TOKEN.equals(tokenType)) {
+                reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                    WSSConstants.TAG_USERNAME_VALUE_TYPE);
+                signature.addKeyInfo((X509Certificate)cert);
+            }
 
             signature.sign(privateKey);
 
         } catch (Exception e) {
-           WSSUtils.debug.error("WSSSignatureProvider.signWithBinaryToken" +
-                    " Exception: ", e);
-           throw new XMLSignatureException(e.getMessage());
+            SAMLUtils.debug.error("WSSSignatureProvider: " + 
+                                  "signWithBinaryTokenProfile Exception: ", e);
+            throw new XMLSignatureException(e.getMessage());
         }
 
-        return (signature.getElement());        
+        return (signature.getElement());
     }
-    
-        /**
+
+
+    /**
      * Verify all the signatures of the WSS xml document
      * @param doc XML dom document whose signature to be verified
      * @param certAlias certAlias alias for Signer's certificate, this is used
@@ -537,9 +603,103 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             }
             return true;
         } catch (Exception ex) {
-            WSSUtils.debug.error("verifyWSSSignature Exception: ", ex);
+            WSSUtils.debug.error("WSSSignatureProvider: " + 
+                                 "verifyWSSSignature Exception: ", ex);
             throw new XMLSignatureException (ex.getMessage ());
         }
+    }
+
+    /**
+     * Returns the public key from the security token.
+     * This is required WS-Security.
+     */
+    private PublicKey getPublicKeyFromWSSToken(Document doc) {
+        PublicKey pubKey = null;
+        try {
+            Element securityElement = (Element) doc.getDocumentElement().
+                getElementsByTagNameNS(WSSConstants.WSSE_NS,
+                         SAMLConstants.TAG_SECURITY).item(0);
+
+            if(securityElement == null) {
+               return null;
+            }
+
+            Element nscontext = com.sun.org.apache.xml.internal.security.utils.
+                XMLUtils.createDSctx(doc,"ds",Constants.SignatureSpecNS);
+            Element sigElement = (Element) XPathAPI.selectSingleNode(
+                          securityElement, "ds:Signature[1]", nscontext);
+
+            Element keyinfo = (Element) sigElement.getElementsByTagNameNS(
+                Constants.SignatureSpecNS, SAMLConstants.TAG_KEYINFO).item(0);
+            Element str = (Element) keyinfo.getElementsByTagNameNS(
+                          WSSConstants.WSSE_NS,
+                          SAMLConstants.TAG_SECURITYTOKENREFERENCE).item(0);
+
+            Element reference = (Element) keyinfo.getElementsByTagNameNS(
+                   WSSConstants.WSSE_NS, SAMLConstants.TAG_REFERENCE).item(0);
+
+            if (reference != null) {
+                String id = reference.getAttribute(SAMLConstants.TAG_URI);
+                id = id.substring(1);
+                nscontext = com.sun.org.apache.xml.internal.security.utils.
+                    XMLUtils.createDSctx(doc,SAMLConstants.PREFIX_WSU,
+                                         WSSConstants.WSU_NS);
+                Node n = XPathAPI.selectSingleNode(
+                    doc, "//*[@"+ SAMLConstants.PREFIX_WSU + ":" +
+                    SAMLConstants.TAG_ID +"=\"" + id + "\"]", nscontext);
+
+                if (n != null) { // X509 Security Token profile
+                    SAMLUtils.debug.message("X509 Token");
+                    String format = ((Element) n).getAttribute(
+                                                SAMLConstants.TAG_VALUETYPE);
+                    NodeList children = n.getChildNodes();
+                    n = children.item(0);
+                    String certString = n.getNodeValue().trim();
+
+                    pubKey = getPublicKey(getCertificate(certString, format));
+
+                } else { // SAML Token profile
+                    SAMLUtils.debug.message("SAML Token");
+                    reference = (Element) XPathAPI.selectSingleNode(
+                            doc, "//*[@AssertionID=\"" + id + "\"]");
+                    // The SAML Statements contain keyinfo, they should be
+                    // all the same. get the first keyinfo!
+                    reference = (Element) reference.getElementsByTagNameNS(
+                                        Constants.SignatureSpecNS,
+                                        SAMLConstants.TAG_KEYINFO).item(0);
+                    if (reference == null) { // no cert found!
+                        throw new Exception(
+                            SAMLUtils.bundle.getString("nullKeyInfo"));
+                    }
+                    Element x509Data =
+                                (Element) reference.getElementsByTagNameNS(
+                                        Constants.SignatureSpecNS,
+                                        SAMLConstants.TAG_X509DATA).item(0);
+                    if (x509Data !=null) { // Keyinfo constains certificate
+                        reference = (Element) x509Data.getChildNodes().item(0);
+                        String certString = x509Data.getChildNodes().item(0).
+                                                getChildNodes().item(0).
+                                                getNodeValue();
+                        if (SAMLUtils.debug.messageEnabled()) {
+                            SAMLUtils.debug.message("certString = " +
+                                                                certString);
+                        }
+
+                        return getPublicKey(getCertificate(certString, null));
+                    } else { // it should contains RSA/DSA key
+                        pubKey = getPublicKeybyDSARSAkeyValue(doc, reference);
+                    }
+                }
+            } else {
+                SAMLUtils.debug.error("WSSSignatureProvider:" + 
+                                      "getPublicKeyFromWSSToken:" + 
+                                      " unknow Security Token Reference");
+            }
+        } catch (Exception e) {
+            SAMLUtils.debug.error("WSSSignatureProvider:" + 
+                                  "getPublicKeyFromWSSToken Exception: ", e);
+        }
+        return pubKey;
     }
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.4 2007-04-07 00:46:00 qcheng Exp $
+ * $Id: SAMLConstants.java,v 1.5 2007-07-11 06:16:59 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1433,4 +1433,6 @@ public final class SAMLConstants
      */
     public static final String ATTR_NAME_SPACE =
         "urn:com:sun:identity:attrnamespace";
+
+    public static final String TAG_USERNAME_TOKEN = "UsernameToken";
 }

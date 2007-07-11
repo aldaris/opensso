@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.2 2007-05-21 23:13:44 mallas Exp $
+ * $Id: BinarySecurityToken.java,v 1.3 2007-07-11 06:12:43 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -340,6 +340,15 @@ public class BinarySecurityToken implements SecurityToken {
      */
     public String getTokenType() {
         return SecurityToken.WSS_X509_TOKEN;
+    }
+
+    /**
+     * Returns the array of certificate aliases defined in this spec.
+     *
+     * @return String[] the array of subject certificate aliases.
+     */ 
+    public String[] getSubjectCertAlias() {
+        return this.certAlias;
     }
 
     /**

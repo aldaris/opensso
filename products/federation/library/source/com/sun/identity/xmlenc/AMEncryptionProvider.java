@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEncryptionProvider.java,v 1.1 2006-10-30 23:16:56 qcheng Exp $
+ * $Id: AMEncryptionProvider.java,v 1.2 2007-07-11 06:17:00 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,16 +34,21 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-
+import java.util.List;
+import java.util.ArrayList;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 import com.sun.org.apache.xml.internal.security.encryption.EncryptedData;
 import com.sun.org.apache.xml.internal.security.encryption.EncryptedKey;
+import com.sun.org.apache.xml.internal.security.encryption.ReferenceList;
+import com.sun.org.apache.xml.internal.security.encryption.Reference;
+import com.sun.org.apache.xml.internal.security.encryption.EncryptionMethod;
 import com.sun.org.apache.xml.internal.security.encryption.
        XMLEncryptionException;
 import com.sun.org.apache.xml.internal.security.keys.KeyInfo;
+import com.sun.org.apache.xml.internal.security.utils.IdResolver;
 import com.sun.identity.saml.xmlsig.*;
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import java.security.cert.X509Certificate;
@@ -52,6 +57,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.org.apache.xml.internal.security.keys.storage.StorageResolver;
+import com.sun.org.apache.xml.internal.security.keys.storage.
+       implementations.KeyStoreResolver;
+import com.sun.org.apache.xml.internal.security.keys.keyresolver.
+       implementations.X509CertificateResolver;
+import com.sun.org.apache.xml.internal.security.keys.keyresolver.
+       implementations.X509SubjectNameResolver;
+import com.sun.org.apache.xml.internal.security.keys.keyresolver.
+       implementations.X509IssuerSerialResolver;
+import com.sun.org.apache.xml.internal.security.keys.keyresolver.
+       implementations.X509SKIResolver;
 
 
 /**
@@ -61,13 +80,15 @@ import java.util.HashMap;
 
 public class AMEncryptionProvider implements EncryptionProvider {
  
-    private KeyProvider keyProvider = null;
+    protected KeyProvider keyProvider = null;
+    private boolean isJKSKeyStore = false;
+
     /**
      * A static map contains provider id and symmetric keys as key value pairs.
      * Key generation each time is an expensive operation and using the same
      * key for each provider should be okay.
      */ 
-    private static Map keyMap = new HashMap();
+    protected static Map keyMap = new HashMap();
 
     static {
         com.sun.org.apache.xml.internal.security.Init.init();
@@ -84,6 +105,9 @@ public class AMEncryptionProvider implements EncryptionProvider {
               "nullValues"));
         }
         this.keyProvider = keystore;
+        if (keystore instanceof JKSKeyProvider) {
+            isJKSKeyStore=true;
+        }
     }
 
  
@@ -277,9 +301,9 @@ public class AMEncryptionProvider implements EncryptionProvider {
 
                if (kekStrength == 0 || kekStrength == 128) {
                    cipher = XMLCipher.getInstance(XMLCipher.AES_128_KeyWrap);
-               } else if(keyStrength == 192) {
+               } else if(kekStrength == 192) {
                    cipher = XMLCipher.getInstance(XMLCipher.AES_192_KeyWrap);
-               } else if(keyStrength == 256) {
+               } else if(kekStrength == 256) {
                    cipher = XMLCipher.getInstance(XMLCipher.AES_256_KeyWrap);
                } else {
                    throw new EncryptionException(
@@ -353,9 +377,34 @@ public class AMEncryptionProvider implements EncryptionProvider {
             "Replace: XML Encryption error", xe); 
             throw new EncryptionException(xe);
         }
-   }
+    }
 
     /**
+     * Encrypts the given WSS XML element in a given XML Context document.
+     * @param doc the context XML Document.
+     * @param element Element to be encrypted.
+     * @param encDataEncAlg Encryption Key Algorithm.
+     * @param encDataEncAlgStrength Encryption Key Strength.
+     * @param certAlias Key Encryption Key cert alias.
+     * @param kekStrength Key Encryption Key Strength.
+     * @param tokenType Security token type.     
+     * @param providerID Provider ID.
+     * @return org.w3c.dom.Document XML Document replaced with encrypted data
+     *         for a given XML element.
+     */
+    public org.w3c.dom.Document encryptAndReplaceWSSBody(
+        org.w3c.dom.Document doc,
+        org.w3c.dom.Element element,
+        java.lang.String encDataEncAlg,
+        int encDataEncAlgStrength,
+        String certAlias,
+        int kekStrength,
+        java.lang.String tokenType,
+        java.lang.String providerID)
+     throws EncryptionException {
+        return null;
+    }
+
     /**
      * Decrypts an XML Document that contains encrypted data.
      * @param encryptedDoc XML Document with encrypted data.
@@ -369,6 +418,7 @@ public class AMEncryptionProvider implements EncryptionProvider {
         return decryptAndReplace(encryptedDoc, 
              keyProvider.getPrivateKey(certAlias));
     }
+
     /**
      * Decrypts an XML Document that contains encrypted data.
      * @param encryptedDoc XML Document with encrypted data.
@@ -379,12 +429,18 @@ public class AMEncryptionProvider implements EncryptionProvider {
         Document encryptedDoc,
         java.security.Key privKey)
      throws EncryptionException {
-
-        if(encryptedDoc == null || privKey == null) {
+        EncryptionUtils.debug.message("************IN DECRYPT *************");
+        if(encryptedDoc == null) {
            throw new EncryptionException(EncryptionUtils.bundle.getString(
-           "nullValues"));
+           "null encrypted doc"));
         }
 
+        if(EncryptionUtils.debug.messageEnabled()) {
+            EncryptionUtils.debug.message("AMEncryptionProvider.decrypt" +
+                "AndReplace: input encrypted DOC = " 
+                + XMLUtils.print(encryptedDoc));
+        }
+        
         Key encryptionKey = null;
         Document decryptedDoc = null;
 
@@ -394,6 +450,7 @@ public class AMEncryptionProvider implements EncryptionProvider {
         if(nodes == null || length == 0) {
            return encryptedDoc;
         }
+                
         /**
          * Check for the encrypted key after the encrypted data.
          * if found, use that symmetric key for the decryption., otherwise
@@ -420,13 +477,22 @@ public class AMEncryptionProvider implements EncryptionProvider {
                }
 
                if(EncryptionUtils.debug.messageEnabled()) {
-                  EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"+
-                  "AndReplace: Encrypted key = " + toString(cipher.martial(
-                  encryptedDoc, encryptedKey)));
+                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                   + "AndReplace: Encrypted key = " + toString(cipher.martial(
+                   encryptedDoc, encryptedKey)));
+               }
+
+               if(EncryptionUtils.debug.messageEnabled()) {
+                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                   + "AndReplace: Encrypted Data = " + toString(cipher.martial(
+                   encryptedDoc, encryptedData)));
                }
 
                if(encryptedKey != null) {
                   XMLCipher keyCipher = XMLCipher.getInstance();
+                  if (privKey == null) {
+                      privKey = getPrivateKey(encryptedKey.getKeyInfo());
+                  }
                   keyCipher.init(XMLCipher.UNWRAP_MODE, privKey);
                   encryptionKey = keyCipher.decryptKey(encryptedKey, 
                   encryptedData.getEncryptionMethod().getAlgorithm());
@@ -435,6 +501,12 @@ public class AMEncryptionProvider implements EncryptionProvider {
                cipher = XMLCipher.getInstance();
                cipher.init(XMLCipher.DECRYPT_MODE, encryptionKey);
                decryptedDoc = cipher.doFinal(encryptedDoc, encryptedElement);
+
+               if(EncryptionUtils.debug.messageEnabled()) {
+                   EncryptionUtils.debug.message("AMEncryptionProvider.decrypt"
+                   + "AndReplace: decryptedDoc = " + 
+                   XMLUtils.print(decryptedDoc));
+               }
 
            } catch (Exception xe) {
                EncryptionUtils.debug.error("AMEncryptionProvider.decrypt" +
@@ -485,13 +557,45 @@ public class AMEncryptionProvider implements EncryptionProvider {
     }
 
     /**
+     * Gets the equivalent XML encryption algorithm string for a given 
+     * algorithm and strength that is published by the provider.
+     */
+    protected String getEncryptionAlgorithm(String algorithm, int keyStrength)
+      throws EncryptionException {
+
+        if(algorithm == null) {
+           throw new EncryptionException(EncryptionUtils.bundle.getString(
+           "nullValues"));
+        }
+
+        if(algorithm.equals(EncryptionConstants.AES)) {
+
+           if(keyStrength == 0 || keyStrength == 128) {
+              return XMLCipher.AES_128;
+           } else if (keyStrength == 192) {
+              return XMLCipher.AES_192;
+           } else if(keyStrength == 256) {
+              return XMLCipher.AES_256;
+           } else {
+             throw new EncryptionException(EncryptionUtils.bundle.getString(
+             "invalidKeyStrength"));
+           }
+
+        } else if(algorithm.equals(EncryptionConstants.TRIPLEDES)) {
+            return XMLCipher.TRIPLEDES;
+        } else {
+            throw new EncryptionException(EncryptionUtils.bundle.getString(
+            "unsupportedKeyAlg"));
+        }
+    }
+
+    /**
      * Generates secret key for a given algorithm and key strength.
      */  
-    private SecretKey generateSecretKey(String algorithm, int keyStrength)
+    protected SecretKey generateSecretKey(String algorithm, int keyStrength)
      throws EncryptionException {
         try {
-            String algorithmShort = getEncryptionAlgorithmShortName(algorithm);
-            KeyGenerator keygen = KeyGenerator.getInstance(algorithmShort);
+            KeyGenerator keygen = KeyGenerator.getInstance(algorithm);
             if(keyStrength != 0) {
                keygen.init(keyStrength);
             }
@@ -499,6 +603,47 @@ public class AMEncryptionProvider implements EncryptionProvider {
         } catch (NoSuchAlgorithmException ne) {
             throw new EncryptionException(ne);
         }
+    }
+
+    /**
+     * Returns the private key for X509Certificate embedded in the KeyInfo
+     * @param keyinfo KeyInfo
+     * @return a private key for X509Certificate
+     */
+    protected java.security.PrivateKey getPrivateKey(KeyInfo keyinfo) {
+	PrivateKey pk = null;
+        try {
+            if (keyinfo != null) {
+                if (isJKSKeyStore) {
+                    StorageResolver storageResolver = new StorageResolver(
+                       new KeyStoreResolver(((JKSKeyProvider)
+                                        keyProvider).getKeyStore()));
+                    keyinfo.addStorageResolver(storageResolver);
+                    keyinfo.registerInternalKeyResolver(new
+                                        X509IssuerSerialResolver());
+                    keyinfo.registerInternalKeyResolver(new
+                                        X509CertificateResolver());
+                    keyinfo.registerInternalKeyResolver(new X509SKIResolver());
+                    keyinfo.registerInternalKeyResolver(new
+                                        X509SubjectNameResolver());
+                }
+                if (keyinfo.containsX509Data()) {
+                    if (EncryptionUtils.debug.messageEnabled()) {
+                        EncryptionUtils.debug.message("Found X509Data" +
+                                                " element in the KeyInfo");
+                    }
+                    X509Certificate certificate = keyinfo.getX509Certificate();
+                    String certAlias = 
+                        keyProvider.getCertificateAlias(certificate);
+		    pk = keyProvider.getPrivateKey(certAlias);
+                } 
+            }
+        } catch (Exception e) {
+            EncryptionUtils.debug.error("getPrivateKey(KeyInfo) Exception: "
+                                        , e);
+        }
+
+	return pk;
     }
  
 }

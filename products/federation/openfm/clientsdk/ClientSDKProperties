@@ -1,5 +1,4 @@
-amBinarySecurityToken.properties
-amEncryption.properties
+libEncryption.properties
 fmWSSProvider.properties
 fmWSSecurity.properties
 fmConfigurationService.properties

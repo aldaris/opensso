@@ -572,3 +572,5 @@ com/sun/identity/liberty/ws/idpp/jaxb/**/*.*
 com/sun/identity/liberty/ws/paos/jaxb/**/*.*
 com/sun/identity/saml2/jaxb/**/*.*
 com/sun/identity/wss/**/*.*
+com/sun/identity/xmlenc/**/*.*
+

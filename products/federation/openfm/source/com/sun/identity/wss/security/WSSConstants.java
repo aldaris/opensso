@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.2 2007-05-17 18:49:18 mallas Exp $
+ * $Id: WSSConstants.java,v 1.3 2007-07-11 06:12:44 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ public class WSSConstants {
      public static final String WSSE_SECURITY_LNAME = "Security";
 
      public static final String WSSE_NS = "http://docs.oasis-open.org/wss" +
-                 "/2004/01/oasis-200401-wss-wssecurity-secext-01.xsd"; 
+                 "/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"; 
      
      public static final String WSSE11_NS = 
            "http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"; 
@@ -86,15 +86,15 @@ public class WSSConstants {
      public static final String XMLSIG_NAMESPACE_URI =   
                    "http://www.w3.org/2000/09/xmldsig#";
 
-     public static final String PASSWORD_DIGEST_TYPE = 
+     public static final String PASSWORD_DIGEST_TYPE =
                    "http://docs.oasis-open.org/" +
-                   "wss/2004/01/oasis-200401-wss-username-token-profile-1.0" +
-                   "#PasswordDigest";
+                   "wss/2004/01/oasis-200401-wss-" +
+                   "username-token-profile-1.0#PasswordDigest";
 
-     public static final String PASSWORD_PLAIN_TYPE = 
+     public static final String PASSWORD_PLAIN_TYPE =
                    "http://docs.oasis-open.org/" +
-                   "wss/2004/01/oasis-200401-wss-username-token-profile-1.0" +
-                   "#PasswordPlainText";
+                   "wss/2004/01/oasis-200401-wss-" +
+                   "username-token-profile-1.0#PasswordText";
 
      public static final String TAG_USERNAME_TOKEN = "UsernameToken";
    
@@ -141,6 +141,10 @@ public class WSSConstants {
      
      public static final String SAML11_TOKEN_TYPE = 
      "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
+
+     public static final String TAG_USERNAME_VALUE_TYPE = 
+             "http://docs.oasis-open.org/wss/2004/01/" + 
+             "oasis-200401-wss-username-token-profile-1.0#UsernameToken";
 
 }
 

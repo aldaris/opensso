@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.4 2007-07-11 06:12:45 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,10 +70,14 @@ import javax.security.auth.Subject;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
-import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.Constants;
+
+import com.sun.identity.xmlenc.XMLEncryptionManager;
+import com.sun.identity.xmlenc.EncryptionConstants;
+import com.sun.identity.xmlenc.EncryptionException;
 
 
 
@@ -92,6 +96,13 @@ public class SecureSOAPMessage {
      private X509Certificate messageCertificate = null;
      private static Debug debug = WSSUtils.debug;
      private static ResourceBundle bundle = WSSUtils.bundle;
+
+     private String server_proto =
+     SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
+     private String server_host  =
+     SystemProperties.get(Constants.AM_SERVER_HOST);
+     private String server_port  =
+     SystemProperties.get(Constants.AM_SERVER_PORT);
 
      /**
       * Constructor to create secure SOAP message. 
@@ -124,7 +135,16 @@ public class SecureSOAPMessage {
       * @return the secured SOAP message.
       */
      public SOAPMessage getSOAPMessage() {
-         return soapMessage;
+         return this.soapMessage;
+     }
+
+     /**
+      * Sets the secured SOAP message.
+      *
+      * @param inSoapMessage the input secured SOAP message.
+      */
+     public void setSOAPMessage(SOAPMessage inSoapMessage) {
+         this.soapMessage = inSoapMessage;
      }
 
      /**
@@ -268,7 +288,20 @@ public class SecureSOAPMessage {
                     "username token found in the security header.");
                  }
                  securityToken = new UserNameToken((Element)currentNode);
-                 securityMechanism = SecurityMechanism.WSS_NULL_USERNAME_TOKEN;
+                 UserNameToken usernameToken = (UserNameToken)securityToken;
+                 String passwordType = usernameToken.getPasswordType(); 
+                 if (passwordType != null) {
+                     if (passwordType.equals(
+                             WSSConstants.PASSWORD_DIGEST_TYPE)) {
+                         securityMechanism = 
+                             SecurityMechanism.WSS_NULL_USERNAME_TOKEN;
+                     } else if 
+                         (passwordType.equals(
+                             WSSConstants.PASSWORD_PLAIN_TYPE)) {
+                         securityMechanism = 
+                             SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN;
+                     }
+                 }
 
              }
           }
@@ -433,20 +466,7 @@ public class SecureSOAPMessage {
      */
      public void sign(String certAlias) throws SecurityException {
 
-         Document doc = null;
-         try {
-             ByteArrayOutputStream bop = new ByteArrayOutputStream();
-             soapMessage.writeTo(bop);
-             ByteArrayInputStream bin =
-                     new ByteArrayInputStream(bop.toByteArray());
-             doc = XMLUtils.toDOMDocument(bin, debug);
-
-         } catch (Exception se) {
-             debug.error("SecureSOAPMessage.sign:: can not convert" + 
-               "to an XMLDocument", se);
-             throw new SecurityException(
-                   bundle.getString("cannotConvertToDocument"));
-         }
+         Document doc = toDocument();
          String tokenType = securityToken.getTokenType();
 
          if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType) ||
@@ -454,6 +474,8 @@ public class SecureSOAPMessage {
             signWithAssertion(doc, certAlias);
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
             signWithBinaryToken(doc, certAlias);
+         } else if (SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)){
+             signWithUNToken(doc, certAlias);
          } else {
             debug.error("SecureSOAPMessage.sign:: Invalid token type for" +
             " XML signing.");
@@ -523,7 +545,12 @@ public class SecureSOAPMessage {
          }
          wsseHeader.appendChild(
                  soapMessage.getSOAPPart().importNode(sigElement, true));
-         soapMessage =  WSSUtils.toSOAPMessage(sigElement.getOwnerDocument());
+         try {
+             this.soapMessage.saveChanges();
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.signWithAssertion:: " +
+                "SOAP message save failed : ", ex);
+         }
      }
 
 
@@ -542,20 +569,60 @@ public class SecureSOAPMessage {
              sigElement = sigManager.signWithBinarySecurityToken(
                 doc, cert, "", getSigningIds());
          } catch (XMLSignatureException se) {
-            debug.error("SecureSOAPMessage.signWithAssertion:: Signature " +
+            debug.error("SecureSOAPMessage.signWithBinaryToken:: Signature " +
             "Exception.", se);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          } catch (Exception ex) {
-            debug.error("SecureSOAPMessage.signWithAssertion:: " +
+            debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
                 "signing failed", ex);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          }
          wsseHeader.appendChild(
                  soapMessage.getSOAPPart().importNode(sigElement, true));
-         soapMessage =  WSSUtils.toSOAPMessage(sigElement.getOwnerDocument());
+         try {
+             this.soapMessage.saveChanges();
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
+                "SOAP message save failed : ", ex);
+         }
 
+     }
+
+     /**
+      * Signs the document with binary security token.
+      */
+     private void signWithUNToken(Document doc, String certAlias) 
+           throws SecurityException {
+
+         Certificate cert = null;
+         Element sigElement = null;
+         XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();
+         KeyProvider keyProvider = sigManager.getKeyProvider();
+         try {
+             cert =  keyProvider.getX509Certificate(certAlias);
+             sigElement = sigManager.signWithUserNameToken(
+                doc, cert, "", getSigningIds());
+         } catch (XMLSignatureException se) {
+            debug.error("SecureSOAPMessage.signWithUNToken:: Signature " +
+            "Exception.", se);
+            throw new SecurityException(
+                   bundle.getString("unabletoSign"));
+         } catch (Exception ex) {
+            debug.error("SecureSOAPMessage.signWithUNToken:: " +
+                "signing failed", ex);
+            throw new SecurityException(
+                   bundle.getString("unabletoSign"));
+         }
+         wsseHeader.appendChild(
+                 soapMessage.getSOAPPart().importNode(sigElement, true));
+         try {
+             this.soapMessage.saveChanges();
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.signWithUNToken:: " +
+                "SOAP message save failed : ", ex);
+         }
      }
 
      /**
@@ -618,5 +685,182 @@ public class SecureSOAPMessage {
       */
      public X509Certificate getMessageCertificate() {
          return messageCertificate;
+     }
+
+    /**
+     * Encrypts the <code>SOAPMessage</code> for the given security profile.
+     *
+     * @param certAlias the certificate alias
+     *
+     * @exception SecurityException if there is any failure in encryption.
+     */
+     public void encrypt(String certAlias) throws SecurityException {
+
+         Document doc = toDocument();         
+         String tokenType = securityToken.getTokenType();
+         
+         Document encryptedDoc = null; 
+         try {             
+             Element bodyElement = (Element) doc.getDocumentElement().
+                 getElementsByTagNameNS(SAMLConstants.SOAP_URI, 
+                 "Body").item(0);             
+             XMLEncryptionManager encManager = 
+                 WSSUtils.getXMLEncryptionManager();
+             encryptedDoc = encManager.encryptAndReplaceWSSBody(
+                 doc, 
+                 bodyElement,
+                 EncryptionConstants.TRIPLEDES,
+                 0,
+                 certAlias,
+                 0,
+                 tokenType,
+                 server_proto + "://" + server_host + ":" + server_port);
+
+         } catch (EncryptionException ee) {
+             debug.error("SecureSOAPMessage.encrypt:: Encryption " +
+                 "Exception : ", ee);
+             throw new SecurityException(
+                 bundle.getString("unabletoEncrypt"));        
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.encrypt:: " +
+                 "encryption failed : ", ex);
+             throw new SecurityException(
+                 bundle.getString("unabletoEncrypt"));
+         }
+         
+         try {
+             Element encryptedKeyElem = 
+                 (Element)encryptedDoc.getElementsByTagNameNS(
+                 EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+             
+             Element encryptedDataElem = 
+                 (Element)encryptedDoc.getElementsByTagNameNS(
+                 EncryptionConstants.ENC_XML_NS, "EncryptedData").item(0);
+         
+             if(debug.messageEnabled()) {
+                 debug.message("SecureSOAPMessage.encrypt:EncryptedKey DOC : " 
+                               + WSSUtils.print(encryptedKeyElem)); 
+                 debug.message("SecureSOAPMessage.encrypt:EncryptedData DOC : " 
+                               + WSSUtils.print(encryptedDataElem));
+             }
+         
+             // Append EncryptedKey element in the Security header
+             Node encKeyNode = 
+                 (soapMessage.getSOAPPart()).importNode(encryptedKeyElem, 
+                                                        true);
+             wsseHeader.appendChild(encKeyNode); 
+         
+             // Replace first child of Body element with the 
+             // EncryptedData element 
+             Node encDataNode = 
+                 (soapMessage.getSOAPPart()).importNode(encryptedDataElem, 
+                                                        true);
+             Node firstNodeInsideBody = 
+                 soapMessage.getSOAPPart().getEnvelope().getBody().
+                 getFirstChild();
+             soapMessage.getSOAPPart().getEnvelope().getBody().
+                 replaceChild(encDataNode, firstNodeInsideBody);
+             
+             soapMessage =  
+                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
+             this.soapMessage.saveChanges();
+
+             if(debug.messageEnabled()) {
+                 debug.message("**************SOAP PART **************"); 
+                 debug.message(WSSUtils.print(soapMessage.getSOAPPart()));
+             }
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.encrypt:: " +
+                 "encryption failed : ", ex);
+             throw new SecurityException(
+                 bundle.getString("unabletoGetFinalSoapMessage"));
+         }
+         
+     }
+     
+    /**
+     * Decrypts the <code>SOAPMessage</code> for the given security profile.
+     *
+     * @param certAlias the certificate alias
+     *
+     * @exception SecurityException if there is any failure in decryption.
+     */
+     public void decrypt() throws SecurityException {
+         Document decryptedDoc = null; 
+         try {
+             Document doc = toDocument();
+
+             NodeList nodes = doc.getElementsByTagNameNS(
+                 EncryptionConstants.ENC_XML_NS, "EncryptedData");
+             if((nodes == null) || (nodes.getLength() == 0)) {
+                 debug.error("SecureSOAPMessage.decrypt:: Request " +
+                     "is not encrypted.");
+                 throw new SecurityException(
+                     bundle.getString("decryptEncryptionFailed"));
+             }
+
+             XMLSignatureManager sigManager = 
+                 WSSUtils.getXMLSignatureManager();
+             XMLEncryptionManager encManager = 
+                 WSSUtils.getXMLEncryptionManager();
+             String certAlias = null;
+             if(messageCertificate != null) {
+                 certAlias = sigManager.getKeyProvider().
+                             getCertificateAlias(messageCertificate);
+             }
+             decryptedDoc = encManager.decryptAndReplace(doc,certAlias);
+         } catch (EncryptionException ee) {
+             debug.error("SecureSOAPMessage.decrypt:: Decrypt " +
+                "encryption failed : ", ee);
+                throw new SecurityException(
+                    bundle.getString("decryptEncryptionFailed"));
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.decrypt:: " +
+                 "exception : ", ex);
+             throw new SecurityException(
+                 bundle.getString("unabletoDecrypt"));
+         }
+
+         try {
+             Element decryptedBodyElem = 
+                 (Element)decryptedDoc.getElementsByTagNameNS(
+                 SAMLConstants.SOAP_URI, "Body").item(0);
+             
+             Element bodyElement = 
+                 (Element)soapMessage.getSOAPPart().getEnvelope().getBody();
+
+             if(debug.messageEnabled()) {
+                 debug.message("Decrypt : decrypted body doc : " 
+                               + WSSUtils.print(decryptedBodyElem));
+                 debug.message("SOAP BODY DOC : " 
+                               + WSSUtils.print(bodyElement));
+             }
+         
+             // Replace first child of Body element with the 
+             // first child of Decrypted Body element
+             Node decDataNode = 
+                 (soapMessage.getSOAPPart()).importNode(decryptedBodyElem, 
+                                                        true);
+             Node firstNodeInsideBody = 
+                 soapMessage.getSOAPPart().getEnvelope().getBody().
+                 getFirstChild();
+             soapMessage.getSOAPPart().getEnvelope().getBody().
+                 replaceChild(decDataNode.getFirstChild(),firstNodeInsideBody);
+
+             soapMessage =  
+                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
+             this.soapMessage.saveChanges();
+
+             if(debug.messageEnabled()) {
+                 debug.message("**************SOAP PART **************"); 
+                 debug.message(WSSUtils.print(soapMessage.getSOAPPart()));
+             }
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.encrypt:: " +
+                 "encryption failed : ", ex);
+             throw new SecurityException(
+                 bundle.getString("unabletoGetFinalSoapMessage"));
+         }
+         
      }
 }

@@ -17,16 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.3 2007-05-30 20:12:15 mallas Exp $
+ * $Id: WSSUtils.java,v 1.4 2007-07-11 06:12:44 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.security;
-
-
-
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,6 +75,8 @@ import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.saml.assertion.AuthenticationStatement;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.xmlenc.XMLEncryptionManager;
+import com.sun.identity.xmlenc.EncryptionException;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.encode.Base64;
 import javax.xml.transform.Transformer;
@@ -89,6 +87,8 @@ import java.security.SecureRandom;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
+import com.sun.identity.wss.xmlsig.WSSSignatureProvider;
+import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
 
 /**
  * This class provides util methods for the web services security. 
@@ -98,6 +98,7 @@ public class WSSUtils {
      public static ResourceBundle bundle = null;
      public static Debug debug = Debug.getInstance("fmWebServicesSecurity");
      private static XMLSignatureManager xmlSigManager = null;
+     private static XMLEncryptionManager xmlEncManager = null;
      
      static {
             bundle = Locale.getInstallResourceBundle("fmWSSecurity");
@@ -404,6 +405,22 @@ public class WSSUtils {
         return null;
     }
     
+    // Returns WSSEncryptionProvider
+    public static XMLEncryptionManager getXMLEncryptionManager() {
+
+        if (xmlEncManager == null) {
+	    synchronized (XMLEncryptionManager.class) {
+		if (xmlEncManager == null) {		    
+	            xmlEncManager = XMLEncryptionManager.getInstance(
+                          new WSSEncryptionProvider(),
+                          new JKSKeyProvider());	    
+		}
+	    }
+	}
+        return xmlEncManager;        	
+    }
+
+    // Returns WSSSignatureProvider
     public static XMLSignatureManager getXMLSignatureManager() {
 
         if (xmlSigManager == null) {

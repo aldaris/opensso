@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLEncryptionManager.java,v 1.1 2006-10-30 23:16:58 qcheng Exp $
+ * $Id: XMLEncryptionManager.java,v 1.2 2007-07-11 06:17:01 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -254,6 +254,35 @@ public class XMLEncryptionManager {
         return ep.encryptAndReplaceResourceID(
             doc, element, secretKeyAlg, keySize,
             kek, kekStrength, providerID);
+    }
+
+    /**
+     * Encrypts the given WSS XML element in a given XML Context document.
+     * @param doc the context XML Document.
+     * @param element Element to be encrypted.
+     * @param encDataEncAlg Encryption Key Algorithm.
+     * @param encDataEncAlgStrength Encryption Key Strength.
+     * @param certAlias Key Encryption Key cert alias.
+     * @param kekStrength Key Encryption Key Strength.
+     * @param tokenType Security token type.     
+     * @param providerID Provider ID.
+     * @return org.w3c.dom.Document XML Document replaced with encrypted data
+     *         for a given XML element.
+     */
+    public org.w3c.dom.Document encryptAndReplaceWSSBody(
+        org.w3c.dom.Document doc,
+        org.w3c.dom.Element element,
+        java.lang.String encDataEncAlg,
+        int encDataEncAlgStrength,
+        String certAlias,
+        int kekStrength,
+        java.lang.String tokenType,
+        java.lang.String providerID)
+     throws EncryptionException {
+        return ep.encryptAndReplaceWSSBody(doc,element,
+                                           encDataEncAlg,encDataEncAlgStrength,
+                                           certAlias,kekStrength,tokenType,
+                                           providerID);
     }
 
     /**

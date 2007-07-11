@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.4 2007-06-25 23:10:24 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.5 2007-07-11 06:12:44 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -195,6 +195,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         List list = config.getSecurityMechanisms();
         String uri = securityMechanism.getURI();
+
+        if(debug.messageEnabled()) {
+            debug.message("List of getSecurityMechanisms : " + list);
+            debug.message("current uri : " + uri);
+        }
+
         if(!list.contains(uri)) {
            if( (!list.contains(
                 SecurityMechanism.WSS_NULL_ANONYMOUS_URI)) &&
@@ -221,15 +227,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             return subject;
         }        
 
-        if(!SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri) &&
-           !SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri) &&
-           !SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri) &&
-           !secureMsg.verifySignature()) {
+        if(config.isRequestEncryptEnabled()) {
+            secureMsg.decrypt();
+            soapRequest = secureMsg.getSOAPMessage();
+        }
 
-           debug.error("SOAPRequestHandler.validateRequest:: Signature " +
-           "verification failed.");
-           throw new SecurityException(
-                 bundle.getString("signatureValidationFailed"));
+        if(config.isRequestSignEnabled()) {
+            if(!secureMsg.verifySignature()) {
+                debug.error("SOAPRequestHandler.validateRequest:: Signature " +
+                "verification failed.");
+                throw new SecurityException(
+                    bundle.getString("signatureValidationFailed"));
+            }
         }
 
         subject = (Subject)getAuthenticator().authenticate(subject, 
@@ -269,8 +278,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            }
         }
 
-        if(!config.isResponseSignEnabled()) {
-           return soapMessage;
+        if(!config.isResponseSignEnabled() && 
+            !config.isResponseEncryptEnabled()) {
+            return soapMessage;
         }
         
         SSOToken token = (SSOToken)AccessController.doPrivileged(
@@ -297,7 +307,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMessage.setSecurityMechanism(
                    SecurityMechanism.WSS_NULL_X509_TOKEN);
 
-        secureMessage.sign(keyAlias);
+        if(config.isResponseSignEnabled()) {            
+            secureMessage.sign(keyAlias);
+        }
+        
+        if(config.isResponseEncryptEnabled()) {            
+            secureMessage.encrypt(keyAlias);
+        }
+        
         soapMessage = secureMessage.getSOAPMessage();
 
         return soapMessage; 
@@ -371,16 +388,21 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMessage.setSecurityToken(securityToken);
 
         secureMessage.setSecurityMechanism(securityMechanism);
-        if(!SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri) &&
-           !SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri) &&
-           !SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri)) {
-           String keyAlias = SystemProperties.get(
-                             Constants.SAML_XMLSIG_CERT_ALIAS);
-           if(!config.useDefaultKeyStore()) {
-               keyAlias = config.getKeyAlias();
-           }
-           secureMessage.sign(keyAlias);
+        
+        String keyAlias = SystemProperties.get(
+                          Constants.SAML_XMLSIG_CERT_ALIAS);
+        if(!config.useDefaultKeyStore()) {
+            keyAlias = config.getKeyAlias();
         }
+        
+        if(config.isRequestSignEnabled()) {            
+            secureMessage.sign(keyAlias);
+        }        
+        
+        if(config.isRequestEncryptEnabled()) {            
+            secureMessage.encrypt(keyAlias);
+        }
+
         soapMessage = secureMessage.getSOAPMessage();
         return soapMessage;
     }
@@ -421,9 +443,15 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            }
         }
 
-        if(config.isResponseSignEnabled()) {
-           SecureSOAPMessage secureMessage = 
-                  new SecureSOAPMessage(soapMessage, false);
+        SecureSOAPMessage secureMessage = 
+            new SecureSOAPMessage(soapMessage, false);
+        
+        if(config.isResponseEncryptEnabled()) {
+            secureMessage.decrypt();
+            soapMessage = secureMessage.getSOAPMessage();
+        }
+        
+        if(config.isResponseSignEnabled()) {           
            if(!secureMessage.verifySignature()) {
               debug.error("SOAPRequestHandler.validateResponse:: Signature" +
               " Verification failed");
@@ -580,6 +608,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         */
 
+        if(debug.messageEnabled()) {
+            debug.message("getSecurityToken: SecurityMechanism URI : " + uri);
+        }
+
         SSOToken token = (SSOToken)AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
 
@@ -631,13 +663,32 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         } else if(
             (SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri)) ||
             (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI.equals(uri)) ||
-            (SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri))){
+            (SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI.equals(uri))
+            || (SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
+            || (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
+            || (SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI.
+                equals(uri))){
 
             if(debug.messageEnabled()) {
                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
                "UserName token");
             }
-            List creds = config.getUsers();
+            List creds = null;
+
+            try {
+                SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
+                creds = subjectSecurity.userCredentials;
+            } catch (Exception ex) {
+                if(debug.messageEnabled()) {
+                    debug.message("SOAPRequestHandler.getSecurityToken:: " + 
+                                  "getSubjectSecurity error :" 
+                                  + ex.getMessage());
+                }
+            }
+
+            if(creds == null || creds.isEmpty()) {
+                creds = config.getUsers();
+            }
             if(creds == null || creds.isEmpty()) {
                debug.error("SOAPRequestHandler.getSecurityToken:: No users " +
                " are configured.");
@@ -647,12 +698,20 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             PasswordCredential credential = 
                    (PasswordCredential)creds.iterator().next();
             UserNameTokenSpec tokenSpec = new UserNameTokenSpec();
-            tokenSpec.setNonce(true);
-            tokenSpec.setPasswordType(WSSConstants.PASSWORD_DIGEST_TYPE);
+            if((SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
+               || (SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN_URI.equals(uri)) 
+               || (SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI.
+                   equals(uri))) {
+                tokenSpec.setPasswordType(WSSConstants.PASSWORD_PLAIN_TYPE);
+            } else {
+                tokenSpec.setNonce(true);
+                tokenSpec.setPasswordType(WSSConstants.PASSWORD_DIGEST_TYPE);
+            }
             tokenSpec.setCreateTimeStamp(true);
             tokenSpec.setUserName(credential.getUserName());
             tokenSpec.setPassword(credential.getPassword());
             securityToken = factory.getSecurityToken(tokenSpec);
+            
         } else if(
            (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
            (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
@@ -700,6 +759,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         SSOToken ssoToken = null; 
         ResourceOffering discoRO = null;
         List discoCredentials = null;
+        List userCredentials = null;
     }
 
     /**
@@ -725,9 +785,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                             subjectSecurity.discoRO = (ResourceOffering)credObj;
                          } else if(credObj instanceof List) {
                             List list = (List)credObj;
-                            if(list != null && list.size() > 0 &&
-                                    list.get(0) instanceof SecurityAssertion ) {
-                               subjectSecurity.discoCredentials = list;
+                            if(list != null && list.size() > 0) {
+                                if (list.get(0) instanceof SecurityAssertion) {
+                                    subjectSecurity.discoCredentials = list;
+                                } else if (
+                                  list.get(0) instanceof PasswordCredential) {
+                                    subjectSecurity.userCredentials = list;
+                                }
                             }
                          }
                      }

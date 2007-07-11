@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionConstants.java,v 1.1 2006-10-30 23:16:57 qcheng Exp $
+ * $Id: EncryptionConstants.java,v 1.2 2007-07-11 06:17:00 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,4 +33,23 @@ public class EncryptionConstants {
     public static final String TRIPLEDES = "DESede";
     public static final String XML_ENCRYPTION_PROVIDER_KEY = 
            "com.sun.identity.xmlenc.EncryptionProviderImpl";
+
+    public static final String ENC_DATA_ENC_METHOD_3DES = 
+        "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
+    public static final String ENC_DATA_ENC_METHOD_AES_128 = 
+        "http://www.w3.org/2001/04/xmlenc#aes128-cbc"; 
+    public static final String ENC_DATA_ENC_METHOD_AES_256 = 
+        "http://www.w3.org/2001/04/xmlenc#aes256-cbc";
+    
+    public static final String ENC_KEY_ENC_METHOD_RSA_1_5 = 
+        "http://www.w3.org/2001/04/xmlenc#rsa-1_5";
+    public static final String ENC_KEY_ENC_METHOD_RSA_OAEP = 
+        "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p";
+    public static final String ENC_KEY_ENC_METHOD_3DES = 
+        "http://www.w3.org/2001/04/xmlenc#kw-tripledes";
+    public static final String ENC_KEY_ENC_METHOD_AES_128 = 
+        "http://www.w3.org/2001/04/xmlenc#kw-aes128";
+    public static final String ENC_KEY_ENC_METHOD_AES_256 = 
+        "http://www.w3.org/2001/04/xmlenc#kw-aes256";
+        
 }
