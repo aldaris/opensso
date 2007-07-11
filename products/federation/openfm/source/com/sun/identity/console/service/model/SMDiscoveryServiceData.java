@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceData.java,v 1.1 2007-03-14 19:33:33 jonnelson Exp $
+ * $Id: SMDiscoveryServiceData.java,v 1.2 2007-07-11 22:05:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.service.model;
 
-import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
 import com.sun.identity.liberty.ws.disco.jaxb.AuthorizeRequesterElement;
@@ -41,6 +40,7 @@ import com.sun.identity.liberty.ws.disco.jaxb11.GenerateBearerTokenElement;
 import com.sun.identity.liberty.ws.disco.jaxb11.SendSingleLogOutElement;
 import com.sun.identity.liberty.ws.disco.plugins.jaxb.DiscoEntryElement;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
 import java.io.StringReader;

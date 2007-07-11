@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.14 2007-06-21 23:01:34 superpat7 Exp $
+   $Id: build-war.xml,v 1.15 2007-07-11 22:05:50 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,6 +65,8 @@
         </copy>
         <copy file="${fedlibrary.dist.dir}/openfedlib.jar"
             tofile="${war.package.dir}/WEB-INF/lib/openfedlib.jar" />
+        <copy file="${fm.dist.dir}/console.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/console.jar" />
         <copy file="${fm.dist.dir}/openfm.jar"
             tofile="${war.package.dir}/WEB-INF/lib/openfm.jar" />
 
@@ -114,10 +116,6 @@
             <fileset dir="${openfm.dir}/www/console"/>
         </copy>
 
-        <copy todir="${war.package.dir}/WEB-INF/classes/com/sun/identity/console">
-            <fileset dir="${openfm.dir}/xml/console/components"
-                includes="*.xml" />
-        </copy>
         <replaceregexp flags="s"
             file="${war.package.dir}/WEB-INF/classes/amPolicyConfig.xml"
             match="(iplanet-am-policy-selected-subjects.+?&lt;ChoiceValues&gt;)"

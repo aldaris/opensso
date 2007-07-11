@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.1 2007-07-10 10:26:24 asyhuang Exp $
+ * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.2 2007-07-11 22:05:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
@@ -44,6 +43,7 @@ import com.sun.identity.console.federation.SAMLPropertyTemplate;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncryptAction;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCDropDownMenu;

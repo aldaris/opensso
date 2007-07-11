@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2007-07-01 07:42:14 veiming Exp $
+   $Id: build.xml,v 1.14 2007-07-11 22:05:50 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -136,7 +136,20 @@
             </fileset>
             <fileset dir="${openfm.xml.dir}" includes="*.xml"
                 excludes="SAML.xml,Federation.xml" />
-            <zipfileset dir="${openfm.classes.dir}" />
+            <zipfileset dir="${openfm.classes.dir}"
+                excludes="com/sun/identity/console/**" />
+        </jar>
+
+        <copy tofile="${fm.dist.dir}/console.jar"
+            file="${openfm.extlib.dir}/console.jar" />
+        <copy todir="${openfm.classes.dir}/com/sun/identity/console">
+            <fileset dir="${openfm.dir}/xml/console/components"
+                includes="*.xml" />
+        </copy>
+
+        <jar destfile="${fm.dist.dir}/console.jar" update="yes">
+            <zipfileset dir="${openfm.classes.dir}"
+                includes="com/sun/identity/console/**" />
         </jar>
 
         <checksum file="${fm.dist.dir}/openfm.jar" 

@@ -17,17 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLSiteID.java,v 1.1 2007-07-10 09:53:41 asyhuang Exp $
+ * $Id: FSSAMLSiteID.java,v 1.2 2007-07-11 22:05:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation;
 
-import com.iplanet.am.util.OrderedSet;
 import com.sun.identity.console.base.AMPipeDelimitAttrTokenizer;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;

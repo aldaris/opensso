@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLServiceViewBean.java,v 1.1 2007-07-10 09:53:33 asyhuang Exp $
+ * $Id: FSSAMLServiceViewBean.java,v 1.2 2007-07-11 22:05:50 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.model.ModelControlException;
@@ -47,6 +46,7 @@ import com.sun.identity.console.federation.model.FSSAMLServiceModel;
 import com.sun.identity.console.federation.model.FSSAMLServiceModelImpl;
 import com.sun.identity.console.federation.FederationViewBean;
 import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;

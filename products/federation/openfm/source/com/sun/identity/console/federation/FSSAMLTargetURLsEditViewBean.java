@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTargetURLsEditViewBean.java,v 1.1 2007-07-10 09:54:01 asyhuang Exp $
+ * $Id: FSSAMLTargetURLsEditViewBean.java,v 1.2 2007-07-11 22:05:51 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation;
 
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
@@ -33,6 +32,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.delegation.model.DelegationConfig;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.util.Iterator;
 import java.util.Map;
