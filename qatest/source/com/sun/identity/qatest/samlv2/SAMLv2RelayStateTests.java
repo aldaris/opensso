@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.1 2007-05-29 18:37:30 mrudulahg Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.2 2007-07-11 18:12:55 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,11 +188,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
      * @DocTest: SAML2|SP Init SSO with RelayState set
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2SPInitSSORS()
+    public void samlv2SPInitArtSSORS()
     throws Exception {
-        entering("samlv2SPInitSSORS", null);
+        entering("samlv2SPInitArtSSORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitSSORS\n", null);
+            log(logLevel, "\nRunning: samlv2SPInitArtSSORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -209,7 +209,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SSO_INIT_RESULT + 1));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate1"));
-            log(logLevel, "samlv2SPInitSSORS", "Map:" + configMap);
+            log(logLevel, "samlv2SPInitArtSSORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitssors_ssoinit", 
@@ -224,17 +224,17 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitSSORS",
+                log(logLevel, "samlv2SPInitArtSSORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitSSORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitArtSSORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2SPInitSSORS");
+        exiting("samlv2SPInitArtSSORS");
     }
     
     /**
@@ -405,11 +405,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
      * @DocTest: SAML2|SP Init SLO with RelayState set
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2SPInitSLORS()
+    public void samlv2SPInitHTTPSLORS()
     throws Exception {
-        entering("samlv2SPInitSLORS", null);
+        entering("samlv2SPInitHTTPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2SPInitHTTPSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -424,7 +424,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 5));
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 5));
-            log(logLevel, "samlv2SPInitSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2SPInitHTTPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitslors_ssoinit", 
@@ -441,28 +441,28 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitSLORS",
+                log(logLevel, "samlv2SPInitHTTPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitHTTPSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2SPInitSLORS");
+        exiting("samlv2SPInitHTTPSLORS");
     }
     
     /**
      * @DocTest: SAML2|SP Init SLO with RelayState with post/soap binding
      */
     @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2SPInitPostSLORS()
+    public void samlv2SPInitSOAPSLORS()
     throws Exception {
-        entering("samlv2SPInitPostSLORS", null);
+        entering("samlv2SPInitSOAPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitPostSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2SPInitSOAPSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -477,7 +477,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 6));
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 6));
-            log(logLevel, "samlv2SPInitPostSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2SPInitSOAPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitpostslors_ssoinit", 
@@ -494,28 +494,28 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitPostSLORS",
+                log(logLevel, "samlv2SPInitSOAPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitPostSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitSOAPSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2SPInitPostSLORS");
+        exiting("samlv2SPInitSOAPSLORS");
     }
     
     /**
      * @DocTest: SAML2|IDP initiated SLO with RelayState set.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2IDPInitSLORS()
+    public void samlv2IDPInitHTTPSLORS()
     throws Exception {
-        entering("samlv2IDPInitSLORS", null);
+        entering("samlv2IDPInitHTTPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2IDPInitHTTPSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -530,7 +530,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 7));
             configMap.put(TestConstants.KEY_IDP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 7));
-            log(logLevel, "samlv2IDPInitSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2IDPInitHTTPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitslors_idplogin", 
@@ -550,28 +550,28 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitSLORS",
+                log(logLevel, "samlv2IDPInitHTTPSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitHTTPSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2IDPInitSLORS");
+        exiting("samlv2IDPInitHTTPSLORS");
     }
     
     /**
      * @DocTest: SAML2|IDP Init SLO with Relay state POST/SOAP binding
      */
     @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2IDPInitPostSLORS()
+    public void samlv2IDPInitSOAPSLORS()
     throws Exception {
-        entering("samlv2IDPInitPostSLORS", null);
+        entering("samlv2IDPInitSOAPSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitPostSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2IDPInitSOAPSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -586,7 +586,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 8));
             configMap.put(TestConstants.KEY_IDP_SLO_RESULT,
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 8));
-            log(logLevel, "samlv2IDPInitPostSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2IDPInitSOAPSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitpostslors_idplogin", 
@@ -606,28 +606,28 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitPostSLORS",
+                log(logLevel, "samlv2IDPInitSOAPSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitPostSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitSOAPSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2IDPInitPostSLORS");
+        exiting("samlv2IDPInitSOAPSLORS");
     }
     
     /**
      * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2SPInitSSOSLORS()
+    public void samlv2SPInitArtHTTPSSOSLORS()
     throws Exception {
-        entering("samlv2SPInitSSOSLORS", null);
+        entering("samlv2SPInitArtHTTPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitSSOSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2SPInitArtHTTPSSOSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -646,7 +646,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 9));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate9"));
-            log(logLevel, "samlv2SPInitSSOSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2SPInitArtHTTPSSOSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitssoslors_ssoinit", 
@@ -664,28 +664,28 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitSSOSLORS",
+                log(logLevel, "samlv2SPInitArtHTTPSSOSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitArtHTTPSSOSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2SPInitSSOSLORS");
+        exiting("samlv2SPInitArtHTTPSSOSLORS");
     }
     
     /**
      * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set POST/SOAP binding
      */
     @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2SPInitPostSSOSLORS()
+    public void samlv2SPInitPostSOAPSSOSLORS()
     throws Exception {
-        entering("samlv2SPInitPostSSOSLORS", null);
+        entering("samlv2SPInitPostSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2SPInitPostSSOSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2SPInitPostSOAPSSOSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -704,46 +704,46 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_SP_SLO_RESULT + 10));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate10"));
-            log(logLevel, "samlv2SPInitPostSSOSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2SPInitPostSOAPSSOSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2spinitpostssoslors_ssoinit", 
                     "samlv2spinitpostssoslors_slo",
                     "samlv2spinitpostssoslors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post",
                     false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate10"));
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
             configMap.remove("urlparams");
             String termxmlfile = baseDir + arrActions[2] + ".xml";
-            SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2SPInitPostSSOSLORS",
+                log(logLevel, "samlv2SPInitPostSOAPSSOSLORS",
                         "Executing xml file:  " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2SPInitPostSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2SPInitPostSOAPSSOSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2SPInitPostSSOSLORS");
+        exiting("samlv2SPInitPostSOAPSSOSLORS");
     }
     
     /**
      * @DocTest: SAML2|IDP initiated SSO/SLO with diff RelayState set.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2IDPInitSSOSLORS()
+    public void samlv2IDPInitArtSOAPSSOSLORS()
     throws Exception {
-        entering("samlv2IDPInitSSOSLORS", null);
+        entering("samlv2IDPInitArtSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitSSOSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2IDPInitArtSOAPSSOSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -762,7 +762,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 11));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate11"));
-            log(logLevel, "samlv2IDPInitSSOSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2IDPInitArtSOAPSSOSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitssoslors_idplogin", 
@@ -771,11 +771,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2idpinitssoslors_terminate"};
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);
+            configMap.put("urlparams", "RelayState="
+                    + usersMap.get("relaystate11"));
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
             SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact",
                     false);
-            configMap.put("urlparams", "RelayState="
-                    + usersMap.get("relaystate11"));
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");
             configMap.remove("urlparams");
@@ -783,17 +783,17 @@ public class SAMLv2RelayStateTests extends TestCommon {
             SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitSSOSLORS",
+                log(logLevel, "samlv2IDPInitArtSOAPSSOSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitArtSOAPSSOSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2IDPInitSSOSLORS");
+        exiting("samlv2IDPInitArtSOAPSSOSLORS");
     }
     
     /**
@@ -801,11 +801,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
      * with POST/SOAP binding.
      */
     @Test(groups={"ff_sec", "ds_sec", "ldapv3_sec"})
-    public void samlv2IDPInitPostSSOSLORS()
+    public void samlv2IDPInitPostSOAPSSOSLORS()
     throws Exception {
-        entering("samlv2IDPInitPostSSOSLORS", null);
+        entering("samlv2IDPInitPostSOAPSSOSLORS", null);
         try {
-            log(logLevel, "\nRunning: samlv2IDPInitPostSSOSLORS\n", null);
+            log(logLevel, "\nRunning: samlv2IDPInitPostSOAPSSOSLORS\n", null);
             
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
@@ -824,7 +824,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_SLO_RESULT + 12));
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate12"));
-            log(logLevel, "samlv2IDPInitPostSSOSLORS", "Map:" + configMap);
+            log(logLevel, "samlv2IDPInitPostSOAPSSOSLORS", "Map:" + configMap);
             
             //Create xml's for each actions.
             String[] arrActions = {"samlv2idpinitpostssoslors_idplogin", 
@@ -833,29 +833,29 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2idpinitpostssoslors_terminate"};
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlIDPLogin(loginxmlfile, configMap);
-            String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate12"));
+            String ssoxmlfile = baseDir + arrActions[1] + ".xml";
+            SAMLv2Common.getxmlIDPInitSSO(ssoxmlfile, configMap, "post",
+                    false);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
+            SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "soap");
             configMap.remove("urlparams");
-            SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");
             String termxmlfile = baseDir + arrActions[3] + ".xml";
-            SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "http");
+            SAMLv2Common.getxmlIDPTerminate(termxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2IDPInitPostSSOSLORS",
+                log(logLevel, "samlv2IDPInitPostSOAPSSOSLORS",
                         "Executing xml file: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2IDPInitPostSSOSLORS", e.getMessage(), null);
+            log(Level.SEVERE, "samlv2IDPInitPostSOAPSSOSLORS", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2IDPInitPostSSOSLORS");
+        exiting("samlv2IDPInitPostSOAPSSOSLORS");
     }
     
     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.3 2007-05-24 23:39:17 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.4 2007-07-11 18:14:42 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -78,7 +79,7 @@ public class ConfigureSAMLv2 extends TestCommon {
      * @DocTest: SAML2|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeTest(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeSuite(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void configureSAMLv2(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};

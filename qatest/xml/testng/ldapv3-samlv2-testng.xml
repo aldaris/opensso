@@ -20,14 +20,14 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3-samlv2-testng.xml,v 1.6 2007-07-06 19:27:30 mrudulahg Exp $
+ $Id: ldapv3-samlv2-testng.xml,v 1.7 2007-07-11 18:17:44 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ldapv3-samlv2" verbose="1">
-    <test name="SAMLv2SmokeTest">
     <parameter name="groupName" value="ldapv3"/>
+    <test name="SAMLv2ConfigureUnconfigure">
         <groups>
             <run>
                 <include name="ldapv3"/>
@@ -35,6 +35,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.samlv2.ConfigureSAMLv2"/>
+            <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/> 
+        </classes>
+    </test>
+    <test name="SAMLv2SmokeTest">
+        <groups>
+            <run>
+                <include name="ldapv3"/>
+            </run>
+        </groups>
+        <classes>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
             <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/>
@@ -43,7 +53,6 @@
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedTransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedDynUserCreationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ForceAuthNTests"/>
-            <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/>
         </classes>
     </test>
 </suite>

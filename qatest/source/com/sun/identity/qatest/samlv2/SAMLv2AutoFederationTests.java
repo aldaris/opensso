@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.1 2007-05-29 18:37:30 mrudulahg Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.2 2007-07-11 18:12:55 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -170,7 +170,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             usersMap = getMapFromResourceBundle("samlv2autofederationtests");
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));
-            for (int i = 1; i < totalUsers; i++) {
+            for (int i = 1; i < totalUsers + 1; i++) {
                 //create sp user first
                 list.clear();
                 list.add("mail=" + usersMap.get(TestConstants.KEY_SP_USER_MAIL +
@@ -350,9 +350,9 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * @DocTest: SAML2| SP initiated Autofederation.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void autoFedSPInit()
+    public void autoFedSPInitArt()
     throws Exception {
-        entering("samlv2AutoFedSPInit", null);
+        entering("autoFedSPInitArt", null);
         try {
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 1));
@@ -371,18 +371,18 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "samlv2AutoFed",
+                log(logLevel, "autoFedSPInitArt",
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i]
                         + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "samlv2AutoFedSPInit", e.getMessage(), null);
+            log(Level.SEVERE, "autoFedSPInitArt", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("samlv2AutoFedSPInit");
+        exiting("autoFedSPInitArt");
     }
     
     /**
@@ -390,9 +390,9 @@ public class SAMLv2AutoFederationTests extends TestCommon {
      * @DocTest: SAML2| IDP initiated Autofederation.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void autoFedIDPInit()
+    public void autoFedIDPInitArt()
     throws Exception {
-        entering("autoFedIDPInit", null);
+        entering("autoFedIDPInitArt", null);
         try {
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 2));
@@ -414,18 +414,18 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             SAMLv2Common.getxmlIDPSLO(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "autoFedIDPInit",
+                log(logLevel, "autoFedIDPInitArt",
                         "Inside for loop. value of i is " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i]
                         + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "autoFedIDPInit", e.getMessage(), null);
+            log(Level.SEVERE, "autoFedIDPInitArt", e.getMessage(), null);
             e.printStackTrace();
             throw e;
         }
-        exiting("autoFedIDPInit");
+        exiting("autoFedIDPInitArt");
     }
     
     /**

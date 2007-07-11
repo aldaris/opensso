@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.2 2007-06-21 20:05:56 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.3 2007-07-11 18:12:55 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -172,9 +172,9 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with ForceAuthn=true.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void testforceAuthNtrue()
+    public void testforceAuthNtrueArt()
     throws Exception {
-        entering("testforceAuthNtrue", null);
+        entering("testforceAuthNtrueArt", null);
         try {
             configMap.put(TestConstants.KEY_SP_USER, 
                     usersMap.get(TestConstants.KEY_SP_USER + 1));
@@ -184,7 +184,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 1));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
-            log(logLevel, "testforceAuthNtrue", "Running: testforceAuthNtrue");
+            log(logLevel, "testforceAuthNtrueArt", "Running: testforceAuthNtrueArt");
             getWebClient();
             consoleLogin(webClient, idpurl,
                     configMap.get(TestConstants.KEY_IDP_USER),
@@ -204,17 +204,17 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNtrue",
+                log(logLevel, "testforceAuthNtrueArt",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "testforceAuthNtrue", e.getMessage());
+            log(Level.SEVERE, "testforceAuthNtrueArt", e.getMessage());
             e.printStackTrace();
             throw e;
         }
-        exiting("testforceAuthNtrue");
+        exiting("testforceAuthNtrueArt");
     }
     
     /**
@@ -244,7 +244,6 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     "forceauthntruepost_slo", 
                     "forceauthntruepost_terminate"};
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
-            configMap.put("urlparams","forceAuthN=true");
             SAMLv2Common.getxmlSPInitSSO(loginxmlfile, configMap, "post", false);
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
@@ -271,9 +270,9 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with ForceAuthn=false.
      */
     @Test(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
-    public void testforceAuthNfalse()
+    public void testforceAuthNfalseArt()
     throws Exception {
-        entering("testforceAuthNfalse", null);
+        entering("testforceAuthNfalseArt", null);
         try {
             configMap.put(TestConstants.KEY_SP_USER, 
                     usersMap.get(TestConstants.KEY_SP_USER + 3));
@@ -283,7 +282,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 3));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 3));
-            log(logLevel, "testforceAuthNfalse", "Running: testforceAuthNfalse");
+            log(logLevel, "testforceAuthNfalseArt", "Running: testforceAuthNfalseArt");
             getWebClient();
             consoleLogin(webClient, idpurl,
                     configMap.get(TestConstants.KEY_IDP_USER),
@@ -301,17 +300,17 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNfalse",
+                log(logLevel, "testforceAuthNfalseArt",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "testforceAuthNfalse", e.getMessage());
+            log(Level.SEVERE, "testforceAuthNfalseArt", e.getMessage());
             e.printStackTrace();
             throw e;
         }
-        exiting("testforceAuthNfalse");
+        exiting("testforceAuthNfalseArt");
     }
     
     /**

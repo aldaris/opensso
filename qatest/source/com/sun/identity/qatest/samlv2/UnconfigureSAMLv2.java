@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.2 2007-05-30 19:24:24 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.3 2007-07-11 18:14:42 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 
 /**
@@ -68,7 +69,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
      * Configure sp & idp
      * @DocTest: SAML2|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterTest (groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @AfterSuite (groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
     public void UnconfigureSAMLv2()
     throws Exception {
         entering ("UnconfigureSAMLv2", null);

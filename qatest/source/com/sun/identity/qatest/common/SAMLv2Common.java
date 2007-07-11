@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.4 2007-05-22 19:21:25 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.5 2007-07-11 18:12:27 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,13 +27,12 @@ package com.sun.identity.qatest.common;
 import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * This class contains helper methods for samlv2 tests
@@ -1014,4 +1013,208 @@ public class SAMLv2Common extends TestCommon {
         }
         return arrMetadata;
     }
+    
+    /*
+     * This method loads the IDP metadata on sp & idp
+     * @param metadata is the standard metadata of IDP
+     * @param metadataext is the extended metadata of IDP
+     * @param FederationManager object initiated with SP details. 
+     * @param FederationManager object initiated with IDP details. 
+     * @param MAP containing all the SP & IDP details
+     * @param WebClient object after admin login is successful.
+     */
+    public void loadIDPMetadata(String metadata, String metadataext,
+            FederationManager fmsp, FederationManager fmidp, Map configMap,
+            WebClient webClient)
+    throws Exception {
+        try{
+            
+            if ((metadata.equals(null)) || (metadataext.equals(null)) ||
+                    (metadata.equals("")) || (metadataext.equals(""))) {
+                log(Level.SEVERE, "loadIDPMetadata", "metadata cannot be " +
+                        "empty");
+                log(Level.FINEST, "loadIDPMetadata", "metadata is : " +
+                        metadata);
+                log(Level.FINEST, "loadIDPMetadata", "ext metadata is : " +
+                        metadataext);
+                assert false;
+            }
+            HtmlPage idpDeleteEntityPage = fmidp.deleteEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
+                    "saml2");
+            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("Descriptor is deleted for entity, " +
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
+                        "IDP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete idp " +
+                        "entity on IDP side" +
+                        idpDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+            HtmlPage importIDPMeta = fmidp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+                    metadata, metadataext, null, "saml2");
+            if (importIDPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.FINE, "loadIDPMetadata", "Successfully " +
+                        "imported IDP metadata on IDP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP" +
+                        " metadata on IDP side" + importIDPMeta.
+                        getWebResponse().getContentAsString());
+                assert false;
+            }
+            
+            //delete & load idp metadata on SP
+            metadataext = metadataext.replaceAll(
+                    (String)configMap.get(TestConstants.KEY_IDP_COT), "");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"true\"", "hosted=\"false\"");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"1\"", "hosted=\"0\"");
+            log(Level.FINER, "loadIDPMetadata", "IDP Ext. Metadata to load " +
+                    "on SP" + metadataext);
+            idpDeleteEntityPage = fmsp.deleteEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), false,
+                    "saml2");
+            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("Descriptor is deleted for entity, " +
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
+                        "SP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete idp " +
+                        "entity on SP side" +
+                        idpDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+            importIDPMeta = fmsp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), metadata,
+                    metadataext,
+                    (String)configMap.get(TestConstants.KEY_SP_COT),
+                    "saml2");
+            if (importIDPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.FINE, "loadIDPMetadata", "Successfully " +
+                        "imported SP metadata on IDP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldn't import SP " +
+                        "metadata on IDP side" + importIDPMeta.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "loadIDPMetadata", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    /*
+     * This method loads the SP metadata on sp & idp 
+     * @param metadata is the standard metadata of SP
+     * @param metadataext is the extended metadata of SP
+     * @param FederationManager object initiated with SP details. 
+     * @param FederationManager object initiated with IDP details. 
+     * @param MAP containing all the SP & IDP details
+     * @param WebClient object after admin login is successful.
+     */
+    public void loadSPMetadata(String metadata, String metadataext, 
+            FederationManager fmsp, FederationManager fmidp, Map configMap, 
+            WebClient webClient) 
+    throws Exception {
+        try {
+            if ((metadata.equals(null)) || (metadataext.equals(null)) || 
+                    (metadata.equals("")) & (metadataext.equals(""))) {
+                log(Level.SEVERE, "loadSPMetadata", "metadata cannot be empty");
+                log(Level.FINEST, "loadSPMetadata", "metadata is : " + 
+                        metadata);
+                log(Level.FINEST, "loadSPMetadata", "ext metadata is : " + 
+                        metadataext);
+                assert false;
+            }
+            HtmlPage spDeleteEntityPage = fmsp.deleteEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), false,
+                    "saml2");
+            if (spDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("Descriptor is deleted for entity, " +
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(Level.FINEST, "loadSPMetadata", "Deleted sp entity on " +
+                        "SP side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete sp " +
+                        "entity on SP side" +
+                        spDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+
+            HtmlPage importSPMeta = fmsp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    metadata, metadataext, null, "saml2");
+            if (importSPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.FINE, "loadSPMetadata", "Successfully " +
+                        "imported SP metadata on SP side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
+                        "metadata on SP side" + importSPMeta.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+
+            //delete & load sp metadata on IDP
+            metadataext = metadataext.replaceAll(
+                    (String)configMap.get(TestConstants.KEY_SP_COT), "");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"true\"", "hosted=\"false\"");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"1\"", "hosted=\"0\"");
+            log(Level.FINER, "loadSPMetadata", "SP Ext. Metadata to load " +
+                    "on IDP" + metadataext);
+            spDeleteEntityPage = fmidp.deleteEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
+                    "saml2");
+            if (spDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("Descriptor is deleted for entity, " +
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(Level.FINE, "loadSPMetadata", "Deleted sp entity on " +
+                        "IDP side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete sp " +
+                        "entity on IDP side" +
+                        spDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+            importSPMeta = fmidp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), metadata,
+                    metadataext,
+                    (String)configMap.get(TestConstants.KEY_IDP_COT),
+                    "saml2");
+            if (importSPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.FINE, "loadSPMetadata", "Successfully " +
+                        "imported SP metadata on IDP side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
+                        "metadata on IDP side" + importSPMeta.getWebResponse().
+                        getContentAsString());
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "changeMetadata", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }

@@ -20,14 +20,14 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_sec-samlv2-testng.xml,v 1.6 2007-07-06 19:27:30 mrudulahg Exp $
+ $Id: ds_sec-samlv2-testng.xml,v 1.7 2007-07-11 18:17:44 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ds_sec-samlv2" verbose="1">
-    <test name="SAMLv2SmokeTest">
     <parameter name="groupName" value="ds_sec"/>
+    <test name="SAMLv2ConfigureUnconfigure">
         <groups>
             <run>
                 <include name="ds_sec"/>
@@ -35,6 +35,16 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.samlv2.ConfigureSAMLv2"/>
+            <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/> 
+        </classes>
+    </test>
+    <test name="SAMLv2SmokeTest">
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2SmokeTest"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ScenarioTests"/> 
             <class name="com.sun.identity.qatest.samlv2.SAMLv2RelayStateTests"/>
@@ -43,7 +53,282 @@
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedTransientUserTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AutoFedDynUserCreationTests"/>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2ForceAuthNTests"/>
-            <class name="com.sun.identity.qatest.samlv2.UnconfigureSAMLv2"/>
         </classes>
     </test>
+    <test name="SAMLv2WantAuthnRequestsSigned">
+    <parameter name="attribute" value="WantAuthnRequestsSigned"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2WantAuthnRequestsSigned_IDP">
+    <parameter name="attribute" value="WantAuthnRequestsSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2AuthnRequestsSigned_SP">
+    <parameter name="attribute" value="WantAuthnRequestsSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2WantAssertionsSigned_SP">
+    <parameter name="attribute" value="WantAssertionsSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantLogoutRequestSigned">
+    <parameter name="attribute" value="wantLogoutRequestSigned"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantLogoutRequestSigned_IDP">
+    <parameter name="attribute" value="wantLogoutRequestSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantLogoutRequestSigned_SP">
+    <parameter name="attribute" value="wantLogoutRequestSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantLogoutResponseSigned">
+    <parameter name="attribute" value="wantLogoutResponseSigned"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantLogoutResponseSigned_IDP">
+    <parameter name="attribute" value="wantLogoutResponseSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantLogoutResponseSigned_SP">
+    <parameter name="attribute" value="wantLogoutResponseSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantMNIRequestSigned">
+    <parameter name="attribute" value="wantMNIRequestSigned"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantMNIRequestSigned_IDP">
+   <parameter name="attribute" value="wantMNIRequestSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantMNIRequestSigned_SP">
+    <parameter name="attribute" value="wantMNIRequestSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantMNIResponseSigned">
+    <parameter name="attribute" value="wantMNIResponseSigned"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantMNIResponseSigned_IDP">
+    <parameter name="attribute" value="wantMNIResponseSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantMNIResponseSigned_SP">
+    <parameter name="attribute" value="wantMNIResponseSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantNameIDEncrypted">
+    <parameter name="attribute" value="wantNameIDEncrypted"/>
+    <parameter name="metadata" value="both"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantNameIDEncrypted_IDP">
+    <parameter name="attribute" value="wantNameIDEncrypted"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantNameIDEncrypted_SP">
+    <parameter name="attribute" value="wantNameIDEncrypted"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantArtifactResolveSigned_IDP">
+    <parameter name="attribute" value="wantArtifactResolveSigned"/>
+    <parameter name="metadata" value="idp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test>
+    <test name="SAMLv2wantArtifactResponseSigned_SP">
+    <parameter name="attribute" value="wantArtifactResponseSigned"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantAssertionEncrypted_SP">
+    <parameter name="attribute" value="wantAssertionEncrypted"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
+    <test name="SAMLv2wantAttributeEncrypted_SP">
+    <parameter name="attribute" value="wantAttributeEncrypted"/>
+    <parameter name="metadata" value="sp"/>
+        <groups>
+            <run>
+                <include name="ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
+        </classes>
+    </test> 
 </suite>
