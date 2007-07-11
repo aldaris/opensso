@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameToken.java,v 1.2 2007-06-21 23:12:50 mallas Exp $
+ * $Id: UserNameToken.java,v 1.3 2007-07-11 22:23:45 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -150,7 +150,7 @@ public class UserNameToken implements SecurityToken {
                nonce = child.getFirstChild().getNodeValue();
 
             } else if(CREATED.equals(child.getLocalName()) &&
-                  WSSConstants.WSSE_NS.equals(child.getNamespaceURI()) ) {
+                  WSSConstants.WSU_NS.equals(child.getNamespaceURI()) ) {
                created = child.getFirstChild().getNodeValue();
             } else {
                if(debug.messageEnabled()) {
@@ -278,9 +278,9 @@ public class UserNameToken implements SecurityToken {
              .append(NONCE).append(">\n");
         }
         if(created != null) {
-           sb.append("<").append(WSSConstants.WSSE_TAG).append(":")
+           sb.append("<").append(WSSConstants.WSU_TAG).append(":")
              .append(CREATED).append(">").append(created)
-             .append("</").append(WSSConstants.WSSE_TAG).append(":")
+             .append("</").append(WSSConstants.WSU_TAG).append(":")
              .append(CREATED).append(">\n");
         }
         sb.append("</").append(WSSConstants.WSSE_TAG).append(":")
