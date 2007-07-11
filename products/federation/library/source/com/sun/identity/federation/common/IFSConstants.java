@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.5 2007-04-06 20:51:47 exu Exp $
+ * $Id: IFSConstants.java,v 1.6 2007-07-11 21:58:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,6 +120,13 @@ public interface IFSConstants {
      */        
     public static final String KEY_PASS =
         "com.sun.identity.saml.xmlsig.keypass";
+
+    /**
+     * Specify login URL IDP will redirect to when there is no valid session 
+     */        
+    public static final String IDP_LOGIN_URL =
+        "com.sun.identity.federation.services.idpLoginURL";
+
     /**
      * Internal error
      */     
