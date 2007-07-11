@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.5 2007-06-29 19:47:20 jonnelson Exp $
+ * $Id: EntitiesModelImpl.java,v 1.6 2007-07-11 22:05:13 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,10 +54,13 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -70,6 +73,14 @@ public class EntitiesModelImpl
     extends AMModelBase
     implements EntitiesModel
 {
+    private static final String AGENT_ATTRIBUTE_LIST =
+        "sunIdentityServerDeviceKeyValue";
+    private static final String RADIO_AGENT_TYPE = "rbAgentType";
+    private static final String RADIO_AGENT_TYPE_GENERIC = "generic";
+    private static final String RADIO_AGENT_TYPE_WSC = "wsc";
+    private static final String RADIO_AGENT_TYPE_WSP = "wsp";
+    private static boolean isWSSEnabled = false;
+
     private boolean endUser = false;
     private static SSOToken adminSSOToken =
         AMAdminUtils.getSuperAdminSSOToken();
@@ -78,6 +89,16 @@ public class EntitiesModelImpl
     private Map requiredAttributeNames = new HashMap();
 
     private String type = null;
+
+    static {
+        try {
+            Class clazz = Class.forName(
+                "com.sun.identity.wss.security.SecurityMechanism");
+            isWSSEnabled = (clazz != null);
+        } catch (ClassNotFoundException e) {
+            //ignored
+        }
+    }
     
     public EntitiesModelImpl(HttpServletRequest req, Map map) {
         super(req, map);
@@ -340,7 +361,9 @@ public class EntitiesModelImpl
         }
 
         if (bCreate) {
-            String xmlFile = "com/sun/identity/console/propertyEntitiesAdd.xml";
+            String xmlFile = (isWSSEnabled && idType.equalsIgnoreCase("agent"))?
+                "com/sun/identity/console/propertyEntitiesAddAgentType.xml" :
+                "com/sun/identity/console/propertyEntitiesAdd.xml";
             String header = AMAdminUtils.getStringFromInputStream(
                 getClass().getClassLoader().getResourceAsStream(xmlFile));
             if (xml != null) {
@@ -402,6 +425,12 @@ public class EntitiesModelImpl
             for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
                 AttributeSchema as = (AttributeSchema)i.next();
                 values.put(as.getName(), as.getDefaultValues());
+            }
+
+            if (isWSSEnabled && bCreate && idType.equalsIgnoreCase("agent")) {
+                Set set = new HashSet(2);
+                set.add(RADIO_AGENT_TYPE_GENERIC);
+                values.put(RADIO_AGENT_TYPE, set);
             }
 
             return values;
@@ -497,6 +526,7 @@ public class EntitiesModelImpl
         }
 
         validateAttributes(values);
+        setAgentDefaultValues(values);
 
         try {
             String[] params = {entityName, idType, realmName};
@@ -520,6 +550,59 @@ public class EntitiesModelImpl
                 {entityName, idType, realmName, strError};
             logEvent("SSO_EXCEPTION_IDENTITY_CREATION", params);
             throw new AMConsoleException(strError);
+        }
+    }
+
+    private void setAgentDefaultValues(Map values)
+        throws AMConsoleException {
+        Set setAgentType = (Set)values.get(RADIO_AGENT_TYPE);
+        if ((setAgentType != null) && !setAgentType.isEmpty()) {
+            String agentType = (String)setAgentType.iterator().next();
+            if (agentType.equals(RADIO_AGENT_TYPE_WSC)) {
+                Set agentValues = new HashSet(6);
+                agentValues.add(
+                    "SecurityMech=urn:sun:wss:security:null:Anonymous");
+                agentValues.add("useDefaultStore=true");
+                agentValues.add("Type=wsc");
+                values.put(AGENT_ATTRIBUTE_LIST, agentValues);
+            } else if (agentType.equals(RADIO_AGENT_TYPE_WSP)) {
+                try {
+                    Class clazz = Class.forName(
+                        "com.sun.identity.wss.security.SecurityMechanism");
+                    Method mtd = clazz.getDeclaredMethod(
+                        "getAllWSPSecurityMechanisms", null);
+                    Method mtdGetURI = clazz.getDeclaredMethod("getURI", null);
+                    List securityMech = (List)mtd.invoke(null, null);
+                    StringBuffer securityMechStr = new StringBuffer();
+                    boolean first = true;
+
+                    for (Iterator i = securityMech.iterator(); i.hasNext(); ) {
+                        Object mech = i.next();
+                        if (first) {
+                            first = false;
+                        } else {
+                            securityMechStr.append(",");
+                        }
+                        securityMechStr.append(
+                            (String)mtdGetURI.invoke(mech, null));
+                    }
+                    Set agentValues = new HashSet(6);
+                    agentValues.add("SecurityMech=" + securityMechStr);
+                    agentValues.add("useDefaultStore=true");
+                    agentValues.add("Type=wsp");
+                    values.put(AGENT_ATTRIBUTE_LIST, agentValues);
+                } catch (ClassNotFoundException e) {
+                    throw new AMConsoleException(e);
+                } catch (NoSuchMethodException e) {
+                    throw new AMConsoleException(e);
+                } catch (IllegalAccessException e) {
+                    throw new AMConsoleException(e);
+                } catch (InvocationTargetException e) {
+                    throw new AMConsoleException(e);
+                }
+            }
+
+            values.remove(RADIO_AGENT_TYPE);
         }
     }
 
@@ -548,13 +631,13 @@ public class EntitiesModelImpl
                 // In the case of Agents, the attribute sun device key
                 // values must be merged
                 if (amid.getType().equals(IdType.AGENT) &&
-                    values.containsKey("sunIdentityServerDeviceKeyValue") &&
-                    (amid.getAttribute("sunIdentityServerDeviceKeyValue")
-                    != null)) {
+                    values.containsKey(AGENT_ATTRIBUTE_LIST) &&
+                    (amid.getAttribute(AGENT_ATTRIBUTE_LIST) != null)
+                ) {
                     Set newDeviceKeyValue = (Set) values.get(
-                        "sunIdentityServerDeviceKeyValue");
+                        AGENT_ATTRIBUTE_LIST);
                     Set origDeviceKeyValue = amid.getAttribute(
-                        "sunIdentityServerDeviceKeyValue");
+                        AGENT_ATTRIBUTE_LIST);
                     for (Iterator items = origDeviceKeyValue.iterator();
                         items.hasNext();) {
                         String olValue = (String) items.next();
