@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2007-03-01 08:45:39 veiming Exp $
+   $Id: build.xml,v 1.6 2007-07-12 19:28:31 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,7 @@
     <property name="samples.server.packageweb.dir"
         location="${amserver.built.samples.dir}/server/packagesweb" />
     <property name="samples.server.classes.dir"
-        location="${amserver.built.samples.dir}/server" />
+        location="${amserver.built.samples.dir}/server/classes" />
     <property name="samples.server.source.dir"
         location="${server.sample.dir}/source" />
 
