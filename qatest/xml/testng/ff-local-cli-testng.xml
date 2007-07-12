@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff-local-cli-testng.xml,v 1.4 2007-06-29 13:51:15 cmwesley Exp $
+ $Id: ff-local-cli-testng.xml,v 1.5 2007-07-12 21:16:24 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1047,6 +1047,347 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.DeleteIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities01">
+        <parameter name="testName" value="listidentities-test1"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities02">
+        <parameter name="testName" value="listidentities-test2"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities03">
+        <parameter name="testName" value="listidentities-test3"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities04">
+        <parameter name="testName" value="listidentities-test4"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities05">
+        <parameter name="testName" value="listidentities-test5"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities06">
+        <parameter name="testName" value="listidentities-test6"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities07">
+        <parameter name="testName" value="listidentities-test7"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities08">
+        <parameter name="testName" value="listidentities-test8"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities09">
+        <parameter name="testName" value="listidentities-test9"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>     
+    <test name="CLI_list-identities10">
+        <parameter name="testName" value="listidentities-test10"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_list-identities11">
+        <parameter name="testName" value="listidentities-test11"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities12">
+        <parameter name="testName" value="listidentities-test12"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities13">
+        <parameter name="testName" value="listidentities-test13"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities14">
+        <parameter name="testName" value="listidentities-test14"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities15">
+        <parameter name="testName" value="listidentities-test15"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities16">
+        <parameter name="testName" value="listidentities-test16"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities17">
+        <parameter name="testName" value="listidentities-test17"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities18">
+        <parameter name="testName" value="listidentities-test17"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities19">
+        <parameter name="testName" value="listidentities-test17"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities20">
+        <parameter name="testName" value="listidentities-test22"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_list-identities21">
+        <parameter name="testName" value="listidentities-test23"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_list-identities22">
+        <parameter name="testName" value="listidentities-test22"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_list-identities23">
+        <parameter name="testName" value="listidentities-test23"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities24">
+        <parameter name="testName" value="listidentities-test24"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities25">
+        <parameter name="testName" value="listidentities-test25"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities26">
+        <parameter name="testName" value="listidentities-test26"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities27">
+        <parameter name="testName" value="listidentities-test27"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities28">
+        <parameter name="testName" value="listidentities-test28"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities29">
+        <parameter name="testName" value="listidentities-test29"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities30">
+        <parameter name="testName" value="listidentities-test30"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
+        </classes>
+    </test>
+    <test name="CLI_list-identities31">
+        <parameter name="testName" value="listidentities-test31"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
         </classes>
     </test>      
 </suite>
