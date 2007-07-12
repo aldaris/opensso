@@ -10,11 +10,13 @@
 /* Define a tree node base class                                             */
 /*****************************************************************************/
 
-function CCAbstractTreeNode(label, statusTxt, url, icon, uid, iconWidth, onClick) {
+function CCAbstractTreeNode(label, statusTxt, url, icon, uid, iconWidth, onClick, target) {
     // every node will be assigned a unique index in the tree list of elements
     this.id = -1;
     // every node has a label
     this.label = label;
+    // the node's target
+    this.targ = target;
     // every node has status text
     this.statusTxt = statusTxt;
     // every node has an associated url
@@ -146,8 +148,7 @@ CCAbstractTreeNode.prototype.getOpenAnchor = function(setId) {
     anchor += this.id + "); return true;\" onmouseover=\"window.status='";
     anchor += this.statusTxt + "'; return true;\" onmouseout=\"window.status";
     anchor += " = ''; return true;\" onblur=\"window.status = ''; ";
-    anchor += "return true;\" target=\"" + this.tree.target + "\" ";
-    
+    anchor += "return true;\" target=\"" + this.targ + "\" ";
     if (setId) {
         anchor += "id=\"labelfor" + this.id + "\" ";
     }
@@ -207,11 +208,11 @@ CCAbstractTreeNode.prototype.getTableStart = function(bgColor, rowHeight) {
 /* Define a container node class that extends the abstract node class        */
 /*****************************************************************************/
 
-function CCContainerNode(label, statusTxt, url, icon, uid, iconWidth, onClick) {
+function CCContainerNode(label, statusTxt, url, icon, uid, iconWidth, onClick, target) {
     // this class extends AbstractTreeNode
     this.base = CCAbstractTreeNode;
     // call the super constructor
-    this.base(label, statusTxt, url, icon, uid, iconWidth, onClick);
+    this.base(label, statusTxt, url, icon, uid, iconWidth, onClick, target);
     // flag indiciating if this is a last sibling
     this.isLastSibling = false;
     // pointer to the img element for the container's turner
@@ -641,9 +642,9 @@ CCContainerNode.prototype.getNumDescendants = function() {
 /*****************************************************************************/
 /* Define an ojbect class that extends the abstract tree node class          */
 /*****************************************************************************/
-function CCObjectNode(label, statusTxt, url, icon, key, iconWidth, onClick) {
+function CCObjectNode(label, statusTxt, url, icon, key, iconWidth, onClick, target) {
     this.base = CCAbstractTreeNode;
-    this.base(label, statusTxt, url, icon, key, iconWidth, onClick);
+    this.base(label, statusTxt, url, icon, key, iconWidth, onClick, target);
 }
 
 // CCObjectNode extends CCAbstractTreeNode

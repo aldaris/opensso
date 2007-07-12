@@ -3436,6 +3436,11 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
+    <name>useNodeTarget</name>
+    <required>false</required>
+    <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
       <name>openFunctionName</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
@@ -3481,6 +3486,11 @@
       <name>targetFrame</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>useNodeTarget</name>
+    <required>false</required>
+    <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
       <name>top</name>
@@ -3559,6 +3569,11 @@
     <attribute>
       <name>name</name>
       <!-- name attribute is not required for 1.0 compatibility -->
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>versionNumber</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>

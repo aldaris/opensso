@@ -23,6 +23,14 @@
 	? request.getParameter("productNameSrc") : "";
     String versionFile = (request.getParameter("versionFile") != null)
 	? request.getParameter("versionFile") : "";
+
+    String versionNumber = (request.getParameter("versionNumber") != null)
+	? request.getParameter("versionNumber") : "";
+    if (versionNumber == null || versionNumber.length() == 0) {
+        versionNumber = CCSystem.getVersionTxt(versionFile,
+            request.getContextPath());
+    }
+
     String productNameHeight =
 	(request.getParameter("productNameHeight") != null)
         ? request.getParameter("productNameHeight") : "";
@@ -33,7 +41,9 @@
     // Create button frame URL.
     NonSyncStringBuffer buttonBuffer =
         new NonSyncStringBuffer(request.getContextPath())
-        .append("/ccversion/ButtonFrame");
+        .append("/ccversion/ButtonFrame?")
+	.append("versionNumber=")
+        .append(URLEncoder.encode(versionNumber, CCI18N.UTF8_ENCODING));
 
     // Create masthead frame URL.
     NonSyncStringBuffer buffer =
@@ -41,8 +51,8 @@
         .append("/ccversion/Masthead.jsp?");
 
     buffer.append("productNameSrc=")
-	.append(URLEncoder.encode(productNameSrc, CCI18N.UTF8_ENCODING))
-	.append("&amp;versionFile=")
+        .append(URLEncoder.encode(productNameSrc, CCI18N.UTF8_ENCODING))
+        .append("&amp;versionFile=")
 	.append(URLEncoder.encode(versionFile, CCI18N.UTF8_ENCODING))
 	.append("&amp;productNameHeight=")
         .append(URLEncoder.encode(productNameHeight, CCI18N.UTF8_ENCODING))
@@ -65,7 +75,7 @@
 
 <frameset rows="110,*,60" frameborder="no" border="0" framespacing="0">
   <frame src="<%=buffer.toString() %>" name="topFrame" scrolling="no" noresize="noresize" id="topFrame" title="Masthead Frame">
-  <frame src="<%=versionFile%>" name="mainFrame" id="mainFrame" title="Content Frame">
+  <frame src="<%=versionFile%>?versionNumber=<%=versionNumber%>" name="mainFrame" id="mainFrame" title="Content Frame">
   <frame src="<%=buttonBuffer.toString() %>" name="buttonFrame" scrolling="no" noresize="noresize" id="bottomFrame" title="Button Frame">
   <noframes>
     <body>
