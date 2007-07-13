@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.12 2007-06-25 22:59:03 rmisra Exp $
+ * $Id: TestCommon.java,v 1.13 2007-07-13 21:16:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,9 +187,9 @@ public class TestCommon implements TestConstants {
      */
     protected SSOToken getToken(String name, String password, String basedn)
     throws Exception {
-        log(logLevel, "getToken", name);
-        log(logLevel, "getToken", password);
-        log(logLevel, "getToken", basedn);
+        log(Level.FINEST, "getToken", name);
+        log(Level.FINEST, "getToken", password);
+        log(Level.FINEST, "getToken", basedn);
         AuthContext authcontext = new AuthContext(basedn);
         authcontext.login();
         javax.security.auth.callback.Callback acallback[] =
@@ -209,9 +209,9 @@ public class TestCommon implements TestConstants {
         authcontext.submitRequirements(acallback);
         if (authcontext.getStatus() ==
                 com.sun.identity.authentication.AuthContext.Status.SUCCESS)
-            log(logLevel, "getToken", "Successful authentication ....... ");
+            log(Level.FINEST, "getToken", "Successful authentication ....... ");
         SSOToken ssotoken = authcontext.getSSOToken();
-        log(logLevel, "getToken",
+        log(Level.FINEST, "getToken",
                 (new StringBuilder()).append("TOKENCREATED>>> ").
                 append(ssotoken).toString());
         return ssotoken;
@@ -222,13 +222,13 @@ public class TestCommon implements TestConstants {
      */
     protected boolean validateToken(SSOToken ssotoken)
     throws Exception {
-        log(logLevel, "validateToken", "Inside validate token");
+        log(Level.INFO, "validateToken", "Inside validate token");
         SSOTokenManager stMgr = SSOTokenManager.getInstance();
         boolean bVal = stMgr.isValidToken(ssotoken);
         if (bVal)
-            log(logLevel, "validateToken", "Token is Valid");
+            log(Level.INFO, "validateToken", "Token is Valid");
         else
-            log(logLevel, "validateToken", "Token is Invalid");
+            log(Level.INFO, "validateToken", "Token is Invalid");
         return bVal;
     }
     
@@ -237,7 +237,7 @@ public class TestCommon implements TestConstants {
      */
     protected void destroyToken(SSOToken ssotoken)
     throws Exception {
-        log(logLevel, "destroyToken", "Inside destroy token");
+        log(Level.INFO, "destroyToken", "Inside destroy token");
         if (validateToken(ssotoken)) {
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             stMgr.destroyToken(ssotoken);
@@ -250,9 +250,9 @@ public class TestCommon implements TestConstants {
      */
     protected String getBaseDir()
     throws Exception {
-        log(logLevel, "getBaseDir", "Inside getBaseDir");
+        log(Level.INFO, "getBaseDir", "Inside getBaseDir");
         String strCD =  System.getProperty("user.dir");
-        log(logLevel, "getBaseDir", "Current Directory:" + strCD);
+        log(Level.FINEST, "getBaseDir", "Current Directory:" + strCD);
         return (strCD);
     }
     
@@ -271,7 +271,7 @@ public class TestCommon implements TestConstants {
                 if ((line.indexOf("=")) != -1)
                     list.add(line);
             }
-            log(logLevel, "getListFromFile", "List :" + list);
+            log(Level.FINEST, "getListFromFile", "List :" + list);
             if (input != null)
                 input.close();
         }
@@ -285,16 +285,16 @@ public class TestCommon implements TestConstants {
             WebClient webclient,
             String amUrl,
             String amadmUser,
-            String amadmPassword
-            ) throws Exception {
+            String amadmPassword)
+    throws Exception {
         entering("consoleLogin", null);
-        log(logLevel, "consoleLogin", "JavaScript Enabled:" +
+        log(Level.FINEST, "consoleLogin", "JavaScript Enabled:" +
                 webclient.isJavaScriptEnabled());
-        log(logLevel, "consoleLogin", "Redirect Enabled:" +
+        log(Level.FINEST, "consoleLogin", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(logLevel, "consoleLogin", page.getTitleText());
+        log(Level.FINEST, "consoleLogin", page.getTitleText());
         HtmlForm form = page.getFormByName("Login");
         HtmlHiddenInput txt1 =
                 (HtmlHiddenInput)form.getInputByName("IDToken1");
@@ -325,6 +325,8 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_CONFIG_DIR));
         map.put(TestConstants.KEY_ATT_CONFIG_DATASTORE, cfg.getString(
                 TestConstants.KEY_ATT_CONFIG_DATASTORE));
+        map.put(TestConstants.KEY_ATT_AM_ENC_KEY,
+                cfg.getString(TestConstants.KEY_ATT_AM_ENC_KEY));
         map.put(TestConstants.KEY_ATT_DIRECTORY_SERVER, cfg.getString(
                 TestConstants.KEY_ATT_DIRECTORY_SERVER));
         map.put(TestConstants.KEY_ATT_DIRECTORY_PORT, cfg.getString(
@@ -369,23 +371,23 @@ public class TestCommon implements TestConstants {
     throws Exception {
         entering("configureProduct", null);
         
-        log(logLevel, "configureProduct", "Configuration Map:" + map);
+        log(Level.FINEST, "configureProduct", "Configuration Map:" + map);
         
         WebClient webclient = new WebClient();
         String strURL = (String)map.get("serverurl") +
                 (String)map.get("serveruri") + "/UI/Login";
-        log(logLevel, "configureProduct", "strURL:" + strURL);
+        log(Level.FINEST, "configureProduct", "strURL:" + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
         try {
             page = (HtmlPage)webclient.getPage(url);
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
-            log(logLevel, "configureProduct", strURL + " cannot be reached.");
+            log(Level.INFO, "configureProduct", strURL + " cannot be reached.");
             return false;
         }
         
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
-            log(logLevel, "configureProduct", "Product Configuration was not" +
+            log(Level.INFO, "configureProduct", "Product Configuration was not" +
                     " successfull." + strURL + "was not found." +
                     " Please check if war is deployed properly.");
             exiting("configureProduct");
@@ -393,7 +395,7 @@ public class TestCommon implements TestConstants {
         }
         
         if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
-            log(logLevel, "configureProduct", "Inside configurator.");
+            log(Level.INFO, "configureProduct", "Inside configurator.");
             HtmlForm form = (HtmlForm)page.getForms().get(0);
             
             HtmlTextInput txtServer =
@@ -419,25 +421,31 @@ public class TestCommon implements TestConstants {
             txtConfigDir.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DIR));
 
+            HtmlTextInput txtEncryptionKey =
+                    (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
+            String strEncryptKey = (String)map.get(TestConstants.KEY_ATT_AM_ENC_KEY);
+            if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
+                txtConfigDir.setValueAttribute(strEncryptKey);
+
             String strConfigStore = (String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE);
-            log(logLevel, "configureProduct", "Config store is:" + strConfigStore);
+            log(Level.INFO, "configureProduct", "Config store is:" + strConfigStore);
 
             HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
             if (strConfigStore.equals("flatfile")) {
-                log(logLevel, "configureProduct",
+                log(Level.INFO, "configureProduct",
                         "Doing File System configuration.");
                 rbDataStore.setDefaultValue("flatfile");
             } else {
-                log(logLevel, "configureProduct",
+                log(Level.INFO, "configureProduct",
                         "Doing directory configuration.");
                 if (strConfigStore.equals("dirServer")) {
-                    log(logLevel, "configureProduct",
+                    log(Level.INFO, "configureProduct",
                         "Doing Directory Server configuration.");
                     rbDataStore.setDefaultValue("dirServer");
                 }
                 if (strConfigStore.equals("activeDir")) {
-                    log(logLevel, "configureProduct",
+                    log(Level.INFO, "configureProduct",
                         "Doing Active Directory configuration.");
                     rbDataStore.setDefaultValue("activeDir");
                 }
@@ -495,12 +503,12 @@ public class TestCommon implements TestConstants {
             }
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(logLevel, "configureProduct", "strURL:" + strURL);
+            log(Level.INFO, "configureProduct", "strURL:" + strURL);
             url = new URL(strURL);
             page = (HtmlPage)webclient.getPage(url);
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(logLevel, "configureProduct", "Product Configuration was" +
+                log(Level.INFO, "configureProduct", "Product Configuration was" +
                         " not successfull. Configuration failed.");
                 strURL = (String)map.get("serverurl") +
                         (String)map.get("serveruri") + "/UI/Logout";
@@ -508,7 +516,7 @@ public class TestCommon implements TestConstants {
                 exiting("configureProduct");
                 return false;
             } else {
-                log(logLevel, "configureProduct", "Product Configuration was" +
+                log(Level.INFO, "configureProduct", "Product Configuration was" +
                         " successfull. New bits were successfully configured.");
                 exiting("configureProduct");
                 return true;
@@ -516,11 +524,11 @@ public class TestCommon implements TestConstants {
         } else {
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(logLevel, "configureProduct", "url:" + strURL);
+            log(Level.INFO, "configureProduct", "url:" + strURL);
             url = new URL(strURL);
             page = (HtmlPage)webclient.getPage(url);
             if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
-                log(logLevel, "configureProduct", "Product was already" +
+                log(Level.INFO, "configureProduct", "Product was already" +
                         " configured. Super admin login failed.");
                 strURL = (String)map.get("serverurl") +
                         (String)map.get("serveruri") + "/UI/Logout";
@@ -528,7 +536,7 @@ public class TestCommon implements TestConstants {
                 exiting("configureProduct");
                 return false;
             } else {
-                log(logLevel, "configureProduct", "Product was already" +
+                log(Level.INFO, "configureProduct", "Product was already" +
                         " configured. Super admin login successfull.");
                 exiting("configureProduct");
                 return true;
@@ -541,16 +549,16 @@ public class TestCommon implements TestConstants {
      */
     protected void consoleLogout(
             WebClient webclient,
-            String amUrl
-            ) throws Exception {
+            String amUrl)
+    throws Exception {
         entering("consoleLogout", null);
-        log(logLevel, "consoleLogout", "JavaScript Enabled:" +
+        log(Level.FINEST, "consoleLogout", "JavaScript Enabled:" +
                 webclient.isJavaScriptEnabled());
-        log(logLevel, "consoleLogout", "Redirect Enabled:" +
+        log(Level.FINEST, "consoleLogout", "Redirect Enabled:" +
                 webclient.isRedirectEnabled());
         URL url = new URL(amUrl);
         HtmlPage page = (HtmlPage)webclient.getPage(amUrl);
-        log(logLevel, "consoleLogout", page.getTitleText());
+        log(Level.FINEST, "consoleLogout", page.getTitleText());
         exiting("consoleLogout");
     }
     
@@ -559,17 +567,17 @@ public class TestCommon implements TestConstants {
      */
     protected int getHtmlPageStringIndex(
             HtmlPage page,
-            String searchStr
-            ) throws Exception {
+            String searchStr)
+    throws Exception {
         entering("getHtmlPageStringIndex", null);
         String strPage = page.asXml();
-        log(logLevel, "getHtmlPageStringIndex", "Search string:" + searchStr);
+        log(Level.FINEST, "getHtmlPageStringIndex", "Search string:" + searchStr);
         int iIdx = strPage.indexOf(searchStr);
         if (iIdx != -1)
-            log(logLevel, "getHtmlPageStringIndex",
+            log(Level.FINEST, "getHtmlPageStringIndex",
                     "Search string found on page:" + iIdx);
         else
-            log(logLevel, "getHtmlPageStringIndex",
+            log(Level.FINEST, "getHtmlPageStringIndex",
                     "Search string not found on page:" + iIdx);
         exiting("getHtmlPageStringIndex");
         return iIdx;
@@ -581,15 +589,15 @@ public class TestCommon implements TestConstants {
      */
     protected void createFileFromMap(Map properties, String fileName)
     throws Exception {
-        log(logLevel, "createFileFromMap", "Map:" + properties);
-        log(logLevel, "createFileFromMap", "fileName:" + fileName);
+        log(Level.FINEST, "createFileFromMap", "Map:" + properties);
+        log(Level.FINEST, "createFileFromMap", "fileName:" + fileName);
         StringBuffer buff = new StringBuffer();
         for (Iterator i = properties.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry entry = (Map.Entry)i.next();
             String valueString = entry.getValue().toString();
             buff.append(entry.getKey())
             .append("=")
-            .append(valueString.substring(1, valueString.length() - 1))
+            .append(valueString)
             .append("\n");
         }
         
@@ -630,7 +638,6 @@ public class TestCommon implements TestConstants {
     protected Map getMapFromResourceBundle(String rbName)
     throws Exception {
         Map map = getMapFromResourceBundle(rbName, null);
-        
         return (map);
     }
     
@@ -712,9 +719,9 @@ public class TestCommon implements TestConstants {
     /*
      * Gets the baseDirectory to create the XML files
      */
-    protected String getTestBase(){
+    protected String getTestBase()
+    throws Exception {
         String testbaseDir = null;
-        try {
         ResourceBundle rbamconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
         testbaseDir = getBaseDir() + fileseparator
@@ -722,19 +729,16 @@ public class TestCommon implements TestConstants {
         + fileseparator + "built"
         + fileseparator + "classes"
         + fileseparator ;
-        } catch (Exception e){
-            log(logLevel.SEVERE, "getTestBase", 
-                    e.getMessage(), null);
-            e.printStackTrace();
-        }
-        return testbaseDir;   
+
+        return (testbaseDir);   
     }
 
     /**
      * Takes a token separated string and returns each individual
      * token as part of a list.
      */
-    public List getAttributeList(String strList, String token) {
+    public List getAttributeList(String strList, String token) 
+    throws Exception {
         StringTokenizer stk = new StringTokenizer(strList, token);
         List<String> attList = new ArrayList<String>();
         while (stk.hasMoreTokens()) {

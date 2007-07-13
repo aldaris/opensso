@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.6 2007-06-25 23:11:17 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.7 2007-07-13 21:16:30 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,6 +106,11 @@ public interface TestConstants {
      * Property key for <code>config_dir</code>.
      */
     String KEY_ATT_CONFIG_DIR = "config_dir";
+
+    /**
+     * Property key for <code>encryption_key</code>.
+     */
+    String KEY_ATT_AM_ENC_KEY = "encryption_key";
 
     /**
      * Property key for <code>datastore</code>.
