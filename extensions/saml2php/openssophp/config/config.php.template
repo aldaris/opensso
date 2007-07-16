@@ -36,6 +36,38 @@ $LIGHTBULB_CONFIG = array (
  		'host'				=> 'localhost',
  		'database'			=> 'openssodemo'
  	),
+ 	
+	/* Configuration for the authmemcookie session handler. */
+	'authmemcookie'       => array (
+		/* The list of memcache servers. This is a string of
+		 * host:port-pairs, separated by ','. The port number is
+		 * optional if the server runs on the default port (11211).
+		 * Example: 'localhost,remote_a:22122,remote_b'
+		 */
+
+		'memcache_servers'    => '127.0.0.1:11211',
+
+		/* The name of the cookie. Should match the
+		 * Auth_memCookie_CookieName configuration parameter for
+		 * Auth MemCookie. The default value for
+		 * Auth_memCookie_CookieName is 'AuthMemCookie'.
+ 		 */
+		
+		'cookie_name'         => 'AuthMemCookie',
+
+		/* The path the cookie is valid under.
+		 * This path must include both the OpenSSO PHP installation, and
+		 * the pages protected by Auth MemCookie.
+		 */
+		
+		'cookie_path'         => '/',
+
+		/* The domain the cookie is valid for. Use an empty string for
+		 * the default value.
+		 */
+		
+		'cookie_domain'       => '',
+	),
 
 	'defaultLandingPage'	=> 'https://feide.erlang.no/example-andreas/test.php'
 );
