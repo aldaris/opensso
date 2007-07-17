@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_sec-idff-testng.xml,v 1.5 2007-06-25 23:08:52 mrudulahg Exp $
+ $Id: ff_sec-idff-testng.xml,v 1.6 2007-07-17 23:41:13 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test> 
     <test name="IDFFTestSSOWithPostProfile">
@@ -64,7 +66,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestSLOWithSOAPProfile">
@@ -78,7 +82,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestTerminationWithSOAPProfile">
@@ -92,7 +98,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestRegistrationWithSOAPProfile">
@@ -106,7 +114,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestSSOWithPostSLOWithSOAPProfile">
@@ -120,7 +130,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestSSOWithPostSLOTermWithSOAPProfile">
@@ -134,7 +146,9 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
     </test>
     <test name="IDFFTestWithNonDefaultProfiles">
@@ -148,7 +162,10 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.idff.ConfigureIDFFProtocols"/>
             <class name="com.sun.identity.qatest.idff.IDFFSmokeTest"/>
+            <class name="com.sun.identity.qatest.idff.IDFFAutoFederationTests"/>
         </classes>
-    </test> </suite>
+    </test> 
+</suite>
 

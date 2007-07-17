@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.4 2007-06-25 23:11:17 mrudulahg Exp $
+ * $Id: IDFFCommon.java,v 1.5 2007-07-17 23:41:58 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,8 @@ public class IDFFCommon extends TestCommon {
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
      */
-    public static void getxmlSPIDFFFederate(String xmlFileName, Map m)
+    public static void getxmlSPIDFFFederate(String xmlFileName, Map m, boolean 
+            idpLogin)
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -74,7 +75,12 @@ public class IDFFCommon extends TestCommon {
         String spUserpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String idpUser = (String)m.get(TestConstants.KEY_IDP_USER);
         String idpUserpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
-        String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        String strResult;
+        if (idpLogin) {
+            strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
+        } else {
+            strResult = (String)m.get(TestConstants.KEY_SSO_RESULT);
+        }
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
@@ -82,14 +88,18 @@ public class IDFFCommon extends TestCommon {
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
-        out.write("<form name=\"form1\" buttonName=\"button\" />");
-        out.write(System.getProperty("line.separator"));
-        out.write("<form name=\"Login\" buttonName=\"\" >");
-        out.write(System.getProperty("line.separator"));
-        out.write("<input name=\"IDToken1\" value=\"" + idpUser + "\" />");
-        out.write(System.getProperty("line.separator"));
-        out.write("<input name=\"IDToken2\" value=\""
-                + idpUserpw + "\" />");
+        if (idpLogin) {
+            out.write("<form name=\"form1\" buttonName=\"button\" />");
+            out.write(System.getProperty("line.separator"));
+            out.write("<form name=\"Login\" buttonName=\"\" >");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken1\" value=\"" + idpUser + "\" />");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken2\" value=\""
+                    + idpUserpw + "\" />");
+        } else {
+            out.write("<form>");
+        }
         out.write(System.getProperty("line.separator"));
         out.write("<result text=\"" + strResult + "\" />");
         out.write(System.getProperty("line.separator"));
@@ -472,4 +482,252 @@ public class IDFFCommon extends TestCommon {
         }
         return spmetadata;
     } 
+    
+    /*
+     * This method loads the SP metadata on sp & idp 
+     * @param metadata is the standard metadata of SP
+     * @param metadataext is the extended metadata of SP
+     * @param FederationManager object initiated with SP details. 
+     * @param FederationManager object initiated with IDP details. 
+     * @param MAP containing all the SP & IDP details
+     * @param WebClient object after admin login is successful.
+     * @param boolean extMetadataOnly is set to true if only ext metadata is 
+     * supplied
+     */
+    public boolean loadSPMetadata(String metadata, String metadataext, 
+            FederationManager fmSP, FederationManager fmIDP, Map configMap, 
+            WebClient webClient, boolean extMetadataOnly) 
+    throws Exception {
+        boolean status = true;
+        try {
+            if (extMetadataOnly) {
+                if ((metadataext.equals(null)) || (metadataext.equals(""))) {
+                    log(Level.SEVERE, "loadSPMetadata", "Ext metadata " +
+                            "cannot be empty");
+                    status = false;
+                }
+            } else if ((metadata.equals(null)) || (metadataext.equals(null)) || 
+                    (metadata.equals("")) || (metadataext.equals(""))) {
+                log(Level.SEVERE, "loadSPMetadata", "metadata cannot be empty");
+                log(Level.FINEST, "loadSPMetadata", "metadata is : " + 
+                        metadata);
+                log(Level.FINEST, "loadSPMetadata", "ext metadata is : " + 
+                        metadataext);
+                status = false;
+            }
+
+            HtmlPage spDeleteEntityPage;
+            if (extMetadataOnly) {
+                spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), true, 
+                        "idff");
+            } else {
+                spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), false, 
+                        "idff");
+            }
+            if (spDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("deleted for entity, " +
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(Level.FINE, "loadSPMetadata", "Deleted SP entity on SP " +
+                        "side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete SP " +
+                        "entity on SP side" + spDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                status = false;
+            }  
+            
+            HtmlPage idpDeleteEntityPage;
+            if (extMetadataOnly) {
+                idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                        true, "idff");
+            } else {
+                idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                        false, "idff");
+            }
+            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("deleted for entity, " +
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
+                log(Level.FINE, "loadSPMetadata", "Deleted SP entity on " +
+                        "IDP side");
+            } else {
+                log(Level.SEVERE, "loadSPMetadata", "Couldnt delete SP entity " +
+                        "on IDP side" + spDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                status = false;
+            }  
+
+            Thread.sleep(9000);
+            HtmlPage importSPMeta = fmSP.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                    metadata, metadataext, null, "idff");
+            if (!importSPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
+                        "metadata on SP side" + importSPMeta.
+                        getWebResponse().getContentAsString());
+                status = false;
+            } else {
+                 log(Level.FINE, "loadSPMetadata", "Successfully imported " +
+                         "modified SP entity on SP side");
+            }
+
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"true\"", "hosted=\"false\"");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"1\"", "hosted=\"0\"");
+            metadataext = metadataext.replaceAll(
+                    (String)configMap.get(TestConstants.KEY_SP_COT),
+                    (String)configMap.get(TestConstants.KEY_IDP_COT));
+            importSPMeta = fmIDP.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                    metadata, metadataext, null, "idff");
+            if (!importSPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
+                        "metadata on IDP side" + importSPMeta.getWebResponse().
+                        getContentAsString());
+                status = false;
+            } else {
+                 log(Level.FINEST, "loadSPMetadata", "Successfully imported " +
+                         "modified SP entity on IDP side");
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "loadSPMetadata", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return status;
+    }
+
+    /*
+     * This method loads the IDP metadata on sp & idp 
+     * @param metadata is the standard metadata of IDP
+     * @param metadataext is the extended metadata of IDP
+     * @param FederationManager object initiated with SP details. 
+     * @param FederationManager object initiated with IDP details. 
+     * @param MAP containing all the SP & IDP details
+     * @param WebClient object after admin login is successful.
+     * @param boolean extMetadataOnly is set to true if only ext metadata is 
+     * supplied
+     */
+    public boolean loadIDPMetadata(String metadata, String metadataext, 
+            FederationManager fmSP, FederationManager fmIDP, Map configMap, 
+            WebClient webClient, boolean extMetadataOnly) 
+    throws Exception {
+        boolean status = true;
+        try {
+            if (extMetadataOnly) {
+                if ((metadataext.equals(null)) || (metadataext.equals(""))) {
+                    log(Level.SEVERE, "loadIDPMetadata", "Ext metadata " +
+                            "cannot be empty");
+                    status = false;
+                }
+            } else if ((metadata.equals(null)) || (metadataext.equals(null)) || 
+                    (metadata.equals("")) || (metadataext.equals(""))) {
+                log(Level.SEVERE, "loadIDPMetadata", "metadata cannot be empty");
+                log(Level.FINEST, "loadIDPMetadata", "metadata is : " + 
+                        metadata);
+                log(Level.FINEST, "loadIDPMetadata", "ext metadata is : " + 
+                        metadataext);
+                status = false;
+            }
+            //TODO: Add if condition for ext metadata deletion/addition
+            HtmlPage idpDeleteEntityPage;
+            if (extMetadataOnly) {
+            idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                    (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), true, 
+                    "idff");
+            } else {
+            idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
+                    (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false, 
+                    "idff");
+            }
+            if (idpDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("deleted for entity, " +
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                log(Level.FINE, "loadIDPMetadata", "Deleted IDP entity on " +
+                        "IDP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete IDP entity " +
+                        "on IDP side" + idpDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                status = false;
+            }  
+            
+            HtmlPage spDeleteEntityPage;
+            if (extMetadataOnly) {
+                 spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        true, "idff");
+            } else {
+                 spDeleteEntityPage = fmSP.deleteEntity(webClient, 
+                        (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        false, "idff");
+            }
+            if (spDeleteEntityPage.getWebResponse().getContentAsString().
+                    contains("deleted for entity, " +
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                log(Level.FINE, "loadIDPMetadata", "Deleted SP entity on " +
+                        "IDP side");
+            } else {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldnt delete SP entity " +
+                        "on IDP side" + spDeleteEntityPage.getWebResponse().
+                        getContentAsString());
+                status = false;
+            }  
+
+            Thread.sleep(9000);
+            HtmlPage importIDPMeta = fmIDP.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                    metadata, metadataext, null, "idff");
+            if (!importIDPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
+                        "metadata on IDP side" + importIDPMeta.
+                        getWebResponse().getContentAsString());
+                status = false;
+            } else {
+                 log(Level.FINE, "loadIDPMetadata", "Successfully imported " +
+                         "modified IDP entity on IDP side");
+            }
+
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"true\"", "hosted=\"false\"");
+            metadataext = metadataext.replaceAll(
+                    "hosted=\"1\"", "hosted=\"0\"");
+            metadataext = metadataext.replaceAll(
+                    (String)configMap.get(TestConstants.KEY_IDP_COT),
+                    (String)configMap.get(TestConstants.KEY_SP_COT));
+            importIDPMeta = fmSP.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                    metadata, metadataext, null, "idff");
+            if (!importIDPMeta.getWebResponse().getContentAsString().
+                    contains("Import file, web.")) {
+                log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
+                        "metadata on SP side" + importIDPMeta.getWebResponse().
+                        getContentAsString());
+                status = false;
+            } else {
+                 log(Level.FINE, "loadIDPMetadata", "Successfully imported " +
+                         "modified IDP entity on SP side");
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "loadIDPMetadata", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return status;
+    }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.3 2007-06-25 23:11:37 mrudulahg Exp $
+ * $Id: IDFFSmokeTest.java,v 1.4 2007-07-17 23:42:47 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,8 @@ public class IDFFSmokeTest extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", "ldapv3_sec"})
+    @BeforeClass(groups={"ff", "ds", "ldapv3", "ff_sec", "ds_sec", 
+    "ldapv3_sec"})
     public void setup(String strSSOProfile, String strSLOProfile, 
             String strTermProfile, String strRegProfile)
     throws Exception {
@@ -114,7 +115,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             configMap = getMapFromResourceBundle("idffTestConfigData");
             configMap.putAll(getMapFromResourceBundle("idffTestData"));
             configMap.putAll(getMapFromResourceBundle("IDFFSmokeTest"));
-            log(logLevel, "setup", "Map is " + configMap);
+            log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
@@ -149,7 +150,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             fmSP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), "User", list);
-            log(logLevel, "setup", "SP user created is " + list);
+            log(Level.FINE, "setup", "SP user created is " + list);
             
             // Create idp users
             list.clear();
@@ -161,79 +162,85 @@ public class IDFFSmokeTest extends IDFFCommon {
             fmIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list);
-            log(logLevel, "setup", "IDP user created is " + list);
+            log(Level.FINE, "setup", "IDP user created is " + list);
             
             //If any of the profile is diff than the default profile, 
             //then only delete & import the metadata. Else leave it as it is. 
             if (strSSOProfile.equals("post") || strSLOProfile.equals("soap") ||
-                    strTermProfile.equals("soap") || strRegProfile.equals("soap")) {
+                    strTermProfile.equals("soap") || 
+                    strRegProfile.equals("soap")) {
                 HtmlPage spmetaPage = fmSP.exportEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
                         (String)configMap.get(TestConstants.KEY_SP_REALM),
                         false, true, true, "idff");
                 spmetadataext = MultiProtocolCommon.getExtMetadataFromPage(
                         spmetaPage);            
-                spmetadata = MultiProtocolCommon.getMetadataFromPage(spmetaPage);            
+                spmetadata = MultiProtocolCommon.getMetadataFromPage
+                        (spmetaPage);            
 
-                //if profile is set to post, change the metadata & run the tests. 
-                log(logLevel, "setup", "SSO Profile is set to " + strSSOProfile);
-                log(logLevel, "setup", "SLO Profile is set to " + strSLOProfile);
-                log(logLevel, "setup", "Termination Profile is set to " + 
+                //if profile is set to post, change the metadata & run the tests
+                log(Level.FINE, "setup", "SSO Profile is set to " + 
+                        strSSOProfile);
+                log(Level.FINE, "setup", "SLO Profile is set to " + 
+                        strSLOProfile);
+                log(Level.FINE, "setup", "Termination Profile is set to " + 
                         strTermProfile);
-                log(logLevel, "setup", "Registration Profile is set to " + 
+                log(Level.FINE, "setup", "Registration Profile is set to " + 
                         strRegProfile);
                 String spmetadataextmod = spmetadataext;
                 String spmetadatamod = spmetadata;
                 if (strSSOProfile.equals("post")) {
-                    log(logLevel, "setup", "Change SSO Profile to post");
+                    log(Level.FINEST, "setup", "Change SSO Profile to post");
                     spmetadataextmod = setSPSSOProfile(spmetadataext, "post");
                 }
                 if (strSLOProfile.equals("soap")) {
-                    log(logLevel, "setup", "Change SLO Profile to soap");
+                    log(Level.FINEST, "setup", "Change SLO Profile to soap");
                     spmetadatamod = setSPSLOProfile(spmetadata, "soap");
                 } 
                 if (strTermProfile.equals("soap")) {
-                    log(logLevel, "setup", "Change Termination Profile to soap");
+                    log(Level.FINEST, "setup", "Change Termination Profile " +
+                            "to soap");
                     spmetadatamod = setSPTermProfile(spmetadatamod, "soap");
                 }
                 if (strRegProfile.equals("soap")) {
-                    log(logLevel, "setup", "Change Registration Profile to soap");
+                    log(Level.FINEST, "setup", "Change Registration Profile " +
+                            "to soap");
                     spmetadatamod = setSPRegProfile(spmetadatamod, "soap");
                 }
                 
-                log(logLevel, "setup", "Modified SP Metadata is: " + 
+                log(Level.FINEST, "setup", "Modified SP Metadata is: " + 
                         spmetadatamod);
-                log(logLevel, "setup", "Modified SP Extended Metadata is: " + 
-                        spmetadataextmod);
+                log(Level.FINEST, "setup", "Modified SP Extended Metadata " +
+                        "is: " + spmetadataextmod);
                 
                 //Remove & Import Entity with modified metadata. 
-                log(logLevel, "setup", "Since SP metadata have changed, " +
+                log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 
                 HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), false, 
-                        "idff");
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        false, "idff");
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "setup", "Deleted SP entity on SP side");
+                    log(Level.FINE, "setup", "Deleted SP entity on SP side");
                 } else {
-                    log(logLevel, "setup", "Couldnt delete SP entity on SP " +
-                            "side" + spDeleteEntityPage.getWebResponse().
+                    log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
+                            "SP side" + spDeleteEntityPage.getWebResponse().
                             getContentAsString());
                     assert false;
                 }  
                 HtmlPage idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_IDP_REALM), false, 
-                        "idff");
+                        (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                        false, "idff");
                 if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "setup", "Deleted SP entity on IDP side");
+                    log(Level.FINE, "setup", "Deleted SP entity on IDP side");
                 } else {
-                    log(logLevel, "setup", "Couldnt delete SP entity on IDP " +
-                            "side" + spDeleteEntityPage.getWebResponse().
+                    log(Level.FINE, "setup", "Couldnt delete SP entity on " +
+                            "IDP side" + spDeleteEntityPage.getWebResponse().
                             getContentAsString());
                     assert false;
                 }  
@@ -245,11 +252,11 @@ public class IDFFSmokeTest extends IDFFCommon {
                 if (!importSPMeta.getWebResponse().getContentAsString().
                         contains("Import file, web.")) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on SP side" + importSPMeta.getWebResponse().
-                            getContentAsString(), null);
+                            "metadata on SP side" + importSPMeta.
+                            getWebResponse().getContentAsString());
                 } else {
-                     log(logLevel, "setup", "Successfully imported modified " +
-                             "SP entity on SP side", null);
+                     log(Level.FINE, "setup", "Successfully imported " +
+                             "modified SP entity on SP side");
                 }
                 spmetadataextmod = spmetadataextmod.replaceAll(
                         "hosted=\"true\"", "hosted=\"false\"");
@@ -265,15 +272,15 @@ public class IDFFSmokeTest extends IDFFCommon {
                 if (!importSPMeta.getWebResponse().getContentAsString().
                         contains("Import file, web.")) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on IDP side" + importSPMeta.getWebResponse().
-                            getContentAsString(), null);
+                            "metadata on IDP side" + importSPMeta.
+                            getWebResponse().getContentAsString());
                 } else {
-                     log(logLevel, "setup", "Successfully imported modified " +
-                             "SP entity on IDP side", null);
+                     log(Level.FINE, "setup", "Successfully imported " +
+                             "modified SP entity on IDP side");
                 }
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage(), null);
+            log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -291,17 +298,17 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testSPInitFederation", null);
         try {
-            log(logLevel, "testSPInitFederation", 
+            log(Level.FINE, "testSPInitFederation", 
                     "Running: testSPInitFederation");
             getWebClient();
-            log(logLevel, "testSPInitFederation", "Login to SP with " + 
+            log(Level.FINE, "testSPInitFederation", "Login to SP with " + 
                     TestConstants.KEY_SP_USER);
             consoleLogin(webClient, spurl, 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitfederation.xml";
-            getxmlSPIDFFFederate(xmlfile, configMap);
-            log(logLevel, "testSPInitFederation", "Run " + xmlfile);
+            getxmlSPIDFFFederate(xmlfile, configMap, true);
+            log(Level.FINE, "testSPInitFederation", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -321,10 +328,10 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testSPInitSLO", null);
         try {
-            log(logLevel, "testSPInitSLO", "Running: testSPInitSLO");
+            log(Level.FINE, "testSPInitSLO", "Running: testSPInitSLO");
             xmlfile = baseDir + "testspinitslo.xml";
             getxmlSPIDFFLogout(xmlfile, configMap);
-            log(logLevel, "testSPInitSLO", "Run " + xmlfile);
+            log(Level.FINE, "testSPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -344,15 +351,15 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testSPInitSSO", null);
         try {
-            log(logLevel, "testSPInitSSO", "Running: testSPInitSSO");
-            log(logLevel, "testSPInitSSO", "Login to IDP with " + 
+            log(Level.FINE, "testSPInitSSO", "Running: testSPInitSSO");
+            log(Level.FINE, "testSPInitSSO", "Login to IDP with " + 
                     TestConstants.KEY_IDP_USER);
             consoleLogin(webClient, idpurl, 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testspinitsso.xml";
             getxmlSPIDFFSSO(xmlfile, configMap);
-            log(logLevel, "testSPInitSSO", "Run " + xmlfile);
+            log(Level.FINE, "testSPInitSSO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -372,10 +379,10 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testSPInitNameReg", null);
         try {
-            log(logLevel, "testSPInitNameReg", "Running: testSPInitNameReg");
+            log(Level.FINE, "testSPInitNameReg", "Running: testSPInitNameReg");
             xmlfile = baseDir + "testspinitnamereg.xml";
             getxmlSPIDFFNameReg(xmlfile, configMap);
-            log(logLevel, "testSPInitNameReg", "Run " + xmlfile);
+            log(Level.FINE, "testSPInitNameReg", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -395,11 +402,11 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testSPInitTerminate", null);
         try {
-            log(logLevel, "testSPInitTerminate", 
+            log(Level.FINE, "testSPInitTerminate", 
                     "Running: testSPInitTerminate");
             xmlfile = baseDir + "testspinitterminate.xml";
             getxmlSPIDFFTerminate(xmlfile, configMap);
-            log(logLevel, "testSPInitTerminate", "Run " + xmlfile);
+            log(Level.FINE, "testSPInitTerminate", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -419,19 +426,19 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testIDPInitSLO", null);
         try {
-            log(logLevel, "testIDPInitSLO", "Running: testIDPInitSLO");
+            log(Level.FINE, "testIDPInitSLO", "Running: testIDPInitSLO");
             xmlfile = baseDir + "testspinitfederation.xml";
             getWebClient();
             consoleLogin(webClient, spurl, 
                     configMap.get(TestConstants.KEY_SP_USER),
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
-            getxmlSPIDFFFederate(xmlfile, configMap);
-            log(logLevel, "testIDPInitSLO", "Run " + xmlfile);
+            getxmlSPIDFFFederate(xmlfile, configMap, true);
+            log(Level.FINE, "testIDPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
             xmlfile = baseDir + "testidpinitslo.xml";
             getxmlIDPIDFFLogout(xmlfile, configMap);
-            log(logLevel, "testIDPInitSLO", "Run " + xmlfile);
+            log(Level.FINE, "testIDPInitSLO", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -451,13 +458,14 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testIDPInitNameReg", null);
         try {
-            log(logLevel, "testIDPInitNameReg", "Running: testIDPInitNameReg");
+            log(Level.FINE, "testIDPInitNameReg", "Running: " +
+                    "testIDPInitNameReg");
             consoleLogin(webClient, idpurl, 
                     configMap.get(TestConstants.KEY_IDP_USER),
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             xmlfile = baseDir + "testidpinitnamereg.xml";
             getxmlIDPIDFFNameReg(xmlfile, configMap);
-            log(logLevel, "testIDPInitNameReg", "Run " + xmlfile);
+            log(Level.FINE, "testIDPInitNameReg", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -477,11 +485,11 @@ public class IDFFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("testIDPInitTerminate", null);
         try {
-            log(logLevel, "testIDPInitTerminate", "Running: " +
+            log(Level.FINE, "testIDPInitTerminate", "Running: " +
                     "testIDPInitTerminate");
             xmlfile = baseDir + "testspinitterminate.xml";
             getxmlIDPIDFFTerminate(xmlfile, configMap);
-            log(logLevel, "testIDPInitTerminate", "Run " + xmlfile);
+            log(Level.FINE, "testIDPInitTerminate", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
         } catch (Exception e) {
@@ -507,7 +515,7 @@ public class IDFFSmokeTest extends IDFFCommon {
         Reporter.log("Cleanup parameters: " + params);
         ArrayList idList;
         try {
-            log(logLevel, "cleanup", "Entering Cleanup");
+            log(Level.FINE, "cleanup", "Entering Cleanup");
             getWebClient();
             consoleLogin(webClient, spurl,
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
@@ -515,7 +523,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             fmSP = new FederationManager(spurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
-            log(logLevel, "cleanup", "sp users to delete :" +
+            log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
             fmSP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_SP_REALM), idList,
@@ -528,7 +536,7 @@ public class IDFFSmokeTest extends IDFFCommon {
             fmIDP = new FederationManager(idpurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
-            log(logLevel, "cleanup", "idp users to delete :" +
+            log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
             fmIDP.deleteIdentities(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), idList,
@@ -537,35 +545,36 @@ public class IDFFSmokeTest extends IDFFCommon {
             //If any of the profile is diff than the default profile, 
             //then only delete & import the metadata. Else leave it as it is. 
             if (strSSOProfile.equals("post") || strSLOProfile.equals("soap") ||
-                    strTermProfile.equals("soap") || strRegProfile.equals("soap")) {
+                    strTermProfile.equals("soap") || 
+                    strRegProfile.equals("soap")) {
                 //Remove & Import Entity with modified metadata. 
-                log(logLevel, "setup", "Since SP metadata have changed, " +
+                log(Level.FINE, "setup", "Since SP metadata have changed, " +
                         "delete SP entity & Import it again. "); 
                 HtmlPage spDeleteEntityPage = fmSP.deleteEntity(webClient, 
-                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), false, 
-                        "idff");
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        false, "idff");
                 if (spDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "setup", "Deleted SP entity on SP side");
+                    log(Level.FINE, "setup", "Deleted SP entity on SP side");
                 } else {
-                    log(logLevel, "setup", "Couldnt delete SP entity on SP " +
-                            "side" + spDeleteEntityPage.getWebResponse().
+                    log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
+                            "SP side" + spDeleteEntityPage.getWebResponse().
                             getContentAsString());
                     assert false;
                 }  
                 HtmlPage idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
-                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
+                        (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
                         (String)configMap.get(TestConstants.KEY_IDP_REALM), 
                         false, "idff");
                 if (idpDeleteEntityPage.getWebResponse().getContentAsString().
                         contains("deleted for entity, " +
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
-                    log(logLevel, "setup", "Deleted SP entity on IDP side");
+                    log(Level.FINE, "setup", "Deleted SP entity on IDP side");
                 } else {
-                    log(logLevel, "setup", "Couldnt delete SP entity on IDP " +
-                            "side" + spDeleteEntityPage.getWebResponse().
+                    log(Level.SEVERE, "setup", "Couldnt delete SP entity on " +
+                            "IDP side" + spDeleteEntityPage.getWebResponse().
                             getContentAsString());
                     assert false;
                 }  
@@ -579,9 +588,10 @@ public class IDFFSmokeTest extends IDFFCommon {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
                             "metadata on SP side" + importSPMeta.
                             getWebResponse().getContentAsString());
+                    assert false;
                 } else {
-                     log(logLevel, "setup", "Successfully imported modified " +
-                             "SP entity on SP side");
+                     log(Level.FINE, "setup", "Successfully imported " +
+                             "modified SP entity on SP side");
                 }
                 
                 spmetadataext = spmetadataext.replaceAll(
@@ -597,11 +607,12 @@ public class IDFFSmokeTest extends IDFFCommon {
                 if (!importSPMeta.getWebResponse().getContentAsString().
                         contains("Import file, web.")) {
                     log(Level.SEVERE, "setup", "Couldn't import SP " +
-                            "metadata on IDP side" + importSPMeta.getWebResponse().
-                            getContentAsString());
+                            "metadata on IDP side" + importSPMeta.
+                            getWebResponse().getContentAsString());
+                    assert false;
                 } else {
-                     log(logLevel, "setup", "Successfully imported modified " +
-                             "SP entity on IDP side");
+                     log(Level.FINE, "setup", "Successfully imported " +
+                             "modified SP entity on IDP side");
                 }
             }
         } catch (Exception e) {
