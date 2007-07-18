@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2007-04-24 06:07:31 veiming Exp $
+   $Id: build.xml,v 1.15 2007-07-18 22:41:25 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -180,6 +180,28 @@
             <src path="${products.basedir}/shared/source"/>
             <include name="com/sun/identity/tools/diffs/*.java"/>
         </javac>
+    </target>
+
+    <target name="logdoc">
+        <delete dir="${prd.classes.dir}" />
+        <delete dir="${prd.log.html.dir}" />
+        <mkdir dir="${prd.classes.dir}" />
+        <mkdir dir="${prd.log.html.dir}" />
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${prd.classes.dir}" source="1.5" target="1.5"
+            debug="on" debuglevel="lines,vars,source">
+            <src path="${amserver.src.dir}"/>
+            <include name="com/sun/identity/tools/logdoc/*.java"/>
+        </javac>
+        <java classname="com.sun.identity/tools/logdoc/LogMessagesFormatter"
+            fork="true">
+            <classpath>
+                 <pathelement path="${prd.classes.dir}" />
+            </classpath>
+            <jvmarg value="-Dopensso.log.html.dir=${prd.log.html.dir}" />
+            <arg value="${amserver.base.dir}/xml/log" />
+            <arg value="${fedlibrary.base.dir}/xml/log" />
+        </java>
     </target>
 
     <target name="cvsdiff" depends="build-diff">

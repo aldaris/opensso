@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.48 2007-05-04 19:12:27 veiming Exp $
+   $Id: build.xml,v 1.49 2007-07-18 22:41:26 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -75,6 +75,7 @@
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
+            <exclude name="**/com/sun/identity/tools/logdoc/*.java"/>
             <exclude name="**/com/sun/identity/cli/tools/*.java"/>
             <exclude name="**/com/sun/identity/cli/annotation/*.java"/>
             <exclude name="**/com/sun/identity/cli/definition/*.java"/>
