@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.20 2007-07-10 22:43:20 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.21 2007-07-18 22:40:01 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,19 +125,25 @@ public class AMSetupServlet extends HttpServlet {
             try {
                 if (servletCtx != null) {
                     String configLocation = getConfigDirectory();
-                    String overridingAMC =  configLocation + "/" +
-                        SetupConstants.AMCONFIG_PROPERTIES; 
-                    FileInputStream fin = new FileInputStream(overridingAMC);
-                    if (fin != null) {
-                        Properties oprops = new Properties();
-                        oprops.load(fin);
-                        SystemProperties.initializeProperties(oprops);
-                        reInitConfigProperties(configLocation, false);
-                        isConfiguredFlag = true;
+
+                    if (configLocation != null) {
+                        String overridingAMC =  configLocation + "/" +
+                            SetupConstants.AMCONFIG_PROPERTIES; 
+                        FileInputStream fin = new FileInputStream(
+                            overridingAMC);
+                        if (fin != null) {
+                            Properties oprops = new Properties();
+                            oprops.load(fin);
+                            SystemProperties.initializeProperties(oprops);
+                            reInitConfigProperties(configLocation, false);
+                            isConfiguredFlag = true;
+                        } else {
+                            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                                "AMSetupServlet.checkConfigProperties: " +
+                                "Unable to open : " + overridingAMC);
+                        }
                     } else {
-                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                            "AMSetupServlet.checkConfigProperties: " +
-                            "Unable to open : " + overridingAMC);
+                        isConfiguredFlag = false;
                     }
                 } else {
                     Debug.getInstance(SetupConstants.DEBUG_NAME).error(
