@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.10 2007-05-14 17:34:03 veiming Exp $
+   $Id: configurator.jsp,v 1.11 2007-07-18 22:40:41 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -496,18 +496,6 @@ onblur="javascript: if (this.disabled==0) this.className='Btn1'" onfocus="javasc
 <td valign="top">
 <div class="ConTblCl2Div"><input type="password" value="" name="DS_DIRMGRPASSWD" id="psLbl3" size="35" class="TxtFld"></div>
 </div>
-</tr>
-
-<!-- Confirm Directory Server Admin Password Text Box -->
-<tr>
-<td valign="top">
-<div class="ConEmbTblCl1Div">
-<div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.confirmadminpasswd"/></span></div>
-</div>
-</td>
-<td valign="top">
-<div class="ConTblCl2Div"><input type="password" value="" name="DS_CONFIRM_PWD" id="psLbl3" size="35" class="TxtFld"></div>
-</td>
 </tr>
 
 <tr><td colspan=2>&nbsp;</td></tr>

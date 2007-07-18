@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.11 2007-07-10 22:43:20 veiming Exp $
+ * $Id: SetupConstants.java,v 1.12 2007-07-18 22:40:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -273,12 +273,6 @@ public interface SetupConstants {
      * Configuration Variable for directory server port.
      */
     String CONFIG_VAR_DIRECTORY_SERVER_PORT = "DIRECTORY_PORT";
-
-    /**
-     * Configuration Variable for confirm directory server 
-     * administrator password.
-     */
-    String CONFIG_VAR_CONFIRM_DS_MGR_PWD = "DS_CONFIRM_PWD";
 
     /**
      * Configuration Variable for administrator password.

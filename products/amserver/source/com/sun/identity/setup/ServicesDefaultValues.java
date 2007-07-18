@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.12 2007-06-07 21:11:24 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.13 2007-07-18 22:40:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -358,16 +358,8 @@ public class ServicesDefaultValues {
         ) {
             adminPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
-            confirmAdminPwd = ((String)map.get(
-                SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD)).trim();
             if (adminPwd != null) {
-                if (!adminPwd.equals(confirmAdminPwd)) {
-                    throw new 
-                        ConfiguratorException("configurator.nopasswdmatch",
-                        null, locale);
-                }
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
-                map.remove(SetupConstants.CONFIG_VAR_CONFIRM_DS_MGR_PWD);
             }
         }
         String encryptAdminPwd = Crypt.encrypt(adminPwd);
