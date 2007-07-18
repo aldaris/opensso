@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.4 2007-07-11 18:14:42 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.5 2007-07-18 21:37:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -372,6 +372,8 @@ public class ConfigureSAMLv2 extends TestCommon {
                     confMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_SP_DATASTORE));
+            spMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
+                    confMap.get(TestConstants.KEY_SP_ENC_KEY));
             spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
             spMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
@@ -413,6 +415,8 @@ public class ConfigureSAMLv2 extends TestCommon {
                     confMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_IDP_DATASTORE));
+            idpMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
+                confMap.get(TestConstants.KEY_IDP_ENC_KEY));
             idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));
             idpMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,

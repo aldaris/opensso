@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.7 2007-07-13 21:16:30 rmisra Exp $
+ * $Id: TestConstants.java,v 1.8 2007-07-18 21:37:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -252,6 +252,11 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>sp_config_dir</code>
      */
     String KEY_SP_CONFIG_DIR = "sp_config_dir";      
+
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_encryption_key</code>
+     */
+    String KEY_SP_ENC_KEY = "sp_encryption_key";
     
     /** 
      * SAMLv2, IDFF Property key for <code>sp_datastore</code>
@@ -363,6 +368,11 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>idp_cot</code>
      */
     String KEY_IDP_COT = "idp_cot";      
+
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_encryption_key</code>
+     */
+    String KEY_IDP_ENC_KEY = "idp_encryption_key";
     
     /** 
      * SAMLv2, IDFF Property key for <code>idp_certalias</code>

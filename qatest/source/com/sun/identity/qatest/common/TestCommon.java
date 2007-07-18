@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.13 2007-07-13 21:16:30 rmisra Exp $
+ * $Id: TestCommon.java,v 1.14 2007-07-18 21:37:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -425,7 +425,7 @@ public class TestCommon implements TestConstants {
                     (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
             String strEncryptKey = (String)map.get(TestConstants.KEY_ATT_AM_ENC_KEY);
             if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
-                txtConfigDir.setValueAttribute(strEncryptKey);
+                txtEncryptionKey.setValueAttribute(strEncryptKey);
 
             String strConfigStore = (String)map.get(TestConstants.KEY_ATT_CONFIG_DATASTORE);
             log(Level.INFO, "configureProduct", "Config store is:" + strConfigStore);
