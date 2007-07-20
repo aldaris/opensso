@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.8 2007-06-28 06:40:35 veiming Exp $
+ * $Id: CLIRequest.java,v 1.9 2007-07-20 20:33:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -221,7 +221,7 @@ public class CLIRequest {
         IOutput outputWriter = mgr.getOutputWriter();
         outputWriter.printlnMessage("");
         outputWriter.printlnMessage("");
-        outputWriter.printlnMessage(
+        outputWriter.printlnMessage(mgr.getProductName() + " " +
             SystemProperties.get(Constants.AM_VERSION));
         outputWriter.printlnMessage("");
     }

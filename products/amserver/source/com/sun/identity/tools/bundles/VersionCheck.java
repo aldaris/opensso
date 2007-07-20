@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.1 2007-03-02 19:02:52 ak138937 Exp $
+ * $Id: VersionCheck.java,v 1.2 2007-07-20 20:33:57 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,13 +33,11 @@ import java.util.ResourceBundle;
 
 public class VersionCheck implements SetupConstants{
     
-    
     /**
      * Check whether the version AM is valid.
      *
      * @param bundle The ResourceBundle contains the prompt message.
      */
-    
     public static int isValid(ResourceBundle bundle) {
         Properties configProperties = new Properties();
         String amExpectedVersion = null;
@@ -89,7 +87,6 @@ public class VersionCheck implements SetupConstants{
      * @param expectedVersion The string of expected version.
      * @return A boolean value to indicate whether the version is compatible.
      */
-    
     protected static boolean versionCompatible(String currentVersion,
         String expectedVersion) {
         if (Character.isDigit(expectedVersion.charAt(expectedVersion.length()

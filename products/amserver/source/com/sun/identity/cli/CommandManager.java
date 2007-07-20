@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.13 2007-04-30 20:40:29 goodearth Exp $
+ * $Id: CommandManager.java,v 1.14 2007-07-20 20:33:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -424,6 +424,21 @@ public class CommandManager {
             subcmd = def.getSubCommand(name);
         }
         return subcmd;
+    }
+
+    /**
+     * Returns product name.
+     *
+     * @return product name.
+     */
+    public String getProductName() {
+        String productName = "";
+        if ((definitionObjects != null) && !definitionObjects.isEmpty()) {
+            IDefinition def = (IDefinition)definitionObjects.get(
+                definitionObjects.size() -1);
+            productName = def.getProductName();
+        }
+        return productName;
     }
 
     private void getOutputWriter(String className)   

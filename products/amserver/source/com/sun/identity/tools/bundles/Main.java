@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.1 2007-03-02 19:02:00 ak138937 Exp $
+ * $Id: Main.java,v 1.2 2007-07-20 20:33:57 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,6 @@ public class Main implements SetupConstants{
             } catch (IOException ex) {
                 System.out.println(bundle.getString("message.error.dir"));
                 System.exit(1);
-                //ex.printStackTrace();
             }
         } else {
             configProp = new Properties();
@@ -87,19 +86,17 @@ public class Main implements SetupConstants{
         try {
             SetupUtils.copyAndFilterScripts(bundle, configProp);
             if (loadConfig) {
-                System.out.println(bundle.getString("message.info.version." +
-                    "tools") + " " + bundle.getString(TOOLS_VERSION));
-                System.out.println(bundle.getString("message.info.version.am") +
+                System.out.println(bundle.getString(
+                    "message.info.version.tools") + " " +
+                    bundle.getString(TOOLS_VERSION));
+                System.out.println(
+                    bundle.getString("message.info.version.am") +
                     " " + configProp.getProperty(AM_VERSION));
             }
         } catch (IOException ex) {
             System.out.println(bundle.getString("message.error.copy"));
             System.exit(1);
-            //ex.printStackTrace();
         }
     }
-    
 }
-
-
 

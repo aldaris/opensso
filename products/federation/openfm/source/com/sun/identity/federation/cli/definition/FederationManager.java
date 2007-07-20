@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.16 2007-06-26 21:56:32 veiming Exp $
+ * $Id: FederationManager.java,v 1.17 2007-07-20 20:34:29 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import com.sun.identity.cli.annotation.ResourceStrings;
 
 public class FederationManager {
     @DefinitionClassInfo(
-        productName="Sun Java System Federation Manager",
+        productName="Sun Java(TM) System Federated Access Manager",
         logName="fmadm",
         resourceBundle="FederationManagerCLI")
     private String product;

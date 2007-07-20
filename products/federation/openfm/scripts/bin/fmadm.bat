@@ -19,11 +19,11 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fmadm.bat,v 1.6 2007-07-02 18:07:46 veiming Exp $
+: $Id: fmadm.bat,v 1.7 2007-07-20 20:34:29 veiming Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
-java -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+" -D"version.file=@CONFIG_DIR@/AMConfig.properties" -D"xml.config=@CONFIG_DIR@/serverconfig.xml" -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=7.5" -D"version.check=yes" -jar "@BASE_DIR@/lib/amadm_setup.jar"
+java -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+" -D"version.file=@CONFIG_DIR@/AMConfig.properties" -D"xml.config=@CONFIG_DIR@/serverconfig.xml" -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=8.0" -D"version.check=yes" -jar "@BASE_DIR@/lib/amadm_setup.jar"
 IF %ERRORLEVEL% EQU 1 GOTO END
 
 setlocal
