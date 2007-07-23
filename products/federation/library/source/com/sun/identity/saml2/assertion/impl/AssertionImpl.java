@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionImpl.java,v 1.2 2007-04-02 06:02:12 veiming Exp $
+ * $Id: AssertionImpl.java,v 1.3 2007-07-23 20:42:43 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -332,7 +332,8 @@ public class AssertionImpl implements Assertion {
                     } else {
                         String type = ((Element)child).getAttribute(
                             XSI_TYPE_ATTR);
-                        if (type.equals(ASSERTION_STATEMENT)) {
+                        if (childName.equals(ASSERTION_STATEMENT) && 
+                                       (type != null && type.length() > 0)) {
                             statements.add(XMLUtils.print((Element)child));
                         } else {
                             SAML2SDKUtils.debug.error(
