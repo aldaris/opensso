@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.15 2007-07-11 22:05:50 veiming Exp $
+   $Id: build-war.xml,v 1.16 2007-07-23 23:06:40 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -80,7 +80,7 @@
                 includes="SAML.xml,Federation.xml" />
         </copy>
 
-        <copy file="${openfm.dir}/www/jsp/fmadm.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/famadm.jsp" todir="${war.package.dir}" />
 
         <copy todir="${war.package.dir}/config/federation/default">
             <fileset dir="${library.dir}/www/config/federation" 

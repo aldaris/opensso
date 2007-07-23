@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: fmadm.jsp,v 1.7 2007-06-13 07:48:56 veiming Exp $
+   $Id: famadm.jsp,v 1.1 2007-07-23 23:06:44 veiming Exp $
   
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,7 +30,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Open Federation</title>
+    <title>Federated Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
     <script language="Javascript" src="js/admincli.js"></script>
@@ -63,13 +63,13 @@
 
         WebCLIHelper helper = new WebCLIHelper(request,
             "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
-            "fmadm", "fmadm.jsp");
+            "famadm", "famadm.jsp");
         out.println(helper.getHTML(request, ssoToken));
         Object[] param = {"0"};
         out.println(MessageFormat.format(
             CLIConstants.JSP_EXIT_CODE_TAG, param));
     } catch (SSOException e) {
-        response.sendRedirect("UI/Login?goto=../fmadm.jsp");
+        response.sendRedirect("UI/Login?goto=../famadm.jsp");
     } catch (CLIException e) {
         Object[] param = {Integer.toString(e.getExitCode())};
         out.println(MessageFormat.format(

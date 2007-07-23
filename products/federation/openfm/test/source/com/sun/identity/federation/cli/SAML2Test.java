@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.4 2007-04-19 18:28:55 veiming Exp $
+ * $Id: SAML2Test.java,v 1.5 2007-07-23 23:06:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,7 @@ public class SAML2Test extends TestBase {
         throws CLIException
     {
         Map<String, Object> env = new HashMap<String, Object>();
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "fmadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
         env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);

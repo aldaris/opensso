@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.4 2007-05-02 04:01:26 veiming Exp $
+   $Id: build-tools.xml,v 1.5 2007-07-23 23:06:40 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,10 +49,10 @@
         <delete file="${tools.temp.dir}/template/unix/bin/amadm.template" />
         <delete file="${tools.temp.dir}/template/windows/bin/amadm.bat.template" />
         <replace file="${tools.temp.dir}/README.setup" token="amAdminTools"
-            value="fmAdminTools" />
+            value="famAdminTools" />
 
-        <copy file="${openfm.dir}/scripts/bin/README.fmadm"
-            tofile="${tools.temp.dir}/README.fmadm" />
+        <copy file="${openfm.dir}/scripts/bin/README.famadm"
+            tofile="${tools.temp.dir}/README.famadm" />
 
         <copy todir="${tools.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/openfm.jar" />
@@ -63,11 +63,11 @@
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>
         </copy>
-        <copy file="${openfm.dir}/scripts/bin/fmadm"
-            tofile="${tools.temp.dir}/template/unix/bin/fmadm.template" />
-        <copy file="${openfm.dir}/scripts/bin/fmadm.bat"
-            tofile="${tools.temp.dir}/template/windows/bin/fmadm.bat.template" />
-        <zip destfile="${fm.dist.dir}/fmAdminTools.zip" whenempty="create">
+        <copy file="${openfm.dir}/scripts/bin/famadm"
+            tofile="${tools.temp.dir}/template/unix/bin/famadm.template" />
+        <copy file="${openfm.dir}/scripts/bin/famadm.bat"
+            tofile="${tools.temp.dir}/template/windows/bin/famadm.bat.template" />
+        <zip destfile="${fm.dist.dir}/famAdminTools.zip" whenempty="create">
             <zipfileset dir="${tools.temp.dir}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
@@ -76,7 +76,7 @@
             </zipfileset>
         </zip>
 
-        <checksum file="${fm.dist.dir}/fmAdminTools.zip"
+        <checksum file="${fm.dist.dir}/famAdminTools.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
 

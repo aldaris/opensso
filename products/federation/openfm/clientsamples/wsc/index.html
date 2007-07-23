@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.7 2007-06-26 21:56:31 veiming Exp $
+   $Id: index.html,v 1.8 2007-07-23 23:06:41 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -118,12 +118,12 @@ visit this <a class="named" href="index.jsp">link</a> to try out this sample.
 
 <h3 name="enc">Enable interaction for IDPP query and modify</h3>
 On IDP machine turn on IDPP policy evaluation:<br>
-1. Download or build fmadm.zip and install.<br>
+1. Download or build famAdminTools.zip and install.<br>
 2. Save administrator password in a file. And Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"<br>
+famadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"<br>
 
 3. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"<br>
+famadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"<br>
 
 <br>
 Create policy for IDPP query and modify:<br>
@@ -170,13 +170,13 @@ Set up keystore:<br>
 
 
 Set up IDP machine:<br>
-1. Download or build fmadm.zip and install.<br>
+1. Download or build famAdminTools.zip and install.<br>
 2. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerDiscoProviderID=&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;"<br>
+famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerDiscoProviderID=&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;"<br>
 3. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"<br>
+famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"<br>
 4. Run<br>
-fmadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a sunIdentityServerBootstrappingDiscoEntry<br>
+famadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a sunIdentityServerBootstrappingDiscoEntry<br>
 
 5.Save 'sunIdentityServerBootstrappingDiscoEntry=...' in the previous step to a file 'datafile'<br>
 
@@ -186,7 +186,7 @@ Replace '&lt;SecurityMechID&gt;urn:liberty:security:2003-08:null:null&lt;/Securi
 Replace '&lt;/ResourceOffering&gt;&lt;/DiscoEntry&gt;' with  '&lt;/ResourceOffering&gt;&lt;AuthorizeRequester xmlns="urn:liberty:disco:2003-08"/&gt;&lt;/DiscoEntry&gt;'<br>
 
 7. Run<br>
-fmadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -D datafile<br>
+famadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -D datafile<br>
 
 8. Edit &lt;configuration dir&gt;/FederationConfig.properties<br>
 com.sun.identity.liberty.ws.ta.certalias=test<br>
@@ -194,45 +194,45 @@ com.sun.identity.liberty.ws.trustedca.certaliases=test<br>
 com.sun.identity.liberty.ws.wsc.certalias=test<br>
 
 9. Run<br>
-fmadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+famadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 10. Run<br>
-fmadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+famadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 11.Run<br>
-fmadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -m /tmp/idpm -x /tmp/idpx -i /idp -b test -g test -c idff<br>
+famadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -m /tmp/idpm -x /tmp/idpx -i /idp -b test -g test -c idff<br>
 
 12. Edit file '/tmp/idpx'<br>
 Change the value of attribute "enableNameIDEncryption" to "true"<br>
 
 13. Run<br>
-fmadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm -x /tmp/idpx -t sampleidffcot -c idff<br>
+famadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm -x /tmp/idpx -t sampleidffcot -c idff<br>
 
 14. Copy '/tmp/spm'(generated at step 4 in section "Set up SP machine" below) from SP machine to '/tmp/spm' on this machine<br>
 
 15. Run<br>
-fmadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -t sampleidffcot -c idff<br>
+famadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -t sampleidffcot -c idff<br>
 <br>
 
 
 Set up SP machine:<br>
-1. Download or build fmadm.zip and install.<br>
+1. Download or build famAdminTools.zip and install.<br>
 2. Run<br>
-fmadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+famadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 3. Run<br>
-fmadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+famadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 4. Run<br>
-fmadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -m /tmp/spm -x /tmp/spx -s /sp -a test -r test -c idff<br>
+famadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -m /tmp/spm -x /tmp/spx -s /sp -a test -r test -c idff<br>
 
 5. Run<br>
-fmadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -x /tmp/spx -t sampleidffcot -c idff<br>
+famadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -x /tmp/spx -t sampleidffcot -c idff<br>
 
 6. Copy '/tmp/idpm'(generated at step 11 in section "Set up IDP machine" above) from IDP machine to '/tmp/idpm' on this machine<br>
 
 7. Run<br>
-fmadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm  -c idff -t sampleidffcot<br>
+famadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm  -c idff -t sampleidffcot<br>
 
 <br>
 Restart web containers on IDP, SP and WSC machines
