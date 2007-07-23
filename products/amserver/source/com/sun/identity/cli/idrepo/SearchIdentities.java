@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchIdentities.java,v 1.6 2007-06-14 20:09:02 veiming Exp $
+ * $Id: SearchIdentities.java,v 1.7 2007-07-23 20:11:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -67,6 +69,20 @@ public class SearchIdentities extends IdentityCommand {
         String[] params = {realm, type, filter};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_SEARCH_IDENTITIES", params);
+
+        // test if realm exists
+        try {
+            new OrganizationConfigManager(adminSSOToken, realm);
+        } catch (SMSException e) {
+            String[] args = {realm, type, filter, e.getMessage()};
+            debugError("SearchIdentities.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SEARCH_IDENTITIES", args);
+            Object[] msgArg = {realm};
+            throw new CLIException(MessageFormat.format(getResourceString(
+                "realm-does-not-exist"), msgArg),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
 
         try {
             AMIdentityRepository amir = new AMIdentityRepository(

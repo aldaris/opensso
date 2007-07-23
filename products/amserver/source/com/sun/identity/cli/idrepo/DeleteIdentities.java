@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.5 2007-07-02 21:04:49 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.6 2007-07-23 20:11:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class DeleteIdentities extends IdentityCommand {
                 args);
             Object[] msgArg = {realm};
             throw new CLIException(MessageFormat.format(getResourceString(
-                "delete-identity-realm-does-not-exist"), msgArg),
+                "realm-does-not-exist"), msgArg),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 

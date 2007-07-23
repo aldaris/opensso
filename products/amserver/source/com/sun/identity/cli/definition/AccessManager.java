@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.28 2007-07-20 20:33:57 veiming Exp $
+ * $Id: AccessManager.java,v 1.29 2007-07-23 20:11:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ public class AccessManager {
 
     @ResourceStrings(
         string={"resourcebundle-not-found=Resource Bundle not found.",
+            "realm-does-not-exist=Cannot process the request because realm {0} does not exist.",
         "missing-attributevalues=attributevalues and datafile options are missing.",
         "missing-choicevalues=choicevalues and datafile options are missing."}
     )
@@ -1003,7 +1004,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "delete-identity-realm-does-not-exist=Cannot process the request because realm {0} does not exist.",
             "delete-identity-succeed=The following {1} was deleted from {0}.",
             "delete-identities-succeed=The following {1}s were deleted from {0}."})
     private String delete_identities;
