@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.2 2006-08-25 21:20:17 veiming Exp $
+ * $Id: SMSAuthModule.java,v 1.3 2007-07-23 17:54:19 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.authentication.internal.LoginModule;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.DNUtils;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
@@ -205,6 +206,16 @@ public class SMSAuthModule implements LoginModule {
             if (userDN != null) {
                 // Get the hashed password for the user
                 String hash = (String) users.get(username);
+                String cachedUserDN = (String) userNameToDN.get(username);
+                if (cachedUserDN != null) {
+                    String normalizedUserDN = DNUtils.normalizeDN(userDN);
+                    if ((normalizedUserDN == null) || 
+                        !normalizedUserDN.equals(DNUtils.
+                        normalizeDN(cachedUserDN))) {
+                        debug.message("SMSAuthModule::login() Invalid User DN");
+                        return false;
+                    }
+                }
                 // Compare the hashed password
                 boolean invalidPassword = false;
                 if (hash != null && hash.equals(Hash.hash(password))) {
@@ -219,6 +230,21 @@ public class SMSAuthModule implements LoginModule {
                                 + "Loading internal users");
                     }
                     loadInternalUsers();
+                    cachedUserDN = (String) userNameToDN.get(username);
+                    if (cachedUserDN != null) {
+                        String normalizedUserDN = DNUtils.normalizeDN(userDN);
+                        if ((normalizedUserDN == null) || 
+                            !normalizedUserDN.equals(DNUtils.
+                            normalizeDN(cachedUserDN))) {
+                            if (debug.messageEnabled()) {
+                                debug.message("SMSAuthModule::login() "
+                                + "Invalid User DN");
+                            }
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
                     hash = (String) users.get(username);
                     if (hash != null && hash.equals(Hash.hash(password))) {
                         if (debug.messageEnabled()) {
