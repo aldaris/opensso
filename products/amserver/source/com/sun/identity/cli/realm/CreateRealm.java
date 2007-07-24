@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealm.java,v 1.2 2006-09-26 20:27:29 veiming Exp $
+ * $Id: CreateRealm.java,v 1.3 2007-07-24 19:41:55 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,9 +33,13 @@ import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -66,7 +70,13 @@ public class CreateRealm extends AuthenticatedCommand {
         try {
             OrganizationConfigManager ocm = new OrganizationConfigManager(
                 adminSSOToken, parentRealm);
-            ocm.createSubOrganization(childRealm, null);
+            Map defaultValues = new HashMap(2);
+            Map map = new HashMap(2);
+            Set values = new HashSet(2);
+            values.add("Active");
+            map.put(IdConstants.ORGANIZATION_STATUS_ATTR, values);
+            defaultValues.put(IdConstants.REPO_SERVICE, map);
+            ocm.createSubOrganization(childRealm, defaultValues);
             getOutputWriter().printlnMessage(getResourceString(
                 "create-realm-succeed"));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "SUCCEED_CREATE_REALM",
