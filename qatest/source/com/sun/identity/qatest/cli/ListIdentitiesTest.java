@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListIdentitiesTest.java,v 1.1 2007-07-12 21:17:56 cmwesley Exp $
+ * $Id: ListIdentitiesTest.java,v 1.2 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ListIdentitiesTest</code> is used to execute tests involving the 
- * list-identities sub-command of fmadm.  This class allows the user to execute
- * "fmadm list-identities" with a variety or arguments (e.g with short or long 
+ * list-identities sub-command of famadm.  This class allows the user to execute
+ * "famadm list-identities" with a variety or arguments (e.g with short or long 
  * options, with a locale argument, with a list of attributes or a datafile 
  * containing attributes, etc.) and a variety of input values.  The properties 
  * file <code>ListIdentitiesTest.properties</code> contains the input values 
@@ -201,7 +201,7 @@ public class ListIdentitiesTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm list-identities"
+     * This method is used to execute tests involving "famadm list-identities"
      * using input data from the ListIdentitiesTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -209,8 +209,6 @@ public class ListIdentitiesTest extends TestCommon {
     throws Exception {
         entering("testIdentitySearch", null);
         boolean stringsFound = false;
-        boolean idsRemovedFound = true;
-        boolean remainingIdsRemoved = false;
         boolean errorFound = false;
         int commandStatus = -1;
         
@@ -307,7 +305,7 @@ public class ListIdentitiesTest extends TestCommon {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
             } else if (expectedExitCode.equals("11")) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "fmadm", "fmadm ");
+                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -354,7 +352,7 @@ public class ListIdentitiesTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testIdentitySearch methods using "fmadm list-identities".
+     * testIdentitySearch methods using "famadm list-identities".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

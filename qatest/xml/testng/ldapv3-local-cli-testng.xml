@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ldapv3-local-cli-testng.xml,v 1.5 2007-07-12 21:16:24 cmwesley Exp $
+ $Id: ldapv3-local-cli-testng.xml,v 1.6 2007-07-24 21:51:21 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1433,5 +1433,269 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
         </classes>
-    </test>     
+    </test>
+    <test name="CLI_add-member01">
+        <parameter name="testName" value="addmember-test1"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member02">
+        <parameter name="testName" value="addmember-test2"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member03">
+        <parameter name="testName" value="addmember-test3"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member04">
+        <parameter name="testName" value="addmember-test4"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member05">
+        <parameter name="testName" value="addmember-test5"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member06">
+        <parameter name="testName" value="addmember-test6"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member07">
+        <parameter name="testName" value="addmember-test7"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member08">
+        <parameter name="testName" value="addmember-test8"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member01">
+        <parameter name="testName" value="removemember-test1"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member02">
+        <parameter name="testName" value="removemember-test2"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member03">
+        <parameter name="testName" value="removemember-test3"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member04">
+        <parameter name="testName" value="removemember-test4"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member05">
+        <parameter name="testName" value="removemember-test5"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member06">
+        <parameter name="testName" value="removemember-test6"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member07">
+        <parameter name="testName" value="removemember-test7"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member08">
+        <parameter name="testName" value="removemember-test8"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members01">
+        <parameter name="testName" value="showmembers-test1"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members02">
+        <parameter name="testName" value="showmembers-test2"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members03">
+        <parameter name="testName" value="showmembers-test3"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members04">
+        <parameter name="testName" value="showmembers-test4"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members05">
+        <parameter name="testName" value="showmembers-test5"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members06">
+        <parameter name="testName" value="showmembers-test6"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members07">
+        <parameter name="testName" value="showmembers-test7"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members08">
+        <parameter name="testName" value="showmembers-test8"/>
+        <groups>
+            <run>
+                <include name="ldapv3-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
 </suite>

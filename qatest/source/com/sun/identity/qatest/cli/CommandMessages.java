@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandMessages.java,v 1.1 2007-05-31 19:39:32 cmwesley Exp $
+ * $Id: CommandMessages.java,v 1.2 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.qatest.cli;
 
 /**
  * <code>CommandMessages</code> is an interface containing strings that
- * are displayed by the fmadm CLI.
+ * are displayed by the famadm CLI.
  */
 public interface CommandMessages {
     String SEARCH_REALM_SUCCEEDED = "Search completed.";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.3 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,8 +60,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteIdentitiesTest</code> is used to execute tests involving the 
- * delete-identities sub-command of fmadm.  This class allows the user to 
- * execute "fmadm delete-identities" with a variety or arguments (e.g with 
+ * delete-identities sub-command of famadm.  This class allows the user to 
+ * execute "famadm delete-identities" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>DeleteIdentitiesTest.properties</code> contains 
@@ -206,7 +206,7 @@ public class DeleteIdentitiesTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm delete-identities"
+     * This method is used to execute tests involving "famadm delete-identities"
      * using input data from the DeleteIdentitiesTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -268,7 +268,7 @@ public class DeleteIdentitiesTest extends TestCommon {
                         newline);
             } else if (expectedExitCode.equals("11")) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "fmadm", "fmadm ");
+                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
                 Object[] params = {argString};
                 String usageError = MessageFormat.format(expectedMessage, 
                         params);
@@ -366,7 +366,7 @@ public class DeleteIdentitiesTest extends TestCommon {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testIdentityDeletion methods using 
-     * "fmadm delete-realm" and "fmadm delete-identities".
+     * "famadm delete-realm" and "famadm delete-identities".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

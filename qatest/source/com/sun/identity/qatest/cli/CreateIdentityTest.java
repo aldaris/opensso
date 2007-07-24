@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
+ * $Id: CreateIdentityTest.java,v 1.3 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,8 +55,8 @@ import org.testng.Reporter;
 
 /**
  * <code>CreateIdentityTest</code> is used to execute tests involving the 
- * create-identity sub-command of fmadm.  This class allows the user to execute
- * "fmadm create-identity" with a variety or arguments (e.g with short or long 
+ * create-identity sub-command of famadm.  This class allows the user to execute
+ * "famadm create-identity" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
  * with a list of attributes or a datafile containing attributes, etc.) 
  * and a variety of input values.  The properties file 
@@ -184,7 +184,7 @@ public class CreateIdentityTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm create-identities"
+     * This method is used to execute tests involving "famadm create-identities"
      * using input data from the CreateIdentityTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -266,8 +266,8 @@ public class CreateIdentityTest extends TestCommon {
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "fmadm",
-                            "fmadm ");
+                            cli.getCliPath() + fileseparator + "famadm",
+                            "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);
@@ -311,8 +311,8 @@ public class CreateIdentityTest extends TestCommon {
     
     /**
      * This method remove any realms and identities that were created during 
-     * the setup and testIdentityCreation methods using "fmadm delete-realm" 
-     * and "fmadm delete-identities".
+     * the setup and testIdentityCreation methods using "famadm delete-realm" 
+     * and "famadm delete-identities".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

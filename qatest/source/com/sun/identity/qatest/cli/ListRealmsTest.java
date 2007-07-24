@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.2 2007-07-10 21:54:21 bt199000 Exp $
+ * $Id: ListRealmsTest.java,v 1.3 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ListRealmsTest</code> is used to execute tests involving the
- * list-realms sub-command of fmadm.  This class allows the user to execute
- * "fmadm list-realms" with a variety or arguments (e.g with short or long
+ * list-realms sub-command of famadm.  This class allows the user to execute
+ * "famadm list-realms" with a variety or arguments (e.g with short or long
  * options, with a locale argument, with the recursive option, with the
  * filter option, etc.) and a variety of input values.  The properties file
  * <code>ListRealmsTest.properties</code> contains the input values which are
@@ -140,7 +140,7 @@ public class ListRealmsTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm list-realms"
+     * This method is used to execute tests involving "famadm list-realms"
      * using input data from the ListRealmsTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -276,8 +276,8 @@ public class ListRealmsTest extends TestCommon {
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "fmadm",
-                            "fmadm ");
+                            cli.getCliPath() + fileseparator + "famadm",
+                            "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);
@@ -300,7 +300,7 @@ public class ListRealmsTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmSearch methods using "fmadm delete-realm".
+     * testRealmSearch methods using "famadm delete-realm".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

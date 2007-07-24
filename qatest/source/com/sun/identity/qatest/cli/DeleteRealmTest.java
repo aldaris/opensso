@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.5 2007-07-10 21:54:21 bt199000 Exp $
+ * $Id: DeleteRealmTest.java,v 1.6 2007-07-24 21:54:08 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,8 +45,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteRealmTest</code> is used to execute tests involving the 
- * delete-realm sub-command of fmadm.  This class allows the user to execute
- * "fmadm delete-realm" with a variety or arguments (e.g with short or long 
+ * delete-realm sub-command of famadm.  This class allows the user to execute
+ * "famadm delete-realm" with a variety or arguments (e.g with short or long 
  * options, with a locale argument, etc.) and a variety of input values.  The 
  * properties file <code>DeleteRealmTest.properties</code> contains the input 
  * values which are read by this class.
@@ -134,7 +134,7 @@ public class DeleteRealmTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm delete-realm"
+     * This method is used to execute tests involving "famadm delete-realm"
      * using input data from the DeleteRealmTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -200,8 +200,8 @@ public class DeleteRealmTest extends TestCommon {
             } else {
                 if (expectedExitCode.equals("11")) {
                     String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "fmadm", 
-                        "fmadm ");
+                        cli.getCliPath() + fileseparator + "famadm", 
+                        "famadm ");
                     Object[] params = {argString};
                     String usageError = 
                             MessageFormat.format(expectedMessage, params);
@@ -249,7 +249,7 @@ public class DeleteRealmTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmDeletion methods using "fmadm delete-realm".
+     * testRealmDeletion methods using "famadm delete-realm".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

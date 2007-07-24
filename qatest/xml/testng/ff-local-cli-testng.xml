@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff-local-cli-testng.xml,v 1.5 2007-07-12 21:16:24 cmwesley Exp $
+ $Id: ff-local-cli-testng.xml,v 1.6 2007-07-24 21:51:21 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1389,5 +1389,533 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.ListIdentitiesTest"/>
         </classes>
-    </test>      
+    </test>  
+    <test name="CLI_add-member01">
+        <parameter name="testName" value="addmember-test1"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member02">
+        <parameter name="testName" value="addmember-test2"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member03">
+        <parameter name="testName" value="addmember-test3"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member04">
+        <parameter name="testName" value="addmember-test4"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member05">
+        <parameter name="testName" value="addmember-test5"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member06">
+        <parameter name="testName" value="addmember-test6"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member07">
+        <parameter name="testName" value="addmember-test7"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member08">
+        <parameter name="testName" value="addmember-test8"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member09">
+        <parameter name="testName" value="addmember-test9"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member10">
+        <parameter name="testName" value="addmember-test10"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member11">
+        <parameter name="testName" value="addmember-test11"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member12">
+        <parameter name="testName" value="addmember-test12"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+           <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member13">
+        <parameter name="testName" value="addmember-test13"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member14">
+        <parameter name="testName" value="addmember-test14"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member15">
+        <parameter name="testName" value="addmember-test15"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-member16">
+        <parameter name="testName" value="addmember-test16"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member01">
+        <parameter name="testName" value="removemember-test1"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member02">
+        <parameter name="testName" value="removemember-test2"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member03">
+        <parameter name="testName" value="removemember-test3"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member04">
+        <parameter name="testName" value="removemember-test4"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member05">
+        <parameter name="testName" value="removemember-test5"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member06">
+        <parameter name="testName" value="removemember-test6"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member07">
+        <parameter name="testName" value="removemember-test7"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member08">
+        <parameter name="testName" value="removemember-test8"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member09">
+        <parameter name="testName" value="removemember-test9"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member10">
+        <parameter name="testName" value="removemember-test10"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member11">
+        <parameter name="testName" value="removemember-test11"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member12">
+        <parameter name="testName" value="removemember-test12"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member13">
+        <parameter name="testName" value="removemember-test13"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member14">
+        <parameter name="testName" value="removemember-test14"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member15">
+        <parameter name="testName" value="removemember-test15"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member16">
+        <parameter name="testName" value="removemember-test16"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members01">
+        <parameter name="testName" value="showmembers-test1"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members02">
+        <parameter name="testName" value="showmembers-test2"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members03">
+        <parameter name="testName" value="showmembers-test3"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members04">
+        <parameter name="testName" value="showmembers-test4"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members05">
+        <parameter name="testName" value="showmembers-test5"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members06">
+        <parameter name="testName" value="showmembers-test6"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members07">
+        <parameter name="testName" value="showmembers-test7"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members08">
+        <parameter name="testName" value="showmembers-test8"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members09">
+        <parameter name="testName" value="showmembers-test9"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members10">
+        <parameter name="testName" value="showmembers-test10"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members11">
+        <parameter name="testName" value="showmembers-test11"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members12">
+        <parameter name="testName" value="showmembers-test12"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members13">
+        <parameter name="testName" value="showmembers-test13"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members14">
+        <parameter name="testName" value="showmembers-test14"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members15">
+        <parameter name="testName" value="showmembers-test15"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
+    <test name="CLI_show-members16">
+        <parameter name="testName" value="showmembers-test16"/>
+        <groups>
+            <run>
+                <include name="ff-local"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.ShowMembersTest"/>
+        </classes>
+    </test>
 </suite>

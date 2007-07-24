@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.4 2007-07-10 21:54:21 bt199000 Exp $
+ * $Id: CreateRealmTest.java,v 1.5 2007-07-24 21:54:08 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,8 +47,8 @@ import org.testng.Reporter;
 
 /**
  * <code>CreateRealmTest</code> is used to execute tests involving the 
- * create-realm sub-command of fmadm.  This class allows the user to execute
- * "fmadm create-realm" with a variety or arguments (e.g with short or long 
+ * create-realm sub-command of famadm.  This class allows the user to execute
+ * "famadm create-realm" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
  * etc.) and a variety of input values.  The properties file 
  * <code>CreateRealmTest.properties</code> contains the input values which are 
@@ -134,7 +134,7 @@ public class CreateRealmTest extends TestCommon {
     }
     
     /**
-     * This method is used to execute tests involving "fmadm create-realm"
+     * This method is used to execute tests involving "famadm create-realm"
      * using input data from the CreateRealmTest.properties file.
      */
     @Test(groups={"ff-local", "ldapv3-local", "ds-local"})
@@ -202,8 +202,8 @@ public class CreateRealmTest extends TestCommon {
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath() + fileseparator + "fmadm", 
-                            "fmadm ");
+                            cli.getCliPath() + fileseparator + "famadm", 
+                            "famadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
@@ -226,7 +226,7 @@ public class CreateRealmTest extends TestCommon {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmCreation methods using "fmadm delete-realm".
+     * testRealmCreation methods using "famadm delete-realm".
      */
     @AfterClass(groups={"ff-local", "ldapv3-local", "ds-local"})
     public void cleanup() 

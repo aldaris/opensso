@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.1 2007-05-31 19:39:31 cmwesley Exp $
+ * $Id: CLIConstants.java,v 1.2 2007-07-24 21:54:09 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,7 @@ package com.sun.identity.qatest.cli;
 
 /**
  * <code>CLIConstants</code> contains strings for the supported 
- * sub-commands of the fmadm CLI.
+ * sub-commands of the famadm CLI.
  */
 public interface CLIConstants {
     /**
