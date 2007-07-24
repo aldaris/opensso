@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.8 2007-01-09 19:07:29 manish_rustagi Exp $
+ * $Id: LDAPAuthUtils.java,v 1.9 2007-07-24 22:58:53 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -356,7 +356,8 @@ public class LDAPAuthUtils {
      */
     public void authenticateUser(String user, String password)
             throws LDAPUtilException {
-        if (password == null || password.length() == 0) {
+        if (password == null) {
+            // password of zero length should be allowed.
             throw new LDAPUtilException("PwdInvalid",
             LDAPUtilException.INVALID_CREDENTIALS, null);
         }

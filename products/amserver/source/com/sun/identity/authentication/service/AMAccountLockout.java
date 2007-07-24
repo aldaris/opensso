@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.2 2006-08-25 21:20:27 veiming Exp $
+ * $Id: AMAccountLockout.java,v 1.3 2007-07-24 22:58:54 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,7 @@ class AMAccountLockout {
     static String bundleName = AuthD.BUNDLE_NAME;
     String token = null;
     private static final String USER_ACTIVE = "active";
+    private static final String USER_INACTIVE = "inactive";
     private static final String FALSE_VALUE = "false";
     private static final String INETUSERSTATUS_ATTR ="inetuserstatus";
     private static final String LOGIN_STATUS_ATTR =
@@ -374,19 +375,7 @@ class AMAccountLockout {
         boolean userEnabled=true;
         try{
             Iterator attrSet = null;
-            // Check "inetuserstatus"
-            Set userActiveSet =
-                (Set)amIdentity.getAttribute(INETUSERSTATUS_ATTR);
-            String userActive = null;
-            if ((userActiveSet == null) || (userActiveSet.isEmpty())) {
-                userActive = USER_ACTIVE;
-            } else {
-                attrSet = userActiveSet.iterator();
-                userActive = (String) attrSet.next();
-                if ((userActive == null) || (userActive.length() == 0)) {
-                    userActive = USER_ACTIVE;
-                }
-            }
+            String userActive = amIdentity.isActive()? USER_ACTIVE : USER_INACTIVE;
             
             // Check "login_status"
             Set loginStatusSet =
