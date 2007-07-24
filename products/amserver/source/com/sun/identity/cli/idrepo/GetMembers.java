@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetMembers.java,v 1.2 2007-02-02 18:05:33 veiming Exp $
+ * $Id: GetMembers.java,v 1.3 2007-07-24 19:39:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,8 +88,13 @@ public class GetMembers extends IdentityCommand {
             Set members = amid.getMembers(membershipIdType);
 
             if ((members != null) && !members.isEmpty()) {
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("idrepo-get-members-succeed"), 
+                        (Object[])params));
+                outputWriter.printlnMessage("");
                 String msg = getResourceString("idrepo-members-result");
                 String[] arg = {"", ""};
+
                 for (Iterator i = members.iterator(); i.hasNext(); ) {
                     AMIdentity a = (AMIdentity)i.next();
                     arg[0] = a.getName();
@@ -98,12 +103,10 @@ public class GetMembers extends IdentityCommand {
                         MessageFormat.format(msg, (Object[])arg));
                 }
             } else {
-                outputWriter.printlnMessage(getResourceString(
-                    "idrepo-no-members"));
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("idrepo-no-members"),
+                        (Object[])params));
             }
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("idrepo-get-members-succeed"), 
-                    (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_IDREPO_GET_MEMBERS", params);
         } catch (IdRepoException e) {

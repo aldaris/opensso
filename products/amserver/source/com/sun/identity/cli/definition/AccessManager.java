@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.29 2007-07-23 20:11:47 veiming Exp $
+ * $Id: AccessManager.java,v 1.30 2007-07-24 19:39:34 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1139,10 +1139,10 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-memberships-succeed=Memberships of identity, {2} of type, {1} in realm, {0} is printed.",
+            "idrepo-get-memberships-succeed=The following {3} memberships for {2} were found.",
             "idrepo-memberships-result={0} ({1})",
-            "idrepo-no-memberships=Identity has no memberships.",
-            "idrepo-cannot-be-member={0} cannot have membership of identity type, {1}"})
+            "idrepo-no-memberships=Identity {2} does not have any {3} memberships.",
+            "idrepo-cannot-be-member={0} cannot have {1} membership."})
     private String show_memberships;
 
     @SubCommandInfo(
@@ -1158,10 +1158,10 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-members-succeed=Members of identity, {2} of type, {1} in realm, {0} is printed.",
+            "idrepo-get-members-succeed=The following {3} members for {2} were found.",
             "idrepo-members-result={0} ({1})",
-            "idrepo-no-members=Identity has no members.",
-            "idrepo-cannot-be-member={0} cannot have members of identity type, {1}"})
+            "idrepo-no-members={2} does not have any {3} members.",
+            "idrepo-cannot-be-member={0} cannot have {1} members."})
     private String show_members;
 
     @SubCommandInfo(
