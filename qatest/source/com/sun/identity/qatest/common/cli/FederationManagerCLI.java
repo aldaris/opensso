@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.5 2007-07-10 21:55:50 bt199000 Exp $
+ * $Id: FederationManagerCLI.java,v 1.6 2007-07-24 21:52:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,8 @@ import java.util.logging.Level;
 
 /**
  * <code>AccessMangerCLI</code> is a utility class which allows the user
- * to invoke the fmadm CLI to perform operations which correspond to supported
- * sub-commands of fmadm (e.g. create-realm, delete-realm, list-realms,
+ * to invoke the famadm CLI to perform operations which correspond to supported
+ * sub-commands of famadm (e.g. create-realm, delete-realm, list-realms,
  * create-identity, delete-identity, list-identities, etc.).
  */
 public class FederationManagerCLI extends CLIUtility 
@@ -53,6 +53,7 @@ public class FederationManagerCLI extends CLIUtility
         GlobalConstants {
 
     private String passwdFile;
+    private boolean usePasswdFile;
     private boolean useDebugOption;
     private boolean useVerboseOption;
     private boolean useLongOptions;
@@ -74,7 +75,7 @@ public class FederationManagerCLI extends CLIUtility
     public FederationManagerCLI(boolean useDebug, boolean useVerbose, 
             boolean useLongOpts)
     throws Exception {
-        super(cliPath + System.getProperty("file.separator") + "fmadm");    
+        super(cliPath + System.getProperty("file.separator") + "famadm");    
         useLongOptions = useLongOpts;
         try {
             addAdminUserArgs();
@@ -269,6 +270,52 @@ public class FederationManagerCLI extends CLIUtility
         addArgument(idtypeArg);
         addArgument(type);
     }
+    
+    /**
+     * Adds the "--memberidname" and member identity name arguments to the 
+     * argument list.
+     */
+    private void addMemberIdnameArguments(String name) {
+        String idnameArg;
+        if (useLongOptions) {
+            idnameArg = PREFIX_ARGUMENT_LONG + MEMBER_ID_NAME_ARGUMENT;
+        } else {
+            idnameArg = PREFIX_ARGUMENT_SHORT + SHORT_MEMBER_ID_NAME_ARGUMENT;
+        }
+        addArgument(idnameArg);
+        addArgument(name);        
+    }
+    
+    /**
+     * Adds the "--memberidtype" and member identity type arguments to the 
+     * argument list.
+     */
+    private void addMemberIdtypeArguments(String type) {
+        String idtypeArg;
+        if (useLongOptions) {
+            idtypeArg = PREFIX_ARGUMENT_LONG + MEMBER_ID_TYPE_ARGUMENT;
+        } else {
+            idtypeArg = PREFIX_ARGUMENT_SHORT + SHORT_MEMBER_ID_TYPE_ARGUMENT;
+        }
+        addArgument(idtypeArg);
+        addArgument(type);        
+    }
+    
+    /**
+     * Adds the "--membershipidtype" and membership identity type arguments to 
+     * the argument list.
+     */
+    private void addMembershipIdtypeArguments(String type) {
+        String idtypeArg;
+        if (useLongOptions) {
+            idtypeArg = PREFIX_ARGUMENT_LONG + MEMBERSHIP_ID_TYPE_ARGUMENT;
+        } else {
+            idtypeArg = PREFIX_ARGUMENT_SHORT + 
+                    SHORT_MEMBERSHIP_ID_TYPE_ARGUMENT;
+        }
+        addArgument(idtypeArg);
+        addArgument(type);        
+    }    
     
     /**
      * Create a new realm.
@@ -488,6 +535,7 @@ public class FederationManagerCLI extends CLIUtility
      * @param filter - the filter to apply in the search for identities
      * @param idtype - the type of identities (e.g. "User", "Group", "Role") for
      * which the search sould be performed
+     * @return the exit status of the "list-identities" command
      */
     public int listIdentities(String realm, String filter, String idtype)
     throws Exception {
@@ -500,10 +548,109 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
+     * Add an identity as a member of another identity.
+     * @param realm - the realm in which the member identity should be added.
+     * @param memberName - the name of the identity which should be added as a
+     * member.
+     * @param memberType - the type of the identity which should be added as a 
+     * member.
+     * @param idName - the name of the identity in which the member should be 
+     * added.
+     * @param idType - the type of the identity in which the member should be 
+     * added.
+     * @return the exit status of the "add-member" command
+     */
+    public int addMember(String realm, String memberName, String memberType, 
+            String idName, String idType)
+    throws Exception {
+        setSubcommand(ADD_MEMBER_SUBCOMMAND);
+        addRealmArguments(realm);
+        addMemberIdnameArguments(memberName);
+        addMemberIdtypeArguments(memberType);
+        addIdnameArguments(idName);
+        addIdtypeArguments(idType);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Remove an identity as a member of another identity.
+     * @param realm - the realm in which the member identity should be removed.
+     * @param memberName - the name of the identity which should be removed as a
+     * member.
+     * @param memberType - the type of the identity which should be removed as a 
+     * member.
+     * @param idName - the name of the identity in which the member should be 
+     * removed.
+     * @param idType - the type of the identity in which the member should be 
+     * removed.
+     * @return the exit status of the "remove-member" command
+     */
+    public int removeMember(String realm, String memberName, String memberType, 
+            String idName, String idType)
+    throws Exception {
+        setSubcommand(REMOVE_MEMBER_SUBCOMMAND);
+        addRealmArguments(realm);
+        addMemberIdnameArguments(memberName);
+        addMemberIdtypeArguments(memberType);
+        addIdnameArguments(idName);
+        addIdtypeArguments(idType);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));       
+    }
+    
+    /**
+     * Display the member identities of an identity.
+     * @param realm - the realm in which the identity exists.
+     * @param membershipType - the identity type of the member which should be
+     * displayed.
+     * @param idName - the name of the identity for which the members should be 
+     * displayed.
+     * @param idType - the type of the identity for which the members should be 
+     * displayed.
+     * @return the exit status of the "show-members" command.
+     */
+    public int showMembers(String realm, String membershipType, String idName, 
+            String idType)
+    throws Exception {
+        setSubcommand(SHOW_MEMBERS_SUBCOMMAND);
+        addRealmArguments(realm);
+        addMembershipIdtypeArguments(membershipType);
+        addIdnameArguments(idName);
+        addIdtypeArguments(idType);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));            
+    } 
+    
+    /**
+     * Display the identities of which an identity is a member.
+     * @param realm - the realm in which the identity exists.
+     * @param membershipType - the type of membership which should be displayed.
+     * @param idName - the identity name for which the memberships should be 
+     * displayed.
+     * @param idType - the identity type for which the memberships should be 
+     * displayed.
+     * @return the exit status of the "show-memberships" command.
+     */
+    public int showMemberships(String realm, String membershipType, 
+            String idName, String idType)
+    throws Exception {
+        setSubcommand(SHOW_MEMBERSHIPS_SUBCOMMAND);
+        addRealmArguments(realm);
+        addMembershipIdtypeArguments(membershipType);
+        addIdnameArguments(idName);
+        addIdtypeArguments(idType);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));             
+    }        
+    
+    
+    /**
      * Iterate through a list containing attribute values and add the 
      * "--attributevalues" argument and a list of one attribute name/value pairs
      * to the argument list
-     * @param 
+     * @param valueList - a List object containing one or more attribute 
+     * name/value pairs.
      */
     private void addAttributevaluesArguments(List valueList) 
     throws Exception {
@@ -672,9 +819,9 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Check to see if a realm exists using the "fmadm list-realms" command
+     * Check to see if a realm exists using the "famadm list-realms" command
      * @param realmsToFind - the realm or realms to find in the output of 
-     * "fmadm list-realms".  Multiple realms should be separated by semi-colons
+     * "famadm list-realms".  Multiple realms should be separated by semi-colons
      * (';').
      * @return a boolean value of true if the realm(s) is(are) found and false 
      * if one or more realms is not found.
@@ -714,7 +861,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findRealms", 
-                        "fmadm list-realms command failed");
+                        "famadm list-realms command failed");
                 realmsFound = false;
             }
             logCommand("findRealms");
@@ -726,9 +873,9 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Check to see if a realm exists using the "fmadm list-realms" command
+     * Check to see if a realm exists using the "famadm list-realms" command
      * @param realmsToFind - the realm or realms to find in the output of 
-     * "fmadm list-realms".  Multiple realms should be separated by semi-colons
+     * "famadm list-realms".  Multiple realms should be separated by semi-colons
      * (';').
      * @return a boolean value of true if the realm(s) is(are) found and false 
      * if one or more realms is not found.
@@ -739,13 +886,14 @@ public class FederationManagerCLI extends CLIUtility
     }  
     
     /**
-     * Check to see if a realm exists using the "fmadm list-identities" command
+     * Check to see if an identity exists using the "famadm list-identities" 
+     * command.
      * @param startRealm - the realm in which to find identities
      * @param filter - the filter that will be applied in the search
      * @param type - the type of identities (User, Group, Role) for which the 
      * search will be performed
      * @param idsToFind - the identity or identities to find in the output of 
-     * "fmadm list-identities".  Multiple identities should be separated by 
+     * "famadm list-identities".  Multiple identities should be separated by 
      * a space (' ').
      * @return a boolean value of true if the identity(ies) is(are) found and 
      * false if one or more identities is not found.
@@ -800,7 +948,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findIdentities", 
-                        "fmadm list-identities command failed");
+                        "famadm list-identities command failed");
                 idsFound = false;
             }
             logCommand("findIdentities");
@@ -809,5 +957,84 @@ public class FederationManagerCLI extends CLIUtility
             idsFound = false;
         }
         return idsFound;
+    }
+
+   /**
+     * Check to see if an identity exists using the "famadm list-identities" 
+     * command.
+     * @param startRealm - the realm in which to find identities
+     * @param filter - the filter that will be applied in the search
+     * @param type - the type of identities (User, Group, Role) for which the 
+     * search will be performed
+     * @param membersToFind - the member identity or identities to find in the 
+     * output of "famadm show-members".  Multiple identities should be separated 
+     * by a semicolon (';').
+     * @return a boolean value of true if the identity(ies) is(are) found and 
+     * false if one or more identities is not found.
+     */
+    public boolean findMembers(String startRealm, String idName, String idType,
+            String memberType, String membersToFind)
+    throws Exception {
+        boolean membersFound = true;
+        
+        if ((membersToFind != null) && (membersToFind.length() > 0)) {
+            if (showMembers(startRealm, memberType, idName, idType) == 0) {
+                String [] members = membersToFind.split(";");
+                for (int i=0; i < members.length; i++) {
+                    String rootDN = "";
+                    if (members[i] != null) {
+                        if (startRealm.equals(TestCommon.realm)) {
+                            rootDN = TestCommon.basedn; 
+                        } else {
+                            String [] realms = startRealm.split("/");
+                            StringBuffer realmBuffer = new StringBuffer();
+                            for (int j = realms.length-1; j >= 0; j--) {
+                                if (realms[j].length() > 0) {
+                                    realmBuffer.append("o=" + realms[j] + ",");
+                                }
+                            }
+                            realmBuffer.append("ou=services,").
+                                    append(TestCommon.basedn);
+                            rootDN = realmBuffer.toString();
+                        }
+                        if (members[i].length() > 0) {
+                            StringBuffer idBuffer = 
+                                    new StringBuffer(members[i]);
+                            idBuffer.append(" (id=").append(members[i]).
+                                    append(",ou=").
+                                    append(memberType.toLowerCase()).
+                                    append(",").append(rootDN).append(")");
+                            if (!findStringInOutput(idBuffer.toString())) {
+                                log(Level.FINEST, "findMember", 
+                                        "String \'" + idBuffer.toString() + 
+                                        "\' was not found.");
+                                membersFound = false;
+                            } else {
+                                log(Level.FINEST, "findMembers", memberType + 
+                                        " identity " + members[i] + 
+                                        " was found.");
+                            }
+                        } else {
+                            log(Level.SEVERE, "findMembers", 
+                                    "The member to find is empty.");
+                            membersFound = false;
+                        }
+                    } else {
+                        log(Level.SEVERE, "findMembers", 
+                                "Identity in membersToFind is null.");
+                        membersFound = false;
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "findMembers", 
+                        "famadm show-members command failed");
+                membersFound = false;
+            }
+            logCommand("findMembers");
+        } else {
+            log(Level.SEVERE, "findMembers", "membersToFind is null or empty");
+            membersFound = false;
+        }
+        return membersFound;
     }    
 }

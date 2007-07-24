@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.2 2007-06-29 13:49:04 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.3 2007-07-24 21:52:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -242,7 +242,7 @@ public class CLIUtility extends TestCommon {
      */
     public void logCommand(String methodName) { 
         if (argList != null) {
-            log(logLevel, "logCommand", methodName + " Command executed: " + 
+            log(Level.FINEST, "logCommand", methodName + " Command executed: " + 
                     getAllArgs());
         } else {
             log(Level.SEVERE, "logCommand", methodName + 
@@ -251,18 +251,18 @@ public class CLIUtility extends TestCommon {
         if (command != null) {
             StringBuffer outputBuffer = command.getOutput();
             StringBuffer errorBuffer = command.getError();
-            log(logLevel, methodName, "Command execution time: " + 
+            log(Level.FINEST, methodName, "Command execution time: " + 
                     command.getDuration() + " seconds");
             if (outputBuffer != null) {
-                log(logLevel, "logCommand", methodName + " Command output: " + 
-                        outputBuffer);
+                log(Level.FINEST, "logCommand", methodName + " Command output: "
+                        + outputBuffer);
             }
             if (errorBuffer != null) {
-                log(logLevel, "logCommand", methodName + " Command error: " + 
-                        errorBuffer);
+                log(Level.FINEST, "logCommand", methodName + " Command error: " 
+                        + errorBuffer);
             }
-            log(logLevel, "logCommand", methodName + " Command exit status: " + 
-                    getExitStatus());
+            log(Level.FINEST, "logCommand", methodName + 
+                    " Command exit status: " + getExitStatus());
         } else {
             log(Level.SEVERE, "logCommand", methodName + " Command is null");
         }
@@ -284,12 +284,14 @@ public class CLIUtility extends TestCommon {
         
         while (tokenizer.hasMoreTokens()) {
             String searchToken = tokenizer.nextToken();
+            log(Level.FINE, "findStringsInOutput", "Searching for string \'" + 
+                    searchToken + "\' in command output.");
             if (!findStringInOutput(searchToken)) {
                 stringsFound = false;
-                log(Level.INFO, "findStringsInOutput", "Could not find string '"
+                log(Level.FINEST, "findStringsInOutput", "Could not find string '"
                         + searchToken + "'" + " in the command output.");
             } else {
-                log(logLevel, "findStringsInOutput", "Found the string '" + 
+                log(Level.FINEST, "findStringsInOutput", "Found the string '" + 
                         searchToken + "'" + " in the command output.");
             }
         }
@@ -312,13 +314,14 @@ public class CLIUtility extends TestCommon {
         
         while (tokenizer.hasMoreTokens()) {
             String searchToken = tokenizer.nextToken();
-      
+            log(Level.FINE, "findStringsInOutput", "Searching for string \'" + 
+                    searchToken + "\' in command output.");      
             if (!findStringInError(searchToken)) {
                 stringsFound = false;
-                log(Level.INFO, "findStringsInError", "Could not find string '" 
+                log(Level.FINEST, "findStringsInError", "Could not find string '" 
                         + searchToken + "'" + " in the command error.");
             } else {
-                log(logLevel, "findStringsInError", "Found the string '" + 
+                log(Level.FINEST, "findStringsInError", "Found the string '" + 
                             searchToken + "'" + " in the command error.");
             } 
         }
