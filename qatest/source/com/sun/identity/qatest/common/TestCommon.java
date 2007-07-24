@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.14 2007-07-18 21:37:22 rmisra Exp $
+ * $Id: TestCommon.java,v 1.15 2007-07-24 19:50:46 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -432,22 +432,21 @@ public class TestCommon implements TestConstants {
 
             HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
+            rbDataStore.setDefaultValue(strConfigStore);
+
             if (strConfigStore.equals("flatfile")) {
                 log(Level.INFO, "configureProduct",
                         "Doing File System configuration.");
-                rbDataStore.setDefaultValue("flatfile");
             } else {
                 log(Level.INFO, "configureProduct",
                         "Doing directory configuration.");
                 if (strConfigStore.equals("dirServer")) {
                     log(Level.INFO, "configureProduct",
-                        "Doing Directory Server configuration.");
-                    rbDataStore.setDefaultValue("dirServer");
+                        "Doing Sun ONE Directory Server configuration.");
                 }
                 if (strConfigStore.equals("activeDir")) {
                     log(Level.INFO, "configureProduct",
                         "Doing Active Directory configuration.");
-                    rbDataStore.setDefaultValue("activeDir");
                 }
                 
                 HtmlTextInput txtDirServerName =
@@ -483,11 +482,6 @@ public class TestCommon implements TestConstants {
                         getInputByName("DS_DIRMGRPASSWD");
                 txtDirAdminPassword.setValueAttribute((String)map.
                         get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
-                HtmlPasswordInput txtDirAdminPasswordR =
-                        (HtmlPasswordInput)form.
-                        getInputByName("DS_CONFIRM_PWD");
-                txtDirAdminPasswordR.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
                 
                 HtmlCheckBoxInput chkLoadUMS =
                         (HtmlCheckBoxInput)form.getInputByName("DS_UM_SCHEMA");
@@ -498,8 +492,12 @@ public class TestCommon implements TestConstants {
                     chkLoadUMS.setChecked(false);
             }
             try {
-                form.submit();
+                page = (HtmlPage)form.submit();
+                log(Level.FINEST, "configureProduct", "Returned Page:" + page.asXml());
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+                log(Level.SEVERE, "configureProduct", e.getMessage(), null);
+                e.printStackTrace();
+                throw e;
             }
             strURL = url + "?" + "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
