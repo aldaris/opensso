@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.4 2007-07-11 06:12:45 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.5 2007-07-25 19:06:38 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,11 +121,23 @@ public class SecureSOAPMessage {
           
          this.soapMessage = soapMessage;
          this.create = create;
+
+         if(debug.messageEnabled()) {
+            debug.message("SecureSOAPMessage.Input SOAP message : " + 
+            WSSUtils.print(soapMessage.getSOAPPart()));
+         }
+
          if(!create) {
-            parseSOAPMessage(soapMessage);
+             parseSOAPMessage(soapMessage);
          } else {
-            addNameSpaces();
-            addSecurityHeader();
+             ((Node) soapMessage.getSOAPPart()).normalize();
+
+             if(debug.messageEnabled()) {
+                debug.message("SecureSOAPMessage.Input SOAP message After " + 
+                "normalization: "+ WSSUtils.print(soapMessage.getSOAPPart()));
+             }
+             addNameSpaces();
+             addSecurityHeader();
          }
      }
 
@@ -479,6 +491,11 @@ public class SecureSOAPMessage {
          } else {
             debug.error("SecureSOAPMessage.sign:: Invalid token type for" +
             " XML signing.");
+         }
+
+         if(debug.messageEnabled()) {
+            debug.message("SecureSOAPMessage.sign:: After Signing : "+
+            WSSUtils.print(soapMessage.getSOAPPart()));
          }
      }
 
