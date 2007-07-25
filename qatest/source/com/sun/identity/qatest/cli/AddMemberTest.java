@@ -17,25 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddMemberTest.java,v 1.1 2007-07-24 21:55:12 cmwesley Exp $
+ * $Id: AddMemberTest.java,v 1.2 2007-07-25 13:42:04 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
- */
-
-/**
- * AddMemberTest automates the following test cases:
- * CLI_add-member01, CLI_add-member02, CLI_add-member03, 
- * CLI_add-member04, CLI_add-member05, CLI_add-member06, 
- * CLI_add-member07, CLI_add-member08, CLI_add-member09, 
- * CLI_add-member10, CLI_add-member11, CLI_add-member12, 
- * CLI_add-member13, CLI_add-member14, CLI_add-member15,
- * CLI_add-member16, CLI_add-member17, CLI_add-member18, 
- * CLI_add-member19, CLI_add-member20, CLI_add-member21, 
- * CLI_add-member22, CLI_add-member23, CLI_add-member24, 
- * CLI_add-member25, CLI_add-member26, CLI_add-member27,
- * CLI_add-member28, CLI_add-member29, CLI_add-member30, 
- * CLI_add-member31, CLI_add-member32, CLI_add-member33, 
- * CLI_add-member34, and CLI_add-member35.
  */
 
 package com.sun.identity.qatest.cli;

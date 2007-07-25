@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMemberTest.java,v 1.1 2007-07-24 21:55:12 cmwesley Exp $
+ * $Id: RemoveMemberTest.java,v 1.2 2007-07-25 13:42:04 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,9 +55,7 @@ import org.testng.Reporter;
  * CLI_remove-member07, CLI_remove-member08, CLI_remove-member09, 
  * CLI_remove-member10, CLI_remove-member11, CLI_remove-member12,
  * CLI_remove-member13, CLI_remove-member14, CLI_remove-member15, 
- * CLI_remove-member16, CLI_remove-member17, CLI_remove-member18,
- * CLI_remove-member19, CLI_remove-member20, CLI_remove-member21, 
- * CLI_remove-member22, CLI_remove-member23, CLI_remove-member24
+ * CLI_remove-member16
  */
 public class RemoveMemberTest extends TestCommon {
     
