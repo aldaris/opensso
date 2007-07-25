@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebHelperCreator.java,v 1.1 2007-07-25 07:02:03 veiming Exp $
+ * $Id: WebHelperCreator.java,v 1.2 2007-07-25 08:09:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class WebHelperCreator {
 
         buff.append("    public FederationManager(String url) {\n");
         buff.append("        amUrl = url;\n");
-        buff.append("        amadmUrl = url + \"/fmadm.jsp?cmd=\";\n");
+        buff.append("        amadmUrl = url + \"/famadm.jsp?cmd=\";\n");
         buff.append("    }\n\n\n");
 
         buff.append("    public static int getExitCode(HtmlPage p) {\n");
