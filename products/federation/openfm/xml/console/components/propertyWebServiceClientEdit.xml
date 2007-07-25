@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceClientEdit.xml,v 1.2 2007-06-14 21:02:51 veiming Exp $
+   $Id: propertyWebServiceClientEdit.xml,v 1.3 2007-07-25 19:13:17 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -115,6 +115,16 @@
             defaultValue="web.services.client.profile.isrequestsigned"
             labelFor="isrequestsigned" />
         <cc name="isrequestsigned"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+
+    <property>
+        <label name="lblisRequestHeaderEncrypt"
+            defaultValue="web.services.client.profile.isRequestHeaderEncrypt"
+            labelFor="isRequestHeaderEncrypt" />
+        <cc name="isRequestHeaderEncrypt"
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
             <attribute name="label" value="label.Yes" />
         </cc>
