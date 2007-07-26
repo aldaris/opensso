@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.2 2007-07-03 22:06:24 qcheng Exp $
+ * $Id: FSSSOAndFedService.java,v 1.3 2007-07-26 22:24:12 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.federation.services.FSSOAPService;
 import com.sun.identity.federation.services.util.FSServiceUtils;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.message.FSAuthnRequest;
+import com.sun.identity.federation.message.common.Extension;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
@@ -62,6 +63,7 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -574,6 +576,14 @@ public class FSSSOAndFedService  extends HttpServlet {
                 FSUtils.debug.message("FSSSOAndFedService.handleAuthnRequest: "
                     + "Trying to handle AuthnRequest message: " 
                     + authnRequest.toXMLString());
+
+                List extensions = authnRequest.getExtensions();
+                if ((extensions != null) && (!extensions.isEmpty())) {
+                    FSUtils.debug.message(
+                        "FSSSOAndFedService.handleAuthnRequest: " +
+                        "AuthnRequest extensions: " +
+                        ((Extension)extensions.get(0)).getAttributeMap());;
+                }
             }
             FSServiceManager sm = FSServiceManager.getInstance();
             FSSSOAndFedHandler handler = null;

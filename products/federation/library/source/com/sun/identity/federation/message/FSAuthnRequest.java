@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthnRequest.java,v 1.1 2006-10-30 23:14:08 qcheng Exp $
+ * $Id: FSAuthnRequest.java,v 1.2 2007-07-26 22:23:27 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
+import com.sun.identity.federation.message.common.Extension;
 import com.sun.identity.federation.message.common.FSMsgException;
 import com.sun.identity.federation.message.common.RequestAuthnContext;
 import com.sun.identity.saml.common.SAMLConstants;
@@ -63,6 +64,7 @@ import com.sun.identity.shared.xml.XMLUtils;
  * @supported.all.api
  */
 public class FSAuthnRequest extends AbstractRequest {
+    private List extensions = null;
     private boolean isPassive = false;
     private boolean forceAuthn = false;
     private boolean federate = false;
@@ -80,7 +82,7 @@ public class FSAuthnRequest extends AbstractRequest {
     protected String affiliationID = null;
     protected int minorVersion = 0;
     protected FSScoping scoping = null;
-    
+    private static final String QUERY_STRING_EXTENSION_PREFIX = "AE_";    
     /**
      * Default AuthnRequest construtor
      */
@@ -286,10 +288,10 @@ public class FSAuthnRequest extends AbstractRequest {
                 } else if(nodeName.equals(IFSConstants.AFFILIATIONID)) {
                     affiliationID = XMLUtils.getElementValue((Element) child);
                 } else if(nodeName.equals(IFSConstants.EXTENSION)) {
-                    if(FSUtils.debug.messageEnabled()) {
-                        FSUtils.debug.message("FSAuthnRequest(Element): " +
-                                "Extensions are not supported");
+                    if (extensions == null) {
+                        extensions = new ArrayList();
                     }
+                    extensions.add(new Extension((Element)child));
                 } else if(nodeName.equals(IFSConstants.SCOPING)) {
                     scoping = new FSScoping((Element)child);
                 } else {
@@ -481,7 +483,16 @@ public class FSAuthnRequest extends AbstractRequest {
                     xml.append(signatureString);
                 }
             }
-            
+
+            if ((extensions != null) && (!extensions.isEmpty())) {
+                for(Iterator iter = extensions.iterator(); iter.hasNext();) {
+                    Extension extension = (Extension)iter.next();
+                    extension.setMinorVersion(minorVersion);
+                    xml.append(extension.toXMLString());
+                }
+
+            }
+
             xml.append(IFSConstants.LEFT_ANGLE)
                .append(prefix)
                .append(IFSConstants.PROVIDER_ID)
@@ -677,6 +688,29 @@ public class FSAuthnRequest extends AbstractRequest {
         return signatureString;
     }
     
+    /**
+     * Returns a list of <code>Extension</code> objects.
+     * Each entry of the list is a <code>Extension</code> object.
+     *
+     * @return a list of <code>Extension</code> elements.
+     * @see #setExtensions(List)
+     */
+    
+    public List getExtensions() {
+        return extensions;
+    }
+    
+    /**
+     * Sets <code>Extension</code> objects.
+     * Each entry of the list is a <code>Extension</code> object.
+     *
+     * @param extensions a list of <code>Extension</code> objects.
+     * @see #getExtensions
+     */
+    public void setExtensions(List extensions) {
+        this.extensions = extensions;
+    }
+
     /**
      * Returns the value of Force Authentication attribute.
      *
@@ -1168,8 +1202,23 @@ public class FSAuthnRequest extends AbstractRequest {
                           .append(IFSConstants.MINOR_VERSION)
                           .append(IFSConstants.EQUAL_TO)
                           .append(minorVersion)
-                          .append(IFSConstants.AMPERSAND)
-                          .append(IFSConstants.PROVIDER_ID)
+                          .append(IFSConstants.AMPERSAND);
+        if ((extensions != null) && (!extensions.isEmpty())) {
+            Extension extension = (Extension)extensions.get(0);
+            urlEncodedAuthnReq.append(extension.toURLEncodedQueryString(
+                QUERY_STRING_EXTENSION_PREFIX)).append(IFSConstants.AMPERSAND);
+
+            if (extensions.size() > 1) {
+                if (FSUtils.debug.warningEnabled()) {
+                    FSUtils.debug.warning(
+                        "FSAuthnRequest.toURLEncodedQueryString: " +
+                        "only one Extension element is allowed and extras " +
+                        " will be removed");
+                }
+            }
+        }
+
+        urlEncodedAuthnReq.append(IFSConstants.PROVIDER_ID)
                           .append(IFSConstants.EQUAL_TO)
                           .append(URLEncDec.encode(providerId))
                           .append(IFSConstants.AMPERSAND);
@@ -1436,7 +1485,14 @@ public class FSAuthnRequest extends AbstractRequest {
                 request, retAuthnRequest.getMinorVersion());
         
         retAuthnRequest.scoping = FSScoping.parseURLEncodedRequest(request);
-        
+
+        Extension extension = Extension.parseURLEncodedRequest(request,
+            QUERY_STRING_EXTENSION_PREFIX, retAuthnRequest.getMinorVersion());
+        if (extension != null) {
+            retAuthnRequest.extensions = new ArrayList();
+            retAuthnRequest.extensions.add(extension);
+        }
+
         return retAuthnRequest;
     }
     
