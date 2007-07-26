@@ -1,0 +1,145 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: propertyWSFedIDPView.xml,v 1.1 2007-07-26 22:03:46 babysunil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>
+    <section name="WSFedIDP" defaultValue="">
+        <property>
+            <label name="lblSigncertAlias"
+                defaultValue="wsfedidp.attribute.label.signcertAlias"
+                    labelFor="tfSigncertAlias" />
+            <cc name="tfSigncertAlias" 
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <attribute name="onChange" value="switchView1('actionMenu')" />
+                <option label="wsfed.actions.label" value="ignore" />
+                <option label="wsfed.idp.label1" value="1" />
+                <option label="wsfed.idp.label2" value="2" />
+                <option label="wsfed.idp.label3" value="3" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblIDPClaimTypesOffered"
+                   defaultValue="wsfedidp.attribute.label.idpclaimTypesOffered"
+                   labelFor="tfIDPClaimTypesOffered" />
+            <ccgroup>
+                <property>
+                    <cc name="tfIDPClaimTypesOffered" 
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" 
+                                   value="label.current.value" />
+                        <attribute name="textboxLabel"
+                                   value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+        <property>
+            <label name="lblIDPAutofedEnabled"
+                   defaultValue="wsfedidp.attribute.label.idpautofedEnabled"
+                   labelFor="tfIDPAutofedEnabled" />
+            <cc name="tfIDPAutofedEnabled" 
+                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+        </property>
+        <property>
+            <label name="lblIDPAutofedAttribute"
+                defaultValue="wsfedidp.attribute.label.idpautofedAttribute"
+                    labelFor="tfIDPAutofedAttribute" />
+            <cc name="tfIDPAutofedAttribute" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblIDPAssertionEffectiveTime"
+                defaultValue=
+                    "wsfedidp.attribute.label.idpassertionEffectiveTime"
+                        labelFor="tfIDPAssertionEffectiveTime" />
+            <cc name="tfIDPAssertionEffectiveTime" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="5" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property> 
+        <property>
+            <label name="lblIdpAuthncontextMapper"
+                defaultValue="wsfedidp.attribute.label.idpAuthncontextMapper"
+                    labelFor="tfIdpAuthncontextMapper" />
+            <cc name="tfIdpAuthncontextMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblIdpAccountMapper"
+                defaultValue="wsfedidp.attribute.label.idpAccountMapper"
+                    labelFor="tfIdpAccountMapper" />
+            <cc name="tfIdpAccountMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblIdpAttributeMapper"
+                defaultValue="wsfedidp.attribute.label.idpAttributeMapper"
+                    labelFor="tfIdpAttributeMapper" />
+            <cc name="tfIdpAttributeMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        
+       <property>
+            <label name="lblIDPAttributeMap"
+                defaultValue="wsfedidp.attribute.label.idpattributeMap"
+                             labelFor="TFIDPATTR_MAP" />
+            <ccgroup>
+                <property>
+                    <cc name="TFIDPATTR_MAP"
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" 
+                            value="label.current.value" />
+                        <attribute name="textboxLabel"
+                            value="label.new.value" />
+                     </cc>
+                     
+                </property>
+            </ccgroup>
+        </property> 
+    </section>
+</propertysheet>

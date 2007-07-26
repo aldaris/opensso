@@ -1,0 +1,180 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: propertyWSFedSPView.xml,v 1.1 2007-07-26 22:04:05 babysunil Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>
+    <section name="WSFedSP" defaultValue="">        
+        <property>
+            <label name="lblSPSingleSignOutNotificationEndpoint"
+                defaultValue=
+                "wsfedsp.attribute.label.spSingleSignOutNotificationEndpoint"
+                labelFor="tfSPSingleSignOutNotificationEndpoint" />
+            <cc name="tfSPSingleSignOutNotificationEndpoint" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>        
+        <property>
+            <label name="lblSPAutofedEnabled"
+                defaultValue="wsfedsp.attribute.label.spautofedEnabled"
+                labelFor="tfSPAutofedEnabled" />
+            <cc name="tfSPAutofedEnabled" 
+                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />       
+        </property>
+        <property>
+            <label name="lblSPArtificatResponseSigned"
+                defaultValue="wsfedsp.attribute.label.spartificatresponsesigned"
+                labelFor="tfSPArtificatResponseSigned" />
+            <cc name="tfSPArtificatResponseSigned" 
+                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+        </property>
+        <property>
+            <label name="lblSPAutofedAttribute"
+                defaultValue="wsfedsp.attribute.label.spautofedAttribute"
+                    labelFor="tfSPAutofedAttribute" />
+            <cc name="tfSPAutofedAttribute" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAssertionEffectiveTime"
+                   defaultValue=
+                       "wsfedsp.attribute.label.spassertionEffectiveTime"
+                   labelFor="tfSPAssertionEffectiveTime" />
+            <cc name="tfSPAssertionEffectiveTime" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="5" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property> 
+        <property>
+            <label name="lblSPAccountMapper"
+                   defaultValue="wsfedsp.attribute.label.spAccountMapper"
+                   labelFor="tfSPAccountMapper" />
+            <cc name="tfSPAccountMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAttributeMapper"
+                   defaultValue="wsfedsp.attribute.label.spAttributeMapper"
+                   labelFor="tfSPAttributeMapper" />
+            <cc name="tfSPAttributeMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAuthncontextMapper"
+                   defaultValue="wsfedsp.attribute.label.spAuthncontextMapper"
+                   labelFor="tfSPAuthncontextMapper" />
+            <cc name="tfSPAuthncontextMapper" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAuthncontextClassrefMapping"
+                defaultValue=
+                    "wsfedsp.attribute.label.spAuthncontextClassrefMapping" 
+                        labelFor="tfSPAuthncontextClassrefMapping" />
+            <cc name="tfSPAuthncontextClassrefMapping" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAuthncontextComparisonType"
+                defaultValue=
+                    "wsfedsp.attribute.label.spAuthncontextComparisonType"
+                        labelFor="tfSPAuthncontextComparisonType" />
+            <cc name="tfSPAuthncontextComparisonType" 
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <attribute name="onChange" value="switchView1('actionMenu')" />
+                <option label="wsfed.actions.label" value="ignore" />
+                <option label="wsfed.sp.label1" value="exact" />
+                <option label="wsfed.sp.label2" value="minimum" />
+                <option label="wsfed.sp.label3" value="maximum" />
+                <option label="wsfed.sp.label4" value="better" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPAttributeMap"
+                defaultValue="wsfedsp.attribute.label.spattributeMap"
+                    labelFor="TFSPATTR_MAP" />
+            <ccgroup>
+                <property>
+                    <cc name="TFSPATTR_MAP" 
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel"
+                            value="label.current.value" />
+                        <attribute name="textboxLabel"
+                            value="label.new.value" />
+                     </cc>                    
+                </property>
+            </ccgroup>
+        </property>
+        <property>
+            <label name="lblSPDefaultRelayState"
+                defaultValue="wsfedsp.attribute.label.spDefaultRelayState"
+                    labelFor="tfSPDefaultRelayState" />
+            <cc name="tfSPDefaultRelayState" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblSPassertionTimeSkew"
+                defaultValue="wsfedsp.attribute.label.spassertionTimeSkew"
+                    labelFor="tfSPassertionTimeSkew" />
+            <cc name="tfSPassertionTimeSkew" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="5" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+    </section>
+</propertysheet>
