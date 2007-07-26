@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.23 2007-07-24 22:58:00 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.24 2007-07-26 20:34:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4136,7 +4136,8 @@ public class LDAPv3Repo extends IdRepo {
                     throw new AuthLoginException(amAuthLDAP, "LDAPex", null);
             }
         }
-        return (ldapAuthUtil.getState() == ldapAuthUtil.SUCCESS);
+        return ((ldapAuthUtil.getState() == ldapAuthUtil.SUCCESS) || 
+            (ldapAuthUtil.getState() == ldapAuthUtil.PASSWORD_EXPIRING));
     }
 
 

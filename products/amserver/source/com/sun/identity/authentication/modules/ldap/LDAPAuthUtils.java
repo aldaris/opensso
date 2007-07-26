@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.9 2007-07-24 22:58:53 kenwho Exp $
+ * $Id: LDAPAuthUtils.java,v 1.10 2007-07-26 20:34:34 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,7 @@ public class LDAPAuthUtils {
     
     // user states (normal)
     static final int PASSWORD_EXPIRED_STATE = 20;
-    static final int PASSWORD_EXPIRING = 21;
+    public static final int PASSWORD_EXPIRING = 21;
     static final int PASSWORD_MISMATCH = 23;
     static final int PASSWORD_USERNAME_SAME = 24;
     static final int PASSWORD_NOT_UPDATE = 25;
